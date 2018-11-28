@@ -1,0 +1,20 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol ActorProtocol {
+
+  import idl "streamConfig.avdl";
+
+  record Actor {
+
+  /**
+  * mot app name of the actor
+  */
+    string name;
+
+  /**
+  * Stream configuration key/value map
+  */
+    @java-class("java.util.ArrayList") array<RegionStreamConfiguration> regionStreamConfigurations = [];
+
+  }
+}

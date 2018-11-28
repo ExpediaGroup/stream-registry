@@ -1,0 +1,33 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol InfraManagerProtocol {
+
+  record ClusterKey {
+  /**
+  * vpc name
+  */
+    string vpc;
+
+  /**
+  * environment Ex: dev, test, stage, prod
+  */
+    string env;
+
+  /**
+  * hint for the cluster ex: primary, other, etc..
+  */
+    string hint;
+
+  /**
+  * type of cluster ex: producer, consumer
+  */
+    union {null, string} type = null;
+  }
+
+  record ClusterValue {
+  /**
+  * cluster properties ex: bootstrap.servers, schema.registry.url, etc...
+  */
+    map<string> clusterProperties;
+  }
+}

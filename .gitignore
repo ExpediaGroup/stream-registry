@@ -1,0 +1,20 @@
+.DS_Store
+
+.classpath
+.project
+.settings
+target/
+
+*dependency-reduced-pom.xml
+
+logs/
+*.log
+*.iml
+.idea
+*.ipr
+*.iws
+
+!core/src/main/docker/bin/
+
+# Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
+!/.mvn/wrapper/maven-wrapper.jar

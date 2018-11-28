@@ -1,0 +1,28 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol StreamConfigurationProtocol {
+
+  record RegionStreamConfiguration {
+    /**
+     * region
+     */
+    string region;
+
+    /**
+     * unique name of the cluster - corresponding to consul tag "cluster"
+     *
+     */
+    string cluster;
+
+    /**
+    * Topic names
+    */
+    array<string> topics;
+
+    /**
+    * Properties related to Stream Configuration
+    */
+    union{null,map<string>} streamConfiguration = null;
+  }
+
+}

@@ -1,0 +1,15 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol ProducerProtocol {
+
+  import idl "actors.avdl";
+
+  record Producer {
+
+  /**
+  * Actor configuration for the producer
+  */
+    Actor actor;
+
+  }
+}
