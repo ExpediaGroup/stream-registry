@@ -1,0 +1,1899 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Open Source Docs and Community Standards">
+      
+      
+        <link rel="canonical" href="https://homeaway.github.io/stream-registry/architecture/">
+      
+      
+        <meta name="author" content="Digital Platform">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.0.5">
+    
+    
+      
+        <title>Stream Registry Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.451f80e5.css">
+      
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.1aa3b519.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+      <link rel="stylesheet" href="../css/progress_bar.css">
+    
+      <link rel="stylesheet" href="../css/details.css">
+    
+      <link rel="stylesheet" href="../css/tasklist.css">
+    
+      <link rel="stylesheet" href="../css/custom_tasklist.css">
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448"
+    viewBox="0 0 416 448" id="__github">
+  <path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19-18.125
+        8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19 18.125-8.5
+        18.125 8.5 10.75 19 3.125 20.5zM320 304q0 10-3.125 20.5t-10.75
+        19-18.125 8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19
+        18.125-8.5 18.125 8.5 10.75 19 3.125 20.5zM360
+        304q0-30-17.25-51t-46.75-21q-10.25 0-48.75 5.25-17.75 2.75-39.25
+        2.75t-39.25-2.75q-38-5.25-48.75-5.25-29.5 0-46.75 21t-17.25 51q0 22 8
+        38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0
+        37.25-1.75t35-7.375 30.5-15 20.25-25.75 8-38.375zM416 260q0 51.75-15.25
+        82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5-41.75
+        1.125q-19.5 0-35.5-0.75t-36.875-3.125-38.125-7.5-34.25-12.875-30.25-20.25-21.5-28.75q-15.5-30.75-15.5-82.75
+        0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25
+        30.875q36.75-8.75 77.25-8.75 37 0 70 8 26.25-20.5
+        46.75-30.25t47.25-9.75q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34
+        99.5z" />
+</svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#stream-registry-architecture" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://homeaway.github.io/stream-registry" title="Stream Registry Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                Stream Registry Documentation
+              </span>
+              <span class="md-header-nav__topic">
+                Architecture
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+
+  <a href="https://github.com/HomeAway/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      streamingplatform/stream-registry
+    </div>
+  </a>
+
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://homeaway.github.io/stream-registry" title="Stream Registry Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Stream Registry Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/HomeAway/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      streamingplatform/stream-registry
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Architecture
+      </label>
+    
+    <a href="./" title="Architecture" class="md-nav__link md-nav__link--active">
+      Architecture
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#stream-provider-plugin-architecture" title="Stream Provider Plugin Architecture" class="md-nav__link">
+    Stream Provider Plugin Architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-infrastructure-manager" title="Stream Infrastructure Manager" class="md-nav__link">
+    Stream Infrastructure Manager
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#namespaces" title="Namespaces" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clusters" title="Clusters" class="md-nav__link">
+    Clusters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streams" title="Streams" class="md-nav__link">
+    Streams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bindings" title="Bindings" class="md-nav__link">
+    Bindings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stream-infrastructure-manager-interface" title="Stream Infrastructure Manager Interface" class="md-nav__link">
+    Stream Infrastructure Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-registry" title="Schema Registry" class="md-nav__link">
+    Schema Registry
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schema-manager-interface" title="Schema Manager Interface" class="md-nav__link">
+    Schema Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-sources" title="Stream Sources" class="md-nav__link">
+    Stream Sources
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-source-manager-interface" title="Stream Source Manager Interface" class="md-nav__link">
+    Stream Source Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-sinks" title="Stream Sinks" class="md-nav__link">
+    Stream Sinks
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-sink-manager-interface" title="Stream Sink Manager Interface" class="md-nav__link">
+    Stream Sink Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-replication" title="Stream Replication" class="md-nav__link">
+    Stream Replication
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-replication-manager-interface" title="Stream Replication Manager Interface" class="md-nav__link">
+    Stream Replication Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-relocation" title="Stream Relocation" class="md-nav__link">
+    Stream Relocation
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-relocation-manager-interface" title="Stream Relocation Manager Interface" class="md-nav__link">
+    Stream Relocation Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../usage/" title="Usage Guide" class="md-nav__link">
+      Usage Guide
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#stream-provider-plugin-architecture" title="Stream Provider Plugin Architecture" class="md-nav__link">
+    Stream Provider Plugin Architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-infrastructure-manager" title="Stream Infrastructure Manager" class="md-nav__link">
+    Stream Infrastructure Manager
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#namespaces" title="Namespaces" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clusters" title="Clusters" class="md-nav__link">
+    Clusters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streams" title="Streams" class="md-nav__link">
+    Streams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bindings" title="Bindings" class="md-nav__link">
+    Bindings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stream-infrastructure-manager-interface" title="Stream Infrastructure Manager Interface" class="md-nav__link">
+    Stream Infrastructure Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-registry" title="Schema Registry" class="md-nav__link">
+    Schema Registry
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schema-manager-interface" title="Schema Manager Interface" class="md-nav__link">
+    Schema Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-sources" title="Stream Sources" class="md-nav__link">
+    Stream Sources
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-source-manager-interface" title="Stream Source Manager Interface" class="md-nav__link">
+    Stream Source Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-sinks" title="Stream Sinks" class="md-nav__link">
+    Stream Sinks
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-sink-manager-interface" title="Stream Sink Manager Interface" class="md-nav__link">
+    Stream Sink Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-replication" title="Stream Replication" class="md-nav__link">
+    Stream Replication
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-replication-manager-interface" title="Stream Replication Manager Interface" class="md-nav__link">
+    Stream Replication Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-relocation" title="Stream Relocation" class="md-nav__link">
+    Stream Relocation
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stream-relocation-manager-interface" title="Stream Relocation Manager Interface" class="md-nav__link">
+    Stream Relocation Manager Interface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/HomeAway/stream-registry/edit/master/docs/docs/architecture/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="stream-registry-architecture">Stream Registry Architecture<a class="headerlink" href="#stream-registry-architecture" title="Permanent link">&para;</a></h1>
+<p>The stream registry is primarily concerned with the centralized management of
+the lifecycle of streams in the enterprise. Therefore, it serves as a central
+system of record (SOR) and source of truth (SOT) for stream metadata.</p>
+<p><center><img alt="Stream Registry Architecture" src="SR-usecases.png" /></center></p>
+<h2 id="stream-provider-plugin-architecture">Stream Provider Plugin Architecture<a class="headerlink" href="#stream-provider-plugin-architecture" title="Permanent link">&para;</a></h2>
+<p><center><img alt="Provider Plugin Architecture" src="SR-provider-plugin.svg" /></center></p>
+<p><strong>Stream Providers</strong></p>
+<p>Stream Providers are plugins that work within the stream registry that
+implement the various bits and pieces of the stream registry that are both
+platform-specific and enterprise-specific.</p>
+<p>For example, the stream-registry will likely be open sourced with a
+<code class="codehilite">generic-kafka-stream-provider</code> to work with the Apache Kafka stream platform
+in a generic manner.  Chances are, that Acme Inc, might want to expand on this
+generic functionality and add Acme-specific ConfigMaps and functionality.
+They can do so by extending <code class="codehilite">generic-kafa-stream-provider</code> to come up with
+an <code class="codehilite">acme-kafka-stream-provider</code>.</p>
+<p>These stream providers are typically jar files that have classes that
+implement the various <em>manager</em> interfaces depicted in the figure above.</p>
+<p><strong>Manager Interfaces</strong></p>
+<p>The following table describes a high level function of each of the
+<em>manager interfaces</em>.</p>
+<table>
+<thead>
+<tr>
+<th>manager</th>
+<th>function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stream Infrastructure Manager</td>
+<td>Serves as an abstraction for stream bindings,<BR/> the actual realization of streams in the underlying infrastructure.</td>
+</tr>
+<tr>
+<td>Schema Manager</td>
+<td>Serves as an abstraction for the underlying schema registry.</td>
+</tr>
+<tr>
+<td>Stream Source Manager</td>
+<td>Serves as an abstraction for managing stream sources.</td>
+</tr>
+<tr>
+<td>Stream Sink Manager</td>
+<td>Serves as an abstraction for managing stream sinks.</td>
+</tr>
+<tr>
+<td>Stream Replication Manager</td>
+<td>Serves as an abstraction for managing stream replication between clusters.</td>
+</tr>
+</tbody>
+</table>
+<p>The following sections will describe in detail what is features are supported by each of these interfaces as
+well as describing the interface requirements themselves.</p>
+<h2 id="stream-infrastructure-manager">Stream Infrastructure Manager<a class="headerlink" href="#stream-infrastructure-manager" title="Permanent link">&para;</a></h2>
+<p><strong>Stream Infrastructure Manager</strong> manages the declaration of namespaces and clusters
+as well as the management of stream lifecycles.</p>
+<h3 id="namespaces">Namespaces<a class="headerlink" href="#namespaces" title="Permanent link">&para;</a></h3>
+<p><strong>The Root Stream Registry</strong></p>
+<p>Like DNS, the Stream Registry is hierarchical and has a 'root' namespace, <code class="codehilite">&quot;/&quot;</code>.
+The 'root' namespace is the <strong>default namespace</strong> of a vanilla stream registry.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE</span>
+<span style="color: #e6db74">&quot;/&quot;</span>
+</pre></div>
+
+<details class="note"><summary>Note</summary><p><strong>SQL 'DDL' syntax:</strong><BR/>
+This documentation uses 'DDL'-esque syntax to communicate <em>command concepts</em>. The actual API and/or
+command line tools may differ (the command line tools may use a stream config language and there will likely
+be a UI tool released that helps users interact with the stream registry directly).
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">CREATE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span> <span style="color: #f8f8f2">...;</span>
+</pre></div></p>
+</details>
+<p>Let say that we leave this instance of the stream registry alone and deploy it such
+that its API is at <code class="codehilite">https://&lt;root-registry-api-uri&gt;</code></p>
+<p>An administrator can configure a second stream registry instance to have a different namespace:</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE</span>
+<span style="color: #e6db74">&quot;/&quot;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">DEFAULT</span> <span style="color: #f8f8f2">NAMESPACE</span> <span style="color: #e6db74">&quot;us-reg1-xyz&quot;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #f8f8f2">PARENT</span> <span style="color: #f8f8f2">REGISTRY</span> <span style="color: #e6db74">&quot;https://&lt;root-registry-api-uri&gt;&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE</span>
+<span style="color: #e6db74">&quot;/us-reg1-xyz&quot;</span>
+</pre></div>
+
+<p>The above might be used to declare a "region" in AWS us-reg1-xyz for the given VPC.
+This could be used for when there are "multiple" regions for a given single company.</p>
+<p>To declare a second "region", an administrator might perform the following command
+on yet another, third, stream registry instance:</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE</span>
+<span style="color: #e6db74">&quot;/&quot;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">DEFAULT</span> <span style="color: #f8f8f2">NAMESPACE</span> <span style="color: #e6db74">&quot;us-aus1-dc01&quot;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #f8f8f2">PARENT</span> <span style="color: #f8f8f2">REGISTRY</span> <span style="color: #e6db74">&quot;https://&lt;root-registry-api-uri&gt;&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE</span>
+<span style="color: #e6db74">&quot;/us-aus1-dc01&quot;</span>
+</pre></div>
+
+<p>This can continue to create a "layer" of namespaces to be used/configured however suits the administrator.
+In the example above, the namespace is being used for regions.  However it could be used for other hierarchies.
+Lets walk through an example.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>It is recommended that a stream registry be available in the namespace that it serves.
+So in the example so far, we would have a stream registry in each region it was deployed.
+The "root" stream registry could be deployed in either region, or possibly a third region that represents
+the "root" namespace.  In practice only "leaf" namespaces serve streams.  "Non-leaf" namespaces serve as
+aggregators for child namespaces.</p>
+</div>
+<p><strong>Namespace example</strong></p>
+<p>Lets say that Acme, Inc. company has 2 cloud providers and a company paas for 2
+data centers:</p>
+<p><center></p>
+<table>
+<thead>
+<tr>
+<th align="center">Cloud</th>
+<th>Region/VPC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">aws</td>
+<td>us-reg1-xyz</td>
+</tr>
+<tr>
+<td align="center">aws</td>
+<td>us-reg2-xyz</td>
+</tr>
+<tr>
+<td align="center">gcp</td>
+<td>us-reg1-foo</td>
+</tr>
+<tr>
+<td align="center">gcp</td>
+<td>us-reg2-foo</td>
+</tr>
+<tr>
+<td align="center">mpaas</td>
+<td>us-aus1-dc01</td>
+</tr>
+<tr>
+<td align="center">mpaas</td>
+<td>us-aus2-dc02</td>
+</tr>
+</tbody>
+</table>
+<p></center></p>
+<p>The administrator sets up 3 stream registries for the "cloud provider" namespace layer.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">-- deployed on AWS stream registry with uri: https://&lt;aws-sr-uri&gt;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">DEFAULT</span> <span style="color: #f8f8f2">NAMESPACE</span> <span style="color: #e6db74">&quot;aws&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #f8f8f2">PARENT</span> <span style="color: #f8f8f2">REGISTRY</span> <span style="color: #e6db74">&quot;https://&lt;root-registry-api-uri&gt;&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE;</span>
+<span style="color: #e6db74">&quot;/aws&quot;</span>
+
+<span style="color: #75715e">-- deployed on GCP stream registry with uri: https://&lt;gcp-sr-uri&gt;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">DEFAULT</span> <span style="color: #f8f8f2">NAMESPACE</span> <span style="color: #e6db74">&quot;gcp&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #f8f8f2">PARENT</span> <span style="color: #f8f8f2">REGISTRY</span> <span style="color: #e6db74">&quot;https://&lt;root-registry-api-uri&gt;&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE;</span>
+<span style="color: #e6db74">&quot;/gcp&quot;</span>
+
+<span style="color: #75715e">-- deployed on mpaas stream registry with uri: https://&lt;mpaas-sr-uri&gt;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">DEFAULT</span> <span style="color: #f8f8f2">NAMESPACE</span> <span style="color: #e6db74">&quot;mpaas&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #f8f8f2">PARENT</span> <span style="color: #f8f8f2">REGISTRY</span> <span style="color: #e6db74">&quot;https://&lt;root-registry-api-uri&gt;&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE;</span>
+<span style="color: #e6db74">&quot;/mpaas&quot;</span>
+</pre></div></p>
+<p>Then lets say that the administrator already had 2 stream registries running with the following namespaces pointing
+at the root namespace <code class="codehilite">/</code>.</p>
+<p><center></p>
+<table>
+<thead>
+<tr>
+<th>Namespace</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>us-reg1-xyz</td>
+</tr>
+<tr>
+<td>us-aus1-dc01</td>
+</tr>
+</tbody>
+</table>
+<p></center></p>
+<p>The parent registry of the <code class="codehilite">us-reg1-xyz</code> namespace is updated to point to <code class="codehilite">/aws</code> and the parent registry
+of the <code class="codehilite">us-aus1-dc01</code> namespace is updated to point to <code class="codehilite">/mpaas</code>.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">-- on us-reg1-xyz</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #f8f8f2">PARENT</span> <span style="color: #f8f8f2">REGISTRY</span> <span style="color: #e6db74">&quot;https://&lt;aws-sr-uri&gt;&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE;</span>
+<span style="color: #e6db74">&quot;/aws/us-reg1-xyz&quot;</span>
+
+
+<span style="color: #75715e">-- on us-aus1-dc01</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #f8f8f2">PARENT</span> <span style="color: #f8f8f2">REGISTRY</span> <span style="color: #e6db74">&quot;https://&lt;mpaas-sr-uri&gt;&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE;</span>
+<span style="color: #e6db74">&quot;/mpaas/us-aus1-dc01&quot;</span>
+</pre></div>
+
+<p>In this manner, arbitrary topologies can be created.  An enterprise can start with one region, one cluster,
+and later, easily expand to multiple regions, multiple data centers, multiple clouds, and eventually multiple
+companies.  This becomes extremely useful, especially during mergers for fast sharing of data, allowing
+teams to adapt to the streams and eventually merge appropriately over time.</p>
+<h3 id="clusters">Clusters<a class="headerlink" href="#clusters" title="Permanent link">&para;</a></h3>
+<p>The following declares 3 clusters in one stream registry (for the <code class="codehilite">/us-aus1-dc01</code> namespace):
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE;</span>
+<span style="color: #e6db74">&quot;/us-aus1-dc01&quot;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster003&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div></p>
+<p>The following declares 1 cluster in another stream registry (for the <code class="codehilite">/us-reg1-xyz</code> namespace):
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">-- Performed on us-reg1-xyz</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">NAMESPACE;</span>
+<span style="color: #e6db74">&quot;/us-reg1-xyz&quot;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DECLARE</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster004&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div></p>
+<p>Now with our namespaces and clusters declared, we can create our streams.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The difference between <code class="codehilite">DECLARE</code> and <code class="codehilite">CREATE</code>, is that <code class="codehilite">DECLARE</code> may or may not have side effects
+depending on the infrastructure manager.  <code class="codehilite">CREATE</code> is intended to explicitly have side-effects (eg. creation
+of the underlying resource).</p>
+</div>
+<h3 id="streams">Streams<a class="headerlink" href="#streams" title="Permanent link">&para;</a></h3>
+<p>The following creates, updates, or deletes a stream in the local namespace of the stream registry.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">CREATE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+    <span style="color: #e6db74">&quot;acme.kafka&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #e6db74">&quot;owner&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;bob@acme.com&quot;</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;team&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;widgets-team&quot;</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;costcenter&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;341D&quot;</span><span style="color: #f8f8f2">,</span>
+    <span style="color: #960050; background-color: #1e0010">}</span><span style="color: #f8f8f2">,</span>
+    <span style="color: #e6db74">&quot;apache.kafka&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #e6db74">&quot;partitions&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">10</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;replication&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">4</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;min_isr&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">2</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;compacted&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;true&quot;</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;compression&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;snappy&quot;</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;unclean.leader.election.enable&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;false&quot;</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;key.serde&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;string&quot;</span><span style="color: #f8f8f2">,</span>
+      <span style="color: #e6db74">&quot;value.serde&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;specific&quot;</span><span style="color: #f8f8f2">,</span>
+    <span style="color: #960050; background-color: #1e0010">}</span>
+  <span style="color: #960050; background-color: #1e0010">}</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">PRODUCER</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+     <span style="color: #e6db74">&quot;apache.kafka&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+       <span style="color: #e6db74">&quot;acks&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;all&quot;</span><span style="color: #f8f8f2">,</span>
+       <span style="color: #e6db74">&quot;retries&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">,</span>
+       <span style="color: #e6db74">&quot;enable.idempotence&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;false&quot;</span><span style="color: #f8f8f2">,</span>
+     <span style="color: #960050; background-color: #1e0010">}</span>
+  <span style="color: #960050; background-color: #1e0010">}</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONSUMER</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+     <span style="color: #e6db74">&quot;apache.kafka&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+       <span style="color: #e6db74">&quot;acks&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;all&quot;</span><span style="color: #f8f8f2">,</span>
+       <span style="color: #e6db74">&quot;retries&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">,</span>
+       <span style="color: #e6db74">&quot;enable.idempotence&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;false&quot;</span><span style="color: #f8f8f2">,</span>
+     <span style="color: #960050; background-color: #1e0010">}</span>
+  <span style="color: #960050; background-color: #1e0010">}</span>
+</pre></div>
+
+<p>This command registers the stream <code class="codehilite">&quot;widgets_v0&quot;</code> with the stream registry.
+At this point, there is no schema, no stream bindings, or other stateful
+operations associated with the stream.  Only the metadata supplied
+will be registered with <code class="codehilite">&quot;widgets_v0&quot;</code>.</p>
+<details class="note"><summary>Note</summary><p>This stream registration happens <em>locally</em> (in the local namespace) only!!!
+Other stream registrations in other stream registries (whether connected or not)
+<em><strong>are allowed</strong></em>. This is to allow maximum flexibility and also reduce contention
+locking and consistency across namespaces for stream registration.</p>
+<p>The tradeoff is, that during inter-namespace replication, however, the stream must be explicitly
+created in the remote stream-registry before replication will be allowed to occur.
+If the stream is already created in the remote stream-registry, the latest schema of the source
+stream must be compatible with the schema in the remote stream to accept replication.</p>
+</details>
+<p><strong>Config Maps:</strong></p>
+<p>This command also introduces the notion of a <em>config map</em>.  A
+<strong>config map</strong> is a hashmap of config key-value pairs specific to a
+given stream-platform or enterprise.</p>
+<p>In the example above, there are two config maps: <code class="codehilite">acme.kafka</code> and
+<code class="codehilite">apache.kafka</code>.  <code class="codehilite">acme.kafka</code> is a <em>company specific</em> config map that provides
+ownership and cost information.  <code class="codehilite">apache.kafka</code> is a stream platform
+specific config map.</p>
+<p>Specifics for each config map vary from stream provider to stream provider.
+Some config maps can be defaulted, others may be required. Consult the
+documentation of your specific stream provider for details.</p>
+<p><strong>Producer/Consumer Config Maps:</strong></p>
+<p>The stream also defines producer/consumer config map defaults. These defaults
+are provided to stream-bindings, producer and consumer requests once the
+stream is bound to a particular cluster.  Stream Binding config maps take
+precedence over stream-level config maps.  By providing definitions at the
+stream level, configuration is simplified and only "override" configuration
+need be specified at the binding level.</p>
+<p>Now that we have our streams created with the necessary metadata,
+we are ready to "<em>bind the streams</em>" to a given cluster,
+so that they can start receiving and sending data.</p>
+<h3 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h3>
+<p>Stream bindings realize the streams in the underlying stream platforms.</p>
+<p>The following command binds the <code class="codehilite">&quot;widgets_v0&quot;</code> stream to the <code class="codehilite">cluster001</code> cluster:</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">CREATE</span> <span style="color: #f8f8f2">BINDING</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span> <span style="color: #66d9ef">TO</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div>
+
+<p>You can create multiple bindings per namespace and override any applicable stream level
+config maps.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">CREATE</span> <span style="color: #f8f8f2">BINDING</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span> <span style="color: #66d9ef">TO</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+<span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- override any cluster specific stream configmaps here</span>
+<span style="color: #960050; background-color: #1e0010">}</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">PRODUCER</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+<span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- override any cluster specific producer configmaps here</span>
+<span style="color: #960050; background-color: #1e0010">}</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONSUMER</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+<span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- override any cluster specific consumer configmaps here</span>
+<span style="color: #960050; background-color: #1e0010">}</span>
+</pre></div>
+
+<p><strong>Default Stream Bindings:</strong></p>
+<p>The first binding for a cluster is declared as the <strong>default</strong>.  This means, that when a producer or consumer
+asks for that stream without specifying a cluster, the stream registry will respond with the first binding
+created for that stream.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DESCRIBE</span> <span style="color: #f8f8f2">BINDINGS</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">stream</span>     <span style="color: #f92672">|</span> <span style="color: #66d9ef">cluster</span>    <span style="color: #f92672">|</span> <span style="color: #66d9ef">default</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">yes</span>     <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #66d9ef">no</span>      <span style="color: #f92672">|</span>
+</pre></div>
+
+<h3 id="stream-infrastructure-manager-interface">Stream Infrastructure Manager Interface<a class="headerlink" href="#stream-infrastructure-manager-interface" title="Permanent link">&para;</a></h3>
+<p>Stream providers should implement the following interface to manage stream-platform and
+company specific configmaps.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * This interface is implemented by a stream provider to provide</span>
+<span style="color: #75715e"> * stream platform and/or company specific requirements related to</span>
+<span style="color: #75715e"> * clusters, streams and stream bindings.</span>
+<span style="color: #75715e"> *</span>
+<span style="color: #75715e"> * TODO - Future operations may deal with cluster creation</span>
+<span style="color: #75715e"> * instead of just cluster validation</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">interface</span> <span style="color: #a6e22e">StreamInfrastructureManager</span> <span style="color: #f92672">{</span>
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Validates the configMaps provided for the given cluster are valid.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">validateCluster</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">clusterName</span><span style="color: #f92672">,</span>
+                       <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                       <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">InfrastructureException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Validates the configMaps provided for the given stream are valid.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">validateStream</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">streamName</span><span style="color: #f92672">,</span>
+                      <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                      <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">InfrastructureException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Creates the stream binding in the underlying stream platform.</span>
+<span style="color: #75715e">   * ConfigMaps guide the creation of the stream.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param streamName the name of the stream to create.</span>
+<span style="color: #75715e">   * @param clusterName the name of the cluster that the stream</span>
+<span style="color: #75715e">   *        should be creted on.</span>
+<span style="color: #75715e">   * @param configMapMap the map of configmaps -- applicable overrides apply.</span>
+<span style="color: #75715e">   * @throws InfrastructureException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">createStreamBinding</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">streamName</span><span style="color: #f92672">,</span>
+                           <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">clusterName</span><span style="color: #f92672">,</span>
+                           <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                           <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">InfrastructureException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Updates the stream in the given stream platform</span>
+<span style="color: #75715e">   * with the supplied configmaps.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param streamName the name of the stream to update.</span>
+<span style="color: #75715e">   * @param clusterName the name of the cluster whose metadata should be updated.</span>
+<span style="color: #75715e">   * @param configMapMap the map of configmaps -- applicable overrides apply.</span>
+<span style="color: #75715e">   * @throws InfrastructureException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">updateStreamBinding</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">streamName</span><span style="color: #f92672">,</span>
+                           <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">clusterName</span><span style="color: #f92672">,</span>
+                           <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                           <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">InfrastructureException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Deletes the stream in the given stream platform.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param streamName the name of the stream to delete</span>
+<span style="color: #75715e">   * @param clusterName the name of the cluster where the stream should be deleted.</span>
+<span style="color: #75715e">   * @throws InfrastructureException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">deleteStreamBinding</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">streamName</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">clusterName</span><span style="color: #f92672">)</span>
+                           <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">InfrastructureException</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">}</span>
+</pre></div>
+
+<h2 id="schema-registry">Schema Registry<a class="headerlink" href="#schema-registry" title="Permanent link">&para;</a></h2>
+<p>The schema registry is responsible for storing versioned, sequenced set of schemas for a given stream.
+It is typically responsible for providing various compatibility levels and formats.  The schemas can be
+provided by id, and are typically useful for "at-rest" storage (such as Hive).  The actual details of the
+schema registry is deferred to the underlying schema registry.</p>
+<p><strong>Partition Key Schema</strong></p>
+<p>Each key of a stream message (event) has a schema.  By default this is a string.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">REGISTER</span> <span style="color: #66d9ef">KEY</span> <span style="color: #66d9ef">SCHEMA</span> <span style="color: #f8f8f2">(</span>
+    <span style="color: #e6db74">&quot;string&quot;</span>
+  <span style="color: #f8f8f2">)</span> <span style="color: #66d9ef">ON</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span><span style="color: #f8f8f2">;</span>
+
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">Subject</span>        <span style="color: #f92672">|</span> <span style="color: #66d9ef">Version</span> <span style="color: #f92672">|</span>  <span style="color: #f8f8f2">Id</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">----------------+---------+-----|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_v0</span><span style="color: #f92672">-</span><span style="color: #66d9ef">key</span> <span style="color: #f92672">|</span>       <span style="color: #ae81ff">1</span> <span style="color: #f92672">|</span> <span style="color: #ae81ff">121</span> <span style="color: #f92672">|</span>
+</pre></div></p>
+<p><strong>Single Type Schema per Stream</strong></p>
+<p>Each stream needs at least one type per stream.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">REGISTER</span> <span style="color: #66d9ef">TYPE</span> <span style="color: #66d9ef">SCHEMA</span> <span style="color: #e6db74">&quot;Widget&quot;</span> <span style="color: #f8f8f2">(</span>
+    <span style="color: #f8f8f2">FILE</span> <span style="color: #f8f8f2">widget.avsc</span>
+  <span style="color: #f8f8f2">)</span> <span style="color: #66d9ef">ON</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span><span style="color: #f8f8f2">;</span>
+
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">Subject</span>           <span style="color: #f92672">|</span> <span style="color: #66d9ef">Version</span> <span style="color: #f92672">|</span>  <span style="color: #f8f8f2">Id</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-------------------+---------+-----|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_v0</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">Widget</span> <span style="color: #f92672">|</span>       <span style="color: #ae81ff">3</span> <span style="color: #f92672">|</span> <span style="color: #ae81ff">347</span> <span style="color: #f92672">|</span>
+</pre></div></p>
+<p>Streams can also support multiple types per streams.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">REGISTER</span> <span style="color: #66d9ef">TYPE</span> <span style="color: #66d9ef">SCHEMA</span> <span style="color: #e6db74">&quot;WidgetNameUpdated&quot;</span> <span style="color: #f8f8f2">(</span>
+    <span style="color: #f8f8f2">FILE</span> <span style="color: #f8f8f2">widget_name_updated.avsc</span>
+  <span style="color: #f8f8f2">)</span> <span style="color: #66d9ef">ON</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #e6db74">&quot;widget_command_events_v0&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">Subject</span>                                    <span style="color: #f92672">|</span> <span style="color: #66d9ef">Version</span> <span style="color: #f92672">|</span>  <span style="color: #f8f8f2">Id</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">--------------------------------------------+---------+-----|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widget_command_events_v0</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">WidgetNameUpdated</span> <span style="color: #f92672">|</span>       <span style="color: #ae81ff">3</span> <span style="color: #f92672">|</span> <span style="color: #ae81ff">347</span> <span style="color: #f92672">|</span>
+
+<span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">REGISTER</span> <span style="color: #66d9ef">TYPE</span> <span style="color: #66d9ef">SCHEMA</span> <span style="color: #e6db74">&quot;WidgetColorUpdated&quot;</span> <span style="color: #f8f8f2">(</span>
+    <span style="color: #f8f8f2">FILE</span> <span style="color: #f8f8f2">widget_color_updated.avsc</span>
+  <span style="color: #f8f8f2">)</span> <span style="color: #66d9ef">ON</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #e6db74">&quot;widget_command_events_v0&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">Subject</span>                                     <span style="color: #f92672">|</span> <span style="color: #66d9ef">Version</span> <span style="color: #f92672">|</span>  <span style="color: #f8f8f2">Id</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">---------------------------------------------+---------+-----|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widget_command_events_v0</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">WidgetColorUpdated</span> <span style="color: #f92672">|</span>       <span style="color: #ae81ff">1</span> <span style="color: #f92672">|</span> <span style="color: #ae81ff">213</span> <span style="color: #f92672">|</span>
+</pre></div></p>
+<p>Like the confluent platform, the determination of a stream <em>subject</em> is provided by a SubjectNameStrategy.
+See <a href="https://www.confluent.io/blog/put-several-event-types-kafka-topic/">Martin Kleppmann's post on the subject for the mechanics</a> of how Confluent does this.</p>
+<p>In practice bundled serializers will do this at runtime.</p>
+<p><img alt="MultiType Schema Registry" src="MTSchemaRegistry.png" /></p>
+<p>For design time, the stream registry should provide delegation mechanisms to allow a developer to register the schema
+for a particular stream during the CI/CD phase for a given target environment.</p>
+<h3 id="schema-manager-interface">Schema Manager Interface<a class="headerlink" href="#schema-manager-interface" title="Permanent link">&para;</a></h3>
+<p>Schema Registries must implement the Schema Manager interface.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This interface was modeled upon <a href="https://docs.confluent.io/current/schema-registry/docs/api.html">Confluent's Schema Registry</a>.</p>
+</div>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #a6e22e">@Data</span>
+<span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * POJO for representing a pointer to a given schema.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">class</span> <span style="color: #a6e22e">SchemaReference</span> <span style="color: #f92672">{</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #a6e22e">SchemaReference</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">,</span> <span style="color: #66d9ef">long</span> <span style="color: #f8f8f2">version</span><span style="color: #f92672">,</span> <span style="color: #66d9ef">long</span> <span style="color: #f8f8f2">id</span><span style="color: #f92672">);</span>
+<span style="color: #f92672">}</span>
+
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">enum</span> <span style="color: #f8f8f2">CompatibilityLevel</span> <span style="color: #f92672">{</span>
+  <span style="color: #f8f8f2">BACKWARD_TRANSITIVE</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">FORWARD_TRANSITIVE</span><span style="color: #f92672">,</span>  <span style="color: #f8f8f2">FULL_TRANSITIVE</span>
+<span style="color: #f92672">}</span>
+
+<span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * This interface is implemented by a stream provider to provide</span>
+<span style="color: #75715e"> * organization specific requirement to the underlying schema registry.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">interface</span> <span style="color: #a6e22e">SchemaManager</span> <span style="color: #f92672">{</span>
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Register a new schema under the specified subject. If successfully</span>
+<span style="color: #75715e">   * registered, this returns the unique identifier of this schema in</span>
+<span style="color: #75715e">   * the registry. The returned identifier should be used to retrieve</span>
+<span style="color: #75715e">   * this schema from the schemas resource and is different from the</span>
+<span style="color: #75715e">   * schema’s version which is associated with the subject. If the</span>
+<span style="color: #75715e">   * same schema is registered under a different subject, the same</span>
+<span style="color: #75715e">   * identifier will be returned. However, the version of the schema</span>
+<span style="color: #75715e">   * may be different under different subjects.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * A schema should be compatible with the previously registered schema</span>
+<span style="color: #75715e">   * or schemas (if there are any) as per the configured compatibility level.</span>
+<span style="color: #75715e">   * @param subject Subject under which the schema will be registered</span>
+<span style="color: #75715e">   * @param schema The Avro schema string</span>
+<span style="color: #75715e">   * @return a SchemaReference for the registered schema</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">SchemaReference</span> <span style="color: #a6e22e">registerSchema</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">schema</span><span style="color: #f92672">)</span>
+                                        <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaManagerException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Register a new schema under the specified subject. If successfully</span>
+<span style="color: #75715e">   * registered, this returns the unique identifier of this schema in</span>
+<span style="color: #75715e">   * the registry. The returned identifier should be used to retrieve</span>
+<span style="color: #75715e">   * this schema from the schemas resource and is different from the</span>
+<span style="color: #75715e">   * schema’s version which is associated with the subject. If the</span>
+<span style="color: #75715e">   * same schema is registered under a different subject, the same</span>
+<span style="color: #75715e">   * identifier will be returned. However, the version of the schema</span>
+<span style="color: #75715e">   * may be different under different subjects.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * A schema should be compatible with the previously registered schema</span>
+<span style="color: #75715e">   * or schemas (if there are any) as per the configured compatibility level.</span>
+<span style="color: #75715e">   * @param subject subject under which the schema is checked to be registered</span>
+<span style="color: #75715e">   * @return a SchemaReference if the requested schema was registered</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">SchemaReference</span> <span style="color: #a6e22e">isSchemaRegistered</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">schema</span><span style="color: #f92672">)</span>
+                                            <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaManagerException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Get the avro schema for the specified version of this subject.</span>
+<span style="color: #75715e">   * The unescaped schema only is returned.</span>
+<span style="color: #75715e">   * @param subject name of the subject</span>
+<span style="color: #75715e">   * @param version Version of the schema to be returned.</span>
+<span style="color: #75715e">   * @return Returns the avro schema string (unescaped)</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">String</span> <span style="color: #a6e22e">getSchema</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">,</span> <span style="color: #66d9ef">int</span> <span style="color: #f8f8f2">version</span><span style="color: #f92672">)</span>
+                          <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaManagerException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Get the schema string identified by the input ID.</span>
+<span style="color: #75715e">   * @param id the globally unique identifier of the schema</span>
+<span style="color: #75715e">   * @return Schema string identified by ID (escaped).</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">String</span> <span style="color: #a6e22e">getSchema</span><span style="color: #f92672">(</span><span style="color: #66d9ef">int</span> <span style="color: #f8f8f2">id</span><span style="color: #f92672">)</span>
+                          <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaManagerException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Deletes a specific version of the schema registered under this</span>
+<span style="color: #75715e">   * subject. This only deletes the version and the schema ID remains</span>
+<span style="color: #75715e">   * intact making it still possible to decode data using the schema ID.</span>
+<span style="color: #75715e">   * This API is recommended to be used only in development environments</span>
+<span style="color: #75715e">   * or under extreme circumstances where-in, its required to delete a</span>
+<span style="color: #75715e">   * previously registered schema for compatibility purposes or re-register</span>
+<span style="color: #75715e">   * previously registered schema.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">deleteSchema</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">,</span> <span style="color: #66d9ef">int</span> <span style="color: #f8f8f2">versionId</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * The subjects resource provides a list of all registered subjects</span>
+<span style="color: #75715e">   * in your Schema Registry. A subject refers to the name under which</span>
+<span style="color: #75715e">   * the schema is registered. If you are using Schema Registry for Kafka,</span>
+<span style="color: #75715e">   * then a subject refers to either a “&lt;topic&gt;-key” or “&lt;topic&gt;-value”</span>
+<span style="color: #75715e">   * depending on whether you are registering the key schema for that</span>
+<span style="color: #75715e">   * topic or the value schema.</span>
+<span style="color: #75715e">   * @return a list of subjects</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">getSubjects</span><span style="color: #f92672">()</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Get a list of versions registered under the specified subject.</span>
+<span style="color: #75715e">   * @param subject - the name of the subject</span>
+<span style="color: #75715e">   * @return A list of integers specifying the versions of the schema</span>
+<span style="color: #75715e">   *         under this subject.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">Integer</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">getSubjectVersions</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Deletes the specified subject and its associated compatibility</span>
+<span style="color: #75715e">   * level if registered. It is recommended to use this API only when</span>
+<span style="color: #75715e">   * a topic needs to be recycled or in development environment.</span>
+<span style="color: #75715e">   * @param subject -  the subject to delete</span>
+<span style="color: #75715e">   * @return A list of versions that were deleted.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">Integer</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">deleteSubject</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Update global compatibility level.</span>
+<span style="color: #75715e">   * @param level the compatibility level to set at the global level</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">setGlobalCompatibility</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">CompatibilityLevel</span> <span style="color: #f8f8f2">level</span><span style="color: #f92672">)</span>
+                                     <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Get global compatibility level.</span>
+<span style="color: #75715e">   * @return the global compatibility level.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">CompatibilityLevel</span> <span style="color: #a6e22e">getGlobalCompatibility</span><span style="color: #f92672">();</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Update compatibility level for the specified subject</span>
+<span style="color: #75715e">   * @param subject name of the subject</span>
+<span style="color: #75715e">   * @param level the compatibility level to set at the global level</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #a6e22e">setCompatibility</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">,</span>
+                               <span style="color: #f8f8f2">CompatibilityLevel</span> <span style="color: #f8f8f2">level</span><span style="color: #f92672">)</span>
+                               <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">Schema</span> <span style="color: #f8f8f2">Exception</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Get compatibility level for a subject.</span>
+<span style="color: #75715e">   * @return the compatibility level for a subject.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">CompatibilityLevel</span> <span style="color: #a6e22e">getCompatibility</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">);</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Test input schema against a particular version of a</span>
+<span style="color: #75715e">   * subject’s schema for compatibility.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #66d9ef">boolean</span> <span style="color: #a6e22e">checkCompatibility</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">subject</span><span style="color: #f92672">,</span> <span style="color: #66d9ef">int</span> <span style="color: #f8f8f2">version</span><span style="color: #f92672">,</span>
+                                    <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">schema</span><span style="color: #f92672">)</span>
+                                    <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">SchemaException</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">}</span>
+</pre></div>
+
+<h2 id="stream-sources">Stream Sources<a class="headerlink" href="#stream-sources" title="Permanent link">&para;</a></h2>
+<p>A <em>Stream Source</em> is any source of streams.  It can be another streaming platform,
+a traditional data store, an API, devices, an online spreadsheet, a mainframe --
+basically its any data source and a monitor of changing <em>events</em> on that data source.</p>
+<p><center><img alt="Stream Source Diagram" src="StreamSource.png" /></center></p>
+<p>First there needs to be a way of knowing which source types are supported by the given <strong>Stream Source Manager</strong>.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #66d9ef">SOURCE</span> <span style="color: #f8f8f2">TYPES</span> <span style="color: #66d9ef">FOR</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #66d9ef">SOURCE</span> <span style="color: #66d9ef">TYPE</span>     <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">s3</span>              <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cassandra</span>       <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">jdbc</span>            <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">kinesis</span>         <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">postgres</span>        <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">mariadb</span>         <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------|</span>
+</pre></div>
+
+<p>Once the developer knows which source types are available, they can declare a stream source.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">CREATE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #66d9ef">SOURCE</span> <span style="color: #e6db74">&quot;widgets_sql_source&quot;</span>
+  <span style="color: #66d9ef">WITH</span> <span style="color: #66d9ef">TYPE</span> <span style="color: #e6db74">&quot;sqlserver-ct&quot;</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+    <span style="color: #e6db74">&quot;sqlserver-source&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- sql server configs --</span>
+    <span style="color: #960050; background-color: #1e0010">}</span><span style="color: #f8f8f2">,</span>
+    <span style="color: #e6db74">&quot;acme.sqlserver-source&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- company specific configs</span>
+    <span style="color: #960050; background-color: #1e0010">}</span>
+  <span style="color: #960050; background-color: #1e0010">}</span> <span style="color: #66d9ef">ON</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DESCRIBE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #66d9ef">SOURCE</span> <span style="color: #e6db74">&quot;widgets_sql_source&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">--------------------+-------------+---------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #66d9ef">SOURCE</span>      <span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>     <span style="color: #f92672">|</span> <span style="color: #66d9ef">TYPE</span>          <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">--------------------+-------------+---------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_sql_source</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span>  <span style="color: #f92672">|</span> <span style="color: #f8f8f2">sqlserver</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">ct</span>  <span style="color: #f92672">|</span> <span style="color: #f8f8f2">PENDING</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">--------------------+-------------+---------------+---------|</span>
+</pre></div>
+
+<p>By convention, the stream source name matches the name
+of the source stream in the underlying platform. This means
+that a source stream <em>binding</em> must exist on the target cluster
+in order for the stream source creation operation to succeed.</p>
+<p>In the above example the name of the stream source is "widgets_sql_source",
+and the name of the source stream is also "widgets_sql_source".</p>
+<p>When the source is ready its state will change correspondingly.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DESCRIBE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #66d9ef">SOURCE</span> <span style="color: #e6db74">&quot;widgets_sql_source&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">--------------------+-------------+---------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #66d9ef">SOURCE</span>      <span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>     <span style="color: #f92672">|</span> <span style="color: #66d9ef">TYPE</span>          <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">--------------------+-------------+---------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_sql_source</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span>  <span style="color: #f92672">|</span> <span style="color: #f8f8f2">sqlserver</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">ct</span>  <span style="color: #f92672">|</span> <span style="color: #f8f8f2">ONLINE</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">--------------------+-------------+---------------+---------|</span>
+</pre></div></p>
+<p>Developers can also update and delete stream sources.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">UPDATE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #66d9ef">SOURCE</span> <span style="color: #e6db74">&quot;widgets_sql_source&quot;</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+    <span style="color: #e6db74">&quot;sqlserver-source&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- sql server configs --</span>
+    <span style="color: #960050; background-color: #1e0010">}</span><span style="color: #f8f8f2">,</span>
+    <span style="color: #e6db74">&quot;acme.sqlserver-source&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- company specific configs</span>
+    <span style="color: #960050; background-color: #1e0010">}</span>
+<span style="color: #960050; background-color: #1e0010">}</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DELETE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #66d9ef">SOURCE</span> <span style="color: #e6db74">&quot;widgets_sql_source&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div>
+
+<h3 id="stream-source-manager-interface">Stream Source Manager Interface<a class="headerlink" href="#stream-source-manager-interface" title="Permanent link">&para;</a></h3>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * The DTO that represents the StreamSource object.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #a6e22e">@Data</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #f8f8f2">StreamSource</span> <span style="color: #f92672">{</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #a6e22e">StreamSource</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceName</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">type</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">status</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">);</span>
+<span style="color: #f92672">}</span>
+<span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * This interface is implemented by a stream provider to provide</span>
+<span style="color: #75715e"> * stream platform and/or company specific requirements related to</span>
+<span style="color: #75715e"> * stream sources.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">interface</span> <span style="color: #a6e22e">StreamSourceManager</span> <span style="color: #f92672">{</span>
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Returns a list of supported source types.</span>
+<span style="color: #75715e">   * The actual list will vary by stream provider.</span>
+<span style="color: #75715e">   * @param cluster the target cluster for provisioned source types</span>
+<span style="color: #75715e">   * @return the available source types for the given cluster</span>
+<span style="color: #75715e">   * @throws StreamSourceException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">getSourceTypes</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSourceException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Creates the stream source in the underlying stream platform.</span>
+<span style="color: #75715e">   * ConfigMaps guide the creation of the stream.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param sourceName the name of the source to create.</span>
+<span style="color: #75715e">   * @param type the type of the source to create. Must be one of the supported types.</span>
+<span style="color: #75715e">   * @param clusterName the name of the cluster that the stream</span>
+<span style="color: #75715e">   *        should be created on.</span>
+<span style="color: #75715e">   * @param configMapMap the map of configmaps.</span>
+<span style="color: #75715e">   * @return the created stream source</span>
+<span style="color: #75715e">   * @throws StreamSourceException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSource</span> <span style="color: #a6e22e">createStreamSource</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceName</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">type</span><span style="color: #f92672">,</span>
+                                  <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">clusterName</span><span style="color: #f92672">,</span>
+                                  <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                                  <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSourceException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Retrieves a StreamSource from the underlying stream provider.</span>
+<span style="color: #75715e">   * @param sourceName the name of the source to retrieve</span>
+<span style="color: #75715e">   * @return the requested stream source</span>
+<span style="color: #75715e">   * @throws StreamSourceException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSource</span> <span style="color: #a6e22e">getStreamSource</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceName</span><span style="color: #f92672">)</span>
+                               <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSourceException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Updates the stream source in the underlying stream provider</span>
+<span style="color: #75715e">   * with the supplied config maps.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param sourceName the name of the stream source to update.</span>
+<span style="color: #75715e">   * @param configMapMap the map of config maps -- applicable overrides apply.</span>
+<span style="color: #75715e">   * @return the updated stream source</span>
+<span style="color: #75715e">   * @throws StreamSourceException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSource</span> <span style="color: #a6e22e">updateStreamSource</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceName</span><span style="color: #f92672">,</span>
+                                  <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                                  <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSourceException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Deletes the stream source in the given stream platform.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param sourceName the name of the stream source to delete</span>
+<span style="color: #75715e">   * @return the deleted stream source</span>
+<span style="color: #75715e">   * @throws StreamSourceException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSource</span> <span style="color: #a6e22e">deleteStreamSource</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceName</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSourceException</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">}</span>
+</pre></div>
+
+<h2 id="stream-sinks">Stream Sinks<a class="headerlink" href="#stream-sinks" title="Permanent link">&para;</a></h2>
+<p>A <em>Stream Sink</em> is a sink of any one stream.  It can be another streaming platform,
+a traditional data store, an API, devices, an online spreadsheet, a mainframe --
+basically its any data sink. A <em>Stream Sink</em> is essentially an export
+of a single <em>sink stream</em> to that data store.</p>
+<p><center><img alt="Stream Sink Diagram" src="StreamSink.png" /></center></p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">SINK</span> <span style="color: #f8f8f2">TYPES</span> <span style="color: #66d9ef">FOR</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">SINK</span> <span style="color: #66d9ef">TYPE</span>   <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">s3</span>          <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cassandra</span>   <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">jdbc</span>        <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">kinesis</span>     <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">postgres</span>    <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">mariadb</span>     <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-------------|</span>
+</pre></div>
+
+<p>First there needs to be a way of knowing which sink types are supported by the given <strong>Stream Sink Manager</strong>.
+Once the developer knows which sink types are available, they can declare a stream sink.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">CREATE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">SINK</span> <span style="color: #e6db74">&quot;widgets_s3_sink&quot;</span>
+  <span style="color: #66d9ef">WITH</span> <span style="color: #66d9ef">TYPE</span> <span style="color: #e6db74">&quot;s3&quot;</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+    <span style="color: #e6db74">&quot;s3-sink&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- s3 configs --</span>
+    <span style="color: #960050; background-color: #1e0010">}</span><span style="color: #f8f8f2">,</span>
+    <span style="color: #e6db74">&quot;acme.s3-sink&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- company specific configs for s3 --</span>
+    <span style="color: #960050; background-color: #1e0010">}</span>
+  <span style="color: #960050; background-color: #1e0010">}</span> <span style="color: #66d9ef">ON</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DESCRIBE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">SINK</span> <span style="color: #e6db74">&quot;sink&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------+------------+------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">SINK</span>     <span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>    <span style="color: #f92672">|</span> <span style="color: #66d9ef">TYPE</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------+------------+------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_s3_sink</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">s3</span>   <span style="color: #f92672">|</span> <span style="color: #f8f8f2">PENDING</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------+------------+------+---------|</span>
+</pre></div>
+
+<p>By convention, the stream sink name matches the name
+of the sink stream in the underlying platform. This means
+that a sink stream <em>binding</em> must exist on the target cluster
+in order for the stream sink creation operation to succeed.</p>
+<p>In the above example the name of the stream sink is "widgets_s3_sink",
+and the name of the sink stream is also "widgets_s3_sink".</p>
+<p>When the sink is ready its state will change correspondingly.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DESCRIBE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">SINK</span> <span style="color: #e6db74">&quot;widgets_s3_sink&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------+------------+------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">SINK</span>     <span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>    <span style="color: #f92672">|</span> <span style="color: #66d9ef">TYPE</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------+------------+------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_s3_sink</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">s3</span>   <span style="color: #f92672">|</span> <span style="color: #f8f8f2">ONLINE</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">-----------------+------------+------+---------|</span>
+</pre></div></p>
+<p>Developers can also update and delete stream sinks.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">UPDATE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">SINK</span> <span style="color: #e6db74">&quot;widgets_s3_sink&quot;</span> <span style="color: #66d9ef">WITH</span> <span style="color: #f8f8f2">CONFIG</span> <span style="color: #960050; background-color: #1e0010">{</span>
+    <span style="color: #e6db74">&quot;s3-sink&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- s3 configs --</span>
+    <span style="color: #960050; background-color: #1e0010">}</span><span style="color: #f8f8f2">,</span>
+    <span style="color: #e6db74">&quot;acme.s3-sink&quot;</span> <span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">{</span>
+      <span style="color: #f8f8f2">...</span> <span style="color: #75715e">-- company specific configs for s3 --</span>
+    <span style="color: #960050; background-color: #1e0010">}</span>
+<span style="color: #960050; background-color: #1e0010">}</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DELETE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">SINK</span> <span style="color: #e6db74">&quot;widgets_s3_sink&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div>
+
+<h3 id="stream-sink-manager-interface">Stream Sink Manager Interface<a class="headerlink" href="#stream-sink-manager-interface" title="Permanent link">&para;</a></h3>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * The DTO that represents the StreamSink object.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #a6e22e">@Data</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #f8f8f2">StreamSink</span> <span style="color: #f92672">{</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #a6e22e">StreamSink</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sinkName</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">type</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">status</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">);</span>
+<span style="color: #f92672">}</span>
+
+<span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * This interface is implemented by a stream provider to provide</span>
+<span style="color: #75715e"> * stream platform and/or company specific requirements related to</span>
+<span style="color: #75715e"> * stream sinks.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">interface</span> <span style="color: #a6e22e">StreamSinkManager</span> <span style="color: #f92672">{</span>
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Returns a list of supported sink types.</span>
+<span style="color: #75715e">   * The actual list will vary by stream provider.</span>
+<span style="color: #75715e">   * @param cluster the target cluster for provisioned sink types</span>
+<span style="color: #75715e">   * @return the available sink types for the given cluster</span>
+<span style="color: #75715e">   * @throws StreamSinkException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">getSinkTypes</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSinkException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Creates the stream sink in the underlying stream platform.</span>
+<span style="color: #75715e">   * ConfigMaps guide the creation of the stream.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param sinkName the name of the sink to create.</span>
+<span style="color: #75715e">   * @param type the type of the sink to create. Must be one of the supported types.</span>
+<span style="color: #75715e">   * @param clusterName the name of the cluster that the stream</span>
+<span style="color: #75715e">   *        should be created on.</span>
+<span style="color: #75715e">   * @param configMapMap the map of config maps.</span>
+<span style="color: #75715e">   * @return the created stream sink</span>
+<span style="color: #75715e">   * @throws StreamSinkException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSink</span> <span style="color: #a6e22e">createStreamSink</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sinkName</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">type</span><span style="color: #f92672">,</span>
+                              <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">clusterName</span><span style="color: #f92672">,</span>
+                              <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                              <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSinkException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Retrieves a StreamSink from the underlying stream provider.</span>
+<span style="color: #75715e">   * @param sinkName the name of the sink to retrieve</span>
+<span style="color: #75715e">   * @return the requested stream sink</span>
+<span style="color: #75715e">   * @throws StreamSinkException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSink</span> <span style="color: #a6e22e">getStreamSink</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sinkName</span><span style="color: #f92672">)</span>
+                           <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSinkException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Updates the stream sink in the underlying stream provider</span>
+<span style="color: #75715e">   * with the supplied configmaps.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param sinkName the name of the stream sink to update.</span>
+<span style="color: #75715e">   * @param configMapMap the map of configmaps -- applicable overrides apply.</span>
+<span style="color: #75715e">   * @return the updated stream sink</span>
+<span style="color: #75715e">   * @throws StreamSinkException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSink</span> <span style="color: #a6e22e">updateStreamSink</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sinkName</span><span style="color: #f92672">,</span>
+                              <span style="color: #f8f8f2">Map</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">String</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">ConfigMap</span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">configMapMap</span><span style="color: #f92672">)</span>
+                              <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSinkException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Deletes the stream sink in the given stream platform.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param sinkName the name of the stream sink to delete</span>
+<span style="color: #75715e">   * @return the deleted stream sink</span>
+<span style="color: #75715e">   * @throws StreamSinkException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamSink</span> <span style="color: #a6e22e">deleteStreamSink</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sinkName</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamSinkException</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">}</span>
+</pre></div>
+
+<h2 id="stream-replication">Stream Replication<a class="headerlink" href="#stream-replication" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>A quick segue back to namespaces.  A namespace can be any hierarchy
+specified by current namespace and the parent namespace, recursively
+all the way up to the root namespace, "/".  So, for a given stream-registry
+the current fully qualified namespace may be <code class="codehilite">&quot;/foo/bar/baz&quot;</code>.</p>
+<p>When a stream binding occurs for a given cluster, implicitly the cluster is appended
+to the end of the namespace path:
+<code class="codehilite">&quot;/foo/bar/baz/cluster001&quot;</code></p>
+<p>So if "widgets_v0" is bounded to "cluster001", then the fully qualified name of the stream is:
+<code class="codehilite">&quot;/foo/bar/baz/cluster001/widgets_v0&quot;</code></p>
+</div>
+<p><strong>Intra-NameSpace Replication</strong></p>
+<p>Intra-NameSpace replication is when replication occurs between clusters in the same namespace.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">REPLICATE</span> <span style="color: #f8f8f2">BINDING</span> <span style="color: #e6db74">&quot;cluster001/widgets_v0&quot;</span>
+  <span style="color: #66d9ef">TO</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div>
+
+<p>This operation replicates the stream from <code class="codehilite">cluster001/widgets_v0</code> (in the current namespace,
+as specified by no leading slash, implying "current namespace") to <code class="codehilite">&quot;cluster002&quot;</code>.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The important thing to note is that the underlying stream on cluster002 (if any for widgets_v0),
+still exists.  There will be an additional stream binding, on cluster002 specifically named
+<code class="codehilite">cluster001/widgets_v0</code> to signify this topic originates from <code class="codehilite">cluster001/widgets_v0</code> and not
+from cluster002.</p>
+</div>
+<p>The developer can also query the state of the replication.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">REPLICATIONS</span> <span style="color: #66d9ef">ON</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-----------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>    <span style="color: #f92672">|</span> <span style="color: #f8f8f2">TOPIC</span>                 <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-----------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">PENDING</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-----------------------+---------|</span>
+</pre></div>
+
+<p>When the replication is online, its status will update.</p>
+<p><div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">REPLICATIONS</span> <span style="color: #66d9ef">ON</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-----------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>    <span style="color: #f92672">|</span> <span style="color: #f8f8f2">TOPIC</span>                 <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-----------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">ONLINE</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-----------------------+---------|</span>
+</pre></div>
+<strong>Inter-NameSpace Replication</strong></p>
+<p>Cross namespace replication is also possible.  This is the only
+interaction that requires cross namespace communication / coordination.<br />
+Lets say there is a company called "acme group" and it has two
+different brands, "brickco" and "rocketco".  Lets also assume that
+the local <code class="codehilite">cluster002</code> is in the current namespace
+<code class="codehilite">/rocketco/aus1/us-somewhere-001</code>. The remote cluster <code class="codehilite">cluster034</code> is in
+<code class="codehilite">/brickco/aws/us-reg1-xyz</code>. Consider the following command:</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #f8f8f2">REPLICATE</span> <span style="color: #f8f8f2">BINDING</span> <span style="color: #e6db74">&quot;cluster034/widgets_v0&quot;</span> <span style="color: #66d9ef">FROM</span> <span style="color: #f8f8f2">NAMESPACE</span> <span style="color: #e6db74">&quot;/brickco/aws/us-reg1-xyz&quot;</span>
+  <span style="color: #66d9ef">TO</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div>
+
+<details class="note"><summary>Note</summary><p>The developer is able to discover the remote namespace, cluster and stream via
+<em>stream discovery</em>. This is a achieved via a different <em>stream registry ui</em> service
+that aggregates known stream registry meta data across all known namespaces.
+By aggregating the metadata and indexing it, it packages all streams to
+allow developers to discover and monitor all data in flight.</p>
+</details>
+<details class="note"><summary>Note</summary><p>Also, this assumes that the "widgets_v0" stream already exists in the local namespace.
+(Presumably it already exists in the remote namespace and cluster).
+If it does not, the replication will fail.  Future versions may also check that the remote
+schemas are all available in the current stream registry, if not then there is a risk of
+consumer error when a local consumer starts to consume from "widgets_v0" stream.</p>
+</details>
+<p>Like before, we can monitor replication status.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">REPLICATIONS</span> <span style="color: #66d9ef">ON</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-------------------------------------------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>    <span style="color: #f92672">|</span> <span style="color: #f8f8f2">TOPIC</span>                                                 <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-------------------------------------------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">widgets_v0</span>                                 <span style="color: #f92672">|</span> <span style="color: #f8f8f2">ONLINE</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f92672">/</span><span style="color: #f8f8f2">brickco</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">aws</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">us</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">reg1</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">xyz</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">cluster034</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">PENDING</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-------------------------------------------------------+---------|</span>
+</pre></div></p>
+<p>When the replication is online, its status will update.
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">SHOW</span> <span style="color: #f8f8f2">REPLICATIONS</span> <span style="color: #66d9ef">ON</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-------------------------------------------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #66d9ef">CLUSTER</span>    <span style="color: #f92672">|</span> <span style="color: #f8f8f2">TOPIC</span>                                                 <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-------------------------------------------------------+---------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">widgets_v0</span>                                 <span style="color: #f92672">|</span> <span style="color: #f8f8f2">ONLINE</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f92672">/</span><span style="color: #f8f8f2">brickco</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">aws</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">us</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">reg1</span><span style="color: #f92672">-</span><span style="color: #f8f8f2">xyz</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">cluster034</span><span style="color: #f92672">/</span><span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">ONLINE</span>  <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+-------------------------------------------------------+---------|</span>
+</pre></div></p>
+<h3 id="stream-replication-manager-interface">Stream Replication Manager Interface<a class="headerlink" href="#stream-replication-manager-interface" title="Permanent link">&para;</a></h3>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">/** The DTO that represents a stream replication. */</span>
+<span style="color: #a6e22e">@Data</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #f8f8f2">StreamReplication</span> <span style="color: #f92672">{</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #a6e22e">StreamReplication</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">topic</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">status</span><span style="color: #f92672">);</span>
+<span style="color: #f92672">}</span>
+
+<span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * This interface is implemented by a stream provider to provide</span>
+<span style="color: #75715e"> * stream platform and/or company specific requirements related to</span>
+<span style="color: #75715e"> * stream replication.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">interface</span> <span style="color: #a6e22e">StreamReplicationManager</span> <span style="color: #f92672">{</span>
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Returns a list of existing replications in the current namespace.</span>
+<span style="color: #75715e">   * @return the list of existing replications.</span>
+<span style="color: #75715e">   * @throws StreamReplicationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">StreamReplication</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">listReplications</span><span style="color: #f92672">()</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamReplicationException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Returns a list of existing replications for the given cluster.</span>
+<span style="color: #75715e">   * @param cluster the target cluster to retrieve replications</span>
+<span style="color: #75715e">   * @return the list of existing replications for the given cluster</span>
+<span style="color: #75715e">   * @throws StreamReplicationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">StreamReplication</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">listReplications</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">)</span> <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamReplicationException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Creates the stream replication in the underlying stream platform.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param cluster the cluster that the replication should be created on.</span>
+<span style="color: #75715e">   * @param remoteCluster the remote cluster to replicate</span>
+<span style="color: #75715e">   * @param remoteStream the remote stream to replicate</span>
+<span style="color: #75715e">   * @param remoteNamespace the name of the remote namespace</span>
+<span style="color: #75715e">   *        (same as local if local)</span>
+<span style="color: #75715e">   * @return the created stream sink</span>
+<span style="color: #75715e">   * @throws StreamReplicationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamReplication</span> <span style="color: #a6e22e">createReplication</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">,</span>
+                                      <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteCluster</span><span style="color: #f92672">,</span>
+                                      <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteStream</span><span style="color: #f92672">,</span>
+                                      <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteNamespace</span><span style="color: #f92672">)</span>
+                                      <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamReplicationException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Retrieves a stream replication from the underlying stream provider.</span>
+<span style="color: #75715e">   * @param cluster the cluster the replication is replicating to</span>
+<span style="color: #75715e">   * @param remoteCluster the remote cluster being replicated</span>
+<span style="color: #75715e">   * @param remoteStream the remote stream being replicated</span>
+<span style="color: #75715e">   * @param remoteNamespace the name of the remote namespace</span>
+<span style="color: #75715e">   *        (same as local if local)</span>
+<span style="color: #75715e">   * @return the requested stream replication</span>
+<span style="color: #75715e">   * @throws StreamReplicationException nThis is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamReplication</span> <span style="color: #a6e22e">getReplication</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">,</span>
+                                   <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteCluster</span><span style="color: #f92672">,</span>
+                                   <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteStream</span><span style="color: #f92672">,</span>
+                                   <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteNamespace</span><span style="color: #f92672">)</span>
+                                   <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamReplicationException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Deletes the stream replication in the given stream platform.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param cluster the cluster the replication is replicating to</span>
+<span style="color: #75715e">   * @param remoteCluster the remote cluster being replicated</span>
+<span style="color: #75715e">   * @param remoteStream the remote stream being replicated</span>
+<span style="color: #75715e">   * @param remoteNamespace the name of the remote namespace</span>
+<span style="color: #75715e">   * @return the deleted stream replication</span>
+<span style="color: #75715e">   * @throws StreamReplicationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamReplication</span> <span style="color: #a6e22e">deleteReplication</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">cluster</span><span style="color: #f92672">,</span>
+                                      <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteCluster</span><span style="color: #f92672">,</span>
+                                      <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteStream</span><span style="color: #f92672">,</span>
+                                      <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">remoteNamespace</span><span style="color: #f92672">)</span>
+                                      <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamReplicationException</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">}</span>
+</pre></div>
+
+<h2 id="stream-relocation">Stream Relocation<a class="headerlink" href="#stream-relocation" title="Permanent link">&para;</a></h2>
+<p><center><img alt="Stream Relocation Animation" src="stream-relocation.gif" /></center></p>
+<p>This command relocates a stream from <code class="codehilite">cluster001</code> to <code class="codehilite">cluster002</code>:</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">CREATE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">RELOCATION</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span>
+  <span style="color: #66d9ef">FROM</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span>
+  <span style="color: #66d9ef">TO</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster002&quot;</span><span style="color: #f8f8f2">;</span>
+</pre></div>
+
+<p>Once created you can check on the status:</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DESCRIBE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">RELOCATION</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span> <span style="color: #66d9ef">FROM</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+------------+------------+-----------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">STREAM</span>     <span style="color: #f92672">|</span> <span style="color: #66d9ef">FROM</span>       <span style="color: #f92672">|</span> <span style="color: #66d9ef">TO</span>         <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>          <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+------------+------------+-----------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">BINDING_PENDING</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+------------+------------+-----------------|</span>
+</pre></div>
+
+<p>The states vary from:</p>
+<ul>
+<li>REPLICATION_PENDING</li>
+<li>REPLICATION_COMPLETE</li>
+<li>CONSUMERS_MIGRATING</li>
+<li>CONSUMERS_COMPLETE</li>
+<li>PRODUCERS_MIGRATING</li>
+<li>PRODUCERS_COMPLETE</li>
+<li>REPLICATION_DELETE_PENDING</li>
+<li>REPLICATION_DELETED</li>
+<li>BINDING_DELETE_PENDING</li>
+<li>BINDING_DELETED</li>
+</ul>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f92672">&gt;</span> <span style="color: #66d9ef">DESCRIBE</span> <span style="color: #f8f8f2">STREAM</span> <span style="color: #f8f8f2">RELOCATION</span> <span style="color: #e6db74">&quot;widgets_v0&quot;</span> <span style="color: #66d9ef">FROM</span> <span style="color: #66d9ef">CLUSTER</span> <span style="color: #e6db74">&quot;cluster001&quot;</span><span style="color: #f8f8f2">;</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+------------+------------+-----------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">STREAM</span>     <span style="color: #f92672">|</span> <span style="color: #66d9ef">FROM</span>       <span style="color: #f92672">|</span> <span style="color: #66d9ef">TO</span>         <span style="color: #f92672">|</span> <span style="color: #f8f8f2">STATUS</span>          <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+------------+------------+-----------------|</span>
+<span style="color: #f92672">|</span> <span style="color: #f8f8f2">widgets_v0</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster001</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">cluster002</span> <span style="color: #f92672">|</span> <span style="color: #f8f8f2">BINDING_DELETED</span> <span style="color: #f92672">|</span>
+<span style="color: #f92672">|</span><span style="color: #75715e">------------+------------+------------+-----------------|</span>
+</pre></div>
+
+<h3 id="stream-relocation-manager-interface">Stream Relocation Manager Interface<a class="headerlink" href="#stream-relocation-manager-interface" title="Permanent link">&para;</a></h3>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">/** The DTO that represents a stream relocation. */</span>
+<span style="color: #a6e22e">@Data</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">void</span> <span style="color: #f8f8f2">StreamRelocation</span> <span style="color: #f92672">{</span>
+  <span style="color: #66d9ef">public</span> <span style="color: #a6e22e">StreamRelocation</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">stream</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceCluster</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">targetCluster</span><span style="color: #f92672">,</span> <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">status</span><span style="color: #f92672">);</span>
+<span style="color: #f92672">}</span>
+
+<span style="color: #75715e">/**</span>
+<span style="color: #75715e"> * This interface is implemented by a stream provider to provide</span>
+<span style="color: #75715e"> * stream platform and/or company specific requirements related to</span>
+<span style="color: #75715e"> * stream relocation.</span>
+<span style="color: #75715e"> */</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">interface</span> <span style="color: #a6e22e">StreamRelocationManager</span> <span style="color: #f92672">{</span>
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Returns a list of existing relocations.</span>
+<span style="color: #75715e">   * @param sourceCluster the source cluster to list the replication</span>
+<span style="color: #75715e">   * @return the list of existing replications</span>
+<span style="color: #75715e">   * @throws StreamRelocationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">List</span><span style="color: #f92672">&lt;</span><span style="color: #f8f8f2">StreamRelocation</span><span style="color: #f92672">&gt;</span> <span style="color: #a6e22e">getRelocations</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceCluster</span><span style="color: #f92672">)</span>
+                                        <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamRelocationException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Returns the requested stream relocation.</span>
+<span style="color: #75715e">   * @param stream the stream being relocated</span>
+<span style="color: #75715e">   * @param sourceCluster the source cluster of the stream</span>
+<span style="color: #75715e">   * @return the requested stream relocation</span>
+<span style="color: #75715e">   * @throws StreamRelocationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamRelocation</span> <span style="color: #a6e22e">getRelocation</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">stream</span><span style="color: #f92672">,</span>
+                                 <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceCluster</span><span style="color: #f92672">)</span>
+                                 <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamRelocationException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Creates the stream relocation.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param stream the name of the stream to relocate</span>
+<span style="color: #75715e">   * @param sourceCluster the source cluster of the stream</span>
+<span style="color: #75715e">   * @param targetCluster the source cluster of the stream</span>
+<span style="color: #75715e">   * @return the created stream relocation</span>
+<span style="color: #75715e">   * @throws StreamRelocationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamRelocation</span> <span style="color: #a6e22e">createRelocation</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">stream</span><span style="color: #f92672">,</span>
+                                    <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceCluster</span><span style="color: #f92672">,</span>
+                                    <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">targetCluster</span><span style="color: #f92672">)</span>
+                                    <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamRelocationException</span><span style="color: #f92672">;</span>
+
+  <span style="color: #75715e">/**</span>
+<span style="color: #75715e">   * Deletes the stream relocation.</span>
+<span style="color: #75715e">   *</span>
+<span style="color: #75715e">   * @param stream the stream being relocated to be deleted</span>
+<span style="color: #75715e">   * @param sourceCluster the source cluster of the relocation</span>
+<span style="color: #75715e">   * @return the deleted stream relocation</span>
+<span style="color: #75715e">   * @throws StreamRelocationException This is thrown when</span>
+<span style="color: #75715e">   *         the operation could not complete.</span>
+<span style="color: #75715e">   */</span>
+  <span style="color: #f8f8f2">StreamRelocation</span> <span style="color: #a6e22e">deleteRelocation</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">stream</span><span style="color: #f92672">,</span>
+                                    <span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">sourceCluster</span><span style="color: #f92672">)</span>
+                                    <span style="color: #66d9ef">throws</span> <span style="color: #f8f8f2">StreamRelocationException</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">}</span>
+</pre></div>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../usage/" title="Usage Guide" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Usage Guide
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.583bbe55.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+        <script src="../js/flowchart-loader.js"></script>
+      
+        <script src="../js/details.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.8.0/flowchart.min.js"></script>
+      
+    
+    
+      
+    
+  </body>
+</html>

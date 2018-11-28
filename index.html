@@ -1,0 +1,518 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Open Source Docs and Community Standards">
+      
+      
+        <link rel="canonical" href="https://homeaway.github.io/stream-registry/">
+      
+      
+        <meta name="author" content="Digital Platform">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.0.5">
+    
+    
+      
+        <title>Stream Registry Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/application.451f80e5.css">
+      
+      
+    
+    
+      <script src="assets/javascripts/modernizr.1aa3b519.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="assets/fonts/material-icons.css">
+    
+      <link rel="stylesheet" href="css/progress_bar.css">
+    
+      <link rel="stylesheet" href="css/details.css">
+    
+      <link rel="stylesheet" href="css/tasklist.css">
+    
+      <link rel="stylesheet" href="css/custom_tasklist.css">
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448"
+    viewBox="0 0 416 448" id="__github">
+  <path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19-18.125
+        8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19 18.125-8.5
+        18.125 8.5 10.75 19 3.125 20.5zM320 304q0 10-3.125 20.5t-10.75
+        19-18.125 8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19
+        18.125-8.5 18.125 8.5 10.75 19 3.125 20.5zM360
+        304q0-30-17.25-51t-46.75-21q-10.25 0-48.75 5.25-17.75 2.75-39.25
+        2.75t-39.25-2.75q-38-5.25-48.75-5.25-29.5 0-46.75 21t-17.25 51q0 22 8
+        38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0
+        37.25-1.75t35-7.375 30.5-15 20.25-25.75 8-38.375zM416 260q0 51.75-15.25
+        82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5-41.75
+        1.125q-19.5 0-35.5-0.75t-36.875-3.125-38.125-7.5-34.25-12.875-30.25-20.25-21.5-28.75q-15.5-30.75-15.5-82.75
+        0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25
+        30.875q36.75-8.75 77.25-8.75 37 0 70 8 26.25-20.5
+        46.75-30.25t47.25-9.75q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34
+        99.5z" />
+</svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#stream-registry" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://homeaway.github.io/stream-registry" title="Stream Registry Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                Stream Registry Documentation
+              </span>
+              <span class="md-header-nav__topic">
+                Home
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+
+  <a href="https://github.com/HomeAway/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      streamingplatform/stream-registry
+    </div>
+  </a>
+
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://homeaway.github.io/stream-registry" title="Stream Registry Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Stream Registry Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/HomeAway/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      streamingplatform/stream-registry
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Home
+      </label>
+    
+    <a href="." title="Home" class="md-nav__link md-nav__link--active">
+      Home
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-stream-registry" title="Why Stream Registry?" class="md-nav__link">
+    Why Stream Registry?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-stream-registry" title="What is Stream Registry?" class="md-nav__link">
+    What is Stream Registry?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-did-homeaway-build-a-stream-registry" title="Why Did HomeAway Build a Stream Registry?" class="md-nav__link">
+    Why Did HomeAway Build a Stream Registry?
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="architecture/" title="Architecture" class="md-nav__link">
+      Architecture
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="usage/" title="Usage Guide" class="md-nav__link">
+      Usage Guide
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-stream-registry" title="Why Stream Registry?" class="md-nav__link">
+    Why Stream Registry?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-stream-registry" title="What is Stream Registry?" class="md-nav__link">
+    What is Stream Registry?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-did-homeaway-build-a-stream-registry" title="Why Did HomeAway Build a Stream Registry?" class="md-nav__link">
+    Why Did HomeAway Build a Stream Registry?
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/HomeAway/stream-registry/edit/master/docs/docs/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <p><img alt="StreamRegistryLogo" src="architecture/SR-logo.svg" /></p>
+<h1 id="stream-registry">Stream Registry<a class="headerlink" href="#stream-registry" title="Permanent link">&para;</a></h1>
+<p>A stream-registry is what its name implies: it is a registry of streams. As enterprises increasingly scale in size,
+the need to organize and develop around streams of data becomes paramount.  Synchronous calls are attracted to the edge,
+and a variety of synchronous and asynchronous calls permeate the enterprise.  The need for a declarative, central
+authority for discovery and orchestration of stream management emerges.  This is what a stream registry provides.
+In much the same way that DNS provides a name translation service for an ip address, by way of analogy, a
+stream-registry provides a “name service” for streams. By centralizing stream metadata, a stream translation service
+for producer and/or consumer stream coördinates becomes possible. This centralized, yet democratized, stream metadata
+function thus streamlines operational complexity via stream lifecycle management, stream discovery,
+stream availability and resiliency.</p>
+<h2 id="why-stream-registry">Why Stream Registry?<a class="headerlink" href="#why-stream-registry" title="Permanent link">&para;</a></h2>
+<p>We believe that as the change to business requirements accelerate, time to market pressures increase,
+competitive measures grow, migrations to cloud and different platforms are required, and so on, systems will
+increasingly need to become more reactive and dynamic in nature.</p>
+<p align="center">The issue of <em>state</em> arises.</p>
+
+<p>We see many systems adopting <em>event-driven-architectures</em> to facilitate the changing business needs in these high stakes
+environments.  We hypothesize there is an emerging need for a centralized "stream metadata" service in the
+industry to help streamline the complexities and operations of deploying stream platforms that serve as a
+distributed federated nervous system in the enterprise.</p>
+<h2 id="what-is-stream-registry">What is Stream Registry?<a class="headerlink" href="#what-is-stream-registry" title="Permanent link">&para;</a></h2>
+<p>Put simply, Stream Registry is a centralized service for stream metadata.</p>
+<p>The stream registry can answer the following question:</p>
+<ol>
+<li>Who owns the stream?  </li>
+<li>Who are the producers and consumers of the stream?  </li>
+<li>Management of stream replication across clusters and regions</li>
+<li>Management of stream storage for permanent access</li>
+<li>Management of stream triggers for legacy stream sources</li>
+</ol>
+<h2 id="why-did-homeaway-build-a-stream-registry">Why Did HomeAway Build a Stream Registry?<a class="headerlink" href="#why-did-homeaway-build-a-stream-registry" title="Permanent link">&para;</a></h2>
+<p>The stream team at <a href="https://www.homeaway.com">HomeAway</a> undertook the responsibility and complexity of maintaining
+the entire stream platform at HomeAway. That platform processes north of 30 billion msgs/day. That's some
+massive scale! Whereas we acknowledge that this has been called out by
+<a href="https://www.thoughtworks.com/radar/techniques/recreating-esb-antipatterns-with-kafka">Thoughtworks ESB as an anti-pattern</a>, with our move to the cloud, the resultant shift
+towards microservices, and the explosion of data science/analytics/machine-learning this number is only going
+to further add complexity and risk to the stream team.</p>
+<p>Our existing streaming platform essentially functioned as the de-facto nervous system
+of HomeAway's infrastructure. Considering how crucial the platform has become, we needed to change how
+we managed our streaming infrastructure by building the basic blocks that enable federated clusters dedicated
+to each portfolio team.  These dedicated clusters not only resolve the
+<a href="https://www.thoughtworks.com/radar/techniques/recreating-esb-antipatterns-with-kafka">Thoughtworks ESB as an anti-pattern</a> dilemma, but they also serve to decrease blast radius when
+errors inevitably occur.</p>
+<p>Our historical way of collecting this information had been pretty clunky and inefficient - a wiki page +
+a ticket process.</p>
+<p>Now with stream-registry, we hope we are providing a better experience both for administrators and developers
+alike to further serve the needs of a growing streaming ecosystem.</p>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+        
+          <a href="architecture/" title="Architecture" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Architecture
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="assets/javascripts/application.583bbe55.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"."}})</script>
+      
+        <script src="js/flowchart-loader.js"></script>
+      
+        <script src="js/details.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.8.0/flowchart.min.js"></script>
+      
+    
+    
+      
+    
+  </body>
+</html>
