@@ -124,7 +124,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         if (!isStreamValid(stream)) {
             log.error("Stream '{}' is not valid", stream.getName());
         }
-        
+
         stream = schemaRegistrar.registerSchema(stream);
 
         Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());

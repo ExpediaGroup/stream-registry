@@ -64,6 +64,8 @@ public class StreamDaoImplTest {
         Stream newStream = buildTestStream();
         newStream.setPartitions(newStream.getPartitions() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
+        when(schemaRegistrar.isSchemaValid(newStream)).thenReturn(true);
+        when(schemaRegistrar.registerSchema(newStream)).thenReturn(newStream);
 
         streamDao.upsertStream(newStream);
     }
@@ -76,6 +78,8 @@ public class StreamDaoImplTest {
         Stream newStream = buildTestStream();
         newStream.setReplicationFactor(newStream.getReplicationFactor() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
+        when(schemaRegistrar.isSchemaValid(newStream)).thenReturn(true);
+        when(schemaRegistrar.registerSchema(newStream)).thenReturn(newStream);
 
         streamDao.upsertStream(newStream);
     }

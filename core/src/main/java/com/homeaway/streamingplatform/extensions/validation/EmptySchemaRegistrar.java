@@ -17,12 +17,10 @@ package com.homeaway.streamingplatform.extensions.validation;
 
 import java.util.Map;
 
-import com.homeaway.streamingplatform.model.Stream;
 import lombok.extern.slf4j.Slf4j;
 
-import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
 import com.homeaway.streamingplatform.exceptions.SchemaRegistrationException;
-import com.homeaway.streamingplatform.model.Schema;
+import com.homeaway.streamingplatform.model.Stream;
 
 @SuppressWarnings("unused")
 @Slf4j

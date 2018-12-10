@@ -17,7 +17,6 @@ package com.homeaway.streamingplatform.extensions.validation;
 
 import java.util.Map;
 
-import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
 import com.homeaway.streamingplatform.exceptions.SchemaRegistrationException;
 import com.homeaway.streamingplatform.model.Stream;
 
