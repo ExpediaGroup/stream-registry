@@ -48,10 +48,7 @@ import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
 import org.rocksdb.Options;
 
-import com.homeaway.streamingplatform.configuration.InfraManagerConfig;
-import com.homeaway.streamingplatform.configuration.StreamRegistryConfiguration;
-import com.homeaway.streamingplatform.configuration.StreamValidatorConfig;
-import com.homeaway.streamingplatform.configuration.TopicsConfig;
+import com.homeaway.streamingplatform.configuration.*;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
@@ -61,6 +58,7 @@ import com.homeaway.streamingplatform.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamingplatform.db.dao.impl.ProducerDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.RegionDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.StreamDaoImpl;
+import com.homeaway.streamingplatform.extensions.validation.SchemaRegistrar;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.health.StreamRegistryHealthCheck;
 import com.homeaway.streamingplatform.model.Consumer;
@@ -168,7 +166,10 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         StreamValidator streamValidator = loadValidator(configuration, httpClient, regionDao);
         Preconditions.checkState(streamValidator != null, "streamValidator cannot be null.");
 
-        StreamDao streamDao = new StreamDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager, streamValidator);
+        SchemaRegistrar schemaRegistrar = loadSchemaRegistrar(configuration);
+        Preconditions.checkState(schemaRegistrar != null, "schemaRegistrar cannot be null.");
+
+        StreamDao streamDao = new StreamDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager, streamValidator, schemaRegistrar);
         StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
         StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
 
@@ -226,6 +227,32 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         return null;
     }
 
+    public static SchemaRegistrar loadSchemaRegistrar(StreamRegistryConfiguration configuration) {
+        SchemaRegistrarConfig schemaRegistrarConfig = configuration.getSchemaRegistrarConfig();
+
+        if (schemaRegistrarConfig != null) {
+            String schemaRegistrarClass = schemaRegistrarConfig.getClassName();
+
+            if (schemaRegistrarClass != null && !schemaRegistrarClass.isEmpty()) {
+                try {
+                    SchemaRegistrar schemaRegistrar = Utils.newInstance(schemaRegistrarClass, SchemaRegistrar.class);
+
+                    Map<String, ?> schemaRegistrarProperties = schemaRegistrarConfig.getProperties();
+                    Map<String, Object> newConfig = new HashMap<>();
+                    if (schemaRegistrarProperties != null) {
+                        newConfig.putAll(schemaRegistrarProperties);
+                    }
+
+                    schemaRegistrar.configure(newConfig);
+                    return schemaRegistrar;
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalStateException("Error loading SchemaRegistrar from configuration", e);
+                }
+            }
+        }
+
+        return null;
+    }
 
     public static class CustomRocksDBConfig implements RocksDBConfigSetter {
 

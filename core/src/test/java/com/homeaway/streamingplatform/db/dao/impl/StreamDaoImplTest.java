@@ -28,6 +28,7 @@ import com.homeaway.digitalplatform.streamregistry.*;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
+import com.homeaway.streamingplatform.extensions.validation.SchemaRegistrar;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.provider.InfraManager;
@@ -46,12 +47,13 @@ public class StreamDaoImplTest {
     private InfraManager infraManager = mock(InfraManager.class);
     private KafkaManager kafkaManager = mock(KafkaManager.class);
     private StreamValidator streamValidator = mock(StreamValidator.class);
+    private SchemaRegistrar schemaRegistrar = mock(SchemaRegistrar.class);
 
     private StreamDao streamDao;
 
     @Before
     public void setup() {
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, kafkaManager, streamValidator);
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, kafkaManager, streamValidator, schemaRegistrar);
     }
 
     @Test(expected = IllegalArgumentException.class)

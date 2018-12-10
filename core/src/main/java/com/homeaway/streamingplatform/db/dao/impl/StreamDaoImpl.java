@@ -15,12 +15,7 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 import javax.ws.rs.InternalServerErrorException;
 
@@ -41,8 +36,10 @@ import com.homeaway.streamingplatform.db.dao.StreamDao;
 import com.homeaway.streamingplatform.dto.AvroToJsonDTO;
 import com.homeaway.streamingplatform.dto.JsonToAvroDTO;
 import com.homeaway.streamingplatform.exceptions.InvalidStreamException;
+import com.homeaway.streamingplatform.exceptions.SchemaRegistrationException;
 import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
+import com.homeaway.streamingplatform.extensions.validation.SchemaRegistrar;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.model.Tags;
@@ -54,16 +51,19 @@ import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
 public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValidator {
 
     private StreamValidator streamValidator;
+    private SchemaRegistrar schemaRegistrar;
 
     public StreamDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-        ManagedKStreams kStreams,
-        String env,
-        RegionDao regionDao,
-        InfraManager infraManager,
-        KafkaManager kafkaManager,
-        StreamValidator validator) {
+                         ManagedKStreams kStreams,
+                         String env,
+                         RegionDao regionDao,
+                         InfraManager infraManager,
+                         KafkaManager kafkaManager,
+                         StreamValidator validator,
+                         SchemaRegistrar schemaRegistrar) {
         super(managedKafkaProducer, kStreams, env, regionDao, infraManager, kafkaManager);
         this.streamValidator = validator;
+        this.schemaRegistrar = schemaRegistrar;
     }
 
     // TODO - This stream validation pattern needs to be reimplemented
@@ -72,6 +72,10 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         try {
             if (streamValidator != null && !streamValidator.isStreamValid(stream)) {
                 throw new InvalidStreamException(stream, streamValidator.getValidationAssertion());
+            }
+
+            if (schemaRegistrar != null && !schemaRegistrar.isSchemaValid(stream)) {
+                throw new InvalidStreamException(stream, schemaRegistrar.getValidationAssertion());
             }
 
             if (stream.getName() == null) {
@@ -107,7 +111,8 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     }
 
     @Override
-    public void configure(Map<String, ?> configs) {}
+    public void configure(Map<String, ?> configs) {
+    }
 
     @Override
     public void upsertStream(Stream stream) {
@@ -119,13 +124,15 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         if (!isStreamValid(stream)) {
             log.error("Stream '{}' is not valid", stream.getName());
         }
+        
+        stream = schemaRegistrar.registerSchema(stream);
 
         Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());
         try {
             AvroStreamKey key;
             AvroStream avroStream =
-                JsonToAvroDTO.convertJsonToAvro(stream, OperationType.UPSERT);
-
+                    JsonToAvroDTO.convertJsonToAvro(stream, OperationType.UPSERT);
+            
             Optional<AvroStream> value = keyValue.getValue();
             if (value.isPresent()) {
                 // ensure valid partition counts and replication factors are provided
@@ -153,12 +160,16 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
                 avroStream.setCreated(System.currentTimeMillis());
                 key = AvroStreamKey.newBuilder().setStreamName(avroStream.getName()).build();
             }
+
             verifyAndUpsertTopics(stream);
             kafkaProducer.log(key, avroStream);
             log.info("Stream upserted for {}", stream.getName());
         } catch (IllegalArgumentException e) {
             log.error("caught an illegal argument exception");
             throw new IllegalArgumentException(e);
+        } catch (SchemaRegistrationException e) {
+            log.error("caught an exception during schema registration", e);
+            throw new SchemaRegistrationException(stream.getName(), e);
         } catch (Exception e) {
             log.error("Error creating new stream", e);
             throw new StreamCreationException(stream.getName());
@@ -167,6 +178,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
 
     /**
      * Setting default replication factor in case if its set to 0 or a negative number
+     *
      * @param stream the stream that will be given a default replication factor
      */
     private void applyDefaultReplicationFactor(Stream stream) {
@@ -177,6 +189,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
 
     /**
      * Setting default partition in case if its set to 0 or a negative number
+     *
      * @param stream the stream that will be given a default number of partitions
      */
     private void applyDefaultPartition(Stream stream) {
@@ -206,7 +219,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             }
         } catch (Exception e) {
             throw new InternalServerErrorException(
-                String.format("Error while creating the stream. Can't create the topic %s", stream.getName()), e);
+                    String.format("Error while creating the stream. Can't create the topic %s", stream.getName()), e);
         }
     }
 
@@ -223,7 +236,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         topicConfig.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zkConnect);
 
         kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig);
-        log.info("Topic {} created/updated at {}",stream.getName(), bootstrapServer);
+        log.info("Topic {} created/updated at {}", stream.getName(), bootstrapServer);
     }
 
     private void applyDefaultHint(Stream stream) {
