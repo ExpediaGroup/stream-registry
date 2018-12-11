@@ -510,6 +510,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${deploy.pluginVersion}</version>
+                    <!-- We disable this in favor of nexus-staging-maven-plugin -->
                     <configuration>
                         <skip>true</skip>
                     </configuration>
@@ -641,6 +642,10 @@
 
     <profiles>
         <profile>
+            <!-- We create a profile here for two things: -->
+            <!-- 1. centrally specify the deploy to ossrh -->
+            <!-- 2. Sign all relevant artifacts (via configured GPG keys) -->
+            <!-- TODO: Document this process -->
             <id>oss</id>
             <build>
                 <plugins>
@@ -683,5 +688,11 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <!-- This is needed so that site-deploy doesn't freak out. We will be using
+                   gh-pages instead. -->
+        <site>
+            <id>site-deploy-noop</id>
+            <url>file:${project.build.directory}/${project.distributionManagement.site.id}</url>
+        </site>
     </distributionManagement>
 </project>

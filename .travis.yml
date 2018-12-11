@@ -5,6 +5,8 @@ dist: trusty
 jdk:
   - oraclejdk8
 
+# 'true' means do NOT do `mvn install`
+# See https://docs.travis-ci.com/user/job-lifecycle/#skipping-the-installation-phase
 install: true
 
 script: make build

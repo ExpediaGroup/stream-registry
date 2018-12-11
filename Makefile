@@ -7,7 +7,7 @@ tests:
 	./mvnw test -B
 
 build:
-	./mvnw install
+	./mvnw install -B
 
 all: build
 
