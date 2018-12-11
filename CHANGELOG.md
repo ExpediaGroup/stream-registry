@@ -7,5 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.3.0 - UNRELEASED (date)
 ### Added
 - Integration with travis-ci (#39)
+- Makefile for build commands (#39, #43)
+
+### Removed
+- Shell script for build commands (#43)
 
 [Milestone]: https://github.com/HomeAway/stream-registry/compare/v0.2.42...v0.3.0
