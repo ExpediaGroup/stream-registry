@@ -25,11 +25,27 @@ import com.homeaway.streamingplatform.model.Stream;
  */
 public interface SchemaRegistrar {
 
-    // TODO: javadoc
+    /**
+     * Used to validate the stream's key and value schemas
+     *
+     * @param stream object
+     * @return whether schemas are valid or not
+     */
     boolean isSchemaValid(Stream stream);
 
+    /**
+     * Perform schema registration
+     *
+     * @param stream object
+     * @return same stream object with key/value schemas updated
+     * @throws SchemaRegistrationException
+     */
     Stream registerSchema(Stream stream) throws SchemaRegistrationException;
 
+    /**
+     *
+     * @return validation assertion to be displayed in case of validation errors
+     */
     String getValidationAssertion();
 
     /**
