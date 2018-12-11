@@ -1,4 +1,7 @@
-# stream-registry
+# stream-registry [![Build Status][build-icon]][build-link]
+
+[build-icon]: https://travis-ci.org/homeaway/stream-registry.svg?branch=master
+[build-link]: https://travis-ci.org/homeaway/stream-registry
 
 Required Local Environment
 ---
@@ -6,7 +9,9 @@ The local 'dev' version of stream registry requires a running version of Apache 
 and Confluent's Schema Registry running locally on port 9092 and 8081 respectively.
 
 A quick version of this is to download, install and start
-[Confluent CLI](https://docs.confluent.io/current/cli/index.html).
+[Confluent CLI][confluent-cli-doc].
+
+[confluent-cli-doc]: https://docs.confluent.io/current/cli/index.html.
 
 Build stream-registry
 ---

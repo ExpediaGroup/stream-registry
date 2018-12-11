@@ -10,7 +10,8 @@ install: true
 script: make build
 
 deploy:
-  - make deploy
+  skip_cleanup: true
+  script: make deploy
 
 notifications:
   email:
@@ -21,4 +22,4 @@ notifications:
 
 cache:
   directories:
-  - "$HOME/.m2/repository"
+  - "$HOME/.m2"
