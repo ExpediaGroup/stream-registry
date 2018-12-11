@@ -67,6 +67,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private boolean isProducerRegistrationHealthy;
     private boolean isConsumerRegistrationHealthy;
 
+    // TODO - This needs to move to a /namespace approach vs an environment variable - see #29
     private final String region = System.getenv("MPAAS_REGION");
 
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
