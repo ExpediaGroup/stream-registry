@@ -5,6 +5,10 @@ streamValidatorConfig:
   properties:
     validator.invalid-id: 13
 
+schemaRegistrarConfig:
+  className: com.homeaway.streamingplatform.extensions.validator.SchemaRegistrarIT$ValidSchemaRegistrar
+  properties:
+
 kafkaStreamsConfig:
   kstreamsProperties:
     application.id: StreamRegistry-dev
