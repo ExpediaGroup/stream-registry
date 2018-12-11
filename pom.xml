@@ -505,6 +505,10 @@
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${release.pluginVersion}</version>
+                    <!-- to ensure we only deploy during release:perform -->
+                    <configuration>
+                        <goals>deploy</goals>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -688,11 +692,5 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-        <!-- This is needed so that site-deploy doesn't freak out. We will be using
-                   gh-pages instead. -->
-        <site>
-            <id>site-deploy-noop</id>
-            <url>file:${project.build.directory}/${project.distributionManagement.site.id}</url>
-        </site>
     </distributionManagement>
 </project>
