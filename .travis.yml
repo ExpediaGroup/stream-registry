@@ -5,11 +5,6 @@ dist: trusty
 jdk:
   - oraclejdk8
 
-deploy:
-  provider: script
-  script: "make build"
-  skip_cleanup: true
-
 notifications:
   email: stream-registry-committers@groups.homeawaycorp.com
 
