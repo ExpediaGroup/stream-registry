@@ -28,17 +28,17 @@ public class EmptySchemaRegistrar implements SchemaRegistrar {
 
     @Override
     public boolean isSchemaValid(Stream stream) {
-        return false;
+        return true;
     }
 
     @Override
     public Stream registerSchema(Stream stream) throws SchemaRegistrationException {
-        return null;
+        return stream;
     }
 
     @Override
     public String getValidationAssertion() {
-        return null;
+        return "empty validation assertion";
     }
 
     @Override
