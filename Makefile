@@ -12,4 +12,4 @@ build:
 all: build
 
 deploy: all
-	./mvnw deploy -Poss
+	./mvnw deploy -Dskip.tests=true -Psigned

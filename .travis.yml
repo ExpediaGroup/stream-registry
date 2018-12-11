@@ -11,6 +11,7 @@ install: true
 
 script: make build
 
+# skip_cleanup is to keep the artifacts from the build phase
 deploy:
   skip_cleanup: true
   script: make deploy

@@ -646,7 +646,7 @@
             <!-- 1. centrally specify the deploy to ossrh -->
             <!-- 2. Sign all relevant artifacts (via configured GPG keys) -->
             <!-- TODO: Document this process -->
-            <id>oss</id>
+            <id>signed</id>
             <build>
                 <plugins>
                     <plugin>
