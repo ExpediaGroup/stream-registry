@@ -7,9 +7,9 @@ tests:
 	./mvnw test -B
 
 build:
-	./mvnw install -Poss
+	./mvnw install
 
 all: build
 
 deploy: all
-	cp .travis.settings.xml $HOME/.m2/settings.xml && ./mvnw deploy -Poss
+	./mvnw deploy -Poss

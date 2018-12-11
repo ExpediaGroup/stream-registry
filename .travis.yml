@@ -7,6 +7,10 @@ jdk:
 
 install: true
 
+script: make build
+
+deploy: make deploy
+
 notifications:
   email:
     recipients:
