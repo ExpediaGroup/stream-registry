@@ -179,7 +179,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         environment.getApplicationContext().addServlet(PingServlet.class, "/ping");
         StreamRegistryHealthCheck streamRegistryHealthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry);
 
-        // TODO: Expose this, or if it's already exposed document it correctly.
+        // TODO: Expose this, or if it's already exposed document it correctly. (issue #46)
         // The health check was previously documented as `http://localhost:8081/healthcheck` but that gives a 404
         environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
 
