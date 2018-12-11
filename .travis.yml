@@ -9,7 +9,8 @@ install: true
 
 script: make build
 
-deploy: make deploy
+deploy:
+  - make deploy
 
 notifications:
   email:
