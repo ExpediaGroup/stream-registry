@@ -11,10 +11,11 @@ install: true
 
 script: make build
 
-# skip_cleanup is to keep the artifacts from the build phase
 deploy:
+  provider: script
+  # skip_cleanup is to keep the artifacts from the build phase
   skip_cleanup: true
-  script: make deploy
+  script: make just-deploy
 
 notifications:
   email:

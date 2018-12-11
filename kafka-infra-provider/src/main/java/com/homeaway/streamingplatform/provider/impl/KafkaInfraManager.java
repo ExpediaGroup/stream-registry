@@ -15,10 +15,13 @@
  */
 package com.homeaway.streamingplatform.provider.impl;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
-import com.homeaway.streamingplatform.provider.InfraManager;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
@@ -27,10 +30,9 @@ import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import com.homeaway.digitalplatform.streamregistry.ClusterKey;
+import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamingplatform.provider.InfraManager;
 
 
 /**
