@@ -5,6 +5,8 @@ dist: trusty
 jdk:
   - oraclejdk8
 
+install: true
+
 notifications:
   email: stream-registry-committers@groups.homeawaycorp.com
 
