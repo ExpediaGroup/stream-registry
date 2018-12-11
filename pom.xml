@@ -23,7 +23,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/HomeAway/stream-registry</url>
+        <url>https://github.com/HomeAway/stream-registry/tree/master</url>
         <connection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</developerConnection>
         <tag>HEAD</tag>
@@ -112,35 +112,6 @@
         <!-- OSSRH -->
         <nexusStaging.pluginVersion>1.6.7</nexusStaging.pluginVersion>
     </properties>
-
-    <profiles>
-        <profile>
-            <id>release-profile</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                </property>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <artifactId>maven-surefire-plugin</artifactId>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <artifactId>maven-failsafe-plugin</artifactId>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -539,6 +510,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${deploy.pluginVersion}</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -633,19 +607,6 @@
                         <target>${maven.compiler.target}</target>
                     </configuration>
                 </plugin>
-
-                <!-- TO BE UNCOMMENTED WHEN READY TO PUSH TO OSS REPO -->
-                <!--<plugin>-->
-                <!--<groupId>org.sonatype.plugins</groupId>-->
-                <!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
-                <!--<version>${nexusStaging.pluginVersion}</version>-->
-                <!--<extensions>true</extensions>-->
-                <!--<configuration>-->
-                <!--<serverId>ossrh</serverId>-->
-                <!--<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
-                <!--<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-                <!--</configuration>-->
-                <!--</plugin>-->
             </plugins>
         </pluginManagement>
 
@@ -671,64 +632,49 @@
         </plugins>
     </reporting>
 
-    <!-- TO BE USED WHEN WE ARE READY TO PUBLISH TO OSS NEXUS -->
-    <!--<distributionManagement>-->
-    <!--<snapshotRepository>-->
-    <!--<id>ossrh</id>-->
-    <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
-    <!--</snapshotRepository>-->
-    <!--<repository>-->
-    <!--<id>ossrh</id>-->
-    <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-    <!--</repository>-->
-    <!--</distributionManagement>-->
+    <profiles>
+        <profile>
+            <id>oss</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexusStaging.pluginVersion}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <distributionManagement>
-        <repository>
-            <id>homeaway</id>
-            <name>HomeAway Services Nexus Repo</name>
-            <url>http://mvn-repo.wvrgroup.internal:8081/nexus/content/repositories/releases</url>
-        </repository>
-
         <snapshotRepository>
-            <id>homeaway-snapshots</id>
-            <name>HomeAway Services Snapshot Nexus Repo</name>
-            <url>http://mvn-repo.wvrgroup.internal:8081/nexus/content/repositories/snapshots</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-
-        <!-- This is needed so that site-deploy doesn't freak out. We will be using
-            gh-pages instead. -->
-        <site>
-            <id>site-deploy-noop</id>
-            <url>file:${project.build.directory}/${project.distributionManagement.site.id}</url>
-        </site>
-
-    </distributionManagement>
-    <repositories>
         <repository>
-            <id>homeaway</id>
-            <name>HomeAway Proxy Repository</name>
-            <layout>default</layout>
-            <url>http://mvn-repo.wvrgroup.internal/maven</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>homeaway</id>
-            <name>homeaway</name>
-            <layout>default</layout>
-            <url>http://mvn-repo.wvrgroup.internal/maven</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+    </distributionManagement>
 </project>

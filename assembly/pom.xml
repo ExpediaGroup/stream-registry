@@ -51,12 +51,6 @@
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
             </plugin>
-            <!-- TO BE UNCOMMENTED WHEN READY TO PUSH TO OSS REPO -->
-            <!--<plugin>-->
-                <!--<groupId>org.sonatype.plugins</groupId>-->
-                <!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
-            <!--</plugin>-->
-
         </plugins>
     </build>
 </project>
