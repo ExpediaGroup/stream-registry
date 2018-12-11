@@ -8,7 +8,11 @@ jdk:
 install: true
 
 notifications:
-  email: stream-registry-committers@groups.homeawaycorp.com
+  email:
+    recipients:
+      - stream-registry-committers@groups.homeawaycorp.com
+    on_success: change
+    on_failure: always
 
 cache:
   directories:
