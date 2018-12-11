@@ -16,27 +16,22 @@ A quick version of this is to download, install and start
 Build stream-registry
 ---
 ```
-./stream-registry.sh build
+make build
 ```
-
 
 Start stream-registry
 ---
 ```
-./stream-registry.sh run
+make run
 ```
 
-* check that your application is running enter url `http://localhost:8080/swagger`
+Check that your application is running at `http://localhost:8080/swagger`
 
-Run Unit Test , and Jacoco Code Coverage.
+Run Unit Tests
 ---
-`mvn clean verify`
-
-The test coverage report is available at `./target/site/jacoco/index.html`
-
-Health Check
----
-To see your applications health enter url `http://localhost:8081/healthcheck`
+```
+make tests
+```
 
 Contributors
 ---
