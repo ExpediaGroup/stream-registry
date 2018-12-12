@@ -72,7 +72,8 @@ public class KafkaManagerImpl implements KafkaManager {
             List<String> topicsToCreate = new ArrayList<>();
             for (String topic : topics) {
                 if (AdminUtils.topicExists(zkUtils, topic)) {
-                    updateTopic(zkUtils, topic, topicConfigMap);
+                    log.info("Stream Registry does not allow updating configs for existing topics.");
+                    //updateTopic(zkUtils, topic, topicConfigMap);
                 } else {
                     topicsToCreate.add(topic);
                 }
