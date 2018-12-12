@@ -4,13 +4,73 @@
 
     <groupId>com.homeaway.streamingplatform</groupId>
     <artifactId>stream-registry-parent</artifactId>
-    <name>Stream Registry Parent POM</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <modules>
         <module>schema-library-events</module>
         <module>kafka-infra-provider</module>
         <module>core</module>
         <module>assembly</module>
     </modules>
+
+    <description>Stream Registry Parent POM</description>
+    <url>https://homeaway.github.io/stream-registry/</url>
+
+    <developers>
+        <developer>
+            <name>Arun Vasudevan</name>
+            <email>avasudevan@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Prabhakaran Thatchinamoorthy</name>
+            <email>pthatchinamoorthy@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Nathan Walther</name>
+            <email>nwalther@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Vinayak Ponangi</name>
+            <email>pponangi@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Adam Westerman</name>
+            <email>awesterman@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Jordan Moore</name>
+            <email>jomoore@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Carlos Cordero</name>
+            <email>ccordero@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Ishan Dikshit</name>
+            <email>idikshit@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Rui Zhang</name>
+            <email>rzhang@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+    </developers>
 
     <packaging>pom</packaging>
     <version>0.3.1-SNAPSHOT</version>
@@ -28,6 +88,7 @@
         <developerConnection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
 
     <properties>
 
@@ -511,6 +572,8 @@
                         <releaseProfiles>signed</releaseProfiles>
                         <!-- to ensure we only deploy during release:perform -->
                         <goals>deploy</goals>
+                        <!-- to ensure that tags are of the right format -->
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
                 <plugin>
