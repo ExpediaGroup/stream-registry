@@ -28,6 +28,11 @@
                 <artifactId>kafka-infra-provider</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.homeaway.streamingplatform</groupId>
+                <artifactId>confluent-schema-manager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
