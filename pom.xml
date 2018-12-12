@@ -13,7 +13,7 @@
     </modules>
 
     <packaging>pom</packaging>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.3.1</version>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -26,7 +26,7 @@
         <url>https://github.com/HomeAway/stream-registry/tree/master</url>
         <connection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v0.3.1</tag>
     </scm>
 
     <properties>
