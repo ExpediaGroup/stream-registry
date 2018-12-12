@@ -28,6 +28,48 @@
             <organization>HomeAway</organization>
             <organizationUrl>https://www.homeaway.com</organizationUrl>
         </developer>
+        <developer>
+            <name>Nathan Walther</name>
+            <email>nwalther@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Vinayak Ponangi</name>
+            <email>pponangi@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Adam Westerman</name>
+            <email>awesterman@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Jordan Moore</name>
+            <email>jomoore@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Carlos Cordero</name>
+            <email>ccordero@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Ishan Dikshit</name>
+            <email>idikshit@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Rui Zhang</name>
+            <email>rzhang@homeaway.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
     </developers>
 
     <packaging>pom</packaging>
