@@ -12,7 +12,7 @@ the need to organize and develop around streams of data becomes paramount.  Sync
 and a variety of synchronous and asynchronous calls permeate the enterprise.  The need for a declarative, central
 authority for discovery and orchestration of stream management emerges.  This is what a stream registry provides.
 In much the same way that DNS provides a name translation service for an ip address, by way of analogy, a
-stream-registry provides a “name service” for streams. By centralizing stream metadata, a stream translation service
+stream-registry provides a “metadata service” for streams. By centralizing stream metadata, a stream translation service
 for producer and/or consumer stream coördinates becomes possible. This centralized, yet democratized, stream metadata
 function thus streamlines operational complexity via stream lifecycle management, stream discovery,
 stream availability and resiliency.
