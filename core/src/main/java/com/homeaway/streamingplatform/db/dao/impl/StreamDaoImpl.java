@@ -282,6 +282,18 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         return streamList;
     }
 
+    @Override
+    public boolean validateStreamCompatibility(Stream stream) {
+        String keySubject = stream.getName() + "-key";
+        String valueSubject = stream.getName() + "-value";
+
+        String keySchema = stream.getLatestKeySchema().getSchemaString();
+        String valueSchema = stream.getLatestValueSchema().getSchemaString();
+
+        return schemaManager.checkCompatibility(keySubject, keySchema)
+                && schemaManager.checkCompatibility(valueSubject, valueSchema);
+    }
+
     public void updateAvroStream(AvroStream stream) {
         AvroStreamKey key = AvroStreamKey.newBuilder().setStreamName(stream.getName()).build();
         stream.setOperationType(OperationType.UPSERT);

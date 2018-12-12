@@ -86,8 +86,7 @@ public class StreamResource {
     @Path("/{streamName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
-    public Response upsertStream(@ApiParam(value = "stream entity", required = true)
-        Stream stream) {
+    public Response upsertStream(@ApiParam(value = "stream entity", required = true) Stream stream) {
         try {
             streamDao.upsertStream(stream);
             return Response.status(Response.Status.ACCEPTED).build();
@@ -99,6 +98,44 @@ public class StreamResource {
         } catch(Exception e) {
             log.error("Error creating stream={}", stream.getName(), e);
             throw new InternalServerErrorException(String.format("Error creating stream=%s ; Error=%s", stream.getName(), e.getMessage()), e);
+        }
+    }
+
+    @PUT
+    @ApiOperation(
+            value = "Validate stream schema compatibility",
+            notes = "Validate compatibility of stream's schemas against an implementation of SchemaManager",
+            tags = "streams")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Compatibility check succeeded"),
+            @ApiResponse(code = 400, message = "Compatibility check failed!"),
+            @ApiResponse(code = 500, message = "Error occurred while validating schemas") })
+    @Path("/{streamName}/{streamType}/compatibility")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed
+    public Response validateStreamCompatibility(@ApiParam(value = "stream entity", required = true) Stream stream,
+                                                @ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName,
+                                                @ApiParam(value = "stream type", allowableValues = "default", required = true) @PathParam("streamType") String streamType) {
+
+        if (!streamName.equals(stream.getName())) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                            "stream name provided in path param does not match that of the stream body"))
+                    .build();
+        }
+
+        try {
+            if (streamDao.validateStreamCompatibility(stream)) {
+                return Response.ok().build();
+            } else {
+                String message = "Stream compatibility check failed";
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), message))
+                        .build();
+            }
+        } catch (Exception e) {
+            log.error("Error validation schema compatibility for stream '{}'");
+            throw new InternalServerErrorException("Error occurred while validating schema compatibility for stream: " + streamName);
         }
     }
 
@@ -114,8 +151,7 @@ public class StreamResource {
         @ApiResponse(code = 404, message = "Stream not found") })
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
-    public Response getStream(@ApiParam(value = "Stream name", required = true)
-    @PathParam("streamName") String streamName) {
+    public Response getStream(@ApiParam(value = "Stream name", required = true) @PathParam("streamName") String streamName) {
         Optional<Stream> stream = streamDao.getStream(streamName);
         try {
             if (!stream.isPresent()) {

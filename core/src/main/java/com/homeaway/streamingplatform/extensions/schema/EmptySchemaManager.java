@@ -31,7 +31,7 @@ public class EmptySchemaManager implements SchemaManager {
     }
 
     @Override
-    public boolean checkCompatibility(String subject, int version, String schema) throws SchemaException {
+    public boolean checkCompatibility(String subject, String schema) throws SchemaException {
         return true;
     }
 

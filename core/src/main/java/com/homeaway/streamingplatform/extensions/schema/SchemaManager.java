@@ -48,7 +48,7 @@ public interface SchemaManager {
      * Test input schema against a particular version of a
      * subject’s schema for compatibility.
      */
-    boolean checkCompatibility(String subject, int version, String schema) throws SchemaException;
+    boolean checkCompatibility(String subject, String schema) throws SchemaException;
 
     void configure(Map<String, Object> configs);
 }

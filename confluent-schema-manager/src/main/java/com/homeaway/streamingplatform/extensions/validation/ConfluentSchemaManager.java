@@ -41,7 +41,7 @@ public class ConfluentSchemaManager implements SchemaManager {
     }
 
     @Override
-    public boolean checkCompatibility(String subject, int version, String schema) throws SchemaException {
+    public boolean checkCompatibility(String subject, String schema) throws SchemaException {
         org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
         try {
             return schemaRegistryClient.testCompatibility(subject, avroSchema);
