@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kafka-infra-provider</artifactId>
-    <name>Stream Registry Kafka Infra Provider</name>
+    <name>${project.groupId}:${project.artifactId}</name>
 
     <dependencies>
 
