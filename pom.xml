@@ -13,6 +13,7 @@
     </modules>
 
     <description>Stream Registry Parent POM</description>
+    <url>https://homeaway.github.io/stream-registry/</url>
 
     <developers>
         <developer>
