@@ -25,8 +25,6 @@ import lombok.NonNull;
 @Data
 public class SchemaManagerConfig {
 
-    public static final String SCHEMA_REGISTRY_URL = "schema.registry.url";
-
     @Valid
     @NonNull
     String className;

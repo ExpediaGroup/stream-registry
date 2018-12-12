@@ -110,12 +110,12 @@ public class StreamResource {
             @ApiResponse(code = 200, message = "Compatibility check succeeded"),
             @ApiResponse(code = 400, message = "Compatibility check failed!"),
             @ApiResponse(code = 500, message = "Error occurred while validating schemas") })
-    @Path("/{streamName}/{streamType}/compatibility")
+    @Path("/{streamName}/{schemaType}/compatibility")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
     public Response validateStreamCompatibility(@ApiParam(value = "stream entity", required = true) Stream stream,
                                                 @ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName,
-                                                @ApiParam(value = "stream type", allowableValues = "default", required = true) @PathParam("streamType") String streamType) {
+                                                @ApiParam(value = "schema type", allowableValues = "default", required = true) @PathParam("schemaType") String schemaType) {
 
         if (!streamName.equals(stream.getName())) {
             return Response.status(Response.Status.BAD_REQUEST)

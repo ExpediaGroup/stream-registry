@@ -15,7 +15,7 @@
  */
 package com.homeaway.streamingplatform;
 
-import static com.homeaway.streamingplatform.configuration.SchemaManagerConfig.SCHEMA_REGISTRY_URL;
+import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
 import java.util.HashMap;
@@ -241,7 +241,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                 "schema registrar class must be defined");
 
         Preconditions.checkState(schemaManagerConfig.getProperties() != null
-                && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL),
+                && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
                 "schemaManagerConfig properties must define schema.registry.url");
         try {
             SchemaManager schemaManager = Utils.newInstance(schemaRegistrarClass, SchemaManager.class);

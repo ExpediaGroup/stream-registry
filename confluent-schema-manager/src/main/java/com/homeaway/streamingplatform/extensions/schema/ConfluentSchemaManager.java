@@ -3,8 +3,6 @@ package com.homeaway.streamingplatform.extensions.schema;
 import com.google.common.base.Preconditions;
 import com.homeaway.streamingplatform.exceptions.SchemaException;
 import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
-import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
-import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
@@ -13,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.homeaway.streamingplatform.configuration.SchemaManagerConfig.SCHEMA_REGISTRY_URL;
+import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
 @Slf4j
 public class ConfluentSchemaManager implements SchemaManager {
@@ -56,8 +54,8 @@ public class ConfluentSchemaManager implements SchemaManager {
 
     @Override
     public void configure(Map<String, Object> configs) {
-        Preconditions.checkState(configs.containsKey(SCHEMA_REGISTRY_URL));
-        String schemaRegistryUrl = (String) configs.get(SCHEMA_REGISTRY_URL);
+        Preconditions.checkState(configs.containsKey(SCHEMA_REGISTRY_URL_CONFIG));
+        String schemaRegistryUrl = (String) configs.get(SCHEMA_REGISTRY_URL_CONFIG);
 
         schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
     }
