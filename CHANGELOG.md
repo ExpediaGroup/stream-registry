@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Specified `deploy` goal in maven-release-plugin
 - Fixed "site breaking release process" (#47)
 - Fixed ossrh release requirements  (#50)
+- DummyForJavaDoc.java in assembly module to generate javadoc (#51)
 
 ## [0.3.0] - 20181211
 ### Added
