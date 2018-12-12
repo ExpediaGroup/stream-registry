@@ -23,7 +23,7 @@ import lombok.Data;
 public class SchemaReference {
 
     private String subject;
-    private long id;
-    private long version;
+    private int id;
+    private int version;
 
 }

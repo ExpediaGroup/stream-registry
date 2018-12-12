@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import javax.ws.rs.InternalServerErrorException;
 
+import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -128,9 +129,14 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
 
         // register schemas
         String keySubject = stream.getName() + "-key";
-        schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
+        SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
+        stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
+        stream.getLatestKeySchema().setVersion(keyReference.getVersion());
+
         String valueSubject = stream.getName() + "-value";
-        schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
+        SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
+        stream.getLatestValueSchema().setId(String.valueOf(valueReference.getId()));
+        stream.getLatestValueSchema().setVersion(valueReference.getVersion());
 
         Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());
         try {

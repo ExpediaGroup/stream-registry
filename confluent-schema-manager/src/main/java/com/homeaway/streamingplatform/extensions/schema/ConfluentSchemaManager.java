@@ -24,8 +24,8 @@ public class ConfluentSchemaManager implements SchemaManager {
 
         SchemaReference schemaReference;
         try {
-            long id = schemaRegistryClient.register(subject, avroSchema);
-            long version = schemaRegistryClient.getLatestSchemaMetadata(subject).getVersion();
+            int id = schemaRegistryClient.register(subject, avroSchema);
+            int version = schemaRegistryClient.getLatestSchemaMetadata(subject).getVersion();
             schemaReference = new SchemaReference(subject, id, version);
         } catch (IOException e) {
             log.error("caught an IOException while registering a new schema for subject '{}'", subject);
