@@ -101,7 +101,7 @@
         <spotless.pluginVersion>1.15.0</spotless.pluginVersion>
         <dependency.pluginVersion>3.1.1</dependency.pluginVersion>
         <deploy.pluginVersion>3.0.0-M1</deploy.pluginVersion>
-        <release.pluginVersion>2.5.2</release.pluginVersion>
+        <release.pluginVersion>2.5.3</release.pluginVersion>
         <mavenCompiler.pluginVersion>3.6.1</mavenCompiler.pluginVersion>
         <!-- TODO can we remove one of these surefire versions ? -->
         <surefire.pluginVersion>2.20.1</surefire.pluginVersion>
@@ -505,8 +505,11 @@
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${release.pluginVersion}</version>
-                    <!-- to ensure we only deploy during release:perform -->
                     <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <releaseProfiles>signed</releaseProfiles>
+                        <!-- to ensure we only deploy during release:perform -->
                         <goals>deploy</goals>
                     </configuration>
                 </plugin>
