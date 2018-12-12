@@ -40,7 +40,7 @@ public class StreamRegistryConfiguration extends Configuration {
     StreamValidatorConfig streamValidatorConfig;
 
     @Valid
-    SchemaRegistrarConfig schemaRegistrarConfig;
+    SchemaManagerConfig schemaManagerConfig;
 
     @Valid
     @NotNull

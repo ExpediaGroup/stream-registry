@@ -10,6 +10,7 @@
         <module>kafka-infra-provider</module>
         <module>core</module>
         <module>assembly</module>
+        <module>confluent-schema-manager</module>
     </modules>
 
     <description>Stream Registry Parent POM</description>

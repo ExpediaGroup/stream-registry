@@ -15,15 +15,6 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
-import java.util.*;
-
-import javax.ws.rs.InternalServerErrorException;
-
-import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.kafka.clients.producer.ProducerConfig;
-
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
@@ -36,22 +27,33 @@ import com.homeaway.streamingplatform.db.dao.StreamDao;
 import com.homeaway.streamingplatform.dto.AvroToJsonDTO;
 import com.homeaway.streamingplatform.dto.JsonToAvroDTO;
 import com.homeaway.streamingplatform.exceptions.InvalidStreamException;
-import com.homeaway.streamingplatform.exceptions.SchemaRegistrationException;
+import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
-import com.homeaway.streamingplatform.extensions.validation.SchemaRegistrar;
+import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.model.Tags;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.kafka.clients.producer.ProducerConfig;
+
+import javax.ws.rs.InternalServerErrorException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 
 @Slf4j
 public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValidator {
 
     private StreamValidator streamValidator;
-    private SchemaRegistrar schemaRegistrar;
+    private SchemaManager schemaManager;
 
     public StreamDaoImpl(ManagedKafkaProducer managedKafkaProducer,
                          ManagedKStreams kStreams,
@@ -60,10 +62,10 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
                          InfraManager infraManager,
                          KafkaManager kafkaManager,
                          StreamValidator validator,
-                         SchemaRegistrar schemaRegistrar) {
+                         SchemaManager schemaManager) {
         super(managedKafkaProducer, kStreams, env, regionDao, infraManager, kafkaManager);
         this.streamValidator = validator;
-        this.schemaRegistrar = schemaRegistrar;
+        this.schemaManager = schemaManager;
     }
 
     // TODO - This stream validation pattern needs to be reimplemented
@@ -72,10 +74,6 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         try {
             if (streamValidator != null && !streamValidator.isStreamValid(stream)) {
                 throw new InvalidStreamException(stream, streamValidator.getValidationAssertion());
-            }
-
-            if (schemaRegistrar != null && !schemaRegistrar.isSchemaValid(stream)) {
-                throw new InvalidStreamException(stream, schemaRegistrar.getValidationAssertion());
             }
 
             if (stream.getName() == null) {
@@ -125,7 +123,11 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             log.error("Stream '{}' is not valid", stream.getName());
         }
 
-        stream = schemaRegistrar.registerSchema(stream);
+        // register schemas
+        String keySubject = stream.getName() + "-key";
+        schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
+        String valueSubject = stream.getName() + "-value";
+        schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
 
         Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());
         try {
@@ -167,9 +169,9 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         } catch (IllegalArgumentException e) {
             log.error("caught an illegal argument exception");
             throw new IllegalArgumentException(e);
-        } catch (SchemaRegistrationException e) {
+        } catch (SchemaManagerException e) {
             log.error("caught an exception during schema registration", e);
-            throw new SchemaRegistrationException(stream.getName(), e);
+            throw new SchemaManagerException(stream.getName(), e);
         } catch (Exception e) {
             log.error("Error creating new stream", e);
             throw new StreamCreationException(stream.getName());

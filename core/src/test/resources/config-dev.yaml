@@ -8,6 +8,7 @@ streamValidatorConfig:
 schemaRegistrarConfig:
   className: com.homeaway.streamingplatform.extensions.validator.SchemaRegistrarIT$ValidSchemaRegistrar
   properties:
+    schema.registry.url: http://localhost:8081
 
 kafkaStreamsConfig:
   kstreamsProperties:

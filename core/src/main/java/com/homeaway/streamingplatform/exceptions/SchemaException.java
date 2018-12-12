@@ -15,25 +15,29 @@
  */
 package com.homeaway.streamingplatform.exceptions;
 
-public class SchemaRegistrationException extends RuntimeException {
+public class SchemaException extends RuntimeException {
 
     private String streamName;
 
-    public SchemaRegistrationException(String streamName) {
+    public SchemaException(String streamName) {
         this.streamName = streamName;
     }
 
-    public SchemaRegistrationException(String streamName, String message) {
+    public SchemaException(Throwable cause) {
+        super(cause);
+    }
+
+    public SchemaException(String streamName, String message) {
         super(message);
         this.streamName = streamName;
     }
 
-    public SchemaRegistrationException(String streamName, String message, Throwable cause) {
+    public SchemaException(String streamName, String message, Throwable cause) {
         super(message, cause);
         this.streamName = streamName;
     }
 
-    public SchemaRegistrationException(String streamName, Throwable cause) {
+    public SchemaException(String streamName, Throwable cause) {
         super(cause);
         this.streamName = streamName;
     }

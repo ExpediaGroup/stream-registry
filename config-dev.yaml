@@ -11,6 +11,11 @@ env: test
 streamValidatorConfig:
   className: com.homeaway.streamingplatform.extensions.validation.EmptyStreamValidator
 
+schemaManagerConfig:
+  className:
+  properties:
+    schema.registry.url: http://localhost:8081
+
 kafkaProducerConfig:
   kafkaProducerProperties:
     bootstrap.servers: localhost:9092

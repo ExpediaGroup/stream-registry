@@ -13,35 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.extensions.validation;
+package com.homeaway.streamingplatform.extensions.schema;
+
+import com.homeaway.streamingplatform.exceptions.SchemaException;
+import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
-
-import com.homeaway.streamingplatform.exceptions.SchemaRegistrationException;
-import com.homeaway.streamingplatform.model.Stream;
-
 @SuppressWarnings("unused")
 @Slf4j
-public class EmptySchemaRegistrar implements SchemaRegistrar {
+public class EmptySchemaManager implements SchemaManager {
 
     @Override
-    public boolean isSchemaValid(Stream stream) {
+    public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
+        return null;
+    }
+
+    @Override
+    public boolean checkCompatibility(String subject, int version, String schema) throws SchemaException {
         return true;
     }
 
     @Override
-    public Stream registerSchema(Stream stream) throws SchemaRegistrationException {
-        return stream;
-    }
-
-    @Override
-    public String getValidationAssertion() {
-        return "empty validation assertion";
-    }
-
-    @Override
-    public void configure(Map<String, ?> configs) {
+    public void configure(Map<String, Object> configs) {
     }
 }

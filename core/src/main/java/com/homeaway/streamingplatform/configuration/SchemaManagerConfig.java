@@ -15,20 +15,21 @@
  */
 package com.homeaway.streamingplatform.configuration;
 
-import java.util.Map;
-
-import javax.validation.Valid;
-
 import lombok.Data;
 import lombok.NonNull;
 
+import javax.validation.Valid;
+import java.util.Map;
+
 @Data
-public class SchemaRegistrarConfig {
+public class SchemaManagerConfig {
+
+    public static final String SCHEMA_REGISTRY_URL = "schema.registry.url";
 
     @Valid
     @NonNull
     String className;
 
-    Map<String, ?> properties;
+    Map<String, Object> properties;
 
 }
