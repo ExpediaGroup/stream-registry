@@ -15,11 +15,12 @@
  */
 package com.homeaway.streamingplatform.configuration;
 
-import lombok.Data;
-import lombok.NonNull;
+import java.util.Map;
 
 import javax.validation.Valid;
-import java.util.Map;
+
+import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class SchemaManagerConfig {

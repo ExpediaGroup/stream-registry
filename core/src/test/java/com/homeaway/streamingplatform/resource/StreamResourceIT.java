@@ -340,4 +340,12 @@ public class StreamResourceIT extends BaseResourceIT {
 
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
+
+    @Test
+    public void test_validate_stream_compatibility_valid() {
+        String streamName = "junit-check-stream-compatibility-valid";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        streamResource.validateStreamCompatibility(stream, streamName, "default");
+    }
 }

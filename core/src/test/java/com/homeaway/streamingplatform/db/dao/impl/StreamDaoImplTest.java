@@ -15,6 +15,7 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,11 +25,16 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.homeaway.digitalplatform.streamregistry.*;
+import com.homeaway.digitalplatform.streamregistry.AvroStream;
+import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+import com.homeaway.digitalplatform.streamregistry.OperationType;
+import com.homeaway.digitalplatform.streamregistry.Schema;
+import com.homeaway.digitalplatform.streamregistry.Tags;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
-import com.homeaway.streamingplatform.extensions.validation.SchemaRegistrar;
+import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
+import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.provider.InfraManager;
@@ -47,7 +53,7 @@ public class StreamDaoImplTest {
     private InfraManager infraManager = mock(InfraManager.class);
     private KafkaManager kafkaManager = mock(KafkaManager.class);
     private StreamValidator streamValidator = mock(StreamValidator.class);
-    private SchemaRegistrar schemaRegistrar = mock(SchemaRegistrar.class);
+    private SchemaManager schemaRegistrar = mock(SchemaManager.class);
 
     private StreamDao streamDao;
 
@@ -64,8 +70,8 @@ public class StreamDaoImplTest {
         Stream newStream = buildTestStream();
         newStream.setPartitions(newStream.getPartitions() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
-        when(schemaRegistrar.isSchemaValid(newStream)).thenReturn(true);
-        when(schemaRegistrar.registerSchema(newStream)).thenReturn(newStream);
+        when(schemaRegistrar.checkCompatibility(anyString(), anyString())).thenReturn(true);
+        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0L, 0L));
 
         streamDao.upsertStream(newStream);
     }
@@ -78,8 +84,8 @@ public class StreamDaoImplTest {
         Stream newStream = buildTestStream();
         newStream.setReplicationFactor(newStream.getReplicationFactor() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
-        when(schemaRegistrar.isSchemaValid(newStream)).thenReturn(true);
-        when(schemaRegistrar.registerSchema(newStream)).thenReturn(newStream);
+        when(schemaRegistrar.checkCompatibility(anyString(), anyString())).thenReturn(true);
+        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0L, 0L));
 
         streamDao.upsertStream(newStream);
     }

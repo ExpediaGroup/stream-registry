@@ -12,7 +12,7 @@ streamValidatorConfig:
   className: com.homeaway.streamingplatform.extensions.validation.EmptyStreamValidator
 
 schemaManagerConfig:
-  className:
+  className: com.homeaway.streamingplatform.extensions.schema.ConfluentSchemaManager
   properties:
     schema.registry.url: http://localhost:8081
 

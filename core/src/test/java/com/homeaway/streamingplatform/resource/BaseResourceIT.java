@@ -60,9 +60,17 @@ import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
 import com.homeaway.streamingplatform.configuration.KafkaStreamsConfig;
 import com.homeaway.streamingplatform.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamingplatform.configuration.TopicsConfig;
-import com.homeaway.streamingplatform.db.dao.*;
-import com.homeaway.streamingplatform.db.dao.impl.*;
-import com.homeaway.streamingplatform.extensions.validation.SchemaRegistrar;
+import com.homeaway.streamingplatform.db.dao.AbstractDao;
+import com.homeaway.streamingplatform.db.dao.KafkaManager;
+import com.homeaway.streamingplatform.db.dao.RegionDao;
+import com.homeaway.streamingplatform.db.dao.StreamClientDao;
+import com.homeaway.streamingplatform.db.dao.StreamDao;
+import com.homeaway.streamingplatform.db.dao.impl.ConsumerDaoImpl;
+import com.homeaway.streamingplatform.db.dao.impl.KafkaManagerImpl;
+import com.homeaway.streamingplatform.db.dao.impl.ProducerDaoImpl;
+import com.homeaway.streamingplatform.db.dao.impl.RegionDaoImpl;
+import com.homeaway.streamingplatform.db.dao.impl.StreamDaoImpl;
+import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.extensions.validator.StreamValidatorIT;
 import com.homeaway.streamingplatform.model.Consumer;
@@ -236,10 +244,10 @@ public class BaseResourceIT {
         StreamValidatorIT.mockHttpClientSuccess(client);
 
         StreamValidator streamValidator = StreamRegistryApplication.loadValidator(configuration, client, regionDao);
-        SchemaRegistrar schemaRegistrar = StreamRegistryApplication.loadSchemaRegistrar(configuration);
+        SchemaManager schemaManager = StreamRegistryApplication.loadSchemaRegistrar(configuration);
 
         StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
-            infraManager, kafkaManager, streamValidator, schemaRegistrar);
+            infraManager, kafkaManager, streamValidator, schemaManager);
         StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
             infraManager, kafkaManager);
         StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,

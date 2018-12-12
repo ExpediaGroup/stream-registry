@@ -13,35 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.extensions.validator;
+package com.homeaway.streamingplatform.extensions.schema;
 
 import java.util.Map;
 
-import com.homeaway.streamingplatform.exceptions.SchemaRegistrationException;
-import com.homeaway.streamingplatform.extensions.validation.SchemaRegistrar;
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.exceptions.SchemaException;
+import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 
-public class SchemaRegistrarIT {
+public class SchemaManagerIT {
 
-    public static class ValidSchemaRegistrar implements SchemaRegistrar {
+    public static class ValidSchemaManager implements SchemaManager {
+
 
         @Override
-        public boolean isSchemaValid(Stream stream) {
+        public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
+            return new SchemaReference("subject", 0L, 0L);
+        }
+
+        @Override
+        public boolean checkCompatibility(String subject, String schema) throws SchemaException {
             return true;
         }
 
         @Override
-        public Stream registerSchema(Stream stream) throws SchemaRegistrationException {
-            return stream;
-        }
-
-        @Override
-        public String getValidationAssertion() {
-            return "mock validation assertion";
-        }
-
-        @Override
-        public void configure(Map<String, ?> configs) {
+        public void configure(Map<String, Object> configs) {
 
         }
     }

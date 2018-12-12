@@ -15,11 +15,12 @@
  */
 package com.homeaway.streamingplatform.extensions.schema;
 
-import com.homeaway.streamingplatform.exceptions.SchemaException;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
+import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
+import com.homeaway.streamingplatform.exceptions.SchemaException;
+import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 
 @SuppressWarnings("unused")
 @Slf4j

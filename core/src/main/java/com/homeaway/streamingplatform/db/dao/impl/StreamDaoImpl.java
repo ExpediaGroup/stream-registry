@@ -15,6 +15,20 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+
+import javax.ws.rs.InternalServerErrorException;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.kafka.clients.producer.ProducerConfig;
+
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
@@ -37,17 +51,6 @@ import com.homeaway.streamingplatform.model.Tags;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.kafka.clients.producer.ProducerConfig;
-
-import javax.ws.rs.InternalServerErrorException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
 
 @Slf4j
 public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValidator {

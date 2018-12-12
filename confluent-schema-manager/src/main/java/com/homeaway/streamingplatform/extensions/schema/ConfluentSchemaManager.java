@@ -1,4 +1,4 @@
-package com.homeaway.streamingplatform.extensions.validation;
+package com.homeaway.streamingplatform.extensions.schema;
 
 import com.google.common.base.Preconditions;
 import com.homeaway.streamingplatform.exceptions.SchemaException;

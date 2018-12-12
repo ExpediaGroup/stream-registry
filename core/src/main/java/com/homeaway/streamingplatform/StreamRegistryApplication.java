@@ -15,12 +15,40 @@
  */
 package com.homeaway.streamingplatform;
 
+import static com.homeaway.streamingplatform.configuration.SchemaManagerConfig.SCHEMA_REGISTRY_URL;
+import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.ws.rs.client.Client;
+
+import lombok.extern.slf4j.Slf4j;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlets.PingServlet;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.base.Preconditions;
+
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.dropwizard.Application;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.utils.Utils;
+import org.apache.kafka.streams.state.RocksDBConfigSetter;
+import org.rocksdb.BlockBasedTableConfig;
+import org.rocksdb.Options;
+
 import com.homeaway.streamingplatform.configuration.InfraManagerConfig;
 import com.homeaway.streamingplatform.configuration.SchemaManagerConfig;
 import com.homeaway.streamingplatform.configuration.StreamRegistryConfiguration;
@@ -46,29 +74,6 @@ import com.homeaway.streamingplatform.resource.StreamResource;
 import com.homeaway.streamingplatform.streams.ManagedInfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
-import io.dropwizard.Application;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
-import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import io.federecio.dropwizard.swagger.SwaggerBundle;
-import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.utils.Utils;
-import org.apache.kafka.streams.state.RocksDBConfigSetter;
-import org.rocksdb.BlockBasedTableConfig;
-import org.rocksdb.Options;
-
-import javax.ws.rs.client.Client;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import static com.homeaway.streamingplatform.configuration.SchemaManagerConfig.SCHEMA_REGISTRY_URL;
-import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
 /**
  * This is the main DropWizard application that bootstraps DropWizard, wires up the app,

@@ -5,8 +5,8 @@ streamValidatorConfig:
   properties:
     validator.invalid-id: 13
 
-schemaRegistrarConfig:
-  className: com.homeaway.streamingplatform.extensions.validator.SchemaRegistrarIT$ValidSchemaRegistrar
+schemaManagerConfig:
+  className: com.homeaway.streamingplatform.extensions.schema.SchemaManagerIT$ValidSchemaManager
   properties:
     schema.registry.url: http://localhost:8081
 
