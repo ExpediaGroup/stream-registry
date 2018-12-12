@@ -49,6 +49,10 @@
             <groupId>com.homeaway.streamingplatform</groupId>
             <artifactId>kafka-infra-provider</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.homeaway.streamingplatform</groupId>
+            <artifactId>confluent-schema-manager</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
