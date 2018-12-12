@@ -27,7 +27,7 @@ public class SchemaManagerIT {
 
         @Override
         public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
-            return new SchemaReference("subject", 0L, 0L);
+            return new SchemaReference("subject", 0, 0);
         }
 
         @Override

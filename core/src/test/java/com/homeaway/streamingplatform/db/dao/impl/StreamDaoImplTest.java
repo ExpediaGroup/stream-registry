@@ -71,7 +71,7 @@ public class StreamDaoImplTest {
         newStream.setPartitions(newStream.getPartitions() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
         when(schemaRegistrar.checkCompatibility(anyString(), anyString())).thenReturn(true);
-        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0L, 0L));
+        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0, 0));
 
         streamDao.upsertStream(newStream);
     }
@@ -85,7 +85,7 @@ public class StreamDaoImplTest {
         newStream.setReplicationFactor(newStream.getReplicationFactor() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
         when(schemaRegistrar.checkCompatibility(anyString(), anyString())).thenReturn(true);
-        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0L, 0L));
+        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0, 0));
 
         streamDao.upsertStream(newStream);
     }

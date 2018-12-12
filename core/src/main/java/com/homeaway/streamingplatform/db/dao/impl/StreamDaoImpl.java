@@ -24,7 +24,6 @@ import java.util.Properties;
 
 import javax.ws.rs.InternalServerErrorException;
 
-import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,6 +45,7 @@ import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
+import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.model.Tags;
