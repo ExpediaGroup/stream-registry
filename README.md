@@ -3,38 +3,76 @@
 [build-icon]: https://travis-ci.org/homeaway/stream-registry.svg?branch=master
 [build-link]: https://travis-ci.org/homeaway/stream-registry
 
-Required Local Environment
----
+<center><img src="docs/docs/architecture/SR-logo.svg" alt="StreamRegistryLogo" style="width:50%;"/></center>
+
+# Stream Registry
+
+A stream-registry is what its name implies: it is a registry of streams. As enterprises increasingly scale in size,
+the need to organize and develop around streams of data becomes paramount.  Synchronous calls are attracted to the edge,
+and a variety of synchronous and asynchronous calls permeate the enterprise.  The need for a declarative, central
+authority for discovery and orchestration of stream management emerges.  This is what a stream registry provides.
+In much the same way that DNS provides a name translation service for an ip address, by way of analogy, a
+stream-registry provides a “metadata service” for streams. By centralizing stream metadata, a stream translation service
+for producer and/or consumer stream coördinates becomes possible. This centralized, yet democratized, stream metadata
+function thus streamlines operational complexity via stream lifecycle management, stream discovery,
+stream availability and resiliency.
+
+## Why Stream Registry? ##
+
+We believe that as the change to business requirements accelerate, time to market pressures increase,
+competitive measures grow, migrations to cloud and different platforms are required, and so on, systems will
+increasingly need to become more reactive and dynamic in nature.
+
+<p align="center">The issue of <em>state</em> arises.</p>
+
+We see many systems adopting _event-driven-architectures_ to facilitate the changing business needs in these high stakes
+environments.  We hypothesize there is an emerging need for a centralized "stream metadata" service in the
+industry to help streamline the complexities and operations of deploying stream platforms that serve as a
+distributed federated nervous system in the enterprise.
+
+## What is Stream Registry?
+Put simply, Stream Registry is a centralized service for stream metadata.
+
+The stream registry can answer the following question:
+
+1. Who owns the stream?  
+2. Who are the producers and consumers of the stream?  
+3. Management of stream replication across clusters and regions
+4. Management of stream storage for permanent access
+5. Management of stream triggers for legacy stream sources
+
+## Want more info?
+
+See the [architecture/northstar documentation](https://homeaway.github.io/stream-registry/).
+
+# Building locally
+## Required Local Environment
 The local 'dev' version of stream registry requires a running version of Apache Kafka
 and Confluent's Schema Registry running locally on port 9092 and 8081 respectively.
 
-A quick version of this is to download, install and start
+To do this, download, install and start
 [Confluent CLI][confluent-cli-doc].
 
 [confluent-cli-doc]: https://docs.confluent.io/current/cli/index.html.
 
-Build stream-registry
----
+## Build stream-registry
 ```
 make build
 ```
 
-Start stream-registry
----
+## Start stream-registry
 ```
 make run
 ```
 
 Check that your application is running at `http://localhost:8080/swagger`
 
-Run Unit Tests
----
+## Run Unit Tests
 ```
 make tests
 ```
 
-Contributors
----
+## Contributors
 Special thanks to the following for making stream-registry possible at HomeAway and beyond!
 
 <!-- Contributors START
