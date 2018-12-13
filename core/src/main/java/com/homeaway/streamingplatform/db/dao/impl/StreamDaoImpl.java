@@ -41,7 +41,6 @@ import com.homeaway.streamingplatform.db.dao.StreamDao;
 import com.homeaway.streamingplatform.dto.AvroToJsonDTO;
 import com.homeaway.streamingplatform.dto.JsonToAvroDTO;
 import com.homeaway.streamingplatform.exceptions.InvalidStreamException;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
@@ -144,7 +143,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             AvroStreamKey key;
             AvroStream avroStream =
                     JsonToAvroDTO.convertJsonToAvro(stream, OperationType.UPSERT);
-            
+
             Optional<AvroStream> value = keyValue.getValue();
             if (value.isPresent()) {
                 // ensure valid partition counts and replication factors are provided

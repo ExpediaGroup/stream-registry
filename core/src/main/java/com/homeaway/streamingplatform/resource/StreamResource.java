@@ -46,6 +46,7 @@ import io.swagger.annotations.ApiResponses;
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
 import com.homeaway.streamingplatform.exceptions.InvalidStreamException;
+import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
 import com.homeaway.streamingplatform.model.Consumer;
 import com.homeaway.streamingplatform.model.Producer;
@@ -90,7 +91,7 @@ public class StreamResource {
         try {
             streamDao.upsertStream(stream);
             return Response.status(Response.Status.ACCEPTED).build();
-        } catch (BadRequestException | InvalidStreamException | IllegalArgumentException se) {
+        } catch (StreamCreationException | BadRequestException | InvalidStreamException | IllegalArgumentException se) {
             log.error("Error creating stream={}", stream.getName(), se);
             return Response.status(Response.Status.BAD_REQUEST)
                 .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), se.getMessage()))

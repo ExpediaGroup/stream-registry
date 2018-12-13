@@ -33,6 +33,7 @@ import com.homeaway.digitalplatform.streamregistry.Tags;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
+import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
@@ -62,7 +63,7 @@ public class StreamDaoImplTest {
         streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, kafkaManager, streamValidator, schemaRegistrar);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = StreamCreationException.class)
     public void testUpsertStreamChangePartitionCountFails() {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
@@ -76,7 +77,7 @@ public class StreamDaoImplTest {
         streamDao.upsertStream(newStream);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = StreamCreationException.class)
     public void testUpsertStreamChangeReplicationFactorFails() {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
