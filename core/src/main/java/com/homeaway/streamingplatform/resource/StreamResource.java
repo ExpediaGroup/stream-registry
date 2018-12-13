@@ -88,6 +88,7 @@ public class StreamResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
     public Response upsertStream(@ApiParam(value = "stream entity", required = true) Stream stream) {
+        // TODO: streamName path param isn't used, we should validate JSON stream matches stream name
         try {
             streamDao.upsertStream(stream);
             return Response.status(Response.Status.ACCEPTED).build();

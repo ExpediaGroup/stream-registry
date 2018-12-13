@@ -24,7 +24,6 @@ public class SchemaManagerIT {
 
     public static class ValidSchemaManager implements SchemaManager {
 
-
         @Override
         public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
             return new SchemaReference("subject", 0, 0);

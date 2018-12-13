@@ -15,13 +15,23 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import com.homeaway.digitalplatform.streamregistry.ClusterKey;
+import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
+import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +51,7 @@ import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import org.mockito.ArgumentCaptor;
 
 public class StreamDaoImplTest {
 
@@ -85,9 +96,56 @@ public class StreamDaoImplTest {
         Stream newStream = buildTestStream();
         newStream.setReplicationFactor(newStream.getReplicationFactor() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
-        when(schemaRegistrar.checkCompatibility(anyString(), anyString())).thenReturn(true);
         when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0, 0));
 
+        streamDao.upsertStream(newStream);
+    }
+
+    @Test
+    public void testUpsertStreamPushesUpdatedSchemaMetadata() {
+        AvroStream originalStream = buildTestAvroStream();
+        when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
+
+        Stream newStream = buildTestStream();
+        SchemaReference newKeySchemaReference = new SchemaReference(TEST_STREAM_KEY.getStreamName() + "-key", 2, 3);
+        when(schemaRegistrar.registerSchema(newStream.getLatestKeySchema().getId(), newStream.getLatestKeySchema().getSchemaString()))
+                .thenReturn(newKeySchemaReference);
+
+        SchemaReference newValueSchemaReference = new SchemaReference(TEST_STREAM_KEY.getStreamName() + "-value", 4, 5);
+        when(schemaRegistrar.registerSchema(newStream.getLatestValueSchema().getId(), newStream.getLatestValueSchema().getSchemaString()))
+                .thenReturn(newValueSchemaReference);
+
+        when(streamValidator.isStreamValid(newStream)).thenReturn(true);
+        Map<String, String> clusterProperties = new HashMap<>();
+        clusterProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        clusterProperties.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "localhost:2181");
+        when(infraManager.getClusterByKey(any(ClusterKey.class))).thenReturn(Optional.of(new ClusterValue(clusterProperties)));
+
+        streamDao.upsertStream(newStream);
+
+        ArgumentCaptor<AvroStream> avroStreamArgumentCaptor = ArgumentCaptor.forClass(AvroStream.class);
+        verify(managedKafkaProducer).log(any(AvroStreamKey.class), avroStreamArgumentCaptor.capture());
+
+        assertEquals("2", avroStreamArgumentCaptor.getValue().getLatestKeySchema().getId());
+        assertEquals((long) 3, (long) avroStreamArgumentCaptor.getValue().getLatestKeySchema().getSubjectId());
+        assertEquals("4", avroStreamArgumentCaptor.getValue().getLatestValueSchema().getId());
+        assertEquals((long) 5, (long) avroStreamArgumentCaptor.getValue().getLatestValueSchema().getSubjectId());
+    }
+
+    @Test(expected = SchemaManagerException.class)
+    public void testIncompatibleSchemaFails() {
+        AvroStream originalStream = buildTestAvroStream();
+        when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
+
+        Stream newStream = buildTestStream();
+        SchemaReference newKeySchemaReference = new SchemaReference(TEST_STREAM_KEY.getStreamName() + "-key", 2, 3);
+        when(schemaRegistrar.registerSchema(newStream.getLatestKeySchema().getId(), newStream.getLatestKeySchema().getSchemaString()))
+                .thenReturn(newKeySchemaReference);
+
+        when(schemaRegistrar.registerSchema(newStream.getLatestValueSchema().getId(), newStream.getLatestValueSchema().getSchemaString()))
+                .thenThrow(new SchemaManagerException("error"));
+
+        when(streamValidator.isStreamValid(newStream)).thenReturn(true);
         streamDao.upsertStream(newStream);
     }
 
@@ -99,8 +157,8 @@ public class StreamDaoImplTest {
                 .setPartitions(1)
                 .setReplicationFactor(1)
                 .setOperationType(OperationType.UPSERT)
-                .setLatestKeySchema(new Schema("1", 1, "", null, null))
-                .setLatestValueSchema(new Schema("2", 1, "", null, null))
+                .setLatestKeySchema(new Schema(TEST_STREAM_KEY.getStreamName() + "-key", 1, "keySchemaString", null, null))
+                .setLatestValueSchema(new Schema(TEST_STREAM_KEY.getStreamName() + "-value", 1, "valueSchemaString", null, null))
                 .setVpcList(Collections.singletonList("us-aus-1-dts"))
                 .build();
     }
