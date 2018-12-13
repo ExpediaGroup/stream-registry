@@ -175,9 +175,6 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             verifyAndUpsertTopics(stream);
             kafkaProducer.log(key, avroStream);
             log.info("Stream upserted for {}", stream.getName());
-        } catch (IllegalArgumentException e) {
-            log.error("caught an illegal argument exception");
-            throw new IllegalArgumentException(e);
         } catch (SchemaManagerException e) {
             log.error("caught an exception during schema registration", e);
             throw new SchemaManagerException(stream.getName(), e);

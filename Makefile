@@ -1,4 +1,4 @@
-# run 'STREAM_REGISTRY_DEBUG_SUSPEND make debug' in order to enable suspend
+# run 'STREAM_REGISTRY_DEBUG_SUSPEND=y make debug' in order to enable suspend
 STREAM_REGISTRY_DEBUG_SUSPEND ?= n
 
 .PHONY: clean tests build run debug all just-deploy deploy ci-setup ci-deploy
