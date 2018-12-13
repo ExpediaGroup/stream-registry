@@ -6,8 +6,9 @@ streamValidatorConfig:
     validator.invalid-id: 13
 
 schemaManagerConfig:
-  className: com.homeaway.streamingplatform.extensions.schema.SchemaManagerIT$ValidSchemaManager
+  className: com.homeaway.streamingplatform.extensions.schema.ConfluentSchemaManager
   properties:
+    # this will get overwritten by local schema.registry.url as integration tests run
     schema.registry.url: http://localhost:8081
 
 kafkaStreamsConfig:

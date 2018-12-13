@@ -27,22 +27,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
-import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+import com.homeaway.digitalplatform.streamregistry.ClusterKey;
+import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
+import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
+import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
@@ -51,7 +52,6 @@ import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
-import org.mockito.ArgumentCaptor;
 
 public class StreamDaoImplTest {
 
