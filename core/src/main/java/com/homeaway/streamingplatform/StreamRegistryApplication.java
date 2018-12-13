@@ -254,7 +254,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     public static class CustomRocksDBConfig implements RocksDBConfigSetter {
-
         @Override
         public void setConfig(final String storeName, final Options options, final Map<String, Object> configs) {
             BlockBasedTableConfig tableConfig = new org.rocksdb.BlockBasedTableConfig();

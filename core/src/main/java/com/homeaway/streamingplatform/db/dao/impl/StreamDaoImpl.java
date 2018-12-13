@@ -127,6 +127,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             log.error("Stream '{}' is not valid", stream.getName());
         }
 
+        // TODO: modify to support multiple schema 'types' per stream (Issue #55)
         // register schemas
         String keySubject = stream.getName() + "-key";
         SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
@@ -175,9 +176,6 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             verifyAndUpsertTopics(stream);
             kafkaProducer.log(key, avroStream);
             log.info("Stream upserted for {}", stream.getName());
-        } catch (SchemaManagerException e) {
-            log.error("caught an exception during schema registration", e);
-            throw new SchemaManagerException(stream.getName(), e);
         } catch (Exception e) {
             log.error("Error creating new stream", e);
             throw new StreamCreationException(stream.getName());
