@@ -3,9 +3,9 @@
 [build-icon]: https://travis-ci.org/homeaway/stream-registry.svg?branch=master
 [build-link]: https://travis-ci.org/homeaway/stream-registry
 
-<center><img src="docs/docs/architecture/SR-logo.svg" alt="StreamRegistryLogo" style="width:50%;"/></center>
-
-# Stream Registry
+<center>
+<img src="docs/docs/architecture/SR-logo.svg" alt="StreamRegistryLogo" style="max-width:50%;"/>
+</center>
 
 A stream-registry is what its name implies: it is a registry of streams. As enterprises increasingly scale in size,
 the need to organize and develop around streams of data becomes paramount.  Synchronous calls are attracted to the edge,
