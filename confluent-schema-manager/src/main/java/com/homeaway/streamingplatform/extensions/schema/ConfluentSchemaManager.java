@@ -27,11 +27,8 @@ public class ConfluentSchemaManager implements SchemaManager {
             int id = schemaRegistryClient.register(subject, avroSchema);
             int version = schemaRegistryClient.getLatestSchemaMetadata(subject).getVersion();
             schemaReference = new SchemaReference(subject, id, version);
-        } catch (IOException e) {
-            log.error("caught an IOException while registering a new schema for subject '{}'", subject);
-            throw new SchemaManagerException(e);
-        } catch (RestClientException e) {
-            log.error("caught a RestClientException while registering a new schema for subject '{}'", subject);
+        } catch (IOException | RestClientException e) {
+            log.error("caught an exception while registering a new schema for subject '{}'", subject);
             throw new SchemaManagerException(e);
         }
 
@@ -43,11 +40,8 @@ public class ConfluentSchemaManager implements SchemaManager {
         org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
         try {
             return schemaRegistryClient.testCompatibility(subject, avroSchema);
-        } catch (IOException e) {
-            log.error("caught an IOException while checking compatibility for subject '{}'", subject);
-            throw new SchemaException(e);
-        } catch (RestClientException e) {
-            log.error("caught a RestClientException while checking compatibility for subject '{}'", subject);
+        } catch (IOException | RestClientException e) {
+            log.error("caught an exception while checking compatibility for subject '{}'", subject);
             throw new SchemaException(e);
         }
     }
