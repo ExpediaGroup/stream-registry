@@ -15,28 +15,128 @@
  */
 package com.homeaway.streamingplatform.extensions.schema;
 
-import java.util.Map;
+import javax.ws.rs.core.Response;
 
-import com.homeaway.streamingplatform.exceptions.SchemaException;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class SchemaManagerIT {
+import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.resource.BaseResourceIT;
+import com.homeaway.streamingplatform.utils.JsonModelBuilder;
 
-    public static class ValidSchemaManager implements SchemaManager {
+public class SchemaManagerIT extends BaseResourceIT {
 
-        @Override
-        public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
-            return new SchemaReference("subject", 0, 0);
-        }
+    @Test
+    public void test_validate_stream_compatibility_new_schema_valid() {
+        // test compatibility with already existing schema
+        String streamName = "junit-check-stream-compatibility-new-schema-valid";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        @Override
-        public boolean checkCompatibility(String subject, String schema) throws SchemaException {
-            return true;
-        }
+        // create stream/register schema
+        streamResource.upsertStream(stream);
 
-        @Override
-        public void configure(Map<String, Object> configs) {
+        // re-check compatibility for same schema (new field with default value)
+        String newSchema = "{\"namespace\":\"com.homeaway\",\"type\":\"record\",\"name\":\"user\",\"fields\":" +
+                "[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"age\",\"type\":\"int\",\"default\":1}]}";
+        stream.getLatestValueSchema().setSchemaString(newSchema);
+        Response response = streamResource.validateStreamCompatibility(stream, streamName, "default");
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
 
-        }
+    @Test
+    public void test_validate_stream_compatibility_new_schema_invalid() {
+        String streamName = "junit-check-stream-compatibility-new-schema-invalid";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        // create stream/register schema
+        streamResource.upsertStream(stream);
+
+        stream.getLatestValueSchema().setSchemaString(stream.getLatestKeySchema().getSchemaString());
+        Response response = streamResource.validateStreamCompatibility(stream, streamName, "default");
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void test_validate_stream_compatibility_bad_schema() {
+        // provided schema string is malformed
+        String streamName = "junit-check-stream-compatibility-bad-schema-failure";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        String schemaString = "this is not valid json";
+        stream.getLatestValueSchema().setSchemaString(schemaString);
+        Response response = streamResource.validateStreamCompatibility(stream, streamName, "default");
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void test_register_stream_valid() throws InterruptedException {
+        // happy path
+        String streamName = "junit-check-register-stream-valid";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        // create stream/register schema
+        Response response = streamResource.upsertStream(stream);
+        Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+
+        Thread.sleep(TEST_SLEEP_WAIT_MS);
+
+        response = streamResource.getStream(streamName);
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void test_register_stream_invalid_schema_returns_400() {
+        String streamName = "junit-check-register-stream-invalid-schema";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        // create stream/register schema
+        Response response = streamResource.upsertStream(stream);
+        Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+
+        String schemaString = "this is not valid json";
+        stream.getLatestValueSchema().setSchemaString(schemaString);
+        response = streamResource.upsertStream(stream);
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void test_register_stream_incompatible_schema_returns_400() throws InterruptedException {
+        String streamName = "junit-check-register-stream-incompatible-schema";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        // create stream/register schema
+        Response response = streamResource.upsertStream(stream);
+        Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+
+        Thread.sleep(TEST_SLEEP_WAIT_MS);
+
+        // incompatible schema
+        stream.getLatestValueSchema().setSchemaString(stream.getLatestKeySchema().getSchemaString());
+        response = streamResource.upsertStream(stream);
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void test_validate_stream_compatibility_new_stream_valid() {
+        // happy path
+        String streamName = "junit-check-stream-compatibility-new-stream-valid";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        Response response = streamResource.validateStreamCompatibility(stream, streamName, "default");
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void test_validate_stream_compatibility_same_schema_valid() {
+        // test compatibility with already existing schema
+        String streamName = "junit-check-stream-compatibility-same-schema-valid";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        // create stream/register schema
+        streamResource.upsertStream(stream);
+
+        // re-check compatibility for same schema
+        Response response = streamResource.validateStreamCompatibility(stream, streamName, "default");
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 }
