@@ -1,6 +1,6 @@
 language: java
 
-dist: trusty
+dist: xenial
 
 jdk:
   - oraclejdk8
@@ -15,7 +15,7 @@ deploy:
   provider: script
   # skip_cleanup is to keep the artifacts from the build phase
   skip_cleanup: true
-  script: make just-deploy
+  script: make ci-deploy
 
 notifications:
   email:

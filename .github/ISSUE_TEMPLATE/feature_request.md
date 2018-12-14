@@ -2,18 +2,16 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: enhancement
 assignees: ''
 
 ---
 
-Desired Behavior
-==============================
+# Desired Behavior
 
 Please describe the new behavior stream-registry project should have.
 
-Benefits
-==============================
+# Benefits
 
 Please list the benefits of updating the stream-registry project 
 to have the new behavior. E.g.:
