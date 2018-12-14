@@ -171,7 +171,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         StreamValidator streamValidator = loadValidator(configuration, httpClient, regionDao);
         Preconditions.checkState(streamValidator != null, "streamValidator cannot be null.");
 
-        SchemaManager schemaManager = loadSchemaRegistrar(configuration);
+        SchemaManager schemaManager = loadSchemaManager(configuration);
 
         StreamDao streamDao = new StreamDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
         StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
@@ -231,20 +231,20 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         return null;
     }
 
-    public static SchemaManager loadSchemaRegistrar(StreamRegistryConfiguration configuration) {
+    public static SchemaManager loadSchemaManager(StreamRegistryConfiguration configuration) {
         SchemaManagerConfig schemaManagerConfig = configuration.getSchemaManagerConfig();
 
-        Preconditions.checkNotNull(schemaManagerConfig, "schema registrar config cannot be null");
-        String schemaRegistrarClass = schemaManagerConfig.getClassName();
+        Preconditions.checkNotNull(schemaManagerConfig, "schema manager config cannot be null");
+        String schemaManagerClass = schemaManagerConfig.getClassName();
 
-        Preconditions.checkState(schemaRegistrarClass != null && !schemaRegistrarClass.isEmpty(),
-                "schema registrar class must be defined");
+        Preconditions.checkState(schemaManagerClass != null && !schemaManagerClass.isEmpty(),
+                "schema manager class must be defined");
 
         Preconditions.checkState(schemaManagerConfig.getProperties() != null
                 && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
                 "schemaManagerConfig properties must define schema.registry.url");
         try {
-            SchemaManager schemaManager = Utils.newInstance(schemaRegistrarClass, SchemaManager.class);
+            SchemaManager schemaManager = Utils.newInstance(schemaManagerClass, SchemaManager.class);
             schemaManager.configure(schemaManagerConfig.getProperties());
 
             return schemaManager;

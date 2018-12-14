@@ -65,13 +65,13 @@ public class StreamDaoImplTest {
     private InfraManager infraManager = mock(InfraManager.class);
     private KafkaManager kafkaManager = mock(KafkaManager.class);
     private StreamValidator streamValidator = mock(StreamValidator.class);
-    private SchemaManager schemaRegistrar = mock(SchemaManager.class);
+    private SchemaManager schemaManager = mock(SchemaManager.class);
 
     private StreamDao streamDao;
 
     @Before
     public void setup() {
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, kafkaManager, streamValidator, schemaRegistrar);
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
     }
 
     @Test(expected = StreamCreationException.class)
@@ -82,8 +82,8 @@ public class StreamDaoImplTest {
         Stream newStream = buildTestStream();
         newStream.setPartitions(newStream.getPartitions() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
-        when(schemaRegistrar.checkCompatibility(anyString(), anyString())).thenReturn(true);
-        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0, 0));
+        when(schemaManager.checkCompatibility(anyString(), anyString())).thenReturn(true);
+        when(schemaManager.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0, 0));
 
         streamDao.upsertStream(newStream);
     }
@@ -96,7 +96,7 @@ public class StreamDaoImplTest {
         Stream newStream = buildTestStream();
         newStream.setReplicationFactor(newStream.getReplicationFactor() + 1);
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
-        when(schemaRegistrar.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0, 0));
+        when(schemaManager.registerSchema(anyString(), anyString())).thenReturn(new SchemaReference("subject", 0, 0));
 
         streamDao.upsertStream(newStream);
     }
@@ -108,11 +108,11 @@ public class StreamDaoImplTest {
 
         Stream newStream = buildTestStream();
         SchemaReference newKeySchemaReference = new SchemaReference(TEST_STREAM_KEY.getStreamName() + "-key", 2, 3);
-        when(schemaRegistrar.registerSchema(newStream.getLatestKeySchema().getId(), newStream.getLatestKeySchema().getSchemaString()))
+        when(schemaManager.registerSchema(newStream.getLatestKeySchema().getId(), newStream.getLatestKeySchema().getSchemaString()))
                 .thenReturn(newKeySchemaReference);
 
         SchemaReference newValueSchemaReference = new SchemaReference(TEST_STREAM_KEY.getStreamName() + "-value", 4, 5);
-        when(schemaRegistrar.registerSchema(newStream.getLatestValueSchema().getId(), newStream.getLatestValueSchema().getSchemaString()))
+        when(schemaManager.registerSchema(newStream.getLatestValueSchema().getId(), newStream.getLatestValueSchema().getSchemaString()))
                 .thenReturn(newValueSchemaReference);
 
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);
@@ -139,10 +139,10 @@ public class StreamDaoImplTest {
 
         Stream newStream = buildTestStream();
         SchemaReference newKeySchemaReference = new SchemaReference(TEST_STREAM_KEY.getStreamName() + "-key", 2, 3);
-        when(schemaRegistrar.registerSchema(newStream.getLatestKeySchema().getId(), newStream.getLatestKeySchema().getSchemaString()))
+        when(schemaManager.registerSchema(newStream.getLatestKeySchema().getId(), newStream.getLatestKeySchema().getSchemaString()))
                 .thenReturn(newKeySchemaReference);
 
-        when(schemaRegistrar.registerSchema(newStream.getLatestValueSchema().getId(), newStream.getLatestValueSchema().getSchemaString()))
+        when(schemaManager.registerSchema(newStream.getLatestValueSchema().getId(), newStream.getLatestValueSchema().getSchemaString()))
                 .thenThrow(new SchemaManagerException("error"));
 
         when(streamValidator.isStreamValid(newStream)).thenReturn(true);

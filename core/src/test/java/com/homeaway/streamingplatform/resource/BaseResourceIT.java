@@ -246,7 +246,7 @@ public class BaseResourceIT {
         StreamValidator streamValidator = StreamRegistryApplication.loadValidator(configuration, client, regionDao);
 
         configuration.getSchemaManagerConfig().getProperties().put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
-        SchemaManager schemaManager = StreamRegistryApplication.loadSchemaRegistrar(configuration);
+        SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
 
         StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
             infraManager, kafkaManager, streamValidator, schemaManager);
