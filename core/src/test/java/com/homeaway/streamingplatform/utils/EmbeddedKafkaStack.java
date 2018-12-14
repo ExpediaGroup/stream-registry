@@ -50,7 +50,7 @@ public class EmbeddedKafkaStack extends ExternalResource {
 
     private static final String KAFKA_SCHEMAS_TOPIC = "_schemas";
 
-    private static final String AVRO_COMPATIBILITY_TYPE = AvroCompatibilityLevel.NONE.name;
+    private static final String AVRO_COMPATIBILITY_TYPE = AvroCompatibilityLevel.BACKWARD_TRANSITIVE.name;
 
     private static final String LISTENERS_CONFIG = "listeners";
 
@@ -89,7 +89,7 @@ public class EmbeddedKafkaStack extends ExternalResource {
 
         props.put(LISTENERS_CONFIG, "http://127.0.0.1:" + port);
 
-        schemaRegistry = new SchemaRegistryEmbedded(port, zookeeperConnect(), KAFKA_SCHEMAS_TOPIC, AvroCompatibilityLevel.BACKWARD_TRANSITIVE.name, props);
+        schemaRegistry = new SchemaRegistryEmbedded(port, zookeeperConnect(), KAFKA_SCHEMAS_TOPIC, AVRO_COMPATIBILITY_TYPE, props);
 
         schemaRegistry.start();
     }
