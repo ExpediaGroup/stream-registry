@@ -1,17 +1,37 @@
+/* Copyright (c) 2018 Expedia Group.
+ * All rights reserved.  http://www.homeaway.com
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ *      http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.homeaway.streamingplatform.extensions.schema;
 
-import com.google.common.base.Preconditions;
-import com.homeaway.streamingplatform.exceptions.SchemaException;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import lombok.extern.slf4j.Slf4j;
+import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
+import lombok.extern.slf4j.Slf4j;
+
+import com.google.common.base.Preconditions;
+
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+
+import org.apache.avro.SchemaParseException;
+
+import com.homeaway.streamingplatform.exceptions.SchemaException;
+import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 
 @Slf4j
 public class ConfluentSchemaManager implements SchemaManager {
@@ -20,10 +40,9 @@ public class ConfluentSchemaManager implements SchemaManager {
 
     @Override
     public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
-        org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
-
         SchemaReference schemaReference;
         try {
+            org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
             int id = schemaRegistryClient.register(subject, avroSchema);
             int version = schemaRegistryClient.getLatestSchemaMetadata(subject).getVersion();
             schemaReference = new SchemaReference(subject, id, version);
@@ -37,9 +56,13 @@ public class ConfluentSchemaManager implements SchemaManager {
 
     @Override
     public boolean checkCompatibility(String subject, String schema) throws SchemaException {
-        org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
         try {
-            return schemaRegistryClient.testCompatibility(subject, avroSchema);
+            org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
+            return !schemaRegistryClient.getAllSubjects().contains(subject)
+                    || schemaRegistryClient.testCompatibility(subject, avroSchema);
+        } catch (SchemaParseException e) {
+            log.error("caught a SchemaParseException indicating an invalid schema was providing, returning false");
+            return false;
         } catch (IOException | RestClientException e) {
             log.error("caught an exception while checking compatibility for subject '{}'", subject);
             throw new SchemaException(e);

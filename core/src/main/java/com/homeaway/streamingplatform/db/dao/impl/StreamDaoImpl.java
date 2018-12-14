@@ -126,20 +126,20 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             log.error("Stream '{}' is not valid", stream.getName());
         }
 
-        // TODO: modify to support multiple schema 'types' per stream (Issue #55)
-        // register schemas
-        String keySubject = stream.getName() + "-key";
-        SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
-        stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
-        stream.getLatestKeySchema().setVersion(keyReference.getVersion());
-
-        String valueSubject = stream.getName() + "-value";
-        SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
-        stream.getLatestValueSchema().setId(String.valueOf(valueReference.getId()));
-        stream.getLatestValueSchema().setVersion(valueReference.getVersion());
-
-        Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());
         try {
+            // TODO: modify to support multiple schema 'types' per stream (Issue #55)
+            // register schemas
+            String keySubject = stream.getName() + "-key";
+            SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
+            stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
+            stream.getLatestKeySchema().setVersion(keyReference.getVersion());
+
+            String valueSubject = stream.getName() + "-value";
+            SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
+            stream.getLatestValueSchema().setId(String.valueOf(valueReference.getId()));
+            stream.getLatestValueSchema().setVersion(valueReference.getVersion());
+
+            Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());
             AvroStreamKey key;
             AvroStream avroStream =
                     JsonToAvroDTO.convertJsonToAvro(stream, OperationType.UPSERT);
@@ -177,7 +177,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             log.info("Stream upserted for {}", stream.getName());
         } catch (Exception e) {
             log.error("Error creating new stream", e);
-            throw new StreamCreationException(stream.getName());
+            throw new StreamCreationException(e, stream.getName());
         }
     }
 

@@ -136,8 +136,11 @@ public class StreamResource {
                         .build();
             }
         } catch (Exception e) {
-            log.error("Error validation schema compatibility for stream '{}'");
-            throw new InternalServerErrorException("Error occurred while validating schema compatibility for stream: " + streamName);
+            String message = String.format("Error validation schema compatibility for stream '%s'", streamName);
+            log.error(message, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message))
+                    .build();
         }
     }
 

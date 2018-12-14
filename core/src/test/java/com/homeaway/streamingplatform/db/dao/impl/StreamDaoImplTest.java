@@ -132,7 +132,7 @@ public class StreamDaoImplTest {
         assertEquals((long) 5, (long) avroStreamArgumentCaptor.getValue().getLatestValueSchema().getSubjectId());
     }
 
-    @Test(expected = SchemaManagerException.class)
+    @Test(expected = StreamCreationException.class)
     public void testIncompatibleSchemaFails() {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));

@@ -21,4 +21,8 @@ public class StreamCreationException extends BaseStreamException {
     public StreamCreationException(String streamName) {
         super(streamName);
     }
+
+    public StreamCreationException(Throwable cause, String streamName) {
+        super(cause, streamName);
+    }
 }
