@@ -43,6 +43,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import org.apache.avro.SchemaParseException;
+
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
 import com.homeaway.streamingplatform.exceptions.InvalidStreamException;
@@ -135,6 +137,10 @@ public class StreamResource {
                         .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), message))
                         .build();
             }
+        } catch (SchemaParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
+                    .build();
         } catch (Exception e) {
             String message = String.format("Error validation schema compatibility for stream '%s'", streamName);
             log.error(message, e);

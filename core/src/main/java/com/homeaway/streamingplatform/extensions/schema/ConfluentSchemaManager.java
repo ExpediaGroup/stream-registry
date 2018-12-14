@@ -28,8 +28,6 @@ import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
-import org.apache.avro.SchemaParseException;
-
 import com.homeaway.streamingplatform.exceptions.SchemaException;
 import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
 
@@ -60,12 +58,10 @@ public class ConfluentSchemaManager implements SchemaManager {
             org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
             return !schemaRegistryClient.getAllSubjects().contains(subject)
                     || schemaRegistryClient.testCompatibility(subject, avroSchema);
-        } catch (SchemaParseException e) {
-            log.error("caught a SchemaParseException indicating an invalid schema was providing, returning false");
-            return false;
         } catch (IOException | RestClientException e) {
-            log.error("caught an exception while checking compatibility for subject '{}'", subject);
-            throw new SchemaException(e);
+            String message = String.format("caught an exception while checking compatibility for subject '%s'", subject);
+            log.error(message);
+            throw new SchemaException(message, e);
         }
     }
 

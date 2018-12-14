@@ -17,28 +17,18 @@ package com.homeaway.streamingplatform.exceptions;
 
 public class SchemaException extends RuntimeException {
 
-    private String streamName;
+    public SchemaException() {
+    }
 
-    public SchemaException(String streamName) {
-        this.streamName = streamName;
+    public SchemaException(String message) {
+        super(message);
+    }
+
+    public SchemaException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public SchemaException(Throwable cause) {
         super(cause);
-    }
-
-    public SchemaException(String streamName, String message) {
-        super(message);
-        this.streamName = streamName;
-    }
-
-    public SchemaException(String streamName, String message, Throwable cause) {
-        super(message, cause);
-        this.streamName = streamName;
-    }
-
-    public SchemaException(String streamName, Throwable cause) {
-        super(cause);
-        this.streamName = streamName;
     }
 }
