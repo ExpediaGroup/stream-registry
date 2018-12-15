@@ -17,56 +17,8 @@
 
     <developers>
         <developer>
-            <name>Arun Vasudevan</name>
-            <email>avasudevan@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Prabhakaran Thatchinamoorthy</name>
-            <email>pthatchinamoorthy@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Nathan Walther</name>
-            <email>nwalther@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Vinayak Ponangi</name>
-            <email>pponangi@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Adam Westerman</name>
-            <email>awesterman@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Jordan Moore</name>
-            <email>jomoore@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Carlos Cordero</name>
-            <email>ccordero@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Ishan Dikshit</name>
-            <email>idikshit@homeaway.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Rui Zhang</name>
-            <email>rzhang@homeaway.com</email>
+            <name>Stream Registry Developers</name>
+            <email>stream-registry-committers@groups.homeawaycorp.com</email>
             <organization>HomeAway</organization>
             <organizationUrl>https://www.homeaway.com</organizationUrl>
         </developer>
@@ -116,10 +68,9 @@
         <curator-test.version>2.9.0</curator-test.version>
 
         <!-- Utilities -->
-        <lombok.version>1.16.18</lombok.version>
+        <lombok.version>1.16.22</lombok.version>
         <guava.version>23.4-jre</guava.version>
-        <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.6</commons-lang3.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
 
         <javax.validation.version>1.1.0.Final</javax.validation.version>
 
@@ -155,7 +106,8 @@
 
         <!-- Plugins -->
         <assembly.pluginVersion>3.1.0</assembly.pluginVersion>
-        <javadoc.pluginVersion>3.0.0-M1</javadoc.pluginVersion>
+        <javadoc.pluginVersion>3.0.1</javadoc.pluginVersion>
+        <enforcer.pluginVersion>3.0.0-M2</enforcer.pluginVersion>
         <checkstyle.pluginVersion>3.0.0</checkstyle.pluginVersion>
         <source.pluginVersion>2.4</source.pluginVersion>
         <shade.pluginVersion>3.1.0</shade.pluginVersion>
@@ -164,9 +116,7 @@
         <deploy.pluginVersion>3.0.0-M1</deploy.pluginVersion>
         <release.pluginVersion>2.5.3</release.pluginVersion>
         <mavenCompiler.pluginVersion>3.6.1</mavenCompiler.pluginVersion>
-        <!-- TODO can we remove one of these surefire versions ? -->
-        <surefire.pluginVersion>2.20.1</surefire.pluginVersion>
-        <surefire-junit4.version>2.20.1</surefire-junit4.version>
+        <surefire.pluginVersion>2.21.0</surefire.pluginVersion>
         <build-helper.maven.plugin.version>3.0.0</build-helper.maven.plugin.version>
 
 
@@ -204,11 +154,6 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
@@ -486,7 +431,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${javadoc.pluginVersion}</version>
+                    <version>${enforcer.pluginVersion}</version>
                     <executions>
                         <execution>
                             <id>enforce-maven</id>
