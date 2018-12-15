@@ -18,6 +18,10 @@ deploy:
   skip_cleanup: true
   script: make ci-deploy
 
+after_failure:
+  - cat target/surefire-reports/*.txt
+  - cat target/failsafe-reports/*.txt
+
 notifications:
   email:
     recipients:
