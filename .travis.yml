@@ -5,6 +5,9 @@ dist: trusty
 jdk:
   - oraclejdk8
 
+before_install:
+  - ./.travis/setup-deploy.sh
+
 # 'true' means do NOT do `mvn install`
 # See https://docs.travis-ci.com/user/job-lifecycle/#skipping-the-installation-phase
 install: true
@@ -15,7 +18,12 @@ deploy:
   provider: script
   # skip_cleanup is to keep the artifacts from the build phase
   skip_cleanup: true
-  script: make ci-deploy
+  script: make just-deploy
+
+after_failure:
+  - cat kafka-infra-provider/surefire-reports/*.txt
+  - cat core/target/surefire-reports/*.txt
+  - cat core/target/failsafe-reports/*.txt
 
 notifications:
   email:

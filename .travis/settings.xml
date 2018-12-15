@@ -6,9 +6,8 @@
             <password>${env.SONATYPE_CREDENTIAL}</password>
         </server>
         <server>
-            <id>gpg-sign</id>
-            <username>${env.GPG_KEYNAME}</username>
-            <password>${env.GPG_KEYPASSPHRASE}</password>
+            <id>travisci-gpg</id>
+            <passphrase>${env.GPG_KEYPHRASE}</passphrase>
         </server>
     </servers>
     <profiles>
@@ -16,7 +15,8 @@
             <id>signed</id>
             <properties>
                 <gpg.keyname>${env.GPG_KEYNAME}</gpg.keyname>
-                <gpg.passphraseServerId>gpg-sign</gpg.passphraseServerId>
+                <gpg.passphraseServerId>travisci-gpg</gpg.passphraseServerId>
+                <gpg.useagent>false</gpg.useagent>
             </properties>
         </profile>
     </profiles>

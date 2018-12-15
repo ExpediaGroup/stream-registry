@@ -19,16 +19,7 @@ all: build
 
 # invoke -Psigned profile for signing artifacts
 just-deploy:
-	./mvnw deploy -B -Dmaven.test.skip=true -DskipTests -Psigned
+	./mvnw deploy -DskipTests -Psigned -B
 
 deploy: all just-deploy
-
-ci-setup:
-	./travis/setup-deploy.sh
-
-# invoke -Psigned profile for signing artifacts
-ci-deploy:
-	./mvnw --settings .travis/settings.xml deploy -B -Dmaven.test.skip=true -DskipTests -Psigned
-
-ci-deploy: ci-setup all ci-deploy
 

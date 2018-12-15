@@ -147,7 +147,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         streamResource.upsertStream(stream);
-        Thread.sleep(TEST_SLEEP_WAIT_MS);
+        Thread.sleep(TEST_SLEEP_WAIT_MS*2);
 
         Assert.assertEquals(streamName, ((Stream) streamResource.getStream(streamName).getEntity()).getName());
 
