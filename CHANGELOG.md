@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.3.2] - SNAPSHOT
 ### Changed
 - Updated README to something that outlines this a bit better. (#54) 
+- Changed .travis.yml and added a setup script to securely send credentials for sigining and deploying master builds. (#57)
 
 ## [0.3.1] - 20181212
 ### Changed

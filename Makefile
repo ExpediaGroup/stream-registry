@@ -1,4 +1,4 @@
-.PHONY: clean tests build all release
+.PHONY: clean tests build run debug all just-deploy deploy ci-setup ci-deploy
 
 clean:
 	./mvnw clean
@@ -22,4 +22,13 @@ just-deploy:
 	./mvnw deploy -B -Dmaven.test.skip=true -DskipTests -Psigned
 
 deploy: all just-deploy
+
+ci-setup:
+	./travis/setup-deploy.sh
+
+# invoke -Psigned profile for signing artifacts
+ci-deploy:
+	./mvnw --settings .travis/settings.xml deploy -B -Dmaven.test.skip=true -DskipTests -Psigned
+
+ci-deploy: ci-setup all ci-deploy
 
