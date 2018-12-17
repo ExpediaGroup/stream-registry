@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - SNAPSHOT
+### Added
+- Schema validation support via `SchemaManager` interface with default Confluent implementation provided (#41)
+
 ## [0.3.2] - 20181216
 ### Changed
 - Updated README to something that outlines this a bit better. (#54) 
