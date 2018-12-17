@@ -15,14 +15,21 @@
  */
 package com.homeaway.streamingplatform.exceptions;
 
-public class StreamCreationException extends BaseStreamException {
-    private static final long serialVersionUID = -4755617190312561871L;
+public class SchemaManagerException extends RuntimeException {
 
-    public StreamCreationException(String streamName) {
-        super(streamName);
+
+    public SchemaManagerException() {
     }
 
-    public StreamCreationException(Throwable cause, String streamName) {
-        super(cause, streamName);
+    public SchemaManagerException(String message) {
+        super(message);
+    }
+
+    public SchemaManagerException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public SchemaManagerException(Throwable cause) {
+        super(cause);
     }
 }

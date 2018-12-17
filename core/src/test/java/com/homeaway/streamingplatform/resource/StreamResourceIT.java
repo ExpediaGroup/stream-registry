@@ -17,7 +17,12 @@ package com.homeaway.streamingplatform.resource;
 
 import static com.homeaway.streamingplatform.utils.JsonModelBuilder.TEST_COMPONENT_ID;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.ws.rs.core.Response;
 

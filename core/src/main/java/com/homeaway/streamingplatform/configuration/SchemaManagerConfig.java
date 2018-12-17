@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.configuration;
 
-public class StreamCreationException extends BaseStreamException {
-    private static final long serialVersionUID = -4755617190312561871L;
+import java.util.Map;
 
-    public StreamCreationException(String streamName) {
-        super(streamName);
-    }
+import javax.validation.Valid;
 
-    public StreamCreationException(Throwable cause, String streamName) {
-        super(cause, streamName);
-    }
+import lombok.Data;
+import lombok.NonNull;
+
+@Data
+public class SchemaManagerConfig {
+
+    @Valid
+    @NonNull
+    String className;
+
+    Map<String, Object> properties;
+
 }

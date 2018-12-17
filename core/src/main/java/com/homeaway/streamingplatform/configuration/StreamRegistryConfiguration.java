@@ -40,6 +40,9 @@ public class StreamRegistryConfiguration extends Configuration {
     StreamValidatorConfig streamValidatorConfig;
 
     @Valid
+    SchemaManagerConfig schemaManagerConfig;
+
+    @Valid
     @NotNull
     KafkaStreamsConfig kafkaStreamsConfig;
 
