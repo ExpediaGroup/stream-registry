@@ -53,10 +53,10 @@ public class JsonModelBuilder {
         stream.setCreated(System.currentTimeMillis());
         stream.setUpdated(System.currentTimeMillis());
         stream.setSchemaCompatibility(SchemaCompatibility.TRANSITIVE_FULL);
-        stream.setLatestKeySchema(Schema.builder().id("1").version(2).schemaString("")
+        stream.setLatestKeySchema(Schema.builder().id("1").version(2).schemaString("{\"type\":\"string\"}")
                 .created(Calendar.getInstance().getTime().toString())
                 .updated(Calendar.getInstance().getTime().toString()).build());
-        stream.setLatestValueSchema(Schema.builder().id("2").version(2).schemaString("")
+        stream.setLatestValueSchema(Schema.builder().id("2").version(2).schemaString("{\"namespace\":\"com.homeaway\",\"type\":\"record\",\"name\":\"user\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}")
                 .created(Calendar.getInstance().getTime().toString())
                 .updated(Calendar.getInstance().getTime().toString())
                 .build());

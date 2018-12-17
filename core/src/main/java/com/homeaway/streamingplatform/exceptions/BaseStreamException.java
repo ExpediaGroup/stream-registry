@@ -22,6 +22,11 @@ public abstract class BaseStreamException extends RuntimeException {
     private static final long serialVersionUID = 3286563758640098316L;
     protected final String streamName;
 
+    public BaseStreamException(Throwable cause, String streamName) {
+        super(cause);
+        this.streamName = streamName;
+    }
+
     public BaseStreamException(String streamName) {
         this.streamName = streamName;
     }

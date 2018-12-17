@@ -15,6 +15,7 @@
  */
 package com.homeaway.streamingplatform;
 
+import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
 import java.util.HashMap;
@@ -49,6 +50,7 @@ import org.rocksdb.BlockBasedTableConfig;
 import org.rocksdb.Options;
 
 import com.homeaway.streamingplatform.configuration.InfraManagerConfig;
+import com.homeaway.streamingplatform.configuration.SchemaManagerConfig;
 import com.homeaway.streamingplatform.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamingplatform.configuration.StreamValidatorConfig;
 import com.homeaway.streamingplatform.configuration.TopicsConfig;
@@ -61,6 +63,7 @@ import com.homeaway.streamingplatform.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamingplatform.db.dao.impl.ProducerDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.RegionDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.StreamDaoImpl;
+import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.health.StreamRegistryHealthCheck;
 import com.homeaway.streamingplatform.model.Consumer;
@@ -94,9 +97,9 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     public void initialize(final Bootstrap<StreamRegistryConfiguration> bootstrap) {
         // EnvironmentVariableSubstitutor enables EnvVariables to be substituted into the configuration before initialization
         bootstrap.setConfigurationSourceProvider(
-            new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
-                new EnvironmentVariableSubstitutor(false)
-            )
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)
+                )
         );
         bootstrap.addBundle(new SwaggerBundle<StreamRegistryConfiguration>() {
             @Override
@@ -137,7 +140,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                 throw new IllegalStateException("Could not load/configure Infra Manager class", e);
             }
         }
-        ManagedInfraManager managedInfraManager= new ManagedInfraManager(infraManager);
+        ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
 
         environment.lifecycle().manage(managedProducer);
         environment.lifecycle().manage(managedKStreams);
@@ -154,9 +157,9 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         }
 
         final Client httpClient = new JerseyClientBuilder(environment)
-            .using(configuration.getHttpClient())
-            .using(environment)
-            .build("remoteStateStoreHttpClient");
+                .using(configuration.getHttpClient())
+                .using(environment)
+                .build("remoteStateStoreHttpClient");
 
         log.info("Connection Timeout:{}", configuration.getHttpClient().getConnectionTimeout());
         log.info("Connection Request Timeout:{}", configuration.getHttpClient().getConnectionRequestTimeout());
@@ -168,7 +171,9 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         StreamValidator streamValidator = loadValidator(configuration, httpClient, regionDao);
         Preconditions.checkState(streamValidator != null, "streamValidator cannot be null.");
 
-        StreamDao streamDao = new StreamDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager, streamValidator);
+        SchemaManager schemaManager = loadSchemaManager(configuration);
+
+        StreamDao streamDao = new StreamDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
         StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
         StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
 
@@ -187,7 +192,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.ALWAYS);
         environment.getObjectMapper()
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         GuavaModule guavaModule = new GuavaModule();
         guavaModule.configureAbsentsAsNulls(true);
         environment.getObjectMapper().registerModule(new GuavaModule().configureAbsentsAsNulls(true));
@@ -226,9 +231,29 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         return null;
     }
 
+    public static SchemaManager loadSchemaManager(StreamRegistryConfiguration configuration) {
+        SchemaManagerConfig schemaManagerConfig = configuration.getSchemaManagerConfig();
+
+        Preconditions.checkNotNull(schemaManagerConfig, "schema manager config cannot be null");
+        String schemaManagerClass = schemaManagerConfig.getClassName();
+
+        Preconditions.checkState(schemaManagerClass != null && !schemaManagerClass.isEmpty(),
+                "schema manager class must be defined");
+
+        Preconditions.checkState(schemaManagerConfig.getProperties() != null
+                && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
+                "schemaManagerConfig properties must define schema.registry.url");
+        try {
+            SchemaManager schemaManager = Utils.newInstance(schemaManagerClass, SchemaManager.class);
+            schemaManager.configure(schemaManagerConfig.getProperties());
+
+            return schemaManager;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Error loading SchemaManager from configuration", e);
+        }
+    }
 
     public static class CustomRocksDBConfig implements RocksDBConfigSetter {
-
         @Override
         public void setConfig(final String storeName, final Options options, final Map<String, Object> configs) {
             BlockBasedTableConfig tableConfig = new org.rocksdb.BlockBasedTableConfig();
