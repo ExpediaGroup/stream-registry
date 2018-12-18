@@ -7,7 +7,7 @@ protocol ActorProtocol {
   record Actor {
 
   /**
-  * mot app name of the actor
+  * Application name of the actor
   */
     string name;
 
