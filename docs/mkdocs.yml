@@ -1,6 +1,6 @@
 site_name: Stream Registry Documentation
 site_description: 'Open Source Docs and Community Standards'
-site_author: 'Digital Platform'
+site_author: 'Stream Registry Committers'
 site_url: 'https://homeaway.github.io/stream-registry'
 repo_name: 'homeaway/stream-registry'
 repo_url: 'https://github.com/HomeAway/stream-registry/'

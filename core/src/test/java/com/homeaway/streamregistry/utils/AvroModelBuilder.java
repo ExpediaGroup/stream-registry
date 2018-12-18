@@ -67,10 +67,9 @@ public class AvroModelBuilder {
         regionKafkaStreamConfigurations.add(regionKafkaStreamConfiguration);
 
         Actor producerActor = Actor.newBuilder()
-            .setName("digitalplatform")
+            .setName("producer")
             .setRegionStreamConfigurations(regionKafkaStreamConfigurations)
             .build();
-
 
         Producer producer1 = Producer.newBuilder()
             .setActor(producerActor)
