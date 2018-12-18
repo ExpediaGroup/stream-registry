@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
+import com.homeaway.streamregistry.ClusterKey;
 import com.homeaway.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamregistry.model.Hint;
 import com.homeaway.streamregistry.provider.InfraManager;

@@ -23,9 +23,9 @@ import org.apache.kafka.streams.integration.utils.IntegrationTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.OperationType;
 import com.homeaway.streamregistry.resource.BaseResourceIT;
 import com.homeaway.streamregistry.utils.AvroModelBuilder;
 

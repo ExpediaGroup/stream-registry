@@ -27,7 +27,7 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
+import com.homeaway.streamregistry.SchemaCompatibility;
 
 @JsonDeserialize(builder = Stream.StreamBuilder.class)
 @Builder

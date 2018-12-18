@@ -27,8 +27,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
 import com.homeaway.streamregistry.configuration.TopicsConfig;
 
 @Slf4j

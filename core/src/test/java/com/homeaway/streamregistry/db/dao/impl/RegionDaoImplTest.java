@@ -21,8 +21,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamregistry.ClusterKey;
+import com.homeaway.streamregistry.ClusterValue;
 import com.homeaway.streamregistry.db.dao.AbstractDao;
 import com.homeaway.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamregistry.model.Hint;

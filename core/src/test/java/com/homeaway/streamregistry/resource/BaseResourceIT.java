@@ -51,10 +51,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.ClusterKey;
+import com.homeaway.streamregistry.ClusterValue;
 import com.homeaway.streamregistry.StreamRegistryApplication;
 import com.homeaway.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamregistry.configuration.KafkaStreamsConfig;

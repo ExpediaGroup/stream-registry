@@ -19,10 +19,10 @@ import java.util.Calendar;
 
 import javax.ws.rs.BadRequestException;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
-import com.homeaway.digitalplatform.streamregistry.Schema;
-import com.homeaway.digitalplatform.streamregistry.Tags;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.OperationType;
+import com.homeaway.streamregistry.Schema;
+import com.homeaway.streamregistry.Tags;
 import com.homeaway.streamregistry.model.Stream;
 
 public class JsonToAvroDTO {

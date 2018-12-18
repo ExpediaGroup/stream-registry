@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamregistry.ClusterKey;
+import com.homeaway.streamregistry.ClusterValue;
 import com.homeaway.streamregistry.provider.InfraManager;
 
 public class InfraManagerImplStub implements InfraManager {

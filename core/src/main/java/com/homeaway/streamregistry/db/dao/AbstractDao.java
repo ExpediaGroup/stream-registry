@@ -31,13 +31,13 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
-import com.homeaway.digitalplatform.streamregistry.Actor;
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
-import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamregistry.Actor;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.ClusterKey;
+import com.homeaway.streamregistry.ClusterValue;
+import com.homeaway.streamregistry.OperationType;
+import com.homeaway.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamregistry.provider.InfraManager;
 import com.homeaway.streamregistry.streams.ManagedKStreams;
@@ -130,8 +130,8 @@ public abstract class AbstractDao {
         }
     }
 
-    protected com.homeaway.digitalplatform.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
-        com.homeaway.digitalplatform.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
+    protected com.homeaway.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
+        com.homeaway.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
         String actorType, Map<String, String> topicConfigMap) {
 
         Actor.Builder actorBuilder = Actor.newBuilder();

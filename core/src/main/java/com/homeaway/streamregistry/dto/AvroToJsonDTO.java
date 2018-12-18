@@ -25,8 +25,8 @@ import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamregistry.model.Consumer;
 import com.homeaway.streamregistry.model.Producer;
 import com.homeaway.streamregistry.model.RegionStreamConfig;
@@ -55,7 +55,7 @@ public class AvroToJsonDTO {
                 .updated(avroStream.getLatestValueSchema().getUpdated())
                 .build();
 
-        com.homeaway.digitalplatform.streamregistry.Tags tagsAvro = avroStream.getTags();
+        com.homeaway.streamregistry.Tags tagsAvro = avroStream.getTags();
         Tags tags = Tags.builder().productId(tagsAvro.getProductId())
             .portfolioId(tagsAvro.getPortfolioId())
             .brand(tagsAvro.getBrand())
@@ -84,7 +84,7 @@ public class AvroToJsonDTO {
                 .build();
     }
 
-    public static Producer getJsonProducer(com.homeaway.digitalplatform.streamregistry.Producer avroProducer) {
+    public static Producer getJsonProducer(com.homeaway.streamregistry.Producer avroProducer) {
         Producer.ProducerBuilder builder = Producer.builder();
         if (avroProducer.getActor().getName() != null) {
             builder.name(avroProducer.getActor().getName());
@@ -98,7 +98,7 @@ public class AvroToJsonDTO {
         return builder.build();
     }
 
-    public static Consumer getJsonConsumer(com.homeaway.digitalplatform.streamregistry.Consumer avroConsumer) {
+    public static Consumer getJsonConsumer(com.homeaway.streamregistry.Consumer avroConsumer) {
         Consumer.ConsumerBuilder builder = Consumer.builder();
         if (avroConsumer.getActor().getName() != null) {
             builder.name(avroConsumer.getActor().getName());

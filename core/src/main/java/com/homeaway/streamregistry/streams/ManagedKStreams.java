@@ -29,8 +29,8 @@ import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
 import com.homeaway.streamregistry.configuration.TopicsConfig;
 
 @Slf4j

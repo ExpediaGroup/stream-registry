@@ -30,8 +30,8 @@ import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamregistry.ClusterKey;
+import com.homeaway.streamregistry.ClusterValue;
 import com.homeaway.streamregistry.provider.InfraManager;
 
 

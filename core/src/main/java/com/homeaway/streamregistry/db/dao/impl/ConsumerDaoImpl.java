@@ -26,12 +26,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.collect.Lists;
 
-import com.homeaway.digitalplatform.streamregistry.Actor;
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.Consumer;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
-import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamregistry.Actor;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.Consumer;
+import com.homeaway.streamregistry.OperationType;
+import com.homeaway.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamregistry.db.dao.AbstractDao;
 import com.homeaway.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamregistry.db.dao.RegionDao;
@@ -86,7 +86,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         if (avroStream.isPresent()) {
             List<Consumer> consumers = avroStream.get().getConsumers();
             if (consumers != null) {
-                for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : consumers) {
+                for (com.homeaway.streamregistry.Consumer consumer : consumers) {
                     if (consumer.getActor().getName().equalsIgnoreCase(consumerName)) {
                         for (RegionStreamConfiguration streamConfiguration : consumer.getActor().getRegionStreamConfigurations()) {
                             if (streamConfiguration.getRegion().equals(region)) {
@@ -122,12 +122,12 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         if (!regionDao.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
             throw new UnknownRegionException(region);
 
-        List<com.homeaway.digitalplatform.streamregistry.Consumer> listConsumers = avroStream.getConsumers();
+        List<com.homeaway.streamregistry.Consumer> listConsumers = avroStream.getConsumers();
         if (listConsumers == null) {
             listConsumers = new ArrayList<>();
         }
 
-        com.homeaway.digitalplatform.streamregistry.Consumer consumer = com.homeaway.digitalplatform.streamregistry.Consumer
+        com.homeaway.streamregistry.Consumer consumer = com.homeaway.streamregistry.Consumer
             .newBuilder()
             .setActor(Actor.newBuilder()
                 .setName(consumerName)
@@ -162,7 +162,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
             AvroStreamKey.newBuilder().setStreamName(streamName).build());
         if (streamValue.isPresent()) {
             streamValue.get().setOperationType(OperationType.GET);
-            for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
+            for (com.homeaway.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
                 if (consumer.getActor().getName().equals(consumerName))
                     return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
             }
@@ -177,7 +177,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
         if (streamValue.isPresent() && streamValue.get().getConsumers() != null) {
             streamValue.get().setOperationType(OperationType.GET);
-            for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
+            for (com.homeaway.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
                 consumers.add(AvroToJsonDTO.getJsonConsumer(consumer));
             }
         }
@@ -188,10 +188,10 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
-            List<com.homeaway.digitalplatform.streamregistry.Consumer> listConsumer = avroStream.get().getConsumers();
+            List<com.homeaway.streamregistry.Consumer> listConsumer = avroStream.get().getConsumers();
             int consumerInitialSize = listConsumer.size();
-            for (Iterator<com.homeaway.digitalplatform.streamregistry.Consumer> iter = listConsumer.listIterator(); iter.hasNext();) {
-                com.homeaway.digitalplatform.streamregistry.Consumer consumerEntity = iter.next();
+            for (Iterator<com.homeaway.streamregistry.Consumer> iter = listConsumer.listIterator(); iter.hasNext();) {
+                com.homeaway.streamregistry.Consumer consumerEntity = iter.next();
                 if (consumerEntity.getActor().getName().equalsIgnoreCase(consumerName)) {
                     // Remove the consumer
                     iter.remove();

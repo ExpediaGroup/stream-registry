@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
+import com.homeaway.streamregistry.SchemaCompatibility;
 import com.homeaway.streamregistry.model.Consumer;
 import com.homeaway.streamregistry.model.Producer;
 import com.homeaway.streamregistry.model.RegionStreamConfig;

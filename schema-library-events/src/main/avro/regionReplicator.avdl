@@ -1,4 +1,4 @@
-@namespace("com.homeaway.digitalplatform.streamregistry")
+@namespace("com.homeaway.streamregistry")
 
 protocol RegionReplicatorProtocol {
 

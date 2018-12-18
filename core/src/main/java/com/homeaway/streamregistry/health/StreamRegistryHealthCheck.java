@@ -36,9 +36,9 @@ import org.apache.commons.lang3.Validate;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.streams.KafkaStreams;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.SchemaCompatibility;
 import com.homeaway.streamregistry.model.Consumer;
 import com.homeaway.streamregistry.model.Producer;
 import com.homeaway.streamregistry.model.RegionStreamConfig;

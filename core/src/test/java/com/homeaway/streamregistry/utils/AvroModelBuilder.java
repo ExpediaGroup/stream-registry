@@ -26,16 +26,16 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.homeaway.digitalplatform.streamregistry.Actor;
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.Consumer;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
-import com.homeaway.digitalplatform.streamregistry.Producer;
-import com.homeaway.digitalplatform.streamregistry.RegionReplicator;
-import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
-import com.homeaway.digitalplatform.streamregistry.Schema;
-import com.homeaway.digitalplatform.streamregistry.Tags;
+import com.homeaway.streamregistry.Actor;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.Consumer;
+import com.homeaway.streamregistry.OperationType;
+import com.homeaway.streamregistry.Producer;
+import com.homeaway.streamregistry.RegionReplicator;
+import com.homeaway.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamregistry.Schema;
+import com.homeaway.streamregistry.Tags;
 
 @Slf4j
 public class AvroModelBuilder {

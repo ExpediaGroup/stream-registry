@@ -18,8 +18,8 @@ package com.homeaway.streamregistry.provider;
 import java.util.Map;
 import java.util.Optional;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamregistry.ClusterKey;
+import com.homeaway.streamregistry.ClusterValue;
 
 /**
  * The interface Infra manager.

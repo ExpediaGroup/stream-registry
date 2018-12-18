@@ -29,10 +29,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.ClusterValue;
+import com.homeaway.streamregistry.OperationType;
 import com.homeaway.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamregistry.db.dao.AbstractDao;
 import com.homeaway.streamregistry.db.dao.KafkaManager;

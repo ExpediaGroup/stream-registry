@@ -25,12 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.collect.Lists;
 
-import com.homeaway.digitalplatform.streamregistry.Actor;
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
-import com.homeaway.digitalplatform.streamregistry.Producer;
-import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamregistry.Actor;
+import com.homeaway.streamregistry.AvroStream;
+import com.homeaway.streamregistry.AvroStreamKey;
+import com.homeaway.streamregistry.OperationType;
+import com.homeaway.streamregistry.Producer;
+import com.homeaway.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamregistry.db.dao.AbstractDao;
 import com.homeaway.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamregistry.db.dao.RegionDao;
@@ -85,7 +85,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         if (avroStream.isPresent()) {
             List<Producer> producers = avroStream.get().getProducers();
             if (producers != null) {
-                for (com.homeaway.digitalplatform.streamregistry.Producer producer : producers) {
+                for (com.homeaway.streamregistry.Producer producer : producers) {
                     if (producer.getActor().getName().equalsIgnoreCase(producerName)) {
                         for (RegionStreamConfiguration config : producer.getActor().getRegionStreamConfigurations()) {
                             if (config.getRegion().equals(region)) {
@@ -116,12 +116,12 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         if (!regionDao.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
             throw new UnknownRegionException(region);
 
-        List<com.homeaway.digitalplatform.streamregistry.Producer> listProducers = avroStream.getProducers();
+        List<com.homeaway.streamregistry.Producer> listProducers = avroStream.getProducers();
         if (listProducers == null) {
             listProducers = new ArrayList<>();
         }
-        com.homeaway.digitalplatform.streamregistry.Producer producer =
-            com.homeaway.digitalplatform.streamregistry.Producer.newBuilder()
+        com.homeaway.streamregistry.Producer producer =
+            com.homeaway.streamregistry.Producer.newBuilder()
                 .setActor(Actor.newBuilder()
                     .setName(producerName)
                     .build())
@@ -132,7 +132,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
 
         Actor actor = populateActorStreamConfig(avroStream.getName(), region, producer.getActor(), OPERATION.CREATE.name(),
             topicPostFixes, hint, ACTOR_TYPE, avroStream.getTopicConfig());
-        Producer newProducer = com.homeaway.digitalplatform.streamregistry.Producer.newBuilder()
+        Producer newProducer = com.homeaway.streamregistry.Producer.newBuilder()
             .setActor(actor)
             .build();
 
@@ -148,10 +148,10 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
-            List<com.homeaway.digitalplatform.streamregistry.Producer> listProducer = avroStream.get().getProducers();
+            List<com.homeaway.streamregistry.Producer> listProducer = avroStream.get().getProducers();
             int producerInitialSize = listProducer.size();
-            for (Iterator<com.homeaway.digitalplatform.streamregistry.Producer> iter = listProducer.listIterator(); iter.hasNext(); ) {
-                com.homeaway.digitalplatform.streamregistry.Producer producerEntity = iter.next();
+            for (Iterator<com.homeaway.streamregistry.Producer> iter = listProducer.listIterator(); iter.hasNext(); ) {
+                com.homeaway.streamregistry.Producer producerEntity = iter.next();
                 if (producerEntity.getActor().getName().equalsIgnoreCase(producerName)) {
                     // Remove the managedKafkaProducer
                     iter.remove();
@@ -176,7 +176,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         if (streamValue.isPresent() && streamValue.get().getProducers() != null) {
             streamValue.get().setOperationType(OperationType.GET);
 
-            for (com.homeaway.digitalplatform.streamregistry.Producer producer : streamValue.get().getProducers()) {
+            for (com.homeaway.streamregistry.Producer producer : streamValue.get().getProducers()) {
                 if (producer.getActor().getName().equals(producerName))
                     return Optional.of(AvroToJsonDTO.getJsonProducer(producer));
             }
@@ -192,7 +192,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
             kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
         if (streamValue.isPresent() && streamValue.get().getProducers() != null) {
             streamValue.get().setOperationType(OperationType.GET);
-            for (com.homeaway.digitalplatform.streamregistry.Producer producer : streamValue.get().getProducers()) {
+            for (com.homeaway.streamregistry.Producer producer : streamValue.get().getProducers()) {
                 producers.add(AvroToJsonDTO.getJsonProducer(producer));
             }
         }
