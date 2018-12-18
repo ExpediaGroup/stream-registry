@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.4.0] - SNAPSHOT
 ### Added
 - Schema validation support via `SchemaManager` interface with default Confluent implementation provided (#41)
+### Changed
+- Java package names changed to `com.homeaway.streamregistry`. (#16)
 
 ## [0.3.2] - 20181216
 ### Changed
-- Updated README to something that outlines this a bit better. (#54) 
+- Updated README to something that outlines this a bit better. (#54)
 - Changed .travis.yml and added a setup script to securely send credentials for sigining and deploying master builds. (#57)
 - Added appropriate variables so that all encrypted keys work. (#57)
 
