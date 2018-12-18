@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>stream-registry-parent</artifactId>
-        <groupId>com.homeaway.streamingplatform</groupId>
+        <groupId>com.homeaway.streamregistry</groupId>
         <version>0.4.0-SNAPSHOT</version>
     </parent>
 
