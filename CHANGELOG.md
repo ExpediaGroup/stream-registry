@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Schema validation support via `SchemaManager` interface with default Confluent implementation provided (#41)
 ### Changed
 - Java package names changed to `com.homeaway.streamregistry`. (#16)
+- INCOMPATIBLE: Avro namespaces changed to `com.homeaway.streamregistry`. (#16)
 
 ## [0.3.2] - 20181216
 ### Changed
