@@ -319,15 +319,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-unit-test-and-jacoco-code-coverage" title="Run Unit Test , and Jacoco Code Coverage." class="md-nav__link">
-    Run Unit Test , and Jacoco Code Coverage.
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#health-check" title="Health Check" class="md-nav__link">
-    Health Check
+  <a href="#run-unit-tests" title="Run Unit Tests" class="md-nav__link">
+    Run Unit Tests
   </a>
   
 </li>
@@ -385,15 +378,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-unit-test-and-jacoco-code-coverage" title="Run Unit Test , and Jacoco Code Coverage." class="md-nav__link">
-    Run Unit Test , and Jacoco Code Coverage.
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#health-check" title="Health Check" class="md-nav__link">
-    Health Check
+  <a href="#run-unit-tests" title="Run Unit Tests" class="md-nav__link">
+    Run Unit Tests
   </a>
   
 </li>
@@ -421,24 +407,20 @@
 <h2 id="required-local-environment">Required Local Environment<a class="headerlink" href="#required-local-environment" title="Permanent link">&para;</a></h2>
 <p>The local 'dev' version of stream registry requires a running version of Apache Kafka
 and Confluent's Stream Registry running locally on port 9092 and 8081 respectively.</p>
-<p>A quick version of this is to download, install and start 
+<p>A quick version of this is to download, install and start
 <a href="https://docs.confluent.io/current/cli/index.html">Confluent CLI</a>.</p>
 <h2 id="build-stream-registry">Build stream-registry<a class="headerlink" href="#build-stream-registry" title="Permanent link">&para;</a></h2>
-<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>./stream-registry.sh build
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>make build
 </pre></div>
 
 <h2 id="start-stream-registry">Start stream-registry<a class="headerlink" href="#start-stream-registry" title="Permanent link">&para;</a></h2>
-<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>./stream-registry.sh run
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>make run
 </pre></div>
 
-<ul>
-<li>check that your application is running enter url <code class="codehilite">http://localhost:8080/swagger</code></li>
-</ul>
-<h2 id="run-unit-test-and-jacoco-code-coverage">Run Unit Test , and Jacoco Code Coverage.<a class="headerlink" href="#run-unit-test-and-jacoco-code-coverage" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite">mvn clean verify</code></p>
-<p>The test coverage report is available at <code class="codehilite">./target/site/jacoco/index.html</code></p>
-<h2 id="health-check">Health Check<a class="headerlink" href="#health-check" title="Permanent link">&para;</a></h2>
-<p>To see your applications health enter url <code class="codehilite">http://localhost:8081/healthcheck</code></p>
+<p>Check that your application is running at <code class="codehilite">http://localhost:8080/swagger</code></p>
+<h2 id="run-unit-tests">Run Unit Tests<a class="headerlink" href="#run-unit-tests" title="Permanent link">&para;</a></h2>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>make tests
+</pre></div>
                 
                   
                 
