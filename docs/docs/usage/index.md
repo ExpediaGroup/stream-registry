@@ -22,8 +22,13 @@ make run
 
 Check that your application is running at `http://localhost:8080/swagger`
 
+#### Health Check
+Check your applications health at `http://localhost:8080/private/healthcheck`
+
+
 Run Unit Tests
 ---
 ```
 make tests
 ```
+
