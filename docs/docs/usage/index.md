@@ -27,3 +27,7 @@ Run Unit Tests
 ```
 make tests
 ```
+
+Health Check
+---
+Check your applications health at `http://localhost:8080/private/healthcheck`
