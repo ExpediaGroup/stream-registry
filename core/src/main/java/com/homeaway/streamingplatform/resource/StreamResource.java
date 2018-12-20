@@ -19,11 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -47,8 +45,6 @@ import org.apache.avro.SchemaParseException;
 
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
-import com.homeaway.streamingplatform.exceptions.InvalidStreamException;
-import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
 import com.homeaway.streamingplatform.model.Consumer;
 import com.homeaway.streamingplatform.model.Producer;
@@ -89,19 +85,29 @@ public class StreamResource {
     @Path("/{streamName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
-    public Response upsertStream(@ApiParam(value = "stream entity", required = true) Stream stream) {
-        // TODO: streamName path param isn't used, we should validate JSON stream matches stream name
+    public Response upsertStream(@ApiParam(value = "stream entity", required = true) Stream stream,
+                                 @ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName) {
+
         try {
+            if (!stream.getName().equals(streamName)) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                                "stream name provided in path param does not match that of the stream body"))
+                        .build();
+            }
+
             streamDao.upsertStream(stream);
             return Response.status(Response.Status.ACCEPTED).build();
-        } catch (StreamCreationException | BadRequestException | InvalidStreamException | IllegalArgumentException se) {
-            log.error("Error creating stream={}", stream.getName(), se);
+        } catch (RuntimeException e) {
+            log.error("Error creating stream={}", stream.getName(), e);
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), se.getMessage()))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
                 .build();
         } catch(Exception e) {
             log.error("Error creating stream={}", stream.getName(), e);
-            throw new InternalServerErrorException(String.format("Error creating stream=%s ; Error=%s", stream.getName(), e.getMessage()), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage()))
+                    .build();
         }
     }
 
@@ -170,8 +176,11 @@ public class StreamResource {
             }
             return Response.ok().entity(stream.get()).build();
         } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            throw new InternalServerErrorException("Error occurred while getting data from Stream Registry", e);
+            String message = "Error occurred while getting data from Stream Registry for stream '" + streamName + "'";
+            log.error(message, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message))
+                    .build();
         }
     }
 

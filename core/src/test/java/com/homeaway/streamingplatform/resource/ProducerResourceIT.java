@@ -57,7 +57,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait so that the Topology can process it and materialize to KV-Store
 
         //Step 1: PUT a stream
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(stream, streamName);
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait so that the Topology can process it and materialize to KV-Store
 
         // Step 2: Validate "Producer Not Found" for a Stream.
@@ -94,7 +94,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         String producerName = "P1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(stream, streamName);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         producerResource.upsertProducer(streamName, producerName, US_EAST_REGION);
@@ -105,7 +105,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         Assert.assertEquals(1, ((Producer) producerResponse.getEntity()).getRegionStreamConfigList().size());
 
         // double registration
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(stream, streamName);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
         producerResource.upsertProducer(streamName, producerName, US_EAST_REGION);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
@@ -122,7 +122,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName, JsonModelBuilder.TEST_PRODUCT_ID, Optional.of(TEST_COMPONENT_ID), OTHER_HINT);
 
         //Step 1: PUT a stream
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(stream, streamName);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         // Step 2: Upsert a producer
@@ -146,7 +146,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         String producerName = "P2";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(stream, streamName);
         Thread.sleep(TEST_SLEEP_WAIT_MS*2);
 
         Assert.assertEquals(streamName, ((Stream) streamResource.getStream(streamName).getEntity()).getName());
@@ -174,7 +174,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         String unsupported_region = "ap-southeast-1-vpc-3f07915b";
 
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(stream, streamName);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response response = producerResource.upsertProducer(streamName, producerName, unsupported_region);
@@ -189,7 +189,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         String producerName = "P1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(stream, streamName);
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait so that the Topology can process it and materialize to KV-Store
 
         producerResource.upsertProducer(streamName, producerName, US_EAST_REGION);
@@ -220,7 +220,7 @@ public class ProducerResourceIT extends BaseResourceIT {
 
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        Response response = streamResource.upsertStream(stream);
+        Response response = streamResource.upsertStream(stream, streamName);
         assertThat(response.getStatus(), is(202));
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
@@ -244,8 +244,8 @@ public class ProducerResourceIT extends BaseResourceIT {
         Stream stream1 = JsonModelBuilder.buildJsonStream(streamName1);
         Stream stream2 = JsonModelBuilder.buildJsonStream(streamName2);
 
-        streamResource.upsertStream(stream1);
-        streamResource.upsertStream(stream2);
+        streamResource.upsertStream(stream1, streamName1);
+        streamResource.upsertStream(stream2, streamName2);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         producerResource.upsertProducer(streamName1, producerName1, US_EAST_REGION);
