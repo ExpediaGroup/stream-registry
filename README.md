@@ -7,17 +7,17 @@
 <img src="docs/docs/architecture/SR-logo.svg" alt="StreamRegistryLogo" style="max-width:50%;"/>
 </center>
 
-A stream-registry is what its name implies: it is a registry of streams. As enterprises increasingly scale in size,
+A Stream Registry is what its name implies: it is a registry of streams. As enterprises increasingly scale in size,
 the need to organize and develop around streams of data becomes paramount.  Synchronous calls are attracted to the edge,
 and a variety of synchronous and asynchronous calls permeate the enterprise.  The need for a declarative, central
 authority for discovery and orchestration of stream management emerges.  This is what a stream registry provides.
 In much the same way that DNS provides a name translation service for an ip address, by way of analogy, a
-stream-registry provides a “metadata service” for streams. By centralizing stream metadata, a stream translation service
+Stream Registry provides a “metadata service” for streams. By centralizing stream metadata, a stream translation service
 for producer and/or consumer stream coördinates becomes possible. This centralized, yet democratized, stream metadata
 function thus streamlines operational complexity via stream lifecycle management, stream discovery,
 stream availability and resiliency.
 
-## Why Stream Registry? ##
+## Why Stream Registry?
 
 We believe that as the change to business requirements accelerate, time to market pressures increase,
 competitive measures grow, migrations to cloud and different platforms are required, and so on, systems will
@@ -45,30 +45,44 @@ The stream registry can answer the following question:
 
 See the [architecture/northstar documentation](https://homeaway.github.io/stream-registry/).
 
-# Building locally
-## Required Local Environment
-The local 'dev' version of stream registry requires a running version of Apache Kafka
-and Confluent's Schema Registry running locally on port 9092 and 8081 respectively.
+## Building locally
 
-To do this, download, install and start
-[Confluent CLI][confluent-cli-doc].
-
-[confluent-cli-doc]: https://docs.confluent.io/current/cli/index.html.
-
-## Build stream-registry
-```
+```console
 make build
 ```
 
-## Start stream-registry
+## Start Stream Registry
+
+> <em>**Required Local Environment**<br/>
+> The local 'dev' version of Stream Registry requires a locally running version of Apache Kafka
+> and Confluent's Schema Registry on ports 9092 and 8081, respectively.</em>
+
+To quickly get a local dev environment set up, we recommend to use the [Confluent CLI][confluent-cli-doc] with the following command.  
+**Note**: The `confluent` command is only available for macOS and Linux. 
+
+  [confluent-cli-doc]: https://docs.confluent.io/current/cli/index.html
+
+```console
+confluent start zookeeper kafka schema-registry
 ```
+
+Stream Registry can then be started 
+
+```console
 make run
 ```
 
-Check that your application is running at `http://localhost:8080/swagger`
+Check that the application's Swagger API is running at http://localhost:8080/swagger
+
+## Kafka Version Compatibility
+
+Stream Registry development and initial deployment started with Kafka 0.11.0 / Confluent Platform 3.3.0, and has also been deployed against Kafka 1.1.1 / Confluent Platform 4.1.2.  
+As per the [Kafka Compatibility Matrix][kafka-compatibility-doc], we expect Stream Registry to be compatbile with Kafka 0.10.0 and newer, and the internal Java Kafka clients used by Stream Registry can be found in the [`pom.xml`](pom.xml).
+
+  [kafka-compatibility-doc]: https://cwiki.apache.org/confluence/display/KAFKA/Compatibility+Matrix
 
 ## Run Unit Tests
-```
+```console
 make tests
 ```
 
