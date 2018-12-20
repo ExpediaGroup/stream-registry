@@ -133,6 +133,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
             stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
             stream.getLatestKeySchema().setVersion(keyReference.getVersion());
+            boolean isNewStream = false;
 
             String valueSubject = stream.getName() + "-value";
             SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
@@ -168,11 +169,12 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
                 avroStream.setS3ConnectorList(value.get().getS3ConnectorList());
             } else {
                 log.info("key NOT available for the stream-name={}", stream.getName());
+                isNewStream = true;
                 avroStream.setCreated(System.currentTimeMillis());
                 key = AvroStreamKey.newBuilder().setStreamName(avroStream.getName()).build();
             }
 
-            verifyAndUpsertTopics(stream);
+            verifyAndUpsertTopics(stream, isNewStream);
             kafkaProducer.log(key, avroStream);
             log.info("Stream upserted for {}", stream.getName());
         } catch (Exception e) {
@@ -208,18 +210,18 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
      *
      * @param stream the stream that will be used to verify and/or upsert topics to
      */
-    private void verifyAndUpsertTopics(Stream stream) {
+    private void verifyAndUpsertTopics(Stream stream, boolean isNewStream) {
         List<String> vpcList = stream.getVpcList();
         List<String> replicatedVpcList = stream.getReplicatedVpcList();
         try {
             log.info("creating topics for vpcList: {}", vpcList);
             for (String vpc : vpcList) {
-                upsertTopics(stream, vpc);
+                upsertTopics(stream, vpc, isNewStream);
             }
             if (replicatedVpcList != null && !replicatedVpcList.isEmpty()) {
                 log.info("creating topics for replicatedVpcList: {}", replicatedVpcList);
                 for (String vpc : replicatedVpcList) {
-                    upsertTopics(stream, vpc);
+                    upsertTopics(stream, vpc, isNewStream);
                 }
             }
         } catch (Exception e) {
@@ -228,7 +230,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         }
     }
 
-    private void upsertTopics(Stream stream, String vpc) {
+    private void upsertTopics(Stream stream, String vpc, boolean isNewStream) {
         ClusterValue clusterValue = getClusterDetails(vpc, env, stream.getTags().getHint(), "producer");
         Properties topicConfig = new Properties();
         if (stream.getTopicConfig() != null) {
@@ -240,7 +242,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         topicConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         topicConfig.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zkConnect);
 
-        kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig);
+        kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isNewStream);
         log.info("Topic {} created/updated at {}", stream.getName(), bootstrapServer);
     }
 

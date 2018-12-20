@@ -22,6 +22,6 @@ import java.util.Properties;
 // TODO Why do we have imperative operations here in stream registry? Does this limit composability? Can we reduce scope?
 public interface KafkaManager {
 
-    void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig);
+    void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream);
 
 }

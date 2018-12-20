@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import kafka.admin.AdminUtils;
+import kafka.server.ConfigType;
 import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +43,12 @@ import org.apache.kafka.common.errors.TopicExistsException;
 
 import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
+import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 
 @Slf4j
 public class KafkaManagerImpl implements KafkaManager {
+
+    public List<String> topicsToCreate;
 
     /**
      * Create and/or Update Topics using AdminClient and AdminUtils
@@ -54,7 +58,7 @@ public class KafkaManagerImpl implements KafkaManager {
      * @param replicationFactor replication for each topic that will be created
      * @param properties        properties that will be set on each topic in the list
      */
-    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties) {
+    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isNewStream) {
         // remove client connection properties to leave only topic configs
         Map<String, String> topicConfigMap = new HashMap<>(properties.entrySet()
                 .stream()
@@ -69,11 +73,23 @@ public class KafkaManagerImpl implements KafkaManager {
         ZkUtils zkUtils = new ZkUtils(zkClient, zkConnection, false);
 
         try {
-            List<String> topicsToCreate = new ArrayList<>();
+            topicsToCreate = new ArrayList<>();
             for (String topic : topics) {
                 if (AdminUtils.topicExists(zkUtils, topic)) {
-                    log.info("Stream Registry does not allow updating configs for existing topics.");
-                    //updateTopic(zkUtils, topic, topicConfigMap);
+                    //TODO Pass the Boolean if it is a New Stream
+                    //TODO Read the existing topics config map and compare sand if its a new stream throw CreateStreamException if it doesn't match
+                    Properties actualTopicConfig = AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), topic);
+                    Map<String, String> actualTopicConfigMap = actualTopicConfig
+                        .entrySet()
+                        .stream()
+                        .collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
+
+                    // If a Stream which is created newly in Stream Registry is already present in the underlying streaming infrastructure
+                    // then compare the configs and fail completely if its doesn't match
+                    if(isNewStream && !actualTopicConfigMap.equals(topicConfigMap)) {
+                        throw new StreamCreationException(topic);
+                    }
+                    updateTopic(zkUtils, topic, topicConfigMap);
                 } else {
                     topicsToCreate.add(topic);
                 }
@@ -100,7 +116,7 @@ public class KafkaManagerImpl implements KafkaManager {
     // TODO need to check if topic exists instead of relying on exception path or just create one since check already occurred above
     // TODO Timeout exception needs to propagate and not be handled here
     // TODO Interrupted Exception also needs to propagate and not be handled here
-    private void createTopics(Collection<String> topics, int partitions, int replicationFactor, Properties adminClientProperties, Map<String, String> topicConfigMap) {
+    protected void createTopics(Collection<String> topics, int partitions, int replicationFactor, Properties adminClientProperties, Map<String, String> topicConfigMap) {
         try (AdminClient adminClient = AdminClient.create(adminClientProperties)) {
             List<NewTopic> newTopicList = topics.stream()
                     .map(topic -> {
