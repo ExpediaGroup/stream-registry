@@ -16,14 +16,11 @@
 package com.homeaway.streamplatform.streamregistry.model;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
 @Data
 public class StreamClient {
 
@@ -31,28 +28,11 @@ public class StreamClient {
      * Name of the producer or Consumer
      */
     @NotNull
-    String name;
+    final String name;
 
     /**
      * Details of the producer or Consumer - region, cluster name, kafka configuration
      */
     @NotNull
-    List<RegionStreamConfig> regionStreamConfigList;
-
-    @Override public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        if (!super.equals(o))
-            return false;
-        StreamClient streamClient = (StreamClient) o;
-        return Objects.equals(name, streamClient.name) &&
-            Objects.equals(regionStreamConfigList, streamClient.regionStreamConfigList);
-    }
-
-    @Override public int hashCode() {
-
-        return Objects.hash(super.hashCode(), name, regionStreamConfigList);
-    }
+    final List<RegionStreamConfig> regionStreamConfigList;
 }

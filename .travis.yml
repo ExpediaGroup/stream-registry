@@ -3,7 +3,8 @@ language: java
 dist: trusty
 
 jdk:
-  - oraclejdk8
+  - openjdk11
+
 
 before_install:
   - ./.travis/setup-deploy.sh
@@ -24,6 +25,10 @@ after_failure:
   - cat infra-provider-kafka/surefire-reports/*.txt
   - cat core/target/surefire-reports/*.txt
   - cat core/target/failsafe-reports/*.txt
+
+after_failure:
+  - cat target/surefire-reports/*.txt
+  - cat target/failsafe-reports/*.txt
 
 notifications:
   email:

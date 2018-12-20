@@ -71,9 +71,9 @@
         <curator-test.version>2.9.0</curator-test.version>
 
         <!-- Utilities -->
-        <lombok.version>1.16.18</lombok.version>
+        <lombok.version>1.16.22</lombok.version>
         <guava.version>23.4-jre</guava.version>
-        <commons-lang3.version>3.6</commons-lang3.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
 
         <javax.validation.version>1.1.0.Final</javax.validation.version>
 
@@ -171,11 +171,6 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
