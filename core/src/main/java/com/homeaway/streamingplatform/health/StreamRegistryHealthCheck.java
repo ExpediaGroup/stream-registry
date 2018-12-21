@@ -151,7 +151,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private void validateCreateStream() {
         try {
             Stream streamRegHealthCheckStream = createCanaryStream();
-            Response response = streamResource.upsertStream(streamRegHealthCheckStream, HEALTH_CHECK_STREAM_NAME);
+            Response response = streamResource.upsertStream(HEALTH_CHECK_STREAM_NAME, streamRegHealthCheckStream);
             if (response.getStatus() != 202) {
                 setStreamCreationHealthy(false);
                 throw new IllegalStateException("HealthCheck Failed: Error while upserting a Stream.");

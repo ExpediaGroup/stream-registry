@@ -43,7 +43,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-stream-create-new-stream";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response streamResponse = streamResource.getStream(streamName);
@@ -61,7 +61,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-stream-with-region";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
         List<String> vpcList = Collections.singletonList(US_EAST_REGION);
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response streamResponse = streamResource.getStream(streamName);
@@ -77,7 +77,7 @@ public class StreamResourceIT extends BaseResourceIT {
         List<String> replicatedVpcList = Collections.singletonList(US_EAST_REGION);
         stream.setReplicatedVpcList(replicatedVpcList);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response streamResponse = streamResource.getStream(streamName);
@@ -97,7 +97,7 @@ public class StreamResourceIT extends BaseResourceIT {
         topicConfig.put(BaseResourceIT.REPLICATION_FACTOR, String.valueOf(1));
 
         stream.setTopicConfig(topicConfig);
-        Response response= streamResource.upsertStream(stream, streamName);
+        Response response= streamResource.upsertStream(streamName, stream);
 
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -107,7 +107,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-stream-upsert-existing-stream";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response streamResponse = streamResource.getStream(streamName);
@@ -116,7 +116,7 @@ public class StreamResourceIT extends BaseResourceIT {
 
         // Update the stream and UPSERT it.
         stream.setOwner("user-2");
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         streamResponse = streamResource.getStream(streamName);
@@ -133,7 +133,7 @@ public class StreamResourceIT extends BaseResourceIT {
     public void test_upsertStream_null_stream_name() {
         Stream stream = JsonModelBuilder.buildJsonStream(null);
 
-        Response response = streamResource.upsertStream(stream, null);
+        Response response = streamResource.upsertStream(null, stream);
 
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -153,8 +153,8 @@ public class StreamResourceIT extends BaseResourceIT {
         Stream stream1 = JsonModelBuilder.buildJsonStream(streamName1);
         Stream stream2 = JsonModelBuilder.buildJsonStream(streamName2);
 
-        streamResource.upsertStream(stream1, streamName1);
-        streamResource.upsertStream(stream2, streamName2);
+        streamResource.upsertStream(streamName1, stream1);
+        streamResource.upsertStream(streamName2, stream2);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         // Two streams should be in the first 10 elements of page 0
@@ -173,7 +173,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-stream-delete-stream-1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait so that the Topology can process it and materialize to KV-Store
 
         streamResource.deleteStream(streamName);
@@ -190,7 +190,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-stream-create-stream-with-tags";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response streamResponse = streamResource.getStream(streamName);
@@ -216,7 +216,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String HINT_SWAGGER = "string";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName, JsonModelBuilder.TEST_PRODUCT_ID, Optional.of(TEST_COMPONENT_ID), HINT_SWAGGER);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response streamResponse = streamResource.getStream(streamName);
@@ -229,7 +229,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String OTHER_HINT = "other-alias";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName, JsonModelBuilder.TEST_PRODUCT_ID, Optional.of(TEST_COMPONENT_ID), OTHER_HINT);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response streamResponse = streamResource.getStream(streamName);
@@ -256,14 +256,14 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-upsert-stream-componentid-1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait so that the Topology can process it and materialize to KV-Store
 
         String updatedComponentId = UUID.randomUUID().toString();
 
         Stream updatedStream = JsonModelBuilder.buildJsonStream(streamName, updatedComponentId);
 
-        streamResource.upsertStream(updatedStream, streamName);
+        streamResource.upsertStream(streamName, updatedStream);
 
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
@@ -288,7 +288,7 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-upsert-stream-automation-1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        Response streamResponse = streamResource.upsertStream(stream, streamName);
+        Response streamResponse = streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
         if(streamResponse.getEntity() instanceof String) {
             throw new IllegalStateException("Expected String entity. Instead response=" + streamResponse.getEntity());
@@ -319,12 +319,12 @@ public class StreamResourceIT extends BaseResourceIT {
         int startingPartitions = 3;
         stream.setPartitions(startingPartitions);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         int updatePartitions = 2;
         stream.setPartitions(updatePartitions);
-        Response response = streamResource.upsertStream(stream, streamName);
+        Response response = streamResource.upsertStream(streamName, stream);
 
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -336,12 +336,12 @@ public class StreamResourceIT extends BaseResourceIT {
         int startingReplicationFactor = 3;
         stream.setReplicationFactor(startingReplicationFactor);
 
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         int updateReplicationFactor = 4;
         stream.setReplicationFactor(updateReplicationFactor);
-        Response response = streamResource.upsertStream(stream, streamName);
+        Response response = streamResource.upsertStream(streamName, stream);
 
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }

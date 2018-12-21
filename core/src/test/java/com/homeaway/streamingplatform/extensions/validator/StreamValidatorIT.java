@@ -69,7 +69,7 @@ public class StreamValidatorIT extends BaseResourceIT {
     public void test_upsertStream_InvalidProductId() {
         String streamName = "junit-stream-1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName, INVALID_PRODUCT_ID, Optional.empty(), JsonModelBuilder.TEST_HINT);
-        Response response = streamResource.upsertStream(stream, streamName);
+        Response response = streamResource.upsertStream(streamName, stream);
 
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }

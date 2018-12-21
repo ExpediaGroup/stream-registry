@@ -33,7 +33,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         // create stream/register schema
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
 
         // re-check compatibility for same schema (new field with default value)
         String newSchema = "{\"namespace\":\"com.homeaway\",\"type\":\"record\",\"name\":\"user\",\"fields\":" +
@@ -49,7 +49,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         // create stream/register schema
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
 
         stream.getLatestValueSchema().setSchemaString(stream.getLatestKeySchema().getSchemaString());
         Response response = streamResource.validateStreamCompatibility(stream, streamName, "default");
@@ -75,7 +75,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         // create stream/register schema
-        Response response = streamResource.upsertStream(stream, streamName);
+        Response response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
 
         Thread.sleep(TEST_SLEEP_WAIT_MS);
@@ -90,12 +90,12 @@ public class SchemaManagerIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         // create stream/register schema
-        Response response = streamResource.upsertStream(stream, streamName);
+        Response response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
 
         String schemaString = "this is not valid json";
         stream.getLatestValueSchema().setSchemaString(schemaString);
-        response = streamResource.upsertStream(stream, streamName);
+        response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
@@ -105,14 +105,14 @@ public class SchemaManagerIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         // create stream/register schema
-        Response response = streamResource.upsertStream(stream, streamName);
+        Response response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
 
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         // incompatible schema
         stream.getLatestValueSchema().setSchemaString(stream.getLatestKeySchema().getSchemaString());
-        response = streamResource.upsertStream(stream, streamName);
+        response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
@@ -133,7 +133,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         // create stream/register schema
-        streamResource.upsertStream(stream, streamName);
+        streamResource.upsertStream(streamName, stream);
 
         // re-check compatibility for same schema
         Response response = streamResource.validateStreamCompatibility(stream, streamName, "default");
