@@ -116,7 +116,7 @@
         <mavenCompiler.pluginVersion>3.6.1</mavenCompiler.pluginVersion>
         <surefire.pluginVersion>2.21.0</surefire.pluginVersion>
         <build-helper.maven.plugin.version>3.0.0</build-helper.maven.plugin.version>
-
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
 
         <!-- OSSRH -->
         <nexusStaging.pluginVersion>1.6.7</nexusStaging.pluginVersion>
@@ -620,6 +620,32 @@
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                    <configuration>
+                        <mainClass>${mainClass}</mainClass>
+                        <includePluginDependencies>true</includePluginDependencies>
+                        <arguments>
+                            <!-- Standard Dropwizard app arguments -->
+                            <argument>server</argument>
+                            <argument>${project.basedir}/config-dev.yaml</argument>
+                        </arguments>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>stream-registry-core</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>kafka-infra-provider</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
