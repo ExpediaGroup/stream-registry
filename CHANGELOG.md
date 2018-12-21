@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [0.4.1] - SNAPSHOT
+### Changed
+- Adding un-annotated `streamName` path param to streamUpsert HTTP resource (#69)
+
 ### Removed
-- Deleted TODO/Documentation that referenced incorrect `http://localhost:8081/healthcheck` (#64 )
+- Deleted TODO/Documentation that referenced incorrect `http://localhost:8081/healthcheck` (#64)
 
 ## [0.4.0] - 20181218
 ### Added
