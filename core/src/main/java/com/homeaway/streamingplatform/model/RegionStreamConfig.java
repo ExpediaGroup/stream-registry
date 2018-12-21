@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 public class RegionStreamConfig {
 
     /**
-     * MOT Region where the Producer/Consumer is deployed
+     * Region where the Producer/Consumer is deployed.
      */
     @NotNull
     String region;

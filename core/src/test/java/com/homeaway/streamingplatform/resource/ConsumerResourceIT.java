@@ -64,7 +64,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C2";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        Response streamResponse = streamResource.upsertStream(stream);
+        Response streamResponse = streamResource.upsertStream(streamName, stream);
         assertThat(streamResponse.getStatus(), is(202));
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
 
@@ -95,7 +95,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C2";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
 
         consumerResource.upsertConsumer(streamName, consumerName, US_EAST_REGION);
@@ -124,7 +124,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C2";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName, JsonModelBuilder.TEST_PRODUCT_ID, Optional.of(TEST_COMPONENT_ID), OTHER_HINT);
 
-        Response streamResponse = streamResource.upsertStream(stream);
+        Response streamResponse = streamResource.upsertStream(streamName, stream);
         assertThat(streamResponse.getStatus(), is(202));
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
@@ -144,7 +144,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C2";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
 
         String invalidRegion="invalid-region";
@@ -171,7 +171,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String unsupported_region = "ap-southeast-1-vpc-3f07915b";
 
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(streamName, stream);
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
         Response response = consumerResource.upsertConsumer(streamName, consumerName, unsupported_region);
@@ -185,7 +185,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        Response response = streamResource.upsertStream(stream);
+        Response response = streamResource.upsertStream(streamName, stream);
         assertThat(response.getStatus(), is(202));
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
@@ -217,7 +217,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        streamResource.upsertStream(stream);
+        streamResource.upsertStream(streamName, stream);
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
 
         consumerResource.upsertConsumer(streamName, consumerName, US_EAST_REGION);
