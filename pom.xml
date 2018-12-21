@@ -15,17 +15,9 @@
     <description>Stream Registry Parent POM</description>
     <url>https://homeaway.github.io/stream-registry/</url>
 
-    <developers>
-        <developer>
-            <name>Stream Registry Developers</name>
-            <email>stream-registry-committers@groups.homeawaycorp.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
-        </developer>
-    </developers>
-
     <packaging>pom</packaging>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.4.1-SNAPSHOT</version>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -41,6 +33,14 @@
         <tag>HEAD</tag>
     </scm>
 
+    <developers>
+        <developer>
+            <name>Stream Registry Committers</name>
+            <email>stream-registry-committers@groups.homeawaycorp.com</email>
+            <organization>HomeAway</organization>
+            <organizationUrl>https://www.homeaway.com</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
 
