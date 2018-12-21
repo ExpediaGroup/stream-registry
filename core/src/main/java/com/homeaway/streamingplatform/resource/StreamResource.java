@@ -85,8 +85,8 @@ public class StreamResource {
     @Path("/{streamName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
-    public Response upsertStream(@ApiParam(value = "stream entity", required = true) Stream stream,
-                                 @ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName) {
+    public Response upsertStream(@ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName,
+                                 @ApiParam(value = "stream entity", required = true) Stream stream) {
 
         try {
             if (!stream.getName().equals(streamName)) {
