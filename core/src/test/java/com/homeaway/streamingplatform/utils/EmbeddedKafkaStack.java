@@ -50,7 +50,7 @@ public class EmbeddedKafkaStack extends ExternalResource {
 
     private static final String KAFKA_SCHEMAS_TOPIC = "_schemas";
 
-    private static final String AVRO_COMPATIBILITY_TYPE = AvroCompatibilityLevel.NONE.name;
+    private static final String AVRO_COMPATIBILITY_TYPE = AvroCompatibilityLevel.BACKWARD_TRANSITIVE.name;
 
     private static final String LISTENERS_CONFIG = "listeners";
 

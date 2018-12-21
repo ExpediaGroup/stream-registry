@@ -9,7 +9,7 @@ protocol RegionReplicatorProtocol {
   record RegionReplicator {
 
     /**
-    * This is the mot app name of the region replicator deployment
+    * This is the application name of the region replicator deployment
     */
     string appName;
 

@@ -32,4 +32,6 @@ public interface StreamDao {
 
     List<Stream> getAllStreams();
 
+    boolean validateStreamCompatibility(Stream stream);
+
 }
