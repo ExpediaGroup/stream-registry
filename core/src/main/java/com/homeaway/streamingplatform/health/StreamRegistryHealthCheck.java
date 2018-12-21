@@ -56,7 +56,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     public static final Integer PRODUCT_ID = 126845;
     public static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
     public static final String APP_NAME = "StreamRegistryApplication";
-    private static final String STREAM_NAME = "StreamRegistryHealthCheck";
+    private static final String HEALTH_CHECK_STREAM_NAME = "StreamRegistryHealthCheck";
 
     private final ManagedKStreams managedKStreams;
     private final StreamResource streamResource;
@@ -151,7 +151,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private void validateCreateStream() {
         try {
             Stream streamRegHealthCheckStream = createCanaryStream();
-            Response response = streamResource.upsertStream(streamRegHealthCheckStream);
+            Response response = streamResource.upsertStream(HEALTH_CHECK_STREAM_NAME, streamRegHealthCheckStream);
             if (response.getStatus() != 202) {
                 setStreamCreationHealthy(false);
                 throw new IllegalStateException("HealthCheck Failed: Error while upserting a Stream.");
@@ -165,7 +165,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private Stream createCanaryStream() {
         return Stream.builder()
-                .name(STREAM_NAME)
+                .name(HEALTH_CHECK_STREAM_NAME)
                 .schemaCompatibility(SchemaCompatibility.TRANSITIVE_BACKWARD)
                 .latestKeySchema(createSampleSchema())
                 .latestValueSchema(createSampleSchema())
@@ -194,9 +194,9 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateStateStore() {
         try {
-            AvroStreamKey avroStreamKey = AvroStreamKey.newBuilder().setStreamName(STREAM_NAME).build();
+            AvroStreamKey avroStreamKey = AvroStreamKey.newBuilder().setStreamName(HEALTH_CHECK_STREAM_NAME).build();
             Optional<AvroStream> avroStreamValue = managedKStreams.getAvroStreamForKey(avroStreamKey);
-            if(!avroStreamValue.isPresent() || ! avroStreamValue.get().getName().equals(STREAM_NAME)) {
+            if(!avroStreamValue.isPresent() || ! avroStreamValue.get().getName().equals(HEALTH_CHECK_STREAM_NAME)) {
                 setStateStoreHealthy(false);
                 throw new IllegalStateException("HealthCheck Failed: StreamRegistryHealthCheck Stream not available in StateStore.");
             }
@@ -227,7 +227,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         try {
             ProducerResource producerResource = streamResource.getProducerResource();
             String producerName = "P1";
-            Response response = producerResource.upsertProducer(STREAM_NAME, producerName, region);
+            Response response = producerResource.upsertProducer(HEALTH_CHECK_STREAM_NAME, producerName, region);
             List<RegionStreamConfig> regionStreamConfigList = ((Producer)response.getEntity()).getRegionStreamConfigList();
 
             if (regionStreamConfigList != null && regionStreamConfigList.size() > 0) {
@@ -261,7 +261,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         try {
             ConsumerResource consumerResource = streamResource.getConsumerResource();
             String consumerName = "C1";
-            Response response = consumerResource.upsertConsumer(STREAM_NAME, consumerName, region);
+            Response response = consumerResource.upsertConsumer(HEALTH_CHECK_STREAM_NAME, consumerName, region);
             List<RegionStreamConfig> regionStreamConfigList = ((Consumer)response.getEntity()).getRegionStreamConfigList();
 
             if (regionStreamConfigList != null && regionStreamConfigList.size() > 0) {
