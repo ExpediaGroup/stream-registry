@@ -71,7 +71,6 @@
         <!-- Utilities -->
         <lombok.version>1.16.18</lombok.version>
         <guava.version>23.4-jre</guava.version>
-        <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.6</commons-lang3.version>
 
         <javax.validation.version>1.1.0.Final</javax.validation.version>
@@ -79,8 +78,6 @@
         <wagon-provider-api.version>1.0-beta-2</wagon-provider-api.version>
         <plexus-utils.version>1.5.6</plexus-utils.version>
         <plexus-container-default.version>1.0-alpha-9-stable-1</plexus-container-default.version>
-
-        <retrofit.version>2.3.0</retrofit.version>
 
         <!-- Servlets -->
         <javax.ws.rs-api.version>2.1</javax.ws.rs-api.version>
@@ -108,7 +105,8 @@
 
         <!-- Plugins -->
         <assembly.pluginVersion>3.1.0</assembly.pluginVersion>
-        <javadoc.pluginVersion>3.0.0-M1</javadoc.pluginVersion>
+        <javadoc.pluginVersion>3.0.1</javadoc.pluginVersion>
+        <enforcer.pluginVersion>3.0.0-M2</enforcer.pluginVersion>
         <checkstyle.pluginVersion>3.0.0</checkstyle.pluginVersion>
         <source.pluginVersion>2.4</source.pluginVersion>
         <shade.pluginVersion>3.1.0</shade.pluginVersion>
@@ -117,11 +115,9 @@
         <deploy.pluginVersion>3.0.0-M1</deploy.pluginVersion>
         <release.pluginVersion>2.5.3</release.pluginVersion>
         <mavenCompiler.pluginVersion>3.6.1</mavenCompiler.pluginVersion>
-        <!-- TODO can we remove one of these surefire versions ? -->
-        <surefire.pluginVersion>2.20.1</surefire.pluginVersion>
-        <surefire-junit4.version>2.20.1</surefire-junit4.version>
+        <surefire.pluginVersion>2.21.0</surefire.pluginVersion>
         <build-helper.maven.plugin.version>3.0.0</build-helper.maven.plugin.version>
-
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
 
         <!-- OSSRH -->
         <nexusStaging.pluginVersion>1.6.7</nexusStaging.pluginVersion>
@@ -172,12 +168,6 @@
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>${javax.validation.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.squareup.retrofit2</groupId>
-                <artifactId>retrofit</artifactId>
-                <version>${retrofit.version}</version>
             </dependency>
 
             <dependency>
@@ -470,7 +460,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${javadoc.pluginVersion}</version>
+                    <version>${enforcer.pluginVersion}</version>
                     <executions>
                         <execution>
                             <id>enforce-maven</id>
@@ -664,6 +654,32 @@
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                    <configuration>
+                        <mainClass>${mainClass}</mainClass>
+                        <includePluginDependencies>true</includePluginDependencies>
+                        <arguments>
+                            <!-- Standard Dropwizard app arguments -->
+                            <argument>server</argument>
+                            <argument>${project.basedir}/config-dev.yaml</argument>
+                        </arguments>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>stream-registry-core</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>kafka-infra-provider</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
