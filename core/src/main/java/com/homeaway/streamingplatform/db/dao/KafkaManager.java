@@ -20,8 +20,26 @@ import java.util.Properties;
 
 // TODO need javadoc for KafkaManager
 // TODO Why do we have imperative operations here in stream registry? Does this limit composability? Can we reduce scope?
+// TODO Need to consider merging this with StreamInfrastructureManager to keep it stream-platform agnostic.
 public interface KafkaManager {
+    /**
+     * Initializes the concrete implementation of KafkaManager.
+     * @param config The properties for the given KafkaManager
+     */
+    void init(Properties config);
 
+    /**
+     * Gracefully shutsdown this implementation of KafkaManager.
+     */
+    void shutdown();
+
+    /**
+     * Creates topics in underlying implementation of KafkaManager provider.
+     * @param topics topics to creates
+     * @param partitions number of partitions for each of those topics
+     * @param replicationFactor replicationFactor for each of those topics
+     * @param topicConfig topic config to use for each of these topics
+     * @param isNewStream whether or not this invocation results from existing or new stream in stream registry.
+     */
     void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream);
-
 }
