@@ -371,6 +371,13 @@
                 </exclusions>
             </dependency>
 
+            <!-- JDK 11 changes -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.4.0-b180830.0359</version>
+            </dependency>
+
             <!-- Test Dependencies -->
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -561,6 +568,8 @@
                                     <ignoredUnusedDeclaredDependency>org.hamcrest:hamcrest-core:jar:${hamcrest.version}</ignoredUnusedDeclaredDependency>
                                     <ignoredUnusedDeclaredDependency>org.slf4j:slf4j-api:jar:${slf4j.version}</ignoredUnusedDeclaredDependency>
                                     <ignoredUnusedDeclaredDependency>io.dropwizard:dropwizard-testing:jar:1.3.5</ignoredUnusedDeclaredDependency>
+                                    <!-- JDK 11 changes -->
+                                    <ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api:jar:2.4.0-b180830.0359</ignoredUnusedDeclaredDependency>
                                 </ignoredUnusedDeclaredDependencies>
                             </configuration>
                         </execution>

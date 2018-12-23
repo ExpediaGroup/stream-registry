@@ -13,7 +13,7 @@ build:
 	./mvnw clean install -B
 
 run:
-	java -Xmx2G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true -jar assembly/target/stream-registry*SNAPSHOT.jar server config-dev.yaml
+	java --add-opens java.base/java.lang=ALL-UNNAMED -Xmx2G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true -jar assembly/target/stream-registry*SNAPSHOT.jar server config-dev.yaml
 
 debug:
 	java -Xmx2G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=$(STREAM_REGISTRY_DEBUG_SUSPEND),address=5105 -jar assembly/target/stream-registry*SNAPSHOT.jar server config-dev.yaml

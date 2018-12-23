@@ -179,6 +179,13 @@
             <artifactId>javax.ws.rs-api</artifactId>
         </dependency>
 
+        <!-- JDK 11 Changes -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
