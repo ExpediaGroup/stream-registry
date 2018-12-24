@@ -362,7 +362,7 @@
                         <artifactId>annotations</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.javassist</groupId>
+                        <groupId>org.javassist</groupId>    
                         <artifactId>javassist</artifactId>
                     </exclusion>
                 </exclusions>
@@ -385,11 +385,11 @@
                 <artifactId>jaxb-api</artifactId>
                 <version>2.4.0-b180830.0359</version>
             </dependency>
-			<dependency>
-			    <groupId>org.javassist</groupId>
-			    <artifactId>javassist</artifactId>
-			    <version>3.24.1-GA</version>
-			</dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.24.1-GA</version>
+            </dependency>
 
             <!-- Test Dependencies -->
             <dependency>
@@ -448,11 +448,11 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire.pluginVersion}</version>
                     <dependencies>
-						<dependency>
-						    <groupId>org.ow2.asm</groupId>
-						    <artifactId>asm</artifactId>
-						    <version>7.0</version>
-						</dependency>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>7.0</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
@@ -542,11 +542,11 @@
                         <failOnError>false</failOnError>
                     </configuration>
                     <dependencies>
-						<dependency>
-						    <groupId>org.ow2.asm</groupId>
-						    <artifactId>asm</artifactId>
-						    <version>7.0</version>
-						</dependency>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>7.0</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
@@ -608,11 +608,11 @@
                         </execution>
                     </executions>
                     <dependencies>
-						<dependency>
-						    <groupId>org.ow2.asm</groupId>
-						    <artifactId>asm</artifactId>
-						    <version>7.0</version>
-						</dependency>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>7.0</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
@@ -673,11 +673,11 @@
                         <target>${maven.compiler.target}</target>
                     </configuration>
                     <dependencies>
-						<dependency>
-						    <groupId>org.ow2.asm</groupId>
-						    <artifactId>asm</artifactId>
-						    <version>7.0</version>
-						</dependency>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>7.0</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
             </plugins>
