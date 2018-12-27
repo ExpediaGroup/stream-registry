@@ -49,6 +49,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+        <asm.version>7.0</asm.version>
+
         <!--Encoding-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -452,7 +454,7 @@
                         <dependency>
                             <groupId>org.ow2.asm</groupId>
                             <artifactId>asm</artifactId>
-                            <version>7.0</version>
+                            <version>${asm.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -546,7 +548,7 @@
                         <dependency>
                             <groupId>org.ow2.asm</groupId>
                             <artifactId>asm</artifactId>
-                            <version>7.0</version>
+                            <version>${asm.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -613,7 +615,7 @@
                         <dependency>
                             <groupId>org.ow2.asm</groupId>
                             <artifactId>asm</artifactId>
-                            <version>7.0</version>
+                            <version>${asm.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -678,7 +680,7 @@
                         <dependency>
                             <groupId>org.ow2.asm</groupId>
                             <artifactId>asm</artifactId>
-                            <version>7.0</version>
+                            <version>${asm.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
