@@ -150,7 +150,7 @@ public class KafkaManagerImplTest {
 
         KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
 
-        //Existing Stream
+        // Not existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
 
         //verify create topic happens when requested topic does not exist
@@ -169,6 +169,10 @@ public class KafkaManagerImplTest {
 
         //Existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
+
+        // note: this is a weird case, because somehow the stream exists in SR, but the underlying topic does NOT
+        // might want to consider this corner case a bit more. Currently the behavior honors the request and creates the topic
+        // with the requested config
 
         //verify create topic happens when requested topic does not exist
         verifyStatic(AdminUtils.class, times(0));
