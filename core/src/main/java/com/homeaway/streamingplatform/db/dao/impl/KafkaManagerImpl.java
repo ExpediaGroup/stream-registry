@@ -39,7 +39,7 @@ import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 
 @Slf4j
 public class KafkaManagerImpl implements KafkaManager {
-    static Map<String,Boolean> TOPIC_CONFIG_KEY_FILTER = new HashMap<String, Boolean>() {
+    private static Map<String,Boolean> TOPIC_CONFIG_KEY_FILTER = new HashMap<String, Boolean>() {
         private static final long serialVersionUID = -7377105429359314831L; {
 
         put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, true);
@@ -166,18 +166,18 @@ public class KafkaManagerImpl implements KafkaManager {
     // package scope so that PowerMock can leverage
     @SuppressWarnings("SuspiciousMethodCalls")
     Map<String,String> filterPropertiesKeys(Properties properties, Map<String,Boolean> keyFilterMap) {
-        return new HashMap<>(properties.keySet().stream()
+        return new HashMap<>(properties.stringPropertyNames().stream()
                 .filter(key -> !keyFilterMap.containsKey(key))
-                .filter(key -> properties.getProperty((String)key) != null)
-                .collect(Collectors.toMap(key -> (String)key, key -> properties.getProperty((String)key))));
+                .filter(key -> properties.getProperty(key) != null)
+                .collect(Collectors.toMap(key -> (String)key, key -> properties.getProperty(key))));
     }
 
     // package scope so that PowerMock can leverage
     Map<String,String> propertiesToMap(Properties properties) {
-        return properties.keySet().stream()
-                .filter(key -> properties.getProperty((String)key) != null)
+        return properties.stringPropertyNames().stream()
+                .filter(key -> properties.getProperty(key) != null)
                 .collect(Collectors.toMap(key -> (String)key,
-                        key -> properties.getProperty((String)key)));
+                        key -> properties.getProperty(key)));
     }
 
     private boolean topicExists(ZkUtils zkUtils, String topic) {

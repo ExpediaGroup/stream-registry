@@ -15,7 +15,6 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.powermock.api.mockito.PowerMockito.*;
 
@@ -56,6 +55,8 @@ public class KafkaManagerImplTest {
     private static final int REPLICATION_FACTOR = 3;
     private static final Properties PROPS = new Properties();
     private static final Properties FILTERED_PROPS = new Properties();
+    private static final Properties TOPIC_PROPS = new Properties();
+    private static final Properties TOPIC_WITH_CNXN_PROPS = new Properties();
 
     @Mock private ZkUtils zkUtils;
     @Mock private ZkClient zkClient;
@@ -74,6 +75,11 @@ public class KafkaManagerImplTest {
         PROPS.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
         FILTERED_PROPS.setProperty("key1", "val1");
         FILTERED_PROPS.setProperty("key2", "2");
+        TOPIC_PROPS.setProperty("key1", "actualVal1"); // different from "val1"
+        TOPIC_PROPS.setProperty("key2", "2");
+        TOPIC_WITH_CNXN_PROPS.putAll(TOPIC_PROPS);
+        TOPIC_WITH_CNXN_PROPS.setProperty(KafkaProducerConfig.ZOOKEEPER_QUORUM, "127.0.0.1:2181");
+        TOPIC_WITH_CNXN_PROPS.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 
         // setup kafkaManager
         // kafkaManager.init(PROPS);
@@ -86,7 +92,7 @@ public class KafkaManagerImplTest {
 
         // using power mock to allow for mocking of static classes
         mockStatic(AdminUtils.class);
-        when(AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), TOPIC)).thenReturn(PROPS);
+        when(AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), TOPIC)).thenReturn(TOPIC_PROPS);
     }
 
     @Test(expected = StreamCreationException.class)
@@ -101,16 +107,35 @@ public class KafkaManagerImplTest {
     }
 
     @Test
+    public void testUpsertTopicsForExistingStreamWithMatchingConfig() {
+        // Mock it as an existing topic
+        when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
+
+        KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
+
+        // Existing Stream, but PROPS match!! should not have an exception
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, TOPIC_WITH_CNXN_PROPS, true);
+
+        // verify change topic DOES NOT HAPPEN because props match
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.changeTopicConfig(zkUtils, TOPIC, TOPIC_PROPS);
+
+        // verify create topic DOES NOT HAPPEN because props match
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, TOPIC_PROPS, RackAwareMode.Enforced$.MODULE$);
+    }
+
+    @Test
     public void testUpsertTopicsForExistingStream() {
         // Mock it as an existing topic
-        when(AdminUtils.topicExists(eq(zkUtils), eq(TOPIC))).thenReturn(true);
+        when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
         KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
 
         //Existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
 
-        //verify change topic happens only when requested config is exact
+        //verify change topic happens because isNewStream=false
         verifyStatic(AdminUtils.class, times(1));
         AdminUtils.changeTopicConfig(zkUtils, TOPIC, FILTERED_PROPS);
         verifyStatic(AdminUtils.class, times(0));
@@ -120,6 +145,23 @@ public class KafkaManagerImplTest {
 
     @Test
     public void testUpsertTopicsForNewTopic() {
+        // Mock it as a new topic
+        when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
+
+        KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
+
+        //Existing Stream
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
+
+        //verify create topic happens when requested topic does not exist
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.changeTopicConfig(zkUtils, TOPIC, FILTERED_PROPS);
+        verifyStatic(AdminUtils.class, times(1));
+        AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, FILTERED_PROPS, RackAwareMode.Enforced$.MODULE$);
+    }
+
+    @Test
+    public void testUpsertTopicsForNewTopicExistsInSR() {
         // Mock it as a new topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 
