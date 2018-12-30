@@ -23,17 +23,6 @@ import java.util.Properties;
 // TODO Need to consider merging this with StreamInfrastructureManager to keep it stream-platform agnostic.
 public interface KafkaManager {
     /**
-     * Initializes the concrete implementation of KafkaManager.
-     * @param config The properties for the given KafkaManager
-     */
-    void init(Properties config);
-
-    /**
-     * Gracefully shutsdown this implementation of KafkaManager.
-     */
-    void shutdown();
-
-    /**
      * Creates topics in underlying implementation of KafkaManager provider.
      * @param topics topics to creates
      * @param partitions number of partitions for each of those topics

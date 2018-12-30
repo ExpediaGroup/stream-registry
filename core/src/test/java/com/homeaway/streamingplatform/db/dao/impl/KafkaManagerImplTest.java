@@ -15,22 +15,21 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
+import static org.powermock.api.mockito.PowerMockito.*;
 
 import java.util.Collections;
 import java.util.Properties;
 
 import kafka.admin.AdminUtils;
+import kafka.admin.RackAwareMode;
 import kafka.server.ConfigType;
 import kafka.utils.ZkUtils;
 
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
-import org.junit.Assert;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -47,80 +47,89 @@ import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
 import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
 @PrepareForTest({KafkaManagerImpl.class, AdminUtils.class})
 public class KafkaManagerImplTest {
 
-    private static final String topic = "kafka-manager-test";
-    private static final int partitions = 2;
-    private static final int replicationFactor = 3;
-    private static Properties props = new Properties();
+    private static final String TOPIC = "kafka-manager-test";
+    private static final int PARTITIONS = 2;
+    private static final int REPLICATION_FACTOR = 3;
+    private static final Properties PROPS = new Properties();
+    private static final Properties FILTERED_PROPS = new Properties();
 
     @Mock private ZkUtils zkUtils;
     @Mock private ZkClient zkClient;
     @Mock private ZkConnection zkConnection;
 
     @InjectMocks
-    private KafkaManagerImpl kafkaManager;
+    private KafkaManagerImpl kafkaManager = new KafkaManagerImpl();
 
     @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Before
     public void setup() throws Exception{
-        props.put("key1", "val1");
-        props.put("key2", 2);
-        props.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "");
+        PROPS.put("key1", "val1");
+        PROPS.put("key2", 2);
+        PROPS.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "127.0.0.1:2181");
+        PROPS.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        FILTERED_PROPS.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "127.0.0.1:2181");
+        FILTERED_PROPS.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 
-        kafkaManager = new KafkaManagerImpl();
+        // setup kafkaManager
+        // kafkaManager.init(PROPS);
+        // un-necessary since powermock has setup mocks for zookeeper in KafkaManagerImpl
 
-        mockStatic(AdminUtils.class);
-
+        // make sure that the * direct-caller * of these classes are in @PrepareForTest annotation above on this test
         whenNew(ZkClient.class).withAnyArguments().thenReturn(zkClient);
         whenNew(ZkConnection.class).withArguments(Mockito.anyString()).thenReturn(zkConnection);
         whenNew(ZkUtils.class).withAnyArguments().thenReturn(zkUtils);
 
-        when(AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), topic)).thenReturn(props);
+        // using power mock to allow for mocking of static classes
+        mockStatic(AdminUtils.class);
+        when(AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), TOPIC)).thenReturn(PROPS);
     }
 
     @Test(expected = StreamCreationException.class)
     public void testUpsertTopicsForNewStream(){
         // Mock it as an existing topic
-        when(AdminUtils.topicExists(zkUtils, topic)).thenReturn(true);
+        when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
         //New Stream
-        kafkaManager.upsertTopics(Collections.singleton(topic), partitions, replicationFactor, props, true);
-        // FIXME!
+        kafkaManager.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
     }
 
     @Test
     public void testUpsertTopicsForExistingStream() {
         // Mock it as an existing topic
-        when(AdminUtils.topicExists(zkUtils, topic)).thenReturn(true);
+        when(AdminUtils.topicExists(eq(zkUtils), eq(TOPIC))).thenReturn(true);
 
         KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
-        doNothing().doThrow(new RuntimeException()).when(kafkaManagerSpy).createTopics(Mockito.anyCollection(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(), Mockito.anyMap());
 
         //Existing Stream
-        kafkaManagerSpy.upsertTopics(Collections.singleton(topic), partitions, replicationFactor, props, false);
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
 
-        //Assert if 0 topic is added to the list to be created
-        //Assert.assertEquals(0,kafkaManagerSpy.topicsToCreate.size());
-        // FIXME!
+        //verify change topic happens only when requested config is exact
+        verifyStatic(AdminUtils.class, times(1));
+        AdminUtils.changeTopicConfig(zkUtils, TOPIC, FILTERED_PROPS);
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, FILTERED_PROPS, RackAwareMode.Enforced$.MODULE$);
     }
 
 
     @Test
     public void testUpsertTopicsForNewTopic() {
         // Mock it as a new topic
-        when(AdminUtils.topicExists(zkUtils, topic)).thenReturn(false);
+        when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 
         KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
-        doNothing().doThrow(new RuntimeException()).when(kafkaManagerSpy).createTopics(Mockito.anyCollection(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(), Mockito.anyMap());
 
         //Existing Stream
-        kafkaManagerSpy.upsertTopics(Collections.singleton(topic), partitions, replicationFactor, props, false);
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
 
-        //Assert if 1 topic is added to the list to be created
-        //Assert.assertEquals(1, kafkaManagerSpy.topicsToCreate.size());
-        // FIXME!
+        //verify create topic happens when requested topic does not exist
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.changeTopicConfig(zkUtils, TOPIC, FILTERED_PROPS);
+        verifyStatic(AdminUtils.class, times(1));
+        AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, FILTERED_PROPS, RackAwareMode.Enforced$.MODULE$);
     }
 }

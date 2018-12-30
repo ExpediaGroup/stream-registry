@@ -15,12 +15,11 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 import kafka.admin.AdminUtils;
+import kafka.admin.RackAwareMode;
 import kafka.server.ConfigType;
 import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
@@ -28,9 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.CreateTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
@@ -39,7 +35,7 @@ import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 
 @Slf4j
 public class KafkaManagerImpl implements KafkaManager {
-    private static Map<String,Boolean> TOPIC_CONFIG_KEY_FILTER = new HashMap<String, Boolean>() {
+    static Map<String,Boolean> TOPIC_CONFIG_KEY_FILTER = new HashMap<String, Boolean>() {
         private static final long serialVersionUID = -7377105429359314831L; {
 
         put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, true);
@@ -48,8 +44,23 @@ public class KafkaManagerImpl implements KafkaManager {
 
     // internal state
 
-    private ZkClient zkClient;
-    private ZkUtils zkUtils;
+
+    private ZkUtils initZkUtils(Properties config) {
+        String zkConnect = config.getProperty(KafkaProducerConfig.ZOOKEEPER_QUORUM);
+        ZkClient zkClient = new ZkClient(zkConnect);
+        zkClient.setZkSerializer(ZKStringSerializer$.MODULE$);
+        ZkConnection zkConnection = new ZkConnection(zkConnect);
+        ZkUtils zkUtils = new ZkUtils(zkClient, zkConnection, false);
+        return zkUtils;
+    }
+
+    public void shutdownZkUtils(ZkUtils zkUtils) {
+        try {
+            zkUtils.close();
+        } catch (RuntimeException exception) {
+            log.error("Unexpected exception caught during zkUtils shutdown.", exception);
+        }
+    }
 
     /**
      * Create and/or Update Topics using AdminClient and AdminUtils
@@ -60,29 +71,45 @@ public class KafkaManagerImpl implements KafkaManager {
      * @param properties        properties that will be set on each topic in the list
      */
     public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isNewStream) {
-        // remove client connection properties to leave only topic configs
-        Map<String, String> topicConfigMap = filterPropertiesKeys(properties, TOPIC_CONFIG_KEY_FILTER);
+        // TODO - Can't guarantee against race conditions... should probably move to event-source paradigm to
+        //      protect against this (and maybe employ optimistic locking for extra safety).
+        //      The issue here is there is nothing that "locks" the underlying kafka store -- something
+        //      can inevitably change the underlying store while this method is evaluating, always accounting for
+        //      some amount of race window.
 
-        List<String> topicsToCreate = new ArrayList<>();
-        for (String topic : topics) {
-            // check if topic doesn't exist and add to list
-            if (!topicExists(topic)) {
-                // buffer creation request
-                topicsToCreate.add(topic);
-                continue;
-            }
+        // TODO probably need to cache a KafkaManagerImpl per "cluster" to avoid un-necessary creation / destruction of connections
+        ZkUtils zkUtils = initZkUtils(properties);
+        try {
+            // remove client connection properties to leave only topic configs
+            Map<String, String> topicConfigMap = filterPropertiesKeys(properties, TOPIC_CONFIG_KEY_FILTER);
 
+            // partition the list by whether the topic exists or not
+            Map<Boolean, List<String>> partitionMaps = topics.stream().collect(Collectors.partitioningBy(topic -> topicExists(zkUtils, topic)));
+
+            // if it exists, update it.  If it doesn't exist, create it
+            List<String> topicsToUpdate = partitionMaps.get(true);
+            List<String> topicsToCreate = partitionMaps.get(false);
+
+            // update any topics that are necessary
+            updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isNewStream);
+
+            // now create any topics that were necessary to create this run
+            createTopics(zkUtils, topicsToCreate, partitions, replicationFactor, topicConfigMap);
+        } finally {
+            shutdownZkUtils(zkUtils);
+        }
+    }
+
+    void updateTopics(ZkUtils zkUtils, List<String> topicsToUpdate, Map<String, String> topicConfigMap, boolean isNewStream) {
+        for (String topic : topicsToUpdate) {
             // update topic
-            Properties actualTopicConfig = getTopicConfig(topic);
+            Properties actualTopicConfig = getTopicConfig(zkUtils, topic);
             Map<String, String> actualTopicConfigMap = propertiesToMap(actualTopicConfig);
-            if(actualTopicConfig.equals(topicConfigMap)) {
+            if(actualTopicConfigMap.equals(topicConfigMap)) {
                 // NOTHING TO DO!
                 log.info("topic config for {} exactly match. Ignoring.", topic);
                 continue;
             }
-
-            // FIXME!! This wreaks of non-declarative.. in a fully declarative world we would log the request and based on some policy accept or reject the request.
-            // FIXME!! Here we are coding up the policy to reject the request if the config is different and in the newStream requested state.
 
             // NOTE: If a newly created stream is requested in Stream Registry but it is already present
             // in the underlying streaming infrastructure... AND we got this far, this means configuration
@@ -93,19 +120,18 @@ public class KafkaManagerImpl implements KafkaManager {
             // to exactly match downstream config when the stream-registry has not "onboarded" existing topic
             // for the first time.
 
-            // TODO: Alternatively we can add a updateMetadataOnly=true flag, and this would not have any side-effects
+            // TODO Alternatively we can add a forceSync=true flag, ignoring any user provided info, and only updating SR with the underlying settings
+            //      We should probably do forceSync=true anyway, as it provides a simple way to keep things in sync
             if(isNewStream) {
                 // FIXME!! Fix exception reporting... just reporting the topic failed with no message is not a good developer experience. Consider replacing topic with message. (and include topic name in message).
+                // throw new StreamCreationException("topic: " + topic " already exists but config is different than requested!"); // consider using forceSync=true
                 throw new StreamCreationException(topic);
             }
 
-            // If we got this far, we are not a new stream, and request config is different than
-            // what is in stream registry. Feel fe
+            // If we got this far, we are "updating" an "existing" stream, and request config is different than
+            // what is in stream registry. Go ahead and update now.
             updateTopic(zkUtils, topic, topicConfigMap);
         }
-
-        // now create any topics that were necessary to create this run
-        createTopics(topicsToCreate, partitions, replicationFactor, properties, topicConfigMap);
     }
 
     private void updateTopic(ZkUtils zkUtils, String topic, Map<String, String> configMap) {
@@ -117,59 +143,41 @@ public class KafkaManagerImpl implements KafkaManager {
     // TODO need to check if topic exists instead of relying on exception path or just create one since check already occurred above
     // TODO Timeout exception needs to propagate and not be handled here
     // TODO Need JavaDoc
-    protected void createTopics(Collection<String> topics, int partitions, int replicationFactor, Properties adminClientProperties, Map<String, String> topicConfigMap) {
-        try {
-            AdminClient adminClient = AdminClient.create(adminClientProperties);
-            List<NewTopic> newTopicList = topics.stream()
-                    .map(topic ->
-                            new NewTopic(topic, partitions, (short) replicationFactor)
-                                    .configs(topicConfigMap))
-                    .collect(toList());
-
-            CreateTopicsResult createTopicsResult = adminClient.createTopics(newTopicList);
-            // synchronous block
-            createTopicsResult.all().get();
-        } catch (Exception exception) {
-            // Unexpected exception
-            throw new IllegalStateException("Unexpected exception", exception);
+    void createTopics(ZkUtils zkUtils, Collection<String> topics, int partitions, int replicationFactor, Map<String, String> topicConfigMap) {
+        for(String topic : topics) {
+            createTopic(zkUtils, topic, partitions, replicationFactor, topicConfigMap);
         }
     }
 
-    @Override
-    public void init(Properties config) {
-        String zkConnect = config.getProperty(KafkaProducerConfig.ZOOKEEPER_QUORUM);
-        zkClient = new ZkClient(zkConnect);
-        zkClient.setZkSerializer(ZKStringSerializer$.MODULE$);
-        ZkConnection zkConnection = new ZkConnection(zkConnect);
-        zkUtils = new ZkUtils(zkClient, zkConnection, false);
+    private void createTopic(ZkUtils zkUtils, String topic, int partitions, int replicationFactor, Map<String, String> topicConfigMap) {
+        Properties topicProperties = new Properties();
+        topicProperties.putAll(topicConfigMap);
+        AdminUtils.createTopic(zkUtils, topic, partitions, replicationFactor, topicProperties, RackAwareMode.Enforced$.MODULE$);
     }
 
-    @Override
-    public void shutdown() {
-        try {
-            zkUtils.close();
-            zkClient.close();
-        } catch (RuntimeException exception) {
-            log.error("Unexpected exception caught during KafkaManagerImpl shutdown.", exception);
-        }
+    // utility methods for this class
+
+    @SuppressWarnings("SuspiciousMethodCalls")
+    Map<String,String> filterPropertiesKeys(Properties properties, Map<String,Boolean> keyFilterMap) {
+        return new HashMap<>(properties.keySet().stream()
+                .filter(keyFilterMap::containsKey)
+                .collect(Collectors.toMap(key -> (String)key, key -> properties.getProperty((String)key))));
     }
 
-    private Map<String,String> filterPropertiesKeys(Properties properties, Map<String,Boolean> keyfilterMap) {
-        return new HashMap<>(properties.entrySet().stream()
-                .filter(entry -> keyfilterMap.containsKey(entry.getKey()))
-                .collect(Collectors.toMap(entry -> (String)entry.getKey(), entry -> (String)entry.getValue())));
+    Map<String,String> propertiesToMap(Properties properties) {
+        return properties.keySet().stream()
+                .filter(key -> properties.getProperty((String)key) != null)
+                .collect(Collectors.toMap(key -> (String)key,
+                        key -> properties.getProperty((String)key)));
     }
 
-    private Map<String,String> propertiesToMap(Properties properties) {
-        return properties.entrySet().stream()
-                .collect(Collectors.toMap(entry -> (String)entry.getKey(), entry -> (String)entry.getValue()));
+    private boolean topicExists(ZkUtils zkUtils, String topic) {
+        boolean topicExists = AdminUtils.topicExists(zkUtils, topic);
+        log.debug("topic: {} exists={}", topic, topicExists);
+        return topicExists;
     }
 
-    private boolean topicExists(String topic) {
-        return AdminUtils.topicExists(zkUtils, topic);
-    }
-
-    private Properties getTopicConfig(String topic) {
+    private Properties getTopicConfig(ZkUtils zkUtils, String topic) {
         return AdminUtils.fetchEntityConfig(zkUtils, ConfigType.Topic(), topic);
     }
 }
