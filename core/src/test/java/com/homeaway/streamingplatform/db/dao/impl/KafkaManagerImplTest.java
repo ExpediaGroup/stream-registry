@@ -68,12 +68,12 @@ public class KafkaManagerImplTest {
 
     @Before
     public void setup() throws Exception{
-        PROPS.put("key1", "val1");
-        PROPS.put("key2", 2);
-        PROPS.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "127.0.0.1:2181");
-        PROPS.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
-        FILTERED_PROPS.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "127.0.0.1:2181");
-        FILTERED_PROPS.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        PROPS.setProperty("key1", "val1");
+        PROPS.setProperty("key2", "2");  // Properties should be strings only... not ints
+        PROPS.setProperty(KafkaProducerConfig.ZOOKEEPER_QUORUM, "127.0.0.1:2181");
+        PROPS.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        FILTERED_PROPS.setProperty("key1", "val1");
+        FILTERED_PROPS.setProperty("key2", "2");
 
         // setup kafkaManager
         // kafkaManager.init(PROPS);
@@ -96,6 +96,8 @@ public class KafkaManagerImplTest {
 
         //New Stream
         kafkaManager.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
+
+        // expecting an exception to be thrown because topic exists but request doesn't match the config
     }
 
     @Test

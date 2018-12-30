@@ -15,7 +15,11 @@
  */
 package com.homeaway.streamingplatform.db.dao.impl;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import kafka.admin.AdminUtils;
@@ -100,6 +104,7 @@ public class KafkaManagerImpl implements KafkaManager {
         }
     }
 
+    // package scope so that PowerMock can verify
     void updateTopics(ZkUtils zkUtils, List<String> topicsToUpdate, Map<String, String> topicConfigMap, boolean isNewStream) {
         for (String topic : topicsToUpdate) {
             // update topic
@@ -143,6 +148,7 @@ public class KafkaManagerImpl implements KafkaManager {
     // TODO need to check if topic exists instead of relying on exception path or just create one since check already occurred above
     // TODO Timeout exception needs to propagate and not be handled here
     // TODO Need JavaDoc
+    // package scope so that PowerMock can verify
     void createTopics(ZkUtils zkUtils, Collection<String> topics, int partitions, int replicationFactor, Map<String, String> topicConfigMap) {
         for(String topic : topics) {
             createTopic(zkUtils, topic, partitions, replicationFactor, topicConfigMap);
@@ -157,13 +163,16 @@ public class KafkaManagerImpl implements KafkaManager {
 
     // utility methods for this class
 
+    // package scope so that PowerMock can leverage
     @SuppressWarnings("SuspiciousMethodCalls")
     Map<String,String> filterPropertiesKeys(Properties properties, Map<String,Boolean> keyFilterMap) {
         return new HashMap<>(properties.keySet().stream()
-                .filter(keyFilterMap::containsKey)
+                .filter(key -> !keyFilterMap.containsKey(key))
+                .filter(key -> properties.getProperty((String)key) != null)
                 .collect(Collectors.toMap(key -> (String)key, key -> properties.getProperty((String)key))));
     }
 
+    // package scope so that PowerMock can leverage
     Map<String,String> propertiesToMap(Properties properties) {
         return properties.keySet().stream()
                 .filter(key -> properties.getProperty((String)key) != null)
