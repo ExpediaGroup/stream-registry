@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.collect.Lists;
@@ -148,16 +150,20 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
-            List<com.homeaway.digitalplatform.streamregistry.Producer> listProducer = avroStream.get().getProducers();
-            int producerInitialSize = listProducer.size();
-            for (Iterator<com.homeaway.digitalplatform.streamregistry.Producer> iter = listProducer.listIterator(); iter.hasNext(); ) {
-                com.homeaway.digitalplatform.streamregistry.Producer producerEntity = iter.next();
-                if (producerEntity.getActor().getName().equalsIgnoreCase(producerName)) {
-                    // Remove the managedKafkaProducer
-                    iter.remove();
-                    avroStream.get().setProducers(Lists.newArrayList(iter));
-                }
-            }
+            // Obtains producer list size before  remove consumer
+            final int producerInitialSize = avroStream.get().getProducers().size();
+
+            // Obtains filtered producer list not containing the consumer we want to remove
+            List<com.homeaway.digitalplatform.streamregistry.Producer> withoutProducer = avroStream.get()
+                    .getProducers()
+                    .stream()
+                    .filter(producer -> !StreamRegistryUtils.hasActorNamed(producerName, producer::getActor))
+                    .collect(Collectors.toList());
+
+            // Update stream's producer list
+            avroStream.get().setProducers(withoutProducer);
+
+            // If filtered producer list size is less than initial size stream will be updated
             if (avroStream.get().getProducers().size() < producerInitialSize)
                 updateAvroStream(avroStream.get());
             else

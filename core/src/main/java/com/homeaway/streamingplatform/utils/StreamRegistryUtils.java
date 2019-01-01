@@ -19,8 +19,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import com.homeaway.digitalplatform.streamregistry.Actor;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -82,5 +86,14 @@ public final class StreamRegistryUtils {
         empty.put(0, Collections.emptyList());
 
         return empty;
+    }
+
+    public static final boolean hasActorNamed(String name, Supplier<Actor> actorSupplier) {
+        return name != null &&
+                Optional.ofNullable(actorSupplier)
+                        .map(Supplier::get)
+                        .map(Actor::getName)
+                        .filter(actorName -> actorName.equalsIgnoreCase(name))
+                        .isPresent();
     }
 }
