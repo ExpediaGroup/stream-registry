@@ -17,15 +17,11 @@ package com.homeaway.streamingplatform.db.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 import lombok.extern.slf4j.Slf4j;
-
-import com.google.common.collect.Lists;
 
 import com.homeaway.digitalplatform.streamregistry.Actor;
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
@@ -44,6 +40,7 @@ import com.homeaway.streamingplatform.exceptions.UnknownRegionException;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 
 @Slf4j
 public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.model.Producer> {

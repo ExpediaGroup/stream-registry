@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import com.homeaway.digitalplatform.streamregistry.Actor;
@@ -42,6 +41,7 @@ import com.homeaway.streamingplatform.exceptions.UnknownRegionException;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 
 @Slf4j
 public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.model.Consumer> {

@@ -24,8 +24,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.homeaway.digitalplatform.streamregistry.Actor;
-
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,6 +32,8 @@ import lombok.ToString;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
+import com.homeaway.digitalplatform.streamregistry.Actor;
 
 public final class StreamRegistryUtils {
     public static <V> Map<Integer, List<V>> paginate(List<V> list, int pageSize) {

@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.homeaway.digitalplatform.streamregistry.Actor;
-import com.homeaway.digitalplatform.streamregistry.Consumer;
 import org.junit.Test;
 
+import com.homeaway.digitalplatform.streamregistry.Actor;
+import com.homeaway.digitalplatform.streamregistry.Consumer;
 import com.homeaway.streamingplatform.utils.StreamRegistryUtils.EntriesPage;
 
 public class StreamRegistryUtilsTest {
