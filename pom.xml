@@ -645,6 +645,12 @@
                             <artifactId>kafka-infra-provider</artifactId>
                             <version>${project.version}</version>
                         </dependency>
+                        <!-- Added to fix Jersey ClassNotFoundException on exec:java goal -->
+                        <dependency>
+                            <groupId>org.glassfish.jersey.containers</groupId>
+                            <artifactId>jersey-container-servlet-core</artifactId>
+                            <version>2.25.1</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
             </plugins>
