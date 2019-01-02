@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Adding un-annotated `streamName` path param to streamUpsert HTTP resource (#69)
 - Updated pom.xml to remove unused retrofit library, and clean up some versioning (#70)
+- Updated pom.xml to fix `make run` goal (#76)
 
 ### Removed
 - Deleted TODO/Documentation that referenced incorrect `http://localhost:8081/healthcheck` (#64)
