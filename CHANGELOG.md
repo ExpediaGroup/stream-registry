@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Adding un-annotated `streamName` path param to streamUpsert HTTP resource (#69)
 - Updated pom.xml to remove unused retrofit library, and clean up some versioning (#70)
+- Stop Stream Creation for existing topics if topic configs don't match (#52)
 
 ### Removed
 - Deleted TODO/Documentation that referenced incorrect `http://localhost:8081/healthcheck` (#64)
@@ -15,9 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.4.0] - 20181218
 ### Added
 - Schema validation support via `SchemaManager` interface with default Confluent implementation provided (#41)
-
-### Changed
-- Stop Stream Creation for existing topics if topic configs don't match
 
 ## [0.3.2] - 20181216
 ### Changed
