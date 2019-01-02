@@ -54,6 +54,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <mainClass>com.homeaway.streamingplatform.StreamRegistryApplication</mainClass>
+        <dropwizard.server.config>config-dev.yaml</dropwizard.server.config>
 
         <!-- JaCoCo Coverage -->
         <coverage.line>0.59</coverage.line>
@@ -120,6 +121,10 @@
 
         <!-- OSSRH -->
         <nexusStaging.pluginVersion>1.6.7</nexusStaging.pluginVersion>
+
+        <!-- Jib -->
+        <jib-maven-plugin.version>0.10.1</jib-maven-plugin.version>
+        <jib.container.appRoot>/app</jib.container.appRoot>
     </properties>
 
     <dependencyManagement>
@@ -631,7 +636,7 @@
                         <arguments>
                             <!-- Standard Dropwizard app arguments -->
                             <argument>server</argument>
-                            <argument>${project.basedir}/config-dev.yaml</argument>
+                            <argument>${project.basedir}/${dropwizard.server.config}</argument>
                         </arguments>
                     </configuration>
                     <dependencies>
@@ -652,6 +657,11 @@
                             <version>2.25.1</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>${jib-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

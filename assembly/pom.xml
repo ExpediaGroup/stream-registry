@@ -11,6 +11,10 @@
     <artifactId>stream-registry</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
 
+    <properties>
+        <dropwizard.server.config>stream-registry-config.yaml</dropwizard.server.config>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -45,6 +49,61 @@
             <artifactId>kafka-infra-provider</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <configuration>
+                            <to>
+                                <image>homeaway/stream-registry</image>
+                                <tags>
+                                    <tag>${project.version}</tag>
+                                    <tag>latest</tag>
+                                </tags>
+                            </to>
+                            <container>
+                                <mainClass>${mainClass}</mainClass>
+                                <args>
+                                    <arg>server</arg>
+                                    <arg>${jib.container.appRoot}/${dropwizard.server.config}</arg>
+                                </args>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                                <!-- good defaults intended for containers -->
+                                <jvmFlags>
+                                    <jmxFlag>-server</jmxFlag>
+                                    <jmxFlag>-Djava.awt.headless=true</jmxFlag>
+                                    <jmxFlag>-XX:+UnlockExperimentalVMOptions</jmxFlag>
+                                    <jmxFlag>-XX:+UseCGroupMemoryLimitForHeap</jmxFlag>
+                                    <jmxFlag>-XX:InitialRAMFraction=2</jmxFlag>
+                                    <jmxFlag>-XX:MinRAMFraction=2</jmxFlag>
+                                    <jmxFlag>-XX:MaxRAMFraction=2</jmxFlag>
+                                    <jmxFlag>-XX:+UseG1GC</jmxFlag>
+                                    <jmxFlag>-XX:MaxGCPauseMillis=100</jmxFlag>
+                                    <jmxFlag>-XX:+UseStringDeduplication</jmxFlag>
+                                </jvmFlags>
+                            </container>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>dockerBuild</id>
+                                <goals>
+                                    <goal>dockerBuild</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
