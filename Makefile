@@ -1,10 +1,5 @@
 # run 'STREAM_REGISTRY_DEBUG_SUSPEND=y make debug' in order to enable suspend
 STREAM_REGISTRY_DEBUG_SUSPEND ?= n
-STREAM_REGISTRY_DEBUG_PORT ?= 5105
-
-STREAM_REGISTRY_HEAP_OPTS ?= -Xmx2g
-STREAM_REGISTRY_JAVA_OPTS = $(STREAM_REGISTRY_HEAP_OPTS) -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true
-STREAM_REGISTRY_DEBUG_OPTS = $(STREAM_REGISTRY_JAVA_OPTS) -agentlib:jdwp=transport=dt_socket,server=y,suspend=$(STREAM_REGISTRY_DEBUG_SUSPEND),address=$(STREAM_REGISTRY_DEBUG_PORT)
 
 .PHONY: clean tests build run debug all just-deploy deploy ci-setup ci-deploy
 
@@ -18,10 +13,10 @@ build:
 	./mvnw clean install -B
 
 run:
-	MAVEN_OPTS="$(STREAM_REGISTRY_JAVA_OPTS)" ./mvnw exec:java
+	java -Xmx2G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true -jar assembly/target/stream-registry*SNAPSHOT.jar server config-dev.yaml
 
 debug:
-	MAVEN_OPTS="$(STREAM_REGISTRY_DEBUG_OPTS)" ./mvnw exec:java
+	java -Xmx2G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=$(STREAM_REGISTRY_DEBUG_SUSPEND),address=5105 -jar assembly/target/stream-registry*SNAPSHOT.jar server config-dev.yaml
 
 all: build
 
