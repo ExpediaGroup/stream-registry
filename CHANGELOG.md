@@ -9,12 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Architecture diagram (#4)
 - Standalone `infra-provider` module (#78)
 - `api` module (#79)
+- `validator-streams` module (#81)
 
 ### Changed
 - Stop Stream Creation for existing topics if topic configs don't match (#52)
 - Rename `kafka-infra-provider` to `infra-provider-kafka` (#78)
 - `maven-enforcer-plugin` to enforce SLF4J logging (#82)
 - Extract `model` and `exceptions` from `core` module to `api` module (#79)
+- Extract `StreamValidator` plugin interface from `core` module to `validator-streams` (#81)
 
 ## [0.4.1] - 20190102
 ### Added
