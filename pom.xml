@@ -7,7 +7,8 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <modules>
         <module>schema-library-events</module>
-        <module>kafka-infra-provider</module>
+        <module>infra-provider</module>
+        <module>infra-provider-kafka</module>
         <module>core</module>
         <module>assembly</module>
     </modules>
@@ -569,11 +570,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${dependency.pluginVersion}</version>
-                    <configuration>
-                        <usedDependencies>
-                            <usedDependency>io.swagger:swagger-jersey2-jaxrs</usedDependency>
-                        </usedDependencies>
-                    </configuration>
                     <executions>
                         <execution>
                             <id>analyze</id>
@@ -681,7 +677,7 @@
                         </dependency>
                         <dependency>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>kafka-infra-provider</artifactId>
+                            <artifactId>infra-provider-kafka</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                         <!-- Added to fix Jersey ClassNotFoundException on exec:java goal -->

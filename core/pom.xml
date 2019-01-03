@@ -25,6 +25,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.homeaway.streamingplatform</groupId>
+            <artifactId>infra-provider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

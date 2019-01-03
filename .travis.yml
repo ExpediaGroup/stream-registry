@@ -21,7 +21,7 @@ deploy:
   script: make just-deploy
 
 after_failure:
-  - cat kafka-infra-provider/surefire-reports/*.txt
+  - cat infra-provider-kafka/surefire-reports/*.txt
   - cat core/target/surefire-reports/*.txt
   - cat core/target/failsafe-reports/*.txt
 
