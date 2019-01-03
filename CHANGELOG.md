@@ -8,10 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Stop Stream Creation for existing topics if topic configs don't match (#52)
 
-## [0.4.1] - SNAPSHOT
+## [0.4.1] - 20180102
+### Added
+- Docker build commands and documentation (#74)
+
 ### Changed
 - Adding un-annotated `streamName` path param to streamUpsert HTTP resource (#69)
 - Updated pom.xml to remove unused retrofit library, and clean up some versioning (#70)
+- Updated pom.xml to fix `make run` goal (#76)
 
 ### Removed
 - Deleted TODO/Documentation that referenced incorrect `http://localhost:8081/healthcheck` (#64)
@@ -41,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Shell script for build commands (#43)
 
+[0.4.2]: https://github.com/HomeAway/stream-registry/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/HomeAway/stream-registry/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/HomeAway/stream-registry/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/HomeAway/stream-registry/compare/v0.3.1...v0.3.2
