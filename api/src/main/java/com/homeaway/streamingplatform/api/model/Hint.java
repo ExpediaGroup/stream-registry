@@ -13,17 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.model;
 
-public class ProducerNotFoundException extends RuntimeException{
-    private static final long serialVersionUID = -6879806564888143788L;
-    protected final String producerName;
+import java.util.Set;
 
-    public ProducerNotFoundException(String producerName) {
-        this.producerName = producerName;
-    }
+import lombok.Builder;
+import lombok.Data;
 
-    public String getProducerName() {
-        return producerName;
-    }
+@Builder
+@Data
+public class Hint {
+
+    /**
+     * Stream's Hint, which would be used to determine the cluster
+     *
+     * Example: primary (default), logs etc.,
+     */
+    String hint;
+
+    /**
+     * Set of VPCs where the kafka cluster is available
+     *
+     * Example: us-east-1-vpc-defa0000, us-west-2-vpc-0000cafe
+     */
+    Set<String> vpcs;
 }

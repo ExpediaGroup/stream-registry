@@ -29,8 +29,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+import com.homeaway.streamingplatform.api.model.Stream;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
-import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.resource.BaseResourceIT;
 import com.homeaway.streamingplatform.utils.JsonModelBuilder;
 

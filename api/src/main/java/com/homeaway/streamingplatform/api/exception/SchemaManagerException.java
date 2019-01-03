@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-public class ConsumerNotFoundException extends RuntimeException{
-    private static final long serialVersionUID = 2754583678262185859L;
-    protected final String consumerName;
+public class SchemaManagerException extends RuntimeException {
 
-    public ConsumerNotFoundException(String consumerName) {
-        this.consumerName=consumerName;
+
+    public SchemaManagerException() {
     }
 
-    public String getConsumerName() {
-        return consumerName;
+    public SchemaManagerException(String message) {
+        super(message);
+    }
+
+    public SchemaManagerException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public SchemaManagerException(Throwable cause) {
+        super(cause);
     }
 }

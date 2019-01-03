@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.api.model.Stream;
 import com.homeaway.streamingplatform.resource.BaseResourceIT;
 import com.homeaway.streamingplatform.utils.JsonModelBuilder;
 

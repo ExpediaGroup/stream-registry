@@ -39,16 +39,16 @@ import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
+import com.homeaway.streamingplatform.api.exception.SchemaManagerException;
+import com.homeaway.streamingplatform.api.exception.StreamCreationException;
+import com.homeaway.streamingplatform.api.model.Stream;
 import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
-import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
-import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
@@ -165,7 +165,7 @@ public class StreamDaoImplTest {
 
     private Stream buildTestStream() {
         AvroStream avroStream = buildTestAvroStream();
-        com.homeaway.streamingplatform.model.Tags tags = com.homeaway.streamingplatform.model.Tags.builder()
+        com.homeaway.streamingplatform.api.model.Tags tags = com.homeaway.streamingplatform.api.model.Tags.builder()
                 .componentId(avroStream.getTags().getComponentId())
                 .productId(avroStream.getTags().getProductId())
                 .hint(avroStream.getTags().getHint())
@@ -173,14 +173,14 @@ public class StreamDaoImplTest {
                 .brand(avroStream.getTags().getBrand())
                 .portfolioId(avroStream.getTags().getPortfolioId())
                 .build();
-        com.homeaway.streamingplatform.model.Schema latestKeySchema = com.homeaway.streamingplatform.model.Schema.builder()
+        com.homeaway.streamingplatform.api.model.Schema latestKeySchema = com.homeaway.streamingplatform.api.model.Schema.builder()
                 .id(avroStream.getLatestKeySchema().getId())
                 .schemaString(avroStream.getLatestKeySchema().getSchemaString())
                 .version(1)
                 .created(avroStream.getLatestKeySchema().getCreated())
                 .updated(avroStream.getLatestKeySchema().getUpdated())
                 .build();
-        com.homeaway.streamingplatform.model.Schema latestValueSchema = com.homeaway.streamingplatform.model.Schema.builder()
+        com.homeaway.streamingplatform.api.model.Schema latestValueSchema = com.homeaway.streamingplatform.api.model.Schema.builder()
                 .id(avroStream.getLatestValueSchema().getId())
                 .schemaString(avroStream.getLatestValueSchema().getSchemaString())
                 .version(1)

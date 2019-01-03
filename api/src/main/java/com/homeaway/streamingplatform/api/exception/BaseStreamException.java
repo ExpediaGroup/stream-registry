@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.api.model.Stream;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class BaseStreamException extends RuntimeException {

@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-public class StreamDeletionException extends BaseStreamException {
-    private static final long serialVersionUID = -5793888606557229357L;
+public class StreamCreationException extends BaseStreamException {
+    private static final long serialVersionUID = -4755617190312561871L;
 
-    public StreamDeletionException(String streamName) {
+    public StreamCreationException(String streamName) {
         super(streamName);
+    }
+
+    public StreamCreationException(Throwable cause, String streamName) {
+        super(cause, streamName);
     }
 }

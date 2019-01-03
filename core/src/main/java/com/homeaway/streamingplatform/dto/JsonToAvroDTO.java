@@ -23,15 +23,15 @@ import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.api.model.Stream;
 
 public class JsonToAvroDTO {
 
     public static AvroStream convertJsonToAvro(Stream jsonStream, OperationType operationType) {
 
-        com.homeaway.streamingplatform.model.Schema jsonKeySchema = jsonStream.getLatestKeySchema();
-        com.homeaway.streamingplatform.model.Schema jsonValueSchema = jsonStream.getLatestValueSchema();
-        com.homeaway.streamingplatform.model.Tags jsonTags = jsonStream.getTags();
+        com.homeaway.streamingplatform.api.model.Schema jsonKeySchema = jsonStream.getLatestKeySchema();
+        com.homeaway.streamingplatform.api.model.Schema jsonValueSchema = jsonStream.getLatestValueSchema();
+        com.homeaway.streamingplatform.api.model.Tags jsonTags = jsonStream.getTags();
 
         if (jsonKeySchema == null || jsonValueSchema == null
             || jsonStream.getOwner() == null

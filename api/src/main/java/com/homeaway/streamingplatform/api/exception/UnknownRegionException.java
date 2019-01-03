@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-public class StreamNotFoundException extends BaseStreamException {
-    private static final long serialVersionUID = -2171171630296498063L;
+public class UnknownRegionException extends RuntimeException {
+    private static final long serialVersionUID = 1687487766016741537L;
 
-    public StreamNotFoundException(String streamName) {
-        super(streamName);
+    protected final String region;
+
+    public UnknownRegionException(String region) {
+        this.region = region;
+    }
+
+    public String getRegion() {
+        return region;
     }
 }

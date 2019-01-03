@@ -18,7 +18,7 @@ package com.homeaway.streamingplatform.db.dao;
 import java.util.Collection;
 import java.util.Set;
 
-import com.homeaway.streamingplatform.model.Hint;
+import com.homeaway.streamingplatform.api.model.Hint;
 
 // TODO consider splitting this interface into a ClusterDao and NamespaceDao
 /**

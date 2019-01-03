@@ -43,12 +43,12 @@ import io.swagger.annotations.ApiResponses;
 
 import org.apache.avro.SchemaParseException;
 
+import com.homeaway.streamingplatform.api.exception.StreamNotFoundException;
+import com.homeaway.streamingplatform.api.model.Consumer;
+import com.homeaway.streamingplatform.api.model.Producer;
+import com.homeaway.streamingplatform.api.model.Stream;
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
-import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
-import com.homeaway.streamingplatform.model.Consumer;
-import com.homeaway.streamingplatform.model.Producer;
-import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.utils.ResourceUtils;
 import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 import com.homeaway.streamingplatform.utils.StreamRegistryUtils.EntriesPage;

@@ -13,12 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-public class TopicManagerAppException extends Exception {
-    private static final long serialVersionUID = -1027262379822901745L;
+public class SchemaException extends RuntimeException {
 
-    public TopicManagerAppException(String message) {
+    public SchemaException() {
+    }
+
+    public SchemaException(String message) {
         super(message);
+    }
+
+    public SchemaException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public SchemaException(Throwable cause) {
+        super(cause);
     }
 }

@@ -13,30 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.model;
+package com.homeaway.streamingplatform.api.model;
 
-import java.util.Optional;
+import javax.validation.constraints.NotNull;
 
+import lombok.Builder;
 import lombok.Data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize
+@JsonDeserialize(builder = Schema.SchemaBuilder.class)
+@Builder
 @Data
-public class StreamConfig {
+public class Schema {
 
     /**
-     * Bootstrap Server for the Application
+     * Id of the Subject in schema-registry
      */
-    Optional<String> bootstrapServers;
+    @NotNull
+    String id;
 
     /**
-     * Schema Registry URL
+     * version of the Subject in schema-registry
      */
-    Optional<String> schemaRegistryUrl;
+    @NotNull
+    int version;
+
+    /**
+     * complete schema
+     */
+    @NotNull
+    String schemaString;
+
+    /**
+     * created timestamp in schema-registry
+     */
+    String created;
+
+    /**
+     * updated timestamp in schema-registry
+     */
+
+    String updated;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class StreamConfigBuilder {
-    }
+    public static final class SchemaBuilder {}
+
 }

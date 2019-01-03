@@ -38,14 +38,14 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import com.homeaway.streamingplatform.api.exception.ClusterNotFoundException;
+import com.homeaway.streamingplatform.api.exception.ProducerNotFoundException;
+import com.homeaway.streamingplatform.api.exception.StreamNotFoundException;
+import com.homeaway.streamingplatform.api.exception.UnknownRegionException;
+import com.homeaway.streamingplatform.api.model.Producer;
+import com.homeaway.streamingplatform.api.model.Stream;
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
-import com.homeaway.streamingplatform.exceptions.ClusterNotFoundException;
-import com.homeaway.streamingplatform.exceptions.ProducerNotFoundException;
-import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
-import com.homeaway.streamingplatform.exceptions.UnknownRegionException;
-import com.homeaway.streamingplatform.model.Producer;
-import com.homeaway.streamingplatform.model.Stream;
 import com.homeaway.streamingplatform.utils.ResourceUtils;
 
 @Slf4j

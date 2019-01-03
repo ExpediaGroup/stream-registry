@@ -13,47 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.model;
+package com.homeaway.streamingplatform.api.model;
 
 import java.util.List;
-import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = RegionStreamConfig.RegionStreamConfigBuilder.class)
-@Builder
+@JsonDeserialize(builder = Producer.ProducerBuilder.class)
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class RegionStreamConfig {
+public class Producer extends StreamClient {
 
-    /**
-     * Region where the Producer/Consumer is deployed.
-     */
-    @NotNull
-    String region;
+    @Builder
+    public Producer(String name, List<RegionStreamConfig> regionStreamConfigList) {
+        super(name, regionStreamConfigList);
+    }
 
-    /**
-     * Name of the cluster that Producer/Consumer is communicating to.
-     */
-    @NotNull
-    String cluster;
-
-    /**
-     * Topic Names
-     */
-    List<String> topics;
-
-    /**
-     * Streams properties of the Producer/Consumer
-     */
-    @NotNull
-    Map<String, String> streamConfiguration;
+    @Override
+    public String toString() {
+        return "Producer{" +
+            "name='" + name + '\'' +
+            ", regionStreamConfigList=" + regionStreamConfigList +
+            '}';
+    }
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class RegionStreamConfigBuilder {}
+    public static final class ProducerBuilder {
+    }
 }

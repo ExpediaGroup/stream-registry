@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-public class UnknownRegionException extends RuntimeException {
-    private static final long serialVersionUID = 1687487766016741537L;
+public class ClusterNotFoundException extends RuntimeException {
+    private static final long serialVersionUID = 7290804308131915047L;
 
-    protected final String region;
+    protected final String clusterName;
 
-    public UnknownRegionException(String region) {
-        this.region = region;
+    public ClusterNotFoundException(String clusterName) {
+        this.clusterName = clusterName;
     }
 
-    public String getRegion() {
-        return region;
+    public String getClusterName() {
+        return clusterName;
     }
 }

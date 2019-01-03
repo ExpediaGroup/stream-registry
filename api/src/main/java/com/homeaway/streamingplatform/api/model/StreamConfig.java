@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.model;
+package com.homeaway.streamingplatform.api.model;
 
-import java.util.Set;
+import java.util.Optional;
 
-import lombok.Builder;
 import lombok.Data;
 
-@Builder
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
+@JsonDeserialize
 @Data
-public class Hint {
+public class StreamConfig {
 
     /**
-     * Stream's Hint, which would be used to determine the cluster
-     *
-     * Example: primary (default), logs etc.,
+     * Bootstrap Server for the Application
      */
-    String hint;
+    Optional<String> bootstrapServers;
 
     /**
-     * Set of VPCs where the kafka cluster is available
-     *
-     * Example: us-east-1-vpc-defa0000, us-west-2-vpc-0000cafe
+     * Schema Registry URL
      */
-    Set<String> vpcs;
+    Optional<String> schemaRegistryUrl;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static final class StreamConfigBuilder {
+    }
 }

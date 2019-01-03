@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-public class StreamCreationException extends BaseStreamException {
-    private static final long serialVersionUID = -4755617190312561871L;
+public class ProducerNotFoundException extends RuntimeException{
+    private static final long serialVersionUID = -6879806564888143788L;
+    protected final String producerName;
 
-    public StreamCreationException(String streamName) {
-        super(streamName);
+    public ProducerNotFoundException(String producerName) {
+        this.producerName = producerName;
     }
 
-    public StreamCreationException(Throwable cause, String streamName) {
-        super(cause, streamName);
+    public String getProducerName() {
+        return producerName;
     }
 }

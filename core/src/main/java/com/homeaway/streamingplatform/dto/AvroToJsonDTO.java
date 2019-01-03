@@ -27,13 +27,13 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
-import com.homeaway.streamingplatform.model.Consumer;
-import com.homeaway.streamingplatform.model.Producer;
-import com.homeaway.streamingplatform.model.RegionStreamConfig;
-import com.homeaway.streamingplatform.model.Schema;
-import com.homeaway.streamingplatform.model.Stream;
-import com.homeaway.streamingplatform.model.StreamConfig;
-import com.homeaway.streamingplatform.model.Tags;
+import com.homeaway.streamingplatform.api.model.Consumer;
+import com.homeaway.streamingplatform.api.model.Producer;
+import com.homeaway.streamingplatform.api.model.RegionStreamConfig;
+import com.homeaway.streamingplatform.api.model.Schema;
+import com.homeaway.streamingplatform.api.model.Stream;
+import com.homeaway.streamingplatform.api.model.StreamConfig;
+import com.homeaway.streamingplatform.api.model.Tags;
 
 public class AvroToJsonDTO {
 

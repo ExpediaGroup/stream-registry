@@ -18,7 +18,7 @@ package com.homeaway.streamingplatform.db.dao;
 import java.util.List;
 import java.util.Optional;
 
-import com.homeaway.streamingplatform.model.StreamClient;
+import com.homeaway.streamingplatform.api.model.StreamClient;
 
 public interface StreamClientDao<T extends StreamClient> {
 

@@ -31,20 +31,20 @@ import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Producer;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamingplatform.api.exception.ProducerNotFoundException;
+import com.homeaway.streamingplatform.api.exception.StreamNotFoundException;
+import com.homeaway.streamingplatform.api.exception.UnknownRegionException;
 import com.homeaway.streamingplatform.db.dao.AbstractDao;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
 import com.homeaway.streamingplatform.dto.AvroToJsonDTO;
-import com.homeaway.streamingplatform.exceptions.ProducerNotFoundException;
-import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
-import com.homeaway.streamingplatform.exceptions.UnknownRegionException;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
 
 @Slf4j
-public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.model.Producer> {
+public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.api.model.Producer> {
 
     private final List<String> topicPostFixes = Collections.singletonList("");
     private final static String ACTOR_TYPE = "producer";
@@ -59,13 +59,13 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
     }
 
     @Override
-    public Optional<com.homeaway.streamingplatform.model.Producer> update(String streamName, String actorName, String region) {
+    public Optional<com.homeaway.streamingplatform.api.model.Producer> update(String streamName, String actorName, String region) {
         log.info("Processing stream {} in local instance.", streamName);
         return updateProducer(streamName, actorName, region);
     }
 
     @Override
-    public Optional<com.homeaway.streamingplatform.model.Producer> get(String streamName, String actorName) {
+    public Optional<com.homeaway.streamingplatform.api.model.Producer> get(String streamName, String actorName) {
         return getProducer(streamName, actorName);
     }
 
@@ -75,11 +75,11 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
     }
 
     @Override
-    public List<com.homeaway.streamingplatform.model.Producer> getAll(String streamName) {
+    public List<com.homeaway.streamingplatform.api.model.Producer> getAll(String streamName) {
         return getProducers(streamName);
     }
 
-    private Optional<com.homeaway.streamingplatform.model.Producer> updateProducer(String streamName, String producerName, String region) {
+    private Optional<com.homeaway.streamingplatform.api.model.Producer> updateProducer(String streamName, String producerName, String region) {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
@@ -112,7 +112,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return Optional.empty();
     }
 
-    private Optional<com.homeaway.streamingplatform.model.Producer> registerProducer(AvroStream avroStream, String producerName, String region) {
+    private Optional<com.homeaway.streamingplatform.api.model.Producer> registerProducer(AvroStream avroStream, String producerName, String region) {
         if (!regionDao.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
             throw new UnknownRegionException(region);
 
@@ -167,7 +167,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         }
     }
 
-    private Optional<com.homeaway.streamingplatform.model.Producer> getProducer(String streamName, String producerName) {
+    private Optional<com.homeaway.streamingplatform.api.model.Producer> getProducer(String streamName, String producerName) {
         // pull data from state store of this instance.
         log.info("Pulling stream information from local instance's state-store for streamName={} ; producerName={}", streamName,
             producerName);
@@ -184,8 +184,8 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return Optional.empty();
     }
 
-    private List<com.homeaway.streamingplatform.model.Producer> getProducers(String streamName) {
-        List<com.homeaway.streamingplatform.model.Producer> producers = new ArrayList<>();
+    private List<com.homeaway.streamingplatform.api.model.Producer> getProducers(String streamName) {
+        List<com.homeaway.streamingplatform.api.model.Producer> producers = new ArrayList<>();
         // pull data from state store of this instance.
         log.info("Pulling stream information from local instance's state-store for streamName={} ; managedKafkaProducer=all", streamName);
         Optional<AvroStream> streamValue =

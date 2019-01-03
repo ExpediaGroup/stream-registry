@@ -38,7 +38,7 @@ import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
-import com.homeaway.streamingplatform.exceptions.ClusterNotFoundException;
+import com.homeaway.streamingplatform.api.exception.ClusterNotFoundException;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;

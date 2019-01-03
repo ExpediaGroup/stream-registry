@@ -23,9 +23,9 @@ import org.mockito.Mockito;
 
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamingplatform.api.model.Hint;
 import com.homeaway.streamingplatform.db.dao.AbstractDao;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
-import com.homeaway.streamingplatform.model.Hint;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.resource.BaseResourceIT;
 

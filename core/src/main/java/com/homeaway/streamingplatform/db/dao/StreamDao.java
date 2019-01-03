@@ -18,7 +18,7 @@ package com.homeaway.streamingplatform.db.dao;
 import java.util.List;
 import java.util.Optional;
 
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.api.model.Stream;
 
 // TODO - Need javadoc
 // TODO - Probably might want to break this up into stream-bindings, clusters, sources, sinks and replications. Currently this is all a bit of a monolith

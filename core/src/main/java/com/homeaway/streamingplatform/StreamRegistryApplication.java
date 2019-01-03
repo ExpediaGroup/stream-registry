@@ -49,6 +49,8 @@ import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
 import org.rocksdb.Options;
 
+import com.homeaway.streamingplatform.api.model.Consumer;
+import com.homeaway.streamingplatform.api.model.Producer;
 import com.homeaway.streamingplatform.configuration.InfraManagerConfig;
 import com.homeaway.streamingplatform.configuration.SchemaManagerConfig;
 import com.homeaway.streamingplatform.configuration.StreamRegistryConfiguration;
@@ -66,8 +68,6 @@ import com.homeaway.streamingplatform.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.health.StreamRegistryHealthCheck;
-import com.homeaway.streamingplatform.model.Consumer;
-import com.homeaway.streamingplatform.model.Producer;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.resource.RegionResource;
 import com.homeaway.streamingplatform.resource.StreamResource;

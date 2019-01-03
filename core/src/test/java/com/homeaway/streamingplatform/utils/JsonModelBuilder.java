@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
-import com.homeaway.streamingplatform.model.Consumer;
-import com.homeaway.streamingplatform.model.Producer;
-import com.homeaway.streamingplatform.model.RegionStreamConfig;
-import com.homeaway.streamingplatform.model.Schema;
-import com.homeaway.streamingplatform.model.Stream;
-import com.homeaway.streamingplatform.model.Tags;
+import com.homeaway.streamingplatform.api.model.Consumer;
+import com.homeaway.streamingplatform.api.model.Producer;
+import com.homeaway.streamingplatform.api.model.RegionStreamConfig;
+import com.homeaway.streamingplatform.api.model.Schema;
+import com.homeaway.streamingplatform.api.model.Stream;
+import com.homeaway.streamingplatform.api.model.Tags;
 
 @SuppressWarnings("WeakerAccess")
 public class JsonModelBuilder {

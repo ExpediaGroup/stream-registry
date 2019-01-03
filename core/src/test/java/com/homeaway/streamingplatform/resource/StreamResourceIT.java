@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.api.model.Stream;
 import com.homeaway.streamingplatform.utils.JsonModelBuilder;
 import com.homeaway.streamingplatform.utils.StreamRegistryUtils.EntriesPage;
 

@@ -39,12 +39,12 @@ import org.apache.kafka.streams.KafkaStreams;
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
-import com.homeaway.streamingplatform.model.Consumer;
-import com.homeaway.streamingplatform.model.Producer;
-import com.homeaway.streamingplatform.model.RegionStreamConfig;
-import com.homeaway.streamingplatform.model.Schema;
-import com.homeaway.streamingplatform.model.Stream;
-import com.homeaway.streamingplatform.model.Tags;
+import com.homeaway.streamingplatform.api.model.Consumer;
+import com.homeaway.streamingplatform.api.model.Producer;
+import com.homeaway.streamingplatform.api.model.RegionStreamConfig;
+import com.homeaway.streamingplatform.api.model.Schema;
+import com.homeaway.streamingplatform.api.model.Stream;
+import com.homeaway.streamingplatform.api.model.Tags;
 import com.homeaway.streamingplatform.resource.ConsumerResource;
 import com.homeaway.streamingplatform.resource.ProducerResource;
 import com.homeaway.streamingplatform.resource.StreamResource;
@@ -178,14 +178,14 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     }
 
     private Schema createSampleSchema() {
-        return com.homeaway.streamingplatform.model.Schema.builder()
+        return com.homeaway.streamingplatform.api.model.Schema.builder()
                 .id("1")
                 .schemaString("-")
                 .version(1).build();
     }
 
     private Tags createSampleTags() {
-        return com.homeaway.streamingplatform.model.Tags.builder()
+        return com.homeaway.streamingplatform.api.model.Tags.builder()
                 .productId(PRODUCT_ID)
                 .componentId(COMPONENT_ID)
                 .hint(PRIMARY_HINT)

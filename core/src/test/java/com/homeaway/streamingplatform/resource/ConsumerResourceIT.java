@@ -35,9 +35,9 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.homeaway.streamingplatform.model.Consumer;
-import com.homeaway.streamingplatform.model.RegionStreamConfig;
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.api.model.Consumer;
+import com.homeaway.streamingplatform.api.model.RegionStreamConfig;
+import com.homeaway.streamingplatform.api.model.Stream;
 import com.homeaway.streamingplatform.utils.JsonModelBuilder;
 
 @SuppressWarnings("WeakerAccess")

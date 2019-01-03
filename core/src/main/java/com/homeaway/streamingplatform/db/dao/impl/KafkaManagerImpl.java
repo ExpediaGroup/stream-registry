@@ -33,9 +33,9 @@ import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
+import com.homeaway.streamingplatform.api.exception.StreamCreationException;
 import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
-import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 
 @Slf4j
 public class KafkaManagerImpl implements KafkaManager {

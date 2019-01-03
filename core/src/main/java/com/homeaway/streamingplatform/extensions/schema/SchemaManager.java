@@ -17,8 +17,8 @@ package com.homeaway.streamingplatform.extensions.schema;
 
 import java.util.Map;
 
-import com.homeaway.streamingplatform.exceptions.SchemaException;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
+import com.homeaway.streamingplatform.api.exception.SchemaException;
+import com.homeaway.streamingplatform.api.exception.SchemaManagerException;
 
 /**
  * This interface is implemented by a stream provider to provide

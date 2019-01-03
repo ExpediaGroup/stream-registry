@@ -28,8 +28,8 @@ import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
-import com.homeaway.streamingplatform.exceptions.SchemaException;
-import com.homeaway.streamingplatform.exceptions.SchemaManagerException;
+import com.homeaway.streamingplatform.api.exception.SchemaException;
+import com.homeaway.streamingplatform.api.exception.SchemaManagerException;
 
 @Slf4j
 public class ConfluentSchemaManager implements SchemaManager {

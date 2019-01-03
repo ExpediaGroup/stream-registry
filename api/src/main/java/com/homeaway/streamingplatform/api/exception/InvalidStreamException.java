@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-public class ClusterNotFoundException extends RuntimeException {
-    private static final long serialVersionUID = 7290804308131915047L;
+import com.homeaway.streamingplatform.api.model.Stream;
 
-    protected final String clusterName;
+public class InvalidStreamException extends RuntimeException {
+    private static final long serialVersionUID = 327424935797536316L;
+    protected final Stream stream;
 
-    public ClusterNotFoundException(String clusterName) {
-        this.clusterName = clusterName;
+    public InvalidStreamException(Stream stream) {
+        this.stream = stream;
     }
 
-    public String getClusterName() {
-        return clusterName;
+    public InvalidStreamException(Stream stream, String message) {
+        super(message);
+        this.stream = stream;
     }
+
 }

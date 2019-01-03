@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.model;
+package com.homeaway.streamingplatform.api.model;
 
 import javax.validation.constraints.NotNull;
 
@@ -23,41 +23,52 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = Schema.SchemaBuilder.class)
-@Builder
+// TODO - Need to genericize Tags so that this is company agnostic
 @Data
-public class Schema {
+@Builder
+@JsonDeserialize(builder = Tags.TagsBuilder.class)
+public class Tags {
 
     /**
-     * Id of the Subject in schema-registry
+     * Product Id of the application.
      */
     @NotNull
-    String id;
+    @Builder.Default
+    private Integer productId = -1;
 
     /**
-     * version of the Subject in schema-registry
+     * Portfolio Id of the application.
      */
-    @NotNull
-    int version;
+    @Builder.Default
+    private Integer portfolioId = -1;
 
     /**
-     * complete schema
+     * Brand name in Expedia Inc.
      */
-    @NotNull
-    String schemaString;
+    @Builder.Default
+    private String brand = null;
 
     /**
-     * created timestamp in schema-registry
+     * Asset Protection Level
      */
-    String created;
+    @Builder.Default
+    private String assetProtectionLevel = null;
 
     /**
-     * updated timestamp in schema-registry
+     * ComponentId (required)
      */
+    private String componentId;
 
-    String updated;
+    /**
+     * Hint for Stream Registry to choose a cluster.
+     * Example: primary, secondary, logs.
+     */
+    @Builder.Default
+    private String hint = "primary";
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class SchemaBuilder {}
+    public static final class TagsBuilder{
+
+    }
 
 }

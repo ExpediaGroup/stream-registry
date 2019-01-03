@@ -32,20 +32,20 @@ import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.Consumer;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamingplatform.api.exception.ConsumerNotFoundException;
+import com.homeaway.streamingplatform.api.exception.StreamNotFoundException;
+import com.homeaway.streamingplatform.api.exception.UnknownRegionException;
 import com.homeaway.streamingplatform.db.dao.AbstractDao;
 import com.homeaway.streamingplatform.db.dao.KafkaManager;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamClientDao;
 import com.homeaway.streamingplatform.dto.AvroToJsonDTO;
-import com.homeaway.streamingplatform.exceptions.ConsumerNotFoundException;
-import com.homeaway.streamingplatform.exceptions.StreamNotFoundException;
-import com.homeaway.streamingplatform.exceptions.UnknownRegionException;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
 
 @Slf4j
-public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.model.Consumer> {
+public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.api.model.Consumer> {
 
     private static final List<String> TOPIC_POST_FIXES = Collections.unmodifiableList(Arrays.asList("", ".global"));
 
@@ -61,12 +61,12 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
     }
 
     @Override
-    public Optional<com.homeaway.streamingplatform.model.Consumer> update(String streamName, String actorName, String region) {
+    public Optional<com.homeaway.streamingplatform.api.model.Consumer> update(String streamName, String actorName, String region) {
         return updateConsumer(streamName, actorName, region);
     }
 
     @Override
-    public Optional<com.homeaway.streamingplatform.model.Consumer> get(String streamName, String actorName) {
+    public Optional<com.homeaway.streamingplatform.api.model.Consumer> get(String streamName, String actorName) {
         return getConsumer(streamName, actorName);
     }
 
@@ -76,11 +76,11 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
     }
 
     @Override
-    public List<com.homeaway.streamingplatform.model.Consumer> getAll(String streamName) {
+    public List<com.homeaway.streamingplatform.api.model.Consumer> getAll(String streamName) {
         return getAllConsumers(streamName);
     }
 
-    private Optional<com.homeaway.streamingplatform.model.Consumer> updateConsumer(String streamName, String consumerName, String region) {
+    private Optional<com.homeaway.streamingplatform.api.model.Consumer> updateConsumer(String streamName, String consumerName, String region) {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
@@ -114,7 +114,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return Optional.empty();
     }
 
-    private Optional<com.homeaway.streamingplatform.model.Consumer> createConsumer(AvroStream avroStream, String consumerName,
+    private Optional<com.homeaway.streamingplatform.api.model.Consumer> createConsumer(AvroStream avroStream, String consumerName,
         String region) {
 
         log.info("==>>> getting into creating consumer. Initial Stream: {}", avroStream.toString());
@@ -154,7 +154,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
     }
 
-    private Optional<com.homeaway.streamingplatform.model.Consumer> getConsumer(String streamName, String consumerName) {
+    private Optional<com.homeaway.streamingplatform.api.model.Consumer> getConsumer(String streamName, String consumerName) {
         // pull data from state store of this instance.
         log.info("Pulling stream information from local instance's state-store for streamName={} ; consumerName={}", streamName,
             consumerName);
@@ -170,8 +170,8 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return Optional.empty();
     }
 
-    private List<com.homeaway.streamingplatform.model.Consumer> getAllConsumers(String streamName) {
-        List<com.homeaway.streamingplatform.model.Consumer> consumers = new ArrayList<>();
+    private List<com.homeaway.streamingplatform.api.model.Consumer> getAllConsumers(String streamName) {
+        List<com.homeaway.streamingplatform.api.model.Consumer> consumers = new ArrayList<>();
         // pull data from state store of this instance.
         log.info("Pulling stream information from local instance's state-store for stream={} ; consumers=all", streamName);
         Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());

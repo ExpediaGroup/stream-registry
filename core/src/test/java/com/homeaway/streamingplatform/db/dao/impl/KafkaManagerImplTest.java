@@ -42,8 +42,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.homeaway.streamingplatform.api.exception.StreamCreationException;
 import com.homeaway.streamingplatform.configuration.KafkaProducerConfig;
-import com.homeaway.streamingplatform.exceptions.StreamCreationException;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")

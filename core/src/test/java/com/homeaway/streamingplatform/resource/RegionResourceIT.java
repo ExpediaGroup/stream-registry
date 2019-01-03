@@ -24,10 +24,10 @@ import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.homeaway.streamingplatform.api.model.Hint;
 import com.homeaway.streamingplatform.db.dao.AbstractDao;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.impl.RegionDaoImpl;
-import com.homeaway.streamingplatform.model.Hint;
 
 public class RegionResourceIT extends BaseResourceIT {
 

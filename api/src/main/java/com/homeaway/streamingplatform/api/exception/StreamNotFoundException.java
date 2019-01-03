@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.exceptions;
+package com.homeaway.streamingplatform.api.exception;
 
-import com.homeaway.streamingplatform.model.Stream;
+public class StreamNotFoundException extends BaseStreamException {
+    private static final long serialVersionUID = -2171171630296498063L;
 
-public class InvalidStreamException extends RuntimeException {
-    private static final long serialVersionUID = 327424935797536316L;
-    protected final Stream stream;
-
-    public InvalidStreamException(Stream stream) {
-        this.stream = stream;
+    public StreamNotFoundException(String streamName) {
+        super(streamName);
     }
-
-    public InvalidStreamException(Stream stream, String message) {
-        super(message);
-        this.stream = stream;
-    }
-
 }

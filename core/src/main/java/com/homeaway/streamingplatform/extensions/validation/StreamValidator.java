@@ -17,8 +17,8 @@ package com.homeaway.streamingplatform.extensions.validation;
 
 import java.util.Map;
 
-import com.homeaway.streamingplatform.exceptions.InvalidStreamException;
-import com.homeaway.streamingplatform.model.Stream;
+import com.homeaway.streamingplatform.api.exception.InvalidStreamException;
+import com.homeaway.streamingplatform.api.model.Stream;
 
 /**
  * The interface Stream validator.

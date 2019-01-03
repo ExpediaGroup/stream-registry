@@ -33,8 +33,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import com.homeaway.streamingplatform.api.model.Hint;
 import com.homeaway.streamingplatform.db.dao.RegionDao;
-import com.homeaway.streamingplatform.model.Hint;
 
 @Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
 @Path("/v0/regions")
