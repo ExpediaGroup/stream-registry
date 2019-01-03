@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.2] - SNAPSHOT
 ### Changed
-- 
+- Stop Stream Creation for existing topics if topic configs don't match (#52)
 
 ## [0.4.1] - 20190102
 ### Added
