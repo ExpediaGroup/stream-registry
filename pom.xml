@@ -10,6 +10,7 @@
         <module>api</module>
         <module>infra-provider</module>
         <module>infra-provider-kafka</module>
+        <module>validator-streams</module>
         <module>core</module>
         <module>assembly</module>
     </modules>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.extensions.validation;
+package com.homeaway.streamingplatform.validator.streams;
 
 import java.util.Map;
 
@@ -21,22 +21,22 @@ import com.homeaway.streamingplatform.api.exception.InvalidStreamException;
 import com.homeaway.streamingplatform.api.model.Stream;
 
 /**
- * The interface Stream validator.
+ * A {@code StreamValidator} is an interface that validates a {@link Stream}.
  */
 public interface StreamValidator {
-    // TODO: Move this interface to a standalone 'stream-registry-validators' module
 
     /**
      * Validates a {@link Stream} under a criteria defined by the implementer.
      *
      * @param stream the stream
-     * @return true if stream should be inserted into the registry
-     * @throws InvalidStreamException the invalid stream exception
+     * @return True if stream is valid and should be inserted into the Stream Registry
+     * @throws InvalidStreamException Thrown when a stream is considered invalid and a reasoning needs to be provided for user-feedback.
+     *                                The exception message can be provided by {@link StreamValidator#getValidationAssertion()}
      */
     boolean isStreamValid(Stream stream) throws InvalidStreamException;
 
     /**
-     * Defines the exception message that is returned with an {@link InvalidStreamException} is thrown.
+     * Defines the exception message that is returned when an {@link InvalidStreamException} is thrown.
      * <p>
      * Example: "Stream should not contain special characters"
      * </p>
@@ -46,9 +46,9 @@ public interface StreamValidator {
     String getValidationAssertion();
 
     /**
-     * Load extra properties from Stream Registry configuration.
+     * Load extra properties from the Stream Registry configuration.
      *
-     * @param configs the configs
+     * @param configs The user-provided runtime configurations
      */
     void configure(Map<String, ?> configs);
 }

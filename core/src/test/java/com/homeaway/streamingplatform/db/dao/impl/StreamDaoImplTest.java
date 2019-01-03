@@ -48,10 +48,10 @@ import com.homeaway.streamingplatform.db.dao.RegionDao;
 import com.homeaway.streamingplatform.db.dao.StreamDao;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
-import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.validator.streams.StreamValidator;
 
 public class StreamDaoImplTest {
 

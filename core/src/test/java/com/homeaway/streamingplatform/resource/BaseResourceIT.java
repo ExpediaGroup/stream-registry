@@ -73,11 +73,10 @@ import com.homeaway.streamingplatform.db.dao.impl.ProducerDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.RegionDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
-import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
-import com.homeaway.streamingplatform.extensions.validator.StreamValidatorIT;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.validator.streams.StreamValidator;
 
 @SuppressWarnings("WeakerAccess")
 @Slf4j
@@ -241,7 +240,7 @@ public class BaseResourceIT {
         regionDao = new RegionDaoImpl(env, infraManager);
 
         client = Mockito.mock(Client.class);
-        StreamValidatorIT.mockHttpClientSuccess(client);
+        StreamResourceValidationIT.mockHttpClientSuccess(client);
 
         StreamValidator streamValidator = StreamRegistryApplication.loadValidator(configuration, client, regionDao);
 

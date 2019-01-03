@@ -9,7 +9,7 @@ server:
 env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
 streamValidatorConfig:
-  className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamingplatform.extensions.validation.EmptyStreamValidator}
+  className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamingplatform.validator.streams.EmptyStreamValidator}
 
 schemaManagerConfig:
   className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-com.homeaway.streamingplatform.extensions.schema.ConfluentSchemaManager}

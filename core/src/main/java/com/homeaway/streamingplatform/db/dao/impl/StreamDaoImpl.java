@@ -47,10 +47,10 @@ import com.homeaway.streamingplatform.dto.AvroToJsonDTO;
 import com.homeaway.streamingplatform.dto.JsonToAvroDTO;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
 import com.homeaway.streamingplatform.extensions.schema.SchemaReference;
-import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.validator.streams.StreamValidator;
 
 @Slf4j
 public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValidator {

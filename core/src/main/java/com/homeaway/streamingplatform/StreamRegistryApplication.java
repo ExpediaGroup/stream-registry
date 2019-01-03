@@ -66,7 +66,6 @@ import com.homeaway.streamingplatform.db.dao.impl.ProducerDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.RegionDaoImpl;
 import com.homeaway.streamingplatform.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamingplatform.extensions.schema.SchemaManager;
-import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
 import com.homeaway.streamingplatform.health.StreamRegistryHealthCheck;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.resource.RegionResource;
@@ -74,6 +73,7 @@ import com.homeaway.streamingplatform.resource.StreamResource;
 import com.homeaway.streamingplatform.streams.ManagedInfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.validator.streams.StreamValidator;
 
 /**
  * This is the main DropWizard application that bootstraps DropWizard, wires up the app,

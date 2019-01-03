@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamingplatform.extensions.validator;
+package com.homeaway.streamingplatform.resource;
 
 import java.util.Map;
 import java.util.Optional;
@@ -30,11 +30,10 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import com.homeaway.streamingplatform.api.model.Stream;
-import com.homeaway.streamingplatform.extensions.validation.StreamValidator;
-import com.homeaway.streamingplatform.resource.BaseResourceIT;
 import com.homeaway.streamingplatform.utils.JsonModelBuilder;
+import com.homeaway.streamingplatform.validator.streams.StreamValidator;
 
-public class StreamValidatorIT extends BaseResourceIT {
+public class StreamResourceValidationIT extends BaseResourceIT {
 
     public static final int INVALID_PRODUCT_ID = 13;
 

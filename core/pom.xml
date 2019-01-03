@@ -37,6 +37,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.homeaway.streamingplatform</groupId>
+            <artifactId>stream-registry-validator-streams</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

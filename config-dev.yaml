@@ -9,7 +9,7 @@ server:
 env: test
 
 streamValidatorConfig:
-  className: com.homeaway.streamingplatform.extensions.validation.EmptyStreamValidator
+  className: com.homeaway.streamingplatform.validator.streams.EmptyStreamValidator
 
 schemaManagerConfig:
   className: com.homeaway.streamingplatform.extensions.schema.ConfluentSchemaManager
