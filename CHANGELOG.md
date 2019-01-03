@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [0.4.1] - SNAPSHOT
+### Added
+- Docker build commands and documentation (#74)
+
 ### Changed
 - Adding un-annotated `streamName` path param to streamUpsert HTTP resource (#69)
 - Updated pom.xml to remove unused retrofit library, and clean up some versioning (#70)
