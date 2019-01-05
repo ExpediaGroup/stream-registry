@@ -41,9 +41,13 @@ The stream registry can answer the following question:
 4. Management of stream storage for permanent access
 5. Management of stream triggers for legacy stream sources
 
-## Want more info?
+## Architecture
 
-See the [architecture/northstar documentation](https://homeaway.github.io/stream-registry/).
+<center>
+<img src="docs/docs/architecture/StreamRegistryArchitecture.png" alt="StreamRegistryArchitecture"/>
+</center>
+
+See the [architecture/northstar documentation](https://homeaway.github.io/stream-registry/) for more details.
 
 ## Building locally
 
