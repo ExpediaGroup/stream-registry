@@ -6,10 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.2] - SNAPSHOT
 ### Added
-- Architecture diagram (#4) 
+- Architecture diagram (#4)
+- Standalone `infra-provider` module (#78)
 
 ### Changed
 - Stop Stream Creation for existing topics if topic configs don't match (#52)
+- Rename `kafka-infra-provider` to `infra-provider-kafka` (#78)
 
 ## [0.4.1] - 20190102
 ### Added

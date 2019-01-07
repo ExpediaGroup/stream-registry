@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -36,56 +37,44 @@ import com.homeaway.streamingplatform.provider.InfraManager;
 
 
 /**
- * The type Stream infra manager.
+ * An {@link InfraManager} implementation backed by a Kafka Streams {@link GlobalKTable}.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Slf4j
 public class KafkaInfraManager implements InfraManager {
 
-    private KafkaStreams infraKStreams;
-    private String infraStateStoreName;
-    private ReadOnlyKeyValueStore<ClusterKey, ClusterValue> store;
-    /**
-     * The constant INFRAMANAGER_TOPIC.
-     */
     public static final String INFRAMANAGER_TOPIC = "infraManagerTopic";
-    /**
-     * The constant INFRAMANAGER_STATE_STORE.
-     */
     public static final String INFRAMANAGER_STATE_STORE = "infraManagerStateStoreName";
-    /**
-     * The constant INFRA_KSTREAM_PROPS.
-     */
     public static final String INFRA_KSTREAM_PROPS = "infraKStreamsProperties";
+
+    private String infraStateStoreName;
+    private KafkaStreams infraKStreams;
+    private GlobalKTable<ClusterKey, ClusterValue> kTable;
+    private ReadOnlyKeyValueStore<ClusterKey, ClusterValue> store;
 
     @SuppressWarnings("unchecked")
     @Override
     public void configure(Map<String, Object> configs) {
-        KStreamBuilder infraKStreamBuilder = new KStreamBuilder();
-        String infraManagerTopic;
-        Properties infraKStreamsProperties = new Properties();
-
         // Get the infra manager topic name
         Validate.validState(configs.containsKey(INFRAMANAGER_TOPIC), "Infra Manager Topic name is not provided.");
-        infraManagerTopic = configs.get(INFRAMANAGER_TOPIC).toString();
-
+        String infraManagerTopic = configs.get(INFRAMANAGER_TOPIC).toString();
         log.info("Infra Manager Topic Name Read: {}", infraManagerTopic);
 
         // Get the infra state store name
         Validate.validState(configs.containsKey(INFRAMANAGER_STATE_STORE), "Infra Manager State Store name is not provided.");
         infraStateStoreName = configs.get(INFRAMANAGER_STATE_STORE).toString();
-
         log.info("Infra Manager State Store Name Read: {}", infraStateStoreName);
 
         // Populate our kstreams properties map
+        Properties infraKStreamsProperties = new Properties();
         Validate.validState(configs.containsKey(INFRA_KSTREAM_PROPS), "InfraKStreams properties is not provided.");
         Map<String, Object> infraKStreamsPropertiesMap = (Map<String, Object>) configs.get(INFRA_KSTREAM_PROPS);
         infraKStreamsPropertiesMap.forEach(infraKStreamsProperties::put);
-
         log.info("Infra KStreams Properties: {}", infraKStreamsProperties);
 
         // initialize the kstreams processor
-        infraKStreamBuilder.globalTable(infraManagerTopic, infraStateStoreName);
+        KStreamBuilder infraKStreamBuilder = new KStreamBuilder();
+        kTable = infraKStreamBuilder.globalTable(infraManagerTopic, infraStateStoreName);
         infraKStreams = new KafkaStreams(infraKStreamBuilder, infraKStreamsProperties);
     }
 
@@ -101,6 +90,22 @@ public class KafkaInfraManager implements InfraManager {
     public void stop() {
         infraKStreams.close();
         log.info("Infrastructure Manager KStream is stopped");
+    }
+
+    @Override
+    public Map<ClusterKey, ClusterValue> getAllClusters() {
+        Map<ClusterKey, ClusterValue> clusterKeyValueMap = new HashMap<>();
+        try (KeyValueIterator<ClusterKey, ClusterValue> clusterKeyValueIterator = store.all()) {
+            log.debug("Approximate Num. of Entries in Infra Table-{}", store.approximateNumEntries());
+
+            while (clusterKeyValueIterator.hasNext()) {
+                KeyValue<ClusterKey, ClusterValue> next = clusterKeyValueIterator.next();
+                clusterKeyValueMap.put(next.key, next.value);
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Infra Manager State Store not initialized ", e);
+        }
+        return clusterKeyValueMap;
     }
 
     @Override
@@ -122,21 +127,5 @@ public class KafkaInfraManager implements InfraManager {
         }
 
         return Optional.ofNullable(clusterValue);
-    }
-
-    @Override
-    public Map<ClusterKey, ClusterValue> getAllClusters() {
-        Map<ClusterKey, ClusterValue> clusterKeyValueMap = new HashMap<>();
-        try (KeyValueIterator<ClusterKey, ClusterValue> clusterKeyValueIterator = store.all()) {
-            log.debug("Approximate Num. of Entries in Infra Table-{}", store.approximateNumEntries());
-
-            while (clusterKeyValueIterator.hasNext()) {
-                KeyValue<ClusterKey, ClusterValue> next = clusterKeyValueIterator.next();
-                clusterKeyValueMap.put(next.key, next.value);
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException("Infra Manager State Store not initialized ", e);
-        }
-        return clusterKeyValueMap;
     }
 }
