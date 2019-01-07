@@ -29,7 +29,7 @@
             </dependency>
             <dependency>
                 <groupId>com.homeaway.streamingplatform</groupId>
-                <artifactId>kafka-infra-provider</artifactId>
+                <artifactId>infra-provider-kafka</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>com.homeaway.streamingplatform</groupId>
-            <artifactId>kafka-infra-provider</artifactId>
+            <artifactId>infra-provider-kafka</artifactId>
         </dependency>
     </dependencies>
 
