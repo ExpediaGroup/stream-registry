@@ -61,7 +61,7 @@
         <coverage.line>0.59</coverage.line>
 
         <!-- Logging -->
-        <slf4j.version>1.7.24</slf4j.version>
+        <slf4j.version>1.7.25</slf4j.version>
 
         <!-- Testing -->
         <junit.version>4.12</junit.version>
@@ -142,6 +142,18 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
 
@@ -479,6 +491,23 @@
                                     <requireMavenVersion>
                                         <version>3.0</version>
                                     </requireMavenVersion>
+                                    <bannedDependencies>
+                                        <searchTransitive>true</searchTransitive>
+                                        <excludes>
+                                            <!-- This should not exist as it will force SLF4J calls to be delegated to log4j -->
+                                            <exclude>org.slf4j:slf4j-log4j12</exclude>
+                                            <exclude>org.slf4j:slf4j-log4j13</exclude>
+                                            <!-- This should not exist as it will force SLF4J calls to be delegated to jul & jcl -->
+                                            <exclude>org.slf4j:slf4j-jdk14</exclude>
+                                            <exclude>org.slf4j:slf4j-jcl</exclude>
+                                            <!-- Ensure only the slf4j binding for logback is on the classpath -->
+                                            <exclude>log4j:log4j</exclude>
+                                            <!-- As recommended from the slf4j guide, exclude commons-logging -->
+                                            <exclude>commons-logging:*</exclude>
+                                        </excludes>
+                                        <message>Secondary logging frameworks are
+                                            banned in preference to org.slf4j:*-over-slf4j</message>
+                                    </bannedDependencies>
                                 </rules>
                             </configuration>
                         </execution>
