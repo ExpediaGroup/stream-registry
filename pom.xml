@@ -54,7 +54,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <mainClass>com.homeaway.streamingplatform.StreamRegistryApplication</mainClass>
+        <mainClass>com.homeaway.streamingplatform.streamregistry.StreamRegistryApplication</mainClass>
         <dropwizard.server.config>config-dev.yaml</dropwizard.server.config>
 
         <!-- JaCoCo Coverage -->

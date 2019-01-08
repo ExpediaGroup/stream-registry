@@ -1,12 +1,12 @@
 env: test
 
 streamValidatorConfig:
-  className: com.homeaway.streamingplatform.extensions.validator.StreamValidatorIT$ValidProductStreamValidator
+  className: com.homeaway.streamingplatform.streamregistry.extensions.validator.StreamValidatorIT$ValidProductStreamValidator
   properties:
     validator.invalid-id: 13
 
 schemaManagerConfig:
-  className: com.homeaway.streamingplatform.extensions.schema.ConfluentSchemaManager
+  className: com.homeaway.streamingplatform.streamregistry.extensions.schema.ConfluentSchemaManager
   properties:
     # this will get overwritten by local schema.registry.url as integration tests run
     schema.registry.url: http://localhost:8081
@@ -22,7 +22,7 @@ topicsConfig:
   stateStoreName: streamregistry_kv_store_v0.1-dev
 
 infraManagerConfig:
-  className: com.homeaway.streamingplatform.streams.StreamInfraManager
+  className: com.homeaway.streamingplatform.streamregistry.streams.StreamInfraManager
   config:
     infraManagerTopic: streamregistry_kis_0.3
     infraManagerStateStoreName: infraManager_kv_store_v0.1-dev
@@ -41,7 +41,7 @@ kafkaProducerConfig:
     linger.ms: 0
 
 swagger:
-  resourcePackage: com.homeaway.streamingplatform.resource
+  resourcePackage: com.homeaway.streamingplatform.streamregistry.resource
 
 httpClient:
   timeout: 10000ms

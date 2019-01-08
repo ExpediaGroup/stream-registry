@@ -357,7 +357,7 @@
                                 <argument>-cp</argument>
                                 <!--suppress UnresolvedMavenProperty -->
                                 <argument>${project.build.directory}/test-classes:${kafkarunner.testclasspath}</argument>
-                                <argument>com.homeaway.streamingplatform.utils.KafkaRunner</argument>
+                                <argument>com.homeaway.streamingplatform.streamregistry.utils.KafkaRunner</argument>
                             </arguments>
                         </configuration>
                     </execution>
