@@ -4,18 +4,21 @@
     <parent>
         <artifactId>stream-registry-parent</artifactId>
         <groupId>com.homeaway.streamingplatform</groupId>
-        <version>0.4.1-SNAPSHOT</version>
+        <version>0.4.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>kafka-infra-provider</artifactId>
+    <artifactId>infra-provider-kafka</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        An InfraManager for HomeAway Stream Registry that is backed by a Kafka Streams KTable
+    </description>
 
     <dependencies>
 
         <dependency>
             <groupId>com.homeaway.streamingplatform</groupId>
-            <artifactId>stream-registry-core</artifactId>
+            <artifactId>infra-provider</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -23,6 +26,12 @@
             <groupId>com.homeaway.streamingplatform</groupId>
             <artifactId>schema-library-events</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- Plugin Core Dependencies -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
         </dependency>
 
         <!-- Logging -->
@@ -41,15 +50,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
