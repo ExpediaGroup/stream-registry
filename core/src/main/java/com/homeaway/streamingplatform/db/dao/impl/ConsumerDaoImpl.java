@@ -187,12 +187,13 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
+            final List<com.homeaway.digitalplatform.streamregistry.Consumer> withConsumer = avroStream.get().getConsumers();
+
             // Obtains consumer list size before  remove consumer
-            final int consumerInitialSize = avroStream.get().getConsumers().size();
+            final int consumerInitialSize = withConsumer.size();
 
             // Obtains filtered consumer list not containing the consumer we want to remove
-            List<com.homeaway.digitalplatform.streamregistry.Consumer> withoutConsumer = avroStream.get()
-                    .getConsumers()
+            List<com.homeaway.digitalplatform.streamregistry.Consumer> withoutConsumer = withConsumer
                     .stream()
                     .filter(consumer -> !StreamRegistryUtils.hasActorNamed(consumerName, consumer::getActor))
                     .collect(Collectors.toList());

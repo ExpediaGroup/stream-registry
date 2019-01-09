@@ -147,12 +147,13 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
+            final List<com.homeaway.digitalplatform.streamregistry.Producer> withProducer = avroStream.get().getProducers();
+
             // Obtains producer list size before  remove consumer
-            final int producerInitialSize = avroStream.get().getProducers().size();
+            final int producerInitialSize = withProducer.size();
 
             // Obtains filtered producer list not containing the consumer we want to remove
-            List<com.homeaway.digitalplatform.streamregistry.Producer> withoutProducer = avroStream.get()
-                    .getProducers()
+            List<com.homeaway.digitalplatform.streamregistry.Producer> withoutProducer = withProducer
                     .stream()
                     .filter(producer -> !StreamRegistryUtils.hasActorNamed(producerName, producer::getActor))
                     .collect(Collectors.toList());
