@@ -9,10 +9,10 @@ server:
 env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
 streamValidatorConfig:
-  className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamingplatform.streamregistry.extensions.validation.EmptyStreamValidator}
+  className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamplatform.streamregistry.extensions.validation.EmptyStreamValidator}
 
 schemaManagerConfig:
-  className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-com.homeaway.streamingplatform.streamregistry.extensions.schema.ConfluentSchemaManager}
+  className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager}
   properties:
     schema.registry.url: ${STREAM_REGISTRY_SCHEMA_REGISTRY_URL:-http://localhost:8081}
 
@@ -41,7 +41,7 @@ topicsConfig:
   stateStoreName: _streamregistry_streams_kv${STREAM_REGISTRY_PRODUCER_STATE_TOPIC_SUFFIX_STATE:-_v0.1}
 
 infraManagerConfig:
-  className: com.homeaway.streamingplatform.streamregistry.provider.impl.KafkaInfraManager
+  className: com.homeaway.streamplatform.streamregistry.provider.impl.KafkaInfraManager
   config:
     infraManagerTopic: _streamregistry_infra${STREAM_REGISTRY_INFRA_TOPIC_SUFFIX:-_v0.1}
     infraManagerStateStoreName: _streamregistry_infra_kv${STREAM_REGISTRY_INFRA_STATE_TOPIC_SUFFIX:-_v0.1}
@@ -62,7 +62,7 @@ logging:
     logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} - %X{code} %msg %n"
 
 swagger:
-  resourcePackage: com.homeaway.streamingplatform.streamregistry.resource
+  resourcePackage: com.homeaway.streamplatform.streamregistry.resource
   title: Stream Registry API
   version: v0
   description: Stream Registry API

@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.homeaway.streamingplatform</groupId>
+    <groupId>com.homeaway.streamplatform</groupId>
     <artifactId>stream-registry-parent</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <modules>
@@ -54,7 +54,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <mainClass>com.homeaway.streamingplatform.streamregistry.StreamRegistryApplication</mainClass>
+        <mainClass>com.homeaway.streamplatform.streamregistry.StreamRegistryApplication</mainClass>
         <dropwizard.server.config>config-dev.yaml</dropwizard.server.config>
 
         <!-- JaCoCo Coverage -->

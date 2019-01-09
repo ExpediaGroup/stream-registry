@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Now DELETE consumer/producer services remove only one client (not all preceding list before a client) (#73)
 - Rename `kafka-infra-provider` to `infra-provider-kafka` (#78)
 - `maven-enforcer-plugin` to enforce SLF4J logging (#82)
-- Java packages moved from `com.homeaway.streamingplatform` to `com.homeaway.streamingplatform.streamregistry`.
+- Java packages moved from `com.homeaway.streamingplatform` to `com.homeaway.streamplatform.streamregistry`.
 
 ## [0.4.1] - 20190102
 ### Added
