@@ -18,13 +18,11 @@ package com.homeaway.streamingplatform.db.dao.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
-
-import com.google.common.collect.Lists;
 
 import com.homeaway.digitalplatform.streamregistry.Actor;
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
@@ -43,6 +41,7 @@ import com.homeaway.streamingplatform.exceptions.UnknownRegionException;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 
 @Slf4j
 public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.model.Consumer> {
@@ -188,16 +187,21 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
-            List<com.homeaway.digitalplatform.streamregistry.Consumer> listConsumer = avroStream.get().getConsumers();
-            int consumerInitialSize = listConsumer.size();
-            for (Iterator<com.homeaway.digitalplatform.streamregistry.Consumer> iter = listConsumer.listIterator(); iter.hasNext();) {
-                com.homeaway.digitalplatform.streamregistry.Consumer consumerEntity = iter.next();
-                if (consumerEntity.getActor().getName().equalsIgnoreCase(consumerName)) {
-                    // Remove the consumer
-                    iter.remove();
-                    avroStream.get().setConsumers(Lists.newArrayList(iter));
-                }
-            }
+            final List<com.homeaway.digitalplatform.streamregistry.Consumer> withConsumer = avroStream.get().getConsumers();
+
+            // Obtains consumer list size before  remove consumer
+            final int consumerInitialSize = withConsumer.size();
+
+            // Obtains filtered consumer list not containing the consumer we want to remove
+            List<com.homeaway.digitalplatform.streamregistry.Consumer> withoutConsumer = withConsumer
+                    .stream()
+                    .filter(consumer -> !StreamRegistryUtils.hasActorNamed(consumerName, consumer::getActor))
+                    .collect(Collectors.toList());
+
+            // Update stream's consumer list
+            avroStream.get().setConsumers(withoutConsumer);
+
+            // If filtered consumer list size is less than initial size stream will be updated
             if (avroStream.get().getConsumers().size() < consumerInitialSize)
                 updateAvroStream(avroStream.get());
             else
@@ -206,5 +210,4 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
             throw new StreamNotFoundException(streamName);
         }
     }
-
 }

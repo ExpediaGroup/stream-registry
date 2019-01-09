@@ -17,13 +17,11 @@ package com.homeaway.streamingplatform.db.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
-
-import com.google.common.collect.Lists;
 
 import com.homeaway.digitalplatform.streamregistry.Actor;
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
@@ -42,6 +40,7 @@ import com.homeaway.streamingplatform.exceptions.UnknownRegionException;
 import com.homeaway.streamingplatform.provider.InfraManager;
 import com.homeaway.streamingplatform.streams.ManagedKStreams;
 import com.homeaway.streamingplatform.streams.ManagedKafkaProducer;
+import com.homeaway.streamingplatform.utils.StreamRegistryUtils;
 
 @Slf4j
 public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.homeaway.streamingplatform.model.Producer> {
@@ -148,16 +147,21 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
 
         if (avroStream.isPresent()) {
-            List<com.homeaway.digitalplatform.streamregistry.Producer> listProducer = avroStream.get().getProducers();
-            int producerInitialSize = listProducer.size();
-            for (Iterator<com.homeaway.digitalplatform.streamregistry.Producer> iter = listProducer.listIterator(); iter.hasNext(); ) {
-                com.homeaway.digitalplatform.streamregistry.Producer producerEntity = iter.next();
-                if (producerEntity.getActor().getName().equalsIgnoreCase(producerName)) {
-                    // Remove the managedKafkaProducer
-                    iter.remove();
-                    avroStream.get().setProducers(Lists.newArrayList(iter));
-                }
-            }
+            final List<com.homeaway.digitalplatform.streamregistry.Producer> withProducer = avroStream.get().getProducers();
+
+            // Obtains producer list size before  remove consumer
+            final int producerInitialSize = withProducer.size();
+
+            // Obtains filtered producer list not containing the consumer we want to remove
+            List<com.homeaway.digitalplatform.streamregistry.Producer> withoutProducer = withProducer
+                    .stream()
+                    .filter(producer -> !StreamRegistryUtils.hasActorNamed(producerName, producer::getActor))
+                    .collect(Collectors.toList());
+
+            // Update stream's producer list
+            avroStream.get().setProducers(withoutProducer);
+
+            // If filtered producer list size is less than initial size stream will be updated
             if (avroStream.get().getProducers().size() < producerInitialSize)
                 updateAvroStream(avroStream.get());
             else
