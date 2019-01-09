@@ -1,8 +1,11 @@
 # Stream Registry Architecture
+<center>
+<img src="StreamRegistryArchitecture.png" alt="StreamRegistryArchitecture"/>
+</center>
 
 The stream registry is primarily concerned with the centralized management of
-the lifecycle of streams in the enterprise. Therefore, it serves as a central
-system of record (SOR) and source of truth (SOT) for stream metadata.
+the lifecycle of streams in the enterprise. It serves as a central
+system of record (SOR) declarative source of truth (SOT) for stream metadata.
 
 <center>![Stream Registry Architecture](SR-usecases.png)</center>
 
