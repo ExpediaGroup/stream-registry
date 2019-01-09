@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Stop Stream Creation for existing topics if topic configs don't match (#52)
+- Now DELETE consumer/producer services remove only one client (not all preceding list before a client) (#73)
 - Rename `kafka-infra-provider` to `infra-provider-kafka` (#78)
 - `maven-enforcer-plugin` to enforce SLF4J logging (#82)
 

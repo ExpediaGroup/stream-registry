@@ -15,6 +15,7 @@
  */
 package com.homeaway.streamingplatform.utils;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -26,6 +27,8 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
+import com.homeaway.digitalplatform.streamregistry.Actor;
+import com.homeaway.digitalplatform.streamregistry.Consumer;
 import com.homeaway.streamingplatform.utils.StreamRegistryUtils.EntriesPage;
 
 public class StreamRegistryUtilsTest {
@@ -87,5 +90,32 @@ public class StreamRegistryUtilsTest {
                 .limit(numElements + 1)
                 .boxed()
                 .collect(Collectors.toList());
+    }
+
+    @Test
+    public void testHasConsumerActor() {
+        final String existentActorName = "FOO-NAME";
+        final String nonExistentActorName = "NON-EXISTEN-FOO-NAME";
+
+        Consumer consumer1 = Consumer.newBuilder()
+                .setActor(Actor.newBuilder()
+                        .setName(existentActorName)
+                        .build())
+                .build();
+
+        // Ideal existence case
+        assertTrue("Actor " + existentActorName + " should exists in consumer", StreamRegistryUtils.hasActorNamed(existentActorName, consumer1::getActor));
+
+        // Ideal non existence case
+        assertFalse("Actor " + nonExistentActorName + " should not exists in consumer", StreamRegistryUtils.hasActorNamed(nonExistentActorName, consumer1::getActor));
+
+        // Null consumer case
+        assertFalse("Actor " + nonExistentActorName + " should not exists in consumer", StreamRegistryUtils.hasActorNamed(nonExistentActorName, null));
+
+        // Null name case
+        assertFalse("Actor " + nonExistentActorName + " should not exists in consumer", StreamRegistryUtils.hasActorNamed(null, consumer1::getActor));
+
+        // All null case
+        assertFalse("Actor " + nonExistentActorName + " should not exists in consumer", StreamRegistryUtils.hasActorNamed(null, null));
     }
 }
