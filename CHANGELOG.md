@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Now DELETE consumer/producer services remove only one client (not all preceding list before a client) (#73)
 - Rename `kafka-infra-provider` to `infra-provider-kafka` (#78)
 - `maven-enforcer-plugin` to enforce SLF4J logging (#82)
+- Java packages moved from `com.homeaway.streamingplatform` to `com.homeaway.streamplatform.streamregistry`.
 
 ## [0.4.1] - 20190102
 ### Added
@@ -33,7 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.3.2] - 20181216
 ### Changed
-- Updated README to something that outlines this a bit better. (#54) 
+- Updated README to something that outlines this a bit better. (#54)
 - Changed .travis.yml and added a setup script to securely send credentials for sigining and deploying master builds. (#57)
 - Added appropriate variables so that all encrypted keys work. (#57)
 
