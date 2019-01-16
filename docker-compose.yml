@@ -11,7 +11,11 @@ services:
       - schema-registry
     environment:
       STREAM_REGISTRY_BOOTSTRAP_SERVERS: 'broker:9092'
+<<<<<<< HEAD
       STREAM_REGISTRY_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+=======
+      STREAM_REGISTRY_SCHEMA_REGISTRY_URL: 'schema-registry:8081'
+>>>>>>> Adding build and runtime support for open jdk 11 (#86)
       STREAM_REGISTRY_PRODUCER_RETRIES: 100
 
   # Source - https://github.com/confluentinc/cp-docker-images/blob/4.1.2-post/examples/cp-all-in-one/docker-compose.yml
@@ -53,4 +57,8 @@ services:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
+<<<<<<< HEAD
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://broker:9092'
+=======
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://broker:9092'
+>>>>>>> Adding build and runtime support for open jdk 11 (#86)
