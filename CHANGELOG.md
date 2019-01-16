@@ -4,10 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.4.1] - SNAPSHOT
+## [0.4.2] - SNAPSHOT
+### Added
+- Architecture diagram (#4)
+- Standalone `infra-provider` module (#78)
+
+### Changed
+- Stop Stream Creation for existing topics if topic configs don't match (#52)
+- Now DELETE consumer/producer services remove only one client (not all preceding list before a client) (#73)
+- Rename `kafka-infra-provider` to `infra-provider-kafka` (#78)
+- `maven-enforcer-plugin` to enforce SLF4J logging (#82)
+- Java packages moved from `com.homeaway.streamingplatform` to `com.homeaway.streamplatform.streamregistry`.
+
+## [0.4.1] - 20190102
+### Added
+- Docker build commands and documentation (#74)
+
 ### Changed
 - Adding un-annotated `streamName` path param to streamUpsert HTTP resource (#69)
 - Updated pom.xml to remove unused retrofit library, and clean up some versioning (#70)
+- Updated pom.xml to fix `make run` goal (#76)
 
 ### Removed
 - Deleted TODO/Documentation that referenced incorrect `http://localhost:8081/healthcheck` (#64)
@@ -18,7 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.3.2] - 20181216
 ### Changed
-- Updated README to something that outlines this a bit better. (#54) 
+- Updated README to something that outlines this a bit better. (#54)
 - Changed .travis.yml and added a setup script to securely send credentials for sigining and deploying master builds. (#57)
 - Added appropriate variables so that all encrypted keys work. (#57)
 
@@ -37,6 +53,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Shell script for build commands (#43)
 
+[0.4.2]: https://github.com/HomeAway/stream-registry/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/HomeAway/stream-registry/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/HomeAway/stream-registry/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/HomeAway/stream-registry/compare/v0.3.1...v0.3.2

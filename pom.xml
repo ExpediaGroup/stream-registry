@@ -2,12 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.homeaway.streamingplatform</groupId>
+    <groupId>com.homeaway.streamplatform</groupId>
     <artifactId>stream-registry-parent</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <modules>
         <module>schema-library-events</module>
-        <module>kafka-infra-provider</module>
+        <module>infra-provider</module>
+        <module>infra-provider-kafka</module>
         <module>core</module>
         <module>assembly</module>
     </modules>
@@ -16,7 +17,7 @@
     <url>https://homeaway.github.io/stream-registry/</url>
 
     <packaging>pom</packaging>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>0.4.2-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -55,22 +56,24 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <mainClass>com.homeaway.streamingplatform.StreamRegistryApplication</mainClass>
+        <mainClass>com.homeaway.streamplatform.streamregistry.StreamRegistryApplication</mainClass>
+        <dropwizard.server.config>config-dev.yaml</dropwizard.server.config>
 
         <!-- JaCoCo Coverage -->
         <coverage.line>0.59</coverage.line>
 
         <!-- Logging -->
-        <slf4j.version>1.7.24</slf4j.version>
+        <slf4j.version>1.7.25</slf4j.version>
 
         <!-- Testing -->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>2.23.4</mockito.version>
+        <powermock.version>2.0.0</powermock.version>
         <curator-test.version>2.9.0</curator-test.version>
 
         <!-- Utilities -->
-        <lombok.version>1.16.22</lombok.version>
+        <lombok.version>1.18.4</lombok.version>
         <guava.version>23.4-jre</guava.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
 
@@ -80,17 +83,15 @@
         <plexus-utils.version>1.5.6</plexus-utils.version>
         <plexus-container-default.version>1.0-alpha-9-stable-1</plexus-container-default.version>
 
-        <retrofit.version>2.3.0</retrofit.version>
-
         <!-- Servlets -->
         <javax.ws.rs-api.version>2.1</javax.ws.rs-api.version>
         <jetty.version>9.4.11.v20180605</jetty.version>
 
         <!-- DropWizard -->
-        <dropwizard.version>1.3.5</dropwizard.version>
+        <dropwizard.version>1.3.8</dropwizard.version>
 
         <!-- Jackson -->
-        <jackson.version>2.9.2</jackson.version>
+        <jackson.version>2.9.6</jackson.version>
 
         <!-- Swagger -->
         <dropwizard-swagger.version>1.1.2-1</dropwizard-swagger.version>
@@ -124,6 +125,10 @@
 
         <!-- OSSRH -->
         <nexusStaging.pluginVersion>1.6.7</nexusStaging.pluginVersion>
+
+        <!-- Jib -->
+        <jib-maven-plugin.version>0.10.1</jib-maven-plugin.version>
+        <jib.container.appRoot>/app</jib.container.appRoot>
     </properties>
 
     <dependencyManagement>
@@ -139,6 +144,18 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
 
@@ -166,12 +183,6 @@
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>${javax.validation.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.squareup.retrofit2</groupId>
-                <artifactId>retrofit</artifactId>
-                <version>${retrofit.version}</version>
             </dependency>
 
             <dependency>
@@ -439,6 +450,37 @@
                 <classifier>test</classifier>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito2</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-core</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>1.9.7</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.9.7</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
@@ -480,6 +522,23 @@
                                     <requireMavenVersion>
                                         <version>3.0</version>
                                     </requireMavenVersion>
+                                    <bannedDependencies>
+                                        <searchTransitive>true</searchTransitive>
+                                        <excludes>
+                                            <!-- This should not exist as it will force SLF4J calls to be delegated to log4j -->
+                                            <exclude>org.slf4j:slf4j-log4j12</exclude>
+                                            <exclude>org.slf4j:slf4j-log4j13</exclude>
+                                            <!-- This should not exist as it will force SLF4J calls to be delegated to jul & jcl -->
+                                            <exclude>org.slf4j:slf4j-jdk14</exclude>
+                                            <exclude>org.slf4j:slf4j-jcl</exclude>
+                                            <!-- Ensure only the slf4j binding for logback is on the classpath -->
+                                            <exclude>log4j:log4j</exclude>
+                                            <!-- As recommended from the slf4j guide, exclude commons-logging -->
+                                            <exclude>commons-logging:*</exclude>
+                                        </excludes>
+                                        <message>Secondary logging frameworks are
+                                            banned in preference to org.slf4j:*-over-slf4j</message>
+                                    </bannedDependencies>
                                 </rules>
                             </configuration>
                         </execution>
@@ -578,11 +637,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${dependency.pluginVersion}</version>
-                    <configuration>
-                        <usedDependencies>
-                            <usedDependency>io.swagger:swagger-jersey2-jaxrs</usedDependency>
-                        </usedDependencies>
-                    </configuration>
                     <executions>
                         <execution>
                             <id>analyze</id>
@@ -603,9 +657,11 @@
                                     <ignoredUnusedDeclaredDependency>org.apache.kafka:kafka_${scala.version}:jar:${kafka.confluent.version}</ignoredUnusedDeclaredDependency>
                                     <ignoredUnusedDeclaredDependency>org.hamcrest:hamcrest-core:jar:${hamcrest.version}</ignoredUnusedDeclaredDependency>
                                     <ignoredUnusedDeclaredDependency>org.slf4j:slf4j-api:jar:${slf4j.version}</ignoredUnusedDeclaredDependency>
-                                    <ignoredUnusedDeclaredDependency>io.dropwizard:dropwizard-testing:jar:1.3.5</ignoredUnusedDeclaredDependency>
+                                    <ignoredUnusedDeclaredDependency>io.dropwizard:dropwizard-testing:jar:${dropwizard.version}</ignoredUnusedDeclaredDependency>
                                     <!-- JDK 11 changes -->
                                     <ignoredUnusedDeclaredDependency>javax.xml.bind:jaxb-api:jar:2.4.0-b180830.0359</ignoredUnusedDeclaredDependency>
+                                    <ignoredUnusedDeclaredDependency>net.bytebuddy:byte-buddy:jar</ignoredUnusedDeclaredDependency>
+                                    <ignoredUnusedDeclaredDependency>net.bytebuddy:byte-buddy-agent</ignoredUnusedDeclaredDependency>
                                 </ignoredUnusedDeclaredDependencies>
                             </configuration>
                         </execution>
@@ -704,10 +760,15 @@
                         </dependency>
                         <dependency>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>kafka-infra-provider</artifactId>
+                            <artifactId>infra-provider-kafka</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>${jib-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
