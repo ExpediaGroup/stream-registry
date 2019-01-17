@@ -11,7 +11,7 @@ services:
       - schema-registry
     environment:
       STREAM_REGISTRY_BOOTSTRAP_SERVERS: 'broker:9092'
-      STREAM_REGISTRY_SCHEMA_REGISTRY_URL: 'schema-registry:8081'
+      STREAM_REGISTRY_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
       STREAM_REGISTRY_PRODUCER_RETRIES: 100
 
   # Source - https://github.com/confluentinc/cp-docker-images/blob/4.1.2-post/examples/cp-all-in-one/docker-compose.yml
