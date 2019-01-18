@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Architecture diagram (#4)
 - Standalone `infra-provider` module (#78)
+- Build and Runtime support for Open
 
 ### Changed
 - Stop Stream Creation for existing topics if topic configs don't match (#52)
