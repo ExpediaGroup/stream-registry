@@ -185,6 +185,12 @@
             <artifactId>javax.ws.rs-api</artifactId>
         </dependency>
 
+        <!-- JDK 11 Changes -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -321,7 +327,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>build-testclasspath</id>
@@ -373,7 +378,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -385,6 +390,13 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

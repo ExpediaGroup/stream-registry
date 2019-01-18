@@ -46,7 +46,7 @@ import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerCon
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.management.*", "javax.xml.*", "org.xml.*" })
 @PrepareForTest({KafkaManagerImpl.class, AdminUtils.class})
 public class KafkaManagerImplTest {
 
