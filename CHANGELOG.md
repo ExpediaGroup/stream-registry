@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.3] - SNAPSHOT
 ### Changed
-- TBD
+- Updated [Building locally](https://github.com/homeaway/stream-registry#building-locally) section in README with OpenJDK 11 reference
 
 ## [0.4.2] - 20190118
 ### Added
@@ -20,7 +20,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rename `kafka-infra-provider` to `infra-provider-kafka` (#78)
 - `maven-enforcer-plugin` to enforce SLF4J logging (#82)
 - Java packages moved from `com.homeaway.streamingplatform` to `com.homeaway.streamplatform.streamregistry`.
-- Updated [Building locally](https://github.com/homeaway/stream-registry#building-locally) section in README with OpenJDK 11 reference
 
 ## [0.4.1] - 20190102
 ### Added
