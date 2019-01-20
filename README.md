@@ -51,7 +51,7 @@ See the [architecture/northstar documentation](https://homeaway.github.io/stream
 
 ## Building locally
 
-Stream Registry is built using Maven. For convenience, we have wrapped each Maven command in a [`Makefile`](Makefile).
+Stream Registry is built using [OpenJDK 11](https://openjdk.java.net/install/) and Maven. For convenience, we have wrapped each Maven command in a [`Makefile`](Makefile).
 If you do not have `make` installed, please consult this file for build commands.
 
 Stream Registry is currently packaged as a shaded JAR file.
