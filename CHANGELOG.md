@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.3] - SNAPSHOT
 ### Changed
-- TBD
+- Updated [Building locally](https://github.com/homeaway/stream-registry#building-locally) section in README with OpenJDK 11 reference
 
 ## [0.4.2] - 20190118
 ### Added
