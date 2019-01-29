@@ -29,6 +29,7 @@ import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -73,6 +74,7 @@ import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
 import com.homeaway.streamplatform.streamregistry.extensions.validator.StreamValidatorIT;
+import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
@@ -130,6 +132,8 @@ public class BaseResourceIT {
     protected static ProducerResource producerResource;
 
     protected static InfraManager infraManager;
+
+    protected static StreamRegistryHealthCheck healthCheck;
 
     protected static RegionDao regionDao;
 
@@ -261,6 +265,8 @@ public class BaseResourceIT {
         SchemaRegistryClient schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryURL, 1);
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
         schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
+
+        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry());
     }
 
     /** initializes the zkClient to load up the test urls */
