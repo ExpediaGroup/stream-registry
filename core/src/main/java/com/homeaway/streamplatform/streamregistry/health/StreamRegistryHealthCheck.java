@@ -32,6 +32,7 @@ import com.codahale.metrics.health.HealthCheck;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 
+import org.apache.avro.SchemaBuilder;
 import org.apache.commons.lang3.Validate;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.streams.KafkaStreams;
@@ -178,10 +179,16 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     }
 
     private Schema createSampleSchema() {
+        org.apache.avro.Schema sampleSchema = SchemaBuilder.builder("com.streamplatform.healthcheck")
+                .record("Healthcheck")
+                .fields()
+                .requiredString("producer")
+                .requiredString("consumer")
+                .endRecord();
+
         return com.homeaway.streamplatform.streamregistry.model.Schema.builder()
-                .id("1")
-                .schemaString("-")
-                .version(1).build();
+                .schemaString(sampleSchema.toString())
+                .build();
     }
 
     private Tags createSampleTags() {
