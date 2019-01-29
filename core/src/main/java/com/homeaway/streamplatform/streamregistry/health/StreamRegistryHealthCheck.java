@@ -69,7 +69,8 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private boolean isConsumerRegistrationHealthy;
 
     // TODO - This needs to move to a /namespace approach vs an environment variable - see #29
-    private final String region = System.getenv("MPAAS_REGION");
+    private String region = System.getenv("MPAAS_REGION");
+    private int healthcheckStreamReplicationFactor = 3;
 
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
         super();
@@ -175,6 +176,8 @@ public class StreamRegistryHealthCheck extends HealthCheck {
                 .isDataNeededAtRest(false)
                 .tags(createSampleTags())
                 .vpcList(Collections.singletonList(region))
+                .partitions(1)
+                .replicationFactor(healthcheckStreamReplicationFactor)
                 .build();
     }
 
@@ -203,13 +206,18 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         try {
             AvroStreamKey avroStreamKey = AvroStreamKey.newBuilder().setStreamName(HEALTH_CHECK_STREAM_NAME).build();
             Optional<AvroStream> avroStreamValue = managedKStreams.getAvroStreamForKey(avroStreamKey);
-            if(!avroStreamValue.isPresent() || ! avroStreamValue.get().getName().equals(HEALTH_CHECK_STREAM_NAME)) {
-                setStateStoreHealthy(false);
-                throw new IllegalStateException("HealthCheck Failed: StreamRegistryHealthCheck Stream not available in StateStore.");
+            if(!avroStreamValue.isPresent()) {
+                // For the first time, it may take some time for the globalKTable to pick the inserted stream
+                // so, sleep for 1 sec and try looking on statestore again.
+                Thread.sleep(1000);
+                avroStreamValue = managedKStreams.getAvroStreamForKey(avroStreamKey);
+                if(!avroStreamValue.isPresent() || ! avroStreamValue.get().getName().equals(HEALTH_CHECK_STREAM_NAME)) {
+                    setStateStoreHealthy(false);
+                    throw new IllegalStateException("HealthCheck Failed: StreamRegistryHealthCheck Stream not available in StateStore.");
+                }
             }
         } catch (Exception e) {
             setStateStoreHealthy(false);
-            throw e;
         }
 
         setStateStoreHealthy(true);
@@ -317,4 +325,15 @@ public class StreamRegistryHealthCheck extends HealthCheck {
             return name;
         }
     }
+
+    // setter methods called from test cases
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public void setHealthcheckStreamReplicationFactor(int healthcheckStreamReplicationFactor) {
+        this.healthcheckStreamReplicationFactor = healthcheckStreamReplicationFactor;
+    }
+
+
 }
