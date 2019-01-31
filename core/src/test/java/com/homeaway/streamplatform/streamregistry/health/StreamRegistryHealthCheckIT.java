@@ -18,7 +18,6 @@ package com.homeaway.streamplatform.streamregistry.health;
 import com.codahale.metrics.health.HealthCheck;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
@@ -29,14 +28,6 @@ import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
  *
  */
 public class StreamRegistryHealthCheckIT extends BaseResourceIT {
-
-    @Before
-    public void setup() {
-        // Integration-Test environment has only one broker, so overriding the default value 3 with 1
-        healthCheck.setHealthcheckStreamReplicationFactor(1);
-        // Build environment does have the env variable MPAAS_REGION
-        healthCheck.setRegion(US_EAST_REGION);
-    }
 
     @Test
     public void testHealthCheck() {
