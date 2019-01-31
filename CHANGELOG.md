@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.4.4] - SNAPSHOT
+
 ## [0.4.3] - 20190131
 ### Changed
 - Updated [Building locally](https://github.com/homeaway/stream-registry#building-locally) section in README with OpenJDK 11 reference
@@ -59,7 +61,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Shell script for build commands (#43)
 
-[0.4.3]: https://github.com/HomeAway/stream-registry/compare/v0.4.1...v0.4.3
+[0.4.4]: https://github.com/HomeAway/stream-registry/compare/v0.4.3...v0.4.4
+[0.4.3]: https://github.com/HomeAway/stream-registry/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/HomeAway/stream-registry/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/HomeAway/stream-registry/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/HomeAway/stream-registry/compare/v0.3.2...v0.4.0
