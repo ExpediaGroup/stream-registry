@@ -32,6 +32,7 @@ import com.codahale.metrics.health.HealthCheck;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 
+import org.apache.avro.SchemaBuilder;
 import org.apache.commons.lang3.Validate;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.streams.KafkaStreams;
@@ -67,16 +68,25 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private boolean isProducerRegistrationHealthy;
     private boolean isConsumerRegistrationHealthy;
 
-    // TODO - This needs to move to a /namespace approach vs an environment variable - see #29
-    private final String region = System.getenv("MPAAS_REGION");
+    private String region;
+    private int healthcheckStreamReplicationFactor;
 
-    public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
+    /**
+     * Constructor called from BaseResourceIT.java for overriding the
+     *      replication-factor to 1 - there is only one broker in IntegrationTest cluster
+     *      region - Build environment does not have MPAAS_REGION env variables.
+     */
+    public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
+                                     int healthcheckStreamReplicationFactor, String region) {
         super();
 
         Validate.notNull(managedKStreams, "managedKStreams cannot be null");
         Validate.notNull(managedKStreams.getStreams(), "managedKStreams.getStreams() cannot be null");
         Validate.notNull(streamResource, "streamResource cannot be null");
 
+
+        this.region = region;
+        this.healthcheckStreamReplicationFactor = healthcheckStreamReplicationFactor;
         this.managedKStreams = managedKStreams;
         this.streamResource = streamResource;
 
@@ -86,6 +96,11 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
+    }
+
+    public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
+        // TODO - looking-up env variables needs to move to a /namespace approach - see #29
+        this(managedKStreams, streamResource, metricRegistry, 3, System.getenv("MPAAS_REGION"));
     }
 
     private synchronized boolean isStreamCreationHealthy() {
@@ -136,10 +151,10 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     protected synchronized Result check() {
         try {
             validateCreateStream();
-            validateStateStore();
             validateKStreamState();
             validateProducerRegistration();
             validateConsumerRegistration();
+            validateStateStore();
         } catch (Exception exception) {
             log.error("Exception during HealthCheck. ", exception);
             return Result.unhealthy(exception.getMessage());
@@ -174,14 +189,22 @@ public class StreamRegistryHealthCheck extends HealthCheck {
                 .isDataNeededAtRest(false)
                 .tags(createSampleTags())
                 .vpcList(Collections.singletonList(region))
+                .partitions(1)
+                .replicationFactor(healthcheckStreamReplicationFactor)
                 .build();
     }
 
     private Schema createSampleSchema() {
+        org.apache.avro.Schema sampleSchema = SchemaBuilder.builder("com.streamplatform.healthcheck")
+                .record("Healthcheck")
+                .fields()
+                .requiredString("producer")
+                .requiredString("consumer")
+                .endRecord();
+
         return com.homeaway.streamplatform.streamregistry.model.Schema.builder()
-                .id("1")
-                .schemaString("-")
-                .version(1).build();
+                .schemaString(sampleSchema.toString())
+                .build();
     }
 
     private Tags createSampleTags() {
@@ -310,4 +333,5 @@ public class StreamRegistryHealthCheck extends HealthCheck {
             return name;
         }
     }
+
 }
