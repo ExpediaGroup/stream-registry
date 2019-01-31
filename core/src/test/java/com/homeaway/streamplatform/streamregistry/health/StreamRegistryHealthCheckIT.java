@@ -23,6 +23,11 @@ import org.junit.Test;
 
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
 
+/**
+ * Test class to validate whether the StreamRegistryHealthCheck could properly insert
+ * a valid Stream, producer and consumer, and validate whether the StateStore is active
+ *
+ */
 public class StreamRegistryHealthCheckIT extends BaseResourceIT {
 
     @Before
