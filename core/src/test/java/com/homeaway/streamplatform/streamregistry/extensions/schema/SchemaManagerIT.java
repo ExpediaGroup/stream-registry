@@ -15,21 +15,21 @@
  */
 package com.homeaway.streamplatform.streamregistry.extensions.schema;
 
+import java.io.IOException;
+
 import javax.ws.rs.core.Response;
 
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+
 import org.apache.avro.Schema;
-import org.apache.avro.SchemaBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
 import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
-
-import java.io.IOException;
 
 public class SchemaManagerIT extends BaseResourceIT {
 
