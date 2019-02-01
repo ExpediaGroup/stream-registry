@@ -18,15 +18,16 @@ package com.homeaway.streamplatform.streamregistry.extensions.schema;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.base.Preconditions;
 
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.RestService;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaException;
@@ -37,38 +38,29 @@ public class ConfluentSchemaManager implements SchemaManager {
 
     private SchemaRegistryClient schemaRegistryClient;
 
-    private RestService schemaRegistryRestService;
+    // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+    //      Keep this around until ^^^^ that bug is fixed.
+    private Map<String, Integer> cachedSchemaIdMap = new HashMap<>();
 
     @Override
     public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
-        SchemaReference schemaReference;
         try {
+            if(cachedSchemaIdMap.containsKey(schema)) {
+                SchemaMetadata schemaMetadata = schemaRegistryClient.getLatestSchemaMetadata(subject);
+                log.info("Schema registration cached. Subject={} ; id={} ; version={}", subject, schemaMetadata.getId(), schemaMetadata.getVersion());
+                return new SchemaReference(subject, schemaMetadata.getId(), schemaMetadata.getVersion());
+            }
+
             org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
-            // TODO: CachedSchemaRegistry has a bug on registering schemas which is addressed at https://github.com/confluentinc/schema-registry/pull/827
-            // more details at (#100).
-            int id = this.register(subject, avroSchema);
+            int id = schemaRegistryClient.register(subject, avroSchema);
+            // TODO ... do we really want latest... shouldn't we be looking up metadata by the id that was just returned?
             int version = schemaRegistryClient.getLatestSchemaMetadata(subject).getVersion();
             log.info("Schema registration successful. Subject={} ; id={} ; version={}", subject, id, version);
-            schemaReference = new SchemaReference(subject, id, version);
+            return new SchemaReference(subject, id, version);
         } catch (IOException | RestClientException | RuntimeException e) {
-            log.error("caught an exception while registering a new schema={} for subject='{}'", schema, subject);
+            log.error("caught an exception while registering a new schema={} for subject='{}'", schema, subject, e);
             throw new SchemaManagerException(e);
         }
-
-        return schemaReference;
-    }
-
-    /**
-     * Register the avro schema for the subject.
-     *
-     * @param subject
-     * @param avroSchema
-     * @return
-     * @throws IOException
-     * @throws RestClientException
-     */
-    private int register(String subject, org.apache.avro.Schema avroSchema) throws IOException, RestClientException {
-        return schemaRegistryRestService.registerSchema(avroSchema.toString(), subject);
     }
 
     @Override
@@ -89,7 +81,6 @@ public class ConfluentSchemaManager implements SchemaManager {
         Preconditions.checkState(configs.containsKey(SCHEMA_REGISTRY_URL_CONFIG));
         String schemaRegistryUrl = (String) configs.get(SCHEMA_REGISTRY_URL_CONFIG);
 
-        schemaRegistryRestService = new RestService(schemaRegistryUrl);
-        schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryRestService, 100);
+        schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
     }
 }
