@@ -33,7 +33,7 @@ import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
 
 public class SchemaManagerIT extends BaseResourceIT {
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void test_validate_multiple_updates_of_same_schema() throws IOException, RestClientException {
         String schema = "{\n" +
                 "     \"type\": \"record\",\n" +
