@@ -92,11 +92,18 @@
                         </configuration>
                         <executions>
                             <execution>
+                                <id>dockerBuild</id>
+                                <goals>
+                                    <goal>dockerBuild</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                            <execution>
                                 <id>dockerBuildAndPush</id>
                                 <goals>
                                     <goal>build</goal>
                                 </goals>
-                                <phase>package</phase>
+                                <phase>deploy</phase>
                             </execution>
                         </executions>
                     </plugin>
