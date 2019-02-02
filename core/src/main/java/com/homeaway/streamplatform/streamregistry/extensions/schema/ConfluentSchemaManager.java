@@ -21,18 +21,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.base.Preconditions;
 
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
+import org.apache.avro.Schema;
+
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
-import org.apache.avro.Schema;
 
 @Slf4j
 public class ConfluentSchemaManager implements SchemaManager {
@@ -45,12 +46,15 @@ public class ConfluentSchemaManager implements SchemaManager {
 
     @Override
     public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
+        Preconditions.checkNotNull(subject, "Subject should not be null");
+        Preconditions.checkNotNull(schema, "Schema should not be null");
         try {
             // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
             //      Keep this around until ^^^^ that bug is fixed.
             String subjectSchemaCacheKey = subject + "-" + schema;
-            if(cachedSchemaIdMap.containsKey(subjectSchemaCacheKey)) {
-                Schema confluentSchema = schemaRegistryClient.getById(cachedSchemaIdMap.get(schema.intern()));
+            Integer cachedId = cachedSchemaIdMap.get(subjectSchemaCacheKey);
+            if(cachedId != null) {
+                Schema confluentSchema = schemaRegistryClient.getById(cachedId);
                 SchemaMetadata schemaMetadata = schemaRegistryClient.getSchemaMetadata(subject,
                         schemaRegistryClient.getVersion(subject, confluentSchema));
                 log.info("Schema registration cached. Subject={} ; id={} ; version={}", subject, schemaMetadata.getId(), schemaMetadata.getVersion());
@@ -84,10 +88,10 @@ public class ConfluentSchemaManager implements SchemaManager {
                 log.debug("Subject '{}' does not exist in schema-registry", subject);
                 return true;
             }
-            String message = String.format("caught an exception while checking compatibility for subject '%s'", subject);
+            String message = String.format("Could not check compatibility for subject '%s'", subject);
             throw new SchemaException(message, restClientException);
         } catch (IOException e) {
-            String message = String.format("caught an exception while checking compatibility for subject '%s'", subject);
+            String message = String.format("Could not check compatibility for subject '%s'", subject);
             throw new SchemaException(message, e);
         }
     }
