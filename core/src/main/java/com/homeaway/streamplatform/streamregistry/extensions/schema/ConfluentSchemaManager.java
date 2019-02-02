@@ -32,6 +32,7 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
+import org.apache.avro.Schema;
 
 @Slf4j
 public class ConfluentSchemaManager implements SchemaManager {
@@ -45,21 +46,31 @@ public class ConfluentSchemaManager implements SchemaManager {
     @Override
     public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
         try {
-            if(cachedSchemaIdMap.containsKey(schema)) {
-                SchemaMetadata schemaMetadata = schemaRegistryClient.getLatestSchemaMetadata(subject);
+            // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+            //      Keep this around until ^^^^ that bug is fixed.
+            String subjectSchemaCacheKey = subject + "-" + schema;
+            if(cachedSchemaIdMap.containsKey(subjectSchemaCacheKey)) {
+                Schema confluentSchema = schemaRegistryClient.getById(cachedSchemaIdMap.get(schema.intern()));
+                SchemaMetadata schemaMetadata = schemaRegistryClient.getSchemaMetadata(subject,
+                        schemaRegistryClient.getVersion(subject, confluentSchema));
                 log.info("Schema registration cached. Subject={} ; id={} ; version={}", subject, schemaMetadata.getId(), schemaMetadata.getVersion());
                 return new SchemaReference(subject, schemaMetadata.getId(), schemaMetadata.getVersion());
             }
 
-            org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
+            // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+            //      until ^^bug fixed, need to ensure we call register only when its not cached.
+            Schema avroSchema = new Schema.Parser().parse(schema);
             int id = schemaRegistryClient.register(subject, avroSchema);
-            // TODO ... do we really want latest... shouldn't we be looking up metadata by the id that was just returned?
-            int version = schemaRegistryClient.getLatestSchemaMetadata(subject).getVersion();
+            int version = schemaRegistryClient.getVersion(subject, avroSchema);
+
+            // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+            //      Keep this around until ^^^^ that bug is fixed. Cache the id.
+            cachedSchemaIdMap.put(subjectSchemaCacheKey, id);
+
             log.info("Schema registration successful. Subject={} ; id={} ; version={}", subject, id, version);
             return new SchemaReference(subject, id, version);
         } catch (IOException | RestClientException | RuntimeException e) {
-            log.error("caught an exception while registering a new schema={} for subject='{}'", schema, subject, e);
-            throw new SchemaManagerException(e);
+            throw new SchemaManagerException("Could not register new schema="+schema+" for subject='"+subject+"'", e);
         }
     }
 
@@ -67,11 +78,16 @@ public class ConfluentSchemaManager implements SchemaManager {
     public boolean checkCompatibility(String subject, String schema) throws SchemaException {
         try {
             org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
-            return !schemaRegistryClient.getAllSubjects().contains(subject)
-                    || schemaRegistryClient.testCompatibility(subject, avroSchema);
-        } catch (IOException | RestClientException e) {
+            return schemaRegistryClient.testCompatibility(subject, avroSchema);
+        } catch (RestClientException restClientException) {
+            if (restClientException.getErrorCode()==40401) {
+                log.debug("Subject '{}' does not exist in schema-registry", subject);
+                return true;
+            }
             String message = String.format("caught an exception while checking compatibility for subject '%s'", subject);
-            log.error(message);
+            throw new SchemaException(message, restClientException);
+        } catch (IOException e) {
+            String message = String.format("caught an exception while checking compatibility for subject '%s'", subject);
             throw new SchemaException(message, e);
         }
     }
