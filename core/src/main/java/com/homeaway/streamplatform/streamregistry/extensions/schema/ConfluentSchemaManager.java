@@ -18,6 +18,7 @@ package com.homeaway.streamplatform.streamregistry.extensions.schema;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 import com.google.common.base.Preconditions;
 
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.RestService;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+
+import org.apache.avro.Schema;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
@@ -37,49 +40,58 @@ public class ConfluentSchemaManager implements SchemaManager {
 
     private SchemaRegistryClient schemaRegistryClient;
 
-    private RestService schemaRegistryRestService;
+    // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+    //      Keep this around until ^^^^ that bug is fixed.
+    private Map<String, Integer> cachedSchemaIdMap = new HashMap<>();
 
     @Override
     public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
-        SchemaReference schemaReference;
+        Preconditions.checkNotNull(subject, "Subject should not be null");
+        Preconditions.checkNotNull(schema, "Schema should not be null");
         try {
-            org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
-            // TODO: CachedSchemaRegistry has a bug on registering schemas which is addressed at https://github.com/confluentinc/schema-registry/pull/827
-            // more details at (#100).
-            int id = this.register(subject, avroSchema);
-            int version = schemaRegistryClient.getLatestSchemaMetadata(subject).getVersion();
+            // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+            //      Keep this around until ^^^^ that bug is fixed.
+            String subjectSchemaCacheKey = subject + "-" + schema;
+            Integer cachedId = cachedSchemaIdMap.get(subjectSchemaCacheKey);
+            if(cachedId != null) {
+                Schema confluentSchema = schemaRegistryClient.getById(cachedId);
+                SchemaMetadata schemaMetadata = schemaRegistryClient.getSchemaMetadata(subject,
+                        schemaRegistryClient.getVersion(subject, confluentSchema));
+                log.info("Schema registration cached. Subject={} ; id={} ; version={}", subject, schemaMetadata.getId(), schemaMetadata.getVersion());
+                return new SchemaReference(subject, schemaMetadata.getId(), schemaMetadata.getVersion());
+            }
+
+            // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+            //      until ^^bug fixed, need to ensure we call register only when its not cached.
+            Schema avroSchema = new Schema.Parser().parse(schema);
+            int id = schemaRegistryClient.register(subject, avroSchema);
+            int version = schemaRegistryClient.getVersion(subject, avroSchema);
+
+            // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
+            //      Keep this around until ^^^^ that bug is fixed. Cache the id.
+            cachedSchemaIdMap.put(subjectSchemaCacheKey, id);
+
             log.info("Schema registration successful. Subject={} ; id={} ; version={}", subject, id, version);
-            schemaReference = new SchemaReference(subject, id, version);
+            return new SchemaReference(subject, id, version);
         } catch (IOException | RestClientException | RuntimeException e) {
-            log.error("caught an exception while registering a new schema={} for subject='{}'", schema, subject);
-            throw new SchemaManagerException(e);
+            throw new SchemaManagerException("Could not register new schema="+schema+" for subject='"+subject+"'", e);
         }
-
-        return schemaReference;
-    }
-
-    /**
-     * Register the avro schema for the subject.
-     *
-     * @param subject
-     * @param avroSchema
-     * @return
-     * @throws IOException
-     * @throws RestClientException
-     */
-    private int register(String subject, org.apache.avro.Schema avroSchema) throws IOException, RestClientException {
-        return schemaRegistryRestService.registerSchema(avroSchema.toString(), subject);
     }
 
     @Override
     public boolean checkCompatibility(String subject, String schema) throws SchemaException {
         try {
             org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
-            return !schemaRegistryClient.getAllSubjects().contains(subject)
-                    || schemaRegistryClient.testCompatibility(subject, avroSchema);
-        } catch (IOException | RestClientException e) {
-            String message = String.format("caught an exception while checking compatibility for subject '%s'", subject);
-            log.error(message);
+            return schemaRegistryClient.testCompatibility(subject, avroSchema);
+        } catch (RestClientException restClientException) {
+            if (restClientException.getErrorCode()==40401) {
+                log.debug("Subject '{}' does not exist in schema-registry", subject);
+                return true;
+            }
+            String message = String.format("Could not check compatibility for subject '%s'", subject);
+            throw new SchemaException(message, restClientException);
+        } catch (IOException e) {
+            String message = String.format("Could not check compatibility for subject '%s'", subject);
             throw new SchemaException(message, e);
         }
     }
@@ -89,7 +101,6 @@ public class ConfluentSchemaManager implements SchemaManager {
         Preconditions.checkState(configs.containsKey(SCHEMA_REGISTRY_URL_CONFIG));
         String schemaRegistryUrl = (String) configs.get(SCHEMA_REGISTRY_URL_CONFIG);
 
-        schemaRegistryRestService = new RestService(schemaRegistryUrl);
-        schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryRestService, 100);
+        schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
     }
 }
