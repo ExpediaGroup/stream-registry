@@ -33,6 +33,12 @@ import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
 
 public class SchemaManagerIT extends BaseResourceIT {
 
+    /**
+     * This test case reproduces the issue #100 (https://github.com/confluentinc/schema-registry/issues/894)
+     *
+     * @throws IOException
+     * @throws RestClientException
+     */
     @Test(expected = IllegalStateException.class)
     public void test_validate_multiple_updates_of_same_schema() throws IOException, RestClientException {
         String schema = "{\n" +
