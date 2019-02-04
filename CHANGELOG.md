@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [0.4.4] - SNAPSHOT
+### Changed
+- Fixed the failing HeathCheck (#101). Workaround for https://github.com/confluentinc/schema-registry/issues/894
 
 ## [0.4.3] - 20190131
 ### Changed
