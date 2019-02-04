@@ -98,6 +98,13 @@
                                 </goals>
                                 <phase>package</phase>
                             </execution>
+                            <execution>
+                                <id>dockerBuildAndPush</id>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <phase>deploy</phase>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
