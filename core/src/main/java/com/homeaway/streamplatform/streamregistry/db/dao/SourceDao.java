@@ -13,30 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.configuration;
+package com.homeaway.streamplatform.streamregistry.db.dao;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Optional;
 
-import lombok.Data;
+import com.homeaway.streamplatform.streamregistry.model.Source;
 
-@Data
-public class TopicsConfig {
+public interface SourceDao {
 
-    @Valid
-    @NotNull
-    String producerTopic;
+    void upsert(Source source);
 
-    @Valid
-    @NotNull
-    String producerStateStore;
+    Optional<Source> get(String streamName, String sourceName);
 
-    @Valid
-    @NotNull
-    String streamSourceTopic;
+    void delete(String streamName, String sourceName);
 
-    @Valid
-    @NotNull
-    String streamSourceStateStore;
+    List<Source> getAll(String streamName);
 
 }

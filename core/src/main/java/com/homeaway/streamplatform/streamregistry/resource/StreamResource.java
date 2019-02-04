@@ -43,6 +43,7 @@ import io.swagger.annotations.ApiResponses;
 
 import org.apache.avro.SchemaParseException;
 
+import com.homeaway.streamplatform.streamregistry.db.dao.SourceDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
@@ -67,21 +68,26 @@ public class StreamResource {
     private final StreamDao streamDao;
     private final StreamClientDao<Producer> producerDao;
     private final StreamClientDao<Consumer> consumerDao;
+    private final SourceDao sourceDao;
 
-    public StreamResource(StreamDao streamDao, StreamClientDao<Producer> producerDao, StreamClientDao<Consumer> consumerDao) {
+    public StreamResource(StreamDao streamDao,
+                          StreamClientDao<Producer> producerDao,
+                          StreamClientDao<Consumer> consumerDao,
+                          SourceDao sourceDao) {
         this.streamDao = streamDao;
         this.producerDao = producerDao;
         this.consumerDao = consumerDao;
+        this.sourceDao = sourceDao;
     }
 
     @PUT
     @ApiOperation(
-        value = "Upsert stream",
-        notes = "Create/Update a stream and its meta-data",
-        tags = "streams")
-    @ApiResponses(value = { @ApiResponse(code = 202, message = "Request accepted"),
-        @ApiResponse(code = 400, message = "Validation Exception while creating a stream"),
-        @ApiResponse(code = 500, message = "Error Occurred while getting data") })
+            value = "Upsert stream",
+            notes = "Create/Update a stream and its meta-data",
+            tags = "streams")
+    @ApiResponses(value = {@ApiResponse(code = 202, message = "Request accepted"),
+            @ApiResponse(code = 400, message = "Validation Exception while creating a stream"),
+            @ApiResponse(code = 500, message = "Error Occurred while getting data")})
     @Path("/{streamName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
@@ -101,9 +107,9 @@ public class StreamResource {
         } catch (RuntimeException e) {
             log.error("Error creating stream={}", stream.getName(), e);
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
-                .build();
-        } catch(Exception e) {
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
+                    .build();
+        } catch (Exception e) {
             log.error("Error creating stream={}", stream.getName(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage()))
@@ -119,7 +125,7 @@ public class StreamResource {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Compatibility check succeeded"),
             @ApiResponse(code = 400, message = "Compatibility check failed!"),
-            @ApiResponse(code = 500, message = "Error occurred while validating schemas") })
+            @ApiResponse(code = 500, message = "Error occurred while validating schemas")})
     @Path("/{streamName}/{schemaType}/compatibility")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
@@ -159,13 +165,13 @@ public class StreamResource {
     @GET
     @Path("/{streamName}")
     @ApiOperation(
-        value = "Get stream",
-        notes = "Returns a single stream resource",
-        tags = "streams",
-        response = Stream.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "successful operation", response = Stream.class),
-        @ApiResponse(code = 500, message = "Error Occurred while getting data"),
-        @ApiResponse(code = 404, message = "Stream not found") })
+            value = "Get stream",
+            notes = "Returns a single stream resource",
+            tags = "streams",
+            response = Stream.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "successful operation", response = Stream.class),
+            @ApiResponse(code = 500, message = "Error Occurred while getting data"),
+            @ApiResponse(code = 404, message = "Stream not found")})
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public Response getStream(@ApiParam(value = "Stream name", required = true) @PathParam("streamName") String streamName) {
@@ -186,25 +192,25 @@ public class StreamResource {
 
     @GET
     @ApiOperation(
-        value = "Get all streams",
-        notes = "Get all streams from stream registry",
-        tags = "streams",
-        response = EntriesPage.class)
+            value = "Get all streams",
+            notes = "Get all streams from stream registry",
+            tags = "streams",
+            response = EntriesPage.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Stream(s) read successfully", response = EntriesPage.class),
-        @ApiResponse(code = 500, message = "Error Occurred while getting data"),
-        @ApiResponse(code = 404, message = "Stream not found") })
+            @ApiResponse(code = 500, message = "Error Occurred while getting data"),
+            @ApiResponse(code = 404, message = "Stream not found")})
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public Response getAllStreams(
-        @ApiParam(
-            value = "Page number (zero based), default: 0",
-            defaultValue = "" + DEFAULT_STREAMS_PAGE_NUMBER)
-        @QueryParam("pageNumber") Optional<Integer> pageNumber,
-        @ApiParam(
-            value = "Page size",
-            defaultValue = "" + DEFAULT_STREAMS_PAGE_SIZE)
-        @QueryParam("pageSize") Optional<Integer> pageSize) {
+            @ApiParam(
+                    value = "Page number (zero based), default: 0",
+                    defaultValue = "" + DEFAULT_STREAMS_PAGE_NUMBER)
+            @QueryParam("pageNumber") Optional<Integer> pageNumber,
+            @ApiParam(
+                    value = "Page size",
+                    defaultValue = "" + DEFAULT_STREAMS_PAGE_SIZE)
+            @QueryParam("pageSize") Optional<Integer> pageSize) {
         try {
             final int pSize = pageSize.orElse(DEFAULT_STREAMS_PAGE_SIZE);
             final int pNumber = pageNumber.orElse(DEFAULT_STREAMS_PAGE_NUMBER);
@@ -212,11 +218,11 @@ public class StreamResource {
             final int totalSize = allStreams.size();
 
             List<Stream> streamsPage = Optional.ofNullable(StreamRegistryUtils
-                .paginate(
-                    allStreams,
-                    pSize)
-                .get(pNumber))
-                .orElse(Collections.emptyList());
+                    .paginate(
+                            allStreams,
+                            pSize)
+                    .get(pNumber))
+                    .orElse(Collections.emptyList());
 
             return Response.ok()
                     .entity(StreamRegistryUtils.toEntriesPage(streamsPage, totalSize, pSize, pNumber))
@@ -235,7 +241,7 @@ public class StreamResource {
     @Path("/{streamName}")
     @Timed
     public Response deleteStream(@ApiParam(value = "Stream object that needs to be deleted from the Stream Registry", required = true)
-    @PathParam("streamName") String streamName) {
+                                 @PathParam("streamName") String streamName) {
         try {
             streamDao.deleteStream(streamName);
         } catch (StreamNotFoundException e) {
@@ -250,13 +256,22 @@ public class StreamResource {
 
 
     @Path("/{streamName}/producers")
-    public ProducerResource getProducerResource(){
+    public ProducerResource getProducerResource() {
         return new ProducerResource(streamDao, producerDao);
     }
 
     @Path("/{streamName}/consumers")
-    public ConsumerResource getConsumerResource(){
+    public ConsumerResource getConsumerResource() {
         return new ConsumerResource(streamDao, consumerDao);
     }
 
+    @Path("/{streamName}/sources")
+    public SourceResource getSourceResource() {
+        return new SourceResource(sourceDao);
+    }
+
+    @Path("/sourcetypes")
+    public SourceTypeResource getSourceTypeResource() {
+        return new SourceTypeResource();
+    }
 }

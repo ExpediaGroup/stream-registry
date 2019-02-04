@@ -29,7 +29,7 @@ import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
 import com.homeaway.streamplatform.streamregistry.utils.AvroModelBuilder;
 
-public class ManagedKafkaProducerIT extends BaseResourceIT {
+public class StreamRegistryProducerIT extends BaseResourceIT {
 
     @Test
     public void testManagedProducer() {
@@ -37,10 +37,11 @@ public class ManagedKafkaProducerIT extends BaseResourceIT {
         IntegrationTestUtils.readKeyValues(topicsConfig.getProducerTopic(), consumerConfig, 500, 10000);
 
         String streamName = "testStream_5689";
-        AbstractMap.SimpleEntry<AvroStreamKey, AvroStream> avroMessage = new AvroModelBuilder().buildSampleMessage(streamName, OperationType.UPSERT);
+        AbstractMap.SimpleEntry<AvroStreamKey, AvroStream> avroMessage =
+                new AvroModelBuilder().buildSampleMessage(streamName, OperationType.UPSERT);
 
         // Push a message
-        managedKafkaProducer.log(avroMessage.getKey(), avroMessage.getValue());
+        streamProducer.log(avroMessage.getKey(), avroMessage.getValue());
 
         // Verify whether the message is available in the topic
         List<KeyValue<AvroStreamKey, AvroStream>> keyValues = IntegrationTestUtils.readKeyValues(topicsConfig.getProducerTopic(), consumerConfig, 400, 1);

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +39,8 @@ import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
+import com.homeaway.streamplatform.streamregistry.streams.GlobalKafkaStore;
+import com.homeaway.streamplatform.streamregistry.streams.StreamProducer;
 
 @Slf4j
 public abstract class AbstractDao {
@@ -54,9 +53,9 @@ public abstract class AbstractDao {
         UPDATE
     }
 
-    protected final ManagedKafkaProducer kafkaProducer;
+    protected final StreamProducer<AvroStreamKey, AvroStream> kafkaProducer;
 
-    protected final ManagedKStreams kStreams;
+    protected final GlobalKafkaStore kStreams;
 
     protected final String env;
 
@@ -66,13 +65,13 @@ public abstract class AbstractDao {
 
     protected final KafkaManager kafkaManager;
 
-    public AbstractDao(ManagedKafkaProducer managedKafkaProducer,
-        ManagedKStreams kStreams,
-        String env,
-        RegionDao regionDao,
-        InfraManager infraManager,
-        KafkaManager kafkaManager) {
-        this.kafkaProducer = managedKafkaProducer;
+    public AbstractDao(StreamProducer streamProducer,
+                       GlobalKafkaStore kStreams,
+                       String env,
+                       RegionDao regionDao,
+                       InfraManager infraManager,
+                       KafkaManager kafkaManager) {
+        this.kafkaProducer = streamProducer;
         this.kStreams = kStreams;
         this.env = env;
         this.regionDao = regionDao;
@@ -83,9 +82,9 @@ public abstract class AbstractDao {
     /**
      * This method looks up in the statestore for cluster information for a given key.
      *
-     * @param vpc VPC of the region that the cluster belongs to. Eg: us-east-1-vpc-defa0000
-     * @param env Environment the cluster belongs to
-     * @param hint Additional information that works in combination with vpc
+     * @param vpc       VPC of the region that the cluster belongs to. Eg: us-east-1-vpc-defa0000
+     * @param env       Environment the cluster belongs to
+     * @param hint      Additional information that works in combination with vpc
      * @param actorType Type that defines if the operation is happening for a producer or consumer
      * @return ClusterValue
      * @throws ClusterNotFoundException thrown if no cluster is found in the region
@@ -131,8 +130,8 @@ public abstract class AbstractDao {
     }
 
     protected com.homeaway.digitalplatform.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
-        com.homeaway.digitalplatform.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
-        String actorType, Map<String, String> topicConfigMap) {
+              com.homeaway.digitalplatform.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
+              String actorType, Map<String, String> topicConfigMap) {
 
         Actor.Builder actorBuilder = Actor.newBuilder();
 
@@ -153,21 +152,16 @@ public abstract class AbstractDao {
             actorBuilder.setRegionStreamConfigurations(new ArrayList<>());
             Map<String, String> configMap = new HashMap<>();
 
-            Properties topicConfig = new Properties();
-            if (topicConfigMap != null) {
-                topicConfig.putAll(topicConfigMap);
-            }
-
             List<String> topics = topicNamePostFixes
-                .stream()
-                .map(streamName::concat)
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(streamName::concat)
+                    .collect(Collectors.toList());
 
             bootstrapServers.ifPresent(s -> configMap.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, s));
             schemaRegistryURL.ifPresent(s -> configMap.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, s));
 
             RegionStreamConfiguration regionStreamConfiguration =
-                new RegionStreamConfiguration(region, clusterName.get(), topics, configMap);
+                    new RegionStreamConfiguration(region, clusterName.get(), topics, configMap);
 
             actorBuilder.getRegionStreamConfigurations().add(regionStreamConfiguration);
         } else if (operation.equalsIgnoreCase(OPERATION.UPDATE.name())) {
@@ -183,9 +177,9 @@ public abstract class AbstractDao {
         }
 
         log.info(
-            "Populated Cluster information into the Stream AvroObject. actorName={} ; region={} ; BootstrapServer={} ; " +
-                "schemaRegistryURL={} ; hint={} ; clusterName={}",
-            actor.getName(), region, bootstrapServers, schemaRegistryURL, hint, clusterName);
+                "Populated Cluster information into the Stream AvroObject. actorName={} ; region={} ; BootstrapServer={} ; " +
+                        "schemaRegistryURL={} ; hint={} ; clusterName={}",
+                actor.getName(), region, bootstrapServers, schemaRegistryURL, hint, clusterName);
 
         return actorBuilder.build();
     }

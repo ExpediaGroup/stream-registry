@@ -18,8 +18,10 @@ kafkaStreamsConfig:
     value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 
 topicsConfig:
-  producerTopic: streamregistry_v0.1_schemalibrary_v0.1.26-dev
-  stateStoreName: streamregistry_kv_store_v0.1-dev
+  producerTopic: _streamregistry_streams_v0.1
+  producerStateStore: _streamregistry_streams_kv_v0.1
+  streamSourceTopic: _stream_source_command_events_v0.1
+  streamSourceStateStore: _stream_source_command_events_store_v0.1
 
 infraManagerConfig:
   className: com.homeaway.streamplatform.streamregistry.streams.StreamInfraManager

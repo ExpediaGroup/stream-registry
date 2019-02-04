@@ -45,10 +45,14 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.utils.Utils;
+import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
 import org.rocksdb.Options;
 
+import com.homeaway.digitalplatform.streamregistry.AvroStream;
+import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+import com.homeaway.digitalplatform.streamregistry.Sources;
 import com.homeaway.streamplatform.streamregistry.configuration.InfraManagerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
@@ -56,12 +60,14 @@ import com.homeaway.streamplatform.streamregistry.configuration.StreamValidatorC
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
+import com.homeaway.streamplatform.streamregistry.db.dao.SourceDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ConsumerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ProducerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.RegionDaoImpl;
+import com.homeaway.streamplatform.streamregistry.db.dao.impl.SourceDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -71,9 +77,9 @@ import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.resource.RegionResource;
 import com.homeaway.streamplatform.streamregistry.resource.StreamResource;
+import com.homeaway.streamplatform.streamregistry.streams.GlobalKafkaStore;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
+import com.homeaway.streamplatform.streamregistry.streams.StreamRegistryProducer;
 
 /**
  * This is the main DropWizard application that bootstraps DropWizard, wires up the app,
@@ -95,7 +101,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     @Override
     public void initialize(final Bootstrap<StreamRegistryConfiguration> bootstrap) {
-        // EnvironmentVariableSubstitutor enables EnvVariables to be substituted into the configuration before initialization
+        // EnvironmentVariableSubstitutor enables EnvVariables to be substituted into
+        // the configuration before initialization
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
                         new EnvironmentVariableSubstitutor(false)
@@ -124,8 +131,24 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         kstreamsProperties.put(ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, CustomRocksDBConfig.class);
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
 
-        ManagedKafkaProducer managedProducer = new ManagedKafkaProducer(producerProperties, topicsConfig);
-        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig);
+        StreamRegistryProducer<AvroStreamKey, AvroStream> streamProducer = new StreamRegistryProducer<>(producerProperties, topicsConfig.getProducerTopic());
+        StreamRegistryProducer<AvroStreamKey, Sources> sourceProducer = new StreamRegistryProducer<>(producerProperties, topicsConfig.getStreamSourceTopic());
+
+        Properties streamProperties = new Properties();
+        streamProperties.putAll(kstreamsProperties);
+        streamProperties.put(StreamsConfig.STATE_DIR_CONFIG, "/tmp/streams/kafka-streams");
+
+        GlobalKafkaStore<AvroStreamKey, AvroStream> streamProcessor = new GlobalKafkaStore<>(streamProperties,
+                topicsConfig.getProducerTopic(), topicsConfig.getProducerStateStore(), null);
+
+
+        Properties sourceProperties = new Properties();
+        sourceProperties.putAll(kstreamsProperties);
+        sourceProperties.put(StreamsConfig.STATE_DIR_CONFIG, "/tmp/sources/kafka-streams");
+        sourceProperties.put("application.id", "source-streams");
+
+        GlobalKafkaStore<AvroStreamKey, Sources> sourceProcessor = new GlobalKafkaStore<>(sourceProperties,
+                topicsConfig.getStreamSourceTopic(), topicsConfig.getStreamSourceStateStore(), null);
 
         InfraManagerConfig infraManagerConfig = configuration.getInfraManagerConfig();
         String infraManagerClassName = infraManagerConfig.getClassName();
@@ -142,19 +165,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         }
         ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
 
-        environment.lifecycle().manage(managedProducer);
-        environment.lifecycle().manage(managedKStreams);
         environment.lifecycle().manage(managedInfraManager);
-
-        // TODO: Check if State Store is Initialized (#98)
-        // This may not be needed if Healthcheck is moved to ManagedKafkaProducer
-        // If not healthy after timeout log error and proceed anyway
-        try {
-            // Sleep needed to make sure the processor's init method is called before servicing the HTTP requests.
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-            log.error("Error while sleeping the main thread for 10 seconds so that Kstream topology gets initialized.", e);
-        }
 
         final Client httpClient = new JerseyClientBuilder(environment)
                 .using(configuration.getHttpClient())
@@ -173,16 +184,17 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         SchemaManager schemaManager = loadSchemaManager(configuration);
 
-        StreamDao streamDao = new StreamDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
-        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
-        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
+        StreamDao streamDao = new StreamDaoImpl(streamProducer, streamProcessor, env, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
+        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(streamProducer, streamProcessor, env, regionDao, infraManager, kafkaManager);
+        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(streamProducer, streamProcessor, env, regionDao, infraManager, kafkaManager);
+        SourceDao sourceDao = new SourceDaoImpl(sourceProducer, sourceProcessor);
 
-        StreamResource streamResource = new StreamResource(streamDao, producerDao, consumerDao);
+        StreamResource streamResource = new StreamResource(streamDao, producerDao, consumerDao, sourceDao);
         environment.jersey().register(streamResource);
         environment.jersey().register(new RegionResource(regionDao));
 
         environment.getApplicationContext().addServlet(PingServlet.class, "/ping");
-        StreamRegistryHealthCheck streamRegistryHealthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry);
+        StreamRegistryHealthCheck streamRegistryHealthCheck = new StreamRegistryHealthCheck(streamProcessor, streamResource, metricRegistry);
 
         environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
 
@@ -239,7 +251,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                 "schema manager class must be defined");
 
         Preconditions.checkState(schemaManagerConfig.getProperties() != null
-                && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
+                        && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
                 "schemaManagerConfig properties must define schema.registry.url");
         try {
             SchemaManager schemaManager = Utils.newInstance(schemaManagerClass, SchemaManager.class);

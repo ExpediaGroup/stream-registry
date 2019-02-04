@@ -39,8 +39,8 @@ import com.homeaway.streamplatform.streamregistry.exceptions.ConsumerNotFoundExc
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.UnknownRegionException;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
+import com.homeaway.streamplatform.streamregistry.streams.GlobalKafkaStore;
+import com.homeaway.streamplatform.streamregistry.streams.StreamProducer;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils;
 
 @Slf4j
@@ -50,13 +50,13 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
 
     private static final String ACTOR_TYPE = "consumer";
 
-    public ConsumerDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-        ManagedKStreams kStreams,
+    public ConsumerDaoImpl(StreamProducer streamProducer,
+        GlobalKafkaStore kStreams,
         String env,
         RegionDao regionDao,
         InfraManager infraManager,
         KafkaManager kafkaManager) {
-        super(managedKafkaProducer, kStreams, env, regionDao, infraManager, kafkaManager);
+        super(streamProducer, kStreams, env, regionDao, infraManager, kafkaManager);
     }
 
     @Override

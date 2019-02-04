@@ -13,30 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.configuration;
+package com.homeaway.streamplatform.streamregistry.exceptions;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+public class StreamSourceException extends Exception {
 
-import lombok.Data;
-
-@Data
-public class TopicsConfig {
-
-    @Valid
-    @NotNull
-    String producerTopic;
-
-    @Valid
-    @NotNull
-    String producerStateStore;
-
-    @Valid
-    @NotNull
-    String streamSourceTopic;
-
-    @Valid
-    @NotNull
-    String streamSourceStateStore;
-
+    public StreamSourceException(String message) {
+        super(message);
+    }
 }

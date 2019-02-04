@@ -147,8 +147,8 @@ public class StreamResourceIT extends BaseResourceIT {
 
     @Test
     public void test_getAllStreamsWithTime() throws InterruptedException {
-        String streamName1 = "junit-stream-getAllStreams-with-time-1";
-        String streamName2 = "junit-stream-getAllStreams-with-time-2";
+        String streamName1 = "junit-stream-getAllValues-with-time-1";
+        String streamName2 = "junit-stream-getAllValues-with-time-2";
 
         Stream stream1 = JsonModelBuilder.buildJsonStream(streamName1);
         Stream stream2 = JsonModelBuilder.buildJsonStream(streamName2);

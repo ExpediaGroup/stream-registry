@@ -38,8 +38,8 @@ import com.homeaway.streamplatform.streamregistry.exceptions.ProducerNotFoundExc
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.UnknownRegionException;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
+import com.homeaway.streamplatform.streamregistry.streams.GlobalKafkaStore;
+import com.homeaway.streamplatform.streamregistry.streams.StreamProducer;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils;
 
 @Slf4j
@@ -48,13 +48,13 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
     private final List<String> topicPostFixes = Collections.singletonList("");
     private final static String ACTOR_TYPE = "producer";
 
-    public ProducerDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-        ManagedKStreams kStreams,
-        String env,
-        RegionDao regionDao,
-        InfraManager infraManager,
-        KafkaManager kafkaManager) {
-        super(managedKafkaProducer, kStreams, env, regionDao, infraManager, kafkaManager);
+    public ProducerDaoImpl(StreamProducer streamProducer,
+                           GlobalKafkaStore kStreams,
+                           String env,
+                           RegionDao regionDao,
+                           InfraManager infraManager,
+                           KafkaManager kafkaManager) {
+        super(streamProducer, kStreams, env, regionDao, infraManager, kafkaManager);
     }
 
     @Override

@@ -107,6 +107,9 @@
         <avro.version>1.8.2</avro.version>
         <snappy-java.version>1.1.2.6</snappy-java.version>
 
+
+        <apache-commons-io.version>2.6</apache-commons-io.version>
+
         <!-- Plugins -->
         <assembly.pluginVersion>3.1.0</assembly.pluginVersion>
         <javadoc.pluginVersion>3.0.1</javadoc.pluginVersion>
@@ -204,6 +207,14 @@
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-provider-api</artifactId>
                 <version>${wagon-provider-api.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${apache-commons-io.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- DropWizard -->

@@ -15,11 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import kafka.admin.AdminUtils;
@@ -164,7 +160,6 @@ public class KafkaManagerImpl implements KafkaManager {
     // utility methods for this class
 
     // package scope so that PowerMock can leverage
-    @SuppressWarnings("SuspiciousMethodCalls")
     Map<String,String> filterPropertiesKeys(Properties properties, Map<String,Boolean> keyFilterMap) {
         return new HashMap<>(properties.stringPropertyNames().stream()
                 .filter(key -> !keyFilterMap.containsKey(key))

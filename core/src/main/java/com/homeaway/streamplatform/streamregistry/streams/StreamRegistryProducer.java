@@ -20,44 +20,32 @@ import java.util.concurrent.Future;
 
 import lombok.extern.slf4j.Slf4j;
 
-import io.dropwizard.lifecycle.Managed;
-
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
-
 @Slf4j
-public class ManagedKafkaProducer implements Managed {
+public class StreamRegistryProducer<K, V> implements StreamProducer<K, V> {
 
-    private final TopicsConfig topicsConfig;
-    private final Properties properties;
-    private Producer<AvroStreamKey, AvroStream> producer;
+    private final String topicName;
+    private Producer<K, V> producer;
 
-    public ManagedKafkaProducer(Properties properties, TopicsConfig topicsConfig) {
-        this.properties = properties;
-        this.topicsConfig = topicsConfig;
-    }
-
-    @Override
-    public void start() {
+    public StreamRegistryProducer(Properties properties, String topicName) {
+        this.topicName = topicName;
         producer = new KafkaProducer<>(properties);
-        log.info("Managed Kafka Producer Started with properties: " + String.valueOf(properties));
+        log.info("Managed Kafka Producer Started with properties: " + properties);
     }
 
-    @Override
     public void stop() {
         producer.close();
         log.info("Manager Kafka Producer stopped.");
     }
 
-    public void log(AvroStreamKey key, AvroStream value) {
+    @Override
+    public void log(K key, V value) {
         try {
-            Future<RecordMetadata> result = producer.send(new ProducerRecord<>(topicsConfig.getProducerTopic(), key, value),
+            Future<RecordMetadata> result = producer.send(new ProducerRecord<>(topicName, key, value),
                     (RecordMetadata recordMetadata, Exception e) -> {
                         if (e != null) {
                             log.error("Error producing to topic={}", recordMetadata.topic(), e);
@@ -70,6 +58,7 @@ public class ManagedKafkaProducer implements Managed {
                     exception);
         }
         log.info("Message pushed to the sourceKStreamProcessorTopic Topic={} with key={} successfully",
-                topicsConfig.getProducerTopic(), String.valueOf(key));
+                topicName, key.toString());
+
     }
 }

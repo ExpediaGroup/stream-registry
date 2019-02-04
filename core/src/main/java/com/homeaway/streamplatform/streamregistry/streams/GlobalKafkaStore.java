@@ -21,77 +21,70 @@ import java.util.Properties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import io.dropwizard.lifecycle.Managed;
-
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
-
 @Slf4j
-public class ManagedKStreams implements Managed {
+public class GlobalKafkaStore<K, V> {
 
     @Getter
     private final KafkaStreams streams;
+
     @Getter
     private final Properties streamProperties;
+
     @Getter
-    private final TopicsConfig topicsConfig;
     private final String stateStoreName;
 
-    private ReadOnlyKeyValueStore<AvroStreamKey, AvroStream> view;
+    @Getter
+    private ReadOnlyKeyValueStore<K, V> view;
+
     private boolean isRunning = false;
 
-    public ManagedKStreams(Properties streamProperties, TopicsConfig topicsConfig) {
-        this(streamProperties, topicsConfig, null);
-    }
+    public GlobalKafkaStore(Properties streamProperties, String topicName, String stateStoreName,
+                            KStreamsProcessorListener testListener) {
 
-    public ManagedKStreams(Properties streamProperties, TopicsConfig topicsConfig, KStreamsProcessorListener testListener) {
         this.streamProperties = streamProperties;
-        this.topicsConfig = topicsConfig;
+        this.stateStoreName = stateStoreName;
 
-        stateStoreName = topicsConfig.getStateStoreName();
-        KStreamBuilder kStreamBuilder= new KStreamBuilder();
+        KStreamBuilder kStreamBuilder = new KStreamBuilder();
 
-        kStreamBuilder.globalTable(topicsConfig.getProducerTopic(), stateStoreName);
+        kStreamBuilder.globalTable(topicName, stateStoreName);
 
         streams = new KafkaStreams(kStreamBuilder, streamProperties);
         // [ #132 ] - Improve build times by notifying test listener that we are running
         streams.setStateListener((newState, oldState) -> {
             if (!isRunning && newState == KafkaStreams.State.RUNNING) {
                 isRunning = true;
-                if( testListener != null) {
+                if (testListener != null) {
                     testListener.stateStoreInitialized();
                 }
             }
         });
         streams.setUncaughtExceptionHandler((t, e) -> log.error("KafkaStreams job failed", e));
+        start();
     }
 
-    @Override
-    public void start() {
+    private void start() {
         streams.start();
         log.info("Stream Registry KStreams started.");
-        log.info("Stream Registry State Store Name: {}",stateStoreName);
+        log.info("Stream Registry State Store Name: {}", stateStoreName);
         view = streams.store(stateStoreName, QueryableStoreTypes.keyValueStore());
     }
 
-    @Override
     public void stop() {
         streams.close();
         log.info("KStreams closed");
     }
 
-    public Optional<AvroStream> getAvroStreamForKey(AvroStreamKey key){
+    public Optional<V> getAvroStreamForKey(K key) {
         return Optional.ofNullable(view.get(key));
     }
 
-    public KeyValueIterator<AvroStreamKey, AvroStream> getAllStreams(){
+    public KeyValueIterator<K, V> getAllValues() {
         return view.all();
     }
 }

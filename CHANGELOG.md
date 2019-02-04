@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [0.4.4] - SNAPSHOT
+### Added
+- Added support for /sources
+
 ### Changed
 - Jib now publishes docker image to dockerhub
+
 
 ## [0.4.3] - 20190131
 ### Changed

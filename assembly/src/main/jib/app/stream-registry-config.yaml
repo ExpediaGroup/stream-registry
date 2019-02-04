@@ -39,6 +39,8 @@ kafkaStreamsConfig:
 topicsConfig:
   producerTopic: _streamregistry_streams${STREAM_REGISTRY_PRODUCER_TOPIC_SUFFIX:-_v0.1}
   stateStoreName: _streamregistry_streams_kv${STREAM_REGISTRY_PRODUCER_STATE_TOPIC_SUFFIX_STATE:-_v0.1}
+  streamSourceTopic: _stream_source_command_events${SOURCE_TOPIC:-_v0.1}
+  streamSourceStateStore: _stream_source_command_events_store${SOURCE_STORE_TOPIC:-_v0.1}
 
 infraManagerConfig:
   className: com.homeaway.streamplatform.streamregistry.provider.impl.KafkaInfraManager

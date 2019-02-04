@@ -15,12 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 import javax.ws.rs.InternalServerErrorException;
 
@@ -28,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.streams.state.KeyValueIterator;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
@@ -49,8 +45,8 @@ import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamVa
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 import com.homeaway.streamplatform.streamregistry.model.Tags;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
+import com.homeaway.streamplatform.streamregistry.streams.GlobalKafkaStore;
+import com.homeaway.streamplatform.streamregistry.streams.StreamProducer;
 
 @Slf4j
 public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValidator {
@@ -58,15 +54,15 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     private StreamValidator streamValidator;
     private SchemaManager schemaManager;
 
-    public StreamDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-                         ManagedKStreams kStreams,
+    public StreamDaoImpl(StreamProducer streamProducer,
+                         GlobalKafkaStore kStreams,
                          String env,
                          RegionDao regionDao,
                          InfraManager infraManager,
                          KafkaManager kafkaManager,
                          StreamValidator validator,
                          SchemaManager schemaManager) {
-        super(managedKafkaProducer, kStreams, env, regionDao, infraManager, kafkaManager);
+        super(streamProducer, kStreams, env, regionDao, infraManager, kafkaManager);
         this.streamValidator = validator;
         this.schemaManager = schemaManager;
     }
@@ -283,7 +279,8 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     public List<Stream> getAllStreams() {
         List<Stream> streamList = new ArrayList<>();
         log.info("Pulling stream information from local instance's state-store");
-        kStreams.getAllStreams().forEachRemaining(avroStream -> streamList.add(AvroToJsonDTO.convertAvroToJson(avroStream.value)));
+        KeyValueIterator<AvroStreamKey, AvroStream> allStreams = (KeyValueIterator<AvroStreamKey, AvroStream>)kStreams.getAllValues();
+        allStreams.forEachRemaining(avroStream -> streamList.add(AvroToJsonDTO.convertAvroToJson(avroStream.value)));
         return streamList;
     }
 

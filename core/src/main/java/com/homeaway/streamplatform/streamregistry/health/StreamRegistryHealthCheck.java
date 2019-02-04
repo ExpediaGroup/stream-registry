@@ -49,17 +49,21 @@ import com.homeaway.streamplatform.streamregistry.model.Tags;
 import com.homeaway.streamplatform.streamregistry.resource.ConsumerResource;
 import com.homeaway.streamplatform.streamregistry.resource.ProducerResource;
 import com.homeaway.streamplatform.streamregistry.resource.StreamResource;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
+import com.homeaway.streamplatform.streamregistry.streams.GlobalKafkaStore;
 
+/**
+ * Stream registry health check. This reports a simple health check by sending a message to the internal store
+ * to health check the internal store. Failure of this health check will bring Stream registry down.
+ */
 @Slf4j
 public class StreamRegistryHealthCheck extends HealthCheck {
 
-    public static final Integer PRODUCT_ID = 126845;
-    public static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
-    public static final String APP_NAME = "StreamRegistryApplication";
+    private static final Integer PRODUCT_ID = 126845;
+    private static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
+    private static final String APP_NAME = "StreamRegistryApplication";
     private static final String HEALTH_CHECK_STREAM_NAME = "StreamRegistryHealthCheck";
 
-    private final ManagedKStreams managedKStreams;
+    private final GlobalKafkaStore managedKStreams;
     private final StreamResource streamResource;
 
     private boolean isStreamCreationHealthy;
@@ -72,11 +76,14 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private int healthcheckStreamReplicationFactor;
 
     /**
-     * Constructor called from BaseResourceIT.java for overriding the
-     *      replication-factor to 1 - there is only one broker in IntegrationTest cluster
-     *      region - Build environment does not have MPAAS_REGION env variables.
+     *
+     * @param managedKStreams                    KStreams store
+     * @param streamResource                     stream resource
+     * @param metricRegistry                     metric registry
+     * @param healthcheckStreamReplicationFactor replication of the IntegrationTest cluster
+     * @param region                             Build environment does not have MPAAS_REGION env variables.
      */
-    public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
+    public StreamRegistryHealthCheck(GlobalKafkaStore managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
                                      int healthcheckStreamReplicationFactor, String region) {
         super();
 
@@ -98,7 +105,14 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
     }
 
-    public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
+    /**
+     * Instantiates a new Stream registry health check.
+     *
+     * @param managedKStreams the managed k streams
+     * @param streamResource  the stream resource
+     * @param metricRegistry  the metric registry
+     */
+    public StreamRegistryHealthCheck(GlobalKafkaStore managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
         // TODO - looking-up env variables needs to move to a /namespace approach - see #29
         this(managedKStreams, streamResource, metricRegistry, 3, System.getenv("MPAAS_REGION"));
     }
@@ -218,7 +232,8 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private void validateStateStore() {
         try {
             AvroStreamKey avroStreamKey = AvroStreamKey.newBuilder().setStreamName(HEALTH_CHECK_STREAM_NAME).build();
-            Optional<AvroStream> avroStreamValue = managedKStreams.getAvroStreamForKey(avroStreamKey);
+            @SuppressWarnings("unchecked")
+            Optional<AvroStream> avroStreamValue = (Optional<AvroStream>) managedKStreams.getAvroStreamForKey(avroStreamKey);
             if(!avroStreamValue.isPresent() || ! avroStreamValue.get().getName().equals(HEALTH_CHECK_STREAM_NAME)) {
                 setStateStoreHealthy(false);
                 throw new IllegalStateException("HealthCheck Failed: StreamRegistryHealthCheck Stream not available in StateStore.");
@@ -315,12 +330,33 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         setConsumerRegistrationHealthy(true);
     }
 
+    /**
+     * The enum Metrics.
+     */
     public enum Metrics {
+        /**
+         * Stream creation health metrics.
+         */
         STREAM_CREATION_HEALTH("app.is_stream_creation_healthy"),
+        /**
+         * Producer registration health metrics.
+         */
         PRODUCER_REGISTRATION_HEALTH("app.is_producer_registration_healthy"),
+        /**
+         * Consumer registration health metrics.
+         */
         CONSUMER_REGISTRATION_HEALTH("app.is_consumer_registration_healthy"),
+        /**
+         * State store health metrics.
+         */
         STATE_STORE_HEALTH("app.is_globaltable_statestore_healthy"),
+        /**
+         * State store state health metrics.
+         */
         STATE_STORE_STATE_HEALTH("app.is_globaltable_kstreams_in_valid_state"),
+        /**
+         * State store state metrics.
+         */
         STATE_STORE_STATE("app.globaltable_kstreams_state");
 
         private String name;
@@ -329,6 +365,11 @@ public class StreamRegistryHealthCheck extends HealthCheck {
             this.name = name;
         }
 
+        /**
+         * Gets name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }

@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.configuration;
+package com.homeaway.streamplatform.streamregistry.exceptions;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+@SuppressWarnings({"WeakerAccess", "unused"})
+public  class UnsupportedSourceType extends RuntimeException {
 
-import lombok.Data;
+    protected final String sourceType;
 
-@Data
-public class TopicsConfig {
+    public UnsupportedSourceType(Throwable cause, String streamName) {
+        super(cause);
+        this.sourceType = streamName;
+    }
 
-    @Valid
-    @NotNull
-    String producerTopic;
-
-    @Valid
-    @NotNull
-    String producerStateStore;
-
-    @Valid
-    @NotNull
-    String streamSourceTopic;
-
-    @Valid
-    @NotNull
-    String streamSourceStateStore;
+    public UnsupportedSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
 
 }

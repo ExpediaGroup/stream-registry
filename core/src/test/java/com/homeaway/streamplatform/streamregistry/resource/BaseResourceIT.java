@@ -45,6 +45,7 @@ import io.dropwizard.jersey.validation.Validators;
 
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
+import org.apache.commons.io.FileUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.streams.StreamsConfig;
@@ -64,12 +65,14 @@ import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
 import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
+import com.homeaway.streamplatform.streamregistry.db.dao.SourceDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ConsumerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ProducerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.RegionDaoImpl;
+import com.homeaway.streamplatform.streamregistry.db.dao.impl.SourceDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -78,8 +81,8 @@ import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthChe
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
+import com.homeaway.streamplatform.streamregistry.streams.GlobalKafkaStore;
+import com.homeaway.streamplatform.streamregistry.streams.StreamRegistryProducer;
 
 @SuppressWarnings("WeakerAccess")
 @Slf4j
@@ -121,13 +124,23 @@ public class BaseResourceIT {
     // THIS IS A TEMPORARY WORKAROUND for now... centralizing here so that we can soon remove it
     protected static final int TEST_SLEEP_WAIT_MS = 80;
 
-    protected static ManagedKStreams managedKStreams;
+    protected static StreamRegistryProducer streamProducer;
 
-    protected static ManagedKafkaProducer managedKafkaProducer;
+    protected final static File streamsDirectory = new File("/tmp/streams");
+
+    protected final static File sourcesDirectory = new File("/tmp/sources");
+
+    protected static StreamRegistryProducer sourceProducer;
+
+    protected static GlobalKafkaStore streamProcessor;
+
+    protected static GlobalKafkaStore sourceProcessor;
 
     protected static StreamResource streamResource;
 
     protected static ConsumerResource consumerResource;
+
+    protected static SourceResource sourceResource;
 
     protected static ProducerResource producerResource;
 
@@ -164,7 +177,6 @@ public class BaseResourceIT {
 
     private static final int DEFAULT_ZK_CONNECTION_TIMEOUT_MS = 8 * 1000;
 
-
     public static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
         log.debug("Creating topic { name: {}, partitions: {}, replication: {}, config: {} }",
                 topic, partitions, replication, topicConfig);
@@ -180,6 +192,10 @@ public class BaseResourceIT {
     //      - Doing so saves on build time.
     @BeforeClass
     public static void setupApplication() throws Exception {
+
+        FileUtils.deleteDirectory(streamsDirectory);
+        FileUtils.deleteDirectory(sourcesDirectory);
+
         // static test config setup during pre-integration-test mvn phase
         zookeeperQuorum = "127.0.0.1:21810";
         initializeZkClient();
@@ -187,17 +203,16 @@ public class BaseResourceIT {
         schemaRegistryURL = getTestUrl("/homeaway/test/schema-registry-key");
 
         loadConfig("config-dev.yaml");
-        TopicsConfig topicsConfig = configuration.getTopicsConfig();
+        topicsConfig = configuration.getTopicsConfig();
         String producerTopic = topicsConfig.getProducerTopic();
+        String streamSourceTopic = topicsConfig.getStreamSourceTopic();
+
         try {
             createTopic(producerTopic, 1, 1, new Properties());
+            createTopic(streamSourceTopic, 1, 1, new Properties());
         } catch (Exception exception) {
             throw new IllegalStateException("Could not create topic " + producerTopic, exception);
         }
-
-        BaseResourceIT.topicsConfig = new TopicsConfig();
-        BaseResourceIT.topicsConfig.setProducerTopic(producerTopic);
-        BaseResourceIT.topicsConfig.setStateStoreName(topicsConfig.getStateStoreName());
 
         infraManager = buildInfraManager();
 
@@ -207,8 +222,9 @@ public class BaseResourceIT {
         producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         producerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
-        managedKafkaProducer = new ManagedKafkaProducer(producerConfig, BaseResourceIT.topicsConfig);
-        managedKafkaProducer.start();
+        
+        streamProducer = new StreamRegistryProducer<>(producerConfig, BaseResourceIT.topicsConfig.getProducerTopic());
+        sourceProducer = new StreamRegistryProducer<>(producerConfig, BaseResourceIT.topicsConfig.getStreamSourceTopic());
 
         streamsConfig = new Properties();
         KafkaStreamsConfig kafkaStreamsConfig = configuration.getKafkaStreamsConfig();
@@ -219,8 +235,22 @@ public class BaseResourceIT {
         streamsConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, kafkaStreamsConfig.getKstreamsProperties().get(VALUE_SERDE));
         streamsConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         CompletableFuture<Boolean> initialized = new CompletableFuture<>();
-        managedKStreams = new ManagedKStreams(streamsConfig, BaseResourceIT.topicsConfig, () -> initialized.complete(true));
-        managedKStreams.start();
+
+        Properties streamProperties = new Properties();
+        streamProperties.putAll(streamsConfig);
+        streamProperties.put(StreamsConfig.STATE_DIR_CONFIG, streamsDirectory.getPath());
+
+        streamProcessor = new GlobalKafkaStore<>(streamProperties, BaseResourceIT.topicsConfig.getProducerTopic(),
+                topicsConfig.getProducerStateStore(), () -> initialized.complete(true));
+
+
+        Properties sourceProperties = new Properties();
+        sourceProperties.putAll(streamsConfig);
+        sourceProperties.put("application.id", "source-kstreams-application.id");
+        sourceProperties.put(StreamsConfig.STATE_DIR_CONFIG, sourcesDirectory.getPath());
+
+        sourceProcessor = new GlobalKafkaStore<>(sourceProperties, BaseResourceIT.topicsConfig.getStreamSourceTopic(),
+                topicsConfig.getStreamSourceStateStore(), () -> initialized.complete(true));
 
         consumerConfig = new Properties();
         consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -252,21 +282,24 @@ public class BaseResourceIT {
         configuration.getSchemaManagerConfig().getProperties().put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
 
-        StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
+        StreamDao streamDao = new StreamDaoImpl(streamProducer, streamProcessor, env, regionDao,
             infraManager, kafkaManager, streamValidator, schemaManager);
-        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
+        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(streamProducer, streamProcessor, env, regionDao,
             infraManager, kafkaManager);
-        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
+        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(streamProducer, streamProcessor, env, regionDao,
             infraManager, kafkaManager);
-        streamResource = new StreamResource(streamDao, producerDao, consumerDao);
+        SourceDao sourceDao = new SourceDaoImpl(sourceProducer, sourceProcessor);
+
+        streamResource = new StreamResource(streamDao, producerDao, consumerDao, sourceDao);
         producerResource = new ProducerResource(streamDao, producerDao);
         consumerResource = new ConsumerResource(streamDao, consumerDao);
+        sourceResource = new SourceResource(sourceDao);
 
         SchemaRegistryClient schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryURL, 1);
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
         schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
 
-        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), 1, US_EAST_REGION);
+        healthCheck = new StreamRegistryHealthCheck(streamProcessor, streamResource, new MetricRegistry(), 1, US_EAST_REGION);
     }
 
     /** initializes the zkClient to load up the test urls */
@@ -347,9 +380,18 @@ public class BaseResourceIT {
     // TODO Why do we start and stop kstreams on each integration test ? Shouldn't this be part of the server
     @AfterClass
     public static void tearDown() throws Exception {
-        managedKStreams.stop();
-        managedKafkaProducer.stop();
+        streamProcessor.stop();
+        streamProcessor.getStreams().cleanUp();
+        sourceProcessor.stop();
+        streamProcessor.getStreams().cleanUp();
+        streamProducer.stop();
+        sourceProducer.stop();
         infraManager.stop();
         ZKCLIENT.close();
+
+        FileUtils.deleteDirectory(streamsDirectory);
+        FileUtils.deleteDirectory(sourcesDirectory);
+
+
     }
 }

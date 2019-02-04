@@ -1,0 +1,50 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol SourceProtocol {
+
+/**
+* Source schema
+*/
+  record Source {
+
+  /**
+  * Stream name of the Source
+  */
+    string streamName;
+
+
+  /**
+  * Name of source in the Source Store
+  */
+    string sourceName;
+
+  /**
+   * Type of source
+   */
+    string sourceType;
+
+   /**
+   * Any additional configuration as a key, value map
+   * This would be sourceType specific.
+   */
+    union{null,map<string>} streamSourceConfiguration = null;
+  }
+
+  /**
+  * List of all sources for a Stream
+  */
+  record Sources {
+
+  /**
+  * Stream name of the Source
+  */
+    string streamName;
+
+  /**
+  * List of all Sources for this streamName
+  */
+    union {null, array<Source>} sources = null;
+
+  }
+
+}

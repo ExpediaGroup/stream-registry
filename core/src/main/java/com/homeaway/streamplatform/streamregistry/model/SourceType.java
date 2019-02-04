@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.configuration;
+package com.homeaway.streamplatform.streamregistry.model;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
-import lombok.Data;
+import java.util.Arrays;
+import java.util.List;
 
-@Data
-public class TopicsConfig {
+/**
+ * Source types supported by the Stream Registry
+ * Add to this im-memory list when registry has to support new types.
+ */
+public class SourceType {
 
-    @Valid
-    @NotNull
-    String producerTopic;
-
-    @Valid
-    @NotNull
-    String producerStateStore;
-
-    @Valid
-    @NotNull
-    String streamSourceTopic;
-
-    @Valid
-    @NotNull
-    String streamSourceStateStore;
+    public static final List<String> SOURCE_TYPES = Arrays.asList("kinesis", "kafka");
 
 }
