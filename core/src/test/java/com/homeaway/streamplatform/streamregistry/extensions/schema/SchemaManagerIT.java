@@ -15,8 +15,15 @@
  */
 package com.homeaway.streamplatform.streamregistry.extensions.schema;
 
+import java.io.IOException;
+
 import javax.ws.rs.core.Response;
 
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+
+import org.apache.avro.Schema;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,6 +32,34 @@ import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
 import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
 
 public class SchemaManagerIT extends BaseResourceIT {
+
+    /**
+     * This test case reproduces the issue #100 (https://github.com/confluentinc/schema-registry/issues/894)
+     *
+     * @throws IOException
+     * @throws RestClientException
+     */
+    @Test(expected = IllegalStateException.class)
+    public void test_validate_multiple_updates_of_same_schema() throws IOException, RestClientException {
+        String schema = "{\n" +
+                "     \"type\": \"record\",\n" +
+                "     \"namespace\": \"com.streamplatform.healthcheck\",\n" +
+                "     \"name\": \"Healthcheck\",\n" +
+                "     \"fields\": [\n" +
+                "       { \"name\": \"producer\", \"type\": \"string\" },\n" +
+                "       { \"name\": \"consumer\", \"type\": \"string\" }\n" +
+                "     ]\n" +
+                "}";
+        int maxSchemaVersions = 1;
+        SchemaRegistryClient cachedSchemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryURL, maxSchemaVersions);
+
+
+        int schemaId = cachedSchemaRegistryClient.register("sample-subject-key", new Schema.Parser().parse(schema));
+        // TODO: Fix the failing test case. register the schema again should not throw the error "Too many schema objects created for sample-subject-key!"
+        int schemaId2ndIteration = cachedSchemaRegistryClient.register("sample-subject-key", new Schema.Parser().parse(schema));
+
+        Assert.assertEquals(schemaId, schemaId2ndIteration);
+    }
 
     @Test
     public void test_validate_stream_compatibility_new_schema_valid() {

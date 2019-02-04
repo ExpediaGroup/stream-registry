@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.4.4] - SNAPSHOT
 ### Changed
 - Jib now publishes docker image to dockerhub
+- Fixed the failing HeathCheck (#101). Workaround for https://github.com/confluentinc/schema-registry/issues/894
 
 ## [0.4.3] - 20190131
 ### Changed

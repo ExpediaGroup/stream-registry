@@ -31,8 +31,11 @@ public class StreamRegistryHealthCheckIT extends BaseResourceIT {
 
     @Test
     public void testHealthCheck() {
-        HealthCheck.Result healthCheckResult = healthCheck.check();
-
-        Assert.assertTrue(healthCheckResult.isHealthy());
+        // The identityMapCapacity on CachedSchemaRegistryClient is set to 100.
+        // so, hit healthcheck (update same schema) for more than 100 times to make sure the applied fix for issue#100 is working.
+        for (int i=0 ; i < 150 ; i++) {
+            HealthCheck.Result healthCheckResult = healthCheck.check();
+            Assert.assertTrue(healthCheckResult.isHealthy());
+        }
     }
 }
