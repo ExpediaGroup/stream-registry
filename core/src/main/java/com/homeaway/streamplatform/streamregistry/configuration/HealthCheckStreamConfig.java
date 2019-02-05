@@ -20,21 +20,36 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
+/**
+ * A stream is upserted for every HeathCheck. This configuration object has the properties of the created Stream.
+ */
 @Data
 public class HealthCheckStreamConfig {
 
+    /**
+     * name of the Stream upserted at HeathCheck
+     */
     @Valid
     @NotNull
     String name;
 
+    /**
+     * region of the Kafka Cluster where the Stream gets upserted at HeathCheck
+     */
     @Valid
     @NotNull
     String clusterRegion;
 
+    /**
+     * partition count of the Stream upserted at HeathCheck
+     */
     @Valid
     @NotNull
     int partitions;
 
+    /**
+     * replication factor of the Stream upserted at HeathCheck
+     */
     @Valid
     @NotNull
     int replicationFactor;

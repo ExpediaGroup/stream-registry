@@ -19,7 +19,9 @@ import java.util.Map;
 
 import lombok.Data;
 
-// TODO Need documentation
+/**
+ * properties of the Producer that would produce events to the StreamRegistry's Underlying Compacted Topic where each Stream is stored.
+ */
 @Data
 public class KafkaProducerConfig {
 

@@ -6,22 +6,27 @@ server:
     type: http
     port: 8080
 
+# Env where StreamRegistry application is running
 env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
+# Properties of the Stream that got upserted in each HealthCheck
 healthCheckStreamConfig:
   name: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_NAME:-StreamRegistryHealthCheck}
   clusterRegion: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_REGION:-localRegion}
   partitions: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_PARTITIONS:-1}
   replicationFactor: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_REPLICAFACTOR:-1}
 
+# Validator Class that validates the stream from @PUT Stream
 streamValidatorConfig:
   className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamplatform.streamregistry.extensions.validation.EmptyStreamValidator}
 
+# SchemaManager class which would validate and register with the Underlying SchemaRegistry
 schemaManagerConfig:
   className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager}
   properties:
     schema.registry.url: ${STREAM_REGISTRY_SCHEMA_REGISTRY_URL:-http://localhost:8081}
 
+# properties of the Producer that would produce events to the StreamRegistry's Underlying Compacted Topic where each Stream is stored.
 kafkaProducerConfig:
   kafkaProducerProperties:
     bootstrap.servers: ${STREAM_REGISTRY_BOOTSTRAP_SERVERS:-localhost:9092}
@@ -32,6 +37,7 @@ kafkaProducerConfig:
     buffer.memory: 33554432
     schema.registry.url: ${STREAM_REGISTRY_SCHEMA_REGISTRY_URL:-http://localhost:8081}
 
+# properties of the KStream that would build a GlobalKtable that would server @GET Streams
 kafkaStreamsConfig:
   kstreamsProperties:
     bootstrap.servers: ${STREAM_REGISTRY_BOOTSTRAP_SERVERS:-localhost:9092}
@@ -42,10 +48,13 @@ kafkaStreamsConfig:
     replication.factor: ${STREAM_REGISTRY_KSTREAMS_REPLICATION_FACTOR:-1}
     num.stream.threads: 2
 
+# producerTopic name is the name of the underlying Kafka Topic that would store the Streams created by the application.
+# IMPORTANT: make sure the producerTopic is compacted or retention.ms=-1 so that the created Streams are not lost.
 topicsConfig:
   producerTopic: _streamregistry_streams${STREAM_REGISTRY_PRODUCER_TOPIC_SUFFIX:-_v0.1}
   stateStoreName: _streamregistry_streams_kv${STREAM_REGISTRY_PRODUCER_STATE_TOPIC_SUFFIX_STATE:-_v0.1}
 
+# properties of the Kafka Topic that has all the Cluster details.
 infraManagerConfig:
   className: com.homeaway.streamplatform.streamregistry.provider.impl.KafkaInfraManager
   config:
