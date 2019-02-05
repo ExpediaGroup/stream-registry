@@ -26,6 +26,8 @@ import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerExcept
  */
 public interface SchemaManager {
 
+    public static final String MAX_SCHEMA_VERSIONS_CAPACITY = "max.schema.version.capacity";
+
     /**
      * Register a new schema under the specified subject. If successfully
      * registered, this returns the unique identifier of this schema in
@@ -50,5 +52,9 @@ public interface SchemaManager {
      */
     boolean checkCompatibility(String subject, String schema) throws SchemaException;
 
+    /**
+     * Configure the SchemaManager with SchemaRegistry endpoints and properties
+     * @param configs
+     */
     void configure(Map<String, Object> configs);
 }
