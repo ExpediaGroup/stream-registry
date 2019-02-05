@@ -47,7 +47,6 @@ import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.streams.KafkaStreams.State;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -239,7 +238,7 @@ public class BaseResourceIT {
         }
         Preconditions.checkState(
         		initialized.isDone() &&
-        		isAcceptableKStreamState(managedKStreams.getStreams().state()),
+                managedKStreams.getStreams().state().isRunning(),
         		"Did not receive state store initialized signal, aborting.");
         log.info("sleep completed.");
 
@@ -354,11 +353,5 @@ public class BaseResourceIT {
         managedKafkaProducer.stop();
         infraManager.stop();
         ZKCLIENT.close();
-    }
-
-    private static boolean isAcceptableKStreamState(State state) {
-		return (state != State.ERROR &&
-				state != State.PENDING_SHUTDOWN &&
-				state != State.NOT_RUNNING);
     }
 }

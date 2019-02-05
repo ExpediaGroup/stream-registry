@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -251,6 +252,12 @@ public class StreamRegistryHealthCheck extends HealthCheck {
             ProducerResource producerResource = streamResource.getProducerResource();
             String producerName = "P1";
             Response response = producerResource.upsertProducer(HEALTH_CHECK_STREAM_NAME, producerName, region);
+
+            if(response.getStatus() != Status.OK.getStatusCode()) {
+                setProducerRegistrationHealthy(false);
+                throw new IllegalStateException(String.format("HealthCheck Failed: Producer Registration Failed. HEALTH_CHECK_STREAM_NAME=%s not found", HEALTH_CHECK_STREAM_NAME));
+            }
+
             List<RegionStreamConfig> regionStreamConfigList = ((Producer)response.getEntity()).getRegionStreamConfigList();
 
             if (regionStreamConfigList != null && regionStreamConfigList.size() > 0) {
