@@ -72,6 +72,8 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private String region;
     private int healthcheckStreamReplicationFactor;
 
+    private ProducerResource producerResource;
+
     /**
      * Constructor called from BaseResourceIT.java for overriding the
      *      replication-factor to 1 - there is only one broker in IntegrationTest cluster
@@ -97,6 +99,10 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
+
+        producerResource = streamResource.getProducerResource();
+        String producerName = "P1";
+        producerResource.upsertProducer(HEALTH_CHECK_STREAM_NAME, producerName, region);
     }
 
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
@@ -249,9 +255,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateProducerRegistration() {
         try {
-            ProducerResource producerResource = streamResource.getProducerResource();
-            String producerName = "P1";
-            Response response = producerResource.upsertProducer(HEALTH_CHECK_STREAM_NAME, producerName, region);
+            Response response = producerResource.getProducer(HEALTH_CHECK_STREAM_NAME, "P1");
 
             if(response.getStatus() != Status.OK.getStatusCode()) {
                 setProducerRegistrationHealthy(false);

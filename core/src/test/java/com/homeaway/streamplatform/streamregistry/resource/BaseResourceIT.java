@@ -236,9 +236,7 @@ public class BaseResourceIT {
         while (!initialized.isDone() && System.currentTimeMillis() <= timeoutTimestamp) {
             Thread.sleep(10); // wait some cycles before checking again
         }
-        Preconditions.checkState(
-        		initialized.isDone() &&
-                managedKStreams.getStreams().state().isRunning(),
+        Preconditions.checkState(initialized.isDone() && managedKStreams.getStreams().state().isRunning(),
         		"Did not receive state store initialized signal, aborting.");
         log.info("sleep completed.");
 
