@@ -37,6 +37,10 @@ public class StreamRegistryConfiguration extends Configuration {
     String env;
 
     @Valid
+    @NonNull
+    HealthCheckStreamConfig healthCheckStreamConfig;
+
+    @Valid
     StreamValidatorConfig streamValidatorConfig;
 
     @Valid

@@ -182,7 +182,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         environment.jersey().register(new RegionResource(regionDao));
 
         environment.getApplicationContext().addServlet(PingServlet.class, "/ping");
-        StreamRegistryHealthCheck streamRegistryHealthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry);
+        StreamRegistryHealthCheck streamRegistryHealthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
 
         environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
 

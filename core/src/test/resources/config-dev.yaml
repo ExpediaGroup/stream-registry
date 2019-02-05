@@ -1,5 +1,11 @@
 env: test
 
+healthCheckStreamConfig:
+  name: StreamRegistryHealthCheck
+  clusterRegion: us-east-1-vpc-defa0000
+  partitions: 1
+  replicationFactor: 1
+
 streamValidatorConfig:
   className: com.homeaway.streamplatform.streamregistry.extensions.validator.StreamValidatorIT$ValidProductStreamValidator
   properties:
