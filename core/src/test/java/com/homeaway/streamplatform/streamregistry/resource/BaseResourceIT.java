@@ -236,7 +236,7 @@ public class BaseResourceIT {
         while (!initialized.isDone() && System.currentTimeMillis() <= timeoutTimestamp) {
             Thread.sleep(10); // wait some cycles before checking again
         }
-        Preconditions.checkState(System.currentTimeMillis() <= timeoutTimestamp,
+        Preconditions.checkState(initialized.isDone(),
             "Did not receive state store initialized signal, aborting.");
         log.info("sleep completed.");
 
