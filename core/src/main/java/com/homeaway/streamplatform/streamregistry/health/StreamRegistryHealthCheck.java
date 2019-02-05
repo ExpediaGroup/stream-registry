@@ -40,6 +40,7 @@ import org.apache.kafka.streams.KafkaStreams;
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
+import com.homeaway.streamplatform.streamregistry.configuration.HealthCheckStreamConfig;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.model.RegionStreamConfig;
@@ -57,7 +58,6 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     public static final Integer PRODUCT_ID = 126845;
     public static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
     public static final String APP_NAME = "StreamRegistryApplication";
-    private static final String HEALTH_CHECK_STREAM_NAME = "StreamRegistryHealthCheck";
 
     private final ManagedKStreams managedKStreams;
     private final StreamResource streamResource;
@@ -68,8 +68,12 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private boolean isProducerRegistrationHealthy;
     private boolean isConsumerRegistrationHealthy;
 
+    private String streamName;
     private String region;
-    private int healthcheckStreamReplicationFactor;
+    private int replicationFactor;
+    private int partitions;
+
+
 
     /**
      * Constructor called from BaseResourceIT.java for overriding the
@@ -77,7 +81,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
      *      region - Build environment does not have MPAAS_REGION env variables.
      */
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
-                                     int healthcheckStreamReplicationFactor, String region) {
+                                     HealthCheckStreamConfig healthCheckStreamConfig) {
         super();
 
         Validate.notNull(managedKStreams, "managedKStreams cannot be null");
@@ -85,8 +89,10 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         Validate.notNull(streamResource, "streamResource cannot be null");
 
 
-        this.region = region;
-        this.healthcheckStreamReplicationFactor = healthcheckStreamReplicationFactor;
+        this.streamName = healthCheckStreamConfig.getName();
+        this.region = healthCheckStreamConfig.getClusterRegion();
+        this.partitions = healthCheckStreamConfig.getPartitions();
+        this.replicationFactor = healthCheckStreamConfig.getReplicationFactor();
         this.managedKStreams = managedKStreams;
         this.streamResource = streamResource;
 
@@ -96,11 +102,6 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
-    }
-
-    public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry) {
-        // TODO - looking-up env variables needs to move to a /namespace approach - see #29
-        this(managedKStreams, streamResource, metricRegistry, 3, System.getenv("MPAAS_REGION"));
     }
 
     private synchronized boolean isStreamCreationHealthy() {
@@ -166,7 +167,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private void validateCreateStream() {
         try {
             Stream streamRegHealthCheckStream = createCanaryStream();
-            Response response = streamResource.upsertStream(HEALTH_CHECK_STREAM_NAME, streamRegHealthCheckStream);
+            Response response = streamResource.upsertStream(streamName, streamRegHealthCheckStream);
             if (response.getStatus() != 202) {
                 setStreamCreationHealthy(false);
                 throw new IllegalStateException("HealthCheck Failed: Error while upserting a Stream.");
@@ -180,7 +181,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private Stream createCanaryStream() {
         return Stream.builder()
-                .name(HEALTH_CHECK_STREAM_NAME)
+                .name(streamName)
                 .schemaCompatibility(SchemaCompatibility.TRANSITIVE_BACKWARD)
                 .latestKeySchema(createSampleSchema())
                 .latestValueSchema(createSampleSchema())
@@ -189,8 +190,8 @@ public class StreamRegistryHealthCheck extends HealthCheck {
                 .isDataNeededAtRest(false)
                 .tags(createSampleTags())
                 .vpcList(Collections.singletonList(region))
-                .partitions(1)
-                .replicationFactor(healthcheckStreamReplicationFactor)
+                .partitions(partitions)
+                .replicationFactor(replicationFactor)
                 .build();
     }
 
@@ -217,9 +218,9 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateStateStore() {
         try {
-            AvroStreamKey avroStreamKey = AvroStreamKey.newBuilder().setStreamName(HEALTH_CHECK_STREAM_NAME).build();
+            AvroStreamKey avroStreamKey = AvroStreamKey.newBuilder().setStreamName(streamName).build();
             Optional<AvroStream> avroStreamValue = managedKStreams.getAvroStreamForKey(avroStreamKey);
-            if(!avroStreamValue.isPresent() || ! avroStreamValue.get().getName().equals(HEALTH_CHECK_STREAM_NAME)) {
+            if(!avroStreamValue.isPresent() || ! avroStreamValue.get().getName().equals(streamName)) {
                 setStateStoreHealthy(false);
                 throw new IllegalStateException("HealthCheck Failed: StreamRegistryHealthCheck Stream not available in StateStore.");
             }
@@ -250,7 +251,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         try {
             ProducerResource producerResource = streamResource.getProducerResource();
             String producerName = "P1";
-            Response response = producerResource.upsertProducer(HEALTH_CHECK_STREAM_NAME, producerName, region);
+            Response response = producerResource.upsertProducer(streamName, producerName, region);
             List<RegionStreamConfig> regionStreamConfigList = ((Producer)response.getEntity()).getRegionStreamConfigList();
 
             if (regionStreamConfigList != null && regionStreamConfigList.size() > 0) {
@@ -284,7 +285,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         try {
             ConsumerResource consumerResource = streamResource.getConsumerResource();
             String consumerName = "C1";
-            Response response = consumerResource.upsertConsumer(HEALTH_CHECK_STREAM_NAME, consumerName, region);
+            Response response = consumerResource.upsertConsumer(streamName, consumerName, region);
             List<RegionStreamConfig> regionStreamConfigList = ((Consumer)response.getEntity()).getRegionStreamConfigList();
 
             if (regionStreamConfigList != null && regionStreamConfigList.size() > 0) {

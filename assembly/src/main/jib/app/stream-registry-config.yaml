@@ -8,6 +8,12 @@ server:
 
 env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
+healthCheckStreamConfig:
+  name: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_NAME:-StreamRegistryHealthCheck}
+  clusterRegion: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_REGION:-localRegion}
+  partitions: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_PARTITIONS:-1}
+  replicationFactor: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_REPLICAFACTOR:-1}
+
 streamValidatorConfig:
   className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamplatform.streamregistry.extensions.validation.EmptyStreamValidator}
 

@@ -8,6 +8,12 @@ server:
 
 env: test
 
+healthCheckStreamConfig:
+  name: StreamRegistryHealthCheck
+  clusterRegion: vpc-localhost
+  partitions: 1
+  replicationFactor: 1
+
 streamValidatorConfig:
   className: com.homeaway.streamplatform.streamregistry.extensions.validation.EmptyStreamValidator
 
