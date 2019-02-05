@@ -30,7 +30,7 @@ all: build
 
 # invoke -Psigned profile for signing artifacts
 just-deploy:
-	./mvnw deploy -DskipTests -Psigned -B
+	./mvnw deploy -DskipTests=true -Psigned -B
 
 deploy: all just-deploy
 
