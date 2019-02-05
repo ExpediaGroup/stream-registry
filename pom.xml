@@ -606,6 +606,8 @@
                         </execution>
                     </executions>
                     <configuration>
+                        <!-- when this becomes source jdk11+ change/remove this -->
+                        <source>8</source>
                         <failOnError>false</failOnError>
                     </configuration>
                     <dependencies>
