@@ -99,8 +99,11 @@ public class ConfluentSchemaManager implements SchemaManager {
     @Override
     public void configure(Map<String, Object> configs) {
         Preconditions.checkState(configs.containsKey(SCHEMA_REGISTRY_URL_CONFIG));
-        String schemaRegistryUrl = (String) configs.get(SCHEMA_REGISTRY_URL_CONFIG);
+        Preconditions.checkState(configs.containsKey(MAX_SCHEMA_VERSIONS_CAPACITY));
 
-        schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
+        String schemaRegistryUrl = (String) configs.get(SCHEMA_REGISTRY_URL_CONFIG);
+        int identityMapCapacity = (int)configs.get(MAX_SCHEMA_VERSIONS_CAPACITY);
+
+        schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryUrl, identityMapCapacity);
     }
 }

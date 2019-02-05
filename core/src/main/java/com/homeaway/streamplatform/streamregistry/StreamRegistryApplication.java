@@ -15,6 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry;
 
+import static com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
@@ -243,6 +244,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                 "schemaManagerConfig properties must define schema.registry.url");
         try {
             SchemaManager schemaManager = Utils.newInstance(schemaManagerClass, SchemaManager.class);
+            schemaManagerConfig.getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 100);
             schemaManager.configure(schemaManagerConfig.getProperties());
 
             return schemaManager;
