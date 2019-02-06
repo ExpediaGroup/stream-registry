@@ -15,18 +15,43 @@
  */
 package com.homeaway.streamplatform.streamregistry.configuration;
 
-import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
 /**
- * properties of the Producer that would produce events to the StreamRegistry's Underlying Compacted Topic where each Stream is stored.
+ * A stream is upserted for every HeathCheck. This configuration object has the properties of the created Stream.
  */
 @Data
-public class KafkaProducerConfig {
+public class HealthCheckStreamConfig {
 
-    public static final String ZOOKEEPER_QUORUM = "zookeeper.quorum";
+    /**
+     * name of the Stream upserted at HeathCheck
+     */
+    @Valid
+    @NotNull
+    String name;
 
-    Map<String, String> kafkaProducerProperties;
+    /**
+     * region of the Kafka Cluster where the Stream gets upserted at HeathCheck
+     */
+    @Valid
+    @NotNull
+    String clusterRegion;
+
+    /**
+     * partition count of the Stream upserted at HeathCheck
+     */
+    @Valid
+    @NotNull
+    int partitions;
+
+    /**
+     * replication factor of the Stream upserted at HeathCheck
+     */
+    @Valid
+    @NotNull
+    int replicationFactor;
 
 }

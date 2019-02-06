@@ -15,6 +15,8 @@
  */
 package com.homeaway.streamplatform.streamregistry.resource;
 
+import static com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
+
 import java.io.File;
 import java.util.Objects;
 import java.util.Properties;
@@ -251,6 +253,8 @@ public class BaseResourceIT {
 
         configuration.getSchemaManagerConfig().getProperties().put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
+        configuration.getSchemaManagerConfig().getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 1);
+
 
         StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
             infraManager, kafkaManager, streamValidator, schemaManager);
@@ -266,7 +270,7 @@ public class BaseResourceIT {
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
         schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
 
-        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), 1, US_EAST_REGION);
+        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), configuration.getHealthCheckStreamConfig());
     }
 
     /** initializes the zkClient to load up the test urls */
