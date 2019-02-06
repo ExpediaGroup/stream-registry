@@ -75,6 +75,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private int partitions;
 
     private ProducerResource producerResource;
+    private Stream streamRegHealthCheckStream;
 
     /**
      * Constructor called from BaseResourceIT.java for overriding the
@@ -103,6 +104,9 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
+
+        streamRegHealthCheckStream = createCanaryStream();
+        streamResource.upsertStream(streamName, streamRegHealthCheckStream);
 
         producerResource = streamResource.getProducerResource();
         String producerName = "P1";
@@ -171,7 +175,6 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateCreateStream() {
         try {
-            Stream streamRegHealthCheckStream = createCanaryStream();
             Response response = streamResource.upsertStream(streamName, streamRegHealthCheckStream);
             if (response.getStatus() != 202) {
                 setStreamCreationHealthy(false);
