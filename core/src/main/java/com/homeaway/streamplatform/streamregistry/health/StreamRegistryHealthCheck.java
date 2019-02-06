@@ -59,7 +59,6 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     public static final Integer PRODUCT_ID = 126845;
     public static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
     public static final String APP_NAME = "StreamRegistryApplication";
-    private static final String HEALTH_CHECK_STREAM_NAME = "StreamRegistryHealthCheck";
 
     private final ManagedKStreams managedKStreams;
     private final StreamResource streamResource;
@@ -107,7 +106,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
         producerResource = streamResource.getProducerResource();
         String producerName = "P1";
-        producerResource.upsertProducer(HEALTH_CHECK_STREAM_NAME, producerName, region);
+        producerResource.upsertProducer(this.streamName, producerName, region);
     }
 
     private synchronized boolean isStreamCreationHealthy() {
@@ -255,11 +254,11 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateProducerRegistration() {
         try {
-            Response response = producerResource.getProducer(HEALTH_CHECK_STREAM_NAME, "P1");
+            Response response = producerResource.getProducer(this.streamName, "P1");
 
             if(response.getStatus() != Status.OK.getStatusCode()) {
                 setProducerRegistrationHealthy(false);
-                throw new IllegalStateException(String.format("HealthCheck Failed: Producer Registration Failed. HEALTH_CHECK_STREAM_NAME=%s not found", HEALTH_CHECK_STREAM_NAME));
+                throw new IllegalStateException(String.format("HealthCheck Failed: Producer Registration Failed. HEALTH_CHECK_STREAM_NAME=%s not found", this.streamName));
             }
 
             List<RegionStreamConfig> regionStreamConfigList = ((Producer)response.getEntity()).getRegionStreamConfigList();
