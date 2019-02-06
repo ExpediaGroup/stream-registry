@@ -59,6 +59,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     public static final Integer PRODUCT_ID = 126845;
     public static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
     public static final String APP_NAME = "StreamRegistryApplication";
+    private static final String HEALTH_CHECK_STREAM_NAME = "StreamRegistryHealthCheck";
 
     private final ManagedKStreams managedKStreams;
     private final StreamResource streamResource;
