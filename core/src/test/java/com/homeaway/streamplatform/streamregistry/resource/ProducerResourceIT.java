@@ -30,6 +30,7 @@ import javax.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.dropwizard.jersey.errors.ErrorMessage;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.Assert;
@@ -164,7 +165,7 @@ public class ProducerResourceIT extends BaseResourceIT {
 
         Response response = producerResource.upsertProducer(streamName, producerName, US_EAST_REGION);
         Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        Assert.assertEquals("Stream not found " + streamName, (response.getEntity()));
+        Assert.assertEquals("Stream:junit-stream-put-producer-with-no-stream not found . Please create the Stream before registering a Producer", ((ErrorMessage)response.getEntity()).getMessage());
     }
 
     @Test
