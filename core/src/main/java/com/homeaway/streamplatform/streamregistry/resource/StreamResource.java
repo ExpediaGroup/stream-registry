@@ -101,7 +101,9 @@ public class StreamResource {
         } catch (RuntimeException e) {
             log.error("Error creating stream={}", stream.getName(), e);
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                        e.getMessage(),
+                        e.getCause() != null ? e.getCause().getMessage(): null))
                 .build();
         } catch(Exception e) {
             log.error("Error creating stream={}", stream.getName(), e);

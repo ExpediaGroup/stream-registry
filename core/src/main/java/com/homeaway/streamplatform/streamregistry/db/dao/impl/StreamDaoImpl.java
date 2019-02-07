@@ -41,7 +41,7 @@ import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
-import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
+import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaReference;
@@ -177,9 +177,8 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             verifyAndUpsertTopics(stream, isNewStream);
             kafkaProducer.log(key, avroStream);
             log.info("Stream upserted for {}", stream.getName());
-        } catch (Exception e) {
-            log.error("Error creating new stream", e);
-            throw new StreamCreationException(e, stream.getName());
+        } catch(SchemaManagerException | InvalidStreamException e) {
+            throw e;
         }
     }
 

@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -139,7 +140,10 @@ public class ConsumerResource {
         try {
             Optional<Stream> stream = streamDao.getStream(streamName);
             if (!stream.isPresent()) {
-                return ResourceUtils.streamNotFound(streamName);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                                "Stream:" + streamName + " not found . Please create the Stream before registering a Consumer"))
+                        .build();
             }
             Optional<Consumer> consumer = consumerDao.update(streamName, consumerName, region);
             if (consumer.isPresent()) {
@@ -148,19 +152,24 @@ public class ConsumerResource {
             }
         } catch (IllegalArgumentException e) {
             log.error("Input is wrong.", e);
-            throw new IllegalArgumentException("Input Validation failed. Message=" + e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                            "Input Validation failed.",
+                            e.getMessage()))
+                    .build();
         } catch (UnknownRegionException re) {
-            log.warn("Region not supported " + region);
+            log.error("Region not supported " + region);
             return Response.status(Response.Status.PRECONDITION_FAILED)
-                .type("text/plain")
-                .entity("Unsupported region: " + re.getRegion() + ". Query /regions to get the list of all supported regions")
-                .build();
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                            "Unsupported region: " + re.getRegion() + ". Hit /regions to get the list of all supported regions",
+                            re.getMessage()))
+                    .build();
         } catch (ClusterNotFoundException ce) {
-            log.warn("Region {} is not supported for the stream {}",region, streamName);
+            log.error("Cluster not available for stream-key:{} ", ce.getClusterName());
             return Response.status(Response.Status.PRECONDITION_FAILED)
-                .type("text/plain")
-                .entity("This region: " + region + " is not available for the stream: "+streamName)
-                .build();
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                            "Cluster not available for " + ce.getClusterName()))
+                    .build();
         } catch (Exception e) {
             log.error("Error occurred while getting data from Stream Registry.", e);
             throw new InternalServerErrorException("Error occurred while getting data from Stream Registry", e);
