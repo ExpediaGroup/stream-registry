@@ -220,6 +220,8 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
                     upsertTopics(stream, vpc, isNewStream);
                 }
             }
+        } catch (StreamCreationException e) {
+            throw e;
         } catch (Exception e) {
             throw new InternalServerErrorException(
                     String.format("Error while creating the stream. Can't create the topic %s", stream.getName()), e);
