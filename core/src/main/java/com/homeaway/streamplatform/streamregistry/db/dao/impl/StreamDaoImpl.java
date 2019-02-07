@@ -42,6 +42,7 @@ import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
+import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaReference;
@@ -116,7 +117,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     }
 
     @Override
-    public void upsertStream(Stream stream) {
+    public void upsertStream(Stream stream) throws SchemaManagerException, InvalidStreamException, StreamCreationException {
         applyDefaultHint(stream);
         applyDefaultPartition(stream);
         applyDefaultReplicationFactor(stream);
@@ -126,60 +127,56 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             log.error("Stream '{}' is not valid", stream.getName());
         }
 
-        try {
-            // TODO: modify to support multiple schema 'types' per stream (Issue #55)
-            // register schemas
-            String keySubject = stream.getName() + "-key";
-            SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
-            stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
-            stream.getLatestKeySchema().setVersion(keyReference.getVersion());
-            boolean isNewStream = false;
+        // TODO: modify to support multiple schema 'types' per stream (Issue #55)
+        // register schemas
+        String keySubject = stream.getName() + "-key";
+        SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
+        stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
+        stream.getLatestKeySchema().setVersion(keyReference.getVersion());
+        boolean isNewStream = false;
 
-            String valueSubject = stream.getName() + "-value";
-            SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
-            stream.getLatestValueSchema().setId(String.valueOf(valueReference.getId()));
-            stream.getLatestValueSchema().setVersion(valueReference.getVersion());
+        String valueSubject = stream.getName() + "-value";
+        SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
+        stream.getLatestValueSchema().setId(String.valueOf(valueReference.getId()));
+        stream.getLatestValueSchema().setVersion(valueReference.getVersion());
 
-            Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());
-            AvroStreamKey key;
-            AvroStream avroStream =
-                    JsonToAvroDTO.convertJsonToAvro(stream, OperationType.UPSERT);
+        Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(stream.getName());
+        AvroStreamKey key;
+        AvroStream avroStream =
+                JsonToAvroDTO.convertJsonToAvro(stream, OperationType.UPSERT);
 
-            Optional<AvroStream> value = keyValue.getValue();
-            if (value.isPresent()) {
-                // ensure valid partition counts and replication factors are provided
-                if (stream.getPartitions() != value.get().getPartitions()) {
-                    throw new IllegalArgumentException(String.format(
-                            "Stream registry does not currently support modifying the initial partition count. " +
-                                    "Requested: %s. Current count: %s", stream.getPartitions(),
-                            value.get().getPartitions()));
-                } else if (stream.getReplicationFactor() != value.get().getReplicationFactor()) {
-                    throw new IllegalArgumentException(String.format(
-                            "Stream registry does not currently support modifying the initial replication factor. " +
-                                    "Requested: %s. Current replication factor: %s", stream.getReplicationFactor(),
-                            value.get().getReplicationFactor()));
-                }
-                key = keyValue.getKey();
-                log.info("key={} available for the stream-name={}", key, stream.getName());
-                // Copy the earlier stream properties
-                avroStream.setCreated(value.get().getCreated());
-                avroStream.setProducers(value.get().getProducers());
-                avroStream.setConsumers(value.get().getConsumers());
-                avroStream.setRegionReplicatorList(value.get().getRegionReplicatorList());
-                avroStream.setS3ConnectorList(value.get().getS3ConnectorList());
-            } else {
-                log.info("key NOT available for the stream-name={}", stream.getName());
-                isNewStream = true;
-                avroStream.setCreated(System.currentTimeMillis());
-                key = AvroStreamKey.newBuilder().setStreamName(avroStream.getName()).build();
+        Optional<AvroStream> value = keyValue.getValue();
+        if (value.isPresent()) {
+            // ensure valid partition counts and replication factors are provided
+            if (stream.getPartitions() != value.get().getPartitions()) {
+                throw new IllegalArgumentException(String.format(
+                        "Stream registry does not currently support modifying the initial partition count. " +
+                                "Requested: %s. Current count: %s", stream.getPartitions(),
+                        value.get().getPartitions()));
+            } else if (stream.getReplicationFactor() != value.get().getReplicationFactor()) {
+                throw new IllegalArgumentException(String.format(
+                        "Stream registry does not currently support modifying the initial replication factor. " +
+                                "Requested: %s. Current replication factor: %s", stream.getReplicationFactor(),
+                        value.get().getReplicationFactor()));
             }
-
-            verifyAndUpsertTopics(stream, isNewStream);
-            kafkaProducer.log(key, avroStream);
-            log.info("Stream upserted for {}", stream.getName());
-        } catch(SchemaManagerException | InvalidStreamException e) {
-            throw e;
+            key = keyValue.getKey();
+            log.info("key={} available for the stream-name={}", key, stream.getName());
+            // Copy the earlier stream properties
+            avroStream.setCreated(value.get().getCreated());
+            avroStream.setProducers(value.get().getProducers());
+            avroStream.setConsumers(value.get().getConsumers());
+            avroStream.setRegionReplicatorList(value.get().getRegionReplicatorList());
+            avroStream.setS3ConnectorList(value.get().getS3ConnectorList());
+        } else {
+            log.info("key NOT available for the stream-name={}", stream.getName());
+            isNewStream = true;
+            avroStream.setCreated(System.currentTimeMillis());
+            key = AvroStreamKey.newBuilder().setStreamName(avroStream.getName()).build();
         }
+
+        verifyAndUpsertTopics(stream, isNewStream);
+        kafkaProducer.log(key, avroStream);
+        log.info("Stream upserted for {}", stream.getName());
     }
 
     /**
