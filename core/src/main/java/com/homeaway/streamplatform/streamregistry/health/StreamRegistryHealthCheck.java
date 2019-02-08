@@ -78,11 +78,6 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private ProducerResource producerResource;
     private ConsumerResource consumerResource;
 
-    /**
-     * Constructor called from BaseResourceIT.java for overriding the
-     *      replication-factor to 1 - there is only one broker in IntegrationTest cluster
-     *      region - Build environment does not have MPAAS_REGION env variables.
-     */
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
                                      HealthCheckStreamConfig healthCheckStreamConfig) {
         super();
