@@ -130,7 +130,7 @@ public class KafkaManagerImpl implements KafkaManager {
             if(isNewStream) {
                 // FIXME!! Fix exception reporting... just reporting the topic failed with no message is not a good developer experience. Consider replacing topic with message. (and include topic name in message).
                 // throw new StreamCreationException("topic: " + topic " already exists but config is different than requested!"); // consider using forceSync=true
-                throw new StreamCreationException(topic);
+                throw new StreamCreationException(String.format("Error: Input configs=%s and actual configs=%s are not same for topic=%s", topicConfigMap, actualTopicConfig, topic));
             }
 
             // If we got this far, we are "updating" an "existing" stream, and request config is different than
