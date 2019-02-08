@@ -101,12 +101,16 @@ public class StreamResource {
         } catch (RuntimeException e) {
             log.error("Error creating stream={}", stream.getName(), e);
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                        "Error creating/updating stream=" + stream.getName() + ".",
+                        e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage(): e.getMessage()))
                 .build();
         } catch(Exception e) {
-            log.error("Error creating stream={}", stream.getName(), e);
+            log.error("Error creating/updating stream={}", stream.getName(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage()))
+                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                            "Error creating stream=" + stream.getName() + ". ",
+                            e.getMessage()))
                     .build();
         }
     }

@@ -44,7 +44,6 @@ import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
-import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaReference;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -74,7 +73,7 @@ public class StreamDaoImplTest {
         streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
     }
 
-    @Test(expected = StreamCreationException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testUpsertStreamChangePartitionCountFails() {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
@@ -88,7 +87,7 @@ public class StreamDaoImplTest {
         streamDao.upsertStream(newStream);
     }
 
-    @Test(expected = StreamCreationException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testUpsertStreamChangeReplicationFactorFails() {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
@@ -132,7 +131,7 @@ public class StreamDaoImplTest {
         assertEquals((long) 5, (long) avroStreamArgumentCaptor.getValue().getLatestValueSchema().getSubjectId());
     }
 
-    @Test(expected = StreamCreationException.class)
+    @Test(expected = SchemaManagerException.class)
     public void testIncompatibleSchemaFails() {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
