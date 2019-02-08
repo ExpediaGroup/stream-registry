@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,6 +74,10 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private int replicationFactor;
     private int partitions;
 
+    private Stream streamRegHealthCheckStream;
+    private ProducerResource producerResource;
+    private ConsumerResource consumerResource;
+
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
                                      HealthCheckStreamConfig healthCheckStreamConfig) {
         super();
@@ -95,6 +100,15 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
+
+        streamRegHealthCheckStream = createCanaryStream();
+        streamResource.upsertStream(streamName, streamRegHealthCheckStream);
+
+        consumerResource = streamResource.getConsumerResource();
+        consumerResource.upsertConsumer(streamName, "C1", region);
+
+        producerResource = streamResource.getProducerResource();
+        producerResource.upsertProducer(streamName, "P1", region);
     }
 
     private synchronized boolean isStreamCreationHealthy() {
@@ -159,7 +173,6 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateCreateStream() {
         try {
-            Stream streamRegHealthCheckStream = createCanaryStream();
             Response response = streamResource.upsertStream(streamName, streamRegHealthCheckStream);
             if (response.getStatus() != 202) {
                 setStreamCreationHealthy(false);
@@ -242,9 +255,13 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateProducerRegistration() {
         try {
-            ProducerResource producerResource = streamResource.getProducerResource();
-            String producerName = "P1";
-            Response response = producerResource.upsertProducer(streamName, producerName, region);
+            Response response = producerResource.getProducer(streamName, "P1");
+
+            if(response.getStatus() != Status.OK.getStatusCode()) {
+                setProducerRegistrationHealthy(false);
+                throw new IllegalStateException(String.format("HealthCheck Failed: Producer P1 Not Found. HEALTH_CHECK_STREAM_NAME=%s", streamName));
+            }
+
             List<RegionStreamConfig> regionStreamConfigList = ((Producer)response.getEntity()).getRegionStreamConfigList();
 
             if (regionStreamConfigList != null && regionStreamConfigList.size() > 0) {
@@ -276,9 +293,13 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateConsumerRegistration() {
         try {
-            ConsumerResource consumerResource = streamResource.getConsumerResource();
-            String consumerName = "C1";
-            Response response = consumerResource.upsertConsumer(streamName, consumerName, region);
+            Response response = consumerResource.getConsumer(streamName, "C1");
+
+            if(response.getStatus() != Status.OK.getStatusCode()) {
+                setProducerRegistrationHealthy(false);
+                throw new IllegalStateException(String.format("HealthCheck Failed: Consumer C1 Not Found. HEALTH_CHECK_STREAM_NAME=%s", streamName));
+            }
+
             List<RegionStreamConfig> regionStreamConfigList = ((Consumer)response.getEntity()).getRegionStreamConfigList();
 
             if (regionStreamConfigList != null && regionStreamConfigList.size() > 0) {
