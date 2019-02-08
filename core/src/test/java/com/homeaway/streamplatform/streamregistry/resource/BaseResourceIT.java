@@ -233,7 +233,7 @@ public class BaseResourceIT {
         consumerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
 
         log.info(
-            "Waiting for processor's init method tob called (KV store created) before servicing the HTTP requests.");
+            "Waiting for processor's init method to be called (KV store created) before servicing the HTTP requests.");
         long timeoutTimestamp = System.currentTimeMillis() + TEST_STARTUP_TIMEOUT_MS;
         while (!initialized.isDone() && System.currentTimeMillis() <= timeoutTimestamp) {
             Thread.sleep(10); // wait some cycles before checking again
