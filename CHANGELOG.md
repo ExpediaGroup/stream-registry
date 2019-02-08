@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Populated the HealthCheck stream region from config file. Removed the dependency of MPAAS_REGION variable. (#103)
 - Refactored the Exception handling workflow in order to better communicate the actual error to customers. (#111)
-- Hardening check for ensuring KStream store is available during Integration Tests
+- Hardening check for ensuring KStream store is available during Integration Tests. (#102)
 
 ## [0.4.4] - 20190204
 ### Changed
