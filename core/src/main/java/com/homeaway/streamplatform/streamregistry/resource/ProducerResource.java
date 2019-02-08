@@ -18,7 +18,6 @@ package com.homeaway.streamplatform.streamregistry.resource;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
@@ -33,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -81,7 +81,10 @@ public class ProducerResource {
         try {
             Optional<Stream> stream = streamDao.getStream(streamName);
             if (!stream.isPresent()) {
-                return ResourceUtils.streamNotFound(streamName);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                                "Stream:" + streamName + " not found . Please create the Stream before registering a Producer"))
+                        .build();
             }
             Optional<Producer> producer = producerDao.update(streamName, producerName, region);
             if (producer.isPresent()) {
@@ -90,19 +93,24 @@ public class ProducerResource {
             }
         } catch (IllegalArgumentException e) {
             log.error("Input is wrong.", e);
-            throw new BadRequestException("Input Validation failed. Message=" + e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                            "Input Validation failed.",
+                            e.getMessage()))
+                    .build();
         } catch (UnknownRegionException re) {
-            log.warn("Region not supported " + region);
+            log.error("Region not supported " + region);
             return Response.status(Response.Status.PRECONDITION_FAILED)
-                .type("text/plain")
-                .entity("Unsupported region: " + re.getRegion() + ". Hit /regions to get the list of all supported regions")
-                .build();
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                            "Unsupported region: " + re.getRegion() + ". Hit /regions to get the list of all supported regions",
+                            re.getMessage()))
+                    .build();
         } catch (ClusterNotFoundException ce) {
-            log.warn("Region {} is not supported for the stream {}", region, streamName);
+            log.error("Cluster not available for stream-key:{} ", ce.getClusterName());
             return Response.status(Response.Status.PRECONDITION_FAILED)
-                .type("text/plain")
-                .entity("This region: " + region + " is not available for the stream")
-                .build();
+                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                            "Cluster not available for " + ce.getClusterName()))
+                    .build();
         } catch (Exception e) {
             log.error("Error occurred while getting data from Stream Registry.", e);
             throw new InternalServerErrorException("Error occurred while updating the Producer in Stream Registry", e);
