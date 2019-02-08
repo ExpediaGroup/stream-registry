@@ -233,14 +233,14 @@ public class BaseResourceIT {
         consumerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
 
         log.info(
-            "sleep started. Sleep needed so that the processor's init method is called (KV store created) before servicing the HTTP requests.");
+            "Waiting for processor's init method tob called (KV store created) before servicing the HTTP requests.");
         long timeoutTimestamp = System.currentTimeMillis() + TEST_STARTUP_TIMEOUT_MS;
         while (!initialized.isDone() && System.currentTimeMillis() <= timeoutTimestamp) {
             Thread.sleep(10); // wait some cycles before checking again
         }
-        Preconditions.checkState(System.currentTimeMillis() <= timeoutTimestamp,
-            "Did not receive state store initialized signal, aborting.");
-        log.info("sleep completed.");
+        Preconditions.checkState(initialized.isDone(), "Did not receive state store initialized signal, aborting.");
+        Preconditions.checkState(managedKStreams.getStreams().state().isRunning(), "State store did not start. Aborting.");
+        log.info("Processor wait completed.");
 
         KafkaManager kafkaManager = new KafkaManagerImpl();
         String env = configuration.getEnv();
