@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.4.5] - SNAPSHOT
+## [0.4.5] - 20190208
 ### Changed
 - Populated the HealthCheck stream region from config file. Removed the dependency of MPAAS_REGION variable. (#103)
 - Refactored the Exception handling workflow in order to better communicate the actual error to customers. (#111)
