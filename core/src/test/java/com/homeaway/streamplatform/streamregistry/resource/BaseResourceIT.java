@@ -119,8 +119,8 @@ public class BaseResourceIT {
     protected static final int TEST_STARTUP_TIMEOUT_MS = 10000;
 
     // TODO: Make resources "consistent" by having all writes (mutations)
-    //       wait some timeout period for the processor to process
-    // THIS IS A TEMPORARY WORKAROUND for now... centralizing here so that we can soon remove it
+    //     - wait some timeout period for the processor to process
+    //     - THIS IS A TEMPORARY WORKAROUND for now... centralizing here so that we can soon remove it (#116)
     protected static final int TEST_SLEEP_WAIT_MS = 80;
 
     protected static ManagedKStreams managedKStreams;
@@ -176,10 +176,9 @@ public class BaseResourceIT {
         }
     }
 
-    // TODO - consider catching checked exceptions and throwing appropriate unchecked exceptions
     // TODO - Why do we start and stop kstreams on each integration test ? Shouldn't this be
     //      - performed during the pre-integration-test phase ONCE?
-    //      - Doing so saves on build time.
+    //      - Doing so saves on build time. (#18)
     @BeforeClass
     public static void setupApplication() throws Exception {
         // static test config setup during pre-integration-test mvn phase
@@ -348,7 +347,7 @@ public class BaseResourceIT {
         configuration = factory.build(yaml);
     }
 
-    // TODO Why do we start and stop kstreams on each integration test ? Shouldn't this be part of the server
+    // TODO Why do we start and stop kstreams on each integration test ? Shouldn't this be part of the server (#18)
     @AfterClass
     public static void tearDown() throws Exception {
         managedKStreams.stop();

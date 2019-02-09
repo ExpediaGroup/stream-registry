@@ -72,7 +72,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         this.schemaManager = schemaManager;
     }
 
-    // TODO - This stream validation pattern needs to be reimplemented
+    // TODO - This stream validation pattern needs to be reimplemented (#117)
     @Override
     public boolean isStreamValid(Stream stream) throws InvalidStreamException {
         try {
@@ -84,11 +84,10 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
                 throw new InvalidStreamException(stream, "Stream name can not be null");
             }
 
-            /*
-             * TODO: Determine if streams actually need a list of VPCs defined.
-             * For example, single cluster or single region deployments, this property is superfluous.
-             * Instead, there should be a way to specify a singular default.
-             */
+
+            //TODO: Determine if streams actually need a list of VPCs defined.
+            //      For example, single cluster or single region deployments, this property is superfluous.
+            //      Instead, there should be a way to specify a singular default.
             if (stream.getVpcList() == null || stream.getVpcList().isEmpty()) {
                 String err = String.format("Stream %s can not be created without vpcList configuration", stream.getName());
                 throw new InvalidStreamException(stream, err);
@@ -122,12 +121,12 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         applyDefaultPartition(stream);
         applyDefaultReplicationFactor(stream);
 
-        // TODO Can isStreamValid (as currently implemented) ever be false?
+        // TODO Can isStreamValid (as currently implemented) ever be false? (#117)
         if (!isStreamValid(stream)) {
             log.error("Stream '{}' is not valid", stream.getName());
         }
 
-        // TODO: modify to support multiple schema 'types' per stream (Issue #55)
+        // TODO: modify to support multiple schema 'types' per stream (#55)
         // register schemas
         String keySubject = stream.getName() + "-key";
         SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());

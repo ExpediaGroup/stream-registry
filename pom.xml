@@ -820,7 +820,7 @@
             <!-- We create a profile here for two things: -->
             <!-- 1. centrally specify the deploy to ossrh -->
             <!-- 2. Sign all relevant artifacts (via configured GPG keys) -->
-            <!-- TODO: Document this process -->
+            <!-- TODO: Automate Release Process #106 -->
             <id>signed</id>
             <build>
                 <plugins>
