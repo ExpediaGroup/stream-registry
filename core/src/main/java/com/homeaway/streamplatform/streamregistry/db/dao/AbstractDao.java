@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
@@ -72,6 +73,13 @@ public abstract class AbstractDao {
         RegionDao regionDao,
         InfraManager infraManager,
         KafkaManager kafkaManager) {
+        Preconditions.checkNotNull(managedKafkaProducer, "managedKafkaProducer should not be null");
+        Preconditions.checkNotNull(kStreams, "kStreams should not be null");
+        Preconditions.checkNotNull(env, "env should not be null");
+        Preconditions.checkNotNull(regionDao, "regionDao should not be null");
+        Preconditions.checkNotNull(infraManager, "infraManager should not be null");
+        Preconditions.checkNotNull(kafkaManager, "kafkaManager should not be null");
+
         this.kafkaProducer = managedKafkaProducer;
         this.kStreams = kStreams;
         this.env = env;

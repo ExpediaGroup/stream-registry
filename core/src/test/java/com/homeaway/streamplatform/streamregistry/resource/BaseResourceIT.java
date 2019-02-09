@@ -209,7 +209,6 @@ public class BaseResourceIT {
         producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         producerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         managedKafkaProducer = new ManagedKafkaProducer(producerConfig, BaseResourceIT.topicsConfig);
-        managedKafkaProducer.start();
 
         streamsConfig = new Properties();
         KafkaStreamsConfig kafkaStreamsConfig = configuration.getKafkaStreamsConfig();
@@ -221,7 +220,6 @@ public class BaseResourceIT {
         streamsConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         CompletableFuture<Boolean> initialized = new CompletableFuture<>();
         managedKStreams = new ManagedKStreams(streamsConfig, BaseResourceIT.topicsConfig, () -> initialized.complete(true));
-        managedKStreams.start();
 
         consumerConfig = new Properties();
         consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -230,16 +228,6 @@ public class BaseResourceIT {
         consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, SpecificAvroDeserializer.class);
         consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, SpecificAvroDeserializer.class);
         consumerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
-
-        log.info(
-            "Waiting for processor's init method to be called (KV store created) before servicing the HTTP requests.");
-        long timeoutTimestamp = System.currentTimeMillis() + TEST_STARTUP_TIMEOUT_MS;
-        while (!initialized.isDone() && System.currentTimeMillis() <= timeoutTimestamp) {
-            Thread.sleep(10); // wait some cycles before checking again
-        }
-        Preconditions.checkState(initialized.isDone(), "Did not receive state store initialized signal, aborting.");
-        Preconditions.checkState(managedKStreams.getStreams().state().isRunning(), "State store did not start. Aborting.");
-        log.info("Processor wait completed.");
 
         KafkaManager kafkaManager = new KafkaManagerImpl();
         String env = configuration.getEnv();
@@ -270,6 +258,19 @@ public class BaseResourceIT {
         schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
 
         healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), configuration.getHealthCheckStreamConfig());
+
+        // Moved the Dropwizard Lifecycle methods to the bottom to replicate the app runtime behavior.
+        managedKafkaProducer.start();
+        managedKStreams.start();
+        log.info(
+                "Waiting for processor's init method to be called (KV store created) before servicing the HTTP requests.");
+        long timeoutTimestamp = System.currentTimeMillis() + TEST_STARTUP_TIMEOUT_MS;
+        while (!initialized.isDone() && System.currentTimeMillis() <= timeoutTimestamp) {
+            Thread.sleep(10); // wait some cycles before checking again
+        }
+        Preconditions.checkState(initialized.isDone(), "Did not receive state store initialized signal, aborting.");
+        Preconditions.checkState(managedKStreams.getStreams().state().isRunning(), "State store did not start. Aborting.");
+        log.info("Processor wait completed.");
     }
 
     /** initializes the zkClient to load up the test urls */
