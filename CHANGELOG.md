@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.4.6] - SNAPSHOT
+### Changed
+
 ## [0.4.5] - 20190208
 ### Changed
 - Populated the HealthCheck stream region from config file. Removed the dependency of MPAAS_REGION variable. (#103)
@@ -70,6 +73,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Shell script for build commands (#43)
 
+[0.4.6]: https://github.com/HomeAway/stream-registry/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/HomeAway/stream-registry/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/HomeAway/stream-registry/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/HomeAway/stream-registry/compare/v0.4.2...v0.4.3
