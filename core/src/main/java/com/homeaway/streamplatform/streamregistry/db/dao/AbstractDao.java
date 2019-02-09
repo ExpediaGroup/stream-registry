@@ -23,8 +23,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
+
+import com.google.common.base.Preconditions;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 

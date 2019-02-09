@@ -18,9 +18,10 @@ package com.homeaway.streamplatform.streamregistry.streams;
 import java.util.Optional;
 import java.util.Properties;
 
-import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import com.google.common.base.Preconditions;
 
 import io.dropwizard.lifecycle.Managed;
 
