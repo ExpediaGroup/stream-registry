@@ -18,6 +18,7 @@ package com.homeaway.streamplatform.streamregistry.streams;
 import java.util.Optional;
 import java.util.Properties;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -88,10 +89,12 @@ public class ManagedKStreams implements Managed {
     }
 
     public Optional<AvroStream> getAvroStreamForKey(AvroStreamKey key){
+        Preconditions.checkState(view != null, "ManagedKStreams not started. Please start before using.");
         return Optional.ofNullable(view.get(key));
     }
 
     public KeyValueIterator<AvroStreamKey, AvroStream> getAllStreams(){
+        Preconditions.checkState(view != null, "ManagedKStreams not started. Please start before using.");
         return view.all();
     }
 }
