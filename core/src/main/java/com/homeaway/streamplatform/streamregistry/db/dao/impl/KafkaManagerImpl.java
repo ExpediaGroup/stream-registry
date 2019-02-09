@@ -75,13 +75,13 @@ public class KafkaManagerImpl implements KafkaManager {
      * @param properties        properties that will be set on each topic in the list
      */
     public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isNewStream) {
-        // TODO - Can't guarantee against race conditions... should probably move to event-source paradigm to
+        // TODO - Cannot guarantee against race conditions... should probably move to event-source paradigm to
         //      protect against this (and maybe employ optimistic locking for extra safety).
         //      The issue here is there is nothing that "locks" the underlying kafka store -- something
         //      can inevitably change the underlying store while this method is evaluating, always accounting for
         //      some amount of race window.
 
-        // TODO probably need to cache a KafkaManagerImpl per "cluster" to avoid un-necessary creation / destruction of connections
+        // TODO probably need to cache a KafkaManagerImpl per "cluster" to avoid un-necessary creation / destruction of connections (#115)
         ZkUtils zkUtils = initZkUtils(properties);
         try {
             // remove client connection properties to leave only topic configs
@@ -126,10 +126,8 @@ public class KafkaManagerImpl implements KafkaManager {
             // for the first time.
 
             // TODO Alternatively we can add a forceSync=true flag, ignoring any user provided info, and only updating SR with the underlying settings
-            //      We should probably do forceSync=true anyway, as it provides a simple way to keep things in sync
+            //      We should probably do forceSync=true anyway, as it provides a simple way to keep things in sync (#114)
             if(isNewStream) {
-                // FIXME!! Fix exception reporting... just reporting the topic failed with no message is not a good developer experience. Consider replacing topic with message. (and include topic name in message).
-                // throw new StreamCreationException("topic: " + topic " already exists but config is different than requested!"); // consider using forceSync=true
                 throw new StreamCreationException(String.format("Error: Input configs=%s and actual configs=%s are not same for topic=%s", topicConfigMap, actualTopicConfig, topic));
             }
 
@@ -145,9 +143,6 @@ public class KafkaManagerImpl implements KafkaManager {
         AdminUtils.changeTopicConfig(zkUtils, topic, topicProperties);
     }
 
-    // TODO need to check if topic exists instead of relying on exception path or just create one since check already occurred above
-    // TODO Timeout exception needs to propagate and not be handled here
-    // TODO Need JavaDoc
     // package scope so that PowerMock can verify
     void createTopics(ZkUtils zkUtils, Collection<String> topics, int partitions, int replicationFactor, Map<String, String> topicConfigMap) {
         for(String topic : topics) {
