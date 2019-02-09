@@ -104,6 +104,13 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         streamRegHealthCheckStream = createCanaryStream();
         streamResource.upsertStream(streamName, streamRegHealthCheckStream);
 
+        // TODO: Remove this wait after (#116) is done
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException interruptedException) {
+            Thread.currentThread().interrupt();
+        }
+
         consumerResource = streamResource.getConsumerResource();
         consumerResource.upsertConsumer(streamName, "C1", region);
 
