@@ -89,12 +89,12 @@ public class ManagedKStreams implements Managed {
     }
 
     public Optional<AvroStream> getAvroStreamForKey(AvroStreamKey key){
-        Preconditions.checkState(view != null, "ManagedKStreams not started. Please start.");
+        Preconditions.checkState(view != null, "ManagedKStreams not started. Please start before using.");
         return Optional.ofNullable(view.get(key));
     }
 
     public KeyValueIterator<AvroStreamKey, AvroStream> getAllStreams(){
-        Preconditions.checkState(view != null, "ManagedKStreams not started. Please start.");
+        Preconditions.checkState(view != null, "ManagedKStreams not started. Please start before using.");
         return view.all();
     }
 }
