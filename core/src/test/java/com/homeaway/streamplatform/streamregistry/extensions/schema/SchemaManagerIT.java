@@ -55,7 +55,6 @@ public class SchemaManagerIT extends BaseResourceIT {
 
 
         int schemaId = cachedSchemaRegistryClient.register("sample-subject-key", new Schema.Parser().parse(schema));
-        // TODO: Fix the failing test case. register the schema again should not throw the error "Too many schema objects created for sample-subject-key!"
         int schemaId2ndIteration = cachedSchemaRegistryClient.register("sample-subject-key", new Schema.Parser().parse(schema));
 
         Assert.assertEquals(schemaId, schemaId2ndIteration);

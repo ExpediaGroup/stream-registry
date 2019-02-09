@@ -23,7 +23,7 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-// TODO - Need to genericize Tags so that this is company agnostic
+// TODO - Need to generalize Tags to be company agnostic (#110)
 @Data
 @Builder
 @JsonDeserialize(builder = Tags.TagsBuilder.class)

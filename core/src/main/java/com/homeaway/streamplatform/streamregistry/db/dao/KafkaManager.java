@@ -18,9 +18,8 @@ package com.homeaway.streamplatform.streamregistry.db.dao;
 import java.util.Collection;
 import java.util.Properties;
 
-// TODO need javadoc for KafkaManager
-// TODO Why do we have imperative operations here in stream registry? Does this limit composability? Can we reduce scope?
-// TODO Need to consider merging this with StreamInfrastructureManager to keep it stream-platform agnostic.
+// TODO need javadoc for KafkaManager (#107)
+// TODO Need to consider merging this with StreamInfrastructureManager to keep it stream-platform agnostic. (#109)
 public interface KafkaManager {
     /**
      * Creates topics in underlying implementation of KafkaManager provider.

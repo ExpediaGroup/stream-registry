@@ -20,8 +20,7 @@ import java.util.Optional;
 
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
-// TODO - Need javadoc
-// TODO - Probably might want to break this up into stream-bindings, clusters, sources, sinks and replications. Currently this is all a bit of a monolith
+// TODO - Need javadoc (#107)
 public interface StreamDao {
 
     void upsertStream(Stream stream);

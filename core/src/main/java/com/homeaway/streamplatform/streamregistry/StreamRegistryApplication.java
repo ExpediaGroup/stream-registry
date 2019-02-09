@@ -215,7 +215,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                         validatorConfig.putAll(validatorProperties);
                     }
 
-                    // TODO: Can we fix this leaky abstraction?
                     // HTTP Client is not pre-loaded with a URL. The validator needs to set a target.
                     validatorConfig.put(StreamValidatorConfig.STREAM_REGISTRY_HTTP_CLIENT, httpClient);
                     // RegionDao allows us to load a dynamic list of supported regions for a Stream.
