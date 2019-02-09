@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.6] - SNAPSHOT
 ### Changed
+- Fixed healthcheck order of operations (#120)
 
 ## [0.4.5] - 20190208
 ### Changed
