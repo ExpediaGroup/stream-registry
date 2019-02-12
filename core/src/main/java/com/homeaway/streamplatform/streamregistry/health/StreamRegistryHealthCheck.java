@@ -33,7 +33,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
-import io.dropwizard.lifecycle.Managed;
 
 import org.apache.avro.SchemaBuilder;
 import org.apache.commons.lang3.Validate;
@@ -56,7 +55,7 @@ import com.homeaway.streamplatform.streamregistry.resource.StreamResource;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 
 @Slf4j
-public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
+public class StreamRegistryHealthCheck extends HealthCheck {
 
     public static final Integer PRODUCT_ID = 126845;
     public static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
@@ -64,7 +63,6 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
 
     private final ManagedKStreams managedKStreams;
     private final StreamResource streamResource;
-    private final MetricRegistry metricRegistry;
 
     private boolean isStreamCreationHealthy;
     private boolean isStateStoreHealthy;
@@ -93,7 +91,14 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
         this.replicationFactor = healthCheckStreamConfig.getReplicationFactor();
         this.managedKStreams = managedKStreams;
         this.streamResource = streamResource;
-        this.metricRegistry = metricRegistry;
+
+        metricRegistry.register(Metrics.STREAM_CREATION_HEALTH.getName(), (Gauge<Integer>)() -> isStreamCreationHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.STATE_STORE_HEALTH.getName(), (Gauge<Integer>)() -> isStateStoreHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.STATE_STORE_STATE_HEALTH.getName(), (Gauge<Integer>)() -> isKStreamInValidState() ? 1 : 2);
+        metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
+
 
     }
 
@@ -338,20 +343,6 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
         public String getName() {
             return name;
         }
-    }
-
-    @Override
-    public void start() throws Exception {
-        metricRegistry.register(Metrics.STREAM_CREATION_HEALTH.getName(), (Gauge<Integer>)() -> isStreamCreationHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.STATE_STORE_HEALTH.getName(), (Gauge<Integer>)() -> isStateStoreHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.STATE_STORE_STATE_HEALTH.getName(), (Gauge<Integer>)() -> isKStreamInValidState() ? 1 : 2);
-        metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
-    }
-
-    @Override
-    public void stop() throws Exception {
     }
 
 }
