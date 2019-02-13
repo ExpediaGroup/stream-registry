@@ -170,15 +170,7 @@ public class BaseResourceIT {
                 topic, partitions, replication, topicConfig);
         ZkUtils zkUtils = new ZkUtils(ZKCLIENT, new ZkConnection(zookeeperQuorum), false);
         if (!AdminUtils.topicExists(zkUtils, topic)) {
-            try {
-                AdminUtils.createTopic(zkUtils, topic, partitions, replication, topicConfig, RackAwareMode.Enforced$.MODULE$);
-            } finally {
-                try {
-                    zkUtils.close();
-                } catch (RuntimeException exception) {
-                    log.error("Unexpected exception caught during zkUtils shutdown.", exception);
-                }
-            }
+            AdminUtils.createTopic(zkUtils, topic, partitions, replication, topicConfig, RackAwareMode.Enforced$.MODULE$);
         }
     }
 
