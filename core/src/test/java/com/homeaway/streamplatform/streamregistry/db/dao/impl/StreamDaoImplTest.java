@@ -40,6 +40,7 @@ import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
+import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
@@ -63,12 +64,13 @@ public class StreamDaoImplTest {
     private InfraManager infraManager = mock(InfraManager.class);
     private StreamValidator streamValidator = mock(StreamValidator.class);
     private SchemaManager schemaManager = mock(SchemaManager.class);
+    private KafkaManager kafkaManager = mock(KafkaManager.class);
 
     private StreamDao streamDao;
 
     @Before
     public void setup() {
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, streamValidator, schemaManager);
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, streamValidator, schemaManager, kafkaManager);
     }
 
     @Test(expected = IllegalArgumentException.class)
