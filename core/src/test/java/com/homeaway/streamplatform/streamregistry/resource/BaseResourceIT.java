@@ -165,12 +165,20 @@ public class BaseResourceIT {
     private static final int DEFAULT_ZK_CONNECTION_TIMEOUT_MS = 8 * 1000;
 
 
-    public static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
+    private static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
         log.debug("Creating topic { name: {}, partitions: {}, replication: {}, config: {} }",
                 topic, partitions, replication, topicConfig);
         ZkUtils zkUtils = new ZkUtils(ZKCLIENT, new ZkConnection(zookeeperQuorum), false);
         if (!AdminUtils.topicExists(zkUtils, topic)) {
-            AdminUtils.createTopic(zkUtils, topic, partitions, replication, topicConfig, RackAwareMode.Enforced$.MODULE$);
+            try {
+                AdminUtils.createTopic(zkUtils, topic, partitions, replication, topicConfig, RackAwareMode.Enforced$.MODULE$);
+            } finally {
+                try {
+                    zkUtils.close();
+                } catch (RuntimeException exception) {
+                    log.error("Unexpected exception caught during zkUtils shutdown.", exception);
+                }
+            }
         }
     }
 
