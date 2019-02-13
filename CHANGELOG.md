@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.7] - SNAPSHOT
 ### Changed
+- Added following dependency to `core/pom.xml` - `org.glassfish.hk2:hk2-api`, `org.glassfish.hk2.external:javax.inject`, `org.glassfish.jersey.core:jersey-server` and `org.glassfish.jersey.containers:jersey-container-servlet-core`
+- Re-ordered bean instantiation in `StreamRegistryApplication.run` and registering health check post initialization of the application has finished, server is started and application is ready to handle requests now.
+- Injecting dependency beans into `StreamDaoImpl`, `ProducerDaoImpl` and `ConsumerDaoImpl`
+- Moved `KafkaManager` local to `StreamDaoImpl`
+- Creating `streamRegHealthCheckStream`, `producerResource` and `consumerResource` inside `StreamRegistryHealthCheck` constructor
+- Changed scope for `BaseResourceIT.createTopic` to `private`
 
 ## [0.4.6] - 20190209
 ### Changed
