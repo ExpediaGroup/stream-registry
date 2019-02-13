@@ -158,16 +158,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         environment.lifecycle().manage(managedProducer);
 
-        // TODO: Check if State Store is Initialized (#98)
-        // This may not be needed if Healthcheck is moved to ManagedKafkaProducer
-        // If not healthy after timeout log error and proceed anyway
-        try {
-            // Sleep needed to make sure the processor's init method is called before servicing the HTTP requests.
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-            log.error("Error while sleeping the main thread for 10 seconds so that Kstream topology gets initialized.", e);
-        }
-
         final Client httpClient = new JerseyClientBuilder(environment)
                 .using(configuration.getHttpClient())
                 .using(environment)
