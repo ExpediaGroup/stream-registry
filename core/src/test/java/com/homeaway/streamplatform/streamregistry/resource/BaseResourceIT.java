@@ -254,8 +254,6 @@ public class BaseResourceIT {
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
         schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
 
-        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), configuration.getHealthCheckStreamConfig());
-
         // Moved the Dropwizard Lifecycle methods to the bottom to replicate the app runtime behavior.
         managedKafkaProducer.start();
         managedKStreams.start();
@@ -268,6 +266,8 @@ public class BaseResourceIT {
         Preconditions.checkState(initialized.isDone(), "Did not receive state store initialized signal, aborting.");
         Preconditions.checkState(managedKStreams.getStreams().state().isRunning(), "State store did not start. Aborting.");
         log.info("Processor wait completed.");
+
+        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), configuration.getHealthCheckStreamConfig());
     }
 
     /** initializes the zkClient to load up the test urls */

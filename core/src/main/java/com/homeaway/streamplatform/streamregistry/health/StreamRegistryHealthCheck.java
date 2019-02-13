@@ -75,6 +75,10 @@ public class StreamRegistryHealthCheck extends HealthCheck {
     private int replicationFactor;
     private int partitions;
 
+    private Stream streamRegHealthCheckStream;
+    private ProducerResource producerResource;
+    private ConsumerResource consumerResource;
+
     @Inject
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
                                      HealthCheckStreamConfig healthCheckStreamConfig) {
@@ -99,6 +103,14 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
         metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
 
+        streamRegHealthCheckStream = createCanaryStream();
+        streamResource.upsertStream(streamName, streamRegHealthCheckStream);
+
+        consumerResource = streamResource.getConsumerResource();
+        consumerResource.upsertConsumer(streamName, "C1", region);
+
+        producerResource = streamResource.getProducerResource();
+        producerResource.upsertProducer(streamName, "P1", region);
 
     }
 
@@ -247,9 +259,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateProducerRegistration() {
         try {
-            ProducerResource producerResource = streamResource.getProducerResource();
-            String producerName = "P1";
-            Response response = producerResource.upsertProducer(streamName, producerName, region);
+            Response response = producerResource.getProducer(streamName, "P1");
 
             if(response.getStatus() != Status.OK.getStatusCode()) {
                 setProducerRegistrationHealthy(false);
@@ -287,9 +297,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
     private void validateConsumerRegistration() {
         try {
-            ConsumerResource consumerResource = streamResource.getConsumerResource();
-            String consumerName = "C1";
-            Response response = consumerResource.upsertConsumer(streamName, consumerName, region);
+            Response response = consumerResource.getConsumer(streamName, "C1");
 
             if(response.getStatus() != Status.OK.getStatusCode()) {
                 setProducerRegistrationHealthy(false);
