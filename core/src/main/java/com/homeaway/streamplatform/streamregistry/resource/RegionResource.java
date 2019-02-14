@@ -18,7 +18,6 @@ package com.homeaway.streamplatform.streamregistry.resource;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -45,7 +44,6 @@ public class RegionResource {
 
     private final RegionDao regionDao;
 
-    @Inject
     public RegionResource(RegionDao regionDao) {
         this.regionDao = regionDao;
     }

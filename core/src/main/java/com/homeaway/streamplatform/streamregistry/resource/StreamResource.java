@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -69,7 +68,6 @@ public class StreamResource {
     private final StreamClientDao<Producer> producerDao;
     private final StreamClientDao<Consumer> consumerDao;
 
-    @Inject
     public StreamResource(StreamDao streamDao, StreamClientDao<Producer> producerDao, StreamClientDao<Consumer> consumerDao) {
         this.streamDao = streamDao;
         this.producerDao = producerDao;

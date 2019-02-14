@@ -15,7 +15,6 @@
  */
 package com.homeaway.streamplatform.streamregistry.streams;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import io.dropwizard.lifecycle.Managed;
@@ -25,7 +24,6 @@ import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 @Slf4j
 public class ManagedInfraManager implements Managed {
 
-    @Getter
     InfraManager infraManager;
 
     public ManagedInfraManager(InfraManager infraManager) {

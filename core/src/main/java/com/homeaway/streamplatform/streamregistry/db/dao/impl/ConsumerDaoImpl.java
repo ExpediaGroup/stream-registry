@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import lombok.extern.slf4j.Slf4j;
 
 import com.homeaway.digitalplatform.streamregistry.Actor;
@@ -41,7 +38,6 @@ import com.homeaway.streamplatform.streamregistry.exceptions.ConsumerNotFoundExc
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.UnknownRegionException;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils;
@@ -52,15 +48,6 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
     private static final List<String> TOPIC_POST_FIXES = Collections.unmodifiableList(Arrays.asList("", ".global"));
 
     private static final String ACTOR_TYPE = "consumer";
-
-    @Inject
-    public ConsumerDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-        ManagedKStreams kStreams,
-        @Named("stream-registry-env") String env,
-        RegionDao regionDao,
-        ManagedInfraManager managedInfraManager) {
-        this(managedKafkaProducer, kStreams, env, regionDao, managedInfraManager.getInfraManager());
-    }
 
     public ConsumerDaoImpl(ManagedKafkaProducer managedKafkaProducer,
         ManagedKStreams kStreams,

@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.InternalServerErrorException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +50,6 @@ import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamVa
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 import com.homeaway.streamplatform.streamregistry.model.Tags;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
@@ -62,27 +59,6 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     private StreamValidator streamValidator;
     private SchemaManager schemaManager;
     private KafkaManager kafkaManager;
-
-    @Inject
-    public StreamDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-        ManagedKStreams kStreams,
-        @Named("stream-registry-env") String env,
-        RegionDao regionDao,
-        ManagedInfraManager managedInfraManager,
-        StreamValidator validator,
-        SchemaManager schemaManager) {
-        this(managedKafkaProducer, kStreams, env, regionDao, managedInfraManager.getInfraManager(), validator, schemaManager);
-    }
-
-    public StreamDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-                         ManagedKStreams kStreams,
-                         String env,
-                         RegionDao regionDao,
-                         InfraManager infraManager,
-                         StreamValidator validator,
-                         SchemaManager schemaManager) {
-        this(managedKafkaProducer, kStreams, env, regionDao, infraManager, validator, schemaManager, new KafkaManagerImpl());
-    }
 
     public StreamDaoImpl(ManagedKafkaProducer managedKafkaProducer,
                         ManagedKStreams kStreams,
