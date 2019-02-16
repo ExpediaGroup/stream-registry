@@ -75,11 +75,6 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
     private int replicationFactor;
     private int partitions;
 
-    private Stream streamRegHealthCheckStream;
-    private ProducerResource producerResource;
-    private ConsumerResource consumerResource;
-    private MetricRegistry metricRegistry;
-
     public StreamRegistryHealthCheck(ManagedKStreams managedKStreams, StreamResource streamResource, MetricRegistry metricRegistry,
                                      HealthCheckStreamConfig healthCheckStreamConfig) {
         super();
@@ -95,8 +90,13 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
         this.replicationFactor = healthCheckStreamConfig.getReplicationFactor();
         this.managedKStreams = managedKStreams;
         this.streamResource = streamResource;
-        this.metricRegistry = metricRegistry;
 
+        metricRegistry.register(Metrics.STREAM_CREATION_HEALTH.getName(), (Gauge<Integer>)() -> isStreamCreationHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.STATE_STORE_HEALTH.getName(), (Gauge<Integer>)() -> isStateStoreHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.STATE_STORE_STATE_HEALTH.getName(), (Gauge<Integer>)() -> isKStreamInValidState() ? 1 : 2);
+        metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
+        metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
     }
 
     private synchronized boolean isStreamCreationHealthy() {
@@ -244,7 +244,9 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
 
     private void validateProducerRegistration() {
         try {
-            Response response = producerResource.getProducer(streamName, "P1");
+            ProducerResource producerResource = streamResource.getProducerResource();
+            String producerName = "P1";
+            Response response = producerResource.upsertProducer(streamName, producerName, region);
 
             if(response.getStatus() != Status.OK.getStatusCode()) {
                 setProducerRegistrationHealthy(false);
@@ -282,7 +284,9 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
 
     private void validateConsumerRegistration() {
         try {
-            Response response = consumerResource.getConsumer(streamName, "C1");
+            ConsumerResource consumerResource = streamResource.getConsumerResource();
+            String consumerName = "C1";
+            Response response = consumerResource.upsertConsumer(streamName, consumerName, region);
 
             if(response.getStatus() != Status.OK.getStatusCode()) {
                 setProducerRegistrationHealthy(false);
@@ -340,22 +344,6 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
 
     @Override
     public void start() throws Exception {
-        metricRegistry.register(Metrics.STREAM_CREATION_HEALTH.getName(), (Gauge<Integer>)() -> isStreamCreationHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.STATE_STORE_HEALTH.getName(), (Gauge<Integer>)() -> isStateStoreHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.STATE_STORE_STATE_HEALTH.getName(), (Gauge<Integer>)() -> isKStreamInValidState() ? 1 : 2);
-        metricRegistry.register(Metrics.PRODUCER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isProducerRegistrationHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.CONSUMER_REGISTRATION_HEALTH.getName(), (Gauge<Integer>)() -> isConsumerRegistrationHealthy() ? 1 : 2);
-        metricRegistry.register(Metrics.STATE_STORE_STATE.getName(), (Gauge<String>)() -> getKstreamsState().toString());
-
-        streamRegHealthCheckStream = createCanaryStream();
-        streamResource.upsertStream(streamName, streamRegHealthCheckStream);
-
-        consumerResource = streamResource.getConsumerResource();
-        consumerResource.upsertConsumer(streamName, "C1", region);
-
-        producerResource = streamResource.getProducerResource();
-        producerResource.upsertProducer(streamName, "P1", region);
-
     }
 
     @Override
