@@ -32,7 +32,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
-import io.dropwizard.lifecycle.Managed;
 
 import org.apache.avro.SchemaBuilder;
 import org.apache.commons.lang3.Validate;
@@ -55,7 +54,7 @@ import com.homeaway.streamplatform.streamregistry.resource.StreamResource;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 
 @Slf4j
-public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
+public class StreamRegistryHealthCheck extends HealthCheck {
 
     public static final Integer PRODUCT_ID = 126845;
     public static final String COMPONENT_ID = "986bef24-0e0d-43aa-adc8-bd39702edd9a";
@@ -340,14 +339,6 @@ public class StreamRegistryHealthCheck extends HealthCheck implements Managed {
         public String getName() {
             return name;
         }
-    }
-
-    @Override
-    public void start() throws Exception {
-    }
-
-    @Override
-    public void stop() throws Exception {
     }
 
 }

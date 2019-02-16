@@ -94,8 +94,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     private StreamResource streamResource;
 
-    private StreamRegistryHealthCheck streamRegistryHealthCheck;
-
     public static void main(final String[] args) throws Exception {
         new StreamRegistryApplication().run(args);
     }
@@ -334,7 +332,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
         Preconditions.checkState(streamResource != null, "streamResource cannot be null.");
 
-        streamRegistryHealthCheck =
+        StreamRegistryHealthCheck streamRegistryHealthCheck =
             new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
         environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
     }
@@ -353,10 +351,9 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
         Preconditions.checkState(managedInfraManager != null, "managedInfraManager cannot be null.");
         Preconditions.checkState(managedKafkaProducer != null, "managedKafkaProducer cannot be null.");
-        Preconditions.checkState(streamRegistryHealthCheck != null, "streamRegistryHealthCheck cannot be null.");
 
         StreamRegistryManagedContainer managedContainer =
-            new StreamRegistryManagedContainer(managedKStreams, managedInfraManager, managedKafkaProducer, streamRegistryHealthCheck);
+            new StreamRegistryManagedContainer(managedKStreams, managedInfraManager, managedKafkaProducer);
         environment.lifecycle().manage(managedContainer);
     }
 }

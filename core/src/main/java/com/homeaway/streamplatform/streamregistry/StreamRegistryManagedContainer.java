@@ -17,7 +17,6 @@ package com.homeaway.streamplatform.streamregistry;
 
 import io.dropwizard.lifecycle.Managed;
 
-import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
@@ -33,13 +32,11 @@ public class StreamRegistryManagedContainer implements Managed {
     private ManagedKStreams managedKStreams;
     private ManagedInfraManager managedInfraManager;
     private ManagedKafkaProducer managedKafkaProducer;
-    private StreamRegistryHealthCheck streamRegistryHealthCheck;
 
-    public StreamRegistryManagedContainer(ManagedKStreams managedKStreams, ManagedInfraManager managedInfraManager, ManagedKafkaProducer managedKafkaProducer, StreamRegistryHealthCheck streamRegistryHealthCheck) {
+    public StreamRegistryManagedContainer(ManagedKStreams managedKStreams, ManagedInfraManager managedInfraManager, ManagedKafkaProducer managedKafkaProducer) {
         this.managedKStreams = managedKStreams;
         this.managedInfraManager = managedInfraManager;
         this.managedKafkaProducer = managedKafkaProducer;
-        this.streamRegistryHealthCheck = streamRegistryHealthCheck;
     }
 
     @Override
@@ -47,12 +44,10 @@ public class StreamRegistryManagedContainer implements Managed {
         this.managedKStreams.start();
         this.managedInfraManager.start();
         this.managedKafkaProducer.start();
-        this.streamRegistryHealthCheck.start();
     }
 
     @Override
     public void stop() throws Exception {
-        this.streamRegistryHealthCheck.stop();
         this.managedKafkaProducer.stop();
         this.managedInfraManager.stop();
         this.managedKStreams.stop();

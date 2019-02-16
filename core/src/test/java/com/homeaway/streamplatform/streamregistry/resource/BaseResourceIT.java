@@ -262,7 +262,7 @@ public class BaseResourceIT {
         HealthCheckStreamConfig healthCheckStreamConfig = configuration.getHealthCheckStreamConfig();
         healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), healthCheckStreamConfig);
 
-        managedContainer = new StreamRegistryManagedContainer(managedKStreams, new ManagedInfraManager(infraManager), managedKafkaProducer, healthCheck);
+        managedContainer = new StreamRegistryManagedContainer(managedKStreams, new ManagedInfraManager(infraManager), managedKafkaProducer);
         managedContainer.start();
     }
 
