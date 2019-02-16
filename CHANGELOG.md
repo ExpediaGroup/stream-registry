@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Re-ordered bean instantiation in `StreamRegistryApplication.run()` to guarantee order of start/stop (#124)
-- Creating `streamRegHealthCheckStream`, `producerResource` and `consumerResource` inside `StreamRegistryHealthCheck` constructor (#124)
 
 ## [0.4.6] - 20190209
 ### Changed
