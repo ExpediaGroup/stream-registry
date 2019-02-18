@@ -123,9 +123,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     @Override
     public void run(final StreamRegistryConfiguration configuration, final Environment environment) {
-        /*
-         * Step 1 - initialize managed beans
-         */
+
+        // Step 1 - initialize managed beans
 
         ManagedKStreams managedKStreams = createManagedKStreams(configuration);
 
@@ -134,35 +133,25 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         ManagedKafkaProducer managedKafkaProducer = createManagedKafkaProducer(configuration);
 
-        /*
-         * Step 2 - initialize the DAO's
-         */
+        // Step 2 - initialize the DAO's
 
         initDao(configuration, environment, managedKStreams, managedKafkaProducer);
 
-        /*
-         * Step 3 - initialize and register the SR resources to JerseyEnvironment
-         */
+        // Step 3 - initialize and register the SR resources to JerseyEnvironment
 
         initAndRegisterResource(environment);
 
-        /*
-         * Step 4 - initialize and register monitoring and health check hooks
-         */
+        // Step 4 - initialize and register monitoring and health check hooks
 
         environment.getApplicationContext().addServlet(PingServlet.class, "/ping");
         initAndRegisterHealthCheck(configuration, environment, managedKStreams);
 
-        /*
-         * Step 5 - centralize initialization and configuration of SR server Object Mapper's
-         */
+        // Step 5 - centralize initialization and configuration of SR server Object Mapper's
         registerServiceMapper(environment);
 
-        /*
-         * Step 6 - In order to avoid muddle up with HK2 and Jersey lifecycle dependency we wrap up
-         * all managed beans in a centralized container to manage server components start and
-         * stop ordering
-         */
+        // Step 6 - In order to avoid muddle up with HK2 and Jersey lifecycle dependency
+        // we wrap up all managed beans in a centralized container to manage server
+        // components start and stop ordering
 
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
