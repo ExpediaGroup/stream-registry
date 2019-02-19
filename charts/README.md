@@ -27,8 +27,7 @@ $ helm install --name stream-registry ./charts
 
 ## Configuration
 
-The following table lists the configurable parameters of the docker-registry chart and
-their default values.
+The following table lists the configurable parameters of the  stream-registry chart and their default values.
 
 | Parameter                   | Description                                                                                | Default         |
 |:----------------------------|:-------------------------------------------------------------------------------------------|:----------------|
