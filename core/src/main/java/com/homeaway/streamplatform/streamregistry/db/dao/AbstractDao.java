@@ -44,7 +44,7 @@ import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
 @Slf4j
-public abstract class AbstractDao{
+public abstract class AbstractDao {
 
     public static final String PRIMARY_HINT = "primary";
     public static final String CLUSTER_NAME = "cluster.name";
