@@ -15,6 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,6 +39,11 @@ public class ClusterDaoImpl implements ClusterDao{
     protected final InfraManager infraManager;
 
     /**
+     * The constant CLUSTER_NAME.
+     */
+    public static final String CLUSTER_NAME = "cluster.name";
+
+    /**
      * Instantiates a new Cluster dao.
      *
      * @param infraManager the infra manager
@@ -52,6 +58,7 @@ public class ClusterDaoImpl implements ClusterDao{
      */
     @Override
     public Map<ClusterKey, ClusterValue> getAllClusters() {
+        log.info("Get all clusters from infra manager...");
         return infraManager.getAllClusters();
     }
 
@@ -73,7 +80,7 @@ public class ClusterDaoImpl implements ClusterDao{
 
         if (clusterValue.isPresent()) {
             log.info("Cluster Information found - {}", clusterValue);
-            return clusterValue.get();
+            return new ClusterValue(clusterValue.get().getClusterProperties());
         }
         // If no cluster information is found set the actorType and look again.
         clusterKey.setType(actorType);
@@ -82,10 +89,26 @@ public class ClusterDaoImpl implements ClusterDao{
 
         if (clusterValue.isPresent()) {
             log.info("Cluster Information found - {}", clusterValue);
-            return clusterValue.get();
+            return new ClusterValue(clusterValue.get().getClusterProperties());
         } else {
             log.info("Cluster Information not found for key - {}", clusterKey);
             throw new ClusterNotFoundException(clusterKey.toString());
         }
+    }
+
+    /**
+     * Get a Cluster using a clusterName
+     * @param clusterName
+     * @return ClusterValue - Contains cluster details
+     */
+    public Optional<ClusterValue> getCluster(String clusterName) {
+        log.info("getting cluster detail for cluster - {}", clusterName);
+        Map<ClusterKey, ClusterValue> allClusters = getAllClusters();
+        Map<String, ClusterValue> clustersByName = new HashMap<>();
+
+        allClusters.forEach( (ClusterKey clusterKey,ClusterValue clusterValue) -> clustersByName.put(clusterValue.getClusterProperties().get(CLUSTER_NAME), clusterValue));
+
+        log.info("Cluster Info for clusterName - {} is: {}",clusterName,clustersByName.get(clusterName));
+        return Optional.ofNullable(new ClusterValue(clustersByName.get(clusterName).getClusterProperties()));
     }
 }
