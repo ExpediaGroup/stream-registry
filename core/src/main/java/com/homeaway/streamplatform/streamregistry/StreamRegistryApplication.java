@@ -238,6 +238,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     private ManagedInfraManager createManagedInfraManager(final StreamRegistryConfiguration configuration) {
+        Preconditions.checkState(infraManager == null, "inframanager should be null before creating ManagedInfraManager");
+
         InfraManagerConfig infraManagerConfig = configuration.getInfraManagerConfig();
         String infraManagerClassName = infraManagerConfig.getClassName();
 
