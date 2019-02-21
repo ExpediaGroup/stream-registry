@@ -30,7 +30,6 @@ import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Producer;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
@@ -52,9 +51,8 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         ManagedKStreams kStreams,
         String env,
         RegionDao regionDao,
-        InfraManager infraManager,
-        KafkaManager kafkaManager) {
-        super(managedKafkaProducer, kStreams, env, regionDao, infraManager, kafkaManager);
+        InfraManager infraManager) {
+        super(managedKafkaProducer, kStreams, env, regionDao, infraManager);
     }
 
     @Override
