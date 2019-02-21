@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Created `StreamRegistryManagedContainer` which will be responsible for ordering lifecycle for infra components (#124)
 
 ### Changed
+- Added `@NonNull` constraint check for `InfraManagerConfig.config` (#128)
 - Re-ordered bean instantiation in `StreamRegistryApplication.run()` to guarantee order of start/stop (#124)
 
 ## [0.4.6] - 20190209
