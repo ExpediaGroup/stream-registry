@@ -21,6 +21,7 @@ To install the chart, use the following:
 3. move to the directory where the code is cloned
 4. run the following commands
 ```console
+$ helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
 $ helm dependency update ./charts/
 $ helm install --name stream-registry ./charts
 ```
