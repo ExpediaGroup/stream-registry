@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.7] - SNAPSHOT
 ### Changed
+- Added `@NonNull` constraint check for `InfraManagerConfig.config` (#128)
 
 ## [0.4.6] - 20190209
 ### Changed
