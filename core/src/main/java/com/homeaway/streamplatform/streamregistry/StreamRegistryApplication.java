@@ -238,23 +238,20 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     private ManagedInfraManager createManagedInfraManager(final StreamRegistryConfiguration configuration) {
-        Preconditions.checkState(infraManager == null, "inframanager should be null before creating ManagedInfraManager");
-
         InfraManagerConfig infraManagerConfig = configuration.getInfraManagerConfig();
         String infraManagerClassName = infraManagerConfig.getClassName();
 
-        if (infraManagerClassName != null && !infraManagerClassName.isEmpty()) {
-            try {
-                infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
-                infraManager.configure(infraManagerConfig.getConfig());
-                ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
-                return managedInfraManager;
-            } catch (Exception e) {
-                log.error("Error loading/configuring Infra Manager Class", e);
-                throw new IllegalStateException("Could not load/configure Infra Manager class", e);
-            }
+        Preconditions.checkState(!infraManagerClassName.isEmpty(), "infraManagerClassName cannot be empty");
+
+        try {
+            infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
+            infraManager.configure(infraManagerConfig.getConfig());
+            ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
+            return managedInfraManager;
+        } catch (Exception e) {
+            log.error("Error loading/configuring Infra Manager Class", e);
+            throw new IllegalStateException("Could not load/configure Infra Manager class", e);
         }
-        return null;
     }
 
     private ManagedKafkaProducer createManagedKafkaProducer(final StreamRegistryConfiguration configuration) {
