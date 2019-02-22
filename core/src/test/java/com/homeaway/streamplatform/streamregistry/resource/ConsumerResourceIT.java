@@ -51,7 +51,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String streamName = "junit-stream-put-consumer-without-stream";
         String consumerName = "C2";
 
-        // delete stream if already exists.
+        // deleting stream if already exists.
         streamResource.deleteStream(streamName);
 
         // try to add consumer to a non-available stream, and expect NotFoundException
@@ -183,7 +183,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
     @Test
     public void test_delete_consumer() throws InterruptedException {
-        String streamName = "junit-stream-delete-consumer";
+        String streamName = "junit-stream-deleting-consumer";
         String consumerName = "C1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
@@ -204,7 +204,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
     @Test
     public void test_delete_consumer_with_no_stream() {
-        String streamName = "junit-delete-consumer-with-no-stream";
+        String streamName = "junit-deleting-consumer-with-no-stream";
         String consumerName = "C1";
 
         Response response = consumerResource.deleteConsumer(streamName, consumerName);
@@ -213,7 +213,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
     @Test
     public void test_delete_invalid_consumer_in_valid_stream() throws InterruptedException {
-        String streamName = "junit-delete-invalid-consumer-invalid-stream";
+        String streamName = "junit-deleting-invalid-consumer-invalid-stream";
         String consumerName = "C1";
         String invalidConsumerName = "invalid-consumer";
 

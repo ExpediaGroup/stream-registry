@@ -281,7 +281,7 @@ The stream also defines producer/consumer config map defaults. These defaults
 are provided to stream-bindings, producer and consumer requests once the
 stream is bound to a particular cluster.  Stream Binding config maps take
 precedence over stream-level config maps.  By providing definitions at the
-stream level, configuration is simplified and only "override" configuration
+stream level, commonConfig is simplified and only "override" commonConfig
 need be specified at the binding level.
 
 Now that we have our streams created with the necessary metadata,
@@ -345,14 +345,14 @@ public interface StreamInfrastructureManager {
    * Validates the configMaps provided for the given cluster are valid.
    */
   void validateCluster(String clusterName,
-                       Map<String, ConfigMap> configMapMap)
+                       Map<String, ConfigMap> configMap)
                        throws InfrastructureException;
 
   /**
    * Validates the configMaps provided for the given stream are valid.
    */
   void validateStream(String streamName,
-                      Map<String, ConfigMap> configMapMap)
+                      Map<String, ConfigMap> configMap)
                       throws InfrastructureException;
 
   /**
@@ -362,13 +362,13 @@ public interface StreamInfrastructureManager {
    * @param streamName the name of the stream to create.
    * @param clusterName the name of the cluster that the stream
    *        should be creted on.
-   * @param configMapMap the map of configmaps -- applicable overrides apply.
+   * @param configMap the map of configmaps -- applicable overrides apply.
    * @throws InfrastructureException This is thrown when
    *         the operation could not complete.
    */
   void createStreamBinding(String streamName,
                            String clusterName,
-                           Map<String, ConfigMap> configMapMap)
+                           Map<String, ConfigMap> configMap)
                            throws InfrastructureException;
 
   /**
@@ -377,13 +377,13 @@ public interface StreamInfrastructureManager {
    *
    * @param streamName the name of the stream to update.
    * @param clusterName the name of the cluster whose metadata should be updated.
-   * @param configMapMap the map of configmaps -- applicable overrides apply.
+   * @param configMap the map of configmaps -- applicable overrides apply.
    * @throws InfrastructureException This is thrown when
    *         the operation could not complete.
    */
   void updateStreamBinding(String streamName,
                            String clusterName,
-                           Map<String, ConfigMap> configMapMap)
+                           Map<String, ConfigMap> configMap)
                            throws InfrastructureException;
 
   /**
@@ -705,7 +705,7 @@ Developers can also update and delete stream sources.
  */
 @Data
 public void StreamSource {
-  public StreamSource(String sourceName, String cluster, String type, String status, Map<String, ConfigMap> configMapMap);
+  public StreamSource(String sourceName, String cluster, String type, String status, Map<String, ConfigMap> configMap);
 }
 /**
  * This interface is implemented by a stream provider to provide
@@ -731,14 +731,14 @@ public interface StreamSourceManager {
    * @param type the type of the source to create. Must be one of the supported types.
    * @param clusterName the name of the cluster that the stream
    *        should be created on.
-   * @param configMapMap the map of configmaps.
+   * @param configMap the map of configmaps.
    * @return the created stream source
    * @throws StreamSourceException This is thrown when
    *         the operation could not complete.
    */
   StreamSource createStreamSource(String sourceName, String type,
                                   String clusterName,
-                                  Map<String, ConfigMap> configMapMap)
+                                  Map<String, ConfigMap> configMap)
                                   throws StreamSourceException;
 
   /**
@@ -756,13 +756,13 @@ public interface StreamSourceManager {
    * with the supplied config maps.
    *
    * @param sourceName the name of the stream source to update.
-   * @param configMapMap the map of config maps -- applicable overrides apply.
+   * @param configMap the map of config maps -- applicable overrides apply.
    * @return the updated stream source
    * @throws StreamSourceException This is thrown when
    *         the operation could not complete.
    */
   StreamSource updateStreamSource(String sourceName,
-                                  Map<String, ConfigMap> configMapMap)
+                                  Map<String, ConfigMap> configMap)
                                   throws StreamSourceException;
 
   /**
@@ -862,7 +862,7 @@ Developers can also update and delete stream sinks.
  */
 @Data
 public void StreamSink {
-  public StreamSink(String sinkName, String cluster, String type, String status, Map<String, ConfigMap> configMapMap);
+  public StreamSink(String sinkName, String cluster, String type, String status, Map<String, ConfigMap> configMap);
 }
 
 /**
@@ -889,14 +889,14 @@ public interface StreamSinkManager {
    * @param type the type of the sink to create. Must be one of the supported types.
    * @param clusterName the name of the cluster that the stream
    *        should be created on.
-   * @param configMapMap the map of config maps.
+   * @param configMap the map of config maps.
    * @return the created stream sink
    * @throws StreamSinkException This is thrown when
    *         the operation could not complete.
    */
   StreamSink createStreamSink(String sinkName, String type,
                               String clusterName,
-                              Map<String, ConfigMap> configMapMap)
+                              Map<String, ConfigMap> configMap)
                               throws StreamSinkException;
 
   /**
@@ -914,13 +914,13 @@ public interface StreamSinkManager {
    * with the supplied configmaps.
    *
    * @param sinkName the name of the stream sink to update.
-   * @param configMapMap the map of configmaps -- applicable overrides apply.
+   * @param configMap the map of configmaps -- applicable overrides apply.
    * @return the updated stream sink
    * @throws StreamSinkException This is thrown when
    *         the operation could not complete.
    */
   StreamSink updateStreamSink(String sinkName,
-                              Map<String, ConfigMap> configMapMap)
+                              Map<String, ConfigMap> configMap)
                               throws StreamSinkException;
 
   /**

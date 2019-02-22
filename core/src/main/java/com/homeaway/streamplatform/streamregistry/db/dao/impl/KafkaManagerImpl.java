@@ -90,11 +90,11 @@ public class KafkaManagerImpl implements KafkaManager {
             // partition the list by whether the topic exists or not
             Map<Boolean, List<String>> partitionMaps = topics.stream().collect(Collectors.partitioningBy(topic -> topicExists(zkUtils, topic)));
 
-            // if it exists, update it.  If it doesn't exist, create it
+            // if it exists, updating it.  If it doesn't exist, create it
             List<String> topicsToUpdate = partitionMaps.get(true);
             List<String> topicsToCreate = partitionMaps.get(false);
 
-            // update any topics that are necessary
+            // updating any topics that are necessary
             updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isNewStream);
 
             // now create any topics that were necessary to create this run
@@ -107,7 +107,7 @@ public class KafkaManagerImpl implements KafkaManager {
     // package scope so that PowerMock can verify
     void updateTopics(ZkUtils zkUtils, List<String> topicsToUpdate, Map<String, String> topicConfigMap, boolean isNewStream) {
         for (String topic : topicsToUpdate) {
-            // update topic
+            // updating topic
             Properties actualTopicConfig = getTopicConfig(zkUtils, topic);
             Map<String, String> actualTopicConfigMap = propertiesToMap(actualTopicConfig);
             if(actualTopicConfigMap.equals(topicConfigMap)) {
@@ -132,7 +132,7 @@ public class KafkaManagerImpl implements KafkaManager {
             }
 
             // If we got this far, we are "updating" an "existing" stream, and request config is different than
-            // what is in stream registry. Go ahead and update now.
+            // what is in stream registry. Go ahead and updating now.
             updateTopic(zkUtils, topic, topicConfigMap);
         }
     }

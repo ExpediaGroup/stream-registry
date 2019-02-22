@@ -186,7 +186,7 @@ public class ProducerResourceIT extends BaseResourceIT {
 
     @Test
     public void test_delete_producer() throws InterruptedException {
-        String streamName = "junit-stream-delete-producer";
+        String streamName = "junit-stream-deleting-producer";
         String producerName = "P1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
@@ -206,7 +206,7 @@ public class ProducerResourceIT extends BaseResourceIT {
 
     @Test
     public void test_delete_producer_with_no_stream() {
-        String streamName = "junit-stream-delete-producer-with-no-stream";
+        String streamName = "junit-stream-deleting-producer-with-no-stream";
         String producerName = "P1";
 
         Response response = producerResource.deleteProducer(streamName, producerName);
@@ -215,7 +215,7 @@ public class ProducerResourceIT extends BaseResourceIT {
 
     @Test
     public void test_delete_invalid_producer_in_valid_stream() throws InterruptedException {
-        String streamName = "junit-stream-delete-invalid-producer-invalid-stream";
+        String streamName = "junit-stream-deleting-invalid-producer-invalid-stream";
         String producerName = "P1";
         String invalidProducerName = "invalid-producer";
 

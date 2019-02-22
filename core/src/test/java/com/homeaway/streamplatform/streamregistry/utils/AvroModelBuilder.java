@@ -52,9 +52,9 @@ public class AvroModelBuilder {
 
     /**
      * Build an Avro stream object given a stream name and an operation type.
-     * @param streamName
-     * @param operationType
-     * @return
+     * @param streamName name of the stream
+     * @param operationType type of Operation to be performed {@link OperationType}
+     * @return avroStream
      */
     public AvroStream buildAvroStream(String streamName, OperationType operationType){
 
@@ -76,8 +76,7 @@ public class AvroModelBuilder {
             .setActor(producerActor)
             .build();
 
-        /** get consumers ready */
-
+        // get consumers ready
         Actor consumerActor = Actor.newBuilder()
             .setName("consumer")
             .setRegionStreamConfigurations(regionKafkaStreamConfigurations)
@@ -87,7 +86,7 @@ public class AvroModelBuilder {
             .setActor(consumerActor)
             .build();
 
-        /** get mirrormaker status */
+        // get mirrormaker status
         RegionReplicator regionReplicator = RegionReplicator.newBuilder()
             .setStatus("NOT_DEPLOYED") // this is not required
             .setAppName("")
@@ -108,9 +107,7 @@ public class AvroModelBuilder {
 
         Tags tags = Tags.newBuilder().setProductId(1234).setPortfolioId(1343).build();
 
-        /**
-         * build the stream object
-         * */
+        // build stream object
         log.trace("Schema for the Avro Stream:" + AvroStream.SCHEMA$);
 
         return AvroStream.newBuilder()

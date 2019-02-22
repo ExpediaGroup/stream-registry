@@ -12,7 +12,7 @@ protocol ActorProtocol {
     string name;
 
   /**
-  * Stream configuration key/value map
+  * Stream commonConfig key/value map
   */
     @java-class("java.util.ArrayList") array<RegionStreamConfiguration> regionStreamConfigurations = [];
 

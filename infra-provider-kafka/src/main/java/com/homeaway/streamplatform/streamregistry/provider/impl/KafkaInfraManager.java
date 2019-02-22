@@ -49,7 +49,6 @@ public class KafkaInfraManager implements InfraManager {
 
     private String infraStateStoreName;
     private KafkaStreams infraKStreams;
-    private GlobalKTable<ClusterKey, ClusterValue> kTable;
     private ReadOnlyKeyValueStore<ClusterKey, ClusterValue> store;
 
     @SuppressWarnings("unchecked")
@@ -74,7 +73,7 @@ public class KafkaInfraManager implements InfraManager {
 
         // initialize the kstreams processor
         KStreamBuilder infraKStreamBuilder = new KStreamBuilder();
-        kTable = infraKStreamBuilder.globalTable(infraManagerTopic, infraStateStoreName);
+        GlobalKTable<ClusterKey, ClusterValue> kTable = infraKStreamBuilder.globalTable(infraManagerTopic, infraStateStoreName);
         infraKStreams = new KafkaStreams(infraKStreamBuilder, infraKStreamsProperties);
     }
 

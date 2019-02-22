@@ -24,7 +24,7 @@ import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
 
 
 /**
- * Test class to validate whether the StreamRegistryHealthCheck could properly insert
+ * Test class to validate whether the StreamRegistryHealthCheck could properly inserting
  * a valid Stream, producer and consumer, and validate whether the StateStore is active
  *
  */
@@ -33,7 +33,7 @@ public class StreamRegistryHealthCheckIT extends BaseResourceIT {
     @Test
     public void testHealthCheck() {
         // The identityMapCapacity on CachedSchemaRegistryClient is set to 1 in BaseResourceIT.
-        // so, hit healthcheck (update same schema) for more than 1 times to make sure the applied fix for issue#100 is working.
+        // so, hit healthcheck (updating same schema) for more than 1 times to make sure the applied fix for issue#100 is working.
         for (int i=0 ; i < 2 ; i++) {
             HealthCheck.Result healthCheckResult = healthCheck.check();
             Assert.assertTrue(healthCheckResult.isHealthy());

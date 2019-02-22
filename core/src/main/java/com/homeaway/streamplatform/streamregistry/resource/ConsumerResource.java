@@ -121,7 +121,7 @@ public class ConsumerResource {
 
     @PUT
     @ApiOperation(
-        value = "Upsert a consumer with streamName in stream-registry",
+        value = "Upsert a consumer with stream in stream-registry",
         tags = "consumers",
         response = Consumer.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Consumer upserted", response = Consumer.class),

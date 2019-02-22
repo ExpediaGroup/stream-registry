@@ -66,7 +66,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         String streamName = "junit-check-stream-compatibility-new-schema-valid";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        // create stream/register schema
+        // inserting stream/register schema
         streamResource.upsertStream(streamName, stream);
 
         // re-check compatibility for same schema (new field with default value)
@@ -82,7 +82,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         String streamName = "junit-check-stream-compatibility-new-schema-invalid";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        // create stream/register schema
+        // inserting stream/register schema
         streamResource.upsertStream(streamName, stream);
 
         stream.getLatestValueSchema().setSchemaString(stream.getLatestKeySchema().getSchemaString());
@@ -108,7 +108,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         String streamName = "junit-check-register-stream-valid";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        // create stream/register schema
+        // inserting stream/register schema
         Response response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
 
@@ -123,7 +123,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         String streamName = "junit-check-register-stream-invalid-schema";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        // create stream/register schema
+        // inserting stream/register schema
         Response response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
 
@@ -138,7 +138,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         String streamName = "junit-check-register-stream-incompatible-schema";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        // create stream/register schema
+        // inserting stream/register schema
         Response response = streamResource.upsertStream(streamName, stream);
         Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
 
@@ -166,7 +166,7 @@ public class SchemaManagerIT extends BaseResourceIT {
         String streamName = "junit-check-stream-compatibility-same-schema-valid";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
-        // create stream/register schema
+        // inserting stream/register schema
         streamResource.upsertStream(streamName, stream);
 
         // re-check compatibility for same schema

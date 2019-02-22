@@ -7,7 +7,7 @@ protocol ConsumerProtocol {
   record Consumer {
 
   /**
-  * Actor configuration for the consumer
+  * Actor commonConfig for the consumer
   */
   Actor actor;
 

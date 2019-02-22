@@ -120,7 +120,7 @@ public class KafkaManagerImplTest {
         verifyStatic(AdminUtils.class, times(0));
         AdminUtils.changeTopicConfig(zkUtils, TOPIC, TOPIC_PROPS);
 
-        // verify create topic DOES NOT HAPPEN because props match
+        // verify inserting topic DOES NOT HAPPEN because props match
         verifyStatic(AdminUtils.class, times(0));
         AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, TOPIC_PROPS, RackAwareMode.Enforced$.MODULE$);
     }
@@ -153,7 +153,7 @@ public class KafkaManagerImplTest {
         // Not existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
 
-        //verify create topic happens when requested topic does not exist
+        //verify inserting topic happens when requested topic does not exist
         verifyStatic(AdminUtils.class, times(0));
         AdminUtils.changeTopicConfig(zkUtils, TOPIC, FILTERED_PROPS);
         verifyStatic(AdminUtils.class, times(1));
@@ -174,7 +174,7 @@ public class KafkaManagerImplTest {
         // might want to consider this corner case a bit more. Currently the behavior honors the request and creates the topic
         // with the requested config
 
-        //verify create topic happens when requested topic does not exist
+        //verify inserting topic happens when requested topic does not exist
         verifyStatic(AdminUtils.class, times(0));
         AdminUtils.changeTopicConfig(zkUtils, TOPIC, FILTERED_PROPS);
         verifyStatic(AdminUtils.class, times(1));

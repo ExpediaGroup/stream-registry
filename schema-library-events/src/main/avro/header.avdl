@@ -1,0 +1,14 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol EventHeader {
+
+  record Header {
+
+  /**
+  * Milliseconds since the epoc for this event
+  */
+    long time;
+
+  }
+
+}

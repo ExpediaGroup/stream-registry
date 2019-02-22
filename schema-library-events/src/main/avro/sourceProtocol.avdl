@@ -1,0 +1,320 @@
+@namespace("com.homeaway.digitalplatform.streamregistry.sources")
+
+
+protocol SourceProtocol {
+
+/**
+* Header for every Source record
+*/
+  record Header {
+
+  /**
+  * Milliseconds since the epoc for this event
+  */
+    long time;
+
+  }
+
+/**
+* Source schema
+*/
+  record Source {
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of source in the Source Store
+  */
+    string sourceName;
+
+  /**
+   * Type of source
+   */
+    string sourceType;
+
+  /**
+  * Name of the stream this source is bound to
+  */
+    string streamName;
+
+  /**
+  * Current status of the source
+  */
+    string status;
+
+  /**
+  * Any additional commonConfig as a key, value map
+  * This would be sourceType specific.
+  */
+    union{null,map<string>} configuration = null;
+
+  /**
+  * Any additional commonConfig as a key, value map
+  * This would be sourceType specific.
+  */
+    union{null,map<string>} tags = null;
+
+  }
+
+
+  /**
+  * All the records related to commands
+  */
+
+
+
+  /** Command event for creating a source. */
+  record CreateRequested {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  /**
+   * Source payload
+   */
+    Source source;
+
+  }
+
+  record Created {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  /**
+   * Source payload
+   */
+    Source source;
+
+  }
+
+  record UpdateRequested {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  /**
+   * Source payload
+   */
+    Source source;
+
+  }
+
+  record Updated {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  /**
+   * Source payload
+   */
+    Source source;
+
+  }
+
+  record StartRequested {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+
+  record Started {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+
+  record PauseRequested {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+
+  record Paused {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+
+  record ResumeRequested {
+
+
+  /**
+  * Source header
+  */
+    Header header;
+
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+
+  record Resumed {
+
+
+  /**
+  * Source header
+  */
+    Header header;
+
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+
+  record StopRequested {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+
+  }
+
+  record Stopped {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+
+  }
+
+  record FailRequested {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+
+  }
+
+  record Failed {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+
+  }
+
+  record DeleteRequested {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+
+  record Deleted {
+
+  /**
+  * Source header
+  */
+    Header header;
+
+  /**
+  * Name of the source
+  */
+    string sourceName;
+
+  }
+}

@@ -100,12 +100,15 @@
         <!-- Kafka + Confluent versions-->
         <scala.version>2.11</scala.version>
         <scala-library.version>${scala.version}.11</scala-library.version>
-        <kafka.confluent.version>0.11.0.1-cp1</kafka.confluent.version>
+        <confluent.version>4.1.0</confluent.version>
+        <kafka.confluent.version>1.1.0-cp1</kafka.confluent.version>
         <zookeeper.version>3.4.10</zookeeper.version>
         <rocksdb.version>5.0.1</rocksdb.version>
-        <confluent.version>3.3.1</confluent.version>
         <avro.version>1.8.2</avro.version>
         <snappy-java.version>1.1.2.6</snappy-java.version>
+
+
+        <apache-commons-io.version>2.6</apache-commons-io.version>
 
         <!-- Plugins -->
         <assembly.pluginVersion>3.1.0</assembly.pluginVersion>
@@ -129,6 +132,9 @@
         <!-- Jib -->
         <jib-maven-plugin.version>0.10.1</jib-maven-plugin.version>
         <jib.container.appRoot>/app</jib.container.appRoot>
+        <jackson-mapper-asl.version>1.9.13</jackson-mapper-asl.version>
+        <scala-reflect.version>2.11.12</scala-reflect.version>
+        <findbugs.version>3.0.2</findbugs.version>
     </properties>
 
     <dependencyManagement>
@@ -205,6 +211,17 @@
                 <artifactId>wagon-provider-api</artifactId>
                 <version>${wagon-provider-api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${apache-commons-io.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${findbugs.version}</version>
+            </dependency>
 
             <!-- DropWizard -->
             <dependency>
@@ -251,6 +268,11 @@
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-library</artifactId>
                 <version>${scala-library.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-reflect</artifactId>
+                <version>${scala-reflect.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
@@ -316,7 +338,7 @@
             <dependency>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-avro-serializer</artifactId>
-                <version>${confluent.version}</version>
+                <version>5.0.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -331,7 +353,7 @@
             <dependency>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-streams-avro-serde</artifactId>
-                <version>${confluent.version}</version>
+                <version>5.0.1</version>
             </dependency>
             <dependency> <!-- Included for testing -->
                 <groupId>io.confluent</groupId>
@@ -485,7 +507,12 @@
                 <version>1.8.5</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-streams-test-utils</artifactId>
+                <version>${kafka.confluent.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>

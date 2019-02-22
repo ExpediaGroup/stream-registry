@@ -23,7 +23,7 @@ import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 
 /**
  * The Infrastructure Manager is a key-value store containing the details of the Stream Registry clusters and their metadata.
- * <br>
+ * <p>
  * <b><code>ClusterKey</code></b> - Avro encoded key containing the following fields
  * <ul>
  *     <li><code>vpc</code> - VPC of the Stream Registry cluster</li>
@@ -31,11 +31,10 @@ import com.homeaway.digitalplatform.streamregistry.ClusterValue;
  *     <li><code>hint</code> - If there are multiple clusters in a vpc, the specific classifier of the cluster. E.g: metrics, logging, etc.</li>
  *     <li><code>type</code> - If there are multiple clusters in a vpc for a type of hint, the specific type of the cluster. E.g. metrics-aggregate or logging-mirror.</li>
  * </ul>
- * <br>
+ * <p>
  * <b><code>ClusterValue</code></b> - Avro encoded value containing containing a <code>Map&lt;String&gt;</code> of Stream Registry cluster properties.
- * This map will be returned to a Stream Registry client at the time of registration.<br>
- * <br>
- * An example of a Confluent Platform Kafka Cluster would contain the following details
+ * This map will be returned to a Stream Registry client at the time of registration.
+ * <br>An example of a Confluent Platform Kafka Cluster would contain the following details
  * <ul>
  *     <li><code>bootstrap.servers</code></li>
  *     <li><code>schema.registry.url</code></li>

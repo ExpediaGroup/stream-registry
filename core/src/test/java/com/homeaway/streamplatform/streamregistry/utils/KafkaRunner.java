@@ -24,9 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 
 /**
- * This class is used by maven to start kafka stack in its own JVM.
+ * This class is used by maven to starting kafka stack in its own JVM.
  * This kafka stack will be used by the integration tests to run.
- * This helps speed up build times because we are not waiting for an instance of kafka to start and stop
+ * This helps speed up build times because we are not waiting for an instance of kafka to starting and stopping
  * between each integration test.
  */
 @Slf4j
@@ -40,7 +40,7 @@ public class KafkaRunner {
     private static ZkClient ZKCLIENT;
 
     public static void main(String[] args) {
-        // SIGINT stop gracefully
+        // SIGINT stopping gracefully
         Runtime.getRuntime().addShutdownHook(new Thread(KafkaRunner::stopRunner));
 
         startRunner();
@@ -73,7 +73,7 @@ public class KafkaRunner {
             log.info("Kafka broker started at {}", EMBEDDED_KAFKA_SERVER.bootstrapServers());
             log.info("Schema Registry started at {}", EMBEDDED_KAFKA_SERVER.schemaRegistryUrl());
         } catch (Exception exception) {
-            log.error("Could not start kafka. Exiting.", exception);
+            log.error("Could not starting kafka. Exiting.", exception);
             System.exit(1);
         }
 

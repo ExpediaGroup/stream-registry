@@ -70,6 +70,6 @@ public class ManagedKafkaProducer implements Managed {
                     exception);
         }
         log.info("Message pushed to the sourceKStreamProcessorTopic Topic={} with key={} successfully",
-                topicsConfig.getProducerTopic(), String.valueOf(key));
+                topicsConfig.getProducerTopic(), key.toString());
     }
 }

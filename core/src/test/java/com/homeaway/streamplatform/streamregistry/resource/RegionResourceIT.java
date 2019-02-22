@@ -15,8 +15,8 @@
  */
 package com.homeaway.streamplatform.streamregistry.resource;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.ws.rs.core.Response;
@@ -40,11 +40,11 @@ public class RegionResourceIT extends BaseResourceIT {
 
         Collection<Hint> hints = (Collection<Hint>)response.getEntity();
 
-        Assert.assertEquals(new HashSet<>(Arrays.asList(US_EAST_REGION)),
+        Assert.assertEquals(new HashSet<>(Collections.singletonList(US_EAST_REGION)),
                 hints.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractDao.PRIMARY_HINT)).findFirst().get().getVpcs());
-        Assert.assertEquals(new HashSet<>(Arrays.asList(US_EAST_REGION)),
+        Assert.assertEquals(new HashSet<>(Collections.singletonList(US_EAST_REGION)),
                 hints.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(BaseResourceIT.OTHER_HINT)).findFirst().get().getVpcs());
-        Assert.assertEquals(new HashSet<>(Arrays.asList(US_WEST_REGION)),
+        Assert.assertEquals(new HashSet<>(Collections.singletonList(US_WEST_REGION)),
                 hints.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(BaseResourceIT.SOME_HINT)).findFirst().get().getVpcs());
     }
 }

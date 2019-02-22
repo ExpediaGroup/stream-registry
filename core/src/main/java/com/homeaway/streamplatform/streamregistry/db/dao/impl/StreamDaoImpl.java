@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.streams.state.KeyValueIterator;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
@@ -203,7 +204,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     }
 
     /**
-     * Verify if the Topic exists If not, create Topics in the Cluster
+     * Verify if the Topic exists If not, inserting Topics in the Cluster
      *
      * @param stream the stream that will be used to verify and/or upsert topics to
      */
@@ -225,7 +226,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             throw e;
         } catch (Exception e) {
             throw new InternalServerErrorException(
-                    String.format("Error while creating the stream. Can't create the topic %s", stream.getName()), e);
+                    String.format("Error while creating the stream. Can't inserting the topic %s", stream.getName()), e);
         }
     }
 
@@ -259,7 +260,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
 
     @Override
     public Optional<Stream> getStream(String streamName) {
-        log.info("Pulling stream information from global state-store for streamName={}", streamName);
+        log.info("Pulling stream information from global state-store for stream={}", streamName);
         Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
         return streamValue.map(AvroToJsonDTO::convertAvroToJson);
     }
@@ -282,7 +283,8 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     public List<Stream> getAllStreams() {
         List<Stream> streamList = new ArrayList<>();
         log.info("Pulling stream information from local instance's state-store");
-        kStreams.getAllStreams().forEachRemaining(avroStream -> streamList.add(AvroToJsonDTO.convertAvroToJson(avroStream.value)));
+        KeyValueIterator<AvroStreamKey, AvroStream> allStreams = kStreams.getAllStreams();
+        allStreams.forEachRemaining(avroStream -> streamList.add(AvroToJsonDTO.convertAvroToJson(avroStream.value)));
         return streamList;
     }
 

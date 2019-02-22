@@ -31,12 +31,12 @@ import io.confluent.kafka.schemaregistry.exceptions.SchemaRegistryException;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryRestApplication;
 import io.confluent.kafka.schemaregistry.storage.SchemaRegistry;
-import io.confluent.kafka.schemaregistry.zookeeper.SchemaRegistryIdentity;
+import io.confluent.kafka.schemaregistry.storage.SchemaRegistryIdentity;
 
 import org.apache.curator.test.InstanceSpec;
 import org.apache.curator.test.TestingServer;
 import org.apache.kafka.common.network.ListenerName;
-import org.apache.kafka.common.protocol.SecurityProtocol;
+import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.utils.Time;
 import org.eclipse.jetty.server.Server;
 import org.junit.rules.ExternalResource;
@@ -100,7 +100,7 @@ public class EmbeddedKafkaStack extends ExternalResource {
             int zkTestPort = zkTestPortConfig != null ? Integer.valueOf(zkTestPortConfig) : -1;
             return new ZooKeeperEmbedded(zkTestPort);
         } catch (Exception exception) {
-            throw new IllegalStateException("Could not start Zookeeper", exception);
+            throw new IllegalStateException("Could not starting Zookeeper", exception);
         }
     }
 

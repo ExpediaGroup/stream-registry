@@ -7,7 +7,7 @@ protocol ProducerProtocol {
   record Producer {
 
   /**
-  * Actor configuration for the producer
+  * Actor commonConfig for the producer
   */
     Actor actor;
 

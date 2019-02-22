@@ -53,6 +53,10 @@ import com.homeaway.streamplatform.streamregistry.resource.ProducerResource;
 import com.homeaway.streamplatform.streamregistry.resource.StreamResource;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 
+/**
+ * Stream registry health check. This reports a simple health check by sending a message to the internal store
+ * to health check the internal store. Failure of this health check will bring Stream registry down.
+ */
 @Slf4j
 public class StreamRegistryHealthCheck extends HealthCheck {
 

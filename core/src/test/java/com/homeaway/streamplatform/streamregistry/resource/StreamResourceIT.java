@@ -40,7 +40,7 @@ public class StreamResourceIT extends BaseResourceIT {
 
     @Test
     public void test_upsertStream_create_new_stream() throws InterruptedException {
-        String streamName = "junit-stream-create-new-stream";
+        String streamName = "junit-stream-inserting-new-stream";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         streamResource.upsertStream(streamName, stream);
@@ -147,8 +147,8 @@ public class StreamResourceIT extends BaseResourceIT {
 
     @Test
     public void test_getAllStreamsWithTime() throws InterruptedException {
-        String streamName1 = "junit-stream-getAllStreams-with-time-1";
-        String streamName2 = "junit-stream-getAllStreams-with-time-2";
+        String streamName1 = "junit-stream-getAllValues-with-time-1";
+        String streamName2 = "junit-stream-getAllValues-with-time-2";
 
         Stream stream1 = JsonModelBuilder.buildJsonStream(streamName1);
         Stream stream2 = JsonModelBuilder.buildJsonStream(streamName2);
@@ -170,7 +170,7 @@ public class StreamResourceIT extends BaseResourceIT {
 
     @Test
     public void test_deleteStream() throws InterruptedException {
-        String streamName = "junit-stream-delete-stream-1";
+        String streamName = "junit-stream-deleting-stream-1";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         streamResource.upsertStream(streamName, stream);
@@ -187,7 +187,7 @@ public class StreamResourceIT extends BaseResourceIT {
 
     @Test
     public void test_create_stream_with_tags() throws InterruptedException {
-        String streamName = "junit-stream-create-stream-with-tags";
+        String streamName = "junit-stream-inserting-stream-with-tags";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
 
         streamResource.upsertStream(streamName, stream);
@@ -211,7 +211,7 @@ public class StreamResourceIT extends BaseResourceIT {
 
     @Test
     public void test_create_stream_with_hint_as_string() throws InterruptedException {
-        String streamName = "test-create-stream-with-hint-as-string";
+        String streamName = "test-inserting-stream-with-hint-as-string";
 
         String HINT_SWAGGER = "string";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName, JsonModelBuilder.TEST_PRODUCT_ID, Optional.of(TEST_COMPONENT_ID), HINT_SWAGGER);
@@ -225,7 +225,7 @@ public class StreamResourceIT extends BaseResourceIT {
     }
     @Test
     public void test_tag() throws InterruptedException {
-        String streamName = "junit-stream-create-stream-with-hint-tag-other";
+        String streamName = "junit-stream-inserting-stream-with-hint-tag-other";
         String OTHER_HINT = "other-alias";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName, JsonModelBuilder.TEST_PRODUCT_ID, Optional.of(TEST_COMPONENT_ID), OTHER_HINT);
 
