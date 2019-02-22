@@ -552,7 +552,8 @@ public class SourceDaoImpl implements SourceDao, Managed {
         KStream<String, SpecificRecord> kstream = builder.stream(SOURCE_COMMANDS_TOPIC_NAME, Consumed.with(keySerde, specificRecordSerde));
 
         // now create our source entities (with compacted topic)
-        kstream.map((sourceName, command) -> this.getKeyValue(command))
+        final CommandTypeProcessor commandTypeProcessor = new CommandTypeProcessor();
+        kstream.map((sourceName, command) -> commandTypeProcessor.process(command))
                 .to(SOURCE_ENTITY_TOPIC_NAME, Produced.with(keySerde, sourceSerde));
 
         // finally bind a store to the source entity topic
@@ -693,58 +694,33 @@ public class SourceDaoImpl implements SourceDao, Managed {
                 .build();
     }
 
-    interface Processor<T extends SpecificRecord> {
-        KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> getKeyValue(T type);
-    }
+    private class CommandTypeProcessor<T> {
 
-    class CreateRequestedProcessor implements Processor<CreateRequested> {
+        private CommandTypeProcessor() {}
 
-        @Override
-        public KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> getKeyValue(CreateRequested createRequested) {
-            return getSourceKeyValue(createRequested.getSource(), createRequested.getClass().getCanonicalName());
+        private KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> process(T entity) {
+            if (entity instanceof CreateRequested) {
+                CreateRequested createRequested = (CreateRequested) entity;
+                return getSourceKeyValue(createRequested.getSource(), createRequested.getClass().getCanonicalName());
+            } else if (entity instanceof UpdateRequested) {
+                UpdateRequested updateRequested = (UpdateRequested) entity;
+                return getSourceKeyValue(updateRequested.getSource(), updateRequested.getClass().getCanonicalName());
+            } else if (entity instanceof StartRequested) {
+                StartRequested startRequested = (StartRequested) entity;
+                return getSourceKeyValueForExistingSource(startRequested.getSourceName(), startRequested.getClass().getCanonicalName());
+            } else if (entity instanceof StopRequested) {
+                StopRequested stopRequested = (StopRequested) entity;
+                return getSourceKeyValueForExistingSource(stopRequested.getSourceName(), stopRequested.getClass().getCanonicalName());
+            } else if (entity instanceof PauseRequested) {
+                PauseRequested pauseRequested = (PauseRequested) entity;
+                return getSourceKeyValueForExistingSource(pauseRequested.getSourceName(), pauseRequested.getClass().getCanonicalName());
+            } else if (entity instanceof ResumeRequested) {
+                ResumeRequested resumeRequested = new ResumeRequested();
+                return getSourceKeyValueForExistingSource(resumeRequested.getSourceName(), resumeRequested.getClass().getCanonicalName());
+            } else {
+                throw new IllegalStateException("Unsupported command type");
+            }
+
         }
     }
-
-    class UpdateRequestedProcessor implements Processor<UpdateRequested> {
-
-        @Override
-        public KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> getKeyValue(UpdateRequested updateRequested) {
-            return getSourceKeyValue(updateRequested.getSource(), updateRequested.getClass().getCanonicalName());
-        }
-    }
-
-
-    class StartRequestedProcessor implements Processor<StartRequested> {
-
-        @Override
-        public KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> getKeyValue(StartRequested startRequested) {
-            return getSourceKeyValueForExistingSource(startRequested.getSourceName(), startRequested.getClass().getCanonicalName());
-        }
-    }
-
-
-    class StopRequestedProcessor implements Processor<StopRequested> {
-
-        @Override
-        public KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> getKeyValue(StopRequested stopRequested) {
-            return getSourceKeyValueForExistingSource(stopRequested.getSourceName(), stopRequested.getClass().getCanonicalName());
-        }
-    }
-
-    class PauseRequestedProcessor implements Processor<PauseRequested> {
-
-        @Override
-        public KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> getKeyValue(PauseRequested pauseRequested) {
-            return getSourceKeyValueForExistingSource(pauseRequested.getSourceName(), pauseRequested.getClass().getCanonicalName());
-        }
-    }
-
-    class ResumeRequestedProcessor implements Processor<ResumeRequested> {
-
-        @Override
-        public KeyValue<String, com.homeaway.digitalplatform.streamregistry.sources.Source> getKeyValue(ResumeRequested resumeRequested) {
-            return getSourceKeyValueForExistingSource(resumeRequested.getSourceName(), resumeRequested.getClass().getCanonicalName());
-        }
-    }
-
 }
