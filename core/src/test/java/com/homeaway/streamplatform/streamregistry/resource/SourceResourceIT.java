@@ -46,15 +46,13 @@ import com.homeaway.streamplatform.streamregistry.model.Source;
 import com.homeaway.streamplatform.streamregistry.model.SourceType;
 
 @Slf4j
-public class SourceDaoImplIT extends BaseResourceIT {
+public class SourceResourceIT extends BaseResourceIT {
 
 
     //TODO: Document the FSM in a matrix for architecture
 
     // Takes longer for messages to show up in the consumer.
-    public static final int SOURCE_WAIT_TIME_MS = 5000;
-
-    public static Properties commonConfig;
+    private static final int SOURCE_WAIT_TIME_MS = 5000;
 
     private static SourceResource sourceResource;
 
@@ -65,7 +63,7 @@ public class SourceDaoImplIT extends BaseResourceIT {
         // This will solve a lot of the dir locked issue etc.
         FileUtils.deleteDirectory(new File(SourceDaoImpl.SOURCE_PROCESSOR_DIRNAME));
 
-        commonConfig = new Properties();
+        Properties commonConfig = new Properties();
         commonConfig.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         commonConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         commonConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class.getName());

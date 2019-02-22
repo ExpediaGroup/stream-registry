@@ -170,7 +170,7 @@ public class BaseResourceIT {
 
     private static StreamRegistryManagedContainer managedContainer;
 
-    private static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
+    protected static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
         log.debug("Creating topic { name: {}, partitions: {}, replication: {}, config: {} }",
                 topic, partitions, replication, topicConfig);
         ZkUtils zkUtils = new ZkUtils(ZKCLIENT, new ZkConnection(zookeeperQuorum), false);

@@ -109,8 +109,6 @@ public class SourceDaoImpTest {
 
         topologyTestDriver = new TopologyTestDriver(builder.build(), commonConfig);
 
-
-
         keyValueStore = topologyTestDriver.getKeyValueStore(SourceDaoImpl.SOURCE_ENTITY_STORE_NAME);
 
         Assert.assertNotNull(keyValueStore);
