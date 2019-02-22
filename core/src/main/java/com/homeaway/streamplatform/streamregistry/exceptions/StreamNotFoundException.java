@@ -19,6 +19,10 @@ public class StreamNotFoundException extends BaseStreamException {
     private static final long serialVersionUID = -2171171630296498063L;
 
     public StreamNotFoundException(String streamName) {
-        super(streamName);
+        this(streamName, null);
+    }
+
+    public StreamNotFoundException(String streamName, String message) {
+        super(streamName, message);
     }
 }

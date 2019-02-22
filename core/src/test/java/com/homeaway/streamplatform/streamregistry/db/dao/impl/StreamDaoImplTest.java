@@ -197,4 +197,5 @@ public class StreamDaoImplTest {
                 .latestValueSchema(latestValueSchema)
                 .build();
     }
+
 }

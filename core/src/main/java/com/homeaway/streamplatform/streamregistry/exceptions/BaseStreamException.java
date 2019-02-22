@@ -27,7 +27,8 @@ public abstract class BaseStreamException extends RuntimeException {
         this.streamName = streamName;
     }
 
-    public BaseStreamException(String streamName) {
+    public BaseStreamException(String streamName, String message) {
+        super(message);
         this.streamName = streamName;
     }
 
