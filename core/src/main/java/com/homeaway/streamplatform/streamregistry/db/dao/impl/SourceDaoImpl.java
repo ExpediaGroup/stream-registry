@@ -62,6 +62,7 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueIterator;
@@ -192,7 +193,7 @@ public class SourceDaoImpl implements SourceDao, Managed {
     private KafkaStreams sourceProcessor;
 
     @Getter
-    private GlobalKTable<String, com.homeaway.digitalplatform.streamregistry.sources.Source> sourceEntityKTable;
+    private KTable<String, com.homeaway.digitalplatform.streamregistry.sources.Source> sourceEntityKTable;
 
     private KafkaProducer<String, CreateRequested> createRequestProducer;
     private KafkaProducer<String, UpdateRequested> updateRequestProducer;
@@ -557,7 +558,7 @@ public class SourceDaoImpl implements SourceDao, Managed {
                 .to(SOURCE_ENTITY_TOPIC_NAME, Produced.with(keySerde, sourceSerde));
 
         // finally bind a store to the source entity topic
-        sourceEntityKTable = builder.globalTable(SOURCE_ENTITY_TOPIC_NAME, Consumed.with(keySerde, sourceSerde), Materialized.<String, com.homeaway.digitalplatform.streamregistry.sources.Source,
+        sourceEntityKTable = builder.table(SOURCE_ENTITY_TOPIC_NAME, Consumed.with(keySerde, sourceSerde), Materialized.<String, com.homeaway.digitalplatform.streamregistry.sources.Source,
                 KeyValueStore<Bytes, byte[]>>as(SOURCE_ENTITY_STORE_NAME)
                 .withKeySerde(keySerde)
                 .withValueSerde(sourceSerde));

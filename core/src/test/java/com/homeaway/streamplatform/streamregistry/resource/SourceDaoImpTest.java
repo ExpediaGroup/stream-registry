@@ -140,7 +140,7 @@ public class SourceDaoImpTest {
                 new StringDeserializer(),
                 sourceEntitySerde.deserializer());
 
-        assertThat(((Source) record1.value()).getStatus(), is(buildAvroSource(sourceName, streamName, SourceDaoImpl.Status.TRANSITIONING.toString()).getStatus()));
+        assertThat(((Source) record1.value()).getStatus(), is(buildAvroSource(sourceName, streamName, SourceDaoImpl.Status.UNASSIGNED.toString()).getStatus()));
 
     }
 
