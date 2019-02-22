@@ -128,7 +128,7 @@ public class KafkaManagerImpl implements KafkaManager {
             // TODO Alternatively we can add a forceSync=true flag, ignoring any user provided info, and only updating SR with the underlying settings
             //      We should probably do forceSync=true anyway, as it provides a simple way to keep things in sync (#114)
             if(isNewStream) {
-                throw new StreamCreationException(String.format("Error: Input configs=%s and actual configs=%s are not same for topic=%s", topicConfigMap, actualTopicConfig, topic));
+                throw new StreamCreationException(topic, String.format("Error: Input configs=%s and actual configs=%s are not same for topic=%s", topicConfigMap, actualTopicConfig, topic));
             }
 
             // If we got this far, we are "updating" an "existing" stream, and request config is different than

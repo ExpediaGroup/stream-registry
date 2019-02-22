@@ -18,7 +18,7 @@ package com.homeaway.streamplatform.streamregistry.exceptions;
 public class StreamDeletionException extends BaseStreamException {
     private static final long serialVersionUID = -5793888606557229357L;
 
-    public StreamDeletionException(String streamName) {
-        super(streamName);
+    public StreamDeletionException(String streamName, String message) {
+        super(streamName, message);
     }
 }

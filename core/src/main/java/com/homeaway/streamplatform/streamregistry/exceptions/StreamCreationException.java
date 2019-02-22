@@ -18,8 +18,8 @@ package com.homeaway.streamplatform.streamregistry.exceptions;
 public class StreamCreationException extends BaseStreamException {
     private static final long serialVersionUID = -4755617190312561871L;
 
-    public StreamCreationException(String msg) {
-        super(msg);
+    public StreamCreationException(String streamName, String msg) {
+        super(streamName, msg);
     }
 
     public StreamCreationException(Throwable cause, String msg) {
