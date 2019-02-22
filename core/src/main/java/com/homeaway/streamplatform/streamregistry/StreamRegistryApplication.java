@@ -85,6 +85,15 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     private MetricRegistry metricRegistry;
 
+    private InfraManager infraManager;
+
+    private RegionDao regionDao;
+    private StreamDao streamDao;
+    private StreamClientDao<Producer> producerDao;
+    private StreamClientDao<Consumer> consumerDao;
+
+    private StreamResource streamResource;
+
     public static void main(final String[] args) throws Exception {
         new StreamRegistryApplication().run(args);
     }
@@ -114,87 +123,39 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     @Override
     public void run(final StreamRegistryConfiguration configuration, final Environment environment) {
-        Properties producerProperties = new Properties();
-        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
 
-        configuration.getKafkaProducerConfig().getKafkaProducerProperties().forEach(producerProperties::put);
+        // Step 1 - initialize managed beans
 
-        Properties kstreamsProperties = new Properties();
-        configuration.getKafkaStreamsConfig().getKstreamsProperties().forEach(kstreamsProperties::put);
-        kstreamsProperties.put(ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, CustomRocksDBConfig.class);
-        TopicsConfig topicsConfig = configuration.getTopicsConfig();
+        ManagedKStreams managedKStreams = createManagedKStreams(configuration);
 
-        ManagedKafkaProducer managedProducer = new ManagedKafkaProducer(producerProperties, topicsConfig);
-        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig);
+        ManagedInfraManager managedInfraManager = createManagedInfraManager(configuration);
+        Preconditions.checkState(managedInfraManager != null, "managedInfraManager cannot be null.");
 
-        InfraManagerConfig infraManagerConfig = configuration.getInfraManagerConfig();
-        String infraManagerClassName = infraManagerConfig.getClassName();
+        ManagedKafkaProducer managedKafkaProducer = createManagedKafkaProducer(configuration);
 
-        InfraManager infraManager = null;
-        if (infraManagerClassName != null && !infraManagerClassName.isEmpty()) {
-            try {
-                infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
-                infraManager.configure(infraManagerConfig.getConfig());
-            } catch (Exception e) {
-                log.error("Error loading/configuring Infra Manager Class", e);
-                throw new IllegalStateException("Could not load/configure Infra Manager class", e);
-            }
-        }
-        ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
+        // Step 2 - initialize the DAO's
 
-        environment.lifecycle().manage(managedProducer);
-        environment.lifecycle().manage(managedKStreams);
-        environment.lifecycle().manage(managedInfraManager);
+        initDao(configuration, environment, managedKStreams, managedKafkaProducer);
 
-        // TODO: Check if State Store is Initialized (#98)
-        // This may not be needed if Healthcheck is moved to ManagedKafkaProducer
-        // If not healthy after timeout log error and proceed anyway
-        try {
-            // Sleep needed to make sure the processor's init method is called before servicing the HTTP requests.
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-            log.error("Error while sleeping the main thread for 10 seconds so that Kstream topology gets initialized.", e);
-        }
+        // Step 3 - initialize and register the SR resources to JerseyEnvironment
 
-        final Client httpClient = new JerseyClientBuilder(environment)
-                .using(configuration.getHttpClient())
-                .using(environment)
-                .build("remoteStateStoreHttpClient");
+        initAndRegisterResource(environment);
 
-        log.info("Connection Timeout:{}", configuration.getHttpClient().getConnectionTimeout());
-        log.info("Connection Request Timeout:{}", configuration.getHttpClient().getConnectionRequestTimeout());
-
-        KafkaManager kafkaManager = new KafkaManagerImpl();
-        String env = configuration.getEnv();
-        RegionDao regionDao = new RegionDaoImpl(env, infraManager);
-
-        StreamValidator streamValidator = loadValidator(configuration, httpClient, regionDao);
-        Preconditions.checkState(streamValidator != null, "streamValidator cannot be null.");
-
-        SchemaManager schemaManager = loadSchemaManager(configuration);
-
-        StreamDao streamDao = new StreamDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
-        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
-        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedProducer, managedKStreams, env, regionDao, infraManager, kafkaManager);
-
-        StreamResource streamResource = new StreamResource(streamDao, producerDao, consumerDao);
-        environment.jersey().register(streamResource);
-        environment.jersey().register(new RegionResource(regionDao));
+        // Step 4 - initialize and register monitoring and health check hooks
 
         environment.getApplicationContext().addServlet(PingServlet.class, "/ping");
-        StreamRegistryHealthCheck streamRegistryHealthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
+        initAndRegisterHealthCheck(configuration, environment, managedKStreams);
 
-        environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
+        // Step 5 - centralize initialization and configuration of SR server Object Mapper's
+        registerServiceMapper(environment);
+
+        // Step 6 - In order to avoid muddle up with HK2 and Jersey lifecycle dependency
+        // we wrap up all managed beans in a centralized container to manage server
+        // components start and stop ordering
+
+        registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
-
-        environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.ALWAYS);
-        environment.getObjectMapper()
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        GuavaModule guavaModule = new GuavaModule();
-        guavaModule.configureAbsentsAsNulls(true);
-        environment.getObjectMapper().registerModule(new GuavaModule().configureAbsentsAsNulls(true));
     }
 
     public static StreamValidator loadValidator(StreamRegistryConfiguration configuration,
@@ -263,5 +224,124 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
             options.setMaxWriteBufferNumber(2);
             options.optimizeFiltersForHits();
         }
+    }
+
+    private ManagedKStreams createManagedKStreams(final StreamRegistryConfiguration configuration) {
+        Properties kstreamsProperties = new Properties();
+        configuration.getKafkaStreamsConfig().getKstreamsProperties().forEach(kstreamsProperties::put);
+        kstreamsProperties.put(ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, CustomRocksDBConfig.class);
+        TopicsConfig topicsConfig = configuration.getTopicsConfig();
+
+        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig);
+        return managedKStreams;
+
+    }
+
+    private ManagedInfraManager createManagedInfraManager(final StreamRegistryConfiguration configuration) {
+        InfraManagerConfig infraManagerConfig = configuration.getInfraManagerConfig();
+        String infraManagerClassName = infraManagerConfig.getClassName();
+
+        Preconditions.checkState(!infraManagerClassName.isEmpty(), "infraManagerClassName cannot be empty");
+
+        try {
+            infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
+            infraManager.configure(infraManagerConfig.getConfig());
+            ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
+            return managedInfraManager;
+        } catch (Exception e) {
+            log.error("Error loading/configuring Infra Manager Class", e);
+            throw new IllegalStateException("Could not load/configure Infra Manager class", e);
+        }
+    }
+
+    private ManagedKafkaProducer createManagedKafkaProducer(final StreamRegistryConfiguration configuration) {
+        Properties producerProperties = new Properties();
+        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        TopicsConfig topicsConfig = configuration.getTopicsConfig();
+
+        configuration.getKafkaProducerConfig().getKafkaProducerProperties().forEach(producerProperties::put);
+
+        ManagedKafkaProducer managedKafkaProducer = new ManagedKafkaProducer(producerProperties, topicsConfig);
+        return managedKafkaProducer;
+    }
+
+    private StreamValidator createStreamValidator(final StreamRegistryConfiguration configuration, final Environment environment) {
+        Preconditions.checkState(regionDao != null, "regionDao cannot be null.");
+
+        final Client httpClient = new JerseyClientBuilder(environment).using(configuration.getHttpClient()).using(environment)
+            .build("remoteStateStoreHttpClient");
+
+        log.info("Connection Timeout:{}", configuration.getHttpClient().getConnectionTimeout());
+        log.info("Connection Request Timeout:{}", configuration.getHttpClient().getConnectionRequestTimeout());
+
+        StreamValidator streamValidator = loadValidator(configuration, httpClient, regionDao);
+        return streamValidator;
+    }
+
+    private void initDao(final StreamRegistryConfiguration configuration, final Environment environment, ManagedKStreams managedKStreams,
+        ManagedKafkaProducer managedKafkaProducer) {
+
+        Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
+        Preconditions.checkState(managedKafkaProducer != null, "managedKafkaProducer cannot be null.");
+        Preconditions.checkState(infraManager != null, "infraManager cannot be null.");
+
+        String env = configuration.getEnv();
+
+        regionDao = new RegionDaoImpl(env, infraManager);
+
+        KafkaManager kafkaManager = new KafkaManagerImpl();
+        SchemaManager schemaManager = loadSchemaManager(configuration);
+        StreamValidator streamValidator = createStreamValidator(configuration, environment);
+
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, infraManager, streamValidator, schemaManager,
+            kafkaManager);
+        producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, infraManager);
+        consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, infraManager);
+    }
+
+    private void initAndRegisterResource(final Environment environment) {
+
+        Preconditions.checkState(streamDao != null, "streamDao cannot be null.");
+        Preconditions.checkState(producerDao != null, "producerDao cannot be null.");
+        Preconditions.checkState(consumerDao != null, "consumerDao cannot be null.");
+        Preconditions.checkState(regionDao != null, "regionDao cannot be null.");
+
+        streamResource = new StreamResource(streamDao, producerDao, consumerDao);
+        RegionResource regionResource = new RegionResource(regionDao);
+
+        environment.jersey().register(streamResource);
+        environment.jersey().register(regionResource);
+    }
+
+    private void initAndRegisterHealthCheck(final StreamRegistryConfiguration configuration, final Environment environment,
+        ManagedKStreams managedKStreams) {
+
+        Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
+        Preconditions.checkState(streamResource != null, "streamResource cannot be null.");
+
+        StreamRegistryHealthCheck streamRegistryHealthCheck =
+            new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
+        environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
+    }
+
+    private void registerServiceMapper(final Environment environment) {
+        environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        environment.getObjectMapper().disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        GuavaModule guavaModule = new GuavaModule();
+        guavaModule.configureAbsentsAsNulls(true);
+        environment.getObjectMapper().registerModule(new GuavaModule().configureAbsentsAsNulls(true));
+    }
+
+    private void registerManagedContainer(final Environment environment, ManagedKStreams managedKStreams,
+        ManagedInfraManager managedInfraManager, ManagedKafkaProducer managedKafkaProducer) {
+
+        Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
+        Preconditions.checkState(managedInfraManager != null, "managedInfraManager cannot be null.");
+        Preconditions.checkState(managedKafkaProducer != null, "managedKafkaProducer cannot be null.");
+
+        StreamRegistryManagedContainer managedContainer =
+            new StreamRegistryManagedContainer(managedKStreams, managedInfraManager, managedKafkaProducer);
+        environment.lifecycle().manage(managedContainer);
     }
 }

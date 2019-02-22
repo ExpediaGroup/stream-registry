@@ -92,7 +92,7 @@ public class StreamResource {
             if (!stream.getName().equals(streamName)) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                                "stream name provided in path param does not match that of the stream body"))
+                                "stream name provided in path param [" + streamName + "] does not match that of the stream body [" + stream.getName() + "]"))
                         .build();
             }
 

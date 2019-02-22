@@ -38,5 +38,7 @@ public class InfraManagerConfig {
     /**
      * Specific configurations required by the Infra Manager class
      */
+    @Valid
+    @NonNull
     Map<String, Object> config;
 }
