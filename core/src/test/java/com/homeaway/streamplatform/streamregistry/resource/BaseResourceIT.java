@@ -137,6 +137,8 @@ public class BaseResourceIT {
 
     protected static ProducerResource producerResource;
 
+    protected static ClusterResource clusterResource;
+
     protected static InfraManager infraManager;
 
     protected static StreamRegistryHealthCheck healthCheck;
@@ -257,8 +259,10 @@ public class BaseResourceIT {
         StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao,
             infraManager);
         streamResource = new StreamResource(streamDao, producerDao, consumerDao);
+
         producerResource = new ProducerResource(producerDao);
         consumerResource = new ConsumerResource(consumerDao);
+        clusterResource = new ClusterResource(clusterDao);
 
         SchemaRegistryClient schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryURL, 1);
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
@@ -296,7 +300,7 @@ public class BaseResourceIT {
             .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_NAME)
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
-        infraManagerImplStub.addCluster(clusterKey,  new ClusterValue(clusterPropertiesMap));
+        infraManagerImplStub.upsertCluster(clusterKey,  new ClusterValue(clusterPropertiesMap));
 
         // inserting another cluster with SOME_HINT
         ClusterKey motClusterKey = new ClusterKey(US_WEST_REGION, ENV_TEST, SOME_HINT, null);
@@ -306,7 +310,7 @@ public class BaseResourceIT {
             .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL)
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
-        infraManagerImplStub.addCluster(motClusterKey,  new ClusterValue(motclusterPropertiesMap));
+        infraManagerImplStub.upsertCluster(motClusterKey,  new ClusterValue(motclusterPropertiesMap));
 
         // Inserting third cluster with OTHER_HINT "producer cluster"
         ClusterKey otherProducerClusterKey = new ClusterKey(US_EAST_REGION, ENV_TEST, OTHER_HINT, PRODUCER);
@@ -316,7 +320,7 @@ public class BaseResourceIT {
             .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL+"_other_producer")
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
-        infraManagerImplStub.addCluster(otherProducerClusterKey,  new ClusterValue(otherProducerClusterPropertiesMap));
+        infraManagerImplStub.upsertCluster(otherProducerClusterKey,  new ClusterValue(otherProducerClusterPropertiesMap));
 
         // Inserting fourth cluster with OTHER_HINT "consumer cluster"
         ClusterKey otherConsumerClusterKey = new ClusterKey(US_EAST_REGION, ENV_TEST, OTHER_HINT, CONSUMER);
@@ -326,7 +330,7 @@ public class BaseResourceIT {
             .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL+"_other_consumer")
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
-        infraManagerImplStub.addCluster(otherConsumerClusterKey,  new ClusterValue(otherConsumerClusterPropertiesMap));
+        infraManagerImplStub.upsertCluster(otherConsumerClusterKey,  new ClusterValue(otherConsumerClusterPropertiesMap));
 
         return infraManagerImplStub;
     }

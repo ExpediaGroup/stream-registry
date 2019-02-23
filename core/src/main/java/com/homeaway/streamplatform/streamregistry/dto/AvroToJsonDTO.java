@@ -26,8 +26,10 @@ import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
+import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.model.RegionStreamConfig;
 import com.homeaway.streamplatform.streamregistry.model.Schema;
@@ -36,6 +38,11 @@ import com.homeaway.streamplatform.streamregistry.model.StreamConfig;
 import com.homeaway.streamplatform.streamregistry.model.Tags;
 
 public class AvroToJsonDTO {
+
+    public static final String CLUSTER_NAME = "cluster.name";
+    public static final String BOOTSTRAP_SERVER = "bootstrap.servers";
+    public static final String SCHEMA_REGISTRY_URL = "schema.registry.url";
+    public static final String ZOOKEEPER_QUORUM = "zookeeper.quorum";
 
     public static Stream convertAvroToJson(AvroStream avroStream) {
 
@@ -141,5 +148,25 @@ public class AvroToJsonDTO {
             regionConfigJsonList.add(regionKafkaStreamJson);
         }
         return regionConfigJsonList;
+    }
+
+
+    public static JsonCluster.Key getJsonClusterKey(ClusterKey avroClusterKey){
+            return JsonCluster.Key.builder()
+                .vpc(avroClusterKey.getVpc())
+                .env(avroClusterKey.getEnv())
+                .hint(avroClusterKey.getHint())
+                .type(avroClusterKey.getType())
+                .build();
+    }
+
+
+    public static JsonCluster.Value getJsonClusterValue(com.homeaway.digitalplatform.streamregistry.ClusterValue avroClusterValue){
+        return JsonCluster.Value.builder()
+            .bootstrapServers(avroClusterValue.getClusterProperties().get(BOOTSTRAP_SERVER))
+            .clusterName(avroClusterValue.getClusterProperties().get(CLUSTER_NAME))
+            .schemaRegistryURL(avroClusterValue.getClusterProperties().get(SCHEMA_REGISTRY_URL))
+            .zookeeperQuorum(avroClusterValue.getClusterProperties().get(ZOOKEEPER_QUORUM))
+            .build();
     }
 }

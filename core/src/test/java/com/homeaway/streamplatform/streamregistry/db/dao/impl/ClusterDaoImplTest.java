@@ -15,8 +15,10 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -29,11 +31,14 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
+import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 
 /**
@@ -60,6 +65,9 @@ public class ClusterDaoImplTest {
      */
     static Map<String, String> clusterProperties;
 
+
+    private static JsonCluster.Value expectedClusterValue;
+
     /**
      * Setup method.
      */
@@ -71,8 +79,15 @@ public class ClusterDaoImplTest {
         clusterProperties = new HashMap<>();
         clusterProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         clusterProperties.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "localhost:2181");
-        clusterProperties.put(CLUSTER_NAME, "cluster_dao_test_primary");
+        clusterProperties.put(CLUSTER_NAME, "cluster_name");
         clusterProperties.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "localhost:8081");
+
+        expectedClusterValue = JsonCluster.Value.builder()
+            .bootstrapServers("localhost:9092")
+            .schemaRegistryURL("localhost:8081")
+            .zookeeperQuorum("localhost:2181")
+            .clusterName("cluster_name")
+            .build();
     }
 
     /**
@@ -99,13 +114,23 @@ public class ClusterDaoImplTest {
      */
     @Test
     public void testGetAllClusters() {
-        ClusterValue expectedClusterValue = new ClusterValue(clusterProperties);
+        Map<JsonCluster.Key, JsonCluster.Value> expectedClusterMap = new HashMap<>();
 
-        Map<ClusterKey, ClusterValue> expectedClusterMap = new HashMap<>();
-        expectedClusterMap.put(new ClusterKey("vpc", "env", "hint", ""), expectedClusterValue);
+        JsonCluster.Key jsonClusterKey = JsonCluster.Key.builder()
+            .vpc("vpc")
+            .env("env")
+            .hint("hint")
+            .type("")
+            .build();
 
-        when(infraManager.getAllClusters()).thenReturn(expectedClusterMap);
-        Map<ClusterKey, ClusterValue> allClusters = clusterDao.getAllClusters();
+        expectedClusterMap.put(jsonClusterKey, expectedClusterValue);
+
+        Map<ClusterKey, ClusterValue> avroClusterMap = new HashMap<>();
+
+        avroClusterMap.put(new ClusterKey("vpc", "env", "hint", ""), new ClusterValue(clusterProperties));
+
+        when(infraManager.getAllClusters()).thenReturn(avroClusterMap);
+        Map<JsonCluster.Key, JsonCluster.Value> allClusters = clusterDao.getAllClusters();
 
         Assert.assertEquals(1, allClusters.size());
     }
@@ -119,8 +144,39 @@ public class ClusterDaoImplTest {
 
         when(infraManager.getAllClusters()).thenReturn(expectedClusterMap);
 
-        Optional<ClusterValue> actualClusterValue = clusterDao.getCluster("cluster_dao_test_primary");
-        Assert.assertEquals(expectedClusterValue, actualClusterValue.get());
+        Optional<JsonCluster.Value> actualClusterValue = clusterDao.getCluster("cluster_name");
+
+        JsonCluster.Value jsonClusterValue = AvroToJsonDTO.getJsonClusterValue(expectedClusterValue);
+
+        Assert.assertTrue(actualClusterValue.isPresent());
+
+        JsonCluster.Value value = actualClusterValue.get();
+
+        Assert.assertEquals(jsonClusterValue.getBootstrapServers(), value.getBootstrapServers());
+        Assert.assertEquals(jsonClusterValue.getSchemaRegistryURL(), value.getSchemaRegistryURL());
+
+        Assert.assertEquals(jsonClusterValue.getClusterName(), value.getClusterName());
+        Assert.assertEquals(jsonClusterValue.getZookeeperQuorum(), value.getZookeeperQuorum());
     }
 
+
+    @Test
+    public void testUpsertCluster() {
+        ClusterKey clusterKey = new ClusterKey("vpc", "env", "hint", "");
+        ClusterValue expectedClusterValue = new ClusterValue(clusterProperties);
+
+        JsonCluster jsonCluster = JsonCluster.builder()
+            .clusterKey(AvroToJsonDTO.getJsonClusterKey(clusterKey))
+            .clusterValue(AvroToJsonDTO.getJsonClusterValue(expectedClusterValue))
+            .build();
+
+        clusterDao.upsertCluster(jsonCluster);
+
+        ArgumentCaptor<ClusterValue> clusterValueArgumentCaptor = ArgumentCaptor.forClass(ClusterValue.class);
+
+        verify(infraManager).upsertCluster(any(ClusterKey.class), clusterValueArgumentCaptor.capture());
+
+        assertEquals("cluster_name", clusterValueArgumentCaptor.getValue().getClusterProperties().get(CLUSTER_NAME));
+        assertEquals( "localhost:9092", clusterValueArgumentCaptor.getValue().getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
+    }
 }

@@ -16,16 +16,26 @@
 package com.homeaway.streamplatform.streamregistry.dto;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
+import com.homeaway.digitalplatform.streamregistry.ClusterKey;
+import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
 public class JsonToAvroDTO {
+
+    public static final String CLUSTER_NAME = "cluster.name";
+    public static final String BOOTSTRAP_SERVER = "bootstrap.servers";
+    public static final String SCHEMA_REGISTRY_URL = "schema.registry.url";
+    public static final String ZOOKEEPER_QUORUM = "zookeeper.quorum";
 
     public static AvroStream convertJsonToAvro(Stream jsonStream, OperationType operationType) {
 
@@ -88,4 +98,24 @@ public class JsonToAvroDTO {
 
     }
 
+    public static ClusterKey getAvroClusterKey(JsonCluster.Key jsonClusterKey){
+        return ClusterKey.newBuilder()
+            .setVpc(jsonClusterKey.getVpc())
+            .setEnv(jsonClusterKey.getEnv())
+            .setHint(jsonClusterKey.getHint())
+            .setType(jsonClusterKey.getType())
+            .build();
+    }
+
+    public static ClusterValue getAvroClusterValue(JsonCluster.Value jsonClusterValue){
+        Map<String, String> clusterProperties = new HashMap<>();
+        clusterProperties.put(CLUSTER_NAME, jsonClusterValue.getClusterName());
+        clusterProperties.put(BOOTSTRAP_SERVER, jsonClusterValue.getBootstrapServers());
+        clusterProperties.put(SCHEMA_REGISTRY_URL, jsonClusterValue.getSchemaRegistryURL());
+        clusterProperties.put(ZOOKEEPER_QUORUM, jsonClusterValue.getZookeeperQuorum());
+
+        return com.homeaway.digitalplatform.streamregistry.ClusterValue.newBuilder()
+            .setClusterProperties(clusterProperties)
+            .build();
+    }
 }

@@ -18,17 +18,19 @@ package com.homeaway.streamplatform.streamregistry.db.dao;
 import java.util.Map;
 import java.util.Optional;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 
 /**
  * Interface for Cluster dao.
  */
 public interface ClusterDao {
-    Map<ClusterKey, ClusterValue> getAllClusters();
+    Map<JsonCluster.Key, JsonCluster.Value> getAllClusters();
 
     ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException;
 
-    Optional<ClusterValue> getCluster(String clusterName);
+    Optional<JsonCluster.Value> getCluster(String clusterName);
+
+    void upsertCluster(JsonCluster jsonCluster);
 }

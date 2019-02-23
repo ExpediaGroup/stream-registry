@@ -26,10 +26,10 @@ import com.homeaway.digitalplatform.streamregistry.ClusterValue;
  * <br>
  * <b><code>ClusterKey</code></b> - Avro encoded key containing the following fields
  * <ul>
- *     <li><code>vpc</code> - VPC of the Stream Registry cluster</li>
- *     <li><code>env</code> - Environment, for example staging or production</li>
- *     <li><code>hint</code> - If there are multiple clusters in a vpc, the specific classifier of the cluster. E.g: metrics, logging, etc.</li>
- *     <li><code>type</code> - If there are multiple clusters in a vpc for a type of hint, the specific type of the cluster. E.g. metrics-aggregate or logging-mirror.</li>
+ * <li><code>vpc</code> - VPC of the Stream Registry cluster</li>
+ * <li><code>env</code> - Environment, for example staging or production</li>
+ * <li><code>hint</code> - If there are multiple clusters in a vpc, the specific classifier of the cluster. E.g: metrics, logging, etc.</li>
+ * <li><code>type</code> - If there are multiple clusters in a vpc for a type of hint, the specific type of the cluster. E.g. metrics-aggregate or logging-mirror.</li>
  * </ul>
  * <br>
  * <b><code>ClusterValue</code></b> - Avro encoded value containing containing a <code>Map&lt;String&gt;</code> of Stream Registry cluster properties.
@@ -37,14 +37,26 @@ import com.homeaway.digitalplatform.streamregistry.ClusterValue;
  * <br>
  * An example of a Confluent Platform Kafka Cluster would contain the following details
  * <ul>
- *     <li><code>bootstrap.servers</code></li>
- *     <li><code>schema.registry.url</code></li>
+ * <li><code>bootstrap.servers</code></li>
+ * <li><code>schema.registry.url</code></li>
+ * <li><code>cluster.name</code></li>
+ * <li><code>zookeeper.quorum</code></li>
  * </ul>
  */
 public interface InfraManager {
 
+    /**
+     * Start.
+     *
+     * @throws Exception the exception
+     */
     void start() throws Exception;
 
+    /**
+     * Stop.
+     *
+     * @throws Exception the exception
+     */
     void stop() throws Exception;
 
     /**
@@ -68,5 +80,14 @@ public interface InfraManager {
      * @return The cluster in the Stream Registry added with the given key
      */
     Optional<ClusterValue> getClusterByKey(ClusterKey key);
+
+
+    /**
+     * Upsert cluster.
+     *
+     * @param clusterKey the cluster key
+     * @param clusterValue the cluster value
+     */
+    void upsertCluster(ClusterKey clusterKey, ClusterValue clusterValue);
 
 }

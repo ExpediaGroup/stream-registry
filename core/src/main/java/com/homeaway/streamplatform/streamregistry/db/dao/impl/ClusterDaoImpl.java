@@ -24,7 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
+import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
+import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 
 /**
@@ -57,9 +60,14 @@ public class ClusterDaoImpl implements ClusterDao{
      * @return Map of ClusterKey and ClusterValue
      */
     @Override
-    public Map<ClusterKey, ClusterValue> getAllClusters() {
+    public Map<JsonCluster.Key, JsonCluster.Value> getAllClusters() {
         log.info("Get all clusters from infra manager...");
-        return infraManager.getAllClusters();
+        Map<ClusterKey, ClusterValue> allClusters = infraManager.getAllClusters();
+
+        Map<JsonCluster.Key, JsonCluster.Value> allJsonClusters = new HashMap<>();
+
+        allClusters.forEach((ClusterKey clusterKey, ClusterValue clusterValue) -> allJsonClusters.put(AvroToJsonDTO.getJsonClusterKey(clusterKey), AvroToJsonDTO.getJsonClusterValue(clusterValue)));
+        return allJsonClusters;
     }
 
     /**
@@ -98,17 +106,30 @@ public class ClusterDaoImpl implements ClusterDao{
 
     /**
      * Get a Cluster using a clusterName
-     * @param clusterName
-     * @return ClusterValue - Contains cluster details
+     * @param clusterName - Name of the Cluster from Infra Manager
+     * @return JsonClusterValue - Contains cluster details
      */
-    public Optional<ClusterValue> getCluster(String clusterName) {
+    public Optional<JsonCluster.Value> getCluster(String clusterName) {
         log.info("getting cluster detail for cluster - {}", clusterName);
-        Map<ClusterKey, ClusterValue> allClusters = getAllClusters();
+        Map<ClusterKey, ClusterValue> allClusters = infraManager.getAllClusters();
         Map<String, ClusterValue> clustersByName = new HashMap<>();
 
         allClusters.forEach( (ClusterKey clusterKey,ClusterValue clusterValue) -> clustersByName.put(clusterValue.getClusterProperties().get(CLUSTER_NAME), clusterValue));
 
         log.info("Cluster Info for clusterName - {} is: {}",clusterName,clustersByName.get(clusterName));
-        return Optional.ofNullable(new ClusterValue(clustersByName.get(clusterName).getClusterProperties()));
+
+        if(clustersByName.get(clusterName) == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(AvroToJsonDTO.getJsonClusterValue(clustersByName.get(clusterName)));
     }
+
+    @Override
+    public void upsertCluster(JsonCluster jsonCluster) {
+        log.info("Upserting Cluster {}", jsonCluster);
+        infraManager.upsertCluster(JsonToAvroDTO.getAvroClusterKey(jsonCluster.getClusterKey()), JsonToAvroDTO.getAvroClusterValue(jsonCluster.getClusterValue()));
+    }
+
+
 }
