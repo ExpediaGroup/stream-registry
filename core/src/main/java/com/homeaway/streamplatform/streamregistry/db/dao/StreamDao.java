@@ -23,14 +23,45 @@ import com.homeaway.streamplatform.streamregistry.model.Stream;
 // TODO - Need javadoc (#107)
 public interface StreamDao {
 
+    /**
+     *  Insert or Update a Stream
+     * @param stream
+     * @throws SchemaManagerException - when the input schema registration fails against SchemaRegistry
+     * @throws InvalidStreamException - When the validator that implements
+     *              `com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator` check fails on input Stream Object.
+     * @throws StreamCreationException - When streams could not be created in the underlying streaming infrastructure.
+     * @throws ClusterNotFoundException - When cluster is not found for the input VPC and Hint
+     */
     void upsertStream(Stream stream) throws SchemaManagerException, InvalidStreamException, StreamCreationException, ClusterNotFoundException;
 
+    /**
+     * Get a Stream for the given name
+     * @param streamName
+     * @return
+     * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
+     */
     Stream getStream(String streamName) throws StreamNotFoundException;
 
+    /**
+     * Delete the stream for the given name
+     * @param streamName
+     * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
+     */
     void deleteStream(String streamName) throws StreamNotFoundException;
 
+    /**
+     * Get all the streams.
+     *
+     * @return List<Stream>
+     */
     List<Stream> getAllStreams();
 
+    /**
+     * Validate the input schema against the SchemaRegistry.
+     * @param stream
+     * @return
+     * @throws SchemaException - when the input schemas for key or value could not parsed.
+     */
     boolean validateStreamCompatibility(Stream stream) throws SchemaException;
 
 }
