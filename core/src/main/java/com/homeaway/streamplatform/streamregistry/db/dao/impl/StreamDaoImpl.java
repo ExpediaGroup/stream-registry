@@ -18,11 +18,8 @@ package com.homeaway.streamplatform.streamregistry.db.dao.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-
-import javax.ws.rs.InternalServerErrorException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,10 +37,7 @@ import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
-import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
-import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
-import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.*;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaReference;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -54,7 +48,7 @@ import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
 @Slf4j
-public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValidator {
+public class StreamDaoImpl extends AbstractDao implements StreamDao {
 
     private StreamValidator streamValidator;
     private SchemaManager schemaManager;
@@ -74,59 +68,14 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         this.kafkaManager = kafkaManager;
     }
 
-    // TODO - This stream validation pattern needs to be reimplemented (#117)
     @Override
-    public boolean isStreamValid(Stream stream) throws InvalidStreamException {
-        try {
-            if (streamValidator != null && !streamValidator.isStreamValid(stream)) {
-                throw new InvalidStreamException(stream, streamValidator.getValidationAssertion());
-            }
-
-            if (stream.getName() == null) {
-                throw new InvalidStreamException(stream, "Stream name can not be null");
-            }
-
-
-            //TODO: Determine if streams actually need a list of VPCs defined.
-            //      For example, single cluster or single region deployments, this property is superfluous.
-            //      Instead, there should be a way to specify a singular default.
-            if (stream.getVpcList() == null || stream.getVpcList().isEmpty()) {
-                String err = String.format("Stream %s can not be created without vpcList configuration", stream.getName());
-                throw new InvalidStreamException(stream, err);
-            }
-        } catch (InvalidStreamException e) {
-            String err = String.format("Stream %s cannot be validated.", stream.getName());
-            String msg = e.getMessage();
-            if (msg == null || msg.trim().isEmpty()) {
-                log.error(err);
-                throw new InvalidStreamException(stream);
-            } else {
-                log.error(err + " " + msg);
-                throw new InvalidStreamException(stream, msg);
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public String getValidationAssertion() {
-        return null; // unused
-    }
-
-    @Override
-    public void configure(Map<String, ?> configs) {
-    }
-
-    @Override
-    public void upsertStream(Stream stream) throws SchemaManagerException, InvalidStreamException, StreamCreationException {
+    public void upsertStream(Stream stream) throws SchemaManagerException, InvalidStreamException, StreamCreationException, ClusterNotFoundException {
         applyDefaultHint(stream);
         applyDefaultPartition(stream);
         applyDefaultReplicationFactor(stream);
 
         // TODO Can isStreamValid (as currently implemented) ever be false? (#117)
-        if (!isStreamValid(stream)) {
-            log.error("Stream '{}' is not valid", stream.getName());
-        }
+        streamValidator.isStreamValid(stream);
 
         // TODO: modify to support multiple schema 'types' per stream (#55)
         // register schemas
@@ -134,7 +83,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
         stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
         stream.getLatestKeySchema().setVersion(keyReference.getVersion());
-        boolean isNewStream = false;
+        boolean isStreamNotAvailableInStreamRegistryDB = false;
 
         String valueSubject = stream.getName() + "-value";
         SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
@@ -170,12 +119,12 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
             avroStream.setS3ConnectorList(value.get().getS3ConnectorList());
         } else {
             log.info("key NOT available for the stream-name={}", stream.getName());
-            isNewStream = true;
+            isStreamNotAvailableInStreamRegistryDB = true;
             avroStream.setCreated(System.currentTimeMillis());
             key = AvroStreamKey.newBuilder().setStreamName(avroStream.getName()).build();
         }
 
-        verifyAndUpsertTopics(stream, isNewStream);
+        verifyAndUpsertTopics(stream, isStreamNotAvailableInStreamRegistryDB);
         kafkaProducer.log(key, avroStream);
         log.info("Stream upserted for {}", stream.getName());
     }
@@ -207,29 +156,22 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
      *
      * @param stream the stream that will be used to verify and/or upsert topics to
      */
-    private void verifyAndUpsertTopics(Stream stream, boolean isNewStream) {
+    private void verifyAndUpsertTopics(Stream stream, boolean isStreamNotAvailableInStreamRegistryDB) throws StreamCreationException, ClusterNotFoundException {
         List<String> vpcList = stream.getVpcList();
         List<String> replicatedVpcList = stream.getReplicatedVpcList();
-        try {
-            log.info("creating topics for vpcList: {}", vpcList);
-            for (String vpc : vpcList) {
-                upsertTopics(stream, vpc, isNewStream);
+        log.info("creating topics for vpcList: {}", vpcList);
+        for (String vpc : vpcList) {
+            upsertTopics(stream, vpc, isStreamNotAvailableInStreamRegistryDB);
+        }
+        if (replicatedVpcList != null && !replicatedVpcList.isEmpty()) {
+            log.info("creating topics for replicatedVpcList: {}", replicatedVpcList);
+            for (String vpc : replicatedVpcList) {
+                upsertTopics(stream, vpc, isStreamNotAvailableInStreamRegistryDB);
             }
-            if (replicatedVpcList != null && !replicatedVpcList.isEmpty()) {
-                log.info("creating topics for replicatedVpcList: {}", replicatedVpcList);
-                for (String vpc : replicatedVpcList) {
-                    upsertTopics(stream, vpc, isNewStream);
-                }
-            }
-        } catch (StreamCreationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new InternalServerErrorException(
-                    String.format("Error while creating the stream. Can't create the topic %s", stream.getName()), e);
         }
     }
 
-    private void upsertTopics(Stream stream, String vpc, boolean isNewStream) {
+    private void upsertTopics(Stream stream, String vpc, boolean isStreamNotAvailableInStreamRegistryDB) throws StreamCreationException, ClusterNotFoundException {
         ClusterValue clusterValue = getClusterDetails(vpc, env, stream.getTags().getHint(), "producer");
         Properties topicConfig = new Properties();
         if (stream.getTopicConfig() != null) {
@@ -241,7 +183,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
         topicConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         topicConfig.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zkConnect);
 
-        kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isNewStream);
+        kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isStreamNotAvailableInStreamRegistryDB);
         log.info("Topic {} created/updated at {}", stream.getName(), bootstrapServer);
     }
 
@@ -258,18 +200,23 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     }
 
     @Override
-    public Optional<Stream> getStream(String streamName) {
+    public Stream getStream(String streamName) throws StreamNotFoundException {
         log.info("Pulling stream information from global state-store for streamName={}", streamName);
         Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
-        return streamValue.map(AvroToJsonDTO::convertAvroToJson);
+
+        if (!streamValue.isPresent()) {
+            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found.", streamName));
+        } else {
+            return AvroToJsonDTO.convertAvroToJson(streamValue.get());
+        }
     }
 
     @Override
-    public void deleteStream(String streamName) {
+    public void deleteStream(String streamName) throws StreamNotFoundException{
         Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(streamName);
 
         if (!keyValue.getValue().isPresent()) {
-            throw new StreamNotFoundException(streamName);
+            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found.", streamName));
         }
         try {
             kafkaProducer.log(keyValue.getKey(), null);
@@ -287,7 +234,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
     }
 
     @Override
-    public boolean validateStreamCompatibility(Stream stream) {
+    public boolean validateStreamCompatibility(Stream stream) throws SchemaException {
         String keySubject = stream.getName() + "-key";
         String valueSubject = stream.getName() + "-value";
 

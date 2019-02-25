@@ -15,16 +15,17 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class ClusterNotFoundException extends RuntimeException {
+import lombok.Getter;
+
+public class ClusterNotFoundException extends Exception {
     private static final long serialVersionUID = 7290804308131915047L;
 
-    protected final String clusterName;
+    @Getter
+    private final String clusterName;
 
-    public ClusterNotFoundException(String clusterName) {
+    public ClusterNotFoundException(String clusterName, String message) {
+        super(message);
         this.clusterName = clusterName;
     }
 
-    public String getClusterName() {
-        return clusterName;
-    }
 }

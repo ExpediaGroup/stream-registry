@@ -18,6 +18,8 @@ package com.homeaway.streamplatform.streamregistry.db.dao;
 import java.util.Collection;
 import java.util.Properties;
 
+import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
+
 // TODO need javadoc for KafkaManager (#107)
 // TODO Need to consider merging this with StreamInfrastructureManager to keep it stream-platform agnostic. (#109)
 public interface KafkaManager {
@@ -28,6 +30,10 @@ public interface KafkaManager {
      * @param replicationFactor replicationFactor for each of those topics
      * @param topicConfig topic config to use for each of these topics
      * @param isNewStream whether or not this invocation results from existing or new stream in stream registry.
+     * @throws StreamCreationException on following cases
+     *      a) Input Configs and the existing configs does not match for a new Stream on-boarded to StreamRegistry,
+     *      but already available in the infrastructure.
      */
-    void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream);
+    void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream)
+            throws StreamCreationException;
 }

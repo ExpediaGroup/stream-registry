@@ -18,16 +18,20 @@ package com.homeaway.streamplatform.streamregistry.db.dao;
 import java.util.List;
 import java.util.Optional;
 
+import com.homeaway.streamplatform.streamregistry.exceptions.ActorNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.model.StreamClient;
 
 public interface StreamClientDao<T extends StreamClient> {
 
-    Optional<T> update(String streamName, String actorName, String region);
+    Optional<T> update(String streamName, String actorName, String region) throws StreamNotFoundException, RegionNotFoundException, ClusterNotFoundException;
 
-    Optional<T> get(String streamName, String actorName);
+    Optional<T> get(String streamName, String actorName) throws StreamNotFoundException;
 
-    void delete(String streamName, String actorName);
+    void delete(String streamName, String actorName) throws StreamNotFoundException, ActorNotFoundException;
 
-    List<T> getAll(String streamName);
+    List<T> getAll(String streamName) throws StreamNotFoundException;
 
 }

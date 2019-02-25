@@ -40,23 +40,18 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
+import com.homeaway.streamplatform.streamregistry.exceptions.ActorNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
-import com.homeaway.streamplatform.streamregistry.exceptions.ConsumerNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
-import com.homeaway.streamplatform.streamregistry.exceptions.UnknownRegionException;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
-import com.homeaway.streamplatform.streamregistry.model.Stream;
-import com.homeaway.streamplatform.streamregistry.utils.ResourceUtils;
 
 @Slf4j
 public class ConsumerResource {
-    private final StreamDao streamDao;
     private final StreamClientDao<Consumer> consumerDao;
 
     @SuppressWarnings("WeakerAccess")
-    public ConsumerResource(StreamDao streamDao, StreamClientDao<Consumer> consumerDao) {
-        this.streamDao = streamDao;
+    public ConsumerResource(StreamClientDao<Consumer> consumerDao) {
         this.consumerDao = consumerDao;
     }
 
@@ -75,20 +70,27 @@ public class ConsumerResource {
         @ApiParam(value = "Stream Name corresponding to the consumer", required = true) @PathParam("streamName") String streamName,
         @ApiParam(value = "Consumer Name", required = true) @PathParam("consumerName") String consumerName) {
         try {
-            Optional<Stream> stream = streamDao.getStream(streamName);
-            if (!stream.isPresent()) {
-                log.warn("Stream not found: {}", streamName);
-                return ResourceUtils.notFound("Stream not found: " + streamName );
-            }
             Optional<Consumer> responseConsumer = consumerDao.get(streamName, consumerName);
             if (!responseConsumer.isPresent()) {
-                log.warn("Consumer not found: {}", consumerName);
-                return ResourceUtils.notFound("consumer not found: " + consumerName);
+                log.warn("Consumer not found: {} for stream={}", consumerName, streamName);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                                String.format("Consumer:%s not found for Stream=%s", consumerName, streamName)))
+                        .build();
             }
             return Response.ok().entity(responseConsumer.get()).build();
-        } catch (Exception exception) {
-            log.error("Error occurred while getting data from Stream Registry.", exception);
-            throw new InternalServerErrorException("Error occurred while getting data from Stream Registry", exception);
+        } catch (StreamNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                            "Stream:" + streamName + " not found . Please create the Stream before trying to pulling  a consumer"))
+                    .build();
+        } catch (RuntimeException e) {
+            log.error("Error occurred while getting data from Stream Registry.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                            "Error while getting consumer=" + consumerName,
+                            e.getCause() !=null ? e.getMessage() + e.getCause().getMessage() : e.getMessage()))
+                    .build();
         }
     }
 
@@ -106,14 +108,14 @@ public class ConsumerResource {
     public Response getAllConsumers(
         @ApiParam(value = "Stream Name corresponding to the consumer", required = true) @PathParam("streamName") String streamName) {
         try {
-            Optional<Stream> stream = streamDao.getStream(streamName);
-            if (!stream.isPresent()) {
-                log.warn("Stream not found " + streamName);
-                return ResourceUtils.notFound("Stream not found " + streamName);
-            }
             List<Consumer> listConsumer = consumerDao.getAll(streamName);
             return Response.ok().entity(listConsumer).build();
-        } catch (Exception exception) {
+        } catch (StreamNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                            "Stream:" + streamName + " not found . Please create the Stream before trying to get all Consumers"))
+                    .build();
+        } catch (RuntimeException exception) {
             log.error("Error occurred while getting data from Stream Registry.", exception);
             throw new InternalServerErrorException("Error occurred while getting data from Stream Registry", exception);
         }
@@ -138,18 +140,15 @@ public class ConsumerResource {
         @ApiParam(value = "Consumer region. All region values available at /regions endpoint",
             required = true) @PathParam("region") String region) {
         try {
-            Optional<Stream> stream = streamDao.getStream(streamName);
-            if (!stream.isPresent()) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
-                                "Stream:" + streamName + " not found . Please create the Stream before registering a Consumer"))
-                        .build();
-            }
             Optional<Consumer> consumer = consumerDao.update(streamName, consumerName, region);
-            if (consumer.isPresent()) {
-                log.info(" Consumer upserted, consumerName: " + consumerName);
-                return Response.ok().entity(consumer.get()).build();
-            }
+            log.info(" Consumer upserted, consumerName: " + consumerName);
+            return Response.ok().entity(consumer.get()).build();
+        } catch (StreamNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                            "Stream:" + streamName + " not found . Please create the Stream before registering a Consumer",
+                            e.getMessage()))
+                    .build();
         } catch (IllegalArgumentException e) {
             log.error("Input is wrong.", e);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -157,24 +156,28 @@ public class ConsumerResource {
                             "Input Validation failed.",
                             e.getMessage()))
                     .build();
-        } catch (UnknownRegionException re) {
+        } catch (RegionNotFoundException re) {
             log.error("Region not supported " + region);
             return Response.status(Response.Status.PRECONDITION_FAILED)
                     .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
                             "Unsupported region: " + re.getRegion() + ". Hit /regions to get the list of all supported regions",
-                            re.getMessage()))
+                            re.getCause() !=null ? re.getMessage() + re.getCause().getMessage() : re.getMessage()))
                     .build();
         } catch (ClusterNotFoundException ce) {
             log.error("Cluster not available for stream-key:{} ", ce.getClusterName());
             return Response.status(Response.Status.PRECONDITION_FAILED)
                     .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                            "Cluster not available for " + ce.getClusterName()))
+                            "Cluster not available for " + ce.getClusterName(),
+                            ce.getCause() !=null ? ce.getMessage() + ce.getCause().getMessage() : ce.getMessage()))
                     .build();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error occurred while getting data from Stream Registry.", e);
-            throw new InternalServerErrorException("Error occurred while getting data from Stream Registry", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                            "Error while upserting consumer=" + consumerName,
+                            e.getCause() !=null ? e.getMessage() + e.getCause().getMessage() : e.getMessage()))
+                    .build();
         }
-        return null;
     }
 
     @DELETE
@@ -190,13 +193,23 @@ public class ConsumerResource {
         try {
             consumerDao.delete(streamName, consumerName);
         } catch (StreamNotFoundException se) {
-            return ResourceUtils.streamNotFound(se.getStreamName());
-        } catch (ConsumerNotFoundException ce) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                            "Stream:" + streamName + " not found . Please create the Stream before trying to delete the consumer"))
+                    .build();
+        } catch (ActorNotFoundException ce) {
             log.warn("Consumer not found: " + consumerName);
-            return ResourceUtils.notFound("Consumer not found: " + ce.getConsumerName());
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),
+                            "Consumer:" + consumerName + " not found.",
+                            ce.getMessage()))
+                    .build();
         } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                            "Error while deleting consumer=" + consumerName,
+                            e.getCause() !=null ? e.getMessage() + e.getCause().getMessage() : e.getMessage()))
+                    .build();
         }
         log.info("Consumer successfully deleted: " + consumerName);
         return Response

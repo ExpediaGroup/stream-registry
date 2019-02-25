@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
@@ -44,8 +45,11 @@ public class StreamValidatorIT extends BaseResourceIT {
         private int invalidProductId;
 
         @Override
-        public boolean isStreamValid(Stream stream) {
-            return !stream.getTags().getProductId().equals(INVALID_PRODUCT_ID);
+        public boolean isStreamValid(Stream stream) throws InvalidStreamException{
+            if (stream.getTags().getProductId().equals(INVALID_PRODUCT_ID)) {
+                throw new InvalidStreamException(stream, "Validation failed. Invalid Product ID");
+            }
+            return true;
         }
 
         @Override

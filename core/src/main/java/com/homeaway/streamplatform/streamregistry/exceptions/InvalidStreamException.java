@@ -17,13 +17,9 @@ package com.homeaway.streamplatform.streamregistry.exceptions;
 
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
-public class InvalidStreamException extends RuntimeException {
+public class InvalidStreamException extends Exception {
     private static final long serialVersionUID = 327424935797536316L;
     protected final Stream stream;
-
-    public InvalidStreamException(Stream stream) {
-        this.stream = stream;
-    }
 
     public InvalidStreamException(Stream stream, String message) {
         super(message);

@@ -74,7 +74,7 @@ public class ConfluentSchemaManager implements SchemaManager {
             log.info("Schema registration successful. Subject={} ; id={} ; version={}", subject, id, version);
             return new SchemaReference(subject, id, version);
         } catch (IOException | RestClientException | RuntimeException e) {
-            throw new SchemaManagerException("Could not register new schema="+schema+" for subject='"+subject+"'", e);
+            throw new SchemaManagerException(String.format("Could not register new schema=%s for subject=%s", schema, subject), e);
         }
     }
 

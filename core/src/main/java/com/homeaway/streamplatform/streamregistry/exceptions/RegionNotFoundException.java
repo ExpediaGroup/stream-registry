@@ -15,15 +15,17 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class ProducerNotFoundException extends RuntimeException{
-    private static final long serialVersionUID = -6879806564888143788L;
-    protected final String producerName;
+import lombok.Getter;
 
-    public ProducerNotFoundException(String producerName) {
-        this.producerName = producerName;
+public class RegionNotFoundException extends Exception {
+    private static final long serialVersionUID = 1687487766016741537L;
+
+    @Getter
+    private final String region;
+
+    public RegionNotFoundException(String region, String message) {
+        super(message);
+        this.region = region;
     }
 
-    public String getProducerName() {
-        return producerName;
-    }
 }

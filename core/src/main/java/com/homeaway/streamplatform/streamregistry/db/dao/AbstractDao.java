@@ -114,7 +114,7 @@ public abstract class AbstractDao {
             return clusterValue.get();
         } else {
             log.info("Cluster Information not found for key - {}", clusterKey);
-            throw new ClusterNotFoundException(clusterKey.toString());
+            throw new ClusterNotFoundException(clusterKey.toString(), String.format("Cluster not found for %s.", clusterKey.toString()));
         }
     }
 
@@ -136,7 +136,7 @@ public abstract class AbstractDao {
 
     protected com.homeaway.digitalplatform.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
         com.homeaway.digitalplatform.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
-        String actorType, Map<String, String> topicConfigMap) {
+        String actorType, Map<String, String> topicConfigMap) throws ClusterNotFoundException {
 
         Actor.Builder actorBuilder = Actor.newBuilder();
 

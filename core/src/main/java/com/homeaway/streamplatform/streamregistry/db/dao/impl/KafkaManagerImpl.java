@@ -74,7 +74,7 @@ public class KafkaManagerImpl implements KafkaManager {
      * @param replicationFactor replication for each topic that will be created
      * @param properties        properties that will be set on each topic in the list
      */
-    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isNewStream) {
+    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isStreamNotAvailableInStreamRegistryDB) throws StreamCreationException{
         // TODO - Cannot guarantee against race conditions... should probably move to event-source paradigm to
         //      protect against this (and maybe employ optimistic locking for extra safety).
         //      The issue here is there is nothing that "locks" the underlying kafka store -- something
@@ -95,7 +95,7 @@ public class KafkaManagerImpl implements KafkaManager {
             List<String> topicsToCreate = partitionMaps.get(false);
 
             // update any topics that are necessary
-            updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isNewStream);
+            updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isStreamNotAvailableInStreamRegistryDB);
 
             // now create any topics that were necessary to create this run
             createTopics(zkUtils, topicsToCreate, partitions, replicationFactor, topicConfigMap);
@@ -105,7 +105,8 @@ public class KafkaManagerImpl implements KafkaManager {
     }
 
     // package scope so that PowerMock can verify
-    void updateTopics(ZkUtils zkUtils, List<String> topicsToUpdate, Map<String, String> topicConfigMap, boolean isNewStream) {
+    void updateTopics(ZkUtils zkUtils, List<String> topicsToUpdate, Map<String, String> topicConfigMap, boolean isStreamNotAvailableInStreamRegistryDB)
+            throws StreamCreationException {
         for (String topic : topicsToUpdate) {
             // update topic
             Properties actualTopicConfig = getTopicConfig(zkUtils, topic);
@@ -127,8 +128,9 @@ public class KafkaManagerImpl implements KafkaManager {
 
             // TODO Alternatively we can add a forceSync=true flag, ignoring any user provided info, and only updating SR with the underlying settings
             //      We should probably do forceSync=true anyway, as it provides a simple way to keep things in sync (#114)
-            if(isNewStream) {
-                throw new StreamCreationException(topic, String.format("Error: Input configs=%s and actual configs=%s are not same for topic=%s", topicConfigMap, actualTopicConfig, topic));
+            if(isStreamNotAvailableInStreamRegistryDB) {
+                throw new StreamCreationException(topic, String.format("Error: Input configs=%s and actual configs=%s are not same for topic=%s",
+                        topicConfigMap, actualTopicConfig, topic));
             }
 
             // If we got this far, we are "updating" an "existing" stream, and request config is different than

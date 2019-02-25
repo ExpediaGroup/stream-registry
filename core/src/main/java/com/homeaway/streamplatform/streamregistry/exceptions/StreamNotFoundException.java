@@ -15,14 +15,17 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class StreamNotFoundException extends BaseStreamException {
+import lombok.Getter;
+
+public class StreamNotFoundException extends Exception {
     private static final long serialVersionUID = -2171171630296498063L;
 
-    public StreamNotFoundException(String streamName) {
-        this(streamName, null);
-    }
+    @Getter
+    private final String streamName;
 
     public StreamNotFoundException(String streamName, String message) {
-        super(streamName, message);
+        super(message);
+        this.streamName = streamName;
     }
+
 }

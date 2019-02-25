@@ -15,10 +15,17 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class StreamDeletionException extends BaseStreamException {
-    private static final long serialVersionUID = -5793888606557229357L;
+import lombok.Getter;
 
-    public StreamDeletionException(String streamName, String message) {
-        super(streamName, message);
+public class ActorNotFoundException extends Exception{
+    private static final long serialVersionUID = -6879806564888143788L;
+
+    @Getter
+    private final String actorName;
+
+    public ActorNotFoundException(String actorName, String message) {
+        super(message);
+        this.actorName = actorName;
     }
+
 }

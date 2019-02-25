@@ -16,21 +16,21 @@
 package com.homeaway.streamplatform.streamregistry.db.dao;
 
 import java.util.List;
-import java.util.Optional;
 
+import com.homeaway.streamplatform.streamregistry.exceptions.*;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
 // TODO - Need javadoc (#107)
 public interface StreamDao {
 
-    void upsertStream(Stream stream);
+    void upsertStream(Stream stream) throws SchemaManagerException, InvalidStreamException, StreamCreationException, ClusterNotFoundException;
 
-    Optional<Stream> getStream(String streamName);
+    Stream getStream(String streamName) throws StreamNotFoundException;
 
-    void deleteStream(String streamName);
+    void deleteStream(String streamName) throws StreamNotFoundException;
 
     List<Stream> getAllStreams();
 
-    boolean validateStreamCompatibility(Stream stream);
+    boolean validateStreamCompatibility(Stream stream) throws SchemaException;
 
 }

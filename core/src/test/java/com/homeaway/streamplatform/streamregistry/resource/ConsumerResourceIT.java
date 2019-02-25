@@ -199,7 +199,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
         response = consumerResource.getConsumer(streamName, consumerName);
-        Assert.assertEquals("consumer not found: " + consumerName, (response.getEntity()));
+        Assert.assertEquals("ErrorMessage{code=404, message=Consumer:" + consumerName + " not found for Stream=" + streamName + ", details=null}", (response.getEntity().toString()));
     }
 
     @Test
@@ -208,7 +208,8 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C1";
 
         Response response = consumerResource.deleteConsumer(streamName, consumerName);
-        Assert.assertEquals("Stream not found "+streamName, response.getEntity());
+        Assert.assertEquals("ErrorMessage{code=404, message=Stream:" + streamName + " not found . Please create the Stream before trying to delete the consumer, details=null}",
+                response.getEntity().toString());
     }
 
     @Test
@@ -227,6 +228,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
         Response response = consumerResource.deleteConsumer(streamName, invalidConsumerName);
 
-        Assert.assertEquals("Consumer not found: "+invalidConsumerName, response.getEntity());
+        Assert.assertEquals("ErrorMessage{code=404, message=Consumer:" + invalidConsumerName + " not found., details=Consumer=" + invalidConsumerName + " not found for Stream=" + streamName + "}",
+                response.getEntity().toString());
     }
 }

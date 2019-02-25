@@ -45,11 +45,10 @@ import org.apache.avro.SchemaParseException;
 
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
-import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.*;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
-import com.homeaway.streamplatform.streamregistry.utils.ResourceUtils;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.EntriesPage;
 
@@ -87,7 +86,6 @@ public class StreamResource {
     @Timed
     public Response upsertStream(@ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName,
                                  @ApiParam(value = "stream entity", required = true) Stream stream) {
-
         try {
             if (!stream.getName().equals(streamName)) {
                 return Response.status(Response.Status.BAD_REQUEST)
@@ -95,23 +93,27 @@ public class StreamResource {
                                 "stream name provided in path param [" + streamName + "] does not match that of the stream body [" + stream.getName() + "]"))
                         .build();
             }
-
             streamDao.upsertStream(stream);
             return Response.status(Response.Status.ACCEPTED).build();
+        } catch (ClusterNotFoundException e) {
+            String message = String.format("Cluster not found the given StreamName=%s ; hint=%s. Please check the vpcList and hint", streamName, stream.getTags().getHint());
+            log.error(message, e);
+            return buildErrorMessage(Response.Status.BAD_REQUEST, message, e);
+        } catch (InvalidStreamException e) {
+            String message = String.format("Validation failed in input Stream=%s. Please check inputs in tags", stream);
+            log.error(message, e);
+            return buildErrorMessage(Response.Status.BAD_REQUEST, message, e);
+        } catch (StreamCreationException e) {
+            String message = String.format("Error while creating the stream=%s in the underlying infrastructure. Please check your Stream configs", stream.getName());
+            log.error(message, e);
+            return buildErrorMessage(Response.Status.BAD_REQUEST, message, e);
+        } catch (SchemaManagerException e) {
+            String message = "Registration of new Schema Failed. Please make sure you passed a valid schema for key and value.";
+            log.error(message, e);
+            return buildErrorMessage(Response.Status.BAD_REQUEST, message, e);
         } catch (RuntimeException e) {
             log.error("Error creating stream={}", stream.getName(), e);
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                        "Error creating/updating stream=" + stream.getName() + ".",
-                        e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage(): e.getMessage()))
-                .build();
-        } catch(Exception e) {
-            log.error("Error creating/updating stream={}", stream.getName(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                            "Error creating stream=" + stream.getName() + ". ",
-                            e.getMessage()))
-                    .build();
+            return buildErrorMessage(Response.Status.BAD_REQUEST, e.getMessage(), e);
         }
     }
 
@@ -148,15 +150,16 @@ public class StreamResource {
                         .build();
             }
         } catch (SchemaParseException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
-                    .build();
-        } catch (Exception e) {
-            String message = String.format("Error validation schema compatibility for stream '%s'", streamName);
+            String message = String.format("Error while parsing the input schema for stream '%s'", streamName);
             log.error(message, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message))
-                    .build();
+            return buildErrorMessage(Response.Status.BAD_REQUEST, message, e);
+        } catch (SchemaException e) {
+            String message = String.format("Schema compatibility validation failed for stream '%s'", streamName);
+            log.error(message, e);
+            return buildErrorMessage(Response.Status.BAD_REQUEST, message, e);
+        } catch (RuntimeException e) {
+            log.error("Exception while validating Schema against schema-registry for stream={}", stream, e);
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 
@@ -173,18 +176,16 @@ public class StreamResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public Response getStream(@ApiParam(value = "Stream name", required = true) @PathParam("streamName") String streamName) {
-        Optional<Stream> stream = streamDao.getStream(streamName);
         try {
-            if (!stream.isPresent()) {
-                return ResourceUtils.streamNotFound(streamName);
-            }
-            return Response.ok().entity(stream.get()).build();
-        } catch (Exception e) {
-            String message = "Error occurred while getting data from Stream Registry for stream '" + streamName + "'";
+            Stream stream = streamDao.getStream(streamName);
+            return Response.ok().entity(stream).build();
+        } catch (StreamNotFoundException e) {
+            String message = String.format("Error occurred while pulling stream=%s data from Stream Registry for stream",streamName );
             log.error(message, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message))
-                    .build();
+            return buildErrorMessage(Response.Status.NOT_FOUND, message, e);
+        } catch (RuntimeException e) {
+            log.error("Exception while pulling steam={}", streamName, e);
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 
@@ -225,9 +226,10 @@ public class StreamResource {
             return Response.ok()
                     .entity(StreamRegistryUtils.toEntriesPage(streamsPage, totalSize, pSize, pNumber))
                     .build();
-        } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException e) {
+            String message = "Error occurred while pull all the streams from Stream Registry datastore.";
+            log.error(message, e);
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, message, e);
         }
     }
 
@@ -242,25 +244,35 @@ public class StreamResource {
     @PathParam("streamName") String streamName) {
         try {
             streamDao.deleteStream(streamName);
+            return Response.ok()
+                    .entity(String.format("Stream=%s deleted successfully", streamName))
+                    .build();
         } catch (StreamNotFoundException e) {
-            return ResourceUtils.streamNotFound(streamName);
-        } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            String message = String.format("stream={} requested to delete is not available.", streamName);
+            log.error(message, e);
+            return buildErrorMessage(Response.Status.NOT_FOUND, message, e);
+        } catch (RuntimeException e) {
+            log.error(String.format("Error occurred while deleting the stream=%s", streamName), e);
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage(),  e);
         }
-
-        return Response.ok().entity("").build();
     }
 
 
     @Path("/{streamName}/producers")
     public ProducerResource getProducerResource(){
-        return new ProducerResource(streamDao, producerDao);
+        return new ProducerResource(producerDao);
     }
 
     @Path("/{streamName}/consumers")
     public ConsumerResource getConsumerResource(){
-        return new ConsumerResource(streamDao, consumerDao);
+        return new ConsumerResource(consumerDao);
     }
 
+    private Response buildErrorMessage(Response.Status httpStatus, String message, Exception e) {
+        return Response.status(httpStatus)
+                .entity(new ErrorMessage(httpStatus.getStatusCode(),
+                        message,
+                        e.getCause() != null ? e.getMessage() + e.getMessage() : e.getMessage()))
+                .build();
+    }
 }
