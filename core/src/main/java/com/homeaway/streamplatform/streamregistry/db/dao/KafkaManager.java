@@ -30,7 +30,7 @@ public interface KafkaManager {
      * @param replicationFactor replicationFactor for each of those topics
      * @param topicConfig topic config to use for each of these topics
      * @param isNewStream whether or not this invocation results from existing or new stream in stream registry.
-     * @throws StreamCreationException on following cases
+     * @throws StreamCreationException  when Stream could not be created in the underlying infrastructure for following reasons
      *      a) Input Configs and the existing configs does not match for a new Stream on-boarded to StreamRegistry,
      *      but already available in the infrastructure.
      */
