@@ -83,7 +83,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
         SchemaReference keyReference = schemaManager.registerSchema(keySubject, stream.getLatestKeySchema().getSchemaString());
         stream.getLatestKeySchema().setId(String.valueOf(keyReference.getId()));
         stream.getLatestKeySchema().setVersion(keyReference.getVersion());
-        boolean isStreamNotAvailableInStreamRegistryDB = false;
+        boolean isNewStream = false;
 
         String valueSubject = stream.getName() + "-value";
         SchemaReference valueReference = schemaManager.registerSchema(valueSubject, stream.getLatestValueSchema().getSchemaString());
@@ -119,12 +119,12 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
             avroStream.setS3ConnectorList(value.get().getS3ConnectorList());
         } else {
             log.info("key NOT available for the stream-name={}", stream.getName());
-            isStreamNotAvailableInStreamRegistryDB = true;
+            isNewStream = true;
             avroStream.setCreated(System.currentTimeMillis());
             key = AvroStreamKey.newBuilder().setStreamName(avroStream.getName()).build();
         }
 
-        verifyAndUpsertTopics(stream, isStreamNotAvailableInStreamRegistryDB);
+        verifyAndUpsertTopics(stream, isNewStream);
         kafkaProducer.log(key, avroStream);
         log.info("Stream upserted for {}", stream.getName());
     }
@@ -156,22 +156,22 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
      *
      * @param stream the stream that will be used to verify and/or upsert topics to
      */
-    private void verifyAndUpsertTopics(Stream stream, boolean isStreamNotAvailableInStreamRegistryDB) throws StreamCreationException, ClusterNotFoundException {
+    private void verifyAndUpsertTopics(Stream stream, boolean isNewStream) throws StreamCreationException, ClusterNotFoundException {
         List<String> vpcList = stream.getVpcList();
         List<String> replicatedVpcList = stream.getReplicatedVpcList();
         log.info("creating topics for vpcList: {}", vpcList);
         for (String vpc : vpcList) {
-            upsertTopics(stream, vpc, isStreamNotAvailableInStreamRegistryDB);
+            upsertTopics(stream, vpc, isNewStream);
         }
         if (replicatedVpcList != null && !replicatedVpcList.isEmpty()) {
             log.info("creating topics for replicatedVpcList: {}", replicatedVpcList);
             for (String vpc : replicatedVpcList) {
-                upsertTopics(stream, vpc, isStreamNotAvailableInStreamRegistryDB);
+                upsertTopics(stream, vpc, isNewStream);
             }
         }
     }
 
-    private void upsertTopics(Stream stream, String vpc, boolean isStreamNotAvailableInStreamRegistryDB) throws StreamCreationException, ClusterNotFoundException {
+    private void upsertTopics(Stream stream, String vpc, boolean isNewStream) throws StreamCreationException, ClusterNotFoundException {
         ClusterValue clusterValue = getClusterDetails(vpc, env, stream.getTags().getHint(), "producer");
         Properties topicConfig = new Properties();
         if (stream.getTopicConfig() != null) {
@@ -183,7 +183,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
         topicConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         topicConfig.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zkConnect);
 
-        kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isStreamNotAvailableInStreamRegistryDB);
+        kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isNewStream);
         log.info("Topic {} created/updated at {}", stream.getName(), bootstrapServer);
     }
 

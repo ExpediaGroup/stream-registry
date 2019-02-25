@@ -74,7 +74,7 @@ public class KafkaManagerImpl implements KafkaManager {
      * @param replicationFactor replication for each topic that will be created
      * @param properties        properties that will be set on each topic in the list
      */
-    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isStreamNotAvailableInStreamRegistryDB) throws StreamCreationException{
+    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isNewStream) throws StreamCreationException{
         // TODO - Cannot guarantee against race conditions... should probably move to event-source paradigm to
         //      protect against this (and maybe employ optimistic locking for extra safety).
         //      The issue here is there is nothing that "locks" the underlying kafka store -- something
@@ -95,7 +95,7 @@ public class KafkaManagerImpl implements KafkaManager {
             List<String> topicsToCreate = partitionMaps.get(false);
 
             // update any topics that are necessary
-            updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isStreamNotAvailableInStreamRegistryDB);
+            updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isNewStream);
 
             // now create any topics that were necessary to create this run
             createTopics(zkUtils, topicsToCreate, partitions, replicationFactor, topicConfigMap);
