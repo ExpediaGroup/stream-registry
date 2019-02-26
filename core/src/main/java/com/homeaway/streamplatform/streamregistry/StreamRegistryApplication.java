@@ -155,6 +155,9 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
+        // Step 7 - Add MDCFilter for Diagnostics.
+        environment.jersey().register(new MDCFilter());
+
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
     }
 
