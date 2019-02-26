@@ -1,0 +1,15 @@
+name: stream-registry
+home: https://github.com/homeaway/stream-registry
+version: 0.1
+appVersion: 0.42
+keywords:
+  - homeaway
+  - stream-registry
+  - kafka
+description:
+apiVersion:
+sources:
+- https://github.com/homeaway/stream-registry
+maintainers:
+- name: Ayan Sen
+  email: aysen@expedia.com
