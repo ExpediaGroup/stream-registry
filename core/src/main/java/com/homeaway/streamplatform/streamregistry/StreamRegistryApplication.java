@@ -340,9 +340,11 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         streamResource = new StreamResource(streamDao, producerDao, consumerDao);
         RegionResource regionResource = new RegionResource(regionDao);
+        ClusterResource clusterResource = new ClusterResource(clusterDao);
 
         environment.jersey().register(streamResource);
         environment.jersey().register(regionResource);
+        environment.jersey().register(clusterResource);
     }
 
     private void initAndRegisterHealthCheck(final StreamRegistryConfiguration configuration, final Environment environment,
