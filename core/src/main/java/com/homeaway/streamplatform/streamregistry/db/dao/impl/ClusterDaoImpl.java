@@ -36,7 +36,7 @@ import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
  * The type Cluster dao.
  */
 @Slf4j
-public class ClusterDaoImpl implements ClusterDao{
+public class ClusterDaoImpl implements ClusterDao {
 
     /**
      * The Infra manager.
@@ -59,6 +59,7 @@ public class ClusterDaoImpl implements ClusterDao{
 
     /**
      * Get all Clusters from the Infra Manager
+     *
      * @return Map of ClusterKey and ClusterValue
      */
     @Override
@@ -108,6 +109,7 @@ public class ClusterDaoImpl implements ClusterDao{
 
     /**
      * Get a Cluster using a clusterName
+     *
      * @param clusterName - Name of the Cluster from Infra Manager
      * @return JsonClusterValue - Contains cluster details
      */
@@ -116,11 +118,11 @@ public class ClusterDaoImpl implements ClusterDao{
         Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> allClusters = infraManager.getAllClusters();
         Map<String, com.homeaway.digitalplatform.streamregistry.ClusterValue> clustersByName = new HashMap<>();
 
-        allClusters.forEach( (com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue clusterValue) -> clustersByName.put(clusterValue.getClusterProperties().get(CLUSTER_NAME), clusterValue));
+        allClusters.forEach((com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue clusterValue) -> clustersByName.put(clusterValue.getClusterProperties().get(CLUSTER_NAME), clusterValue));
 
-        log.info("Cluster Info for clusterName - {} is: {}",clusterName,clustersByName.get(clusterName));
+        log.info("Cluster Info for clusterName - {} is: {}", clusterName, clustersByName.get(clusterName));
 
-        if(clustersByName.get(clusterName) == null) {
+        if (clustersByName.get(clusterName) == null) {
             return Optional.empty();
         }
 
@@ -128,7 +130,7 @@ public class ClusterDaoImpl implements ClusterDao{
     }
 
     @Override
-    public void upsertCluster(JsonCluster jsonCluster) throws InvalidClusterException{
+    public void upsertCluster(JsonCluster jsonCluster) throws InvalidClusterException {
         log.info("Upserting Cluster {}", jsonCluster);
 
         ClusterValidator.isValid(jsonCluster);

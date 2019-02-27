@@ -72,7 +72,7 @@ public class ClusterDaoImplTest {
      * Setup method.
      */
     @BeforeClass
-    public static void setup(){
+    public static void setup() {
         infraManager = mock(InfraManager.class);
         clusterDao = new ClusterDaoImpl(infraManager);
 
@@ -177,6 +177,6 @@ public class ClusterDaoImplTest {
         verify(infraManager).upsertCluster(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class), clusterValueArgumentCaptor.capture());
 
         assertEquals("cluster_name", clusterValueArgumentCaptor.getValue().getClusterProperties().get(CLUSTER_NAME));
-        assertEquals( "localhost:9092", clusterValueArgumentCaptor.getValue().getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
+        assertEquals("localhost:9092", clusterValueArgumentCaptor.getValue().getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
     }
 }

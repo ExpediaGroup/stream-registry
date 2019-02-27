@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -28,9 +27,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import lombok.extern.slf4j.Slf4j;
-
 import com.codahale.metrics.annotation.Timed;
+import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
+import com.homeaway.streamplatform.streamregistry.utils.ResourceUtils;
 
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.Api;
@@ -38,12 +40,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
-import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
-import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
-import com.homeaway.streamplatform.streamregistry.utils.ResourceUtils;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
 @Path("/v0/clusters")
@@ -115,7 +112,6 @@ public class ClusterResource {
         }
     }
 
-
     @GET
     @Path("/{clusterName}")
     @ApiOperation(
@@ -128,11 +124,11 @@ public class ClusterResource {
         @ApiResponse(code = 404, message = "Cluster not found") })
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
-    public Response getCluster(@ApiParam(value = "clusterName", required = true) @PathParam ("clusterName") String clusterName) {
+    public Response getCluster(@ApiParam(value = "clusterName", required = true) @PathParam("clusterName") String clusterName) {
         try {
             Optional<ClusterValue> jsonClusterValue = clusterDao.getCluster(clusterName);
 
-            if(!jsonClusterValue.isPresent()) {
+            if (!jsonClusterValue.isPresent()) {
                 return ResourceUtils.notFound("Cluster not found " + clusterName);
             }
 
