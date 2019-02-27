@@ -58,18 +58,20 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao, StreamValid
 
     private StreamValidator streamValidator;
     private SchemaManager schemaManager;
+    private KafkaManager kafkaManager;
 
     public StreamDaoImpl(ManagedKafkaProducer managedKafkaProducer,
-                         ManagedKStreams kStreams,
-                         String env,
-                         RegionDao regionDao,
-                         InfraManager infraManager,
-                         KafkaManager kafkaManager,
-                         StreamValidator validator,
-                         SchemaManager schemaManager) {
-        super(managedKafkaProducer, kStreams, env, regionDao, infraManager, kafkaManager);
+                        ManagedKStreams kStreams,
+                        String env,
+                        RegionDao regionDao,
+                        InfraManager infraManager,
+                        StreamValidator validator,
+                        SchemaManager schemaManager,
+                        KafkaManager kafkaManager) {
+        super(managedKafkaProducer, kStreams, env, regionDao, infraManager);
         this.streamValidator = validator;
         this.schemaManager = schemaManager;
+        this.kafkaManager = kafkaManager;
     }
 
     // TODO - This stream validation pattern needs to be reimplemented (#117)

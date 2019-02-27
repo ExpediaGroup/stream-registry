@@ -62,15 +62,15 @@ public class StreamDaoImplTest {
     private ManagedKStreams managedKStreams = mock(ManagedKStreams.class);
     private RegionDao regionDao = mock(RegionDao.class);
     private InfraManager infraManager = mock(InfraManager.class);
-    private KafkaManager kafkaManager = mock(KafkaManager.class);
     private StreamValidator streamValidator = mock(StreamValidator.class);
     private SchemaManager schemaManager = mock(SchemaManager.class);
+    private KafkaManager kafkaManager = mock(KafkaManager.class);
 
     private StreamDao streamDao;
 
     @Before
     public void setup() {
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, kafkaManager, streamValidator, schemaManager);
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, streamValidator, schemaManager, kafkaManager);
     }
 
     @Test(expected = IllegalArgumentException.class)

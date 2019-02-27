@@ -33,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
@@ -59,6 +58,11 @@ import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.StreamRegistryApplication;
+<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
+=======
+import com.homeaway.streamplatform.streamregistry.StreamRegistryManagedContainer;
+import com.homeaway.streamplatform.streamregistry.configuration.HealthCheckStreamConfig;
+>>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaStreamsConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
@@ -80,6 +84,10 @@ import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthChe
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
+<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
+=======
+import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
+>>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
@@ -166,8 +174,9 @@ public class BaseResourceIT {
 
     private static final int DEFAULT_ZK_CONNECTION_TIMEOUT_MS = 8 * 1000;
 
+    private static StreamRegistryManagedContainer managedContainer;
 
-    public static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
+    private static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
         log.debug("Creating topic { name: {}, partitions: {}, replication: {}, config: {} }",
                 topic, partitions, replication, topicConfig);
         ZkUtils zkUtils = new ZkUtils(ZKCLIENT, new ZkConnection(zookeeperQuorum), false);
@@ -229,7 +238,10 @@ public class BaseResourceIT {
         consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, SpecificAvroDeserializer.class);
         consumerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
 
+<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
         KafkaManager kafkaManager = new KafkaManagerImpl();
+=======
+>>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
         String env = configuration.getEnv();
         regionDao = new RegionDaoImpl(env, infraManager);
 
@@ -241,14 +253,18 @@ public class BaseResourceIT {
         configuration.getSchemaManagerConfig().getProperties().put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
         configuration.getSchemaManagerConfig().getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 1);
+<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
 
+=======
+>>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
 
+        KafkaManager kafkaManager = new KafkaManagerImpl();
         StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
-            infraManager, kafkaManager, streamValidator, schemaManager);
+            infraManager, streamValidator, schemaManager, kafkaManager);
         StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
-            infraManager, kafkaManager);
+            infraManager);
         StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
-            infraManager, kafkaManager);
+            infraManager);
         streamResource = new StreamResource(streamDao, producerDao, consumerDao);
         producerResource = new ProducerResource(streamDao, producerDao);
         consumerResource = new ConsumerResource(streamDao, consumerDao);
@@ -257,6 +273,7 @@ public class BaseResourceIT {
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
         schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
 
+<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
         healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), configuration.getHealthCheckStreamConfig());
 
         // Moved the Dropwizard Lifecycle methods to the bottom to replicate the app runtime behavior.
@@ -271,6 +288,13 @@ public class BaseResourceIT {
         Preconditions.checkState(initialized.isDone(), "Did not receive state store initialized signal, aborting.");
         Preconditions.checkState(managedKStreams.getStreams().state().isRunning(), "State store did not start. Aborting.");
         log.info("Processor wait completed.");
+=======
+        HealthCheckStreamConfig healthCheckStreamConfig = configuration.getHealthCheckStreamConfig();
+        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), healthCheckStreamConfig);
+
+        managedContainer = new StreamRegistryManagedContainer(managedKStreams, new ManagedInfraManager(infraManager), managedKafkaProducer);
+        managedContainer.start();
+>>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
     }
 
     /** initializes the zkClient to load up the test urls */
@@ -351,9 +375,7 @@ public class BaseResourceIT {
     // TODO Why do we start and stop kstreams on each integration test ? Shouldn't this be part of the server (#18)
     @AfterClass
     public static void tearDown() throws Exception {
-        managedKStreams.stop();
-        managedKafkaProducer.stop();
-        infraManager.stop();
+        managedContainer.stop();
         ZKCLIENT.close();
     }
 }
