@@ -66,27 +66,22 @@ public abstract class AbstractDao {
 
     protected final InfraManager infraManager;
 
-    protected final KafkaManager kafkaManager;
-
     public AbstractDao(ManagedKafkaProducer managedKafkaProducer,
         ManagedKStreams kStreams,
         String env,
         RegionDao regionDao,
-        InfraManager infraManager,
-        KafkaManager kafkaManager) {
+        InfraManager infraManager) {
         Preconditions.checkNotNull(managedKafkaProducer, "managedKafkaProducer should not be null");
         Preconditions.checkNotNull(kStreams, "kStreams should not be null");
         Preconditions.checkNotNull(env, "env should not be null");
         Preconditions.checkNotNull(regionDao, "regionDao should not be null");
         Preconditions.checkNotNull(infraManager, "infraManager should not be null");
-        Preconditions.checkNotNull(kafkaManager, "kafkaManager should not be null");
-
+        
         this.kafkaProducer = managedKafkaProducer;
         this.kStreams = kStreams;
         this.env = env;
         this.regionDao = regionDao;
         this.infraManager = infraManager;
-        this.kafkaManager = kafkaManager;
     }
 
     /**
