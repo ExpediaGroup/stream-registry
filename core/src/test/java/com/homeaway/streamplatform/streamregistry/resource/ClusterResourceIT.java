@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
 
@@ -35,18 +36,20 @@ public class ClusterResourceIT extends BaseResourceIT {
 
         Response cluster = clusterResource.getCluster(clusterName);
 
-        Assert.assertEquals(expectedCluster.getClusterValue(), cluster.getEntity());
+        Assert.assertEquals(expectedCluster.getClusterValue().getBootstrapServers(), ((ClusterValue)cluster.getEntity()).getBootstrapServers());
+        Assert.assertEquals(expectedCluster.getClusterValue().getClusterName(), ((ClusterValue)cluster.getEntity()).getClusterName());
+        Assert.assertEquals(expectedCluster.getClusterValue().getSchemaRegistryURL(), ((ClusterValue)cluster.getEntity()).getSchemaRegistryURL());
+        Assert.assertEquals(expectedCluster.getClusterValue().getZookeeperQuorum(), ((ClusterValue)cluster.getEntity()).getZookeeperQuorum());
     }
 
     @Test
     public void test_upsert_new_cluster_with_exception() throws InterruptedException {
         JsonCluster expectedCluster = JsonModelBuilder.buildJsonCluster(null);
-
         Response response = clusterResource.upsertCluster(expectedCluster);
 
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
-        Assert.assertEquals(Response.Status.BAD_REQUEST, response.getStatus());
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
 }
