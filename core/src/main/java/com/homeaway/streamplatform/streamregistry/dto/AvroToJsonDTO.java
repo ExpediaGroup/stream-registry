@@ -26,10 +26,10 @@ import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
-import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.model.RegionStreamConfig;
 import com.homeaway.streamplatform.streamregistry.model.Schema;
@@ -151,8 +151,8 @@ public class AvroToJsonDTO {
     }
 
 
-    public static JsonCluster.Key getJsonClusterKey(ClusterKey avroClusterKey){
-            return JsonCluster.Key.builder()
+    public static ClusterKey getJsonClusterKey(com.homeaway.digitalplatform.streamregistry.ClusterKey avroClusterKey){
+            return ClusterKey.builder()
                 .vpc(avroClusterKey.getVpc())
                 .env(avroClusterKey.getEnv())
                 .hint(avroClusterKey.getHint())
@@ -161,8 +161,8 @@ public class AvroToJsonDTO {
     }
 
 
-    public static JsonCluster.Value getJsonClusterValue(com.homeaway.digitalplatform.streamregistry.ClusterValue avroClusterValue){
-        return JsonCluster.Value.builder()
+    public static ClusterValue getJsonClusterValue(com.homeaway.digitalplatform.streamregistry.ClusterValue avroClusterValue){
+        return ClusterValue.builder()
             .bootstrapServers(avroClusterValue.getClusterProperties().get(BOOTSTRAP_SERVER))
             .clusterName(avroClusterValue.getClusterProperties().get(CLUSTER_NAME))
             .schemaRegistryURL(avroClusterValue.getClusterProperties().get(SCHEMA_REGISTRY_URL))

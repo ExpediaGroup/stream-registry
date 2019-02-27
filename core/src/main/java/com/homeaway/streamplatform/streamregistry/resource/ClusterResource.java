@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.annotation.Timed;
 
+import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,6 +40,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.utils.ResourceUtils;
 
@@ -64,16 +67,26 @@ public class ClusterResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
     @Timed
-    public Response upsertCluster(@ApiParam(value = "Cluster Object", name = "Cluster Object", required = true) JsonCluster clusterParam)
-    {
+    public Response upsertCluster(@ApiParam(value = "Cluster Object", name = "Cluster Object", required = true) JsonCluster clusterParam) {
         try {
             log.info("Cluster Object {}", clusterParam);
-            clusterDao.upsertCluster(clusterParam);
 
+            clusterDao.upsertCluster(clusterParam);
             return Response.status(Response.Status.ACCEPTED).build();
+        } catch (RuntimeException e) {
+            log.error("Error upserting cluster.", e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                    "Error upserting cluster.",
+                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
+                .build();
         } catch (Exception e) {
-            log.error("Error occurred while upserting cluster in Stream Registry", e);
-            throw new InternalServerErrorException("Error occurred while upserting cluster in Stream Registry", e);
+            log.error("Error upserting cluster.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                    "Error upserting cluster.",
+                    e.getMessage()))
+                .build();
         }
     }
 
@@ -90,11 +103,15 @@ public class ClusterResource {
     @Timed
     public Response getAllClusters() {
         try {
-            Map<JsonCluster.Key, JsonCluster.Value> clusterMap = clusterDao.getAllClusters();
+            Map<ClusterKey, ClusterValue> clusterMap = clusterDao.getAllClusters();
             return Response.status(200).entity(clusterMap).build();
         } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            throw new InternalServerErrorException("Error occurred while getting data from Stream Registry");
+            log.error("Error getting cluster details.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                    "Error getting cluster details.",
+                    e.getMessage()))
+                .build();
         }
     }
 
@@ -105,24 +122,28 @@ public class ClusterResource {
         value = "Get a Cluster",
         notes = "Returns a single cluster",
         tags = "clusters",
-        response = JsonCluster.Value.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Returns Cluster information", response = JsonCluster.Value.class),
+        response = ClusterValue.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Returns Cluster information", response = ClusterValue.class),
         @ApiResponse(code = 500, message = "Error Occurred while getting data"),
         @ApiResponse(code = 404, message = "Cluster not found") })
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public Response getCluster(@ApiParam(value = "clusterName", required = true) @PathParam ("clusterName") String clusterName) {
         try {
-            Optional<JsonCluster.Value> jsonClusterValue = clusterDao.getCluster(clusterName);
+            Optional<ClusterValue> jsonClusterValue = clusterDao.getCluster(clusterName);
 
             if(!jsonClusterValue.isPresent()) {
-                return ResourceUtils.notFound("Cluster not found" + clusterName);
+                return ResourceUtils.notFound("Cluster not found " + clusterName);
             }
 
             return Response.ok().entity(jsonClusterValue.get()).build();
         } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            throw new InternalServerErrorException("Error occurred while getting data from Stream Registry");
+            log.error("Error getting cluster details.", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                    "Error getting cluster details.",
+                    e.getMessage()))
+                .build();
         }
     }
 }

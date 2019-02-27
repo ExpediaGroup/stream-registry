@@ -22,12 +22,11 @@ import java.util.Map;
 import javax.ws.rs.BadRequestException;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
-import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
 public class JsonToAvroDTO {
@@ -98,8 +97,8 @@ public class JsonToAvroDTO {
 
     }
 
-    public static ClusterKey getAvroClusterKey(JsonCluster.Key jsonClusterKey){
-        return ClusterKey.newBuilder()
+    public static com.homeaway.digitalplatform.streamregistry.ClusterKey getAvroClusterKey(ClusterKey jsonClusterKey){
+        return com.homeaway.digitalplatform.streamregistry.ClusterKey.newBuilder()
             .setVpc(jsonClusterKey.getVpc())
             .setEnv(jsonClusterKey.getEnv())
             .setHint(jsonClusterKey.getHint())
@@ -107,7 +106,7 @@ public class JsonToAvroDTO {
             .build();
     }
 
-    public static ClusterValue getAvroClusterValue(JsonCluster.Value jsonClusterValue){
+    public static com.homeaway.digitalplatform.streamregistry.ClusterValue getAvroClusterValue(ClusterValue jsonClusterValue){
         Map<String, String> clusterProperties = new HashMap<>();
         clusterProperties.put(CLUSTER_NAME, jsonClusterValue.getClusterName());
         clusterProperties.put(BOOTSTRAP_SERVER, jsonClusterValue.getBootstrapServers());

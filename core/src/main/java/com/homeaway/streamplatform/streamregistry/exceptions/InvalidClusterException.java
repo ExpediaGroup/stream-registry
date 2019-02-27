@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.model;
+package com.homeaway.streamplatform.streamregistry.exceptions;
 
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 
-import javax.validation.constraints.NotNull;
+public class InvalidClusterException extends RuntimeException{
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+    protected final JsonCluster cluster;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+    public InvalidClusterException(JsonCluster cluster) {
+        this.cluster = cluster;
+    }
 
-@JsonDeserialize(builder = JsonCluster.JsonClusterBuilder.class)
-@Builder
-@Getter
-@ToString
-public class JsonCluster {
-    @NotNull
-    private ClusterKey clusterKey;
-
-    @NotNull
-    private ClusterValue clusterValue;
-
-    @JsonPOJOBuilder(withPrefix = "")
-    public static final class JsonClusterBuilder{
+    public InvalidClusterException(JsonCluster cluster, String message) {
+        super(message);
+        this.cluster = cluster;
     }
 }

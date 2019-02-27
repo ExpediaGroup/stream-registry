@@ -33,11 +33,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 
@@ -66,7 +66,7 @@ public class ClusterDaoImplTest {
     static Map<String, String> clusterProperties;
 
 
-    private static JsonCluster.Value expectedClusterValue;
+    private static ClusterValue expectedClusterValue;
 
     /**
      * Setup method.
@@ -82,7 +82,7 @@ public class ClusterDaoImplTest {
         clusterProperties.put(CLUSTER_NAME, "cluster_name");
         clusterProperties.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "localhost:8081");
 
-        expectedClusterValue = JsonCluster.Value.builder()
+        expectedClusterValue = ClusterValue.builder()
             .bootstrapServers("localhost:9092")
             .schemaRegistryURL("localhost:8081")
             .zookeeperQuorum("localhost:2181")
@@ -95,10 +95,10 @@ public class ClusterDaoImplTest {
      */
     @Test
     public void testGetCluster() {
-        ClusterValue expectedClusterValue = new ClusterValue(clusterProperties);
-        when(infraManager.getClusterByKey(any(ClusterKey.class))).thenReturn(Optional.of(expectedClusterValue));
+        com.homeaway.digitalplatform.streamregistry.ClusterValue expectedClusterValue = new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties);
+        when(infraManager.getClusterByKey(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class))).thenReturn(Optional.of(expectedClusterValue));
 
-        ClusterValue actualClusterValue = clusterDao.getCluster("vpc", "env", "hint", "");
+        com.homeaway.digitalplatform.streamregistry.ClusterValue actualClusterValue = clusterDao.getCluster("vpc", "env", "hint", "");
         Assert.assertEquals(expectedClusterValue, actualClusterValue);
 
         // Change the cluster properties to make the assert fail
@@ -114,9 +114,9 @@ public class ClusterDaoImplTest {
      */
     @Test
     public void testGetAllClusters() {
-        Map<JsonCluster.Key, JsonCluster.Value> expectedClusterMap = new HashMap<>();
+        Map<ClusterKey, ClusterValue> expectedClusterMap = new HashMap<>();
 
-        JsonCluster.Key jsonClusterKey = JsonCluster.Key.builder()
+        ClusterKey jsonClusterKey = ClusterKey.builder()
             .vpc("vpc")
             .env("env")
             .hint("hint")
@@ -125,32 +125,32 @@ public class ClusterDaoImplTest {
 
         expectedClusterMap.put(jsonClusterKey, expectedClusterValue);
 
-        Map<ClusterKey, ClusterValue> avroClusterMap = new HashMap<>();
+        Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> avroClusterMap = new HashMap<>();
 
-        avroClusterMap.put(new ClusterKey("vpc", "env", "hint", ""), new ClusterValue(clusterProperties));
+        avroClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties));
 
         when(infraManager.getAllClusters()).thenReturn(avroClusterMap);
-        Map<JsonCluster.Key, JsonCluster.Value> allClusters = clusterDao.getAllClusters();
+        Map<ClusterKey, ClusterValue> allClusters = clusterDao.getAllClusters();
 
         Assert.assertEquals(1, allClusters.size());
     }
 
     @Test
     public void testGetClusterByClusterName() {
-        ClusterValue expectedClusterValue = new ClusterValue(clusterProperties);
+        com.homeaway.digitalplatform.streamregistry.ClusterValue expectedClusterValue = new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties);
 
-        Map<ClusterKey, ClusterValue> expectedClusterMap = new HashMap<>();
-        expectedClusterMap.put(new ClusterKey("vpc", "env", "hint", ""), expectedClusterValue);
+        Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> expectedClusterMap = new HashMap<>();
+        expectedClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), expectedClusterValue);
 
         when(infraManager.getAllClusters()).thenReturn(expectedClusterMap);
 
-        Optional<JsonCluster.Value> actualClusterValue = clusterDao.getCluster("cluster_name");
+        Optional<ClusterValue> actualClusterValue = clusterDao.getCluster("cluster_name");
 
-        JsonCluster.Value jsonClusterValue = AvroToJsonDTO.getJsonClusterValue(expectedClusterValue);
+        ClusterValue jsonClusterValue = AvroToJsonDTO.getJsonClusterValue(expectedClusterValue);
 
         Assert.assertTrue(actualClusterValue.isPresent());
 
-        JsonCluster.Value value = actualClusterValue.get();
+        ClusterValue value = actualClusterValue.get();
 
         Assert.assertEquals(jsonClusterValue.getBootstrapServers(), value.getBootstrapServers());
         Assert.assertEquals(jsonClusterValue.getSchemaRegistryURL(), value.getSchemaRegistryURL());
@@ -162,8 +162,8 @@ public class ClusterDaoImplTest {
 
     @Test
     public void testUpsertCluster() {
-        ClusterKey clusterKey = new ClusterKey("vpc", "env", "hint", "");
-        ClusterValue expectedClusterValue = new ClusterValue(clusterProperties);
+        com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey = new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", "");
+        com.homeaway.digitalplatform.streamregistry.ClusterValue expectedClusterValue = new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties);
 
         JsonCluster jsonCluster = JsonCluster.builder()
             .clusterKey(AvroToJsonDTO.getJsonClusterKey(clusterKey))
@@ -172,9 +172,9 @@ public class ClusterDaoImplTest {
 
         clusterDao.upsertCluster(jsonCluster);
 
-        ArgumentCaptor<ClusterValue> clusterValueArgumentCaptor = ArgumentCaptor.forClass(ClusterValue.class);
+        ArgumentCaptor<com.homeaway.digitalplatform.streamregistry.ClusterValue> clusterValueArgumentCaptor = ArgumentCaptor.forClass(com.homeaway.digitalplatform.streamregistry.ClusterValue.class);
 
-        verify(infraManager).upsertCluster(any(ClusterKey.class), clusterValueArgumentCaptor.capture());
+        verify(infraManager).upsertCluster(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class), clusterValueArgumentCaptor.capture());
 
         assertEquals("cluster_name", clusterValueArgumentCaptor.getValue().getClusterProperties().get(CLUSTER_NAME));
         assertEquals( "localhost:9092", clusterValueArgumentCaptor.getValue().getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));

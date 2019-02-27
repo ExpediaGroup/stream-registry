@@ -21,12 +21,14 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
+import com.homeaway.streamplatform.streamregistry.extensions.validation.ClusterValidator;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 
@@ -60,13 +62,13 @@ public class ClusterDaoImpl implements ClusterDao{
      * @return Map of ClusterKey and ClusterValue
      */
     @Override
-    public Map<JsonCluster.Key, JsonCluster.Value> getAllClusters() {
+    public Map<ClusterKey, ClusterValue> getAllClusters() {
         log.info("Get all clusters from infra manager...");
-        Map<ClusterKey, ClusterValue> allClusters = infraManager.getAllClusters();
+        Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> allClusters = infraManager.getAllClusters();
 
-        Map<JsonCluster.Key, JsonCluster.Value> allJsonClusters = new HashMap<>();
+        Map<ClusterKey, ClusterValue> allJsonClusters = new HashMap<>();
 
-        allClusters.forEach((ClusterKey clusterKey, ClusterValue clusterValue) -> allJsonClusters.put(AvroToJsonDTO.getJsonClusterKey(clusterKey), AvroToJsonDTO.getJsonClusterValue(clusterValue)));
+        allClusters.forEach((com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue clusterValue) -> allJsonClusters.put(AvroToJsonDTO.getJsonClusterKey(clusterKey), AvroToJsonDTO.getJsonClusterValue(clusterValue)));
         return allJsonClusters;
     }
 
@@ -80,15 +82,15 @@ public class ClusterDaoImpl implements ClusterDao{
      * @return ClusterValue cluster details
      * @throws ClusterNotFoundException thrown if no cluster is found in the region
      */
-    public ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException {
+    public com.homeaway.digitalplatform.streamregistry.ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException {
         log.info("Cluster Details: vpc: {}, env: {}, hint: {}, actorType: {}", vpc, env, hint, actorType);
-        ClusterKey clusterKey = new ClusterKey(vpc, env, hint, null);
+        com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey = new com.homeaway.digitalplatform.streamregistry.ClusterKey(vpc, env, hint, null);
 
-        Optional<ClusterValue> clusterValue = infraManager.getClusterByKey(clusterKey);
+        Optional<com.homeaway.digitalplatform.streamregistry.ClusterValue> clusterValue = infraManager.getClusterByKey(clusterKey);
 
         if (clusterValue.isPresent()) {
             log.info("Cluster Information found - {}", clusterValue);
-            return new ClusterValue(clusterValue.get().getClusterProperties());
+            return new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterValue.get().getClusterProperties());
         }
         // If no cluster information is found set the actorType and look again.
         clusterKey.setType(actorType);
@@ -97,7 +99,7 @@ public class ClusterDaoImpl implements ClusterDao{
 
         if (clusterValue.isPresent()) {
             log.info("Cluster Information found - {}", clusterValue);
-            return new ClusterValue(clusterValue.get().getClusterProperties());
+            return new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterValue.get().getClusterProperties());
         } else {
             log.info("Cluster Information not found for key - {}", clusterKey);
             throw new ClusterNotFoundException(clusterKey.toString());
@@ -109,12 +111,12 @@ public class ClusterDaoImpl implements ClusterDao{
      * @param clusterName - Name of the Cluster from Infra Manager
      * @return JsonClusterValue - Contains cluster details
      */
-    public Optional<JsonCluster.Value> getCluster(String clusterName) {
+    public Optional<ClusterValue> getCluster(String clusterName) {
         log.info("getting cluster detail for cluster - {}", clusterName);
-        Map<ClusterKey, ClusterValue> allClusters = infraManager.getAllClusters();
-        Map<String, ClusterValue> clustersByName = new HashMap<>();
+        Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> allClusters = infraManager.getAllClusters();
+        Map<String, com.homeaway.digitalplatform.streamregistry.ClusterValue> clustersByName = new HashMap<>();
 
-        allClusters.forEach( (ClusterKey clusterKey,ClusterValue clusterValue) -> clustersByName.put(clusterValue.getClusterProperties().get(CLUSTER_NAME), clusterValue));
+        allClusters.forEach( (com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue clusterValue) -> clustersByName.put(clusterValue.getClusterProperties().get(CLUSTER_NAME), clusterValue));
 
         log.info("Cluster Info for clusterName - {} is: {}",clusterName,clustersByName.get(clusterName));
 
@@ -126,8 +128,11 @@ public class ClusterDaoImpl implements ClusterDao{
     }
 
     @Override
-    public void upsertCluster(JsonCluster jsonCluster) {
+    public void upsertCluster(JsonCluster jsonCluster) throws InvalidClusterException{
         log.info("Upserting Cluster {}", jsonCluster);
+
+        ClusterValidator.isValid(jsonCluster);
+
         infraManager.upsertCluster(JsonToAvroDTO.getAvroClusterKey(jsonCluster.getClusterKey()), JsonToAvroDTO.getAvroClusterValue(jsonCluster.getClusterValue()));
     }
 
