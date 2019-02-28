@@ -58,11 +58,7 @@ public class KafkaManagerImpl implements KafkaManager {
         return zkUtils;
     }
 
-<<<<<<< HEAD
-    public void shutdownZkUtils(ZkUtils zkUtils) {
-=======
     private void shutdownZkUtils(ZkUtils zkUtils) {
->>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b
         try {
             zkUtils.close();
         } catch (RuntimeException exception) {

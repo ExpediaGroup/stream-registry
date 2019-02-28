@@ -35,7 +35,6 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import com.homeaway.digitalplatform.streamregistry.Actor;
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
@@ -45,7 +44,7 @@ import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
 @Slf4j
-public abstract class AbstractDao {
+public abstract class AbstractDao{
 
     public static final String PRIMARY_HINT = "primary";
     public static final String CLUSTER_NAME = "cluster.name";
@@ -65,56 +64,27 @@ public abstract class AbstractDao {
 
     protected final InfraManager infraManager;
 
+    protected final ClusterDao clusterDao;
+
     public AbstractDao(ManagedKafkaProducer managedKafkaProducer,
         ManagedKStreams kStreams,
         String env,
         RegionDao regionDao,
+        ClusterDao clusterDao,
         InfraManager infraManager) {
         Preconditions.checkNotNull(managedKafkaProducer, "managedKafkaProducer should not be null");
         Preconditions.checkNotNull(kStreams, "kStreams should not be null");
         Preconditions.checkNotNull(env, "env should not be null");
         Preconditions.checkNotNull(regionDao, "regionDao should not be null");
         Preconditions.checkNotNull(infraManager, "infraManager should not be null");
-        
+        Preconditions.checkNotNull(clusterDao, "clusterDao should not be null");
+
         this.kafkaProducer = managedKafkaProducer;
         this.kStreams = kStreams;
         this.env = env;
         this.regionDao = regionDao;
         this.infraManager = infraManager;
-    }
-
-    /**
-     * This method looks up in the statestore for cluster information for a given key.
-     *
-     * @param vpc VPC of the region that the cluster belongs to. Eg: us-east-1-vpc-defa0000
-     * @param env Environment the cluster belongs to
-     * @param hint Additional information that works in combination with vpc
-     * @param actorType Type that defines if the operation is happening for a producer or consumer
-     * @return ClusterValue
-     * @throws ClusterNotFoundException thrown if no cluster is found in the region
-     */
-    protected ClusterValue getClusterDetails(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException {
-        log.info("Cluster Details: vpc: {}, env: {}, hint: {}, actorType: {}", vpc, env, hint, actorType);
-        ClusterKey clusterKey = new ClusterKey(vpc, env, hint, null);
-
-        Optional<ClusterValue> clusterValue = infraManager.getClusterByKey(clusterKey);
-
-        if (clusterValue.isPresent()) {
-            log.info("Cluster Information found - {}", clusterValue);
-            return clusterValue.get();
-        }
-        // If no cluster information is found set the actorType and look again.
-        clusterKey.setType(actorType);
-
-        clusterValue = infraManager.getClusterByKey(clusterKey);
-
-        if (clusterValue.isPresent()) {
-            log.info("Cluster Information found - {}", clusterValue);
-            return clusterValue.get();
-        } else {
-            log.info("Cluster Information not found for key - {}", clusterKey);
-            throw new ClusterNotFoundException(String.format("Cluster not found for the given %s.", clusterKey.toString()));
-        }
+        this.clusterDao = clusterDao;
     }
 
     protected Pair<AvroStreamKey, Optional<AvroStream>> getAvroStreamKeyValue(String streamName) {
@@ -142,7 +112,7 @@ public abstract class AbstractDao {
         actorBuilder.setName(actor.getName());
         actorBuilder.setRegionStreamConfigurations(actor.getRegionStreamConfigurations());
 
-        ClusterValue clusterValue = getClusterDetails(region, env, hint, actorType);
+        ClusterValue clusterValue = clusterDao.getCluster(region, env, hint, actorType);
         Optional<String> bootstrapServers = Optional.ofNullable(clusterValue.getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
         Optional<String> schemaRegistryURL = Optional.ofNullable(clusterValue.getClusterProperties().get(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG));
         Optional<String> clusterName = Optional.ofNullable(clusterValue.getClusterProperties().get(CLUSTER_NAME));

@@ -58,20 +58,19 @@ import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.StreamRegistryApplication;
-<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
-=======
 import com.homeaway.streamplatform.streamregistry.StreamRegistryManagedContainer;
 import com.homeaway.streamplatform.streamregistry.configuration.HealthCheckStreamConfig;
->>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaStreamsConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
 import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
+import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
+import com.homeaway.streamplatform.streamregistry.db.dao.impl.ClusterDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ConsumerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ProducerDaoImpl;
@@ -84,10 +83,7 @@ import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthChe
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
-=======
 import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
->>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
@@ -146,6 +142,8 @@ public class BaseResourceIT {
     protected static StreamRegistryHealthCheck healthCheck;
 
     protected static RegionDao regionDao;
+
+    protected static ClusterDao clusterDao;
 
     protected static Client client;
 
@@ -238,12 +236,9 @@ public class BaseResourceIT {
         consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, SpecificAvroDeserializer.class);
         consumerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
 
-<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
-        KafkaManager kafkaManager = new KafkaManagerImpl();
-=======
->>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
         String env = configuration.getEnv();
         regionDao = new RegionDaoImpl(env, infraManager);
+        clusterDao = new ClusterDaoImpl(infraManager);
 
         client = Mockito.mock(Client.class);
         StreamValidatorIT.mockHttpClientSuccess(client);
@@ -253,17 +248,13 @@ public class BaseResourceIT {
         configuration.getSchemaManagerConfig().getProperties().put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
         configuration.getSchemaManagerConfig().getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 1);
-<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
-
-=======
->>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
 
         KafkaManager kafkaManager = new KafkaManagerImpl();
-        StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
+        StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao,
             infraManager, streamValidator, schemaManager, kafkaManager);
-        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
+        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao,
             infraManager);
-        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
+        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao,
             infraManager);
         streamResource = new StreamResource(streamDao, producerDao, consumerDao);
         producerResource = new ProducerResource(producerDao);
@@ -273,28 +264,11 @@ public class BaseResourceIT {
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
         schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
 
-<<<<<<< HEAD:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
-        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), configuration.getHealthCheckStreamConfig());
-
-        // Moved the Dropwizard Lifecycle methods to the bottom to replicate the app runtime behavior.
-        managedKafkaProducer.start();
-        managedKStreams.start();
-        log.info(
-                "Waiting for processor's init method to be called (KV store created) before servicing the HTTP requests.");
-        long timeoutTimestamp = System.currentTimeMillis() + TEST_STARTUP_TIMEOUT_MS;
-        while (!initialized.isDone() && System.currentTimeMillis() <= timeoutTimestamp) {
-            Thread.sleep(10); // wait some cycles before checking again
-        }
-        Preconditions.checkState(initialized.isDone(), "Did not receive state store initialized signal, aborting.");
-        Preconditions.checkState(managedKStreams.getStreams().state().isRunning(), "State store did not start. Aborting.");
-        log.info("Processor wait completed.");
-=======
         HealthCheckStreamConfig healthCheckStreamConfig = configuration.getHealthCheckStreamConfig();
         healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), healthCheckStreamConfig);
 
         managedContainer = new StreamRegistryManagedContainer(managedKStreams, new ManagedInfraManager(infraManager), managedKafkaProducer);
         managedContainer.start();
->>>>>>> 553345fff8ed6997c1134820343ca6677ee4596b:core/src/test/java/com/homeaway/streamplatform/streamregistry/resource/BaseResourceIT.java
     }
 
     /** initializes the zkClient to load up the test urls */
