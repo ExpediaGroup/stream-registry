@@ -655,7 +655,6 @@
                                 <ignoredDependencies>
                                     <ignoredDependency>org.eclipse.jetty:jetty-server:jar:9.*</ignoredDependency>
                                 </ignoredDependencies>
-                                <ignoredUsedUndeclaredDependencies>io.swagger:swagger-annotations:jar:1.5.21</ignoredUsedUndeclaredDependencies>
                                 <ignoredUnusedDeclaredDependencies>
                                     <ignoredUnusedDeclaredDependency>com.google.guava:guava:jar:${guava.version}</ignoredUnusedDeclaredDependency>
                                     <ignoredUnusedDeclaredDependency>io.dropwizard:dropwizard-util:jar:*</ignoredUnusedDeclaredDependency>

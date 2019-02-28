@@ -49,7 +49,8 @@ public class ClusterValidator {
         if (clusterValue.getClusterName() == null || clusterValue.getClusterName().trim() == "" ||
             clusterValue.getBootstrapServers() == null || clusterValue.getBootstrapServers().trim() == "" ||
             clusterValue.getZookeeperQuorum() == null || clusterValue.getZookeeperQuorum().trim() == "") {
-            throw new InvalidClusterException("Cluster Values (Cluster Name/Bootstrap servers/Zookeeper Quorum) cannot be null or empty");
+            throw new InvalidClusterException("Cluster Values (Cluster Name/Bootstrap servers/Zookeeper Quorum) cannot be null or empty for vpc:"+clusterKey.getVpc()+
+                " env:"+clusterKey.getEnv()+" hint:"+clusterKey.getHint()+" type:"+clusterKey.getType() );
         }
     }
 }
