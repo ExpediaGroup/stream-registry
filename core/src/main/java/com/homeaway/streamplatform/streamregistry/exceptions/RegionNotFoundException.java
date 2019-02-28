@@ -15,17 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-import lombok.Getter;
-
 public class RegionNotFoundException extends Exception {
     private static final long serialVersionUID = 1687487766016741537L;
 
-    @Getter
-    private final String region;
-
-    public RegionNotFoundException(String region, String message) {
+    public RegionNotFoundException(String message) {
         super(message);
-        this.region = region;
     }
 
 }

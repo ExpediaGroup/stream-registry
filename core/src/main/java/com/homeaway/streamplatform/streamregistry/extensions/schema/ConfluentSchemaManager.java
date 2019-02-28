@@ -32,7 +32,7 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 
 import org.apache.avro.Schema;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaException;
+import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
 
 @Slf4j
@@ -79,20 +79,23 @@ public class ConfluentSchemaManager implements SchemaManager {
     }
 
     @Override
-    public boolean checkCompatibility(String subject, String schema) throws SchemaException {
+    public boolean checkCompatibility(String subject, String schema) throws SchemaValidationException {
         try {
             org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
-            return schemaRegistryClient.testCompatibility(subject, avroSchema);
+            if (!schemaRegistryClient.testCompatibility(subject, avroSchema)) {
+                throw new SchemaValidationException(String.format("Schema Compatibility check Failed for subject=%s schema=%s", subject, schema));
+            }
+            return true;
         } catch (RestClientException restClientException) {
             if (restClientException.getErrorCode()==40401) {
                 log.debug("Subject '{}' does not exist in schema-registry", subject);
                 return true;
             }
             String message = String.format("Could not check compatibility for subject '%s'", subject);
-            throw new SchemaException(message, restClientException);
+            throw new SchemaValidationException(message, restClientException);
         } catch (IOException e) {
             String message = String.format("Could not check compatibility for subject '%s'", subject);
-            throw new SchemaException(message, e);
+            throw new SchemaValidationException(message, e);
         }
     }
 

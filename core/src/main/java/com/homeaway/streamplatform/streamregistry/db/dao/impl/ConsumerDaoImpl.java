@@ -111,7 +111,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
             log.info("Registering new Consumer. Stream={} Consumer={} ; region={}", streamName, consumerName, region);
             return createConsumer(avroStream.get(), consumerName, region);
         } else {
-            throw new StreamNotFoundException(streamName, String.format("StreamName=%s not found.", streamName));
+            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Consumer", streamName));
         }
     }
 
@@ -121,7 +121,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         log.info("==>>> getting into creating consumer. Initial Stream: {}", avroStream.toString());
 
         if (!regionDao.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
-            throw new RegionNotFoundException(region, String.format("Region=%s is not supported for the Stream's hint=%s", region, avroStream.getTags().getHint()));
+            throw new RegionNotFoundException(String.format("Region=%s is not supported for the Stream's hint=%s", region, avroStream.getTags().getHint()));
 
         List<com.homeaway.digitalplatform.streamregistry.Consumer> listConsumers = avroStream.getConsumers();
         if (listConsumers == null) {
@@ -168,7 +168,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
                     return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
             }
         } else {
-            throw new StreamNotFoundException(streamName, String.format("StreamName=%s not found.", streamName));
+            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before getting a Consumer", streamName));
         }
         return Optional.empty();
     }
@@ -186,7 +186,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
                 }
             }
         } else {
-            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found", streamName));
+            throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before retrieving a Consumers", streamName));
         }
         return consumers;
     }
@@ -213,9 +213,9 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
             if (avroStream.get().getConsumers().size() < consumerInitialSize)
                 updateAvroStream(avroStream.get());
             else
-                throw new ActorNotFoundException(consumerName, String.format("Consumer=%s not found for Stream=%s", consumerName, streamName));
+                throw new ActorNotFoundException(String.format("Consumer=%s not found for Stream=%s", consumerName, streamName));
         } else {
-            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found.", streamName));
+            throw new StreamNotFoundException(String.format("Stream with the name %s not found. Please create the Stream before deleting a Consumer", streamName));
         }
     }
 }

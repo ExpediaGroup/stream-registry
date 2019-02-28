@@ -47,6 +47,7 @@ import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
+
 @Slf4j
 public class StreamDaoImpl extends AbstractDao implements StreamDao {
 
@@ -99,12 +100,12 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
         if (value.isPresent()) {
             // ensure valid partition counts and replication factors are provided
             if (stream.getPartitions() != value.get().getPartitions()) {
-                throw new IllegalArgumentException(String.format(
+                throw new UnsupportedOperationException(String.format(
                         "Stream registry does not currently support modifying the initial partition count. " +
                                 "Requested: %s. Current count: %s", stream.getPartitions(),
                         value.get().getPartitions()));
             } else if (stream.getReplicationFactor() != value.get().getReplicationFactor()) {
-                throw new IllegalArgumentException(String.format(
+                throw new UnsupportedOperationException(String.format(
                         "Stream registry does not currently support modifying the initial replication factor. " +
                                 "Requested: %s. Current replication factor: %s", stream.getReplicationFactor(),
                         value.get().getReplicationFactor()));
@@ -205,7 +206,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
         Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
 
         if (!streamValue.isPresent()) {
-            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found.", streamName));
+            throw new StreamNotFoundException(String.format("Stream=%s not found.", streamName));
         } else {
             return AvroToJsonDTO.convertAvroToJson(streamValue.get());
         }
@@ -216,7 +217,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
         Pair<AvroStreamKey, Optional<AvroStream>> keyValue = getAvroStreamKeyValue(streamName);
 
         if (!keyValue.getValue().isPresent()) {
-            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found.", streamName));
+            throw new StreamNotFoundException(String.format("Stream=%s not found.", streamName));
         }
         try {
             kafkaProducer.log(keyValue.getKey(), null);
@@ -234,7 +235,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
     }
 
     @Override
-    public boolean validateStreamCompatibility(Stream stream) throws SchemaException {
+    public boolean validateSchemaCompatibility(Stream stream) throws SchemaValidationException {
         String keySubject = stream.getName() + "-key";
         String valueSubject = stream.getName() + "-value";
 

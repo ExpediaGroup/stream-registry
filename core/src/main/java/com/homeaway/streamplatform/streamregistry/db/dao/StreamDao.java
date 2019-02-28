@@ -60,8 +60,10 @@ public interface StreamDao {
      * Validate the input schema against the SchemaRegistry.
      * @param stream
      * @return
-     * @throws SchemaException - when the input schemas for key or value could not parsed.
+     * @throws SchemaValidationException -
+     *  a) Where there is a RuntimeException while validating schema against schema-registry.
+     *  b) When schema validation check fails.
      */
-    boolean validateStreamCompatibility(Stream stream) throws SchemaException;
+    boolean validateSchemaCompatibility(Stream stream) throws SchemaValidationException;
 
 }

@@ -63,7 +63,7 @@ public class ProducerResourceIT extends BaseResourceIT {
 
         // Step 2: Validate "Producer Not Found" for a Stream.
         Response producer = producerResource.getProducer(streamName, producerName);
-        Assert.assertEquals("ErrorMessage{code=404, message=Producer:" + producerName + " not found for Stream=" + streamName + ", details=null}", (producer.getEntity().toString()));
+        Assert.assertEquals("ErrorMessage{code=404, message=Producer=" + producerName + " not found for Stream=" + streamName + ", details=null}", (producer.getEntity().toString()));
 
         // Step 3: PUT a producer
         producerResource.upsertProducer(streamName, producerName, US_EAST_REGION);
@@ -164,8 +164,8 @@ public class ProducerResourceIT extends BaseResourceIT {
         String producerName = "P1";
 
         Response response = producerResource.upsertProducer(streamName, producerName, US_EAST_REGION);
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        Assert.assertEquals("Stream:junit-stream-put-producer-with-no-stream not found . Please create the Stream before registering a Producer", ((ErrorMessage)response.getEntity()).getMessage());
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        Assert.assertEquals("StreamName=junit-stream-put-producer-with-no-stream not found. Please create the Stream before registering a Producer", ((ErrorMessage)response.getEntity()).getMessage());
     }
 
     @Test
@@ -201,7 +201,7 @@ public class ProducerResourceIT extends BaseResourceIT {
 
         Thread.sleep(TEST_SLEEP_WAIT_MS);
         response = producerResource.getProducer(streamName, producerName);
-        Assert.assertEquals("ErrorMessage{code=404, message=Producer:" + producerName + " not found for Stream=" + streamName + ", details=null}",
+        Assert.assertEquals("ErrorMessage{code=404, message=Producer=" + producerName + " not found for Stream=" + streamName + ", details=null}",
                 (response.getEntity().toString()));
     }
 
@@ -211,7 +211,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         String producerName = "P1";
 
         Response response = producerResource.deleteProducer(streamName, producerName);
-        Assert.assertEquals("ErrorMessage{code=404, message=Stream:" + streamName + " not found . Please create the Stream before registering a Producer, details=Stream=" + streamName + " not found}",
+        Assert.assertEquals("ErrorMessage{code=400, message=Stream=" + streamName + " not found. Please create the Stream before deleting a Producer, details=null}",
                 response.getEntity().toString());
     }
 
@@ -232,8 +232,8 @@ public class ProducerResourceIT extends BaseResourceIT {
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         response = producerResource.deleteProducer(streamName, invalidProducerName);
-        assertThat(response.getStatus(), is(404));
-        Assert.assertEquals("ErrorMessage{code=404, message=Producer:" + invalidProducerName + " not found., details=Producer=" + invalidProducerName + " not found for Stream=junit-stream-delete-invalid-producer-invalid-stream}",
+        assertThat(response.getStatus(), is(400));
+        Assert.assertEquals("ErrorMessage{code=400, message=Producer=" + invalidProducerName + " not found for Stream=" + streamName + ", details=null}",
                 response.getEntity().toString());
     }
 

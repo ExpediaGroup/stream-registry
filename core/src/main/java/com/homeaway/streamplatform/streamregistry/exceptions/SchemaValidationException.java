@@ -15,11 +15,14 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class StreamNotFoundException extends Exception {
-    private static final long serialVersionUID = -2171171630296498063L;
+public class SchemaValidationException extends Exception {
 
-    public StreamNotFoundException(String message) {
+    public SchemaValidationException(String message) {
         super(message);
+    }
+
+    public SchemaValidationException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

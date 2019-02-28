@@ -17,7 +17,7 @@ package com.homeaway.streamplatform.streamregistry.extensions.schema;
 
 import java.util.Map;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaException;
+import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
 
 /**
@@ -50,7 +50,7 @@ public interface SchemaManager {
      * Test input schema against a particular version of a
      * subject’s schema for compatibility.
      */
-    boolean checkCompatibility(String subject, String schema) throws SchemaException;
+    boolean checkCompatibility(String subject, String schema) throws SchemaValidationException;
 
     /**
      * Configure the SchemaManager with SchemaRegistry endpoints and properties

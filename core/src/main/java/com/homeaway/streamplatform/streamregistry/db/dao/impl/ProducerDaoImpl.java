@@ -108,14 +108,14 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
             log.info("Registering new Producer. Stream={} Producer={} ; region={}", streamName, producerName, region);
             return registerProducer(avroStream.get(), producerName, region);
         } else {
-            throw new StreamNotFoundException(streamName, String.format("StreamName=%s not found.", streamName));
+            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Producer", streamName));
         }
     }
 
     private Optional<com.homeaway.streamplatform.streamregistry.model.Producer> registerProducer(AvroStream avroStream, String producerName, String region)
             throws RegionNotFoundException, ClusterNotFoundException {
         if (!regionDao.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
-            throw new RegionNotFoundException(region, String.format("Region=%s not supported for hint=%s", region, avroStream.getTags().getHint()));
+            throw new RegionNotFoundException(String.format("Region=%s not supported for hint=%s", region, avroStream.getTags().getHint()));
 
         List<com.homeaway.digitalplatform.streamregistry.Producer> listProducers = avroStream.getProducers();
         if (listProducers == null) {
@@ -167,9 +167,9 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
             if (avroStream.get().getProducers().size() < producerInitialSize)
                 updateAvroStream(avroStream.get());
             else
-                throw new ActorNotFoundException(producerName, String.format("Producer=%s not found for Stream=%s", producerName, streamName));
+                throw new ActorNotFoundException(String.format("Producer=%s not found for Stream=%s", producerName, streamName));
         } else {
-            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found", streamName));
+            throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before deleting a Producer", streamName));
         }
     }
 
@@ -189,7 +189,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
                 }
             }
         } else {
-            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found", streamName));
+            throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before getting a Producer", streamName));
         }
         return Optional.empty();
     }
@@ -208,7 +208,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
                 }
             }
         } else {
-            throw new StreamNotFoundException(streamName, String.format("Stream=%s not found", streamName));
+            throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before retrieving the producers", streamName));
         }
         return producers;
     }

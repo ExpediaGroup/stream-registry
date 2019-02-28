@@ -114,7 +114,7 @@ public abstract class AbstractDao {
             return clusterValue.get();
         } else {
             log.info("Cluster Information not found for key - {}", clusterKey);
-            throw new ClusterNotFoundException(clusterKey.toString(), String.format("Cluster not found for %s.", clusterKey.toString()));
+            throw new ClusterNotFoundException(String.format("Cluster not found for the given %s.", clusterKey.toString()));
         }
     }
 

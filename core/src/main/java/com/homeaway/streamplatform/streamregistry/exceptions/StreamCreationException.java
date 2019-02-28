@@ -15,17 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-import lombok.Getter;
-
 public class StreamCreationException extends Exception {
     private static final long serialVersionUID = -4755617190312561871L;
 
-    @Getter
-    private String streamName;
-
-    public StreamCreationException(String streamName, String message) {
+    public StreamCreationException(String message) {
         super(message);
-        this.streamName = streamName;
     }
 
 }

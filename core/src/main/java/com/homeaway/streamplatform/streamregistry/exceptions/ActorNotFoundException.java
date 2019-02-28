@@ -15,17 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-import lombok.Getter;
-
 public class ActorNotFoundException extends Exception{
     private static final long serialVersionUID = -6879806564888143788L;
 
-    @Getter
-    private final String actorName;
-
-    public ActorNotFoundException(String actorName, String message) {
+    public ActorNotFoundException(String message) {
         super(message);
-        this.actorName = actorName;
     }
 
 }
