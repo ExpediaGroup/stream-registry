@@ -41,6 +41,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
+import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
 import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
@@ -74,19 +75,19 @@ public class ClusterResource {
 
             clusterDao.upsertCluster(clusterParam);
             return Response.status(Response.Status.ACCEPTED).build();
-        } catch (RuntimeException e) {
+        }  catch (InvalidClusterException e) {
             log.error("Error upserting cluster.", e);
             return Response.status(Response.Status.BAD_REQUEST)
                 .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
                     "Error upserting cluster.",
                     e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
                 .build();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error upserting cluster.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
                     "Error upserting cluster.",
-                    e.getMessage()))
+                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
                 .build();
         }
     }
@@ -141,13 +142,6 @@ public class ClusterResource {
                     "Error getting cluster.",
                     e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
                 .build();
-        } catch (Exception e) {
-            log.error("Error getting cluster details.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    "Error getting cluster details.",
-                    e.getMessage()))
-                .build();
         }
     }
 
@@ -178,13 +172,6 @@ public class ClusterResource {
                 .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
                     "Error getting cluster.",
                     e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
-                .build();
-        } catch (Exception e) {
-            log.error("Error getting cluster details.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    "Error getting cluster details.",
-                    e.getMessage()))
                 .build();
         }
     }

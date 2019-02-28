@@ -15,7 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class InvalidClusterException extends RuntimeException{
+public class InvalidClusterException extends Exception{
 
     public InvalidClusterException(String message) {
         super(message);

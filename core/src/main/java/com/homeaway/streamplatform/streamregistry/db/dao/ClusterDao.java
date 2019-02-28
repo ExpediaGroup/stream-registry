@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
 import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
@@ -59,5 +60,5 @@ public interface ClusterDao {
      *
      * @param jsonCluster the json cluster
      */
-    void upsertCluster(JsonCluster jsonCluster);
+    void upsertCluster(JsonCluster jsonCluster) throws InvalidClusterException;
 }

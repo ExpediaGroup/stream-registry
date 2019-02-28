@@ -41,7 +41,7 @@ public class ClusterValidator {
         if (clusterKey.getEnv() == null || clusterKey.getEnv().trim() == "" ||
             clusterKey.getHint() == null || clusterKey.getHint().trim() == "" ||
             clusterKey.getVpc() == null || clusterKey.getVpc().trim() == "") {
-            throw new InvalidClusterException("Cluster Keys (Env/Hint/VPC) cannot be null or empty");
+            throw new InvalidClusterException(String.format("Cluster Keys (Env/Hint/VPC) cannot be null or empty, clusterKey:%s",clusterKey));
         }
 
         ClusterValue clusterValue = cluster.getClusterValue();
@@ -49,8 +49,7 @@ public class ClusterValidator {
         if (clusterValue.getClusterName() == null || clusterValue.getClusterName().trim() == "" ||
             clusterValue.getBootstrapServers() == null || clusterValue.getBootstrapServers().trim() == "" ||
             clusterValue.getZookeeperQuorum() == null || clusterValue.getZookeeperQuorum().trim() == "") {
-            throw new InvalidClusterException("Cluster Values (Cluster Name/Bootstrap servers/Zookeeper Quorum) cannot be null or empty for vpc:"+clusterKey.getVpc()+
-                " env:"+clusterKey.getEnv()+" hint:"+clusterKey.getHint()+" type:"+clusterKey.getType() );
+            throw new InvalidClusterException(String.format("Cluster Values (Cluster Name/Bootstrap servers/Zookeeper Quorum) cannot be null or empty, clusterKey:%s",clusterKey));
         }
     }
 }
