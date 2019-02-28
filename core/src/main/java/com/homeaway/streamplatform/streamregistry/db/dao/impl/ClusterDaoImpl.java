@@ -129,13 +129,19 @@ public class ClusterDaoImpl implements ClusterDao {
         return Optional.of(AvroToJsonDTO.getJsonClusterValue(clustersByName.get(clusterName)));
     }
 
+    /**
+     * Upsert a cluster object
+     * @param jsonCluster
+     * @throws InvalidClusterException
+     */
     @Override
     public void upsertCluster(JsonCluster jsonCluster) throws InvalidClusterException {
         log.info("Upserting Cluster {}", jsonCluster);
 
-        ClusterValidator.isValid(jsonCluster);
+        ClusterValidator.validate(jsonCluster);
 
-        infraManager.upsertCluster(JsonToAvroDTO.getAvroClusterKey(jsonCluster.getClusterKey()), JsonToAvroDTO.getAvroClusterValue(jsonCluster.getClusterValue()));
+        infraManager.upsertCluster(JsonToAvroDTO.getAvroClusterKey(jsonCluster.getClusterKey()),
+            JsonToAvroDTO.getAvroClusterValue(jsonCluster.getClusterValue()));
     }
 
 

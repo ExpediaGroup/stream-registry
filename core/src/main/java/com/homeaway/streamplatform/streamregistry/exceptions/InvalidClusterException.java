@@ -15,18 +15,9 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
-
 public class InvalidClusterException extends RuntimeException{
 
-    protected final JsonCluster cluster;
-
-    public InvalidClusterException(JsonCluster cluster) {
-        this.cluster = cluster;
-    }
-
-    public InvalidClusterException(JsonCluster cluster, String message) {
+    public InvalidClusterException(String message) {
         super(message);
-        this.cluster = cluster;
     }
 }

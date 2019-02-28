@@ -27,11 +27,37 @@ import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
  * Interface for Cluster dao.
  */
 public interface ClusterDao {
+    /**
+     * Gets all clusters.
+     *
+     * @return the all clusters
+     */
     Map<ClusterKey, ClusterValue> getAllClusters();
 
+    /**
+     * Gets cluster.
+     *
+     * @param vpc the vpc
+     * @param env the env
+     * @param hint the hint
+     * @param actorType the actor type
+     * @return the cluster
+     * @throws ClusterNotFoundException the cluster not found exception
+     */
     com.homeaway.digitalplatform.streamregistry.ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException;
 
+    /**
+     * Gets cluster.
+     *
+     * @param clusterName the cluster name
+     * @return the cluster
+     */
     Optional<ClusterValue> getCluster(String clusterName);
 
+    /**
+     * Upsert cluster.
+     *
+     * @param jsonCluster the json cluster
+     */
     void upsertCluster(JsonCluster jsonCluster);
 }

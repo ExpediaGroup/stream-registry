@@ -134,6 +134,13 @@ public class ClusterResource {
             }
 
             return Response.status(200).entity(clusterMap).build();
+        } catch (RuntimeException e) {
+            log.error("Error getting cluster.", e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                    "Error getting cluster.",
+                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
+                .build();
         } catch (Exception e) {
             log.error("Error getting cluster details.", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -165,6 +172,13 @@ public class ClusterResource {
             }
 
             return Response.ok().entity(jsonClusterValue.get()).build();
+        } catch (RuntimeException e) {
+            log.error("Error getting cluster.", e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
+                    "Error getting cluster.",
+                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
+                .build();
         } catch (Exception e) {
             log.error("Error getting cluster details.", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

@@ -20,11 +20,20 @@ import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 
+/**
+ * The type Cluster validator.
+ */
 public class ClusterValidator {
 
-    public static boolean isValid(JsonCluster cluster) throws InvalidClusterException {
+    /**
+     * Validate.
+     *
+     * @param cluster the cluster
+     * @throws InvalidClusterException the invalid cluster exception
+     */
+    public static void validate(JsonCluster cluster) throws InvalidClusterException {
         if (cluster == null || cluster.getClusterKey() == null || cluster.getClusterValue() == null) {
-            throw new InvalidClusterException(cluster, "Cluster Key/Value cannot be null");
+            throw new InvalidClusterException("Cluster Key/Value cannot be null ");
         }
 
         ClusterKey clusterKey = cluster.getClusterKey();
@@ -32,7 +41,7 @@ public class ClusterValidator {
         if (clusterKey.getEnv() == null || clusterKey.getEnv().trim() == "" ||
             clusterKey.getHint() == null || clusterKey.getHint().trim() == "" ||
             clusterKey.getVpc() == null || clusterKey.getVpc().trim() == "") {
-            throw new InvalidClusterException(cluster, "Cluster Keys (Env/Hint/VPC) cannot be null or empty");
+            throw new InvalidClusterException("Cluster Keys (Env/Hint/VPC) cannot be null or empty");
         }
 
         ClusterValue clusterValue = cluster.getClusterValue();
@@ -40,9 +49,7 @@ public class ClusterValidator {
         if (clusterValue.getClusterName() == null || clusterValue.getClusterName().trim() == "" ||
             clusterValue.getBootstrapServers() == null || clusterValue.getBootstrapServers().trim() == "" ||
             clusterValue.getZookeeperQuorum() == null || clusterValue.getZookeeperQuorum().trim() == "") {
-            throw new InvalidClusterException(cluster, "Cluster Values (Cluster Name/Bootstrap servers/Zookeeper Quorum) cannot be null or empty");
+            throw new InvalidClusterException("Cluster Values (Cluster Name/Bootstrap servers/Zookeeper Quorum) cannot be null or empty");
         }
-
-        return true;
     }
 }
