@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseFilter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -155,10 +157,25 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
-        // Step 7 - Add MDCFilter for Diagnostics.
-        environment.jersey().register(new MDCFilter());
+        // Step 7 - Add MDCRequestFilter for Diagnostics.
+        registerFiltersForMDC(environment, configuration);
 
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
+    }
+
+    private void registerFiltersForMDC(Environment environment, StreamRegistryConfiguration configuration) {
+        try {
+            if (configuration.getRequestMDCFilterClassName() != null) {
+                ContainerRequestFilter mdcRequestFilter = Utils.newInstance(configuration.getRequestMDCFilterClassName(), ContainerRequestFilter.class);
+                environment.jersey().register(mdcRequestFilter);
+            }
+            if (configuration.getResponseMDCFilterClassName() != null) {
+                ContainerResponseFilter mdcResponseFilter = Utils.newInstance(configuration.getResponseMDCFilterClassName(), ContainerResponseFilter.class);
+                environment.jersey().register(mdcResponseFilter);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(String.format("Error loading MDCFilter from configuration %s",configuration),  e);
+        }
     }
 
     public static StreamValidator loadValidator(StreamRegistryConfiguration configuration,
@@ -186,7 +203,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                     streamValidator.configure(validatorConfig);
                     return streamValidator;
                 } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException("Error loading streamValidator from configuration", e);
+                    throw new IllegalStateException(String.format("Error loading streamValidator from configuration %s",validatorClass),  e);
                 }
             }
         }

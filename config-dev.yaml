@@ -8,6 +8,9 @@ server:
 
 env: test
 
+requestMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCRequestFilter
+responseMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCResponseFilter
+
 healthCheckStreamConfig:
   name: StreamRegistryHealthCheck
   clusterRegion: vpc-localhost
@@ -65,7 +68,7 @@ logging:
     com.homeaway: DEBUG
   appenders:
     - type: console
-      logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} - requestMarker-%X{requestMarker} %msg %n"
+      logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} %X{request-UUID} - %msg %n"
 
 swagger:
   resourcePackage: com.homeaway.streamplatform.streamregistry.resource
