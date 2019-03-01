@@ -166,6 +166,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
     }
 
+<<<<<<< HEAD
     private void createEventStoreKafkaTopicIfNotExists(StreamRegistryConfiguration configuration) {
         EventStoreTopic eventStoreTopic = configuration.getTopicsConfig().getEventStoreTopic();
         String topicName = eventStoreTopic.getName();
@@ -190,20 +191,20 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     private void registerFilters(Environment environment, StreamRegistryConfiguration configuration) {
+=======
+    private void registerFiltersForMDC(Environment environment, StreamRegistryConfiguration configuration) {
+>>>>>>> Made the MDC Filters passed at runtime
         try {
-            if (configuration.getRequestFilterClassNames() != null) {
-                for (String requestFilterClassName : configuration.getRequestFilterClassNames()) {
-                    environment.jersey().register(Utils.newInstance(requestFilterClassName, ContainerRequestFilter.class));
-                }
+            if (configuration.getRequestMDCFilterClassName() != null) {
+                ContainerRequestFilter mdcRequestFilter = Utils.newInstance(configuration.getRequestMDCFilterClassName(), ContainerRequestFilter.class);
+                environment.jersey().register(mdcRequestFilter);
             }
-
-            if (configuration.getResponseFilterClassNames() != null) {
-                for (String responseFilterClassName : configuration.getResponseFilterClassNames()) {
-                    environment.jersey().register(Utils.newInstance(responseFilterClassName, ContainerResponseFilter.class));
-                }
+            if (configuration.getResponseMDCFilterClassName() != null) {
+                ContainerResponseFilter mdcResponseFilter = Utils.newInstance(configuration.getResponseMDCFilterClassName(), ContainerResponseFilter.class);
+                environment.jersey().register(mdcResponseFilter);
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(String.format("Error loading Jersey Filter from configuration %s",configuration),  e);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(String.format("Error loading MDCFilter from configuration %s",configuration),  e);
         }
     }
 

@@ -8,12 +8,8 @@ server:
 
 env: local
 
-requestFilterClassNames:
-#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter1
-#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter2
-responseFilterClassNames:
-#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter1
-#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter2
+requestMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCRequestFilter
+responseMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCResponseFilter
 
 healthCheckStreamConfig:
   name: StreamRegistryHealthCheck
@@ -80,7 +76,7 @@ logging:
     com.homeaway: DEBUG
   appenders:
     - type: console
-      logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} - requestMarker-%X{requestMarker} %msg %n"
+      logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} %X{request-UUID} - %msg %n"
 
 swagger:
   resourcePackage: com.homeaway.streamplatform.streamregistry.resource
