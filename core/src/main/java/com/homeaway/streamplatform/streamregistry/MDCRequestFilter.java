@@ -15,26 +15,19 @@
  */
 package com.homeaway.streamplatform.streamregistry;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
 
 import org.slf4j.MDC;
 
-public class MDCFilter implements ContainerRequestFilter, ContainerResponseFilter {
-    public static final String MDC_REQUEST_MARKER ="requestMarker";
+public class MDCRequestFilter implements ContainerRequestFilter {
+    public static final String MDC_REQUEST_UUID ="request-UUID";
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-        MDC.put(MDC_REQUEST_MARKER, UUID.randomUUID().toString());
+    public void filter(ContainerRequestContext requestContext) {
+        MDC.put(MDC_REQUEST_UUID, UUID.randomUUID().toString());
     }
 
-    @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        MDC.remove(MDC_REQUEST_MARKER);
-    }
 }
