@@ -130,7 +130,7 @@ public class ProducerResource extends BaseResource{
             return Response
                     .ok()
                     .type("text/plain")
-                    .entity(String.format("Producer=%s deleted", producerName))
+                    .entity(String.format("Producer=%s deleted.", producerName))
                     .build();
         } catch (StreamNotFoundException | ActorNotFoundException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);

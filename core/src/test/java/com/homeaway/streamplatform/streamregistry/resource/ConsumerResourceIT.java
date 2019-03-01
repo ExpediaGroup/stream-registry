@@ -195,7 +195,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
         response = consumerResource.deleteConsumer(streamName, consumerName);
-        Assert.assertEquals("Consumer deleted " + consumerName, (response.getEntity()));
+        Assert.assertEquals("Consumer " + consumerName + " deleted.", (response.getEntity()));
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
         response = consumerResource.getConsumer(streamName, consumerName);

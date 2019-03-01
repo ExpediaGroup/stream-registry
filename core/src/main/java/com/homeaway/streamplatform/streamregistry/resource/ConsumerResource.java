@@ -43,6 +43,7 @@ import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundExce
 import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
+import org.codehaus.jackson.map.util.JSONPObject;
 
 @Slf4j
 public class ConsumerResource extends BaseResource {
@@ -153,7 +154,7 @@ public class ConsumerResource extends BaseResource {
             return Response
                     .ok()
                     .type("text/plain")
-                    .entity("Consumer " + consumerName + " deleted ")
+                    .entity(String.format("Consumer %s deleted.", consumerName))
                     .build();
         } catch (ActorNotFoundException | StreamNotFoundException  e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);

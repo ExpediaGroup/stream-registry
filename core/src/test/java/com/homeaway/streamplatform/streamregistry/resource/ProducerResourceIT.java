@@ -197,7 +197,7 @@ public class ProducerResourceIT extends BaseResourceIT {
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
         Response response = producerResource.deleteProducer(streamName, producerName);
-        Assert.assertEquals("Producer=" + producerName + " deleted", (response.getEntity()));
+        Assert.assertEquals("Producer=" + producerName + " deleted.", (response.getEntity()));
 
         Thread.sleep(TEST_SLEEP_WAIT_MS);
         response = producerResource.getProducer(streamName, producerName);
