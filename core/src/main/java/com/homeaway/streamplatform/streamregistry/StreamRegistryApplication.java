@@ -166,7 +166,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
     }
 
-<<<<<<< HEAD
     private void createEventStoreKafkaTopicIfNotExists(StreamRegistryConfiguration configuration) {
         EventStoreTopic eventStoreTopic = configuration.getTopicsConfig().getEventStoreTopic();
         String topicName = eventStoreTopic.getName();
@@ -191,9 +190,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     private void registerFilters(Environment environment, StreamRegistryConfiguration configuration) {
-=======
-    private void registerFiltersForMDC(Environment environment, StreamRegistryConfiguration configuration) {
->>>>>>> Made the MDC Filters passed at runtime
         try {
             if (configuration.getRequestMDCFilterClassName() != null) {
                 ContainerRequestFilter mdcRequestFilter = Utils.newInstance(configuration.getRequestMDCFilterClassName(), ContainerRequestFilter.class);

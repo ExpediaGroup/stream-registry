@@ -15,7 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry;
 
-import static com.homeaway.streamplatform.streamregistry.MDCRequestFilter.MDC_REQUEST_UUID;
+import static com.homeaway.streamplatform.streamregistry.UUIDMDCRequestFilter.MDC_REQUEST_UUID;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -23,7 +23,7 @@ import javax.ws.rs.container.ContainerResponseFilter;
 
 import org.slf4j.MDC;
 
-public class MDCResponseFilter implements ContainerResponseFilter {
+public class UUIDMDCResponseFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         responseContext.getHeaders().add(MDC_REQUEST_UUID, MDC.get(MDC_REQUEST_UUID));
