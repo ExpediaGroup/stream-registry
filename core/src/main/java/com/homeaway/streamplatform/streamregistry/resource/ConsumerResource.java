@@ -153,7 +153,7 @@ public class ConsumerResource extends BaseResource {
             return Response
                     .ok()
                     .type("text/plain")
-                    .entity("Consumer deleted " + consumerName)
+                    .entity("Consumer " + consumerName + " deleted ")
                     .build();
         } catch (ActorNotFoundException | StreamNotFoundException  e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);

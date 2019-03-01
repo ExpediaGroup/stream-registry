@@ -32,8 +32,8 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 
 import org.apache.avro.Schema;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
+import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 
 @Slf4j
 public class ConfluentSchemaManager implements SchemaManager {

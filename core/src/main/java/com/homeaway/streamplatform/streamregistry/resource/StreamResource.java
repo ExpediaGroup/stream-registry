@@ -124,7 +124,9 @@ public class StreamResource extends BaseResource{
                         streamName, stream.getName()));
             }
             streamDao.validateSchemaCompatibility(stream);
-            return Response.ok().entity("Schema Validation Successful").build();
+            return Response.ok()
+                    .type("text/plain")
+                    .entity("Schema Validation Successful").build();
         } catch (InvalidStreamException | SchemaParseException | SchemaValidationException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
         } catch (RuntimeException e) {

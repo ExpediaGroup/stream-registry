@@ -163,9 +163,11 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
             AvroStreamKey.newBuilder().setStreamName(streamName).build());
         if (streamValue.isPresent()) {
             streamValue.get().setOperationType(OperationType.GET);
-            for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
-                if (consumer.getActor().getName().equals(consumerName))
-                    return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
+            if (streamValue.get().getConsumers() != null) {
+                for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
+                    if (consumer.getActor().getName().equals(consumerName))
+                        return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
+                }
             }
         } else {
             throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before getting a Consumer", streamName));
@@ -196,6 +198,9 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
 
         if (avroStream.isPresent()) {
             final List<com.homeaway.digitalplatform.streamregistry.Consumer> withConsumer = avroStream.get().getConsumers();
+
+            if (withConsumer == null || withConsumer.size() == 0 )
+                throw new ActorNotFoundException(String.format("Consumer=%s not found for Stream=%s", consumerName, streamName));
 
             // Obtains consumer list size before  remove consumer
             final int consumerInitialSize = withConsumer.size();

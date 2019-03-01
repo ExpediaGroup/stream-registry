@@ -17,8 +17,8 @@ package com.homeaway.streamplatform.streamregistry.extensions.schema;
 
 import java.util.Map;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
+import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 
 /**
  * This interface is implemented by a stream provider to provide

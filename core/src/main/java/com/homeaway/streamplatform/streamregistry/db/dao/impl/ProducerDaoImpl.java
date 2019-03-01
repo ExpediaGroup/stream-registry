@@ -151,6 +151,9 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         if (avroStream.isPresent()) {
             final List<com.homeaway.digitalplatform.streamregistry.Producer> withProducer = avroStream.get().getProducers();
 
+            if (withProducer == null || withProducer.size() == 0 )
+                throw new ActorNotFoundException(String.format("Producer=%s not found for Stream=%s", producerName, streamName));
+
             // Obtains producer list size before  remove consumer
             final int producerInitialSize = withProducer.size();
 
