@@ -164,7 +164,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
-        // Step 7 - Add MDCRequestFilter for Diagnostics.
+        // Step 7 - Add UUIDMDCRequestFilter for Diagnostics.
         registerFiltersForMDC(environment, configuration);
 
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
