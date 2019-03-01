@@ -76,7 +76,7 @@ logging:
     com.homeaway: DEBUG
   appenders:
     - type: console
-      logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} %X{request-UUID} - %msg %n"
+      logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %X{request-UUID} %logger{5} - %msg %n"
 
 swagger:
   resourcePackage: com.homeaway.streamplatform.streamregistry.resource
