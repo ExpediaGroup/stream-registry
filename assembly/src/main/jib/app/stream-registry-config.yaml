@@ -10,8 +10,8 @@ server:
 env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
 # Filters for denoting request UUID in logs in order to group logs statements for a httpRequest for making debugging easy.
-requestMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCRequestFilter
-responseMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCResponseFilter
+requestMDCFilterClassName: ${MDC_REQUEST_FILTER:-com.homeaway.streamplatform.streamregistry.UUIDMDCRequestFilter}
+responseMDCFilterClassName: ${MDC_RESPONSE_FILTER:-com.homeaway.streamplatform.streamregistry.UUIDMDCResponseFilter}
 
 # Properties of the Stream that got upserted in each HealthCheck
 healthCheckStreamConfig:
