@@ -74,8 +74,8 @@ public class StreamRegistryConfiguration extends Configuration {
     private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
 
     @Valid
-    private List<String> requestFilterClassNames;
+    private String requestMDCFilterClassName;
 
     @Valid
-    private List<String> responseFilterClassNames;
+    private String responseMDCFilterClassName;
 }

@@ -157,29 +157,24 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
-        // Step 7 - Add MDCFilter for Diagnostics.
-        environment.jersey().register(new MDCFilter());
+        // Step 7 - Add MDCRequestFilter for Diagnostics.
+        registerFiltersForMDC(environment, configuration);
 
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
     }
 
-    private void registerFilters(Environment environment, StreamRegistryConfiguration configuration) {
+    private void registerFiltersForMDC(Environment environment, StreamRegistryConfiguration configuration) {
         try {
-            if (configuration.getRequestFilterClassNames() != null) {
-                for (String requestFilterClassName : configuration.getRequestFilterClassNames()) {
-                    environment.jersey().register(Utils.newInstance(requestFilterClassName, ContainerRequestFilter.class));
-                    log.info(String.format("Registered request filter %s", requestFilterClassName));
-                }
+            if (configuration.getRequestMDCFilterClassName() != null) {
+                ContainerRequestFilter mdcRequestFilter = Utils.newInstance(configuration.getRequestMDCFilterClassName(), ContainerRequestFilter.class);
+                environment.jersey().register(mdcRequestFilter);
             }
-
-            if (configuration.getResponseFilterClassNames() != null) {
-                for (String responseFilterClassName : configuration.getResponseFilterClassNames()) {
-                    environment.jersey().register(Utils.newInstance(responseFilterClassName, ContainerResponseFilter.class));
-                    log.info(String.format("Registered response filter %s", responseFilterClassName));
-                }
+            if (configuration.getResponseMDCFilterClassName() != null) {
+                ContainerResponseFilter mdcResponseFilter = Utils.newInstance(configuration.getResponseMDCFilterClassName(), ContainerResponseFilter.class);
+                environment.jersey().register(mdcResponseFilter);
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(String.format("Error loading Jersey Filter from configuration %s",configuration),  e);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(String.format("Error loading MDCFilter from configuration %s",configuration),  e);
         }
     }
 
