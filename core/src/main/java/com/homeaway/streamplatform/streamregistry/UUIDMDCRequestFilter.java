@@ -22,7 +22,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 
 import org.slf4j.MDC;
 
-public class MDCRequestFilter implements ContainerRequestFilter {
+public class UUIDMDCRequestFilter implements ContainerRequestFilter {
     public static final String MDC_REQUEST_UUID ="request-UUID";
 
     @Override

@@ -8,8 +8,8 @@ server:
 
 env: test
 
-requestMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCRequestFilter
-responseMDCFilterClassName: com.homeaway.streamplatform.streamregistry.MDCResponseFilter
+requestMDCFilterClassName: com.homeaway.streamplatform.streamregistry.UUIDMDCRequestFilter
+responseMDCFilterClassName: com.homeaway.streamplatform.streamregistry.UUIDMDCResponseFilter
 
 healthCheckStreamConfig:
   name: StreamRegistryHealthCheck
