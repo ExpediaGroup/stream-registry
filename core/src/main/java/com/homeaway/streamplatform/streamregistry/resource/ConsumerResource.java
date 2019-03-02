@@ -43,7 +43,6 @@ import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundExce
 import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
-import org.codehaus.jackson.map.util.JSONPObject;
 
 @Slf4j
 public class ConsumerResource extends BaseResource {

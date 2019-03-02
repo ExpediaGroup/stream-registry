@@ -89,11 +89,13 @@ public final class StreamRegistryUtils {
     }
 
     public static final boolean hasActorNamed(String name, Supplier<Actor> actorSupplier) {
-        return name != null &&
-                Optional.ofNullable(actorSupplier)
-                        .map(Supplier::get)
-                        .map(Actor::getName)
-                        .filter(actorName -> actorName.equalsIgnoreCase(name))
-                        .isPresent();
+        return name != null && getActorName(name, actorSupplier).isPresent();
+    }
+
+    public static final Optional<String> getActorName(String name, Supplier<Actor> actorSupplier) {
+        return Optional.ofNullable(actorSupplier)
+                .map(Supplier::get)
+                .map(Actor::getName)
+                .filter(actorName -> actorName.equalsIgnoreCase(name));
     }
 }
