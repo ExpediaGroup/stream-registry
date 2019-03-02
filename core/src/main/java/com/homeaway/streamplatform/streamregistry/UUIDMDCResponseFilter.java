@@ -23,7 +23,17 @@ import javax.ws.rs.container.ContainerResponseFilter;
 
 import org.slf4j.MDC;
 
+/**
+ * UUIDMDCResponseFilter class whose 'filter' method would while returning each Http Response
+ */
 public class UUIDMDCResponseFilter implements ContainerResponseFilter {
+    
+    /**
+     * Return the key-value that was set in the MDC by UUIDMDCRequestContext.filter method in the Response Headers
+     * Removes the Key value from MDC to avoid having stale data.
+     * @param requestContext
+     * @param responseContext
+     */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         responseContext.getHeaders().add(MDC_REQUEST_UUID, MDC.get(MDC_REQUEST_UUID));
