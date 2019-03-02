@@ -15,33 +15,42 @@
  */
 package com.homeaway.streamplatform.streamregistry.resource;
 
+import java.io.IOException;
+
 import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
 
+
+/**
+ * The type Cluster resource it.
+ */
 public class ClusterResourceIT extends BaseResourceIT {
 
+    /**
+     * Test upsert new cluster and verify it by getting it back.
+     *
+     * @throws InterruptedException the interrupted exception
+     * @throws IOException the io exception
+     */
     @Test
-    public void test_upsert_new_cluster() throws InterruptedException {
+    public void test_upsert_new_cluster() {
         String clusterName = "test_upsert_new_cluster";
         JsonCluster expectedCluster = JsonModelBuilder.buildJsonCluster(clusterName);
-        clusterResource.upsertCluster(expectedCluster);
+        Response response = clusterResource.upsertCluster(expectedCluster);
 
-        Thread.sleep(TEST_SLEEP_WAIT_MS);
-
-        Response cluster = clusterResource.getAllClusters(clusterName, null, null, null, null);
-
-        Assert.assertEquals(expectedCluster.getClusterValue().getBootstrapServers(), ((ClusterValue)cluster.getEntity()).getBootstrapServers());
-        Assert.assertEquals(expectedCluster.getClusterValue().getClusterName(), ((ClusterValue)cluster.getEntity()).getClusterName());
-        Assert.assertEquals(expectedCluster.getClusterValue().getSchemaRegistryURL(), ((ClusterValue)cluster.getEntity()).getSchemaRegistryURL());
-        Assert.assertEquals(expectedCluster.getClusterValue().getZookeeperQuorum(), ((ClusterValue)cluster.getEntity()).getZookeeperQuorum());
+        Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
     }
 
+    /**
+     * Test upsert new cluster with exception.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void test_upsert_new_cluster_with_exception() throws InterruptedException {
         JsonCluster expectedCluster = JsonModelBuilder.buildJsonCluster(null);

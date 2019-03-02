@@ -15,7 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry.resource;
 
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
@@ -40,8 +40,6 @@ import io.swagger.annotations.ApiResponses;
 
 import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
-import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 
 @Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
@@ -106,39 +104,39 @@ public class ClusterResource {
         @ApiParam(value = "hint") @QueryParam("hint") String hint,
         @ApiParam(value = "type") @QueryParam("type") String type) {
         try {
-            Map<ClusterKey, ClusterValue> clusterMap = clusterDao.getAllClusters();
+            List<JsonCluster> clusterList = clusterDao.getAllClusters();
 
             if(clusterName != null && !clusterName.isEmpty()) {
-                clusterMap = clusterMap.entrySet().stream()
-                    .filter(e -> e.getValue().getClusterName().equalsIgnoreCase(clusterName))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                clusterList = clusterList.stream()
+                    .filter(e -> e.getClusterValue().getClusterName().equalsIgnoreCase(clusterName))
+                    .collect(Collectors.toList());
             }
 
             if(vpc != null && !vpc.isEmpty()) {
-                clusterMap = clusterMap.entrySet().stream()
-                    .filter(e -> e.getKey().getVpc().equalsIgnoreCase(vpc))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                clusterList = clusterList.stream()
+                    .filter(e -> e.getClusterKey().getVpc().equalsIgnoreCase(vpc))
+                    .collect(Collectors.toList());
             }
 
             if(env != null && !env.isEmpty()) {
-                clusterMap = clusterMap.entrySet().stream()
-                    .filter(e -> e.getKey().getEnv().equalsIgnoreCase(env))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                clusterList = clusterList.stream()
+                    .filter(e -> e.getClusterKey().getEnv().equalsIgnoreCase(env))
+                    .collect(Collectors.toList());
             }
 
             if(hint != null && !hint.isEmpty()) {
-                clusterMap = clusterMap.entrySet().stream()
-                    .filter(e -> e.getKey().getHint().equalsIgnoreCase(hint))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                clusterList = clusterList.stream()
+                    .filter(e -> e.getClusterKey().getHint().equalsIgnoreCase(hint))
+                    .collect(Collectors.toList());
             }
 
             if(type != null && !type.isEmpty()) {
-                clusterMap = clusterMap.entrySet().stream()
-                    .filter(e -> e.getKey().getType().equalsIgnoreCase(type))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                clusterList = clusterList.stream()
+                    .filter(e -> e.getClusterKey().getType().equalsIgnoreCase(type))
+                    .collect(Collectors.toList());
             }
 
-            return Response.status(200).entity(clusterMap).build();
+            return Response.status(Response.Status.OK.getStatusCode()).entity(clusterList).build();
         } catch (RuntimeException e) {
             log.error("Error getting cluster.", e);
             return Response.status(Response.Status.BAD_REQUEST)

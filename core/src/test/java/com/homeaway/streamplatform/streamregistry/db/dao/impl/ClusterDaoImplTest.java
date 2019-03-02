@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -131,7 +132,7 @@ public class ClusterDaoImplTest {
         avroClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties));
 
         when(infraManager.getAllClusters()).thenReturn(avroClusterMap);
-        Map<ClusterKey, ClusterValue> allClusters = clusterDao.getAllClusters();
+        List<JsonCluster> allClusters = clusterDao.getAllClusters();
 
         Assert.assertEquals(1, allClusters.size());
     }

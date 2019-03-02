@@ -15,7 +15,8 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao.impl;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,8 +28,6 @@ import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.ClusterValidator;
-import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 
@@ -42,11 +41,6 @@ public class ClusterDaoImpl implements ClusterDao {
      * The Infra manager.
      */
     protected final InfraManager infraManager;
-
-    /**
-     * The constant CLUSTER_NAME.
-     */
-    public static final String CLUSTER_NAME = "cluster.name";
 
     /**
      * Instantiates a new Cluster dao.
@@ -63,14 +57,20 @@ public class ClusterDaoImpl implements ClusterDao {
      * @return Map of ClusterKey and ClusterValue
      */
     @Override
-    public Map<ClusterKey, ClusterValue> getAllClusters() {
+    public List<JsonCluster> getAllClusters() {
         log.info("Get all clusters from infra manager...");
         Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> allClusters = infraManager.getAllClusters();
 
-        Map<ClusterKey, ClusterValue> allJsonClusters = new HashMap<>();
+        List<JsonCluster> jsonClusterList = new ArrayList<>();
 
-        allClusters.forEach((com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue clusterValue) -> allJsonClusters.put(AvroToJsonDTO.getJsonClusterKey(clusterKey), AvroToJsonDTO.getJsonClusterValue(clusterValue)));
-        return allJsonClusters;
+        allClusters.forEach((com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue clusterValue) ->
+            jsonClusterList.add(
+                JsonCluster.builder().clusterKey(AvroToJsonDTO.getJsonClusterKey(clusterKey))
+                .clusterValue(AvroToJsonDTO.getJsonClusterValue(clusterValue))
+                .build()
+            ));
+
+        return jsonClusterList;
     }
 
     /**

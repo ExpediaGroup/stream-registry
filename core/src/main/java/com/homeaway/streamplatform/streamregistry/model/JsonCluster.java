@@ -19,16 +19,14 @@ package com.homeaway.streamplatform.streamregistry.model;
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = JsonCluster.JsonClusterBuilder.class)
 @Builder
-@Getter
-@ToString
+@Data
 public class JsonCluster {
     @NotNull
     private ClusterKey clusterKey;

@@ -15,12 +15,10 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao;
 
-import java.util.Map;
+import java.util.List;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
-import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 
 /**
@@ -32,7 +30,7 @@ public interface ClusterDao {
      *
      * @return the all clusters
      */
-    Map<ClusterKey, ClusterValue> getAllClusters();
+    List<JsonCluster> getAllClusters();
 
     /**
      * Gets cluster.
