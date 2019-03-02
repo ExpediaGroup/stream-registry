@@ -34,7 +34,7 @@ public class ClusterResourceIT extends BaseResourceIT {
 
         Thread.sleep(TEST_SLEEP_WAIT_MS);
 
-        Response cluster = clusterResource.getCluster(clusterName);
+        Response cluster = clusterResource.getAllClusters(clusterName, null, null, null, null);
 
         Assert.assertEquals(expectedCluster.getClusterValue().getBootstrapServers(), ((ClusterValue)cluster.getEntity()).getBootstrapServers());
         Assert.assertEquals(expectedCluster.getClusterValue().getClusterName(), ((ClusterValue)cluster.getEntity()).getClusterName());

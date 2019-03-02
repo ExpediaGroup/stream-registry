@@ -16,7 +16,6 @@
 package com.homeaway.streamplatform.streamregistry.db.dao;
 
 import java.util.Map;
-import java.util.Optional;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
@@ -46,14 +45,6 @@ public interface ClusterDao {
      * @throws ClusterNotFoundException the cluster not found exception
      */
     com.homeaway.digitalplatform.streamregistry.ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException;
-
-    /**
-     * Gets cluster.
-     *
-     * @param clusterName the cluster name
-     * @return the cluster
-     */
-    Optional<ClusterValue> getCluster(String clusterName);
 
     /**
      * Upsert cluster.

@@ -108,28 +108,6 @@ public class ClusterDaoImpl implements ClusterDao {
     }
 
     /**
-     * Get a Cluster using a clusterName
-     *
-     * @param clusterName - Name of the Cluster from Infra Manager
-     * @return JsonClusterValue - Contains cluster details
-     */
-    public Optional<ClusterValue> getCluster(String clusterName) {
-        log.info("getting cluster detail for cluster - {}", clusterName);
-        Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> allClusters = infraManager.getAllClusters();
-        Map<String, com.homeaway.digitalplatform.streamregistry.ClusterValue> clustersByName = new HashMap<>();
-
-        allClusters.forEach((com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue clusterValue) -> clustersByName.put(clusterValue.getClusterProperties().get(CLUSTER_NAME), clusterValue));
-
-        log.info("Cluster Info for clusterName - {} is: {}", clusterName, clustersByName.get(clusterName));
-
-        if (clustersByName.get(clusterName) == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(AvroToJsonDTO.getJsonClusterValue(clustersByName.get(clusterName)));
-    }
-
-    /**
      * Upsert a cluster object
      * @param jsonCluster
      * @throws InvalidClusterException

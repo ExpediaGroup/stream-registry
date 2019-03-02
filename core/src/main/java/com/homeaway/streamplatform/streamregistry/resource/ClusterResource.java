@@ -16,14 +16,12 @@
 package com.homeaway.streamplatform.streamregistry.resource;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -45,7 +43,6 @@ import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterExcep
 import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
-import com.homeaway.streamplatform.streamregistry.utils.ResourceUtils;
 
 @Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
 @Path("/v0/clusters")
@@ -103,12 +100,19 @@ public class ClusterResource {
         @ApiResponse(code = 404, message = "Cluster not found") })
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
-    public Response getAllClusters(@ApiParam(value = "vpc") @QueryParam("vpc") String vpc,
+    public Response getAllClusters(@ApiParam(value = "clusterName") @QueryParam("clusterName") String clusterName,
+        @ApiParam(value = "vpc") @QueryParam("vpc") String vpc,
         @ApiParam(value = "env") @QueryParam("env") String env,
         @ApiParam(value = "hint") @QueryParam("hint") String hint,
         @ApiParam(value = "type") @QueryParam("type") String type) {
         try {
             Map<ClusterKey, ClusterValue> clusterMap = clusterDao.getAllClusters();
+
+            if(clusterName != null && !clusterName.isEmpty()) {
+                clusterMap = clusterMap.entrySet().stream()
+                    .filter(e -> e.getValue().getClusterName().equalsIgnoreCase(clusterName))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            }
 
             if(vpc != null && !vpc.isEmpty()) {
                 clusterMap = clusterMap.entrySet().stream()
@@ -135,37 +139,6 @@ public class ClusterResource {
             }
 
             return Response.status(200).entity(clusterMap).build();
-        } catch (RuntimeException e) {
-            log.error("Error getting cluster.", e);
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Error getting cluster.",
-                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
-                .build();
-        }
-    }
-
-    @GET
-    @Path("/{clusterName}")
-    @ApiOperation(
-        value = "Get a Cluster",
-        notes = "Returns a single cluster",
-        tags = "clusters",
-        response = ClusterValue.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Returns Cluster information", response = ClusterValue.class),
-        @ApiResponse(code = 500, message = "Error Occurred while getting data"),
-        @ApiResponse(code = 404, message = "Cluster not found") })
-    @Produces(MediaType.APPLICATION_JSON)
-    @Timed
-    public Response getCluster(@ApiParam(value = "clusterName", required = true) @PathParam("clusterName") String clusterName) {
-        try {
-            Optional<ClusterValue> jsonClusterValue = clusterDao.getCluster(clusterName);
-
-            if (!jsonClusterValue.isPresent()) {
-                return ResourceUtils.notFound("Cluster not found " + clusterName);
-            }
-
-            return Response.ok().entity(jsonClusterValue.get()).build();
         } catch (RuntimeException e) {
             log.error("Error getting cluster.", e);
             return Response.status(Response.Status.BAD_REQUEST)

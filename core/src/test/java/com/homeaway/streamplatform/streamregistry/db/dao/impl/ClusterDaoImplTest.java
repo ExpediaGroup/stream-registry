@@ -136,31 +136,11 @@ public class ClusterDaoImplTest {
         Assert.assertEquals(1, allClusters.size());
     }
 
-    @Test
-    public void testGetClusterByClusterName() {
-        com.homeaway.digitalplatform.streamregistry.ClusterValue expectedClusterValue = new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties);
-
-        Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> expectedClusterMap = new HashMap<>();
-        expectedClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), expectedClusterValue);
-
-        when(infraManager.getAllClusters()).thenReturn(expectedClusterMap);
-
-        Optional<ClusterValue> actualClusterValue = clusterDao.getCluster("cluster_name");
-
-        ClusterValue jsonClusterValue = AvroToJsonDTO.getJsonClusterValue(expectedClusterValue);
-
-        Assert.assertTrue(actualClusterValue.isPresent());
-
-        ClusterValue value = actualClusterValue.get();
-
-        Assert.assertEquals(jsonClusterValue.getBootstrapServers(), value.getBootstrapServers());
-        Assert.assertEquals(jsonClusterValue.getSchemaRegistryURL(), value.getSchemaRegistryURL());
-
-        Assert.assertEquals(jsonClusterValue.getClusterName(), value.getClusterName());
-        Assert.assertEquals(jsonClusterValue.getZookeeperQuorum(), value.getZookeeperQuorum());
-    }
-
-
+    /**
+     * Test upsert cluster.
+     *
+     * @throws InvalidClusterException the invalid cluster exception
+     */
     @Test
     public void testUpsertCluster() throws InvalidClusterException{
         com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey = new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", "");
