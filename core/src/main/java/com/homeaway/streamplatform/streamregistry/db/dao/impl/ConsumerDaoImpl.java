@@ -82,10 +82,6 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
     private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> updateConsumer(String streamName, String consumerName, String region)
             throws StreamNotFoundException, RegionNotFoundException, ClusterNotFoundException {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
-        if (!avroStream.isPresent()) {
-            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Consumer", streamName));
-        }
-
         // Try to do exceptions first, reduces cyclomatic complexity
         if (!avroStream.isPresent()) {
             throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Consumer", streamName));
