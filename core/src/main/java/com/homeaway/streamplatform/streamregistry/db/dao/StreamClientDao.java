@@ -18,16 +18,50 @@ package com.homeaway.streamplatform.streamregistry.db.dao;
 import java.util.List;
 import java.util.Optional;
 
+import com.homeaway.streamplatform.streamregistry.exceptions.ActorNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.model.StreamClient;
 
 public interface StreamClientDao<T extends StreamClient> {
 
-    Optional<T> update(String streamName, String actorName, String region);
+    /**
+     * Insert or Update a Producer/Consumer of a Stream
+     * @param streamName
+     * @param actorName
+     * @param region
+     * @return a Producer or Consumer Object
+     * @throws StreamNotFoundException - When a stream is not available for the given streamName
+     * @throws RegionNotFoundException - When the input region is not supported
+     * @throws ClusterNotFoundException - When a cluster could not be found for the given region.
+     */
+    Optional<T> update(String streamName, String actorName, String region) throws StreamNotFoundException, RegionNotFoundException, ClusterNotFoundException;
 
-    Optional<T> get(String streamName, String actorName);
+    /**
+     * Pull the producer/consumer for the given name.
+     * @param streamName
+     * @param actorName
+     * @return
+     * @throws StreamNotFoundException - Stream not available for the given name
+     */
+    Optional<T> get(String streamName, String actorName) throws StreamNotFoundException;
 
-    void delete(String streamName, String actorName);
+    /**
+     * Delete the producer/consumer for the give name
+     * @param streamName
+     * @param actorName
+     * @throws StreamNotFoundException - When the given stream is not available
+     * @throws ActorNotFoundException - When the given Producer/Consumer is not available
+     */
+    void delete(String streamName, String actorName) throws StreamNotFoundException, ActorNotFoundException;
 
-    List<T> getAll(String streamName);
+    /**
+     * Pull all the Producers or consumers for a given stream.
+     * @param streamName
+     * @return
+     * @throws StreamNotFoundException - when the given stream is not available.
+     */
+    List<T> getAll(String streamName) throws StreamNotFoundException;
 
 }

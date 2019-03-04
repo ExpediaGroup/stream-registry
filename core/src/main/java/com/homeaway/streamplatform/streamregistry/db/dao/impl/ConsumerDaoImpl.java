@@ -34,9 +34,10 @@ import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
-import com.homeaway.streamplatform.streamregistry.exceptions.ConsumerNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.ActorNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
-import com.homeaway.streamplatform.streamregistry.exceptions.UnknownRegionException;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
@@ -58,66 +59,69 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
     }
 
     @Override
-    public Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> update(String streamName, String actorName, String region) {
+    public Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> update(String streamName, String actorName, String region)
+            throws StreamNotFoundException, RegionNotFoundException, ClusterNotFoundException {
         return updateConsumer(streamName, actorName, region);
     }
 
     @Override
-    public Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> get(String streamName, String actorName) {
+    public Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> get(String streamName, String actorName) throws StreamNotFoundException {
         return getConsumer(streamName, actorName);
     }
 
     @Override
-    public void delete(String streamName, String actorName) {
+    public void delete(String streamName, String actorName) throws StreamNotFoundException, ActorNotFoundException {
         deleteConsumer(streamName, actorName);
     }
 
     @Override
-    public List<com.homeaway.streamplatform.streamregistry.model.Consumer> getAll(String streamName) {
+    public List<com.homeaway.streamplatform.streamregistry.model.Consumer> getAll(String streamName) throws StreamNotFoundException {
         return getAllConsumers(streamName);
     }
 
-    private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> updateConsumer(String streamName, String consumerName, String region) {
+    private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> updateConsumer(String streamName, String consumerName, String region)
+            throws StreamNotFoundException, RegionNotFoundException, ClusterNotFoundException {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
+        // Try to do exceptions first, reduces cyclomatic complexity
+        if (!avroStream.isPresent()) {
+            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Consumer", streamName));
+        }
 
-        if (avroStream.isPresent()) {
-            List<Consumer> consumers = avroStream.get().getConsumers();
-            if (consumers != null) {
-                for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : consumers) {
-                    if (consumer.getActor().getName().equalsIgnoreCase(consumerName)) {
-                        for (RegionStreamConfiguration streamConfiguration : consumer.getActor().getRegionStreamConfigurations()) {
-                            if (streamConfiguration.getRegion().equals(region)) {
-                                // Existing consumer for this region
-                                String streamHint = avroStream.get().getTags().getHint();
-                                String hint = (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT
-                                    : streamHint.trim().toLowerCase();
-                                Actor consumerActor = populateActorStreamConfig(streamName, region, consumer.getActor(),
-                                    OPERATION.UPDATE.name(), TOPIC_POST_FIXES, hint,
-                                    ACTOR_TYPE, avroStream.get().getTopicConfig());
-                                consumer.setActor(consumerActor);
-                                updateAvroStream(avroStream.get());
-                                log.info(
-                                    "Consumer updated in source-processor-topic. streamName={} ; consumerName={} ; consumer={} ; region={}",
-                                    streamName, consumerName, consumer, region);
-                                return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
-                            }
+        // if consumers exist try to update the matching consumer
+        List<Consumer> consumers = avroStream.get().getConsumers();
+        if (consumers != null) {
+            for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : consumers) {
+                if (consumer.getActor().getName().equalsIgnoreCase(consumerName)) {
+                    for (RegionStreamConfiguration streamConfiguration : consumer.getActor().getRegionStreamConfigurations()) {
+                        if (streamConfiguration.getRegion().equals(region)) {
+                            // Existing consumer for this region
+                            String streamHint = avroStream.get().getTags().getHint();
+                            String hint = (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT
+                                : streamHint.trim().toLowerCase();
+                            Actor consumerActor = populateActorStreamConfig(streamName, region, consumer.getActor(),
+                                OPERATION.UPDATE.name(), TOPIC_POST_FIXES, hint,
+                                ACTOR_TYPE);
+                            consumer.setActor(consumerActor);
+                            updateAvroStream(avroStream.get());
+                            log.info(
+                                "Consumer updated in source-processor-topic. streamName={} ; consumerName={} ; consumer={} ; region={}",
+                                streamName, consumerName, consumer, region);
+                            return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
                         }
                     }
                 }
             }
-            log.info("Registering new Consumer. Stream={} Consumer={} ; region={}", streamName, consumerName, region);
-            return createConsumer(avroStream.get(), consumerName, region);
         }
-        return Optional.empty();
+        // no consumer and/or region matches
+        return createConsumer(avroStream.get(), consumerName, region);
     }
 
     private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> createConsumer(AvroStream avroStream, String consumerName,
-        String region) {
-
-        log.info("==>>> getting into creating consumer. Initial Stream: {}", avroStream.toString());
+        String region) throws RegionNotFoundException, ClusterNotFoundException {
+        log.info("Registering new Consumer. Stream={} Consumer={} ; region={}", avroStream.getName(), consumerName, region);
 
         if (!regionDao.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
-            throw new UnknownRegionException(region);
+            throw new RegionNotFoundException(String.format("Region=%s is not supported for the Stream's hint=%s", region, avroStream.getTags().getHint()));
 
         List<com.homeaway.digitalplatform.streamregistry.Consumer> listConsumers = avroStream.getConsumers();
         if (listConsumers == null) {
@@ -131,13 +135,10 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
                 .build())
             .build();
 
-        String streamHint = avroStream.getTags().getHint();
-        String hint =
-            (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT : streamHint.trim().toLowerCase();
+        String hint = getDefaultHint(avroStream);
 
-        Actor actor =
-            populateActorStreamConfig(avroStream.getName(), region, consumer.getActor(), OPERATION.CREATE.name(), TOPIC_POST_FIXES, hint,
-                ACTOR_TYPE, avroStream.getTopicConfig());
+        Actor actor = populateActorStreamConfig(avroStream.getName(), region, consumer.getActor(), OPERATION.CREATE.name(), TOPIC_POST_FIXES, hint,
+                ACTOR_TYPE);
 
         consumer = Consumer.newBuilder()
             .setActor(actor)
@@ -151,14 +152,16 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
     }
 
-    private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> getConsumer(String streamName, String consumerName) {
+    private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> getConsumer(String streamName, String consumerName) throws StreamNotFoundException {
         // pull data from state store of this instance.
-        log.info("Pulling stream information from local instance's state-store for streamName={} ; consumerName={}", streamName,
-            consumerName);
-        Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(
-            AvroStreamKey.newBuilder().setStreamName(streamName).build());
-        if (streamValue.isPresent()) {
-            streamValue.get().setOperationType(OperationType.GET);
+        log.info("Pulling stream information from local instance's state-store for streamName={} ; consumerName={}", streamName, consumerName);
+        Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
+        if (!streamValue.isPresent()) {
+            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before getting a Consumer", streamName));
+        }
+
+        streamValue.get().setOperationType(OperationType.GET);
+        if (streamValue.get().getConsumers() != null) {
             for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
                 if (consumer.getActor().getName().equals(consumerName))
                     return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
@@ -167,12 +170,16 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return Optional.empty();
     }
 
-    private List<com.homeaway.streamplatform.streamregistry.model.Consumer> getAllConsumers(String streamName) {
-        List<com.homeaway.streamplatform.streamregistry.model.Consumer> consumers = new ArrayList<>();
+    private List<com.homeaway.streamplatform.streamregistry.model.Consumer> getAllConsumers(String streamName) throws StreamNotFoundException {
         // pull data from state store of this instance.
         log.info("Pulling stream information from local instance's state-store for stream={} ; consumers=all", streamName);
         Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
-        if (streamValue.isPresent() && streamValue.get().getConsumers() != null) {
+        if (!streamValue.isPresent()) {
+            throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before retrieving a Consumers", streamName));
+        }
+
+        List<com.homeaway.streamplatform.streamregistry.model.Consumer> consumers = new ArrayList<>();
+        if (streamValue.get().getConsumers() != null) {
             streamValue.get().setOperationType(OperationType.GET);
             for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : streamValue.get().getConsumers()) {
                 consumers.add(AvroToJsonDTO.getJsonConsumer(consumer));
@@ -181,31 +188,30 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         return consumers;
     }
 
-    private void deleteConsumer(String streamName, String consumerName) {
+    private void deleteConsumer(String streamName, String consumerName) throws StreamNotFoundException, ActorNotFoundException {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
+        if (!avroStream.isPresent()) {
+            throw new StreamNotFoundException(String.format("Stream with the name %s not found. Please create the Stream before deleting a Consumer", streamName));
+        }
 
-        if (avroStream.isPresent()) {
-            final List<com.homeaway.digitalplatform.streamregistry.Consumer> withConsumer = avroStream.get().getConsumers();
+        final List<com.homeaway.digitalplatform.streamregistry.Consumer> withConsumer = avroStream.get().getConsumers();
+        if (withConsumer == null || withConsumer.size() == 0 )
+            throw new ActorNotFoundException(String.format("Consumer=%s not found for Stream=%s", consumerName, streamName));
 
-            // Obtains consumer list size before  remove consumer
-            final int consumerInitialSize = withConsumer.size();
-
-            // Obtains filtered consumer list not containing the consumer we want to remove
-            List<com.homeaway.digitalplatform.streamregistry.Consumer> withoutConsumer = withConsumer
-                    .stream()
-                    .filter(consumer -> !StreamRegistryUtils.hasActorNamed(consumerName, consumer::getActor))
-                    .collect(Collectors.toList());
-
-            // Update stream's consumer list
-            avroStream.get().setConsumers(withoutConsumer);
-
-            // If filtered consumer list size is less than initial size stream will be updated
-            if (avroStream.get().getConsumers().size() < consumerInitialSize)
-                updateAvroStream(avroStream.get());
-            else
-                throw new ConsumerNotFoundException(consumerName);
+        // Obtains consumer list size before  remove consumer
+        final int consumerInitialSize = withConsumer.size();
+        // Obtains filtered consumer list not containing the consumer we want to remove
+        List<com.homeaway.digitalplatform.streamregistry.Consumer> withoutConsumer = withConsumer
+                .stream()
+                .filter(consumer -> !StreamRegistryUtils.hasActorNamed(consumerName, consumer::getActor))
+                .collect(Collectors.toList());
+        // Update stream's consumer list
+        avroStream.get().setConsumers(withoutConsumer);
+        // If filtered consumer list size is less than initial size stream will be updated
+        if (avroStream.get().getConsumers().size() < consumerInitialSize) {
+            updateAvroStream(avroStream.get());
         } else {
-            throw new StreamNotFoundException(streamName);
+            throw new ActorNotFoundException(String.format("Consumer=%s not found for Stream=%s", consumerName, streamName));
         }
     }
 }

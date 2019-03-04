@@ -15,15 +15,14 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class ConsumerNotFoundException extends RuntimeException{
-    private static final long serialVersionUID = 2754583678262185859L;
-    protected final String consumerName;
+public class SchemaValidationException extends Exception {
 
-    public ConsumerNotFoundException(String consumerName) {
-        this.consumerName=consumerName;
+    public SchemaValidationException(String message) {
+        super(message);
     }
 
-    public String getConsumerName() {
-        return consumerName;
+    public SchemaValidationException(String message, Throwable cause) {
+        super(message, cause);
     }
+
 }

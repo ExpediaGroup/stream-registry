@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -114,7 +113,7 @@ public abstract class AbstractDao {
             return clusterValue.get();
         } else {
             log.info("Cluster Information not found for key - {}", clusterKey);
-            throw new ClusterNotFoundException(clusterKey.toString());
+            throw new ClusterNotFoundException(String.format("Cluster not found for the given %s.", clusterKey.toString()));
         }
     }
 
@@ -136,7 +135,7 @@ public abstract class AbstractDao {
 
     protected com.homeaway.digitalplatform.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
         com.homeaway.digitalplatform.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
-        String actorType, Map<String, String> topicConfigMap) {
+        String actorType) throws ClusterNotFoundException {
 
         Actor.Builder actorBuilder = Actor.newBuilder();
 
@@ -149,18 +148,14 @@ public abstract class AbstractDao {
         Optional<String> clusterName = Optional.ofNullable(clusterValue.getClusterProperties().get(CLUSTER_NAME));
 
         if (!clusterName.isPresent()) {
-            throw new IllegalStateException("Cluster name cannot be null");
+            throw new IllegalStateException(String.format("Cluster name cannot be null. region=%s ; env=%s ; hint=%s ; actorType=%s ; Cluster Details: %s",
+                    region, env, hint, actorType, clusterValue));
         }
 
         if (operation.equalsIgnoreCase(OPERATION.CREATE.name())) {
 
             actorBuilder.setRegionStreamConfigurations(new ArrayList<>());
             Map<String, String> configMap = new HashMap<>();
-
-            Properties topicConfig = new Properties();
-            if (topicConfigMap != null) {
-                topicConfig.putAll(topicConfigMap);
-            }
 
             List<String> topics = topicNamePostFixes
                 .stream()
@@ -192,5 +187,10 @@ public abstract class AbstractDao {
             actor.getName(), region, bootstrapServers, schemaRegistryURL, hint, clusterName);
 
         return actorBuilder.build();
+    }
+
+    protected String getDefaultHint(AvroStream avroStream) {
+        String streamHint = avroStream.getTags().getHint();
+        return (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT : streamHint.trim().toLowerCase();
     }
 }

@@ -96,7 +96,7 @@ public class KafkaManagerImplTest {
     }
 
     @Test(expected = StreamCreationException.class)
-    public void testUpsertTopicsForNewStream(){
+    public void testUpsertTopicsForNewStream() throws StreamCreationException {
         // Mock it as an existing topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
@@ -107,7 +107,7 @@ public class KafkaManagerImplTest {
     }
 
     @Test
-    public void testUpsertTopicsForExistingStreamWithMatchingConfig() {
+    public void testUpsertTopicsForExistingStreamWithMatchingConfig() throws StreamCreationException {
         // Mock it as an existing topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
@@ -126,7 +126,7 @@ public class KafkaManagerImplTest {
     }
 
     @Test
-    public void testUpsertTopicsForExistingStream() {
+    public void testUpsertTopicsForExistingStream() throws StreamCreationException {
         // Mock it as an existing topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
@@ -144,7 +144,7 @@ public class KafkaManagerImplTest {
 
 
     @Test
-    public void testUpsertTopicsForNewTopic() {
+    public void testUpsertTopicsForNewTopic() throws StreamCreationException {
         // Mock it as a new topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 
@@ -161,7 +161,7 @@ public class KafkaManagerImplTest {
     }
 
     @Test
-    public void testUpsertTopicsForNewTopicExistsInSR() {
+    public void testUpsertTopicsForNewTopicExistsInSR() throws StreamCreationException {
         // Mock it as a new topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 

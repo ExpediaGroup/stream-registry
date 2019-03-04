@@ -142,7 +142,8 @@ public class StreamResourceIT extends BaseResourceIT {
     public void test_upsertStream_get_stream() {
         Response response = streamResource.getStream("Nothing");
         Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        Assert.assertEquals("Stream not found Nothing", response.getEntity());
+        Assert.assertEquals("ErrorMessage{code=404, message=Stream=Nothing not found., details=null}",
+                response.getEntity().toString());
     }
 
     @Test
@@ -182,7 +183,7 @@ public class StreamResourceIT extends BaseResourceIT {
         // Make sure the getStream return 404
         Response response = streamResource.getStream(streamName);
         Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        Assert.assertEquals("Stream not found "+streamName, response.getEntity());
+        Assert.assertEquals("ErrorMessage{code=404, message=Stream=" + streamName + " not found., details=null}", response.getEntity().toString());
     }
 
     @Test

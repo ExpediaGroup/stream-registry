@@ -15,11 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class SchemaManagerException extends RuntimeException {
-
-
-    public SchemaManagerException() {
-    }
+public class SchemaManagerException extends Exception {
 
     public SchemaManagerException(String message) {
         super(message);
@@ -29,7 +25,4 @@ public class SchemaManagerException extends RuntimeException {
         super(message, cause);
     }
 
-    public SchemaManagerException(Throwable cause) {
-        super(cause);
-    }
 }

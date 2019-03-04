@@ -164,7 +164,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
             Response response = streamResource.upsertStream(streamName, streamRegHealthCheckStream);
             if (response.getStatus() != 202) {
                 setStreamCreationHealthy(false);
-                throw new IllegalStateException("HealthCheck Failed: Error while upserting a Stream.");
+                throw new IllegalStateException(String.format("HealthCheck Failed: Error while upserting a Stream. %s", response.getEntity()));
             }
         } catch (Exception e) {
             setStreamCreationHealthy(false);
