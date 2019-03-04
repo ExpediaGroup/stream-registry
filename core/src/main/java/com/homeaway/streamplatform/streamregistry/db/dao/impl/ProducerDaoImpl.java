@@ -171,6 +171,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         // Update stream's producer list and update
         avroStream.setProducers(withoutProducer);
         updateAvroStream(avroStream);
+
     }
 
     private Optional<com.homeaway.streamplatform.streamregistry.model.Producer> getProducer(String streamName,
@@ -198,7 +199,6 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
     }
 
     private List<com.homeaway.streamplatform.streamregistry.model.Producer> getProducers(String streamName) throws StreamNotFoundException {
-        List<com.homeaway.streamplatform.streamregistry.model.Producer> producers = new ArrayList<>();
         // pull data from state store of this instance.
         log.info("Pulling stream information from local instance's state-store for streamName={} ; managedKafkaProducer=all", streamName);
         Optional<AvroStream> streamOptional = kStreams.getAvroStreamForKey(getStreamKey(streamName));
