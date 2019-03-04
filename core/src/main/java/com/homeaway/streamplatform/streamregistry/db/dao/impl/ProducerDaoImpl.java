@@ -81,35 +81,34 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
     private Optional<com.homeaway.streamplatform.streamregistry.model.Producer> updateProducer(String streamName, String producerName, String region)
             throws StreamNotFoundException, RegionNotFoundException, ClusterNotFoundException {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
+        if (!avroStream.isPresent()) {
+            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Producer", streamName));
+        }
 
-        if (avroStream.isPresent()) {
-            List<Producer> producers = avroStream.get().getProducers();
-            if (producers != null) {
-                for (com.homeaway.digitalplatform.streamregistry.Producer producer : producers) {
-                    if (producer.getActor().getName().equalsIgnoreCase(producerName)) {
-                        for (RegionStreamConfiguration config : producer.getActor().getRegionStreamConfigurations()) {
-                            if (config.getRegion().equals(region)) {
-                                // Existing producer for this region
-                                String streamHint = avroStream.get().getTags().getHint();
-                                String hint = (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT : streamHint.trim().toLowerCase();
-                                Actor producerActor = populateActorStreamConfig(streamName, region, producer.getActor(), OPERATION.CREATE.name(), topicPostFixes, hint,
+        List<Producer> producers = avroStream.get().getProducers();
+        if (producers != null) {
+            for (com.homeaway.digitalplatform.streamregistry.Producer producer : producers) {
+                if (producer.getActor().getName().equalsIgnoreCase(producerName)) {
+                    for (RegionStreamConfiguration config : producer.getActor().getRegionStreamConfigurations()) {
+                        if (config.getRegion().equals(region)) {
+                            // Existing producer for this region
+                            String streamHint = avroStream.get().getTags().getHint();
+                            String hint = (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT : streamHint.trim().toLowerCase();
+                            Actor producerActor = populateActorStreamConfig(streamName, region, producer.getActor(), OPERATION.CREATE.name(), topicPostFixes, hint,
                                     ACTOR_TYPE, avroStream.get().getTopicConfig());
-                                producer.setActor(producerActor);
-                                updateAvroStream(avroStream.get());
-                                log.info("Producer updated in source-processor-topic. streamName={} ; producerName={} ; region={}",
+                            producer.setActor(producerActor);
+                            updateAvroStream(avroStream.get());
+                            log.info("Producer updated in source-processor-topic. streamName={} ; producerName={} ; region={}",
                                     streamName, producerName, region);
-                                return Optional.of(AvroToJsonDTO.getJsonProducer(producer));
-                            }
+                            return Optional.of(AvroToJsonDTO.getJsonProducer(producer));
                         }
                     }
                 }
             }
-            // Register the new producer
-            log.info("Registering new Producer. Stream={} Producer={} ; region={}", streamName, producerName, region);
-            return registerProducer(avroStream.get(), producerName, region);
-        } else {
-            throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Producer", streamName));
         }
+        // Register the new producer
+        log.info("Registering new Producer. Stream={} Producer={} ; region={}", streamName, producerName, region);
+        return registerProducer(avroStream.get(), producerName, region);
     }
 
     private Optional<com.homeaway.streamplatform.streamregistry.model.Producer> registerProducer(AvroStream avroStream, String producerName, String region)
@@ -147,71 +146,64 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
 
     private void deleteProducer(String streamName, String producerName) throws ActorNotFoundException, StreamNotFoundException {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
-
-        if (avroStream.isPresent()) {
-            final List<com.homeaway.digitalplatform.streamregistry.Producer> withProducer = avroStream.get().getProducers();
-
-            if (withProducer == null || withProducer.size() == 0 )
-                throw new ActorNotFoundException(String.format("Producer=%s not found for Stream=%s", producerName, streamName));
-
-            // Obtains producer list size before  remove consumer
-            final int producerInitialSize = withProducer.size();
-
-            // Obtains filtered producer list not containing the consumer we want to remove
-            List<com.homeaway.digitalplatform.streamregistry.Producer> withoutProducer = withProducer
-                    .stream()
-                    .filter(producer -> !StreamRegistryUtils.hasActorNamed(producerName, producer::getActor))
-                    .collect(Collectors.toList());
-
-            // Update stream's producer list
-            avroStream.get().setProducers(withoutProducer);
-
-            // If filtered producer list size is less than initial size stream will be updated
-            if (avroStream.get().getProducers().size() < producerInitialSize)
-                updateAvroStream(avroStream.get());
-            else
-                throw new ActorNotFoundException(String.format("Producer=%s not found for Stream=%s", producerName, streamName));
-        } else {
+        if (!avroStream.isPresent()) {
             throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before deleting a Producer", streamName));
         }
+
+        final List<com.homeaway.digitalplatform.streamregistry.Producer> withProducer = avroStream.get().getProducers();
+        if (withProducer == null || withProducer.size() == 0 )
+            throw new ActorNotFoundException(String.format("Producer=%s not found for Stream=%s", producerName, streamName));
+
+        // Obtains producer list size before  remove consumer
+        final int producerInitialSize = withProducer.size();
+        // Obtains filtered producer list not containing the consumer we want to remove
+        List<com.homeaway.digitalplatform.streamregistry.Producer> withoutProducer = withProducer
+                .stream()
+                .filter(producer -> !StreamRegistryUtils.hasActorNamed(producerName, producer::getActor))
+                .collect(Collectors.toList());
+        // Update stream's producer list
+        avroStream.get().setProducers(withoutProducer);
+        // If filtered producer list size is less than initial size stream will be updated
+        if (avroStream.get().getProducers().size() < producerInitialSize)
+            updateAvroStream(avroStream.get());
+        else
+            throw new ActorNotFoundException(String.format("Producer=%s not found for Stream=%s", producerName, streamName));
     }
 
     private Optional<com.homeaway.streamplatform.streamregistry.model.Producer> getProducer(String streamName, String producerName) throws StreamNotFoundException {
         // pull data from state store of this instance.
-        log.info("Pulling stream information from local instance's state-store for streamName={} ; producerName={}", streamName,
-            producerName);
-        Optional<AvroStream> streamValue =
-            kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
-        if (streamValue.isPresent()) {
-            if (streamValue.get().getProducers() != null) {
-                streamValue.get().setOperationType(OperationType.GET);
-
-                for (com.homeaway.digitalplatform.streamregistry.Producer producer : streamValue.get().getProducers()) {
-                    if (producer.getActor().getName().equals(producerName))
-                        return Optional.of(AvroToJsonDTO.getJsonProducer(producer));
-                }
-            }
-        } else {
+        log.info("Pulling stream information from local instance's state-store for streamName={} ; producerName={}", streamName, producerName);
+        Optional<AvroStream> streamValue = kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
+        if (!streamValue.isPresent()) {
             throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before getting a Producer", streamName));
+        }
+
+        if (streamValue.get().getProducers() != null) {
+            streamValue.get().setOperationType(OperationType.GET);
+
+            for (com.homeaway.digitalplatform.streamregistry.Producer producer : streamValue.get().getProducers()) {
+                if (producer.getActor().getName().equals(producerName))
+                    return Optional.of(AvroToJsonDTO.getJsonProducer(producer));
+            }
         }
         return Optional.empty();
     }
 
     private List<com.homeaway.streamplatform.streamregistry.model.Producer> getProducers(String streamName) throws StreamNotFoundException {
-        List<com.homeaway.streamplatform.streamregistry.model.Producer> producers = new ArrayList<>();
         // pull data from state store of this instance.
         log.info("Pulling stream information from local instance's state-store for streamName={} ; managedKafkaProducer=all", streamName);
         Optional<AvroStream> streamValue =
             kStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build());
-        if (streamValue.isPresent()) {
-            if (streamValue.get().getProducers() != null) {
-                streamValue.get().setOperationType(OperationType.GET);
-                for (com.homeaway.digitalplatform.streamregistry.Producer producer : streamValue.get().getProducers()) {
-                    producers.add(AvroToJsonDTO.getJsonProducer(producer));
-                }
-            }
-        } else {
+        if (!streamValue.isPresent()) {
             throw new StreamNotFoundException(String.format("Stream=%s not found. Please create the Stream before retrieving the producers", streamName));
+        }
+
+        List<com.homeaway.streamplatform.streamregistry.model.Producer> producers = new ArrayList<>();
+        if (streamValue.get().getProducers() != null) {
+            streamValue.get().setOperationType(OperationType.GET);
+            for (com.homeaway.digitalplatform.streamregistry.Producer producer : streamValue.get().getProducers()) {
+                producers.add(AvroToJsonDTO.getJsonProducer(producer));
+            }
         }
         return producers;
     }
