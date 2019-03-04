@@ -208,7 +208,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
 
         AvroStream stream = streamOptional.get();
         if (stream.getProducers() == null) {
-            return producers;
+            return new ArrayList<>();
         }
         return stream.getProducers().stream()
                 .map(AvroToJsonDTO::getJsonProducer)
