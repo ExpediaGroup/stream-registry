@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -157,10 +156,13 @@ public abstract class AbstractDao {
             actorBuilder.setRegionStreamConfigurations(new ArrayList<>());
             Map<String, String> configMap = new HashMap<>();
 
+            // TODO - why is this here? Why do we ignore topicConfigMap and not do anything with it? Commenting out for now
+            /*
             Properties topicConfig = new Properties();
             if (topicConfigMap != null) {
                 topicConfig.putAll(topicConfigMap);
             }
+            */
 
             List<String> topics = topicNamePostFixes
                 .stream()
@@ -192,5 +194,10 @@ public abstract class AbstractDao {
             actor.getName(), region, bootstrapServers, schemaRegistryURL, hint, clusterName);
 
         return actorBuilder.build();
+    }
+
+    protected String getDefaultHint(AvroStream avroStream) {
+        String streamHint = avroStream.getTags().getHint();
+        return (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT : streamHint.trim().toLowerCase();
     }
 }

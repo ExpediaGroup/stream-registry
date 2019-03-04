@@ -82,10 +82,12 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
     private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> updateConsumer(String streamName, String consumerName, String region)
             throws StreamNotFoundException, RegionNotFoundException, ClusterNotFoundException {
         Optional<AvroStream> avroStream = getAvroStreamKeyValue(streamName).getValue();
+        // Try to do exceptions first, reduces cyclomatic complexity
         if (!avroStream.isPresent()) {
             throw new StreamNotFoundException(String.format("StreamName=%s not found. Please create the Stream before registering a Consumer", streamName));
         }
 
+        // if consumers exist try to update the matching consumer
         List<Consumer> consumers = avroStream.get().getConsumers();
         if (consumers != null) {
             for (com.homeaway.digitalplatform.streamregistry.Consumer consumer : consumers) {
@@ -95,29 +97,28 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
                             // Existing consumer for this region
                             String streamHint = avroStream.get().getTags().getHint();
                             String hint = (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT
-                                    : streamHint.trim().toLowerCase();
+                                : streamHint.trim().toLowerCase();
                             Actor consumerActor = populateActorStreamConfig(streamName, region, consumer.getActor(),
-                                    OPERATION.UPDATE.name(), TOPIC_POST_FIXES, hint,
-                                    ACTOR_TYPE, avroStream.get().getTopicConfig());
+                                OPERATION.UPDATE.name(), TOPIC_POST_FIXES, hint,
+                                ACTOR_TYPE, avroStream.get().getTopicConfig());
                             consumer.setActor(consumerActor);
                             updateAvroStream(avroStream.get());
                             log.info(
-                                    "Consumer updated in source-processor-topic. streamName={} ; consumerName={} ; consumer={} ; region={}",
-                                    streamName, consumerName, consumer, region);
+                                "Consumer updated in source-processor-topic. streamName={} ; consumerName={} ; consumer={} ; region={}",
+                                streamName, consumerName, consumer, region);
                             return Optional.of(AvroToJsonDTO.getJsonConsumer(consumer));
                         }
                     }
                 }
             }
         }
-        log.info("Registering new Consumer. Stream={} Consumer={} ; region={}", streamName, consumerName, region);
+        // no consumer and/or region matches
         return createConsumer(avroStream.get(), consumerName, region);
     }
 
     private Optional<com.homeaway.streamplatform.streamregistry.model.Consumer> createConsumer(AvroStream avroStream, String consumerName,
         String region) throws RegionNotFoundException, ClusterNotFoundException {
-
-        log.info("==>>> getting into creating consumer. Initial Stream: {}", avroStream.toString());
+        log.info("Registering new Consumer. Stream={} Consumer={} ; region={}", avroStream.getName(), consumerName, region);
 
         if (!regionDao.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
             throw new RegionNotFoundException(String.format("Region=%s is not supported for the Stream's hint=%s", region, avroStream.getTags().getHint()));
@@ -134,12 +135,9 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
                 .build())
             .build();
 
-        String streamHint = avroStream.getTags().getHint();
-        String hint =
-            (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT : streamHint.trim().toLowerCase();
+        String hint = getDefaultHint(avroStream);
 
-        Actor actor =
-            populateActorStreamConfig(avroStream.getName(), region, consumer.getActor(), OPERATION.CREATE.name(), TOPIC_POST_FIXES, hint,
+        Actor actor = populateActorStreamConfig(avroStream.getName(), region, consumer.getActor(), OPERATION.CREATE.name(), TOPIC_POST_FIXES, hint,
                 ACTOR_TYPE, avroStream.getTopicConfig());
 
         consumer = Consumer.newBuilder()
