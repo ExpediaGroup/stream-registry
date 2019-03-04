@@ -95,7 +95,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
                             // Existing producer for this region
                             String hint = getDefaultHint(streamOptional.get());
                             Actor producerActor = populateActorStreamConfig(streamName, region, producer.getActor(), OPERATION.CREATE.name(), topicPostFixes, hint,
-                                    ACTOR_TYPE, stream.getTopicConfig());
+                                    ACTOR_TYPE);
                             producer.setActor(producerActor);
                             updateAvroStream(stream);
                             log.info("Producer updated in source-processor-topic. streamName={} ; producerName={} ; region={}", streamName, producerName, region);
@@ -129,7 +129,7 @@ public class ProducerDaoImpl extends AbstractDao implements StreamClientDao<com.
         String hint = getDefaultHint(avroStream);
 
         Actor actor = populateActorStreamConfig(avroStream.getName(), region, producer.getActor(), OPERATION.CREATE.name(),
-            topicPostFixes, hint, ACTOR_TYPE, avroStream.getTopicConfig());
+            topicPostFixes, hint, ACTOR_TYPE);
         Producer newProducer = com.homeaway.digitalplatform.streamregistry.Producer.newBuilder()
             .setActor(actor)
             .build();

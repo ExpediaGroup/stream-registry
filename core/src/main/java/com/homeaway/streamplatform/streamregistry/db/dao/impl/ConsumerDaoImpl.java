@@ -100,7 +100,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
                                 : streamHint.trim().toLowerCase();
                             Actor consumerActor = populateActorStreamConfig(streamName, region, consumer.getActor(),
                                 OPERATION.UPDATE.name(), TOPIC_POST_FIXES, hint,
-                                ACTOR_TYPE, avroStream.get().getTopicConfig());
+                                ACTOR_TYPE);
                             consumer.setActor(consumerActor);
                             updateAvroStream(avroStream.get());
                             log.info(
@@ -138,7 +138,7 @@ public class ConsumerDaoImpl extends AbstractDao implements StreamClientDao<com.
         String hint = getDefaultHint(avroStream);
 
         Actor actor = populateActorStreamConfig(avroStream.getName(), region, consumer.getActor(), OPERATION.CREATE.name(), TOPIC_POST_FIXES, hint,
-                ACTOR_TYPE, avroStream.getTopicConfig());
+                ACTOR_TYPE);
 
         consumer = Consumer.newBuilder()
             .setActor(actor)

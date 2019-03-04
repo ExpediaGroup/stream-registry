@@ -135,7 +135,7 @@ public abstract class AbstractDao {
 
     protected com.homeaway.digitalplatform.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
         com.homeaway.digitalplatform.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
-        String actorType, Map<String, String> topicConfigMap) throws ClusterNotFoundException {
+        String actorType) throws ClusterNotFoundException {
 
         Actor.Builder actorBuilder = Actor.newBuilder();
 
@@ -148,21 +148,14 @@ public abstract class AbstractDao {
         Optional<String> clusterName = Optional.ofNullable(clusterValue.getClusterProperties().get(CLUSTER_NAME));
 
         if (!clusterName.isPresent()) {
-            throw new IllegalStateException("Cluster name cannot be null");
+            throw new IllegalStateException(String.format("Cluster name cannot be null. region=%s ; env=%s ; hint=%s ; actorType=%s ; Cluster Details: %s",
+                    region, env, hint, actorType, clusterValue));
         }
 
         if (operation.equalsIgnoreCase(OPERATION.CREATE.name())) {
 
             actorBuilder.setRegionStreamConfigurations(new ArrayList<>());
             Map<String, String> configMap = new HashMap<>();
-
-            // TODO - why is this here? Why do we ignore topicConfigMap and not do anything with it? Commenting out for now
-            /*
-            Properties topicConfig = new Properties();
-            if (topicConfigMap != null) {
-                topicConfig.putAll(topicConfigMap);
-            }
-            */
 
             List<String> topics = topicNamePostFixes
                 .stream()
