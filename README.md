@@ -17,8 +17,6 @@ for producer and/or consumer stream coördinates becomes possible. This centrali
 function thus streamlines operational complexity via stream lifecycle management, stream discovery,
 stream availability and resiliency.
 
-[TOC]
-
 ## Why Stream Registry?
 
 We believe that as the change to business requirements accelerate, time to market pressures increase,
