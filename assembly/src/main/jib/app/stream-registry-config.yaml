@@ -9,9 +9,9 @@ server:
 # Env where StreamRegistry application is running
 env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
-# Filters for denoting request UUID in logs in order to group logs statements for a httpRequest for making debugging easy.
-requestMDCFilterClassName: ${MDC_REQUEST_FILTER:-com.homeaway.streamplatform.streamregistry.UUIDMDCRequestFilter}
-responseMDCFilterClassName: ${MDC_RESPONSE_FILTER:-com.homeaway.streamplatform.streamregistry.UUIDMDCResponseFilter}
+# list (yaml syntax) of Jersey Filter Full Class Names loaded at runtime.
+requestFilterClassNames:
+responseFilterClassNames:
 
 # Properties of the Stream that got upserted in each HealthCheck
 healthCheckStreamConfig:
@@ -78,7 +78,7 @@ logging:
     com.homeaway: DEBUG
   appenders:
   - type: console
-    logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %X{request-UUID} %logger{5} - %msg %n"
+    logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} - %msg %n"
 
 swagger:
   resourcePackage: com.homeaway.streamplatform.streamregistry.resource
