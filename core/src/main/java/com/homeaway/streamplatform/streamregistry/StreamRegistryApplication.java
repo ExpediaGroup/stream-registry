@@ -191,16 +191,19 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     private void registerFilters(Environment environment, StreamRegistryConfiguration configuration) {
         try {
-            if (configuration.getRequestMDCFilterClassName() != null) {
-                ContainerRequestFilter mdcRequestFilter = Utils.newInstance(configuration.getRequestMDCFilterClassName(), ContainerRequestFilter.class);
-                environment.jersey().register(mdcRequestFilter);
+            if (configuration.getRequestFilterClassNames() != null) {
+                for (String requestFilterClassName : configuration.getRequestFilterClassNames()) {
+                    environment.jersey().register(Utils.newInstance(requestFilterClassName, ContainerRequestFilter.class));
+                }
             }
-            if (configuration.getResponseMDCFilterClassName() != null) {
-                ContainerResponseFilter mdcResponseFilter = Utils.newInstance(configuration.getResponseMDCFilterClassName(), ContainerResponseFilter.class);
-                environment.jersey().register(mdcResponseFilter);
+
+            if (configuration.getResponseFilterClassNames() != null) {
+                for (String responseFilterClassName : configuration.getResponseFilterClassNames()) {
+                    environment.jersey().register(Utils.newInstance(responseFilterClassName, ContainerResponseFilter.class));
+                }
             }
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(String.format("Error loading MDCFilter from configuration %s",configuration),  e);
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("Error loading Jersey Filter from configuration %s",configuration),  e);
         }
     }
 
