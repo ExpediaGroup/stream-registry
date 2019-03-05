@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.4.7] - SNAPSHOT
 ### Added
 - Created `StreamRegistryManagedContainer` which will be responsible for ordering lifecycle for infra components (#124)
+- Added support for registering Jersey Filters via config.yaml (#136)
 
 ### Changed
 - Added `@NonNull` constraint check for `InfraManagerConfig.config` (#128)
