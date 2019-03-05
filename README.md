@@ -17,6 +17,8 @@ for producer and/or consumer stream coördinates becomes possible. This centrali
 function thus streamlines operational complexity via stream lifecycle management, stream discovery,
 stream availability and resiliency.
 
+[TOC]
+
 ## Why Stream Registry?
 
 We believe that as the change to business requirements accelerate, time to market pressures increase,
@@ -101,6 +103,73 @@ make run
 ```
 
 Once Stream Registry has started, check that the application's Swagger API is running at http://localhost:8080/swagger
+
+## Create a Stream Locally
+
+Once stream registry is up insert your local cluster info
+
+```bash
+curl -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{
+>     "clusterKey": {
+>       "vpc": "local",
+>       "env": "local",
+>       "hint": "primary",
+>       "type": null
+>     },
+>     "clusterValue": {
+>       "clusterName": "localCluster",
+>       "bootstrapServers": "localhost:9092",
+>       "zookeeperQuorum": "zookeeper:2181",
+>       "schemaRegistryURL": "http://localhost:8081"
+>     }
+>   }' 'http://localhost:8080/v0/clusters'
+```
+
+Now, add a stream using `vpcList` as `local` and `tags`->`hint` as `primary` 
+
+Here is a sample stream 
+```bash
+curl -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{
+  "name": "sampleStream",
+  "schemaCompatibility": "BACKWARD",
+  "latestKeySchema": {
+    "id": "string",
+    "version": 0,
+    "schemaString": "\"string\"",
+    "created": "string",
+    "updated": "string"
+  },
+  "latestValueSchema": {
+    "id": "string",
+    "version": 0,
+    "schemaString": "\"string\"",
+    "created": "string",
+    "updated": "string"
+  },
+  "owner": "string",
+  "created": 0,
+  "updated": 0,
+  "githubUrl": "http://github.com",
+  "isDataNeededAtRest": true,
+  "isAutomationNeeded": true,
+  "tags": {
+    "productId": 0,
+    "portfolioId": 0,
+    "brand": "string",
+    "assetProtectionLevel": "string",
+    "componentId": "string",
+    "hint": "primary"
+  },
+  "vpcList": [
+    "local"
+  ],
+  "replicatedVpcList": [
+  ],
+  "topicConfig": {},
+  "partitions": 1,
+  "replicationFactor": 1
+}' 'http://localhost:8080/v0/streams/sampleStream'
+```
 
 ## Kafka Version Compatibility
 
