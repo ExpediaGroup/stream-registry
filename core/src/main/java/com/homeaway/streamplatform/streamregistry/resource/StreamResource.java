@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.annotation.Timed;
 
-import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,14 +41,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import org.apache.avro.SchemaParseException;
+import org.apache.kafka.common.errors.InvalidReplicationFactorException;
 
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
-import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
+import com.homeaway.streamplatform.streamregistry.exceptions.*;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
-import com.homeaway.streamplatform.streamregistry.utils.ResourceUtils;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.EntriesPage;
 
@@ -58,7 +57,7 @@ import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.Entr
 @Path("/v0/streams")
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class StreamResource {
+public class StreamResource extends BaseResource{
 
     private static final int DEFAULT_STREAMS_PAGE_NUMBER = 0;
 
@@ -79,39 +78,28 @@ public class StreamResource {
         value = "Upsert stream",
         notes = "Create/Update a stream and its meta-data",
         tags = "streams")
-    @ApiResponses(value = { @ApiResponse(code = 202, message = "Request accepted"),
-        @ApiResponse(code = 400, message = "Validation Exception while creating a stream"),
-        @ApiResponse(code = 500, message = "Error Occurred while getting data") })
+    @ApiResponses(value = { @ApiResponse(code = 202, message = "Stream registration request accepted"),
+        @ApiResponse(code = 400, message = "Validation Exception while creating a stream."),
+        @ApiResponse(code = 412, message = "Exception occurred as requested cluster is not supported"),
+        @ApiResponse(code = 500, message = "Error occured while registering a Stream") })
     @Path("/{streamName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
     public Response upsertStream(@ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName,
                                  @ApiParam(value = "stream entity", required = true) Stream stream) {
-
         try {
-            if (!stream.getName().equals(streamName)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                                "stream name provided in path param [" + streamName + "] does not match that of the stream body [" + stream.getName() + "]"))
-                        .build();
+            if (stream.getName() == null || !stream.getName().equals(streamName)) {
+                throw new InvalidStreamException(String.format("Stream name provided in path param [%s] does not match that of the stream body [%s]",
+                        streamName, stream.getName()));
             }
-
             streamDao.upsertStream(stream);
             return Response.status(Response.Status.ACCEPTED).build();
+        } catch (InvalidStreamException | SchemaManagerException | StreamCreationException | UnsupportedOperationException | InvalidReplicationFactorException e) {
+            return buildErrorMessage(Response.Status.BAD_REQUEST, e);
+        } catch (ClusterNotFoundException e) {
+            return buildErrorMessage(Response.Status.PRECONDITION_FAILED, e);
         } catch (RuntimeException e) {
-            log.error("Error creating stream={}", stream.getName(), e);
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                        "Error creating/updating stream=" + stream.getName() + ".",
-                        e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage(): e.getMessage()))
-                .build();
-        } catch(Exception e) {
-            log.error("Error creating/updating stream={}", stream.getName(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                            "Error creating stream=" + stream.getName() + ". ",
-                            e.getMessage()))
-                    .build();
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -130,33 +118,19 @@ public class StreamResource {
     public Response validateStreamCompatibility(@ApiParam(value = "stream entity", required = true) Stream stream,
                                                 @ApiParam(value = "stream name", required = true) @PathParam("streamName") String streamName,
                                                 @ApiParam(value = "schema type", allowableValues = "default", required = true) @PathParam("schemaType") String schemaType) {
-
-        if (!streamName.equals(stream.getName())) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                            "stream name provided in path param does not match that of the stream body"))
-                    .build();
-        }
-
         try {
-            if (streamDao.validateStreamCompatibility(stream)) {
-                return Response.ok().build();
-            } else {
-                String message = "Stream compatibility check failed";
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), message))
-                        .build();
+            if (!streamName.equals(stream.getName())) {
+                throw new InvalidStreamException(String.format("Stream name provided in path param [%s] does not match that of the stream body [%s]",
+                        streamName, stream.getName()));
             }
-        } catch (SchemaParseException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage()))
-                    .build();
-        } catch (Exception e) {
-            String message = String.format("Error validation schema compatibility for stream '%s'", streamName);
-            log.error(message, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message))
-                    .build();
+            streamDao.validateSchemaCompatibility(stream);
+            return Response.ok()
+                    .type("text/plain")
+                    .entity("Schema Validation Successful").build();
+        } catch (InvalidStreamException | SchemaParseException | SchemaValidationException e) {
+            return buildErrorMessage(Response.Status.BAD_REQUEST, e);
+        } catch (RuntimeException e) {
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -168,23 +142,18 @@ public class StreamResource {
         tags = "streams",
         response = Stream.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "successful operation", response = Stream.class),
-        @ApiResponse(code = 500, message = "Error Occurred while getting data"),
-        @ApiResponse(code = 404, message = "Stream not found") })
+        @ApiResponse(code = 404, message = "Stream not found"),
+        @ApiResponse(code = 500, message = "Error occured while getting a Stream.") })
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public Response getStream(@ApiParam(value = "Stream name", required = true) @PathParam("streamName") String streamName) {
-        Optional<Stream> stream = streamDao.getStream(streamName);
         try {
-            if (!stream.isPresent()) {
-                return ResourceUtils.streamNotFound(streamName);
-            }
-            return Response.ok().entity(stream.get()).build();
-        } catch (Exception e) {
-            String message = "Error occurred while getting data from Stream Registry for stream '" + streamName + "'";
-            log.error(message, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message))
-                    .build();
+            Stream stream = streamDao.getStream(streamName);
+            return Response.ok().entity(stream).build();
+        } catch (StreamNotFoundException e) {
+            return buildErrorMessage(Response.Status.NOT_FOUND, e);
+        } catch (RuntimeException e) {
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -195,8 +164,7 @@ public class StreamResource {
         tags = "streams",
         response = EntriesPage.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Stream(s) read successfully", response = EntriesPage.class),
-        @ApiResponse(code = 500, message = "Error Occurred while getting data"),
-        @ApiResponse(code = 404, message = "Stream not found") })
+        @ApiResponse(code = 500, message = "Error Occurred while getting data")})
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
@@ -225,9 +193,8 @@ public class StreamResource {
             return Response.ok()
                     .entity(StreamRegistryUtils.toEntriesPage(streamsPage, totalSize, pSize, pNumber))
                     .build();
-        } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException e) {
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -235,32 +202,32 @@ public class StreamResource {
     @ApiOperation(value = "Delete stream with path param stream name", tags = "streams")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Stream deleted successfully"),
             @ApiResponse(code = 404, message = "Stream not found"),
-            @ApiResponse(code = 500, message = "Error Occurred while getting data")})
+            @ApiResponse(code = 500, message = "Error Occurred while deleting the stream")})
     @Path("/{streamName}")
     @Timed
     public Response deleteStream(@ApiParam(value = "Stream object that needs to be deleted from the Stream Registry", required = true)
     @PathParam("streamName") String streamName) {
         try {
             streamDao.deleteStream(streamName);
+            return Response.ok()
+                    .entity(String.format("Stream=%s deleted successfully", streamName))
+                    .build();
         } catch (StreamNotFoundException e) {
-            return ResourceUtils.streamNotFound(streamName);
-        } catch (Exception e) {
-            log.error("Error occurred while getting data from Stream Registry.", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return buildErrorMessage(Response.Status.NOT_FOUND, e);
+        } catch (RuntimeException e) {
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
-
-        return Response.ok().entity("").build();
     }
 
 
     @Path("/{streamName}/producers")
     public ProducerResource getProducerResource(){
-        return new ProducerResource(streamDao, producerDao);
+        return new ProducerResource(producerDao);
     }
 
     @Path("/{streamName}/consumers")
     public ConsumerResource getConsumerResource(){
-        return new ConsumerResource(streamDao, consumerDao);
+        return new ConsumerResource(consumerDao);
     }
 
 }

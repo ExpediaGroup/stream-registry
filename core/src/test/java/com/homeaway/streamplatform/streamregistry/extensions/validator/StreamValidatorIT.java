@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
@@ -38,14 +39,20 @@ public class StreamValidatorIT extends BaseResourceIT {
 
     public static final int INVALID_PRODUCT_ID = 13;
 
-    public static class ValidProductStreamValidator implements StreamValidator {
+    public static class IntegrationTestStreamValidator implements StreamValidator {
 
         public static final String INVALID_ID_CONFIG = "validator.invalid-id";
         private int invalidProductId;
 
         @Override
-        public boolean isStreamValid(Stream stream) {
-            return !stream.getTags().getProductId().equals(INVALID_PRODUCT_ID);
+        public boolean isStreamValid(Stream stream) throws InvalidStreamException{
+            if (stream.getTags().getProductId().equals(INVALID_PRODUCT_ID)) {
+                throw new InvalidStreamException(String.format("Validation failed. Invalid Product ID : %s", stream.getTags().getProductId()));
+            }
+            if (stream.getVpcList() == null || stream.getVpcList().isEmpty()) {
+                throw new InvalidStreamException(String.format("Stream %s can not be created without vpcList configuration", stream.getName()));
+            }
+            return true;
         }
 
         @Override

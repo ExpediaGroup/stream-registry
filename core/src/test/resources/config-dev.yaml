@@ -7,7 +7,7 @@ healthCheckStreamConfig:
   replicationFactor: 1
 
 streamValidatorConfig:
-  className: com.homeaway.streamplatform.streamregistry.extensions.validator.StreamValidatorIT$ValidProductStreamValidator
+  className: com.homeaway.streamplatform.streamregistry.extensions.validator.StreamValidatorIT$IntegrationTestStreamValidator
   properties:
     validator.invalid-id: 13
 

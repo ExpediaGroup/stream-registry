@@ -15,20 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class SchemaException extends RuntimeException {
+public class RegionNotFoundException extends Exception {
+    private static final long serialVersionUID = 1687487766016741537L;
 
-    public SchemaException() {
-    }
-
-    public SchemaException(String message) {
+    public RegionNotFoundException(String message) {
         super(message);
     }
 
-    public SchemaException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public SchemaException(Throwable cause) {
-        super(cause);
-    }
 }

@@ -43,7 +43,7 @@ import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerCon
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
+import com.homeaway.streamplatform.streamregistry.exceptions.*;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaReference;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -73,8 +73,8 @@ public class StreamDaoImplTest {
         streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, streamValidator, schemaManager, kafkaManager);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testUpsertStreamChangePartitionCountFails() {
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUpsertStreamChangePartitionCountFails() throws InvalidStreamException, SchemaValidationException, SchemaManagerException, StreamCreationException, ClusterNotFoundException {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
 
@@ -87,8 +87,8 @@ public class StreamDaoImplTest {
         streamDao.upsertStream(newStream);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testUpsertStreamChangeReplicationFactorFails() {
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUpsertStreamChangeReplicationFactorFails() throws InvalidStreamException, SchemaManagerException, StreamCreationException, ClusterNotFoundException {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
 
@@ -101,7 +101,7 @@ public class StreamDaoImplTest {
     }
 
     @Test
-    public void testUpsertStreamPushesUpdatedSchemaMetadata() {
+    public void testUpsertStreamPushesUpdatedSchemaMetadata() throws SchemaManagerException, InvalidStreamException, StreamCreationException, ClusterNotFoundException {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
 
@@ -132,7 +132,7 @@ public class StreamDaoImplTest {
     }
 
     @Test(expected = SchemaManagerException.class)
-    public void testIncompatibleSchemaFails() {
+    public void testIncompatibleSchemaFails() throws SchemaManagerException, InvalidStreamException, StreamCreationException, ClusterNotFoundException {
         AvroStream originalStream = buildTestAvroStream();
         when(managedKStreams.getAvroStreamForKey(TEST_STREAM_KEY)).thenReturn(Optional.of(originalStream));
 

@@ -15,10 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class StreamNotFoundException extends BaseStreamException {
+public class StreamNotFoundException extends Exception {
     private static final long serialVersionUID = -2171171630296498063L;
 
-    public StreamNotFoundException(String streamName) {
-        super(streamName);
+    public StreamNotFoundException(String message) {
+        super(message);
     }
+
 }

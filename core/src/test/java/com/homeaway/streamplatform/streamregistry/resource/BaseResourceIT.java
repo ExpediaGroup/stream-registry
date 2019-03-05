@@ -266,8 +266,8 @@ public class BaseResourceIT {
         StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao,
             infraManager);
         streamResource = new StreamResource(streamDao, producerDao, consumerDao);
-        producerResource = new ProducerResource(streamDao, producerDao);
-        consumerResource = new ConsumerResource(streamDao, consumerDao);
+        producerResource = new ProducerResource(producerDao);
+        consumerResource = new ConsumerResource(consumerDao);
 
         SchemaRegistryClient schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryURL, 1);
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);

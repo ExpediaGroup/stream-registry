@@ -13,12 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.exceptions;
+package com.homeaway.streamplatform.streamregistry.resource;
 
-public class StreamDeletionException extends BaseStreamException {
-    private static final long serialVersionUID = -5793888606557229357L;
+import javax.ws.rs.core.Response;
 
-    public StreamDeletionException(String streamName) {
-        super(streamName);
+import lombok.extern.slf4j.Slf4j;
+
+import io.dropwizard.jersey.errors.ErrorMessage;
+
+@Slf4j
+public class BaseResource {
+
+    protected Response buildErrorMessage(Response.Status status, Exception e) {
+        log.error(e.getMessage(), e);
+
+        return Response.status(status)
+                .entity(new ErrorMessage(status.getStatusCode(),
+                        e.getMessage(),
+                        e.getCause() != null ? e.getCause().getMessage() : null))
+                .build();
     }
+
 }

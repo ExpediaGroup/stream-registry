@@ -56,7 +56,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
         // try to add consumer to a non-available stream, and expect NotFoundException
         Response response = consumerResource.upsertConsumer(streamName, consumerName, US_EAST_REGION);
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test
@@ -161,8 +161,8 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C1";
 
         Response response = consumerResource.upsertConsumer(streamName, consumerName, US_EAST_REGION);
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        Assert.assertEquals("Stream:junit-stream-consumer-with-no-stream not found . Please create the Stream before registering a Consumer"
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        Assert.assertEquals("StreamName=junit-stream-consumer-with-no-stream not found. Please create the Stream before registering a Consumer"
 , ((ErrorMessage)response.getEntity()).getMessage());
     }
 
@@ -195,11 +195,11 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
         response = consumerResource.deleteConsumer(streamName, consumerName);
-        Assert.assertEquals("Consumer deleted " + consumerName, (response.getEntity()));
+        Assert.assertEquals("Consumer " + consumerName + " deleted.", (response.getEntity()));
 
         Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
         response = consumerResource.getConsumer(streamName, consumerName);
-        Assert.assertEquals("consumer not found: " + consumerName, (response.getEntity()));
+        Assert.assertEquals("ErrorMessage{code=404, message=Consumer=" + consumerName + " not found for Stream=" + streamName + ", details=null}", (response.getEntity().toString()));
     }
 
     @Test
@@ -208,7 +208,8 @@ public class ConsumerResourceIT extends BaseResourceIT {
         String consumerName = "C1";
 
         Response response = consumerResource.deleteConsumer(streamName, consumerName);
-        Assert.assertEquals("Stream not found "+streamName, response.getEntity());
+        Assert.assertEquals("ErrorMessage{code=400, message=Stream with the name junit-delete-consumer-with-no-stream not found. Please create the Stream before deleting a Consumer, details=null}",
+                response.getEntity().toString());
     }
 
     @Test
@@ -227,6 +228,7 @@ public class ConsumerResourceIT extends BaseResourceIT {
 
         Response response = consumerResource.deleteConsumer(streamName, invalidConsumerName);
 
-        Assert.assertEquals("Consumer not found: "+invalidConsumerName, response.getEntity());
+        Assert.assertEquals("ErrorMessage{code=400, message=Consumer=" + invalidConsumerName + " not found for Stream=" + streamName + ", details=null}",
+                response.getEntity().toString());
     }
 }

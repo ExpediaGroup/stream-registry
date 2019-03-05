@@ -15,15 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.exceptions;
 
-public class ProducerNotFoundException extends RuntimeException{
+public class ActorNotFoundException extends Exception{
     private static final long serialVersionUID = -6879806564888143788L;
-    protected final String producerName;
 
-    public ProducerNotFoundException(String producerName) {
-        this.producerName = producerName;
+    public ActorNotFoundException(String message) {
+        super(message);
     }
 
-    public String getProducerName() {
-        return producerName;
-    }
 }

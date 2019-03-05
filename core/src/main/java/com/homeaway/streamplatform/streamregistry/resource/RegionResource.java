@@ -40,7 +40,7 @@ import com.homeaway.streamplatform.streamregistry.model.Hint;
 @Path("/v0/regions")
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class RegionResource {
+public class RegionResource extends BaseResource{
 
     private final RegionDao regionDao;
 
@@ -53,12 +53,17 @@ public class RegionResource {
         value = "Get all supported regions for each Hint in this environment",
         tags = "regions",
         response = Collection.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Returns all available regions", response = List.class) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Returns all available regions", response = List.class),
+            @ApiResponse(code = 500, message = "Error occurred while retrieving the supported regions") })
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public Response getRegions() {
-        Collection<Hint> hintRegionMap = regionDao.getHints();
-        return Response.status(200).entity(hintRegionMap).build();
+        try {
+            Collection<Hint> hintRegionMap = regionDao.getHints();
+            return Response.status(200).entity(hintRegionMap).build();
+        }catch (RuntimeException e) {
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
+        }
     }
 
 }
