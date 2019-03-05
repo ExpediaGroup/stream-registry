@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseFilter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -155,7 +157,30 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
+        // Step 7 - register list of Jersey Filters.
+        registerFilters(environment, configuration);
+
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
+    }
+
+    private void registerFilters(Environment environment, StreamRegistryConfiguration configuration) {
+        try {
+            if (configuration.getRequestFilterClassNames() != null) {
+                for (String requestFilterClassName : configuration.getRequestFilterClassNames()) {
+                    environment.jersey().register(Utils.newInstance(requestFilterClassName, ContainerRequestFilter.class));
+                    log.info(String.format("Registered request filter %s", requestFilterClassName));
+                }
+            }
+
+            if (configuration.getResponseFilterClassNames() != null) {
+                for (String responseFilterClassName : configuration.getResponseFilterClassNames()) {
+                    environment.jersey().register(Utils.newInstance(responseFilterClassName, ContainerResponseFilter.class));
+                    log.info(String.format("Registered response filter %s", responseFilterClassName));
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("Error loading Jersey Filter from configuration %s",configuration),  e);
+        }
     }
 
     public static StreamValidator loadValidator(StreamRegistryConfiguration configuration,
@@ -183,7 +208,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                     streamValidator.configure(validatorConfig);
                     return streamValidator;
                 } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException("Error loading streamValidator from configuration", e);
+                    throw new IllegalStateException(String.format("Error loading streamValidator from configuration %s",validatorClass),  e);
                 }
             }
         }

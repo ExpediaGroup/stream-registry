@@ -15,6 +15,8 @@
  */
 package com.homeaway.streamplatform.streamregistry.configuration;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -70,4 +72,10 @@ public class StreamRegistryConfiguration extends Configuration {
     @Valid
     @NotNull
     private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
+
+    @Valid
+    private List<String> requestFilterClassNames;
+
+    @Valid
+    private List<String> responseFilterClassNames;
 }
