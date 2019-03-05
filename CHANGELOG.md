@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Added `@NonNull` constraint check for `InfraManagerConfig.config` (#128)
 - Re-ordered bean instantiation in `StreamRegistryApplication.run()` to guarantee order of start/stop (#124)
-- Refactored the Exception chaining and removed business object from the custom Exception classes (#129)
 
 ## [0.4.6] - 20190209
 ### Changed
