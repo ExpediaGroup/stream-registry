@@ -25,12 +25,13 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 public class BaseResource {
 
     protected Response buildErrorMessage(Response.Status status, Exception e) {
-        log.error(e.getMessage(), e);
+        ErrorMessage errorMessage = new ErrorMessage(status.getStatusCode(),
+                e.getMessage(),
+                e.getCause() != null ? e.getCause().getMessage() : null);
 
+        log.error(errorMessage.toString(), e);
         return Response.status(status)
-                .entity(new ErrorMessage(status.getStatusCode(),
-                        e.getMessage(),
-                        e.getCause() != null ? e.getCause().getMessage() : null))
+                .entity(errorMessage)
                 .build();
     }
 

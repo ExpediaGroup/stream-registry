@@ -168,12 +168,14 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
             if (configuration.getRequestFilterClassNames() != null) {
                 for (String requestFilterClassName : configuration.getRequestFilterClassNames()) {
                     environment.jersey().register(Utils.newInstance(requestFilterClassName, ContainerRequestFilter.class));
+                    log.info(String.format("Registered request filter %s", requestFilterClassName));
                 }
             }
 
             if (configuration.getResponseFilterClassNames() != null) {
                 for (String responseFilterClassName : configuration.getResponseFilterClassNames()) {
                     environment.jersey().register(Utils.newInstance(responseFilterClassName, ContainerResponseFilter.class));
+                    log.info(String.format("Registered response filter %s", responseFilterClassName));
                 }
             }
         } catch (Exception e) {
