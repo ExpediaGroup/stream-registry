@@ -57,10 +57,12 @@ import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerCon
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamValidatorConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
+import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
+import com.homeaway.streamplatform.streamregistry.db.dao.impl.ClusterDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ConsumerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.ProducerDaoImpl;
@@ -72,6 +74,7 @@ import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthChe
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
+import com.homeaway.streamplatform.streamregistry.resource.ClusterResource;
 import com.homeaway.streamplatform.streamregistry.resource.RegionResource;
 import com.homeaway.streamplatform.streamregistry.resource.StreamResource;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
@@ -93,6 +96,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     private StreamDao streamDao;
     private StreamClientDao<Producer> producerDao;
     private StreamClientDao<Consumer> consumerDao;
+    private ClusterDao clusterDao;
 
     private StreamResource streamResource;
 
@@ -314,15 +318,16 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         String env = configuration.getEnv();
 
         regionDao = new RegionDaoImpl(env, infraManager);
+        clusterDao = new ClusterDaoImpl(infraManager);
 
         KafkaManager kafkaManager = new KafkaManagerImpl();
         SchemaManager schemaManager = loadSchemaManager(configuration);
         StreamValidator streamValidator = createStreamValidator(configuration, environment);
 
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, infraManager, streamValidator, schemaManager,
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao, infraManager, streamValidator, schemaManager,
             kafkaManager);
-        producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, infraManager);
-        consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, infraManager);
+        producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao, infraManager);
+        consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao, infraManager);
     }
 
     private void initAndRegisterResource(final Environment environment) {
@@ -334,9 +339,11 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         streamResource = new StreamResource(streamDao, producerDao, consumerDao);
         RegionResource regionResource = new RegionResource(regionDao);
+        ClusterResource clusterResource = new ClusterResource(clusterDao);
 
         environment.jersey().register(streamResource);
         environment.jersey().register(regionResource);
+        environment.jersey().register(clusterResource);
     }
 
     private void initAndRegisterHealthCheck(final StreamRegistryConfiguration configuration, final Environment environment,

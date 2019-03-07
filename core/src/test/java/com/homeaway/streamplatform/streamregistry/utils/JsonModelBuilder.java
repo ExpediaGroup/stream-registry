@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
+import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.model.RegionStreamConfig;
 import com.homeaway.streamplatform.streamregistry.model.Schema;
@@ -90,4 +93,26 @@ public class JsonModelBuilder {
         return Consumer.builder().name(name).regionStreamConfigList(regionStreamConfigs).build();
     }
 
+    public static JsonCluster buildJsonCluster(String clusterName){
+        ClusterKey clusterKey = ClusterKey.builder()
+            .env("test")
+            .hint("primary")
+            .vpc("vpc")
+            .type("")
+            .build();
+
+        ClusterValue clusterValue = ClusterValue.builder()
+            .clusterName(clusterName)
+            .bootstrapServers("localhost:9092")
+            .schemaRegistryURL("localhost:8081")
+            .zookeeperQuorum("localhost:2181")
+            .build();
+
+        JsonCluster cluster = JsonCluster.builder()
+            .clusterKey(clusterKey)
+            .clusterValue(clusterValue)
+            .build();
+
+        return cluster;
+    }
 }
