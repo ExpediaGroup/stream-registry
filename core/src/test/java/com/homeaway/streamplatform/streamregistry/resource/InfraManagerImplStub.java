@@ -36,7 +36,8 @@ public class InfraManagerImplStub implements InfraManager {
     @Override
     public void configure(Map<String, Object> configs) {}
 
-    public void addCluster(ClusterKey key, ClusterValue value) {
+    @Override
+    public void upsertCluster(ClusterKey key, ClusterValue value) {
         this.clusterMap.put(key, value);
     }
 

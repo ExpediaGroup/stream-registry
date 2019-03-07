@@ -102,6 +102,73 @@ make run
 
 Once Stream Registry has started, check that the application's Swagger API is running at http://localhost:8080/swagger
 
+## Create a Stream Locally
+
+First create your cluster
+
+```bash
+curl -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{
+>     "clusterKey": {
+>       "vpc": "local",
+>       "env": "local",
+>       "hint": "primary",
+>       "type": null
+>     },
+>     "clusterValue": {
+>       "clusterName": "localCluster",
+>       "bootstrapServers": "localhost:9092",
+>       "zookeeperQuorum": "zookeeper:2181",
+>       "schemaRegistryURL": "http://localhost:8081"
+>     }
+>   }' 'http://localhost:8080/v0/clusters'
+```
+
+Now, declare your stream
+
+Here is a sample stream 
+```bash
+curl -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{
+  "name": "sampleStream",
+  "schemaCompatibility": "BACKWARD",
+  "latestKeySchema": {
+    "id": "string",
+    "version": 0,
+    "schemaString": "\"string\"",
+    "created": "string",
+    "updated": "string"
+  },
+  "latestValueSchema": {
+    "id": "string",
+    "version": 0,
+    "schemaString": "\"string\"",
+    "created": "string",
+    "updated": "string"
+  },
+  "owner": "string",
+  "created": 0,
+  "updated": 0,
+  "githubUrl": "http://github.com",
+  "isDataNeededAtRest": true,
+  "isAutomationNeeded": true,
+  "tags": {
+    "productId": 0,
+    "portfolioId": 0,
+    "brand": "string",
+    "assetProtectionLevel": "string",
+    "componentId": "string",
+    "hint": "primary"
+  },
+  "vpcList": [
+    "local"
+  ],
+  "replicatedVpcList": [
+  ],
+  "topicConfig": {},
+  "partitions": 1,
+  "replicationFactor": 1
+}' 'http://localhost:8080/v0/streams/sampleStream'
+```
+
 ## Kafka Version Compatibility
 
 Stream Registry development and initial deployment started with Kafka 0.11.0 / Confluent Platform 3.3.0, and has also been deployed against Kafka 1.1.1 / Confluent Platform 4.1.2.  

@@ -32,6 +32,7 @@ import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
+import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
@@ -59,11 +60,12 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
                         ManagedKStreams kStreams,
                         String env,
                         RegionDao regionDao,
+                        ClusterDao clusterDao,
                         InfraManager infraManager,
                         StreamValidator validator,
                         SchemaManager schemaManager,
                         KafkaManager kafkaManager) {
-        super(managedKafkaProducer, kStreams, env, regionDao, infraManager);
+        super(managedKafkaProducer, kStreams, env, regionDao, clusterDao, infraManager);
         this.streamValidator = validator;
         this.schemaManager = schemaManager;
         this.kafkaManager = kafkaManager;
@@ -173,7 +175,7 @@ public class StreamDaoImpl extends AbstractDao implements StreamDao {
     }
 
     private void upsertTopics(Stream stream, String vpc, boolean isNewStream) throws StreamCreationException, ClusterNotFoundException {
-        ClusterValue clusterValue = getClusterDetails(vpc, env, stream.getTags().getHint(), "producer");
+        ClusterValue clusterValue = clusterDao.getCluster(vpc, env, stream.getTags().getHint(), "producer");
         Properties topicConfig = new Properties();
         if (stream.getTopicConfig() != null) {
             topicConfig.putAll(stream.getTopicConfig());

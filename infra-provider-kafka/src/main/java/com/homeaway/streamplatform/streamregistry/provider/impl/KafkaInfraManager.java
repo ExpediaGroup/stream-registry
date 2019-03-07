@@ -22,7 +22,12 @@ import java.util.Properties;
 
 import lombok.extern.slf4j.Slf4j;
 
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
+
 import org.apache.commons.lang3.Validate;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.GlobalKTable;
@@ -49,15 +54,17 @@ public class KafkaInfraManager implements InfraManager {
 
     private String infraStateStoreName;
     private KafkaStreams infraKStreams;
+    private KafkaProducer<ClusterKey, ClusterValue> infraProducer;
     private GlobalKTable<ClusterKey, ClusterValue> kTable;
     private ReadOnlyKeyValueStore<ClusterKey, ClusterValue> store;
+    private String infraManagerTopic;
 
     @SuppressWarnings("unchecked")
     @Override
     public void configure(Map<String, Object> configs) {
         // Get the infra manager topic name
         Validate.validState(configs.containsKey(INFRAMANAGER_TOPIC), "Infra Manager Topic name is not provided.");
-        String infraManagerTopic = configs.get(INFRAMANAGER_TOPIC).toString();
+        infraManagerTopic = configs.get(INFRAMANAGER_TOPIC).toString();
         log.info("Infra Manager Topic Name Read: {}", infraManagerTopic);
 
         // Get the infra state store name
@@ -70,7 +77,12 @@ public class KafkaInfraManager implements InfraManager {
         Validate.validState(configs.containsKey(INFRA_KSTREAM_PROPS), "InfraKStreams properties is not provided.");
         Map<String, Object> infraKStreamsPropertiesMap = (Map<String, Object>) configs.get(INFRA_KSTREAM_PROPS);
         infraKStreamsPropertiesMap.forEach(infraKStreamsProperties::put);
+        infraKStreamsProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        infraKStreamsProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         log.info("Infra KStreams Properties: {}", infraKStreamsProperties);
+
+        // Create a Infra Producer
+        infraProducer = new KafkaProducer<>(infraKStreamsProperties);
 
         // initialize the kstreams processor
         KStreamBuilder infraKStreamBuilder = new KStreamBuilder();
@@ -128,4 +140,15 @@ public class KafkaInfraManager implements InfraManager {
 
         return Optional.ofNullable(clusterValue);
     }
+
+    @Override
+    public void upsertCluster(ClusterKey clusterKey, ClusterValue clusterValue) {
+        try {
+            infraProducer.send(new ProducerRecord<>(infraManagerTopic, clusterKey, clusterValue));
+        } catch (Exception e) {
+            log.error("Error producing to topic={}", infraManagerTopic, e);
+        }
+    }
+
+
 }

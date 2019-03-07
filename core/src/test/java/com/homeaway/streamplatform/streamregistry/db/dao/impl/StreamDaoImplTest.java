@@ -34,12 +34,12 @@ import org.mockito.ArgumentCaptor;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
+import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
@@ -62,6 +62,7 @@ public class StreamDaoImplTest {
     private ManagedKStreams managedKStreams = mock(ManagedKStreams.class);
     private RegionDao regionDao = mock(RegionDao.class);
     private InfraManager infraManager = mock(InfraManager.class);
+    private ClusterDao clusterDao = mock(ClusterDao.class);
     private StreamValidator streamValidator = mock(StreamValidator.class);
     private SchemaManager schemaManager = mock(SchemaManager.class);
     private KafkaManager kafkaManager = mock(KafkaManager.class);
@@ -70,7 +71,7 @@ public class StreamDaoImplTest {
 
     @Before
     public void setup() {
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, infraManager, streamValidator, schemaManager, kafkaManager);
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, TEST_ENV, regionDao, clusterDao, infraManager, streamValidator, schemaManager, kafkaManager);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -118,7 +119,7 @@ public class StreamDaoImplTest {
         Map<String, String> clusterProperties = new HashMap<>();
         clusterProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         clusterProperties.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "localhost:2181");
-        when(infraManager.getClusterByKey(any(ClusterKey.class))).thenReturn(Optional.of(new ClusterValue(clusterProperties)));
+        when(clusterDao.getCluster(anyString(), anyString(), anyString(), anyString())).thenReturn(new ClusterValue(clusterProperties));
 
         streamDao.upsertStream(newStream);
 
