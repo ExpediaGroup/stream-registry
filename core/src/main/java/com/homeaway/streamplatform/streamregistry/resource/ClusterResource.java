@@ -31,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.annotation.Timed;
 
-import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -46,7 +45,7 @@ import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 @Path("/v0/clusters")
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
-public class ClusterResource {
+public class ClusterResource extends BaseResource {
     private final ClusterDao clusterDao;
 
     public ClusterResource(ClusterDao clusterDao) {
@@ -71,19 +70,7 @@ public class ClusterResource {
             clusterDao.upsertCluster(clusterParam);
             return Response.status(Response.Status.ACCEPTED).build();
         }  catch (InvalidClusterException e) {
-            log.error("Error upserting cluster.", e);
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Error upserting cluster.",
-                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
-                .build();
-        } catch (RuntimeException e) {
-            log.error("Error upserting cluster.", e);
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Error upserting cluster.",
-                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
-                .build();
+            return buildErrorMessage(Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -137,13 +124,8 @@ public class ClusterResource {
             }
 
             return Response.status(Response.Status.OK.getStatusCode()).entity(clusterList).build();
-        } catch (RuntimeException e) {
-            log.error("Error getting cluster.", e);
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Error getting cluster.",
-                    e.getCause() != null ? e.getMessage() + ". " + e.getCause().getMessage() : e.getMessage()))
-                .build();
+        } catch (IllegalStateException e) {
+            return buildErrorMessage(Response.Status.BAD_REQUEST, e);
         }
     }
 }

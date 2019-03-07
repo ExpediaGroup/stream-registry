@@ -57,7 +57,7 @@ public class ClusterDaoImpl implements ClusterDao {
      * @return Map of ClusterKey and ClusterValue
      */
     @Override
-    public List<JsonCluster> getAllClusters() {
+    public List<JsonCluster> getAllClusters() throws IllegalStateException {
         log.info("Get all clusters from infra manager...");
         Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> allClusters = infraManager.getAllClusters();
 
