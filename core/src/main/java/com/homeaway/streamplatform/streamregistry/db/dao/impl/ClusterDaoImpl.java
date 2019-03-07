@@ -85,26 +85,24 @@ public class ClusterDaoImpl implements ClusterDao {
      */
     public com.homeaway.digitalplatform.streamregistry.ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException {
         log.info("Cluster Details: vpc: {}, env: {}, hint: {}, actorType: {}", vpc, env, hint, actorType);
+
+        // Because the default is to have producer/consumer be the same cluster, lets see first try actorType=null to see if a cluster exists
         com.homeaway.digitalplatform.streamregistry.ClusterKey clusterKey = new com.homeaway.digitalplatform.streamregistry.ClusterKey(vpc, env, hint, null);
 
         Optional<com.homeaway.digitalplatform.streamregistry.ClusterValue> clusterValue = infraManager.getClusterByKey(clusterKey);
 
-        if (clusterValue.isPresent()) {
-            log.info("Cluster Information found - {}", clusterValue);
-            return new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterValue.get().getClusterProperties());
-        }
-        // If no cluster information is found set the actorType and look again.
-        clusterKey.setType(actorType);
+        if (!clusterValue.isPresent()) {
+            // Second time set the actorType and look again.
+            clusterKey.setType(actorType);
+            clusterValue = infraManager.getClusterByKey(clusterKey);
 
-        clusterValue = infraManager.getClusterByKey(clusterKey);
-
-        if (clusterValue.isPresent()) {
-            log.info("Cluster Information found - {}", clusterValue);
-            return new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterValue.get().getClusterProperties());
-        } else {
-            log.info("Cluster Information not found for key - {}", clusterKey);
-            throw new ClusterNotFoundException(clusterKey.toString());
+            // There is no clusters second time as well so throwing out the exception.
+            if (!clusterValue.isPresent()) {
+                throw new ClusterNotFoundException(String.format("Cluster Information not found for key - %s",clusterKey.toString()));
+            }
         }
+
+        return new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterValue.get().getClusterProperties());
     }
 
     /**

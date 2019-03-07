@@ -104,7 +104,7 @@ Once Stream Registry has started, check that the application's Swagger API is ru
 
 ## Create a Stream Locally
 
-Once stream registry is up insert your local cluster info
+First create your cluster
 
 ```bash
 curl -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{
@@ -123,7 +123,7 @@ curl -X PUT --header 'Content-Type: application/json' --header 'Accept: applicat
 >   }' 'http://localhost:8080/v0/clusters'
 ```
 
-Now, add a stream using `vpcList` as `local` and `tags`->`hint` as `primary` 
+Now, declare your stream
 
 Here is a sample stream 
 ```bash
