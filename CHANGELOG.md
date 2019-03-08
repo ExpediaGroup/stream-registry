@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added clusters Api 
 
+### Changed
+- Updated license info to extend until Present
+
 ## [0.4.7] - 20190305
 ### Added
 - Created `StreamRegistryManagedContainer` which will be responsible for ordering lifecycle for infra components (#124)
