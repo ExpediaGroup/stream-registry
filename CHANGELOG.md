@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.4.9] - SNAPSHOT
+### Changed
+
 ## [0.4.8] - 20190308
 ### Added
 - Added clusters Api (#131, #36) 
@@ -91,6 +94,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Shell script for build commands (#43)
 
+[0.4.9]: https://github.com/HomeAway/stream-registry/compare/v0.4.8...v0.4.9
 [0.4.8]: https://github.com/HomeAway/stream-registry/compare/v0.4.7...v0.4.8
 [0.4.7]: https://github.com/HomeAway/stream-registry/compare/v0.4.6...v0.4.7
 [0.4.6]: https://github.com/HomeAway/stream-registry/compare/v0.4.5...v0.4.6
