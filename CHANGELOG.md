@@ -4,12 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.4.8] - SNAPSHOT
+## [0.4.8] - 20190308
 ### Added
-- Added clusters Api 
+- Added clusters Api (#131, #36) 
 
 ### Changed
-- Updated license info to extend until Present
+- Updated license info to extend until Present (#138)
 
 ## [0.4.7] - 20190305
 ### Added
