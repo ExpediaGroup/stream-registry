@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added clusters Api 
 
 ### Changed
-- Updated license info to extend until 2019
+- Updated license info to extend until Present
 
 ## [0.4.7] - 20190305
 ### Added
