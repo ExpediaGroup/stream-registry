@@ -298,36 +298,30 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#required-local-environment" title="Required Local Environment" class="md-nav__link">
-    Required Local Environment
+  <a href="#building-locally" title="Building locally" class="md-nav__link">
+    Building locally
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#build-stream-registry" title="Build stream-registry" class="md-nav__link">
-    Build stream-registry
+  <a href="#start-stream-registry" title="Start Stream Registry" class="md-nav__link">
+    Start Stream Registry
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#start-stream-registry" title="Start stream-registry" class="md-nav__link">
-    Start stream-registry
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#health-check" title="Health Check" class="md-nav__link">
-    Health Check
+  <a href="#create-a-stream-locally" title="Create a Stream Locally" class="md-nav__link">
+    Create a Stream Locally
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-version-compatibility" title="Kafka Version Compatibility" class="md-nav__link">
+    Kafka Version Compatibility
+  </a>
   
 </li>
       
@@ -370,36 +364,30 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#required-local-environment" title="Required Local Environment" class="md-nav__link">
-    Required Local Environment
+  <a href="#building-locally" title="Building locally" class="md-nav__link">
+    Building locally
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#build-stream-registry" title="Build stream-registry" class="md-nav__link">
-    Build stream-registry
+  <a href="#start-stream-registry" title="Start Stream Registry" class="md-nav__link">
+    Start Stream Registry
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#start-stream-registry" title="Start stream-registry" class="md-nav__link">
-    Start stream-registry
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#health-check" title="Health Check" class="md-nav__link">
-    Health Check
+  <a href="#create-a-stream-locally" title="Create a Stream Locally" class="md-nav__link">
+    Create a Stream Locally
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-version-compatibility" title="Kafka Version Compatibility" class="md-nav__link">
+    Kafka Version Compatibility
+  </a>
   
 </li>
       
@@ -430,22 +418,107 @@
                 
                 
                 <h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
-<h2 id="required-local-environment">Required Local Environment<a class="headerlink" href="#required-local-environment" title="Permanent link">&para;</a></h2>
-<p>The local 'dev' version of stream registry requires a running version of Apache Kafka
-and Confluent's Stream Registry running locally on port 9092 and 8081 respectively.</p>
-<p>A quick version of this is to download, install and start
-<a href="https://docs.confluent.io/current/cli/index.html">Confluent CLI</a>.</p>
-<h2 id="build-stream-registry">Build stream-registry<a class="headerlink" href="#build-stream-registry" title="Permanent link">&para;</a></h2>
+<h2 id="building-locally">Building locally<a class="headerlink" href="#building-locally" title="Permanent link">&para;</a></h2>
+<p>Stream Registry is built using <a href="https://openjdk.java.net/install/">OpenJDK 11</a> and Maven. For convenience, we have wrapped each Maven command in a <a href="Makefile"><code class="codehilite">Makefile</code></a>.
+If you do not have <code class="codehilite">make</code> installed, please consult this file for build commands.</p>
+<p>Stream Registry is currently packaged as a shaded JAR file.
+We leave specific deployment considerations up to each team since this varies from enterprise to enterprise.
+We, do, however provide a vanilla Docker example for teams to use/leverage for demo, learning, or development purposes.</p>
+<p>To build Stream Registry as a JAR file, please run</p>
 <div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>make build
 </pre></div>
 
-<h2 id="start-stream-registry">Start stream-registry<a class="headerlink" href="#start-stream-registry" title="Permanent link">&para;</a></h2>
+<p>To build Stream Registry as a Docker image, please run the following, which will use the <a href="https://github.com/GoogleContainerTools/jib">Jib</a> Maven Plugin to build and install the image</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>make build-docker
+</pre></div>
+
+<h2 id="start-stream-registry">Start Stream Registry<a class="headerlink" href="#start-stream-registry" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><em><strong>Required Local Environment</strong><br/>
+The local 'dev' version of Stream Registry requires a locally running version of Apache Kafka
+and Confluent's Schema Registry on ports 9092 and 8081, respectively.</em></p>
+</blockquote>
+<p>To quickly get a local dev environment set up, we recommend to use the provided <a href="docker-compose.yml">Docker Compose</a>.
+Be sure to first build the Docker image using the command above.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>docker-compose up
+</pre></div>
+
+<p>Alternatively, one can start Confluent Platform locally after downloading the <a href="https://docs.confluent.io/current/cli/index.html">Confluent CLI</a> and running the following command.
+<strong>Note</strong>: The <code class="codehilite">confluent</code> command is currently only available for macOS and Linux. If using Windows, you'll need to use Docker, or run ZooKeeper, Kafka, and the Schema Registry all individually.</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>confluent start zookeeper
+confluent start kafka
+confluent start schema-registry
+</pre></div>
+
+<p>Stream Registry can then be started </p>
 <div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>make run
 </pre></div>
 
-<p>Check that your application is running at <code class="codehilite">http://localhost:8080/swagger</code></p>
-<h4 id="health-check">Health Check<a class="headerlink" href="#health-check" title="Permanent link">&para;</a></h4>
-<p>Check your applications health at <code class="codehilite">http://localhost:8080/private/healthcheck</code></p>
+<p>Once Stream Registry has started, check that the application's Swagger API is running at <a href="http://localhost:8080/swagger">http://localhost:8080/swagger</a></p>
+<h2 id="create-a-stream-locally">Create a Stream Locally<a class="headerlink" href="#create-a-stream-locally" title="Permanent link">&para;</a></h2>
+<p>Once stream registry is up insert your local cluster info</p>
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>curl -X PUT --header <span style="color: #e6db74">&#39;Content-Type: application/json&#39;</span> --header <span style="color: #e6db74">&#39;Accept: application/json&#39;</span> -d <span style="color: #e6db74">&#39;{</span>
+<span style="color: #e6db74">&gt;     &quot;clusterKey&quot;: {</span>
+<span style="color: #e6db74">&gt;       &quot;vpc&quot;: &quot;local&quot;,</span>
+<span style="color: #e6db74">&gt;       &quot;env&quot;: &quot;local&quot;,</span>
+<span style="color: #e6db74">&gt;       &quot;hint&quot;: &quot;primary&quot;,</span>
+<span style="color: #e6db74">&gt;       &quot;type&quot;: null</span>
+<span style="color: #e6db74">&gt;     },</span>
+<span style="color: #e6db74">&gt;     &quot;clusterValue&quot;: {</span>
+<span style="color: #e6db74">&gt;       &quot;clusterName&quot;: &quot;localCluster&quot;,</span>
+<span style="color: #e6db74">&gt;       &quot;bootstrapServers&quot;: &quot;localhost:9092&quot;,</span>
+<span style="color: #e6db74">&gt;       &quot;zookeeperQuorum&quot;: &quot;zookeeper:2181&quot;,</span>
+<span style="color: #e6db74">&gt;       &quot;schemaRegistryURL&quot;: &quot;http://localhost:8081&quot;</span>
+<span style="color: #e6db74">&gt;     }</span>
+<span style="color: #e6db74">&gt;   }&#39;</span> <span style="color: #e6db74">&#39;http://localhost:8080/v0/clusters&#39;</span>
+</pre></div>
+
+<p>Now, add a stream using <code class="codehilite">vpcList</code> as <code class="codehilite">local</code> and <code class="codehilite">tags</code>-&gt;<code class="codehilite">hint</code> as <code class="codehilite">primary</code> </p>
+<p>Here is a sample stream 
+<div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>curl -X PUT --header <span style="color: #e6db74">&#39;Content-Type: application/json&#39;</span> --header <span style="color: #e6db74">&#39;Accept: application/json&#39;</span> -d <span style="color: #e6db74">&#39;{</span>
+<span style="color: #e6db74">  &quot;name&quot;: &quot;sampleStream&quot;,</span>
+<span style="color: #e6db74">  &quot;schemaCompatibility&quot;: &quot;BACKWARD&quot;,</span>
+<span style="color: #e6db74">  &quot;latestKeySchema&quot;: {</span>
+<span style="color: #e6db74">    &quot;id&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">    &quot;version&quot;: 0,</span>
+<span style="color: #e6db74">    &quot;schemaString&quot;: &quot;\&quot;string\&quot;&quot;,</span>
+<span style="color: #e6db74">    &quot;created&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">    &quot;updated&quot;: &quot;string&quot;</span>
+<span style="color: #e6db74">  },</span>
+<span style="color: #e6db74">  &quot;latestValueSchema&quot;: {</span>
+<span style="color: #e6db74">    &quot;id&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">    &quot;version&quot;: 0,</span>
+<span style="color: #e6db74">    &quot;schemaString&quot;: &quot;\&quot;string\&quot;&quot;,</span>
+<span style="color: #e6db74">    &quot;created&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">    &quot;updated&quot;: &quot;string&quot;</span>
+<span style="color: #e6db74">  },</span>
+<span style="color: #e6db74">  &quot;owner&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">  &quot;created&quot;: 0,</span>
+<span style="color: #e6db74">  &quot;updated&quot;: 0,</span>
+<span style="color: #e6db74">  &quot;githubUrl&quot;: &quot;http://github.com&quot;,</span>
+<span style="color: #e6db74">  &quot;isDataNeededAtRest&quot;: true,</span>
+<span style="color: #e6db74">  &quot;isAutomationNeeded&quot;: true,</span>
+<span style="color: #e6db74">  &quot;tags&quot;: {</span>
+<span style="color: #e6db74">    &quot;productId&quot;: 0,</span>
+<span style="color: #e6db74">    &quot;portfolioId&quot;: 0,</span>
+<span style="color: #e6db74">    &quot;brand&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">    &quot;assetProtectionLevel&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">    &quot;componentId&quot;: &quot;string&quot;,</span>
+<span style="color: #e6db74">    &quot;hint&quot;: &quot;primary&quot;</span>
+<span style="color: #e6db74">  },</span>
+<span style="color: #e6db74">  &quot;vpcList&quot;: [</span>
+<span style="color: #e6db74">    &quot;local&quot;</span>
+<span style="color: #e6db74">  ],</span>
+<span style="color: #e6db74">  &quot;replicatedVpcList&quot;: [</span>
+<span style="color: #e6db74">  ],</span>
+<span style="color: #e6db74">  &quot;topicConfig&quot;: {},</span>
+<span style="color: #e6db74">  &quot;partitions&quot;: 1,</span>
+<span style="color: #e6db74">  &quot;replicationFactor&quot;: 1</span>
+<span style="color: #e6db74">}&#39;</span> <span style="color: #e6db74">&#39;http://localhost:8080/v0/streams/sampleStream&#39;</span>
+</pre></div></p>
+<h2 id="kafka-version-compatibility">Kafka Version Compatibility<a class="headerlink" href="#kafka-version-compatibility" title="Permanent link">&para;</a></h2>
+<p>Stream Registry development and initial deployment started with Kafka 0.11.0 / Confluent Platform 3.3.0, and has also been deployed against Kafka 1.1.1 / Confluent Platform 4.1.2.<br />
+As per the <a href="https://cwiki.apache.org/confluence/display/KAFKA/Compatibility+Matrix">Kafka Compatibility Matrix</a>, we expect Stream Registry to be compatbile with Kafka 0.10.0 and newer, and the internal Java Kafka clients used by Stream Registry can be found in the <a href="pom.xml"><code class="codehilite">pom.xml</code></a>.</p>
 <h2 id="run-unit-tests">Run Unit Tests<a class="headerlink" href="#run-unit-tests" title="Permanent link">&para;</a></h2>
 <div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>make tests
 </pre></div>
