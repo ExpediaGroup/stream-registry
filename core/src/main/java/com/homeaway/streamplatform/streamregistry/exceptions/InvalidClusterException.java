@@ -1,4 +1,4 @@
-/* Copyright (c) 2018-2019 Expedia Group.
+/* Copyright (c) 2018-Present Expedia Group.
  * All rights reserved.  http://www.homeaway.com
 
  * Licensed under the Apache License, Version 2.0 (the "License");
