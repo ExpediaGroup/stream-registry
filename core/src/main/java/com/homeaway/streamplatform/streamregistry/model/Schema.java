@@ -23,6 +23,9 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+import io.swagger.annotations.ApiModelProperty;
+
+
 @JsonDeserialize(builder = Schema.SchemaBuilder.class)
 @Builder
 @Data
@@ -43,6 +46,7 @@ public class Schema {
     /**
      * complete schema
      */
+    @ApiModelProperty(example = "{\"type\":\"string\"}")
     @NotNull
     String schemaString;
 
