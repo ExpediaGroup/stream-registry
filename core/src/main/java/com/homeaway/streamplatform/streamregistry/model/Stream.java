@@ -27,6 +27,8 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
 
 @JsonDeserialize(builder = Stream.StreamBuilder.class)
@@ -85,6 +87,7 @@ public class Stream {
     /**
      * Is data need in long term storage devices like Hadoop , S3 etc.
      */
+    @ApiModelProperty(example = "false")
     @Builder.Default
     Boolean isDataNeededAtRest = false;
 
@@ -121,11 +124,13 @@ public class Stream {
     /**
      * Number of Partitions
      */
+    @ApiModelProperty(example = "1")
     int partitions;
 
     /**
      * Replication Factor
      */
+    @ApiModelProperty(example = "3")
     int replicationFactor;
 
     @JsonPOJOBuilder(withPrefix = "")
