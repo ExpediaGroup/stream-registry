@@ -18,10 +18,10 @@ package com.homeaway.streamplatform.streamregistry.db.dao;
 import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.kafka.streams.state.KeyValueIterator;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
-import org.apache.kafka.streams.state.KeyValueIterator;
 
 public interface StreamDao {
 

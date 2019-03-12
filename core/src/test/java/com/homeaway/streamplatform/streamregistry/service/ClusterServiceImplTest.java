@@ -42,7 +42,6 @@ import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.service.ClusterService;
 import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
 
 /**

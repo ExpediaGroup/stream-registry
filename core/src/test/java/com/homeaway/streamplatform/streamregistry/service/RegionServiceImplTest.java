@@ -26,8 +26,6 @@ import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.Hint;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
-import com.homeaway.streamplatform.streamregistry.service.AbstractService;
-import com.homeaway.streamplatform.streamregistry.service.RegionService;
 import com.homeaway.streamplatform.streamregistry.service.impl.RegionServiceImpl;
 
 public class RegionServiceImplTest {
