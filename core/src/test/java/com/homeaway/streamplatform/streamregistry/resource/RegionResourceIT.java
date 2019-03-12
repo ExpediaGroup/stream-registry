@@ -24,24 +24,24 @@ import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.RegionDaoImpl;
 import com.homeaway.streamplatform.streamregistry.model.Hint;
+import com.homeaway.streamplatform.streamregistry.service.AbstractService;
+import com.homeaway.streamplatform.streamregistry.service.RegionService;
+import com.homeaway.streamplatform.streamregistry.service.impl.RegionServiceImpl;
 
 public class RegionResourceIT extends BaseResourceIT {
 
     @SuppressWarnings("unchecked")
     @Test
     public void testGetRegions(){
-        RegionDao regionDao = new RegionDaoImpl(configuration.getEnv(), infraManager);
-        RegionResource resource = new RegionResource(regionDao);
+        RegionService regionService = new RegionServiceImpl(configuration.getEnv(), infraManager);
+        RegionResource resource = new RegionResource(regionService);
         Response response = resource.getRegions();
 
         Collection<Hint> hints = (Collection<Hint>)response.getEntity();
 
         Assert.assertEquals(new HashSet<>(Arrays.asList(US_EAST_REGION)),
-                hints.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractDao.PRIMARY_HINT)).findFirst().get().getVpcs());
+                hints.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractService.PRIMARY_HINT)).findFirst().get().getVpcs());
         Assert.assertEquals(new HashSet<>(Arrays.asList(US_EAST_REGION)),
                 hints.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(BaseResourceIT.OTHER_HINT)).findFirst().get().getVpcs());
         Assert.assertEquals(new HashSet<>(Arrays.asList(US_WEST_REGION)),

@@ -36,20 +36,20 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.ActorNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
+import com.homeaway.streamplatform.streamregistry.service.StreamClientService;
 
 @Slf4j
 public class ProducerResource extends BaseResource{
 
-    private final StreamClientDao<Producer> producerDao;
+    private final StreamClientService<Producer> producerDao;
 
     @SuppressWarnings("WeakerAccess")
-    public ProducerResource(StreamClientDao<Producer> producerDao) {
+    public ProducerResource(StreamClientService<Producer> producerDao) {
         this.producerDao = producerDao;
     }
 

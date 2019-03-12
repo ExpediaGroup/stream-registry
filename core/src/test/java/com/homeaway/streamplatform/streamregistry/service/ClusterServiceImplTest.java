@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao.impl;
+package com.homeaway.streamplatform.streamregistry.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
-import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
@@ -43,11 +42,13 @@ import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
+import com.homeaway.streamplatform.streamregistry.service.ClusterService;
+import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
 
 /**
  * The type Cluster dao impl test.
  */
-public class ClusterDaoImplTest {
+public class ClusterServiceImplTest {
 
     /**
      * The Infra manager.
@@ -56,7 +57,7 @@ public class ClusterDaoImplTest {
     /**
      * The Cluster dao.
      */
-    static ClusterDao clusterDao;
+    static ClusterService clusterService;
 
     /**
      * The constant CLUSTER_NAME.
@@ -77,7 +78,7 @@ public class ClusterDaoImplTest {
     @BeforeClass
     public static void setup() {
         infraManager = mock(InfraManager.class);
-        clusterDao = new ClusterDaoImpl(infraManager);
+        clusterService = new ClusterServiceImpl(infraManager);
 
         clusterProperties = new HashMap<>();
         clusterProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -101,7 +102,7 @@ public class ClusterDaoImplTest {
         com.homeaway.digitalplatform.streamregistry.ClusterValue expectedClusterValue = new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties);
         when(infraManager.getClusterByKey(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class))).thenReturn(Optional.of(expectedClusterValue));
 
-        com.homeaway.digitalplatform.streamregistry.ClusterValue actualClusterValue = clusterDao.getCluster("vpc", "env", "hint", "");
+        com.homeaway.digitalplatform.streamregistry.ClusterValue actualClusterValue = clusterService.getCluster("vpc", "env", "hint", "");
         Assert.assertEquals(expectedClusterValue, actualClusterValue);
 
         // Change the cluster properties to make the assert fail
@@ -133,7 +134,7 @@ public class ClusterDaoImplTest {
         avroClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties));
 
         when(infraManager.getAllClusters()).thenReturn(avroClusterMap);
-        List<JsonCluster> allClusters = clusterDao.getAllClusters();
+        List<JsonCluster> allClusters = clusterService.getAllClusters();
 
         Assert.assertEquals(1, allClusters.size());
     }
@@ -153,7 +154,7 @@ public class ClusterDaoImplTest {
             .clusterValue(AvroToJsonDTO.getJsonClusterValue(expectedClusterValue))
             .build();
 
-        clusterDao.upsertCluster(jsonCluster);
+        clusterService.upsertCluster(jsonCluster);
 
         ArgumentCaptor<com.homeaway.digitalplatform.streamregistry.ClusterValue> clusterValueArgumentCaptor = ArgumentCaptor.forClass(com.homeaway.digitalplatform.streamregistry.ClusterValue.class);
 

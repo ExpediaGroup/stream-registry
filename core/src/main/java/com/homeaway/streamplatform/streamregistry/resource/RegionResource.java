@@ -33,8 +33,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.model.Hint;
+import com.homeaway.streamplatform.streamregistry.service.RegionService;
 
 @Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
 @Path("/v0/regions")
@@ -42,10 +42,10 @@ import com.homeaway.streamplatform.streamregistry.model.Hint;
 @Slf4j
 public class RegionResource extends BaseResource{
 
-    private final RegionDao regionDao;
+    private final RegionService regionService;
 
-    public RegionResource(RegionDao regionDao) {
-        this.regionDao = regionDao;
+    public RegionResource(RegionService regionService) {
+        this.regionService = regionService;
     }
 
     @GET
@@ -59,7 +59,7 @@ public class RegionResource extends BaseResource{
     @Timed
     public Response getRegions() {
         try {
-            Collection<Hint> hintRegionMap = regionDao.getHints();
+            Collection<Hint> hintRegionMap = regionService.getHints();
             return Response.status(200).entity(hintRegionMap).build();
         }catch (RuntimeException e) {
             return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);

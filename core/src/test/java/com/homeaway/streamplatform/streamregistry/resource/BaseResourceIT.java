@@ -64,17 +64,9 @@ import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerCon
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaStreamsConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
-import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
-import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.ClusterDaoImpl;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.ConsumerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.ProducerDaoImpl;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.RegionDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -83,6 +75,13 @@ import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthChe
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
+import com.homeaway.streamplatform.streamregistry.service.*;
+import com.homeaway.streamplatform.streamregistry.service.ClusterService;
+import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.ConsumerServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.ProducerServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.RegionServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.StreamServiceImpl;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
@@ -143,9 +142,9 @@ public class BaseResourceIT {
 
     protected static StreamRegistryHealthCheck healthCheck;
 
-    protected static RegionDao regionDao;
+    protected static RegionService regionService;
 
-    protected static ClusterDao clusterDao;
+    protected static ClusterService clusterService;
 
     protected static Client client;
 
@@ -239,30 +238,29 @@ public class BaseResourceIT {
         consumerConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
 
         String env = configuration.getEnv();
-        regionDao = new RegionDaoImpl(env, infraManager);
-        clusterDao = new ClusterDaoImpl(infraManager);
+        regionService = new RegionServiceImpl(env, infraManager);
+        clusterService = new ClusterServiceImpl(infraManager);
 
         client = Mockito.mock(Client.class);
         StreamValidatorIT.mockHttpClientSuccess(client);
 
-        StreamValidator streamValidator = StreamRegistryApplication.loadValidator(configuration, client, regionDao);
+        StreamValidator streamValidator = StreamRegistryApplication.loadValidator(configuration, client, regionService);
 
         configuration.getSchemaManagerConfig().getProperties().put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
         configuration.getSchemaManagerConfig().getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 1);
 
         KafkaManager kafkaManager = new KafkaManagerImpl();
-        StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao,
+        StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams);
+        StreamService streamService = new StreamServiceImpl(streamDao, env, regionService, clusterService,
             infraManager, streamValidator, schemaManager, kafkaManager);
-        StreamClientDao<Producer> producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao,
-            infraManager);
-        StreamClientDao<Consumer> consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao,
-            infraManager);
-        streamResource = new StreamResource(streamDao, producerDao, consumerDao);
+        StreamClientService<Producer> producerDao = new ProducerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
+        StreamClientService<Consumer> consumerDao = new ConsumerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
+        streamResource = new StreamResource(streamService, producerDao, consumerDao);
 
         producerResource = new ProducerResource(producerDao);
         consumerResource = new ConsumerResource(consumerDao);
-        clusterResource = new ClusterResource(clusterDao);
+        clusterResource = new ClusterResource(clusterService);
 
         SchemaRegistryClient schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryURL, 1);
         schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
@@ -293,11 +291,11 @@ public class BaseResourceIT {
     private static InfraManagerImplStub buildInfraManager() {
         InfraManagerImplStub infraManagerImplStub = new InfraManagerImplStub();
         // Inserting the Primary Cluster
-        ClusterKey clusterKey = new ClusterKey(US_EAST_REGION, ENV_TEST, AbstractDao.PRIMARY_HINT, null);
+        ClusterKey clusterKey = new ClusterKey(US_EAST_REGION, ENV_TEST, AbstractService.PRIMARY_HINT, null);
         final ImmutableMap<String, String> clusterPropertiesMap = new ImmutableMap.Builder<String, String>()
             .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
             .put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL)
-            .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_NAME)
+            .put(AbstractService.CLUSTER_NAME, US_EAST_CLUSTER_NAME)
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
         infraManagerImplStub.upsertCluster(clusterKey,  new ClusterValue(clusterPropertiesMap));
@@ -307,7 +305,7 @@ public class BaseResourceIT {
         final ImmutableMap<String, String> motclusterPropertiesMap = new ImmutableMap.Builder<String, String>()
             .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
             .put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL)
-            .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL)
+            .put(AbstractService.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL)
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
         infraManagerImplStub.upsertCluster(motClusterKey,  new ClusterValue(motclusterPropertiesMap));
@@ -317,7 +315,7 @@ public class BaseResourceIT {
         final ImmutableMap<String, String> otherProducerClusterPropertiesMap = new ImmutableMap.Builder<String, String>()
             .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
             .put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL)
-            .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL+"_other_producer")
+            .put(AbstractService.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL+"_other_producer")
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
         infraManagerImplStub.upsertCluster(otherProducerClusterKey,  new ClusterValue(otherProducerClusterPropertiesMap));
@@ -327,7 +325,7 @@ public class BaseResourceIT {
         final ImmutableMap<String, String> otherConsumerClusterPropertiesMap = new ImmutableMap.Builder<String, String>()
             .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
             .put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL)
-            .put(AbstractDao.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL+"_other_consumer")
+            .put(AbstractService.CLUSTER_NAME, US_EAST_CLUSTER_GENERAL+"_other_consumer")
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
         infraManagerImplStub.upsertCluster(otherConsumerClusterKey,  new ClusterValue(otherConsumerClusterPropertiesMap));

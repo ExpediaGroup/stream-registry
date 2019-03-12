@@ -15,7 +15,7 @@
  */
 package com.homeaway.streamplatform.streamregistry.health;
 
-import static com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao.PRIMARY_HINT;
+import static com.homeaway.streamplatform.streamregistry.service.AbstractService.PRIMARY_HINT;
 
 import java.util.Collections;
 import java.util.List;

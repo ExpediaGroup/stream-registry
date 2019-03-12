@@ -15,55 +15,20 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao;
 
-import java.util.List;
+import java.util.Optional;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.*;
-import com.homeaway.streamplatform.streamregistry.model.Stream;
+import org.apache.commons.lang3.tuple.Pair;
 
-// TODO - Need javadoc (#107)
+import com.homeaway.digitalplatform.streamregistry.AvroStream;
+import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+import org.apache.kafka.streams.state.KeyValueIterator;
+
 public interface StreamDao {
 
-    /**
-     *  Insert or Update a Stream
-     * @param stream
-     * @throws SchemaManagerException - when the input schema registration fails against SchemaRegistry
-     * @throws InvalidStreamException - When the validator that implements
-     *              `com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator` check fails on input Stream Object.
-     * @throws StreamCreationException - When streams could not be created in the underlying streaming infrastructure.
-     * @throws ClusterNotFoundException - When cluster is not found for the input VPC and Hint
-     */
-    void upsertStream(Stream stream) throws SchemaManagerException, InvalidStreamException, StreamCreationException, ClusterNotFoundException;
+    void upsertStream(AvroStreamKey key, AvroStream stream);
 
-    /**
-     * Get a Stream for the given name
-     * @param streamName
-     * @return
-     * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
-     */
-    Stream getStream(String streamName) throws StreamNotFoundException;
+    Pair<AvroStreamKey, Optional<AvroStream>> getStream(String streamName);
 
-    /**
-     * Delete the stream for the given name
-     * @param streamName
-     * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
-     */
-    void deleteStream(String streamName) throws StreamNotFoundException;
-
-    /**
-     * Get all the streams.
-     *
-     * @return List<Stream>
-     */
-    List<Stream> getAllStreams();
-
-    /**
-     * Validate the input schema against the SchemaRegistry.
-     * @param stream
-     * @return
-     * @throws SchemaValidationException -
-     *  a) Where there is a RuntimeException while validating schema against schema-registry.
-     *  b) When schema validation check fails.
-     */
-    boolean validateSchemaCompatibility(Stream stream) throws SchemaValidationException;
+    KeyValueIterator<AvroStreamKey, AvroStream> getAllStreams();
 
 }

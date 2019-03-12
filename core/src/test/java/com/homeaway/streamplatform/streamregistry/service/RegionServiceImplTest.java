@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao.impl;
+package com.homeaway.streamplatform.streamregistry.service;
 
 import java.util.*;
 
@@ -23,17 +23,18 @@ import org.mockito.Mockito;
 
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
-import com.homeaway.streamplatform.streamregistry.db.dao.AbstractDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.model.Hint;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
+import com.homeaway.streamplatform.streamregistry.service.AbstractService;
+import com.homeaway.streamplatform.streamregistry.service.RegionService;
+import com.homeaway.streamplatform.streamregistry.service.impl.RegionServiceImpl;
 
-public class RegionDaoImplTest {
+public class RegionServiceImplTest {
 
     private final InfraManager mockInfraManager = Mockito.mock(InfraManager.class);
     private String devEnv = "dev";
-    private RegionDao dao = new RegionDaoImpl(devEnv, mockInfraManager);
+    private RegionService dao = new RegionServiceImpl(devEnv, mockInfraManager);
 
     private ClusterKey createClusterKey(String env, String hint, String vpc) {
         return ClusterKey.newBuilder()
@@ -48,11 +49,11 @@ public class RegionDaoImplTest {
         Map<ClusterKey, ClusterValue> allClusters = new HashMap<>();
 
         // primary supported regions
-        allClusters.put(createClusterKey(devEnv, AbstractDao.PRIMARY_HINT, "aus-dts-1"), null);
-        allClusters.put(createClusterKey(devEnv, AbstractDao.PRIMARY_HINT, "us-east-vpc"), null);
-        allClusters.put(createClusterKey(devEnv, AbstractDao.PRIMARY_HINT, "us-west-vpc"), null);
-        allClusters.put(createClusterKey(devEnv, AbstractDao.PRIMARY_HINT, "us-east-vpc-3"), null);
-        allClusters.put(createClusterKey("test", AbstractDao.PRIMARY_HINT, "us-west-vpc-2"), null);
+        allClusters.put(createClusterKey(devEnv, AbstractService.PRIMARY_HINT, "aus-dts-1"), null);
+        allClusters.put(createClusterKey(devEnv, AbstractService.PRIMARY_HINT, "us-east-vpc"), null);
+        allClusters.put(createClusterKey(devEnv, AbstractService.PRIMARY_HINT, "us-west-vpc"), null);
+        allClusters.put(createClusterKey(devEnv, AbstractService.PRIMARY_HINT, "us-east-vpc-3"), null);
+        allClusters.put(createClusterKey("test", AbstractService.PRIMARY_HINT, "us-west-vpc-2"), null);
 
         // other-hint supported regions
         allClusters.put(ClusterKey.newBuilder().setEnv(devEnv).setHint(BaseResourceIT.OTHER_HINT).setVpc("us-east-vpc").setType("producer").build(), null);
@@ -72,8 +73,8 @@ public class RegionDaoImplTest {
         // 5 tiered hints, primary, other-hint
         Assert.assertEquals(hintRegionMap.size(), 7);
 
-        Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractDao.PRIMARY_HINT)).count(), 1);
-        Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractDao.PRIMARY_HINT)).findFirst().get().getVpcs(),
+        Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractService.PRIMARY_HINT)).count(), 1);
+        Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractService.PRIMARY_HINT)).findFirst().get().getVpcs(),
                 new HashSet<>(Arrays.asList("aus-dts-1", "us-east-vpc", "us-west-vpc", "us-east-vpc-3")));
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(BaseResourceIT.OTHER_HINT)).findFirst().get().getVpcs(),
                 new HashSet<>(Arrays.asList("us-east-vpc")));
