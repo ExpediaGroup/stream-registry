@@ -41,6 +41,9 @@ import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterExcep
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.service.ClusterService;
 
+/**
+ * The type Cluster resource.
+ */
 @Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
 @Path("/v0/clusters")
 @Produces(MediaType.APPLICATION_JSON)
@@ -48,10 +51,21 @@ import com.homeaway.streamplatform.streamregistry.service.ClusterService;
 public class ClusterResource extends BaseResource {
     private final ClusterService clusterService;
 
+    /**
+     * Instantiates a new Cluster resource.
+     *
+     * @param clusterService the cluster service
+     */
     public ClusterResource(ClusterService clusterService) {
         this.clusterService = clusterService;
     }
 
+    /**
+     * Upsert cluster response.
+     *
+     * @param clusterParam the cluster param
+     * @return the response
+     */
     @PUT
     @ApiOperation(
         value = "Upsert Clusters",
@@ -71,9 +85,21 @@ public class ClusterResource extends BaseResource {
             return Response.status(Response.Status.ACCEPTED).build();
         }  catch (InvalidClusterException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
+        } catch (RuntimeException e) {
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 
+    /**
+     * Gets all clusters.
+     *
+     * @param clusterName the cluster name
+     * @param vpc the vpc
+     * @param env the env
+     * @param hint the hint
+     * @param type the type
+     * @return the all clusters
+     */
     @GET
     @Path("/")
     @ApiOperation(
@@ -126,6 +152,8 @@ public class ClusterResource extends BaseResource {
             return Response.status(Response.Status.OK.getStatusCode()).entity(clusterList).build();
         } catch (IllegalStateException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
+        } catch (RuntimeException e) {
+            return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 }
