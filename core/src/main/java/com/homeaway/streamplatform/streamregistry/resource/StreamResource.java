@@ -210,6 +210,7 @@ public class StreamResource extends BaseResource{
         try {
             streamService.deleteStream(streamName);
             return Response.ok()
+                    .type("text/plain")
                     .entity(String.format("Stream=%s deleted successfully", streamName))
                     .build();
         } catch (StreamNotFoundException e) {
