@@ -25,10 +25,27 @@ import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 
 public interface StreamDao {
 
+    /**
+     * Insert or Update a Stream
+     *
+     * @param key - AvroStreamKey
+     * @param stream - AvroStreamValue
+     */
     void upsertStream(AvroStreamKey key, AvroStream stream);
 
+    /**
+     * Retrieve the Stream for a given stream name.
+     *
+     * @param streamName - name of the Stream.
+     * @return a Pair of AvroStream Key and Value for a given Stream Name.
+     */
     Pair<AvroStreamKey, Optional<AvroStream>> getStream(String streamName);
 
+    /**
+     * Retrieve all the Streams from the underlying data store.
+     *
+     * @return an Iterator of Key,Value
+     */
     KeyValueIterator<AvroStreamKey, AvroStream> getAllStreams();
 
 }
