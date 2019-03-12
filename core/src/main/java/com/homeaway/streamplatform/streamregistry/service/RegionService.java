@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao;
+package com.homeaway.streamplatform.streamregistry.service;
 
 import java.util.Collection;
 import java.util.Set;
 
 import com.homeaway.streamplatform.streamregistry.model.Hint;
 
-// TODO consider splitting this interface into a ClusterDao and NamespaceDao
+// TODO consider splitting this interface into a ClusterService and NamespaceDao
 /**
  * The interface for the Region dao.
  */
-public interface RegionDao {
+public interface RegionService {
     // TODO hint name needs to become clustername or stream-binding
-    // TODO this method needs to move to a ClusterDao
+    // TODO this method needs to move to a ClusterService
     /**
      * Returns a Collection of {@link Hint}s
      *

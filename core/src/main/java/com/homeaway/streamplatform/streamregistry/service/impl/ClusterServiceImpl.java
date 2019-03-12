@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao.impl;
+package com.homeaway.streamplatform.streamregistry.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
@@ -30,12 +29,13 @@ import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterExcep
 import com.homeaway.streamplatform.streamregistry.extensions.validation.ClusterValidator;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
+import com.homeaway.streamplatform.streamregistry.service.ClusterService;
 
 /**
  * The type Cluster dao.
  */
 @Slf4j
-public class ClusterDaoImpl implements ClusterDao {
+public class ClusterServiceImpl implements ClusterService {
 
     /**
      * The Infra manager.
@@ -47,7 +47,7 @@ public class ClusterDaoImpl implements ClusterDao {
      *
      * @param infraManager the infra manager
      */
-    public ClusterDaoImpl(InfraManager infraManager) {
+    public ClusterServiceImpl(InfraManager infraManager) {
         this.infraManager = infraManager;
     }
 

@@ -43,12 +43,12 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.avro.SchemaParseException;
 import org.apache.kafka.common.errors.InvalidReplicationFactorException;
 
-import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.*;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
+import com.homeaway.streamplatform.streamregistry.service.StreamClientService;
+import com.homeaway.streamplatform.streamregistry.service.StreamService;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.EntriesPage;
 
@@ -63,12 +63,12 @@ public class StreamResource extends BaseResource{
 
     private static final int DEFAULT_STREAMS_PAGE_SIZE = 10;
 
-    private final StreamDao streamDao;
-    private final StreamClientDao<Producer> producerDao;
-    private final StreamClientDao<Consumer> consumerDao;
+    private final StreamService streamService;
+    private final StreamClientService<Producer> producerDao;
+    private final StreamClientService<Consumer> consumerDao;
 
-    public StreamResource(StreamDao streamDao, StreamClientDao<Producer> producerDao, StreamClientDao<Consumer> consumerDao) {
-        this.streamDao = streamDao;
+    public StreamResource(StreamService streamService, StreamClientService<Producer> producerDao, StreamClientService<Consumer> consumerDao) {
+        this.streamService = streamService;
         this.producerDao = producerDao;
         this.consumerDao = consumerDao;
     }
@@ -92,7 +92,7 @@ public class StreamResource extends BaseResource{
                 throw new InvalidStreamException(String.format("Stream name provided in path param [%s] does not match that of the stream body [%s]",
                         streamName, stream.getName()));
             }
-            streamDao.upsertStream(stream);
+            streamService.upsertStream(stream);
             return Response.status(Response.Status.ACCEPTED).build();
         } catch (InvalidStreamException | SchemaManagerException | StreamCreationException | UnsupportedOperationException | InvalidReplicationFactorException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
@@ -123,7 +123,7 @@ public class StreamResource extends BaseResource{
                 throw new InvalidStreamException(String.format("Stream name provided in path param [%s] does not match that of the stream body [%s]",
                         streamName, stream.getName()));
             }
-            streamDao.validateSchemaCompatibility(stream);
+            streamService.validateSchemaCompatibility(stream);
             return Response.ok()
                     .type("text/plain")
                     .entity("Schema Validation Successful").build();
@@ -148,7 +148,7 @@ public class StreamResource extends BaseResource{
     @Timed
     public Response getStream(@ApiParam(value = "Stream name", required = true) @PathParam("streamName") String streamName) {
         try {
-            Stream stream = streamDao.getStream(streamName);
+            Stream stream = streamService.getStream(streamName);
             return Response.ok().entity(stream).build();
         } catch (StreamNotFoundException e) {
             return buildErrorMessage(Response.Status.NOT_FOUND, e);
@@ -180,7 +180,7 @@ public class StreamResource extends BaseResource{
         try {
             final int pSize = pageSize.orElse(DEFAULT_STREAMS_PAGE_SIZE);
             final int pNumber = pageNumber.orElse(DEFAULT_STREAMS_PAGE_NUMBER);
-            final List<Stream> allStreams = streamDao.getAllStreams();
+            final List<Stream> allStreams = streamService.getAllStreams();
             final int totalSize = allStreams.size();
 
             List<Stream> streamsPage = Optional.ofNullable(StreamRegistryUtils
@@ -208,7 +208,7 @@ public class StreamResource extends BaseResource{
     public Response deleteStream(@ApiParam(value = "Stream object that needs to be deleted from the Stream Registry", required = true)
     @PathParam("streamName") String streamName) {
         try {
-            streamDao.deleteStream(streamName);
+            streamService.deleteStream(streamName);
             return Response.ok()
                     .entity(String.format("Stream=%s deleted successfully", streamName))
                     .build();

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao;
+package com.homeaway.streamplatform.streamregistry.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,7 @@ import com.homeaway.streamplatform.streamregistry.exceptions.RegionNotFoundExcep
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.model.StreamClient;
 
-public interface StreamClientDao<T extends StreamClient> {
+public interface StreamClientService<T extends StreamClient> {
 
     /**
      * Insert or Update a Producer/Consumer of a Stream

@@ -15,55 +15,37 @@
  */
 package com.homeaway.streamplatform.streamregistry.db.dao;
 
-import java.util.List;
+import java.util.Optional;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.*;
-import com.homeaway.streamplatform.streamregistry.model.Stream;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.kafka.streams.state.KeyValueIterator;
 
-// TODO - Need javadoc (#107)
+import com.homeaway.digitalplatform.streamregistry.AvroStream;
+import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+
 public interface StreamDao {
 
     /**
-     *  Insert or Update a Stream
-     * @param stream
-     * @throws SchemaManagerException - when the input schema registration fails against SchemaRegistry
-     * @throws InvalidStreamException - When the validator that implements
-     *              `com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator` check fails on input Stream Object.
-     * @throws StreamCreationException - When streams could not be created in the underlying streaming infrastructure.
-     * @throws ClusterNotFoundException - When cluster is not found for the input VPC and Hint
-     */
-    void upsertStream(Stream stream) throws SchemaManagerException, InvalidStreamException, StreamCreationException, ClusterNotFoundException;
-
-    /**
-     * Get a Stream for the given name
-     * @param streamName
-     * @return
-     * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
-     */
-    Stream getStream(String streamName) throws StreamNotFoundException;
-
-    /**
-     * Delete the stream for the given name
-     * @param streamName
-     * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
-     */
-    void deleteStream(String streamName) throws StreamNotFoundException;
-
-    /**
-     * Get all the streams.
+     * Insert or Update a Stream
      *
-     * @return List<Stream>
+     * @param key - AvroStreamKey
+     * @param stream - AvroStreamValue
      */
-    List<Stream> getAllStreams();
+    void upsertStream(AvroStreamKey key, AvroStream stream);
 
     /**
-     * Validate the input schema against the SchemaRegistry.
-     * @param stream
-     * @return
-     * @throws SchemaValidationException -
-     *  a) Where there is a RuntimeException while validating schema against schema-registry.
-     *  b) When schema validation check fails.
+     * Retrieve the Stream for a given stream name.
+     *
+     * @param streamName - name of the Stream.
+     * @return a Pair of AvroStream Key and Value for a given Stream Name.
      */
-    boolean validateSchemaCompatibility(Stream stream) throws SchemaValidationException;
+    Pair<AvroStreamKey, Optional<AvroStream>> getStream(String streamName);
+
+    /**
+     * Retrieve all the Streams from the underlying data store.
+     *
+     * @return an Iterator of Key,Value
+     */
+    KeyValueIterator<AvroStreamKey, AvroStream> getAllStreams();
 
 }

@@ -37,19 +37,19 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
+import com.homeaway.streamplatform.streamregistry.service.ClusterService;
 
 @Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
 @Path("/v0/clusters")
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
 public class ClusterResource extends BaseResource {
-    private final ClusterDao clusterDao;
+    private final ClusterService clusterService;
 
-    public ClusterResource(ClusterDao clusterDao) {
-        this.clusterDao = clusterDao;
+    public ClusterResource(ClusterService clusterService) {
+        this.clusterService = clusterService;
     }
 
     @PUT
@@ -67,7 +67,7 @@ public class ClusterResource extends BaseResource {
         try {
             log.info("Cluster Object {}", clusterParam);
 
-            clusterDao.upsertCluster(clusterParam);
+            clusterService.upsertCluster(clusterParam);
             return Response.status(Response.Status.ACCEPTED).build();
         }  catch (InvalidClusterException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
@@ -91,7 +91,7 @@ public class ClusterResource extends BaseResource {
         @ApiParam(value = "hint") @QueryParam("hint") String hint,
         @ApiParam(value = "type") @QueryParam("type") String type) {
         try {
-            List<JsonCluster> clusterList = clusterDao.getAllClusters();
+            List<JsonCluster> clusterList = clusterService.getAllClusters();
 
             if(clusterName != null && !clusterName.isEmpty()) {
                 clusterList = clusterList.stream()

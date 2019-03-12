@@ -57,16 +57,9 @@ import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerCon
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamValidatorConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
-import com.homeaway.streamplatform.streamregistry.db.dao.ClusterDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
-import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.StreamClientDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.ClusterDaoImpl;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.ConsumerDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.ProducerDaoImpl;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.RegionDaoImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -77,6 +70,15 @@ import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.resource.ClusterResource;
 import com.homeaway.streamplatform.streamregistry.resource.RegionResource;
 import com.homeaway.streamplatform.streamregistry.resource.StreamResource;
+import com.homeaway.streamplatform.streamregistry.service.ClusterService;
+import com.homeaway.streamplatform.streamregistry.service.RegionService;
+import com.homeaway.streamplatform.streamregistry.service.StreamClientService;
+import com.homeaway.streamplatform.streamregistry.service.StreamService;
+import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.ConsumerServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.ProducerServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.RegionServiceImpl;
+import com.homeaway.streamplatform.streamregistry.service.impl.StreamServiceImpl;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
@@ -92,11 +94,12 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     private InfraManager infraManager;
 
-    private RegionDao regionDao;
     private StreamDao streamDao;
-    private StreamClientDao<Producer> producerDao;
-    private StreamClientDao<Consumer> consumerDao;
-    private ClusterDao clusterDao;
+    private RegionService regionService;
+    private StreamService streamService;
+    private StreamClientService<Producer> producerDao;
+    private StreamClientService<Consumer> consumerDao;
+    private ClusterService clusterService;
 
     private StreamResource streamResource;
 
@@ -141,7 +144,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         // Step 2 - initialize the DAO's
 
-        initDao(configuration, environment, managedKStreams, managedKafkaProducer);
+        initServiceAndDao(configuration, environment, managedKStreams, managedKafkaProducer);
 
         // Step 3 - initialize and register the SR resources to JerseyEnvironment
 
@@ -172,14 +175,12 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
             if (configuration.getRequestFilterClassNames() != null) {
                 for (String requestFilterClassName : configuration.getRequestFilterClassNames()) {
                     environment.jersey().register(Utils.newInstance(requestFilterClassName, ContainerRequestFilter.class));
-                    log.info(String.format("Registered request filter %s", requestFilterClassName));
                 }
             }
 
             if (configuration.getResponseFilterClassNames() != null) {
                 for (String responseFilterClassName : configuration.getResponseFilterClassNames()) {
                     environment.jersey().register(Utils.newInstance(responseFilterClassName, ContainerResponseFilter.class));
-                    log.info(String.format("Registered response filter %s", responseFilterClassName));
                 }
             }
         } catch (Exception e) {
@@ -189,7 +190,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     public static StreamValidator loadValidator(StreamRegistryConfiguration configuration,
                                                 Client httpClient,
-                                                RegionDao regionDao) {
+                                                RegionService regionService) {
         StreamValidatorConfig streamValidatorConfig = configuration.getStreamValidatorConfig();
 
         if (streamValidatorConfig != null) {
@@ -207,8 +208,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
                     // HTTP Client is not pre-loaded with a URL. The validator needs to set a target.
                     validatorConfig.put(StreamValidatorConfig.STREAM_REGISTRY_HTTP_CLIENT, httpClient);
-                    // RegionDao allows us to load a dynamic list of supported regions for a Stream.
-                    validatorConfig.put(StreamValidatorConfig.STREAM_REGISTRY_REGION_SUPPLIER, regionDao);
+                    // RegionService allows us to load a dynamic list of supported regions for a Stream.
+                    validatorConfig.put(StreamValidatorConfig.STREAM_REGISTRY_REGION_SUPPLIER, regionService);
                     streamValidator.configure(validatorConfig);
                     return streamValidator;
                 } catch (ClassNotFoundException e) {
@@ -296,7 +297,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     private StreamValidator createStreamValidator(final StreamRegistryConfiguration configuration, final Environment environment) {
-        Preconditions.checkState(regionDao != null, "regionDao cannot be null.");
+        Preconditions.checkState(regionService != null, "regionService cannot be null.");
 
         final Client httpClient = new JerseyClientBuilder(environment).using(configuration.getHttpClient()).using(environment)
             .build("remoteStateStoreHttpClient");
@@ -304,12 +305,12 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         log.info("Connection Timeout:{}", configuration.getHttpClient().getConnectionTimeout());
         log.info("Connection Request Timeout:{}", configuration.getHttpClient().getConnectionRequestTimeout());
 
-        StreamValidator streamValidator = loadValidator(configuration, httpClient, regionDao);
+        StreamValidator streamValidator = loadValidator(configuration, httpClient, regionService);
         return streamValidator;
     }
 
-    private void initDao(final StreamRegistryConfiguration configuration, final Environment environment, ManagedKStreams managedKStreams,
-        ManagedKafkaProducer managedKafkaProducer) {
+    private void initServiceAndDao(final StreamRegistryConfiguration configuration, final Environment environment, ManagedKStreams managedKStreams,
+                                   ManagedKafkaProducer managedKafkaProducer) {
 
         Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
         Preconditions.checkState(managedKafkaProducer != null, "managedKafkaProducer cannot be null.");
@@ -317,29 +318,29 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         String env = configuration.getEnv();
 
-        regionDao = new RegionDaoImpl(env, infraManager);
-        clusterDao = new ClusterDaoImpl(infraManager);
+        regionService = new RegionServiceImpl(env, infraManager);
+        clusterService = new ClusterServiceImpl(infraManager);
 
         KafkaManager kafkaManager = new KafkaManagerImpl();
         SchemaManager schemaManager = loadSchemaManager(configuration);
         StreamValidator streamValidator = createStreamValidator(configuration, environment);
 
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao, infraManager, streamValidator, schemaManager,
-            kafkaManager);
-        producerDao = new ProducerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao, infraManager);
-        consumerDao = new ConsumerDaoImpl(managedKafkaProducer, managedKStreams, env, regionDao, clusterDao, infraManager);
+        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams);
+        streamService = new StreamServiceImpl(streamDao, env, regionService, clusterService, infraManager, streamValidator, schemaManager, kafkaManager);
+        producerDao = new ProducerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
+        consumerDao = new ConsumerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
     }
 
     private void initAndRegisterResource(final Environment environment) {
 
-        Preconditions.checkState(streamDao != null, "streamDao cannot be null.");
+        Preconditions.checkState(streamService != null, "streamService cannot be null.");
         Preconditions.checkState(producerDao != null, "producerDao cannot be null.");
         Preconditions.checkState(consumerDao != null, "consumerDao cannot be null.");
-        Preconditions.checkState(regionDao != null, "regionDao cannot be null.");
+        Preconditions.checkState(regionService != null, "regionService cannot be null.");
 
-        streamResource = new StreamResource(streamDao, producerDao, consumerDao);
-        RegionResource regionResource = new RegionResource(regionDao);
-        ClusterResource clusterResource = new ClusterResource(clusterDao);
+        streamResource = new StreamResource(streamService, producerDao, consumerDao);
+        RegionResource regionResource = new RegionResource(regionService);
+        ClusterResource clusterResource = new ClusterResource(clusterService);
 
         environment.jersey().register(streamResource);
         environment.jersey().register(regionResource);

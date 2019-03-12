@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.4.9] - SNAPSHOT
 ### Changed
 - Updated swagger example values (#139)
+- Extract out service logic from StreamDao to a new Service Layer (#140)
 
 ## [0.4.8] - 20190308
 ### Added

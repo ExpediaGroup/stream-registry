@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao;
+package com.homeaway.streamplatform.streamregistry.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,23 +28,17 @@ import com.google.common.base.Preconditions;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.homeaway.digitalplatform.streamregistry.Actor;
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
-import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
 
 @Slf4j
-public abstract class AbstractDao {
+public abstract class AbstractService {
 
     public static final String PRIMARY_HINT = "primary";
     public static final String CLUSTER_NAME = "cluster.name";
@@ -54,53 +48,27 @@ public abstract class AbstractDao {
         UPDATE
     }
 
-    protected final ManagedKafkaProducer kafkaProducer;
-
-    protected final ManagedKStreams kStreams;
-
     protected final String env;
 
-    protected final RegionDao regionDao;
+    protected final RegionService regionService;
 
     protected final InfraManager infraManager;
 
-    protected final ClusterDao clusterDao;
+    protected final ClusterService clusterService;
 
-    public AbstractDao(ManagedKafkaProducer managedKafkaProducer,
-        ManagedKStreams kStreams,
-        String env,
-        RegionDao regionDao,
-        ClusterDao clusterDao,
-        InfraManager infraManager) {
-        Preconditions.checkNotNull(managedKafkaProducer, "managedKafkaProducer should not be null");
-        Preconditions.checkNotNull(kStreams, "kStreams should not be null");
+    public AbstractService(String env,
+                           RegionService regionService,
+                           ClusterService clusterService,
+                           InfraManager infraManager) {
         Preconditions.checkNotNull(env, "env should not be null");
-        Preconditions.checkNotNull(regionDao, "regionDao should not be null");
+        Preconditions.checkNotNull(regionService, "regionService should not be null");
         Preconditions.checkNotNull(infraManager, "infraManager should not be null");
-        Preconditions.checkNotNull(clusterDao, "clusterDao should not be null");
+        Preconditions.checkNotNull(clusterService, "clusterService should not be null");
 
-        this.kafkaProducer = managedKafkaProducer;
-        this.kStreams = kStreams;
         this.env = env;
-        this.regionDao = regionDao;
+        this.regionService = regionService;
         this.infraManager = infraManager;
-        this.clusterDao = clusterDao;
-    }
-
-    protected Pair<AvroStreamKey, Optional<AvroStream>> getAvroStreamKeyValue(String streamName) {
-        AvroStreamKey key = AvroStreamKey.newBuilder().setStreamName(streamName).build();
-        Optional<AvroStream> value = kStreams.getAvroStreamForKey(key);
-        return new ImmutablePair<>(key, value);
-    }
-
-    public void updateAvroStream(AvroStream stream) {
-        AvroStreamKey key = AvroStreamKey.newBuilder().setStreamName(stream.getName()).build();
-        stream.setOperationType(OperationType.UPSERT);
-        try {
-            kafkaProducer.log(key, stream);
-        } catch (Exception e) {
-            log.error("Error logging stream - {}", stream.toString());
-        }
+        this.clusterService = clusterService;
     }
 
     protected com.homeaway.digitalplatform.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
@@ -112,7 +80,7 @@ public abstract class AbstractDao {
         actorBuilder.setName(actor.getName());
         actorBuilder.setRegionStreamConfigurations(actor.getRegionStreamConfigurations());
 
-        ClusterValue clusterValue = clusterDao.getCluster(region, env, hint, actorType);
+        ClusterValue clusterValue = clusterService.getCluster(region, env, hint, actorType);
         Optional<String> bootstrapServers = Optional.ofNullable(clusterValue.getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
         Optional<String> schemaRegistryURL = Optional.ofNullable(clusterValue.getClusterProperties().get(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG));
         Optional<String> clusterName = Optional.ofNullable(clusterValue.getClusterProperties().get(CLUSTER_NAME));
@@ -161,6 +129,6 @@ public abstract class AbstractDao {
 
     protected String getDefaultHint(AvroStream avroStream) {
         String streamHint = avroStream.getTags().getHint();
-        return (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractDao.PRIMARY_HINT : streamHint.trim().toLowerCase();
+        return (streamHint == null || streamHint.trim().matches("(?i:string)?")) ? AbstractService.PRIMARY_HINT : streamHint.trim().toLowerCase();
     }
 }

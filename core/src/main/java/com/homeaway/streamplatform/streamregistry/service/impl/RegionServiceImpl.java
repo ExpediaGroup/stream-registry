@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao.impl;
+package com.homeaway.streamplatform.streamregistry.service.impl;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,15 +22,15 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.db.dao.RegionDao;
 import com.homeaway.streamplatform.streamregistry.model.Hint;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
+import com.homeaway.streamplatform.streamregistry.service.RegionService;
 
 /**
- * Specific implementation of {@link RegionDao} that uses {@link InfraManager}
+ * Specific implementation of {@link RegionService} that uses {@link InfraManager}
  */
 @Slf4j
-public class RegionDaoImpl implements RegionDao {
+public class RegionServiceImpl implements RegionService {
 
     private final String env;
 
@@ -42,7 +42,7 @@ public class RegionDaoImpl implements RegionDao {
      * @param env the env
      * @param infraManager the infra manager
      */
-    public RegionDaoImpl(String env, InfraManager infraManager) {
+    public RegionServiceImpl(String env, InfraManager infraManager) {
         this.env = env;
         this.infraManager = infraManager;
     }

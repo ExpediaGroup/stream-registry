@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao;
+package com.homeaway.streamplatform.streamregistry.service;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 /**
  * Interface for Cluster dao.
  */
-public interface ClusterDao {
+public interface ClusterService {
     /**
      * Gets all clusters.
      *
