@@ -224,8 +224,4 @@ public class ProducerServiceImpl extends AbstractService implements StreamClient
                 .collect(Collectors.toList());
     }
 
-    private AvroStreamKey getStreamKey(String streamName) {
-        return AvroStreamKey.newBuilder().setStreamName(streamName).build();
-    }
-
 }

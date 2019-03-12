@@ -202,26 +202,21 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
     public Stream getStream(String streamName) throws StreamNotFoundException {
         log.info("Pulling stream information from global state-store for streamName={}", streamName);
         Optional<AvroStream> streamValue = streamDao.getStream(streamName).getValue();
-
         if (!streamValue.isPresent()) {
             throw new StreamNotFoundException(String.format("Stream=%s not found.", streamName));
-        } else {
-            return AvroToJsonDTO.convertAvroToJson(streamValue.get());
         }
+
+        return AvroToJsonDTO.convertAvroToJson(streamValue.get());
     }
 
     @Override
     public void deleteStream(String streamName) throws StreamNotFoundException{
         Pair<AvroStreamKey, Optional<AvroStream>> keyValue = streamDao.getStream(streamName);
-
         if (!keyValue.getValue().isPresent()) {
             throw new StreamNotFoundException(String.format("Stream=%s not found.", streamName));
         }
-        try {
-            streamDao.upsertStream(keyValue.getKey(), null);
-        } catch (Exception e) {
-            log.error("Error deleting stream", e);
-        }
+
+        streamDao.upsertStream(keyValue.getKey(), null);
     }
 
     @Override

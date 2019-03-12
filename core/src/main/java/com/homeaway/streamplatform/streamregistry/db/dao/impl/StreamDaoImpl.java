@@ -42,11 +42,7 @@ public class StreamDaoImpl implements StreamDao {
 
     @Override
     public void upsertStream(AvroStreamKey key, AvroStream stream) {
-        try {
-            kafkaProducer.log(key, stream);
-        } catch (Exception e) {
-            log.error("Error logging stream - {}", stream, e);
-        }
+        kafkaProducer.log(key, stream);
     }
 
     @Override
