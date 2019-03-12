@@ -64,6 +64,6 @@ public interface StreamService {
      *  a) Where there is a RuntimeException while validating schema against schema-registry.
      *  b) When schema validation check fails.
      */
-    boolean validateSchemaCompatibility(Stream stream) throws SchemaValidationException;
+    void validateSchemaCompatibility(Stream stream) throws SchemaValidationException;
 
 }
