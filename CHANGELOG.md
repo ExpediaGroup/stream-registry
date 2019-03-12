@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Updated swagger example values (#139)
 - Extract out service logic from StreamDao to a new Service Layer (#140)
-- Adding Runtime Exception to Cluster Resource.
+- Fixed Exception Handling to catch Runtime Exception in Cluster Resource
+- Fixed the response type to text in Stream Resource
 
 ## [0.4.8] - 20190308
 ### Added
