@@ -35,6 +35,8 @@ import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamExcept
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
+import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
+import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaReference;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
