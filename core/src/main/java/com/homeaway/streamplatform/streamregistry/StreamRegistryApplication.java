@@ -276,7 +276,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         try {
             infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
-
             infraManager.configure(infraManagerConfig.getConfig());
             ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
             return managedInfraManager;
