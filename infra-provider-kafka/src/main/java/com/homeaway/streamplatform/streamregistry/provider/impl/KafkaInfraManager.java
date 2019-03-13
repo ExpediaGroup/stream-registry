@@ -30,8 +30,9 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.GlobalKTable;
-import org.apache.kafka.streams.kstream.KStreamBuilder;
+import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
@@ -85,9 +86,10 @@ public class KafkaInfraManager implements InfraManager {
         infraProducer = new KafkaProducer<>(infraKStreamsProperties);
 
         // initialize the kstreams processor
-        KStreamBuilder infraKStreamBuilder = new KStreamBuilder();
-        kTable = infraKStreamBuilder.globalTable(infraManagerTopic, infraStateStoreName);
-        infraKStreams = new KafkaStreams(infraKStreamBuilder, infraKStreamsProperties);
+        StreamsBuilder infraKStreamBuilder = new StreamsBuilder();
+
+        kTable = infraKStreamBuilder.globalTable(infraManagerTopic, Materialized.as(infraStateStoreName));
+        infraKStreams = new KafkaStreams(infraKStreamBuilder.build(), infraKStreamsProperties);
     }
 
     @Override
@@ -149,6 +151,4 @@ public class KafkaInfraManager implements InfraManager {
             log.error("Error producing to topic={}", infraManagerTopic, e);
         }
     }
-
-
 }

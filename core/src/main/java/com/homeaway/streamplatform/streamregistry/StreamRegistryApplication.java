@@ -261,8 +261,9 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         configuration.getKafkaStreamsConfig().getKstreamsProperties().forEach(kstreamsProperties::put);
         kstreamsProperties.put(ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, CustomRocksDBConfig.class);
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
+        SchemaManagerConfig schemaManagerConfig = configuration.getSchemaManagerConfig();
 
-        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig);
+        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig, schemaManagerConfig);
         return managedKStreams;
 
     }
@@ -275,6 +276,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         try {
             infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
+
             infraManager.configure(infraManagerConfig.getConfig());
             ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
             return managedInfraManager;

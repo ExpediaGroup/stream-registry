@@ -15,6 +15,8 @@
  */
 package com.homeaway.streamplatform.streamregistry.streams;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -23,16 +25,22 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.base.Preconditions;
 
+import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import io.dropwizard.lifecycle.Managed;
 
+import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.kstream.KStreamBuilder;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.KeyValueIterator;
+import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
+import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
 
 @Slf4j
@@ -49,20 +57,20 @@ public class ManagedKStreams implements Managed {
     private ReadOnlyKeyValueStore<AvroStreamKey, AvroStream> view;
     private boolean isRunning = false;
 
-    public ManagedKStreams(Properties streamProperties, TopicsConfig topicsConfig) {
-        this(streamProperties, topicsConfig, null);
+    public ManagedKStreams(Properties streamProperties, TopicsConfig topicsConfig, SchemaManagerConfig schemaManagerConfig) {
+        this(streamProperties, topicsConfig, schemaManagerConfig, null);
     }
 
-    public ManagedKStreams(Properties streamProperties, TopicsConfig topicsConfig, KStreamsProcessorListener testListener) {
+    public ManagedKStreams(Properties streamProperties, TopicsConfig topicsConfig, SchemaManagerConfig schemaManagerConfig, KStreamsProcessorListener testListener) {
         this.streamProperties = streamProperties;
         this.topicsConfig = topicsConfig;
 
         stateStoreName = topicsConfig.getStateStoreName();
-        KStreamBuilder kStreamBuilder= new KStreamBuilder();
+        final StreamsBuilder kStreamBuilder= new StreamsBuilder();
 
-        kStreamBuilder.globalTable(topicsConfig.getProducerTopic(), stateStoreName);
+        kStreamBuilder.globalTable(topicsConfig.getProducerTopic(), createMaterialized(schemaManagerConfig));
 
-        streams = new KafkaStreams(kStreamBuilder, streamProperties);
+        streams = new KafkaStreams(kStreamBuilder.build(), streamProperties);
         // [ #132 ] - Improve build times by notifying test listener that we are running
         streams.setStateListener((newState, oldState) -> {
             if (!isRunning && newState == KafkaStreams.State.RUNNING) {
@@ -97,5 +105,23 @@ public class ManagedKStreams implements Managed {
     public KeyValueIterator<AvroStreamKey, AvroStream> getAllStreams(){
         Preconditions.checkState(view != null, "ManagedKStreams not started. Please start before using.");
         return view.all();
+    }
+
+
+    private Materialized createMaterialized(SchemaManagerConfig schemaManagerConfig){
+        final Map<String, String> serdeConfig =
+            Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+                schemaManagerConfig.getProperties().get("schema.registry.url").toString());
+
+        final SpecificAvroSerde<AvroStreamKey> keySpecificAvroSerde = new SpecificAvroSerde<>();
+        keySpecificAvroSerde.configure(serdeConfig, true);
+
+        final SpecificAvroSerde<AvroStream> valueSpecificAvroSerde = new SpecificAvroSerde<>();
+        valueSpecificAvroSerde.configure(serdeConfig, false);
+
+
+        return Materialized.<AvroStreamKey, AvroStream, KeyValueStore<Bytes, byte[]>>as(stateStoreName)
+            .withKeySerde(keySpecificAvroSerde)
+            .withValueSerde(valueSpecificAvroSerde);
     }
 }

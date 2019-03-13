@@ -18,6 +18,7 @@ package com.homeaway.streamplatform.streamregistry.resource;
 import static com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
@@ -62,6 +63,7 @@ import com.homeaway.streamplatform.streamregistry.StreamRegistryManagedContainer
 import com.homeaway.streamplatform.streamregistry.configuration.HealthCheckStreamConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaStreamsConfig;
+import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
@@ -150,6 +152,8 @@ public class BaseResourceIT {
 
     protected static TopicsConfig topicsConfig;
 
+    protected static SchemaManagerConfig schemaManagerConfig;
+
     protected static Properties producerConfig;
 
     protected static Properties consumerConfig;
@@ -208,6 +212,9 @@ public class BaseResourceIT {
         BaseResourceIT.topicsConfig.setProducerTopic(producerTopic);
         BaseResourceIT.topicsConfig.setStateStoreName(topicsConfig.getStateStoreName());
 
+        BaseResourceIT.schemaManagerConfig = new SchemaManagerConfig("com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager");
+        BaseResourceIT.schemaManagerConfig.setProperties(Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL));
+
         infraManager = buildInfraManager();
 
         producerConfig = new Properties();
@@ -227,7 +234,7 @@ public class BaseResourceIT {
         streamsConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, kafkaStreamsConfig.getKstreamsProperties().get(VALUE_SERDE));
         streamsConfig.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         CompletableFuture<Boolean> initialized = new CompletableFuture<>();
-        managedKStreams = new ManagedKStreams(streamsConfig, BaseResourceIT.topicsConfig, () -> initialized.complete(true));
+        managedKStreams = new ManagedKStreams(streamsConfig, BaseResourceIT.topicsConfig, BaseResourceIT.schemaManagerConfig, () -> initialized.complete(true));
 
         consumerConfig = new Properties();
         consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
