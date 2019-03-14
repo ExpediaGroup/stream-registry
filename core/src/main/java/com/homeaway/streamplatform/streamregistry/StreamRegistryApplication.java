@@ -263,6 +263,10 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
         SchemaManagerConfig schemaManagerConfig = configuration.getSchemaManagerConfig();
 
+        Preconditions.checkState(schemaManagerConfig.getProperties() != null
+                && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
+            "schemaManagerConfig properties must define schema.registry.url");
+
         ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig, schemaManagerConfig);
         return managedKStreams;
 

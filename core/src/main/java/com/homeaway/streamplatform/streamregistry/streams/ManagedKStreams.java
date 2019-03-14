@@ -111,7 +111,7 @@ public class ManagedKStreams implements Managed {
     private Materialized createMaterialized(SchemaManagerConfig schemaManagerConfig){
         final Map<String, String> serdeConfig =
             Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
-                schemaManagerConfig.getProperties().get("schema.registry.url").toString());
+                (String) schemaManagerConfig.getProperties().get(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG));
 
         final SpecificAvroSerde<AvroStreamKey> keySpecificAvroSerde = new SpecificAvroSerde<>();
         keySpecificAvroSerde.configure(serdeConfig, true);
