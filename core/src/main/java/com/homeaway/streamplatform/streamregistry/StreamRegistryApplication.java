@@ -231,7 +231,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         Preconditions.checkState(schemaManagerConfig.getProperties() != null
                 && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
-                "schemaManagerConfig properties must define"+ SCHEMA_REGISTRY_URL_CONFIG);
+                "schemaManagerConfig properties must define "+ SCHEMA_REGISTRY_URL_CONFIG);
         try {
             SchemaManager schemaManager = Utils.newInstance(schemaManagerClass, SchemaManager.class);
             schemaManagerConfig.getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 100);
@@ -265,11 +265,10 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         Preconditions.checkState(schemaManagerConfig.getProperties() != null
                 && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
-            "schemaManagerConfig properties must define schema.registry.url");
+            "schemaManagerConfig properties must define "+ SCHEMA_REGISTRY_URL_CONFIG);
 
         ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig, schemaManagerConfig);
         return managedKStreams;
-
     }
 
     private ManagedInfraManager createManagedInfraManager(final StreamRegistryConfiguration configuration) {
