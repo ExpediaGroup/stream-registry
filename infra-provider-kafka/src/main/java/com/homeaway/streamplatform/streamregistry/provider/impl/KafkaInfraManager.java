@@ -15,6 +15,9 @@
  */
 package com.homeaway.streamplatform.streamregistry.provider.impl;
 
+import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,17 +26,20 @@ import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.KeyValueIterator;
+import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
@@ -82,13 +88,16 @@ public class KafkaInfraManager implements InfraManager {
         infraKStreamsProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         log.info("Infra KStreams Properties: {}", infraKStreamsProperties);
 
+        Validate.validState(configs.containsKey(SCHEMA_REGISTRY_URL_CONFIG), SCHEMA_REGISTRY_URL_CONFIG+" is not provided.");
+        String schemaRegistryUrl = (String) configs.get(SCHEMA_REGISTRY_URL_CONFIG);
+
         // Create a Infra Producer
         infraProducer = new KafkaProducer<>(infraKStreamsProperties);
 
         // initialize the kstreams processor
         StreamsBuilder infraKStreamBuilder = new StreamsBuilder();
 
-        kTable = infraKStreamBuilder.globalTable(infraManagerTopic, Materialized.as(infraStateStoreName));
+        kTable = infraKStreamBuilder.globalTable(infraManagerTopic, createMaterialized(schemaRegistryUrl));
         infraKStreams = new KafkaStreams(infraKStreamBuilder.build(), infraKStreamsProperties);
     }
 
@@ -150,5 +159,21 @@ public class KafkaInfraManager implements InfraManager {
         } catch (Exception e) {
             log.error("Error producing to topic={}", infraManagerTopic, e);
         }
+    }
+
+    private Materialized createMaterialized(String schemaRegistryUrl){
+        final Map<String, String> serdeConfig =
+            Collections.singletonMap(SCHEMA_REGISTRY_URL_CONFIG,
+                schemaRegistryUrl);
+
+        final SpecificAvroSerde<ClusterKey> keySpecificAvroSerde = new SpecificAvroSerde<>();
+        keySpecificAvroSerde.configure(serdeConfig, true);
+
+        final SpecificAvroSerde<ClusterValue> valueSpecificAvroSerde = new SpecificAvroSerde<>();
+        valueSpecificAvroSerde.configure(serdeConfig, false);
+
+        return Materialized.<ClusterKey, ClusterValue, KeyValueStore<Bytes, byte[]>>as(infraStateStoreName)
+            .withKeySerde(keySpecificAvroSerde)
+            .withValueSerde(valueSpecificAvroSerde);
     }
 }
