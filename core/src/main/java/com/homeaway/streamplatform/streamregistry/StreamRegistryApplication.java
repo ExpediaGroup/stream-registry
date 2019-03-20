@@ -27,7 +27,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -284,7 +283,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         try {
             infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
-            @NonNull Map<String, Object> infraConfig = infraManagerConfig.getConfig();
+            Map<String, Object> infraConfig = infraManagerConfig.getConfig();
             SchemaManagerConfig schemaManagerConfig = getSchemaManagerConfig(configuration);
 
             infraConfig.put(SCHEMA_REGISTRY_URL_CONFIG, schemaManagerConfig.getProperties().get(SCHEMA_REGISTRY_URL_CONFIG));
