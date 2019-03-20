@@ -159,7 +159,7 @@ curl -X PUT --header 'Content-Type: application/json' --header 'Accept: applicat
     "hint": "primary"
   },
   "vpcList": [
-    "local"
+    "localRegion"
   ],
   "replicatedVpcList": [
   ],
