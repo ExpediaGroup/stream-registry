@@ -322,6 +322,9 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <quiet>true</quiet>
+                </configuration>
             </plugin>
             <!-- This is for IT setup -->
             <plugin>
