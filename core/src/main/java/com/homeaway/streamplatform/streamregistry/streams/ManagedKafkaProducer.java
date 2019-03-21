@@ -52,7 +52,7 @@ public class ManagedKafkaProducer implements Managed {
     @Override
     public void stop() {
         producer.close();
-        log.info("Manager Kafka Producer stopped.");
+        log.info("Managed Kafka Producer stopped.");
     }
 
     public void log(AvroStreamKey key, AvroStream value) {

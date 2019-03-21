@@ -221,17 +221,10 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     public static SchemaManager loadSchemaManager(StreamRegistryConfiguration configuration) {
-        SchemaManagerConfig schemaManagerConfig = configuration.getSchemaManagerConfig();
+        SchemaManagerConfig schemaManagerConfig = getSchemaManagerConfig(configuration);
 
-        Preconditions.checkNotNull(schemaManagerConfig, "schema manager config cannot be null");
         String schemaManagerClass = schemaManagerConfig.getClassName();
 
-        Preconditions.checkState(schemaManagerClass != null && !schemaManagerClass.isEmpty(),
-                "schema manager class must be defined");
-
-        Preconditions.checkState(schemaManagerConfig.getProperties() != null
-                && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
-                "schemaManagerConfig properties must define schema.registry.url");
         try {
             SchemaManager schemaManager = Utils.newInstance(schemaManagerClass, SchemaManager.class);
             schemaManagerConfig.getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 100);
@@ -261,10 +254,25 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         configuration.getKafkaStreamsConfig().getKstreamsProperties().forEach(kstreamsProperties::put);
         kstreamsProperties.put(ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, CustomRocksDBConfig.class);
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
+        SchemaManagerConfig schemaManagerConfig = getSchemaManagerConfig(configuration);
 
-        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig);
+        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig, schemaManagerConfig);
         return managedKStreams;
+    }
 
+    private static SchemaManagerConfig getSchemaManagerConfig(StreamRegistryConfiguration configuration) {
+        SchemaManagerConfig schemaManagerConfig = configuration.getSchemaManagerConfig();
+
+        Preconditions.checkNotNull(schemaManagerConfig, "schema manager config cannot be null");
+        String schemaManagerClass = schemaManagerConfig.getClassName();
+
+        Preconditions.checkState(schemaManagerClass != null && !schemaManagerClass.isEmpty(),
+            "schema manager class must be defined");
+
+        Preconditions.checkState(schemaManagerConfig.getProperties() != null
+                && schemaManagerConfig.getProperties().containsKey(SCHEMA_REGISTRY_URL_CONFIG),
+            "schemaManagerConfig properties must define "+ SCHEMA_REGISTRY_URL_CONFIG);
+        return schemaManagerConfig;
     }
 
     private ManagedInfraManager createManagedInfraManager(final StreamRegistryConfiguration configuration) {
@@ -275,7 +283,12 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         try {
             infraManager = Utils.newInstance(infraManagerClassName, InfraManager.class);
-            infraManager.configure(infraManagerConfig.getConfig());
+            Map<String, Object> infraConfig = infraManagerConfig.getConfig();
+            SchemaManagerConfig schemaManagerConfig = getSchemaManagerConfig(configuration);
+
+            infraConfig.put(SCHEMA_REGISTRY_URL_CONFIG, schemaManagerConfig.getProperties().get(SCHEMA_REGISTRY_URL_CONFIG));
+
+            infraManager.configure(infraConfig);
             ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
             return managedInfraManager;
         } catch (Exception e) {

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Extract out service logic from StreamDao to a new Service Layer (#140)
 - Fixed Exception Handling to catch Runtime Exception in Cluster Resource (#141)
 - Fixed the response type to text in Stream Resource (#141)
+- Upgrade confluent version from 3.3.1 to 4.1.3 (#142)
 
 ## [0.4.8] - 20190308
 ### Added

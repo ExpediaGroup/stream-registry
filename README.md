@@ -108,19 +108,19 @@ First create your cluster
 
 ```bash
 curl -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{
->     "clusterKey": {
->       "vpc": "local",
->       "env": "local",
->       "hint": "primary",
->       "type": null
->     },
->     "clusterValue": {
->       "clusterName": "localCluster",
->       "bootstrapServers": "localhost:9092",
->       "zookeeperQuorum": "zookeeper:2181",
->       "schemaRegistryURL": "http://localhost:8081"
->     }
->   }' 'http://localhost:8080/v0/clusters'
+     "clusterKey": {
+       "vpc": "localRegion",
+       "env": "local",
+       "hint": "primary",
+       "type": null
+     },
+     "clusterValue": {
+       "clusterName": "localCluster",
+       "bootstrapServers": "localhost:9092",
+       "zookeeperQuorum": "zookeeper:2181",
+       "schemaRegistryURL": "http://localhost:8081"
+     }
+   }' 'http://localhost:8080/v0/clusters'
 ```
 
 Now, declare your stream
@@ -159,7 +159,7 @@ curl -X PUT --header 'Content-Type: application/json' --header 'Accept: applicat
     "hint": "primary"
   },
   "vpcList": [
-    "local"
+    "localRegion"
   ],
   "replicatedVpcList": [
   ],

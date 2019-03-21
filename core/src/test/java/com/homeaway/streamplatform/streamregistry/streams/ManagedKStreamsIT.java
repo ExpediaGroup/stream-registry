@@ -79,6 +79,7 @@ public class ManagedKStreamsIT extends BaseResourceIT {
         Assert.assertEquals(streamName, avroStream.getName());
         Assert.assertEquals(avroMessage.getValue(), avroStream);
 
+        Thread.sleep(TEST_SLEEP_WAIT_MS);
         // DELETE the stream
         managedKafkaProducer.log(avroMessage.getKey(), null);
 

@@ -91,7 +91,7 @@
         <dropwizard.version>1.3.8</dropwizard.version>
 
         <!-- Jackson -->
-        <jackson.version>2.9.2</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
 
         <!-- Swagger -->
         <dropwizard-swagger.version>1.1.2-1</dropwizard-swagger.version>
@@ -100,12 +100,12 @@
         <!-- Kafka + Confluent versions-->
         <scala.version>2.11</scala.version>
         <scala-library.version>${scala.version}.11</scala-library.version>
-        <kafka.confluent.version>0.11.0.1-cp1</kafka.confluent.version>
+        <kafka.confluent.version>1.1.1-cp2</kafka.confluent.version>
         <zookeeper.version>3.4.10</zookeeper.version>
-        <rocksdb.version>5.0.1</rocksdb.version>
-        <confluent.version>3.3.1</confluent.version>
+        <rocksdb.version>5.7.3</rocksdb.version>
+        <confluent.version>4.1.3</confluent.version>
         <avro.version>1.8.2</avro.version>
-        <snappy-java.version>1.1.2.6</snappy-java.version>
+        <snappy-java.version>1.1.7.1</snappy-java.version>
 
         <!-- Plugins -->
         <assembly.pluginVersion>3.1.0</assembly.pluginVersion>
