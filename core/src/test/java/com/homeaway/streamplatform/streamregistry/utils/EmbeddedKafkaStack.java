@@ -113,6 +113,7 @@ public class EmbeddedKafkaStack extends ExternalResource {
         effectiveConfig.put(KafkaConfig$.MODULE$.DeleteTopicEnableProp(), true);
         effectiveConfig.put(KafkaConfig$.MODULE$.LogCleanerDedupeBufferSizeProp(), 2 * 1024 * 1024L);
         effectiveConfig.put(KafkaConfig$.MODULE$.GroupMinSessionTimeoutMsProp(), 0);
+        effectiveConfig.put(KafkaConfig$.MODULE$.GroupInitialRebalanceDelayMsProp(), 0);
         effectiveConfig.put(KafkaConfig$.MODULE$.OffsetsTopicReplicationFactorProp(), (short) 1);
         effectiveConfig.put(KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
         return effectiveConfig;
