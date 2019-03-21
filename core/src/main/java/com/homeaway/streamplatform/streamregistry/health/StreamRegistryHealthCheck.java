@@ -166,7 +166,8 @@ public class StreamRegistryHealthCheck extends HealthCheck {
                 setStreamCreationHealthy(false);
                 throw new IllegalStateException(String.format("HealthCheck Failed: Error while upserting a Stream. %s", response.getEntity()));
             }
-        } catch (Exception e) {
+            try { Thread.sleep(1000); } catch (InterruptedException interruptedException) { throw new IllegalArgumentException("Interrupted", interruptedException); }
+        } catch (RuntimeException e) {
             setStreamCreationHealthy(false);
             throw e;
         }
@@ -249,7 +250,8 @@ public class StreamRegistryHealthCheck extends HealthCheck {
 
             if(response.getStatus() != Status.OK.getStatusCode()) {
                 setProducerRegistrationHealthy(false);
-                throw new IllegalStateException(String.format("HealthCheck Failed: Producer P1 Not Found. HEALTH_CHECK_STREAM_NAME=%s", streamName));
+                throw new IllegalStateException(String.format("HealthCheck Failed: Producer P1 Not Found. HEALTH_CHECK_STREAM_NAME=%s, errCode=%s, errMsg=%s",
+                        streamName, response.getStatus(), response.getEntity().toString()));
             }
 
             List<RegionStreamConfig> regionStreamConfigList = ((Producer)response.getEntity()).getRegionStreamConfigList();

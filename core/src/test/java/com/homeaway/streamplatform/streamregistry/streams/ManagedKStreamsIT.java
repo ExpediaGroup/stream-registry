@@ -72,7 +72,7 @@ public class ManagedKStreamsIT extends BaseResourceIT {
         AbstractMap.SimpleEntry<AvroStreamKey, AvroStream> avroMessage = sampleMessageBuilder.buildSampleMessage(streamName, OperationType.UPSERT);
         managedKafkaProducer.log(avroMessage.getKey(), avroMessage.getValue());
 
-        Thread.sleep(TEST_SLEEP_WAIT_MS);
+        Thread.sleep(2*TEST_SLEEP_WAIT_MS);
 
         // Validate whether the stream is in KV-Store
         AvroStream avroStream = managedKStreams.getAvroStreamForKey(AvroStreamKey.newBuilder().setStreamName(streamName).build()).get();
