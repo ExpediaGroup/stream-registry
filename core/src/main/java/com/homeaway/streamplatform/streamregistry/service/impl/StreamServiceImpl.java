@@ -222,6 +222,7 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
         }
 
         streamDao.upsertStream(keyValue.getKey(), null);
+        log.info("Stream {} deleted successfully", streamName);
     }
 
     @Override

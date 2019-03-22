@@ -63,6 +63,7 @@ import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
+import com.homeaway.streamplatform.streamregistry.health.DataStoreHealthCheck;
 import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
@@ -369,6 +370,10 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         StreamRegistryHealthCheck streamRegistryHealthCheck =
             new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
         environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
+
+        DataStoreHealthCheck dataStoreHealthCheck =
+                new DataStoreHealthCheck(configuration, metricRegistry);
+        environment.healthChecks().register("dataStoreHealthCheck", dataStoreHealthCheck);
     }
 
     private void registerServiceMapper(final Environment environment) {

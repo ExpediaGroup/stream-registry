@@ -220,6 +220,7 @@ public class ConsumerServiceImpl extends AbstractService implements StreamClient
         // If filtered consumer list size is less than initial size stream will be updated
         if (avroStream.get().getConsumers().size() < consumerInitialSize) {
             streamDao.upsertStream(key, avroStream.get());
+            log.info("Consumer {} of Stream {} deleted successfully.", consumerName, streamName);
         } else {
             throw new ActorNotFoundException(String.format("Consumer=%s not found for Stream=%s", consumerName, streamName));
         }
