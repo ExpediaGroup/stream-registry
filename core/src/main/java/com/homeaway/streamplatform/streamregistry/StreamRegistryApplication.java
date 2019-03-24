@@ -367,13 +367,13 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
         Preconditions.checkState(streamResource != null, "streamResource cannot be null.");
 
-        StreamRegistryHealthCheck streamRegistryHealthCheck =
-            new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
-        environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
-
         DatabaseHealthCheck databaseHealthCheck =
                 new DatabaseHealthCheck(configuration, metricRegistry);
         environment.healthChecks().register("databaseHealthCheck", databaseHealthCheck);
+
+        StreamRegistryHealthCheck streamRegistryHealthCheck =
+            new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
+        environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
     }
 
     private void registerServiceMapper(final Environment environment) {
