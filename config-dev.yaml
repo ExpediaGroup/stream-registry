@@ -6,14 +6,14 @@ server:
     type: http
     port: 8080
 
-env: test
+env: local
 
 requestFilterClassNames:
 responseFilterClassNames:
 
 healthCheckStreamConfig:
   name: StreamRegistryHealthCheck
-  clusterRegion: vpc-localhost
+  clusterRegion: localRegion
   partitions: 1
   replicationFactor: 1
 
