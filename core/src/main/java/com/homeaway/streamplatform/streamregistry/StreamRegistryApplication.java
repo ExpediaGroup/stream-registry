@@ -459,6 +459,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         } catch (ExecutionException e) {
             if ("org.apache.kafka.common.errors.InvalidReplicationFactorException".equals(e.getCause().getClass().getName())) {
                 log.warn("Some environments like dev or laptop may have a cluster with only one broker. So, try to create with one replica.");
+                partitions = 1;
                 replicationFactor = 1;
                 streamRegistryTopic = new NewTopic(topicName, partitions, replicationFactor);
                 configs = new HashMap<>();
