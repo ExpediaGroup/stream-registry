@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [0.4.10] - SNAPSHOT
-### Changed
+### Added
+- Add health check to verify whether the underlying topic (used as Datastore) is compaction enabled. (#144)
 
 ## [0.4.9] - 20190321
 ### Changed
