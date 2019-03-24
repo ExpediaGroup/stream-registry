@@ -91,14 +91,18 @@ public class DatabaseHealthCheck extends HealthCheck {
 
     private void makeSureTopicIsCompacted() throws ExecutionException, InterruptedException {
         ConfigResource configResource = new ConfigResource(Type.TOPIC, topicName);
-        List<ConfigEntry> configEntries = new ArrayList<>();
-        configEntries.add(new ConfigEntry("cleanup.policy", "compact"));
-        configEntries.add(new ConfigEntry("min.insync.replicas", "2"));
-        kafkaAdminClient.alterConfigs(Collections.singletonMap(configResource, new Config(configEntries)))
-                .values()
-                .get(configResource)
-                .get();
-        log.info("Stream Registry underlying data store - kafka topic {} updated with config entries {}", topicName, configEntries);
+
+        Config config = kafkaAdminClient.describeConfigs(Collections.singleton(configResource)).values().get(configResource).get();
+        if (isCompactionConfigAvailable(config)) {
+            log.info("Compaction config available in the topic {}", topicName);
+        } else {
+            config.entries().add(new ConfigEntry("cleanup.policy", "compact"));
+            kafkaAdminClient.alterConfigs(Collections.singletonMap(configResource, config))
+                    .values()
+                    .get(configResource)
+                    .get();
+            log.info("Stream Registry underlying data store - kafka topic {} updated with config {}", topicName, config);
+        }
     }
 
     private void createTopicWithCompactionEnabled() throws ExecutionException, InterruptedException {
@@ -136,8 +140,7 @@ public class DatabaseHealthCheck extends HealthCheck {
                 .get(configResource)
                 .get();
 
-        boolean isTopicCompacted = configs.entries().stream()
-                .anyMatch(config -> "cleanup.policy".equals(config.name()) && "compact".equals(config.value()));
+        boolean isTopicCompacted = isCompactionConfigAvailable(configs);
         this.setKafkaTopicCompacted(isTopicCompacted);
 
         if (isTopicCompacted)
@@ -150,5 +153,10 @@ public class DatabaseHealthCheck extends HealthCheck {
                     .unhealthy()
                     .withMessage("The Kafka Topic used as a Data store is not Compacted, so there is a possible loss of Stream Metadata.")
                     .build();
+    }
+
+    private boolean isCompactionConfigAvailable(Config configs) {
+        return configs.entries().stream()
+                .anyMatch(config -> "cleanup.policy".equals(config.name()) && "compact".equals(config.value()));
     }
 }
