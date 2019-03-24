@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.10] - SNAPSHOT
 ### Added
-- Add health check to verify whether the underlying topic (used as Datastore) is compaction enabled. (#144)
+- Add health check to verify whether the underlying topic (used as Datastore) is compaction enabled to make sure Stream Metadata is not lost. (#144)
 
 ## [0.4.9] - 20190321
 ### Changed
