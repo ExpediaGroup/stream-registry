@@ -36,9 +36,9 @@ import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryCo
 
 /**
  * StreamRegistry uses Kafka as its Data-store.
- * Kafka's default retention setting is "cleanup.policy=delete(7 days)", and any message older than 7 days would be
- * deleted. So, it is necessary to make sure we override the config of the Kafka Topic with "cleanup.policy=compact"
- * so that there is possibility of loss of Stream metadata.
+ * Kafka Topic's default retention setting is "cleanup.policy=delete(7 days)", and any message older than 7 days would be
+ * deleted. So, it is necessary to make sure we periodically verify the availability of topic config "cleanup.policy=compact",
+ * and monitor this metric.
  *
  * This HealthCheck returns "Unhealthy" if the configuration "cleanup.policy=compact" is not available for the Kafka Topic,
  * and return the metric "app.is_kafka_topic_compacted=2" at http://HOST:8081/private/metrics
