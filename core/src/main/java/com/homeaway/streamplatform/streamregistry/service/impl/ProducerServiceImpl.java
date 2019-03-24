@@ -180,7 +180,6 @@ public class ProducerServiceImpl extends AbstractService implements StreamClient
         // Update stream's producer list and update
         avroStream.setProducers(withoutProducer);
         streamDao.upsertStream(key, avroStream);
-        log.info("Producer {} of Stream {} deleted successfully.", producerName, streamName);
     }
 
     private Optional<com.homeaway.streamplatform.streamregistry.model.Producer> getProducer(String streamName,

@@ -93,6 +93,7 @@ public class StreamResource extends BaseResource{
                         streamName, stream.getName()));
             }
             streamService.upsertStream(stream);
+            log.info("Stream={} upserted", streamName);
             return Response.status(Response.Status.ACCEPTED).build();
         } catch (InvalidStreamException | SchemaManagerException | StreamCreationException | UnsupportedOperationException | InvalidReplicationFactorException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
@@ -209,6 +210,7 @@ public class StreamResource extends BaseResource{
     @PathParam("streamName") String streamName) {
         try {
             streamService.deleteStream(streamName);
+            log.info("Stream={} deleted successfully", streamName);
             return Response.ok()
                     .type("text/plain")
                     .entity(String.format("Stream=%s deleted successfully", streamName))

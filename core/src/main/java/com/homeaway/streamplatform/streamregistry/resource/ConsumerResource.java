@@ -126,7 +126,7 @@ public class ConsumerResource extends BaseResource {
             required = true) @PathParam("region") String region) {
         try {
             Optional<Consumer> consumer = consumerDao.update(streamName, consumerName, region);
-            log.info(" Consumer upserted, consumerName={}", consumerName);
+            log.info("Consumer={} upserted for stream={}", consumerName, streamName);
             return Response.ok().entity(consumer.get()).build();
         } catch (StreamNotFoundException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
@@ -149,7 +149,7 @@ public class ConsumerResource extends BaseResource {
         @ApiParam(value = "Consumer Name", required = true) @PathParam("consumerName") String consumerName) {
         try {
             consumerDao.delete(streamName, consumerName);
-            log.info("Consumer successfully deleted: " + consumerName);
+            log.info("Consumer={} of stream={} successfully deleted.", consumerName, streamName);
             return Response
                     .ok()
                     .type("text/plain")

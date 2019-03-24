@@ -130,7 +130,6 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
 
         verifyAndUpsertTopics(stream, isNewStream);
         streamDao.upsertStream(key, avroStream);
-        log.info("Stream upserted for {}", stream.getName());
     }
 
     /**
@@ -222,7 +221,6 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
         }
 
         streamDao.upsertStream(keyValue.getKey(), null);
-        log.info("Stream {} deleted successfully", streamName);
     }
 
     @Override
