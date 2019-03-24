@@ -8,7 +8,6 @@ server:
 
 env: local
 
-# list (yaml syntax) of Jersey Filter Full Class Names loaded at runtime.
 requestFilterClassNames:
 #  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter1
 #  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter2
