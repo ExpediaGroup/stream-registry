@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.10] - SNAPSHOT
 ### Changed
+- Fixed a NPE in get clusters(#145)
 
 ## [0.4.9] - 20190321
 ### Changed

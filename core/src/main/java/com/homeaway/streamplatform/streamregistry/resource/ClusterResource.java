@@ -145,10 +145,14 @@ public class ClusterResource extends BaseResource {
 
             if(type != null && !type.isEmpty()) {
                 clusterList = clusterList.stream()
+                    .filter(e -> e.getClusterKey().getType()!= null)
                     .filter(e -> e.getClusterKey().getType().equalsIgnoreCase(type))
                     .collect(Collectors.toList());
             }
-
+            if (clusterList.isEmpty()) {
+                return Response
+                    .status(Response.Status.NOT_FOUND.getStatusCode()).build();
+            }
             return Response.status(Response.Status.OK.getStatusCode()).entity(clusterList).build();
         } catch (IllegalStateException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
