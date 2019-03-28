@@ -150,6 +150,7 @@ public class ClusterResource extends BaseResource {
                     .filter(e -> e.getClusterKey().getType().equalsIgnoreCase(type))
                     .collect(Collectors.toList());
             }
+            
             return Response.status(Response.Status.OK.getStatusCode()).entity(clusterList).build();
         } catch (IllegalStateException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
