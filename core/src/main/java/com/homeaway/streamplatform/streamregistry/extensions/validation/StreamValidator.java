@@ -31,9 +31,8 @@ public interface StreamValidator {
      *
      * @param stream the stream
      * @return true if stream should be inserted into the registry
-     * @throws InvalidStreamException the invalid stream exception
      */
-    boolean isStreamValid(Stream stream) throws InvalidStreamException;
+    boolean isStreamValid(Stream stream);
 
     /**
      * Defines the exception message that is returned with an {@link InvalidStreamException} is thrown.
