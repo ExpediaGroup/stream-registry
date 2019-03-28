@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
 @Slf4j
-public class EmptyStreamValidator implements StreamValidator {
+public class DefaultStreamValidator implements StreamValidator {
 
     @Override
     public void configure(Map<String, ?> configs) {

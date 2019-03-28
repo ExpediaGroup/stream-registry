@@ -23,18 +23,20 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
 import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
 
+@Slf4j
 public class StreamValidatorIT extends BaseResourceIT {
 
     public static final int INVALID_PRODUCT_ID = 13;
@@ -45,12 +47,14 @@ public class StreamValidatorIT extends BaseResourceIT {
         private int invalidProductId;
 
         @Override
-        public boolean isStreamValid(Stream stream) throws InvalidStreamException{
+        public boolean isStreamValid(Stream stream) {
             if (stream.getTags().getProductId().equals(INVALID_PRODUCT_ID)) {
-                throw new InvalidStreamException(String.format("Validation failed. Invalid Product ID : %s", stream.getTags().getProductId()));
+                log.error("Validation failed. Invalid Product ID: {}", stream.getTags().getProductId());
+                return false;
             }
             if (stream.getVpcList() == null || stream.getVpcList().isEmpty()) {
-                throw new InvalidStreamException(String.format("Stream %s can not be created without vpcList configuration", stream.getName()));
+                log.error("Stream {} cannot be created without vpcList configuration", stream.getName());
+                return false;
             }
             return true;
         }
