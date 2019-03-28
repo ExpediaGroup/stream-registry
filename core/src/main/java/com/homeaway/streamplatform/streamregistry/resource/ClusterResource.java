@@ -145,6 +145,7 @@ public class ClusterResource extends BaseResource {
 
             if(type != null && !type.isEmpty()) {
                 clusterList = clusterList.stream()
+                    .filter(e -> e.getClusterKey().getType()!= null)
                     .filter(e -> e.getClusterKey().getType().equalsIgnoreCase(type))
                     .collect(Collectors.toList());
             }
