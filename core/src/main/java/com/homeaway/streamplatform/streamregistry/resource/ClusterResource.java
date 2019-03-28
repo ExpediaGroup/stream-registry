@@ -17,7 +17,6 @@ package com.homeaway.streamplatform.streamregistry.resource;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -150,7 +149,7 @@ public class ClusterResource extends BaseResource {
                     .filter(e -> e.getClusterKey().getType().equalsIgnoreCase(type))
                     .collect(Collectors.toList());
             }
-            
+
             return Response.status(Response.Status.OK.getStatusCode()).entity(clusterList).build();
         } catch (IllegalStateException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
