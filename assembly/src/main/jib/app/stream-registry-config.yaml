@@ -26,7 +26,7 @@ healthCheckStreamConfig:
 
 # Validator Class that validates the stream from @PUT Stream
 streamValidatorConfig:
-  className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamplatform.streamregistry.extensions.validation.EmptyStreamValidator}
+  className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamplatform.streamregistry.extensions.validation.DefaultStreamValidator}
 
 # SchemaManager class which would validate and register with the Underlying SchemaRegistry
 schemaManagerConfig:

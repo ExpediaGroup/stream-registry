@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add health check to verify whether the underlying topic (used as Datastore) is compaction enabled to make sure Stream Metadata is not lost. (#144)
 
+### Changed
+- Fixed Stream Validation signature and updated implementation (#117)
+- Fixed a NPE in get clusters(#145)
+
 ## [0.4.9] - 20190321
 ### Changed
 - Updated swagger example values (#139)

@@ -52,10 +52,10 @@ import com.homeaway.streamplatform.streamregistry.service.StreamService;
 @Slf4j
 public class StreamServiceImpl extends AbstractService implements StreamService {
 
-    private StreamValidator streamValidator;
-    private SchemaManager schemaManager;
-    private KafkaManager kafkaManager;
-    private StreamDao streamDao;
+    private final StreamValidator streamValidator;
+    private final SchemaManager schemaManager;
+    private final KafkaManager kafkaManager;
+    private final StreamDao streamDao;
 
     public StreamServiceImpl(StreamDao streamDao,
                              String env,
@@ -78,8 +78,9 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
         applyDefaultPartition(stream);
         applyDefaultReplicationFactor(stream);
 
-        // TODO Can isStreamValid (as currently implemented) ever be false? (#117)
-        streamValidator.isStreamValid(stream);
+        if (!streamValidator.isStreamValid(stream)) {
+            throw new InvalidStreamException(String.format("Stream is not valid - failed validation test in %s", streamValidator.getClass().toString()));
+        }
 
         // TODO: modify to support multiple schema 'types' per stream (#55)
         // register schemas
