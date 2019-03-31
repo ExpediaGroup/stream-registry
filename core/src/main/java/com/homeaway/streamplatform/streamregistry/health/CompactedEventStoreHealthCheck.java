@@ -45,7 +45,7 @@ import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryCo
  *
  */
 @Slf4j
-public class DatabaseHealthCheck extends HealthCheck {
+public class CompactedEventStoreHealthCheck extends HealthCheck {
     private static final String METRIC_IS_KAFKA_TOPIC_COMPACTED = "app.is_kafka_topic_compacted";
 
     @Getter@Setter
@@ -53,10 +53,10 @@ public class DatabaseHealthCheck extends HealthCheck {
     private final AdminClient kafkaAdminClient;
     private final String topicName;
 
-    public DatabaseHealthCheck(StreamRegistryConfiguration configuration, MetricRegistry metricRegistry) {
+    public CompactedEventStoreHealthCheck(StreamRegistryConfiguration configuration, MetricRegistry metricRegistry) {
         metricRegistry.register(METRIC_IS_KAFKA_TOPIC_COMPACTED, (Gauge<Integer>)() -> isKafkaTopicCompacted() ? 1 : 2);
 
-        String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get("bootstrap.servers");
+        String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
         Properties properties = new Properties();
         properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
         this.kafkaAdminClient = KafkaAdminClient.create(properties);
@@ -73,10 +73,9 @@ public class DatabaseHealthCheck extends HealthCheck {
                 .get(configResource)
                 .get();
 
-        boolean isTopicCompacted = isCompactionConfigAvailable(configs);
-        this.setKafkaTopicCompacted(isTopicCompacted);
+        isKafkaTopicCompacted = isCompactionConfigAvailable(configs);
 
-        if (isTopicCompacted)
+        if (isKafkaTopicCompacted)
             return Result.builder()
                     .healthy()
                     .withMessage("The Kafka Topic used as a Data store is Compacted.")
@@ -88,7 +87,7 @@ public class DatabaseHealthCheck extends HealthCheck {
                     .build();
     }
 
-    private boolean isCompactionConfigAvailable(Config configs) {
+    public static boolean isCompactionConfigAvailable(Config configs) {
         return configs.entries().stream()
                 .anyMatch(config -> "cleanup.policy".equals(config.name()) && "compact".equals(config.value()));
     }

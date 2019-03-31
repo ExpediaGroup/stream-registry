@@ -16,6 +16,7 @@
 package com.homeaway.streamplatform.streamregistry;
 
 import static com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
+import static com.homeaway.streamplatform.streamregistry.health.CompactedEventStoreHealthCheck.isCompactionConfigAvailable;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
@@ -30,6 +31,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
+import com.homeaway.streamplatform.streamregistry.health.CompactedEventStoreHealthCheck;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -52,6 +54,8 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.InvalidReplicationFactorException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
@@ -68,7 +72,6 @@ import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
-import com.homeaway.streamplatform.streamregistry.health.DatabaseHealthCheck;
 import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
@@ -138,41 +141,40 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     @Override
     public void run(final StreamRegistryConfiguration configuration, final Environment environment) {
-        // Step 1 - initialize managed beans
+        // Initialize managed beans
         ManagedKStreams managedKStreams = createManagedKStreams(configuration);
         ManagedInfraManager managedInfraManager = createManagedInfraManager(configuration);
         Preconditions.checkState(managedInfraManager != null, "managedInfraManager cannot be null.");
         ManagedKafkaProducer managedKafkaProducer = createManagedKafkaProducer(configuration);
 
-        // Step 2 - Create the Kafka topics used as DataStore
+        // Create the Kafka topics used as DataStore
         createKafkaTopicUsedAsDatastore(configuration);
 
-        // Step 3 - initialize the DAO's
+        // Initialize the DAO's
         initServiceAndDao(configuration, environment, managedKStreams, managedKafkaProducer);
 
-        // Step 4 - initialize and register the SR resources to JerseyEnvironment
+        // Initialize and register the SR resources to JerseyEnvironment
         initAndRegisterResource(environment);
 
-        // Step 5 - initialize and register monitoring and health check hooks
+        // Initialize and register monitoring and health check hooks
         environment.getApplicationContext().addServlet(PingServlet.class, "/ping");
         initAndRegisterHealthCheck(configuration, environment, managedKStreams);
 
-        // Step 6 - centralize initialization and configuration of SR server Object Mapper's
+        // Centralize initialization and configuration of SR server Object Mapper's
         registerServiceMapper(environment);
 
-        // Step 7 - In order to avoid muddle up with HK2 and Jersey lifecycle dependency
-        // we wrap up all managed beans in a centralized container to manage server
-        // components start and stop ordering
+        // In order to avoid muddle up with HK2 and Jersey lifecycle dependency we wrap up all managed beans in a
+        // centralized container to manage server components start and stop ordering
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
-        // Step 8 - register list of Jersey Filters.
+        // Register list of Jersey Filters.
         registerFilters(environment, configuration);
 
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
     }
 
     private void createKafkaTopicUsedAsDatastore(StreamRegistryConfiguration configuration) {
-        String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get("bootstrap.servers");
+        String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
         Properties properties = new Properties();
         properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
         AdminClient adminClient = KafkaAdminClient.create(properties);
@@ -185,8 +187,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
                 createTopicWithCompactionEnabled(adminClient, topicName);
             }
         } catch (Exception e) {
-            log.error("Error while communication with the underlying data-store. Topic={} BootstrapURI={}", topicName, kafkaBootstrapURI);
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("Error while communication with the underlying kafka data-store." +
+                    " Topic={} BootstrapURI={}", topicName, kafkaBootstrapURI), e);
         }
     }
 
@@ -386,9 +388,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
         Preconditions.checkState(streamResource != null, "streamResource cannot be null.");
 
-        DatabaseHealthCheck databaseHealthCheck =
-                new DatabaseHealthCheck(configuration, metricRegistry);
-        environment.healthChecks().register("databaseHealthCheck", databaseHealthCheck);
+        CompactedEventStoreHealthCheck compactedEventStoreHealthCheck = new CompactedEventStoreHealthCheck(configuration, metricRegistry);
+        environment.healthChecks().register("compactedEventStoreHealthCheck", compactedEventStoreHealthCheck);
 
         StreamRegistryHealthCheck streamRegistryHealthCheck =
             new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
@@ -415,14 +416,14 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         environment.lifecycle().manage(managedContainer);
     }
 
-    private boolean isKafkaTopicAlreadyPresent(AdminClient adminClient, String topicName) throws InterruptedException, ExecutionException {
+    protected boolean isKafkaTopicAlreadyPresent(AdminClient adminClient, String topicName) throws InterruptedException, ExecutionException {
         DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Collections.singleton(topicName));
         try {
             TopicDescription topicDescription = describeTopicsResult.values().get(topicName).get();
-            log.info("Topic present. {}", topicDescription);
+            log.debug("Topic present. {}", topicDescription);
             return true;
         } catch (ExecutionException e) {
-            if ("org.apache.kafka.common.errors.UnknownTopicOrPartitionException".equals(e.getCause().getClass().getName())) {
+            if (e.getCause() instanceof UnknownTopicOrPartitionException) {
                 log.error("Topic {} not present.", topicName);
                 return false;
             }
@@ -436,14 +437,15 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Config config = adminClient.describeConfigs(Collections.singleton(configResource)).values().get(configResource).get();
         if (isCompactionConfigAvailable(config)) {
             log.info("Compaction config available in the topic {}", topicName);
-        } else {
-            config.entries().add(new ConfigEntry("cleanup.policy", "compact"));
-            adminClient.alterConfigs(Collections.singletonMap(configResource, config))
-                    .values()
-                    .get(configResource)
-                    .get();
-            log.info("Stream Registry underlying data store - kafka topic {} updated with config {}", topicName, config);
+            return;
         }
+
+        config.entries().add(new ConfigEntry("cleanup.policy", "compact"));
+        adminClient.alterConfigs(Collections.singletonMap(configResource, config))
+                .values()
+                .get(configResource)
+                .get();
+        log.info("Stream Registry underlying data store - kafka topic {} updated with config {}", topicName, config);
     }
 
     private void createTopicWithCompactionEnabled(AdminClient adminClient, String topicName) throws ExecutionException, InterruptedException {
@@ -457,7 +459,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         try {
             adminClient.createTopics(Collections.singleton(streamRegistryTopic)).values().get(topicName).get();
         } catch (ExecutionException e) {
-            if ("org.apache.kafka.common.errors.InvalidReplicationFactorException".equals(e.getCause().getClass().getName())) {
+            if (e.getCause() instanceof  InvalidReplicationFactorException) {
                 log.warn("Some environments like dev or laptop may have a cluster with only one broker. So, try to create with one replica.");
                 partitions = 1;
                 replicationFactor = 1;
@@ -473,8 +475,4 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         log.info("Stream Registry underlying data store - kafka topic {} created with replicationFator {}.", topicName, replicationFactor);
     }
 
-    private boolean isCompactionConfigAvailable(Config configs) {
-        return configs.entries().stream()
-                .anyMatch(config -> "cleanup.policy".equals(config.name()) && "compact".equals(config.value()));
-    }
 }
