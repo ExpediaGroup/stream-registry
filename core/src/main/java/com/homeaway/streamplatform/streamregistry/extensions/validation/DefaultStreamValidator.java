@@ -19,19 +19,21 @@ import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
-@SuppressWarnings("unused")
 @Slf4j
-public class EmptyStreamValidator implements StreamValidator {
+public class DefaultStreamValidator implements StreamValidator {
 
     @Override
     public void configure(Map<String, ?> configs) {
     }
 
     @Override
-    public boolean isStreamValid(Stream stream) throws InvalidStreamException {
+    public boolean isStreamValid(Stream stream) {
+        if (stream.getVpcList() == null || stream.getVpcList().isEmpty()) {
+            log.error("Stream {} cannot be created without vpcList configuration", stream.getName());
+            return false;
+        }
         return true;
     }
 
