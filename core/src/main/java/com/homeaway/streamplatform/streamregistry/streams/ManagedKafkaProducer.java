@@ -38,8 +38,8 @@ public class ManagedKafkaProducer implements Managed {
     private final Properties properties;
     private Producer<AvroStreamKey, AvroStream> producer;
 
-    public ManagedKafkaProducer(Properties properties, TopicsConfig topicsConfig) {
-        this.properties = properties;
+    public ManagedKafkaProducer(Properties producerProperties, TopicsConfig topicsConfig) {
+        this.properties = producerProperties;
         this.topicsConfig = topicsConfig;
     }
 
@@ -57,7 +57,7 @@ public class ManagedKafkaProducer implements Managed {
 
     public void log(AvroStreamKey key, AvroStream value) {
         try {
-            Future<RecordMetadata> result = producer.send(new ProducerRecord<>(topicsConfig.getProducerTopic(), key, value),
+            Future<RecordMetadata> result = producer.send(new ProducerRecord<>(topicsConfig.getEventStoreTopic().getName(), key, value),
                     (RecordMetadata recordMetadata, Exception e) -> {
                         if (e != null) {
                             log.error("Error producing to topic={}", recordMetadata.topic(), e);
@@ -70,6 +70,6 @@ public class ManagedKafkaProducer implements Managed {
                     exception);
         }
         log.info("Message pushed to the sourceKStreamProcessorTopic Topic={} with key={} successfully",
-                topicsConfig.getProducerTopic(), String.valueOf(key));
+                topicsConfig.getEventStoreTopic(), String.valueOf(key));
     }
 }

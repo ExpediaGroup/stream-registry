@@ -60,12 +60,7 @@ import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.StreamRegistryApplication;
 import com.homeaway.streamplatform.streamregistry.StreamRegistryManagedContainer;
-import com.homeaway.streamplatform.streamregistry.configuration.HealthCheckStreamConfig;
-import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
-import com.homeaway.streamplatform.streamregistry.configuration.KafkaStreamsConfig;
-import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
-import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
-import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
+import com.homeaway.streamplatform.streamregistry.configuration.*;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
@@ -201,7 +196,7 @@ public class BaseResourceIT {
 
         loadConfig("config-dev.yaml");
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
-        String producerTopic = topicsConfig.getProducerTopic();
+        String producerTopic = topicsConfig.getEventStoreTopic().getName();
         try {
             createTopic(producerTopic, 1, 1, new Properties());
         } catch (Exception exception) {
@@ -209,7 +204,7 @@ public class BaseResourceIT {
         }
 
         BaseResourceIT.topicsConfig = new TopicsConfig();
-        BaseResourceIT.topicsConfig.setProducerTopic(producerTopic);
+        BaseResourceIT.topicsConfig.setEventStoreTopic(topicsConfig.getEventStoreTopic());
         BaseResourceIT.topicsConfig.setStateStoreName(topicsConfig.getStateStoreName());
 
         BaseResourceIT.schemaManagerConfig = new SchemaManagerConfig("com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager");

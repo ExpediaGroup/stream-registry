@@ -56,10 +56,16 @@ kafkaStreamsConfig:
     replication.factor: ${STREAM_REGISTRY_KSTREAMS_REPLICATION_FACTOR:-1}
     num.stream.threads: 2
 
-# producerTopic name is the name of the underlying Kafka Topic that would store the Streams created by the application.
-# IMPORTANT: make sure the producerTopic is compacted or retention.ms=-1 so that the created Streams are not lost.
+# eventStoreTopic name is the name of the underlying Kafka Topic that would store the Streams created by the application.
+# IMPORTANT: make sure the eventStoreTopic is compacted or retention.ms=-1 so that the created Streams are not lost.
 topicsConfig:
-  producerTopic: _streamregistry_streams${STREAM_REGISTRY_PRODUCER_TOPIC_SUFFIX:-_v0.1}
+  eventStoreTopic:
+    name: _streamregistry_streams${STREAM_REGISTRY_EVENTSTORE_TOPIC_SUFFIX:-_v0.1}
+    partitions: ${STREAM_REGISTRY_EVENTSTORE_PARTITIONCOUNT:-1}
+    replicationFactor: ${STREAM_REGISTRY_EVENTSTORE_REPLICATIONFACTOR:-1}
+    properties:
+      min.insync.replicas: ${STREAM_REGISTRY_EVENTSTORE_MININSYNCREPLICA:-1}
+      cleanup.policy: ${STREAM_REGISTRY_EVENTSTORE_CLEANUPPOLICY:-compact}
   stateStoreName: _streamregistry_streams_kv${STREAM_REGISTRY_PRODUCER_STATE_TOPIC_SUFFIX_STATE:-_v0.1}
 
 # properties of the Kafka Topic that has all the Cluster details.

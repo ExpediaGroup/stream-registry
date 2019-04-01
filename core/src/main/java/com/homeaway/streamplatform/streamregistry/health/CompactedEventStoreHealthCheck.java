@@ -61,7 +61,7 @@ public class CompactedEventStoreHealthCheck extends HealthCheck {
         properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
         this.kafkaAdminClient = KafkaAdminClient.create(properties);
 
-        this.topicName = configuration.getTopicsConfig().getProducerTopic();
+        this.topicName = configuration.getTopicsConfig().getEventStoreTopic().getName();
     }
 
     @Override

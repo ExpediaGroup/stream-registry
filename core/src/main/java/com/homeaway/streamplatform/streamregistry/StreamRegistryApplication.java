@@ -16,22 +16,17 @@
 package com.homeaway.streamplatform.streamregistry;
 
 import static com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
-import static com.homeaway.streamplatform.streamregistry.health.CompactedEventStoreHealthCheck.isCompactionConfigAvailable;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
-import com.homeaway.streamplatform.streamregistry.health.CompactedEventStoreHealthCheck;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -54,24 +49,20 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.ConfigResource;
-import org.apache.kafka.common.errors.InvalidReplicationFactorException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
 import org.rocksdb.Options;
 
-import com.homeaway.streamplatform.streamregistry.configuration.InfraManagerConfig;
-import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
-import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
-import com.homeaway.streamplatform.streamregistry.configuration.StreamValidatorConfig;
-import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
+import com.homeaway.streamplatform.streamregistry.configuration.*;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
+import com.homeaway.streamplatform.streamregistry.health.CompactedEventStoreHealthCheck;
 import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
@@ -147,8 +138,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Preconditions.checkState(managedInfraManager != null, "managedInfraManager cannot be null.");
         ManagedKafkaProducer managedKafkaProducer = createManagedKafkaProducer(configuration);
 
-        // Create the Kafka topics used as DataStore
-        createKafkaTopicUsedAsDatastore(configuration);
+        // Create the Kafka topic used as EventStore
+        createEventStoreKafkaTopicIfNotExists(configuration);
 
         // Initialize the DAO's
         initServiceAndDao(configuration, environment, managedKStreams, managedKafkaProducer);
@@ -173,18 +164,18 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
     }
 
-    private void createKafkaTopicUsedAsDatastore(StreamRegistryConfiguration configuration) {
+    private void createEventStoreKafkaTopicIfNotExists(StreamRegistryConfiguration configuration) {
         String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
         Properties properties = new Properties();
         properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
         AdminClient adminClient = KafkaAdminClient.create(properties);
 
-        String topicName = configuration.getTopicsConfig().getProducerTopic();
+        String topicName = configuration.getTopicsConfig().getEventStoreTopic().getName();
         try {
-            if (isKafkaTopicAlreadyPresent(adminClient, topicName)) {
-                makeSureTopicIsCompacted(adminClient, topicName);
+            if (isEventStoreKafkaTopicPresent(adminClient, topicName)) {
+                validateTopicConfigs(adminClient, configuration.getTopicsConfig().getEventStoreTopic());
             } else {
-                createTopicWithCompactionEnabled(adminClient, topicName);
+                createTopicWithCompactionEnabled(adminClient, configuration.getTopicsConfig().getEventStoreTopic());
             }
         } catch (Exception e) {
             throw new RuntimeException(String.format("Error while communication with the underlying kafka data-store." +
@@ -416,63 +407,48 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         environment.lifecycle().manage(managedContainer);
     }
 
-    protected boolean isKafkaTopicAlreadyPresent(AdminClient adminClient, String topicName) throws InterruptedException, ExecutionException {
+    protected boolean isEventStoreKafkaTopicPresent(AdminClient adminClient, String topicName) {
         DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Collections.singleton(topicName));
         try {
             TopicDescription topicDescription = describeTopicsResult.values().get(topicName).get();
-            log.debug("Topic present. {}", topicDescription);
+            log.debug("EventStore topic {} present. Topic Details = {}", topicName, topicDescription);
             return true;
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
+            // If the exception is an instance of UnknownTopicOrPartitionException, then the topic is not available.
             if (e.getCause() instanceof UnknownTopicOrPartitionException) {
-                log.error("Topic {} not present.", topicName);
+                log.error("EventStore topic {} not present.", topicName);
                 return false;
             }
-            throw e;
+            /* If exception is not an instance of UnknownTopicOrPartitionException, then the Kafka Cluster is not reachable,
+             and it is better to halt the application by throwing back the exception. */
+            throw new RuntimeException(String.format("Error while describing the EventStore topic=%s. " +
+                            "Please make sure the cluster is accessible" , topicName), e);
         }
     }
 
-    private void makeSureTopicIsCompacted(AdminClient adminClient, String topicName) throws ExecutionException, InterruptedException {
-        ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
-
+    protected void validateTopicConfigs(AdminClient adminClient, EventStoreTopic eventStoreTopic) throws ExecutionException, InterruptedException {
+        ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, eventStoreTopic.getName());
+        // check whether the compaction property is available
         Config config = adminClient.describeConfigs(Collections.singleton(configResource)).values().get(configResource).get();
-        if (isCompactionConfigAvailable(config)) {
-            log.info("Compaction config available in the topic {}", topicName);
-            return;
-        }
 
-        config.entries().add(new ConfigEntry("cleanup.policy", "compact"));
-        adminClient.alterConfigs(Collections.singletonMap(configResource, config))
-                .values()
-                .get(configResource)
-                .get();
-        log.info("Stream Registry underlying data store - kafka topic {} updated with config {}", topicName, config);
+        Map<String, String> expectedProperties = eventStoreTopic.getProperties();
+        Collection<ConfigEntry> actualProperties = config.entries();
+
+        expectedProperties.forEach((key, value) -> {
+            boolean isConfigAvailable = actualProperties.stream().anyMatch(configEntry ->
+                    configEntry.name().equals(key) && configEntry.value().equals(value));
+            if (! isConfigAvailable)
+                throw new RuntimeException(String.format("EventStore topic config mismatch. TopicName=%s Excepted Config=%s ;" +
+                    " Actual Config=%s", eventStoreTopic.getName(), expectedProperties, actualProperties));
+        });
+        log.info("Stream Registry underlying EventStore kafka topic config {} validation passed", actualProperties);
     }
 
-    private void createTopicWithCompactionEnabled(AdminClient adminClient, String topicName) throws ExecutionException, InterruptedException {
-        int partitions = 2;
-        short replicationFactor = 3;
-        NewTopic streamRegistryTopic = new NewTopic(topicName, partitions, replicationFactor);
-        Map<String, String> configs = new HashMap<>();
-        configs.put("min.insync.replicas", "2");
-        configs.put("cleanup.policy", "compact");
-        streamRegistryTopic.configs(configs);
-        try {
-            adminClient.createTopics(Collections.singleton(streamRegistryTopic)).values().get(topicName).get();
-        } catch (ExecutionException e) {
-            if (e.getCause() instanceof  InvalidReplicationFactorException) {
-                log.warn("Some environments like dev or laptop may have a cluster with only one broker. So, try to create with one replica.");
-                partitions = 1;
-                replicationFactor = 1;
-                streamRegistryTopic = new NewTopic(topicName, partitions, replicationFactor);
-                configs = new HashMap<>();
-                configs.put("cleanup.policy", "compact");
-                streamRegistryTopic.configs(configs);
-                adminClient.createTopics(Collections.singleton(streamRegistryTopic)).values().get(topicName).get();
-            } else {
-                throw e;
-            }
-        }
-        log.info("Stream Registry underlying data store - kafka topic {} created with replicationFator {}.", topicName, replicationFactor);
+    private void createTopicWithCompactionEnabled(AdminClient adminClient, EventStoreTopic eventStoreTopic) throws ExecutionException, InterruptedException {
+        NewTopic streamRegistryTopic = new NewTopic(eventStoreTopic.getName(), eventStoreTopic.getPartitions(), eventStoreTopic.getReplicationFactor());
+        streamRegistryTopic.configs(eventStoreTopic.getProperties());
+        adminClient.createTopics(Collections.singleton(streamRegistryTopic)).values().get(eventStoreTopic.getName()).get();
+        log.info("Stream Registry underlying kafka event store created : {}", streamRegistryTopic);
     }
 
 }

@@ -15,21 +15,46 @@
  */
 package com.homeaway.streamplatform.streamregistry.configuration;
 
+import java.util.Map;
+
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 
+/**
+ * Details of the topic used as EventStore
+ */
 @Data
-public class TopicsConfig {
+@Builder
+public class EventStoreTopic {
 
+    /**
+     * name of the topic
+     */
     @Valid
-    @NotNull
-    EventStoreTopic eventStoreTopic;
+    @NonNull
+    String name;
 
-
+    /**
+     * number of partitions
+     */
     @Valid
-    @NotNull
-    String stateStoreName;
+    @NonNull
+    int partitions;
 
+    /**
+     * number of replicas
+     */
+    @Valid
+    @NonNull
+    short replicationFactor;
+
+    /**
+     * properties of the topic
+     */
+    @Valid
+    @NonNull
+    Map<String, String> properties;
 }

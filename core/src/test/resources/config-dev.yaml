@@ -24,7 +24,13 @@ kafkaStreamsConfig:
     value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 
 topicsConfig:
-  producerTopic: streamregistry_v0.1_schemalibrary_v0.1.26-dev
+  eventStoreTopic:
+    name: streamregistry_v0.1_schemalibrary_v0.1.26-dev
+    partitions: 1
+    replicationFactor: 1
+    properties:
+      min.insync.replicas: 1
+      cleanup.policy: compact
   stateStoreName: streamregistry_kv_store_v0.1-dev
 
 infraManagerConfig:

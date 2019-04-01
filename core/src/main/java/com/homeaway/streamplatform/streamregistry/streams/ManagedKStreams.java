@@ -68,7 +68,7 @@ public class ManagedKStreams implements Managed {
         stateStoreName = topicsConfig.getStateStoreName();
         final StreamsBuilder kStreamBuilder= new StreamsBuilder();
 
-        kStreamBuilder.globalTable(topicsConfig.getProducerTopic(), createMaterialized(schemaManagerConfig));
+        kStreamBuilder.globalTable(topicsConfig.getEventStoreTopic().getName(), createMaterialized(schemaManagerConfig));
 
         streams = new KafkaStreams(kStreamBuilder.build(), streamProperties);
         // [ #132 ] - Improve build times by notifying test listener that we are running
