@@ -36,6 +36,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
@@ -44,7 +46,10 @@ import com.homeaway.streamplatform.streamregistry.service.ClusterService;
 /**
  * The type Cluster resource.
  */
-@Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
+@Api(tags = {"Stream-registry API"})
+@SwaggerDefinition(tags = {
+    @Tag(name = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
+})
 @Path("/v0/clusters")
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j

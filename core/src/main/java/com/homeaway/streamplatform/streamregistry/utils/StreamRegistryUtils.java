@@ -88,11 +88,11 @@ public final class StreamRegistryUtils {
         return empty;
     }
 
-    public static final boolean hasActorNamed(String name, Supplier<Actor> actorSupplier) {
+    public static boolean hasActorNamed(String name, Supplier<Actor> actorSupplier) {
         return name != null && getActorName(name, actorSupplier).isPresent();
     }
 
-    public static final Optional<String> getActorName(String name, Supplier<Actor> actorSupplier) {
+    public static Optional<String> getActorName(String name, Supplier<Actor> actorSupplier) {
         return Optional.ofNullable(actorSupplier)
                 .map(Supplier::get)
                 .map(Actor::getName)

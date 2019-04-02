@@ -15,11 +15,14 @@
  */
 package com.homeaway.streamplatform.streamregistry.provider;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
+import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
 
 /**
  * The Infrastructure Manager is a key-value store containing the details of the Stream Registry clusters and their metadata.
@@ -48,16 +51,14 @@ public interface InfraManager {
     /**
      * Start.
      *
-     * @throws Exception the exception
      */
-    void start() throws Exception;
+    void start();
 
     /**
      * Stop.
      *
-     * @throws Exception the exception
      */
-    void stop() throws Exception;
+    void stop();
 
     /**
      * Provides the {@link InfraManager} class with the given values for later configuration.
@@ -89,5 +90,19 @@ public interface InfraManager {
      * @param clusterValue the cluster value
      */
     void upsertCluster(ClusterKey clusterKey, ClusterValue clusterValue);
+
+    /**
+     * Creates topics in underlying implementation of InfraManager provider.
+     * @param topics topics to creates
+     * @param partitions number of partitions for each of those topics
+     * @param replicationFactor replicationFactor for each of those topics
+     * @param topicConfig topic config to use for each of these topics
+     * @param isNewStream whether or not this invocation results from existing or new stream in stream registry.
+     * @throws StreamCreationException  when Stream could not be created in the underlying infrastructure for following reasons
+     *      a) Input Configs and the existing configs does not match for a new Stream on-boarded to StreamRegistry,
+     *      but already available in the infrastructure.
+     */
+    void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream)
+        throws StreamCreationException;
 
 }

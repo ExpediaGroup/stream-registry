@@ -18,7 +18,6 @@ package com.homeaway.streamplatform.streamregistry.extensions.schema;
 import java.util.Map;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 
 /**
  * This interface is implemented by a stream provider to provide
@@ -26,7 +25,7 @@ import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationExc
  */
 public interface SchemaManager {
 
-    public static final String MAX_SCHEMA_VERSIONS_CAPACITY = "max.schema.version.capacity";
+    String MAX_SCHEMA_VERSIONS_CAPACITY = "max.schema.version.capacity";
 
     /**
      * Register a new schema under the specified subject. If successfully
@@ -40,21 +39,25 @@ public interface SchemaManager {
      *
      * A schema should be compatible with the previously registered schema
      * or schemas (if there are any) as per the configured compatibility level.
-     * @param subject Subject under which the schema will be registered
-     * @param schema The Avro schema string
+     * @param subject - Subject under which the schema will be registered
+     * @param schema - The Avro schema string
      * @return a SchemaReference for the registered schema
+     * @throws SchemaManagerException - when the schema fails to register
      */
     SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException;
 
     /**
      * Test input schema against a particular version of a
      * subject’s schema for compatibility.
+     * @param subject - Subject under which the comparative schema will be checked against
+     * @param schema - the schema to check against a version of the subject's schema
+     * @return boolean
      */
-    boolean checkCompatibility(String subject, String schema) throws SchemaValidationException;
+    boolean checkCompatibility(String subject, String schema);
 
     /**
      * Configure the SchemaManager with SchemaRegistry endpoints and properties
-     * @param configs
+     * @param configs - Map containing SchemaRegistry configurations
      */
     void configure(Map<String, Object> configs);
 }

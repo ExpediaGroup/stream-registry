@@ -38,8 +38,6 @@ import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerCon
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
-import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
@@ -52,24 +50,21 @@ public class ClusterServiceImplTest {
     /**
      * The Infra manager.
      */
-    static InfraManager infraManager;
+    private static InfraManager infraManager;
     /**
      * The Cluster dao.
      */
-    static ClusterService clusterService;
+    private static ClusterService clusterService;
 
     /**
      * The constant CLUSTER_NAME.
      */
-    public static final String CLUSTER_NAME = "cluster.name";
+    private static final String CLUSTER_NAME = "cluster.name";
 
     /**
      * The Cluster properties.
      */
-    static Map<String, String> clusterProperties;
-
-
-    private static ClusterValue expectedClusterValue;
+    private static Map<String, String> clusterProperties;
 
     /**
      * Setup method.
@@ -84,13 +79,6 @@ public class ClusterServiceImplTest {
         clusterProperties.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "localhost:2181");
         clusterProperties.put(CLUSTER_NAME, "cluster_name");
         clusterProperties.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "localhost:8081");
-
-        expectedClusterValue = ClusterValue.builder()
-            .bootstrapServers("localhost:9092")
-            .schemaRegistryURL("localhost:8081")
-            .zookeeperQuorum("localhost:2181")
-            .clusterName("cluster_name")
-            .build();
     }
 
     /**
@@ -117,17 +105,6 @@ public class ClusterServiceImplTest {
      */
     @Test
     public void testGetAllClusters() {
-        Map<ClusterKey, ClusterValue> expectedClusterMap = new HashMap<>();
-
-        ClusterKey jsonClusterKey = ClusterKey.builder()
-            .vpc("vpc")
-            .env("env")
-            .hint("hint")
-            .type("")
-            .build();
-
-        expectedClusterMap.put(jsonClusterKey, expectedClusterValue);
-
         Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> avroClusterMap = new HashMap<>();
 
         avroClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties));
@@ -141,7 +118,7 @@ public class ClusterServiceImplTest {
     /**
      * Test upsert cluster.
      *
-     * @throws InvalidClusterException the invalid cluster exception
+     * @throws InvalidClusterException - if the cluster fails to upsert
      */
     @Test
     public void testUpsertCluster() throws InvalidClusterException{

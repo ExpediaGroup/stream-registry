@@ -66,9 +66,7 @@ import com.homeaway.streamplatform.streamregistry.configuration.KafkaStreamsConf
 import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
-import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -78,7 +76,6 @@ import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.service.*;
-import com.homeaway.streamplatform.streamregistry.service.ClusterService;
 import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
 import com.homeaway.streamplatform.streamregistry.service.impl.ConsumerServiceImpl;
 import com.homeaway.streamplatform.streamregistry.service.impl.ProducerServiceImpl;
@@ -179,12 +176,12 @@ public class BaseResourceIT {
 
     private static StreamRegistryManagedContainer managedContainer;
 
-    private static void createTopic(String topic, int partitions, int replication, Properties topicConfig) {
+    private static void createTopic(String topic, Properties topicConfig) {
         log.debug("Creating topic { name: {}, partitions: {}, replication: {}, config: {} }",
-                topic, partitions, replication, topicConfig);
+                topic, 1, 1, topicConfig);
         ZkUtils zkUtils = new ZkUtils(ZKCLIENT, new ZkConnection(zookeeperQuorum), false);
         if (!AdminUtils.topicExists(zkUtils, topic)) {
-            AdminUtils.createTopic(zkUtils, topic, partitions, replication, topicConfig, RackAwareMode.Enforced$.MODULE$);
+            AdminUtils.createTopic(zkUtils, topic, 1, 1, topicConfig, RackAwareMode.Enforced$.MODULE$);
         }
     }
 
@@ -203,7 +200,7 @@ public class BaseResourceIT {
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
         String producerTopic = topicsConfig.getProducerTopic();
         try {
-            createTopic(producerTopic, 1, 1, new Properties());
+            createTopic(producerTopic, new Properties());
         } catch (Exception exception) {
             throw new IllegalStateException("Could not create topic " + producerTopic, exception);
         }
@@ -257,10 +254,9 @@ public class BaseResourceIT {
         SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
         configuration.getSchemaManagerConfig().getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 1);
 
-        KafkaManager kafkaManager = new KafkaManagerImpl();
         StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams);
         StreamService streamService = new StreamServiceImpl(streamDao, env, regionService, clusterService,
-            infraManager, streamValidator, schemaManager, kafkaManager);
+            infraManager, streamValidator, schemaManager);
         StreamClientService<Producer> producerDao = new ProducerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
         StreamClientService<Consumer> consumerDao = new ConsumerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
         streamResource = new StreamResource(streamService, producerDao, consumerDao);
