@@ -55,11 +55,6 @@
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.homeaway.streamplatform</groupId>
-            <artifactId>stream-registry-core</artifactId>
-            <version>0.4.10-SNAPSHOT</version>
-        </dependency>
 
         <!-- Test -->
         <dependency>
