@@ -35,12 +35,12 @@ public interface ClusterService {
     /**
      * Gets cluster.
      *
-     * @param vpc the vpc
-     * @param env the env
-     * @param hint the hint
-     * @param actorType the actor type
-     * @return the cluster
-     * @throws ClusterNotFoundException the cluster not found exception
+     * @param vpc - the vpc
+     * @param env - the env
+     * @param hint - the hint
+     * @param actorType - the actor type
+     * @return ClusterValue
+     * @throws ClusterNotFoundException - if the cluster is not found
      */
     com.homeaway.digitalplatform.streamregistry.ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException;
 
@@ -48,6 +48,7 @@ public interface ClusterService {
      * Upsert cluster.
      *
      * @param jsonCluster the json cluster
+     * @throws InvalidClusterException - if the cluster properties are not defined
      */
     void upsertCluster(JsonCluster jsonCluster) throws InvalidClusterException;
 }

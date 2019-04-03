@@ -28,8 +28,8 @@ public class ClusterValidator {
     /**
      * Validate.
      *
-     * @param cluster the cluster
-     * @throws InvalidClusterException the invalid cluster exception
+     * @param cluster - the cluster
+     * @throws InvalidClusterException - if the cluster parameters are not correctly defined
      */
     public static void validate(JsonCluster cluster) throws InvalidClusterException {
         if (cluster == null || cluster.getClusterKey() == null || cluster.getClusterValue() == null) {
@@ -38,17 +38,17 @@ public class ClusterValidator {
 
         ClusterKey clusterKey = cluster.getClusterKey();
 
-        if (clusterKey.getEnv() == null || clusterKey.getEnv().trim() == "" ||
-            clusterKey.getHint() == null || clusterKey.getHint().trim() == "" ||
-            clusterKey.getVpc() == null || clusterKey.getVpc().trim() == "") {
+        if (clusterKey.getEnv() == null || clusterKey.getEnv().trim().equals("") ||
+            clusterKey.getHint() == null || clusterKey.getHint().trim().equals("") ||
+            clusterKey.getVpc() == null || clusterKey.getVpc().trim().equals("")) {
             throw new InvalidClusterException(String.format("Cluster Keys (Env/Hint/VPC) cannot be null or empty, clusterKey:%s",clusterKey));
         }
 
         ClusterValue clusterValue = cluster.getClusterValue();
 
-        if (clusterValue.getClusterName() == null || clusterValue.getClusterName().trim() == "" ||
-            clusterValue.getBootstrapServers() == null || clusterValue.getBootstrapServers().trim() == "" ||
-            clusterValue.getZookeeperQuorum() == null || clusterValue.getZookeeperQuorum().trim() == "") {
+        if (clusterValue.getClusterName() == null || clusterValue.getClusterName().trim().equals("") ||
+            clusterValue.getBootstrapServers() == null || clusterValue.getBootstrapServers().trim().equals("") ||
+            clusterValue.getZookeeperQuorum() == null || clusterValue.getZookeeperQuorum().trim().equals("")) {
             throw new InvalidClusterException(String.format("Cluster Values (Cluster Name/Bootstrap servers/Zookeeper Quorum) cannot be null or empty, clusterKey:%s",clusterKey));
         }
     }

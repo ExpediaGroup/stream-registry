@@ -39,6 +39,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 
 import org.apache.avro.SchemaParseException;
 import org.apache.kafka.common.errors.InvalidReplicationFactorException;
@@ -53,7 +55,10 @@ import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.EntriesPage;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-@Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
+@Api(tags = {"Stream-registry API"})
+@SwaggerDefinition(tags = {
+    @Tag(name = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
+})
 @Path("/v0/streams")
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
@@ -81,7 +86,7 @@ public class StreamResource extends BaseResource{
     @ApiResponses(value = { @ApiResponse(code = 202, message = "Stream registration request accepted"),
         @ApiResponse(code = 400, message = "Validation Exception while creating a stream."),
         @ApiResponse(code = 412, message = "Exception occurred as requested cluster is not supported"),
-        @ApiResponse(code = 500, message = "Error occured while registering a Stream") })
+        @ApiResponse(code = 500, message = "Error occurred while registering a Stream") })
     @Path("/{streamName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed
@@ -123,7 +128,9 @@ public class StreamResource extends BaseResource{
                 throw new InvalidStreamException(String.format("Stream name provided in path param [%s] does not match that of the stream body [%s]",
                         streamName, stream.getName()));
             }
-            streamService.validateSchemaCompatibility(stream);
+            if (!streamService.validateSchemaCompatibility(stream)) {
+                throw new SchemaValidationException("Unable to validate Schema compatibility");
+            }
             return Response.ok()
                     .type("text/plain")
                     .entity("Schema Validation Successful").build();
@@ -143,7 +150,7 @@ public class StreamResource extends BaseResource{
         response = Stream.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "successful operation", response = Stream.class),
         @ApiResponse(code = 404, message = "Stream not found"),
-        @ApiResponse(code = 500, message = "Error occured while getting a Stream.") })
+        @ApiResponse(code = 500, message = "Error occurred while getting a Stream.") })
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public Response getStream(@ApiParam(value = "Stream name", required = true) @PathParam("streamName") String streamName) {

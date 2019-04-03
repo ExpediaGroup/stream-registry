@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.homeaway.streamplatform.streamregistry.db.dao.impl;
+package com.homeaway.streamplatform.streamregistry.provider.impl;
 
 import static org.mockito.Mockito.times;
 import static org.powermock.api.mockito.PowerMockito.*;
@@ -47,10 +47,10 @@ import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationExcep
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.management.*", "javax.xml.*", "org.xml.*" })
-@PrepareForTest({KafkaManagerImpl.class, AdminUtils.class})
-public class KafkaManagerImplTest {
+@PrepareForTest({KafkaInfraManager.class, AdminUtils.class})
+public class KafkaInfraManagerTest {
 
-    private static final String TOPIC = "kafka-manager-test";
+    private static final String TOPIC = "kafka-infra-manager-test";
     private static final int PARTITIONS = 2;
     private static final int REPLICATION_FACTOR = 3;
     private static final Properties PROPS = new Properties();
@@ -63,7 +63,7 @@ public class KafkaManagerImplTest {
     @Mock private ZkConnection zkConnection;
 
     @InjectMocks
-    private KafkaManagerImpl kafkaManager = new KafkaManagerImpl();
+    private KafkaInfraManager kafkaManager = new KafkaInfraManager();
 
     @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -80,10 +80,6 @@ public class KafkaManagerImplTest {
         TOPIC_WITH_CNXN_PROPS.putAll(TOPIC_PROPS);
         TOPIC_WITH_CNXN_PROPS.setProperty(KafkaProducerConfig.ZOOKEEPER_QUORUM, "127.0.0.1:2181");
         TOPIC_WITH_CNXN_PROPS.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
-
-        // setup kafkaManager
-        // kafkaManager.init(PROPS);
-        // un-necessary since powermock has setup mocks for zookeeper in KafkaManagerImpl
 
         // make sure that the * direct-caller * of these classes are in @PrepareForTest annotation above on this test
         whenNew(ZkClient.class).withAnyArguments().thenReturn(zkClient);
@@ -111,7 +107,7 @@ public class KafkaManagerImplTest {
         // Mock it as an existing topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
-        KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         // Existing Stream, but PROPS match!! should not have an exception
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, TOPIC_WITH_CNXN_PROPS, true);
@@ -130,7 +126,7 @@ public class KafkaManagerImplTest {
         // Mock it as an existing topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
-        KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         //Existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
@@ -148,7 +144,7 @@ public class KafkaManagerImplTest {
         // Mock it as a new topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 
-        KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         // Not existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
@@ -165,7 +161,7 @@ public class KafkaManagerImplTest {
         // Mock it as a new topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 
-        KafkaManagerImpl kafkaManagerSpy = spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         //Existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);

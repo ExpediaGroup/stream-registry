@@ -75,17 +75,17 @@ public class RegionServiceImplTest {
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(AbstractService.PRIMARY_HINT)).findFirst().get().getVpcs(),
                 new HashSet<>(Arrays.asList("aus-dts-1", "us-east-vpc", "us-west-vpc", "us-east-vpc-3")));
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase(BaseResourceIT.OTHER_HINT)).findFirst().get().getVpcs(),
-                new HashSet<>(Arrays.asList("us-east-vpc")));
+                new HashSet<>(Collections.singletonList("us-east-vpc")));
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase("tier-1")).findFirst().get().getVpcs(),
-                new HashSet<>(Arrays.asList("us-east-vpc")));
+                new HashSet<>(Collections.singletonList("us-east-vpc")));
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase("tier-2")).findFirst().get().getVpcs(),
-                new HashSet<>(Arrays.asList("us-east-vpc")));
+                new HashSet<>(Collections.singletonList("us-east-vpc")));
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase("tier-3")).findFirst().get().getVpcs(),
-                new HashSet<>(Arrays.asList("aus-dts-1")));
+                new HashSet<>(Collections.singletonList("aus-dts-1")));
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase("tier-4")).findFirst().get().getVpcs(),
-                new HashSet<>(Arrays.asList("aus-dts-1")));
+                new HashSet<>(Collections.singletonList("aus-dts-1")));
         Assert.assertEquals(hintRegionMap.stream().filter((hint) -> hint.getHint().equalsIgnoreCase("tier-5")).findFirst().get().getVpcs(),
-                new HashSet<>(Arrays.asList("aus-dts-1")));
+                new HashSet<>(Collections.singletonList("aus-dts-1")));
     }
 
 }

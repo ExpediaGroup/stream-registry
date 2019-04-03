@@ -25,7 +25,7 @@ public interface StreamService {
 
     /**
      *  Insert or Update a Stream
-     * @param stream
+     * @param stream - the Stream to be upserted
      * @throws SchemaManagerException - when the input schema registration fails against SchemaRegistry
      * @throws InvalidStreamException - When the validator that implements
      *              `com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator` check fails on input Stream Object.
@@ -36,15 +36,15 @@ public interface StreamService {
 
     /**
      * Get a Stream for the given name
-     * @param streamName
-     * @return
+     * @param streamName - the name of the Stream to be retrieved
+     * @return retrieved Stream
      * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
      */
     Stream getStream(String streamName) throws StreamNotFoundException;
 
     /**
      * Delete the stream for the given name
-     * @param streamName
+     * @param streamName - the name of the Stream to be deleted
      * @throws StreamNotFoundException - when Stream is not available for the given Stream Name
      */
     void deleteStream(String streamName) throws StreamNotFoundException;
@@ -52,18 +52,15 @@ public interface StreamService {
     /**
      * Get all the streams.
      *
-     * @return List<Stream>
+     * @return all of the Streams in a List
      */
     List<Stream> getAllStreams();
 
     /**
      * Validate the input schema against the SchemaRegistry.
-     * @param stream
-     * @return
-     * @throws SchemaValidationException -
-     *  a) Where there is a RuntimeException while validating schema against schema-registry.
-     *  b) When schema validation check fails.
+     * @param stream - the Stream to be validated
+     * @return whether or not the schema could be validated
      */
-    void validateSchemaCompatibility(Stream stream) throws SchemaValidationException;
+    boolean validateSchemaCompatibility(Stream stream);
 
 }

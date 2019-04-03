@@ -15,9 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.resource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
@@ -25,7 +27,7 @@ import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 
 public class InfraManagerImplStub implements InfraManager {
 
-    private Map<ClusterKey, ClusterValue> clusterMap = new HashMap<>();
+    private final Map<ClusterKey, ClusterValue> clusterMap = new HashMap<>();
 
     @Override
     public void start() {}
@@ -44,6 +46,10 @@ public class InfraManagerImplStub implements InfraManager {
     @Override
     public Optional<ClusterValue> getClusterByKey(ClusterKey key) {
         return this.clusterMap.get(key) == null ? Optional.empty() : Optional.of(this.clusterMap.get(key));
+    }
+
+    @Override
+    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream) {
     }
 
     @Override

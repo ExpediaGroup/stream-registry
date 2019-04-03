@@ -108,11 +108,9 @@ public class JsonModelBuilder {
             .zookeeperQuorum("localhost:2181")
             .build();
 
-        JsonCluster cluster = JsonCluster.builder()
+        return JsonCluster.builder()
             .clusterKey(clusterKey)
             .clusterValue(clusterValue)
             .build();
-
-        return cluster;
     }
 }

@@ -40,7 +40,6 @@ import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.digitalplatform.streamregistry.Schema;
 import com.homeaway.digitalplatform.streamregistry.Tags;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
-import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.exceptions.*;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
@@ -56,23 +55,22 @@ public class StreamServiceImplTest {
 
     private static final String TEST_STREAM_KEY = "test_stream";
 
-    private StreamDao streamDao = mock(StreamDao.class);
-    private RegionService regionService = mock(RegionService.class);
-    private InfraManager infraManager = mock(InfraManager.class);
-    private ClusterService clusterService = mock(ClusterService.class);
-    private StreamValidator streamValidator = mock(StreamValidator.class);
-    private SchemaManager schemaManager = mock(SchemaManager.class);
-    private KafkaManager kafkaManager = mock(KafkaManager.class);
+    private final StreamDao streamDao = mock(StreamDao.class);
+    private final RegionService regionService = mock(RegionService.class);
+    private final InfraManager infraManager = mock(InfraManager.class);
+    private final ClusterService clusterService = mock(ClusterService.class);
+    private final StreamValidator streamValidator = mock(StreamValidator.class);
+    private final SchemaManager schemaManager = mock(SchemaManager.class);
 
     private StreamService streamService;
 
     @Before
     public void setup() {
-        streamService = new StreamServiceImpl(streamDao, TEST_ENV, regionService, clusterService, infraManager, streamValidator, schemaManager, kafkaManager);
+        streamService = new StreamServiceImpl(streamDao, TEST_ENV, regionService, clusterService, infraManager, streamValidator, schemaManager);
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testUpsertStreamChangePartitionCountFails() throws InvalidStreamException, SchemaValidationException, SchemaManagerException, StreamCreationException, ClusterNotFoundException {
+    public void testUpsertStreamChangePartitionCountFails() throws InvalidStreamException, SchemaManagerException, StreamCreationException, ClusterNotFoundException {
         when(streamDao.getStream(TEST_STREAM_KEY)).thenReturn(buildTestAvroStream());
 
         Stream newStream = buildTestStream();
@@ -159,8 +157,11 @@ public class StreamServiceImplTest {
     }
 
     private Stream buildTestStream() {
-        AvroStream avroStream = buildTestAvroStream().getValue().get();
-        com.homeaway.streamplatform.streamregistry.model.Tags tags = com.homeaway.streamplatform.streamregistry.model.Tags.builder()
+        if (!buildTestAvroStream().getValue().isPresent()) {
+            return Stream.builder().build();
+        } else {
+            AvroStream avroStream = buildTestAvroStream().getValue().get();
+            com.homeaway.streamplatform.streamregistry.model.Tags tags = com.homeaway.streamplatform.streamregistry.model.Tags.builder()
                 .componentId(avroStream.getTags().getComponentId())
                 .productId(avroStream.getTags().getProductId())
                 .hint(avroStream.getTags().getHint())
@@ -168,21 +169,21 @@ public class StreamServiceImplTest {
                 .brand(avroStream.getTags().getBrand())
                 .portfolioId(avroStream.getTags().getPortfolioId())
                 .build();
-        com.homeaway.streamplatform.streamregistry.model.Schema latestKeySchema = com.homeaway.streamplatform.streamregistry.model.Schema.builder()
+            com.homeaway.streamplatform.streamregistry.model.Schema latestKeySchema = com.homeaway.streamplatform.streamregistry.model.Schema.builder()
                 .id(avroStream.getLatestKeySchema().getId())
                 .schemaString(avroStream.getLatestKeySchema().getSchemaString())
                 .version(1)
                 .created(avroStream.getLatestKeySchema().getCreated())
                 .updated(avroStream.getLatestKeySchema().getUpdated())
                 .build();
-        com.homeaway.streamplatform.streamregistry.model.Schema latestValueSchema = com.homeaway.streamplatform.streamregistry.model.Schema.builder()
+            com.homeaway.streamplatform.streamregistry.model.Schema latestValueSchema = com.homeaway.streamplatform.streamregistry.model.Schema.builder()
                 .id(avroStream.getLatestValueSchema().getId())
                 .schemaString(avroStream.getLatestValueSchema().getSchemaString())
                 .version(1)
                 .created(avroStream.getLatestValueSchema().getCreated())
                 .updated(avroStream.getLatestValueSchema().getUpdated())
                 .build();
-        return Stream.builder()
+            return Stream.builder()
                 .name(avroStream.getName())
                 .owner(avroStream.getOwner())
                 .tags(tags)
@@ -192,5 +193,6 @@ public class StreamServiceImplTest {
                 .latestKeySchema(latestKeySchema)
                 .latestValueSchema(latestValueSchema)
                 .build();
+        }
     }
 }

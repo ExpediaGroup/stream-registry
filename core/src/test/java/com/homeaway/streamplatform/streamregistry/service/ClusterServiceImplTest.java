@@ -38,8 +38,6 @@ import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerCon
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidClusterException;
-import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.JsonCluster;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
 import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
@@ -52,45 +50,35 @@ public class ClusterServiceImplTest {
     /**
      * The Infra manager.
      */
-    static InfraManager infraManager;
+    private static InfraManager INFRA_MANAGER;
     /**
      * The Cluster dao.
      */
-    static ClusterService clusterService;
+    private static ClusterService clusterService;
 
     /**
      * The constant CLUSTER_NAME.
      */
-    public static final String CLUSTER_NAME = "cluster.name";
+    private static final String CLUSTER_NAME = "cluster.name";
 
     /**
      * The Cluster properties.
      */
-    static Map<String, String> clusterProperties;
-
-
-    private static ClusterValue expectedClusterValue;
+    private static Map<String, String> clusterProperties;
 
     /**
      * Setup method.
      */
     @BeforeClass
     public static void setup() {
-        infraManager = mock(InfraManager.class);
-        clusterService = new ClusterServiceImpl(infraManager);
+        INFRA_MANAGER = mock(InfraManager.class);
+        clusterService = new ClusterServiceImpl(INFRA_MANAGER);
 
         clusterProperties = new HashMap<>();
         clusterProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         clusterProperties.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, "localhost:2181");
         clusterProperties.put(CLUSTER_NAME, "cluster_name");
         clusterProperties.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "localhost:8081");
-
-        expectedClusterValue = ClusterValue.builder()
-            .bootstrapServers("localhost:9092")
-            .schemaRegistryURL("localhost:8081")
-            .zookeeperQuorum("localhost:2181")
-            .clusterName("cluster_name")
-            .build();
     }
 
     /**
@@ -99,7 +87,7 @@ public class ClusterServiceImplTest {
     @Test
     public void testGetCluster() throws ClusterNotFoundException {
         com.homeaway.digitalplatform.streamregistry.ClusterValue expectedClusterValue = new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties);
-        when(infraManager.getClusterByKey(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class))).thenReturn(Optional.of(expectedClusterValue));
+        when(INFRA_MANAGER.getClusterByKey(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class))).thenReturn(Optional.of(expectedClusterValue));
 
         com.homeaway.digitalplatform.streamregistry.ClusterValue actualClusterValue = clusterService.getCluster("vpc", "env", "hint", "");
         Assert.assertEquals(expectedClusterValue, actualClusterValue);
@@ -117,22 +105,11 @@ public class ClusterServiceImplTest {
      */
     @Test
     public void testGetAllClusters() {
-        Map<ClusterKey, ClusterValue> expectedClusterMap = new HashMap<>();
-
-        ClusterKey jsonClusterKey = ClusterKey.builder()
-            .vpc("vpc")
-            .env("env")
-            .hint("hint")
-            .type("")
-            .build();
-
-        expectedClusterMap.put(jsonClusterKey, expectedClusterValue);
-
         Map<com.homeaway.digitalplatform.streamregistry.ClusterKey, com.homeaway.digitalplatform.streamregistry.ClusterValue> avroClusterMap = new HashMap<>();
 
         avroClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties));
 
-        when(infraManager.getAllClusters()).thenReturn(avroClusterMap);
+        when(INFRA_MANAGER.getAllClusters()).thenReturn(avroClusterMap);
         List<JsonCluster> allClusters = clusterService.getAllClusters();
 
         Assert.assertEquals(1, allClusters.size());
@@ -141,7 +118,7 @@ public class ClusterServiceImplTest {
     /**
      * Test upsert cluster.
      *
-     * @throws InvalidClusterException the invalid cluster exception
+     * @throws InvalidClusterException - if the cluster fails to upsert
      */
     @Test
     public void testUpsertCluster() throws InvalidClusterException{
@@ -157,7 +134,7 @@ public class ClusterServiceImplTest {
 
         ArgumentCaptor<com.homeaway.digitalplatform.streamregistry.ClusterValue> clusterValueArgumentCaptor = ArgumentCaptor.forClass(com.homeaway.digitalplatform.streamregistry.ClusterValue.class);
 
-        verify(infraManager).upsertCluster(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class), clusterValueArgumentCaptor.capture());
+        verify(INFRA_MANAGER).upsertCluster(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class), clusterValueArgumentCaptor.capture());
 
         assertEquals("cluster_name", clusterValueArgumentCaptor.getValue().getClusterProperties().get(CLUSTER_NAME));
         assertEquals("localhost:9092", clusterValueArgumentCaptor.getValue().getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));

@@ -32,11 +32,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 
 import com.homeaway.streamplatform.streamregistry.model.Hint;
 import com.homeaway.streamplatform.streamregistry.service.RegionService;
 
-@Api(value = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
+@Api(tags = {"Stream-registry API"})
+@SwaggerDefinition(tags = {
+    @Tag(name = "Stream-registry API", description = "Stream Registry API, a centralized governance tool for managing streams.")
+})
 @Path("/v0/regions")
 @Produces(MediaType.APPLICATION_JSON)
 @Slf4j
