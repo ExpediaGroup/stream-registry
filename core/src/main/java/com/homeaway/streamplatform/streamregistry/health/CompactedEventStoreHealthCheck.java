@@ -17,7 +17,8 @@ package com.homeaway.streamplatform.streamregistry.health;
 
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import lombok.extern.slf4j.Slf4j;
