@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.5.0] - SNAPSHOT
 ### Changed
+- Migrated version of jib to 1.0.2 (#151)
 
 ## [0.4.10] - 20190403
 ### Changed
