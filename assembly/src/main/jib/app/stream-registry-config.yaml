@@ -58,6 +58,9 @@ kafkaStreamsConfig:
 
 # eventStoreTopic name is the name of the underlying Kafka Topic that would store the Streams created by the application.
 # IMPORTANT: make sure the eventStoreTopic is compacted or retention.ms=-1 so that the created Streams are not lost.
+# IMPORTANT: Recommended overrides in Prod:
+#   STREAM_REGISTRY_EVENTSTORE_REPLICATIONFACTOR=3
+#   STREAM_REGISTRY_EVENTSTORE_MININSYNCREPLICA=2
 topicsConfig:
   eventStoreTopic:
     name: _streamregistry_streams${STREAM_REGISTRY_EVENTSTORE_TOPIC_SUFFIX:-_v0.1}

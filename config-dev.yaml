@@ -49,6 +49,8 @@ kafkaStreamsConfig:
     replication.factor: 1
     num.stream.threads: 2
 
+# WARNING! This config is NOT RECOMMENDED for production. Dev-use only
+# recommended overrides in production = replicationFactor: 3
 topicsConfig:
   eventStoreTopic:
     name: _streamregistry_streams_v0.1
