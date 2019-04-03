@@ -126,7 +126,7 @@
         <nexusStaging.pluginVersion>1.6.7</nexusStaging.pluginVersion>
 
         <!-- Jib -->
-        <jib-maven-plugin.version>0.10.1</jib-maven-plugin.version>
+        <jib-maven-plugin.version>1.0.2</jib-maven-plugin.version>
         <jib.container.appRoot>/app</jib.container.appRoot>
     </properties>
 
