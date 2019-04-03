@@ -16,9 +16,6 @@
 package com.homeaway.streamplatform.streamregistry;
 
 import static com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
-import static com.homeaway.streamplatform.streamregistry.utils.KafkaClientUtils.createTopic;
-import static com.homeaway.streamplatform.streamregistry.utils.KafkaClientUtils.isKafkaTopicPresent;
-import static com.homeaway.streamplatform.streamregistry.utils.KafkaClientUtils.validateTopicConfigs;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
@@ -32,6 +29,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
+import com.homeaway.streamplatform.streamregistry.utils.KafkaTopicClient;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -172,18 +170,17 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
     }
 
     private void createEventStoreKafkaTopicIfNotExists(StreamRegistryConfiguration configuration) {
-        String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
-
         EventStoreTopic eventStoreTopic = configuration.getTopicsConfig().getEventStoreTopic();
         String topicName = eventStoreTopic.getName();
+        String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
+        KafkaTopicClient kafkaTopicClient = new KafkaTopicClient(kafkaBootstrapURI);
         try {
-            if (isKafkaTopicPresent(kafkaBootstrapURI, topicName)) {
+            if (kafkaTopicClient.isKafkaTopicPresent(topicName)) {
                 log.debug("Topic {} present. Topic Details = {}", topicName);
-                validateTopicConfigs(kafkaBootstrapURI, eventStoreTopic.getName(), eventStoreTopic.getProperties());
+                kafkaTopicClient.validateTopicConfigs(eventStoreTopic.getName(), eventStoreTopic.getProperties());
                 log.debug("Stream Registry underlying EventStore kafka topic config {} validation passed", eventStoreTopic.getProperties());
             } else {
-                createTopic(kafkaBootstrapURI,
-                        eventStoreTopic.getName(),
+                kafkaTopicClient.createTopic(eventStoreTopic.getName(),
                         eventStoreTopic.getPartitions(),
                         eventStoreTopic.getReplicationFactor(),
                         eventStoreTopic.getProperties());

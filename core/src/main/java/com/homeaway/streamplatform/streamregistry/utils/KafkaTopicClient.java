@@ -35,13 +35,19 @@ import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 
 @Slf4j
-public class KafkaClientUtils {
+public class KafkaTopicClient {
 
-    public static boolean isKafkaTopicPresent(String kafkaBootstrapServers, String topicName) {
+    private String kafkaBootstrapServers;
+    private AdminClient adminClient;
+
+    public KafkaTopicClient(String kafkaBootstrapServers) {
         Properties properties = new Properties();
         properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
-        AdminClient adminClient = KafkaAdminClient.create(properties);
+        this.adminClient = KafkaAdminClient.create(properties);
+        this.kafkaBootstrapServers = kafkaBootstrapServers;
+    }
 
+    public boolean isKafkaTopicPresent(String topicName) {
         DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Collections.singleton(topicName));
         try {
             describeTopicsResult.values().get(topicName).get();
@@ -59,27 +65,17 @@ public class KafkaClientUtils {
         }
     }
 
-    public static void createTopic(String kafkaBootstrapServers,
-                                   String topicName,
+    public void createTopic(String topicName,
                                    int partitionCount,
                                    short replicationFactor,
                                    Map<String, String> configs) throws ExecutionException, InterruptedException {
-        Properties properties = new Properties();
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
-        AdminClient adminClient = KafkaAdminClient.create(properties);
-
         NewTopic streamRegistryTopic = new NewTopic(topicName, partitionCount, replicationFactor);
         streamRegistryTopic.configs(configs);
         adminClient.createTopics(Collections.singleton(streamRegistryTopic)).values().get(topicName).get();
     }
 
-    public static void validateTopicConfigs(String kafkaBootstrapServers,
-                                     String topicName,
+    public void validateTopicConfigs(String topicName,
                                      Map<String, String> expectedProperties) throws ExecutionException, InterruptedException {
-        Properties properties = new Properties();
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
-        AdminClient adminClient = KafkaAdminClient.create(properties);
-
         ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
         // check whether the compaction property is available
         Config config = adminClient.describeConfigs(Collections.singleton(configResource)).values().get(configResource).get();
