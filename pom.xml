@@ -7,7 +7,6 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <modules>
         <module>schema-library-events</module>
-        <module>infra-provider</module>
         <module>infra-provider-kafka</module>
         <module>core</module>
         <module>assembly</module>

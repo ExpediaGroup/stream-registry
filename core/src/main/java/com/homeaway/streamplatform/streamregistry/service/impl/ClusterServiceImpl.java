@@ -107,8 +107,8 @@ public class ClusterServiceImpl implements ClusterService {
 
     /**
      * Upsert a cluster object
-     * @param jsonCluster
-     * @throws InvalidClusterException
+     * @param jsonCluster - the input JSON cluster
+     * @throws InvalidClusterException - if cluster parameters are not defined
      */
     @Override
     public void upsertCluster(JsonCluster jsonCluster) throws InvalidClusterException {

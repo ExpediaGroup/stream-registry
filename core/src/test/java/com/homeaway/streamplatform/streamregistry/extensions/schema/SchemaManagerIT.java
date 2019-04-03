@@ -81,7 +81,6 @@ public class SchemaManagerIT extends BaseResourceIT {
     public void test_validate_stream_compatibility_new_schema_invalid() {
         String streamName = "junit-check-stream-compatibility-new-schema-invalid";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
-
         // create stream/register schema
         streamResource.upsertStream(streamName, stream);
 

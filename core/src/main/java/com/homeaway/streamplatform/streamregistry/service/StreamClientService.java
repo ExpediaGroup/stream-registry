@@ -28,9 +28,9 @@ public interface StreamClientService<T extends StreamClient> {
 
     /**
      * Insert or Update a Producer/Consumer of a Stream
-     * @param streamName
-     * @param actorName
-     * @param region
+     * @param streamName - the name of the Stream to insert or update the Producer/Consumer for
+     * @param actorName - the name of the Producer/Consumer for the Stream
+     * @param region - the region housing the Stream
      * @return a Producer or Consumer Object
      * @throws StreamNotFoundException - When a stream is not available for the given streamName
      * @throws RegionNotFoundException - When the input region is not supported
@@ -40,17 +40,17 @@ public interface StreamClientService<T extends StreamClient> {
 
     /**
      * Pull the producer/consumer for the given name.
-     * @param streamName
-     * @param actorName
-     * @return
+     * @param streamName - the name of the Stream for getting the available Producers/Consumers
+     * @param actorName - the name of the Producer/Consumer
+     * @return a Producer or Consumer Object
      * @throws StreamNotFoundException - Stream not available for the given name
      */
     Optional<T> get(String streamName, String actorName) throws StreamNotFoundException;
 
     /**
      * Delete the producer/consumer for the give name
-     * @param streamName
-     * @param actorName
+     * @param streamName - the name of the Stream for deleting the Producers/Consumers against
+     * @param actorName - the name of the Producer/Consumer to be deleted
      * @throws StreamNotFoundException - When the given stream is not available
      * @throws ActorNotFoundException - When the given Producer/Consumer is not available
      */
@@ -58,8 +58,8 @@ public interface StreamClientService<T extends StreamClient> {
 
     /**
      * Pull all the Producers or consumers for a given stream.
-     * @param streamName
-     * @return
+     * @param streamName - the name of the Stream for retrieving the Producers/Consumers against
+     * @return All of the Producers/Consumers for the Stream as a List
      * @throws StreamNotFoundException - when the given stream is not available.
      */
     List<T> getAll(String streamName) throws StreamNotFoundException;

@@ -27,14 +27,12 @@ import com.homeaway.digitalplatform.streamregistry.AvroStreamKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.digitalplatform.streamregistry.OperationType;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
-import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.homeaway.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.homeaway.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.homeaway.streamplatform.streamregistry.exceptions.InvalidStreamException;
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamCreationException;
 import com.homeaway.streamplatform.streamregistry.exceptions.StreamNotFoundException;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
@@ -54,7 +52,6 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
 
     private final StreamValidator streamValidator;
     private final SchemaManager schemaManager;
-    private final KafkaManager kafkaManager;
     private final StreamDao streamDao;
 
     public StreamServiceImpl(StreamDao streamDao,
@@ -63,13 +60,11 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
                              ClusterService clusterService,
                              InfraManager infraManager,
                              StreamValidator validator,
-                             SchemaManager schemaManager,
-                             KafkaManager kafkaManager) {
+                             SchemaManager schemaManager) {
         super(env, regionService, clusterService, infraManager);
         this.streamDao = streamDao;
         this.streamValidator = validator;
         this.schemaManager = schemaManager;
-        this.kafkaManager = kafkaManager;
     }
 
     @Override
@@ -187,7 +182,7 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
         topicConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         topicConfig.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zkConnect);
 
-        kafkaManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isNewStream);
+        infraManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isNewStream);
         log.info("Topic {} created/updated at {}", stream.getName(), bootstrapServer);
     }
 
@@ -233,15 +228,14 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
     }
 
     @Override
-    public void validateSchemaCompatibility(Stream stream) throws SchemaValidationException {
+    public boolean validateSchemaCompatibility(Stream stream) {
         String keySubject = stream.getName() + "-key";
         String valueSubject = stream.getName() + "-value";
 
         String keySchema = stream.getLatestKeySchema().getSchemaString();
         String valueSchema = stream.getLatestValueSchema().getSchemaString();
 
-        schemaManager.checkCompatibility(keySubject, keySchema);
-        schemaManager.checkCompatibility(valueSubject, valueSchema);
+        return schemaManager.checkCompatibility(keySubject, keySchema) && schemaManager.checkCompatibility(valueSubject, valueSchema);
     }
 
 }

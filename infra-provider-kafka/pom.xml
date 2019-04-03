@@ -18,7 +18,7 @@
 
         <dependency>
             <groupId>com.homeaway.streamplatform</groupId>
-            <artifactId>infra-provider</artifactId>
+            <artifactId>stream-registry-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -59,6 +59,33 @@
             <groupId>com.homeaway.streamplatform</groupId>
             <artifactId>stream-registry-core</artifactId>
             <version>0.4.10-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

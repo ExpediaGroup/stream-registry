@@ -46,7 +46,7 @@ public class ManagedKafkaProducer implements Managed {
     @Override
     public void start() {
         producer = new KafkaProducer<>(properties);
-        log.info("Managed Kafka Producer Started with properties: " + String.valueOf(properties));
+        log.info("Managed Kafka Producer Started with properties: " + properties);
     }
 
     @Override

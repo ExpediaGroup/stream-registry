@@ -33,7 +33,6 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 import org.apache.avro.Schema;
 
 import com.homeaway.streamplatform.streamregistry.exceptions.SchemaManagerException;
-import com.homeaway.streamplatform.streamregistry.exceptions.SchemaValidationException;
 
 @Slf4j
 public class ConfluentSchemaManager implements SchemaManager {
@@ -42,7 +41,7 @@ public class ConfluentSchemaManager implements SchemaManager {
 
     // TODO Workaround until https://github.com/confluentinc/schema-registry/pull/827 is FIXED.
     //      Keep this around until ^^^^ that bug is fixed.
-    private Map<String, Integer> cachedSchemaIdMap = new HashMap<>();
+    private final Map<String, Integer> cachedSchemaIdMap = new HashMap<>();
 
     @Override
     public SchemaReference registerSchema(String subject, String schema) throws SchemaManagerException {
@@ -79,11 +78,12 @@ public class ConfluentSchemaManager implements SchemaManager {
     }
 
     @Override
-    public boolean checkCompatibility(String subject, String schema) throws SchemaValidationException {
+    public boolean checkCompatibility(String subject, String schema) {
         try {
             org.apache.avro.Schema avroSchema = new org.apache.avro.Schema.Parser().parse(schema);
             if (!schemaRegistryClient.testCompatibility(subject, avroSchema)) {
-                throw new SchemaValidationException(String.format("Schema Compatibility check Failed for subject=%s schema=%s", subject, schema));
+                log.error(String.format("Schema Compatibility check Failed for subject=%s schema=%s", subject, schema));
+                return false;
             }
             return true;
         } catch (RestClientException restClientException) {
@@ -92,10 +92,12 @@ public class ConfluentSchemaManager implements SchemaManager {
                 return true;
             }
             String message = String.format("Could not check compatibility for subject '%s'", subject);
-            throw new SchemaValidationException(message, restClientException);
-        } catch (IOException e) {
+            log.error(message);
+            return false;
+        } catch (Exception e) {
             String message = String.format("Could not check compatibility for subject '%s'", subject);
-            throw new SchemaValidationException(message, e);
+            log.error(message, e);
+            return false;
         }
     }
 

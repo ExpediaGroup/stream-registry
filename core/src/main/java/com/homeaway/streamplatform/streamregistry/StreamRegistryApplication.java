@@ -61,9 +61,7 @@ import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerCon
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamValidatorConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
-import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
-import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
@@ -99,7 +97,6 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     private InfraManager infraManager;
 
-    private StreamDao streamDao;
     private RegionService regionService;
     private StreamService streamService;
     private StreamClientService<Producer> producerDao;
@@ -278,8 +275,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
         SchemaManagerConfig schemaManagerConfig = getSchemaManagerConfig(configuration);
 
-        ManagedKStreams managedKStreams = new ManagedKStreams(kstreamsProperties, topicsConfig, schemaManagerConfig);
-        return managedKStreams;
+        return new ManagedKStreams(kstreamsProperties, topicsConfig, schemaManagerConfig);
     }
 
     private static SchemaManagerConfig getSchemaManagerConfig(StreamRegistryConfiguration configuration) {
@@ -311,8 +307,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
             infraConfig.put(SCHEMA_REGISTRY_URL_CONFIG, schemaManagerConfig.getProperties().get(SCHEMA_REGISTRY_URL_CONFIG));
 
             infraManager.configure(infraConfig);
-            ManagedInfraManager managedInfraManager = new ManagedInfraManager(infraManager);
-            return managedInfraManager;
+            return new ManagedInfraManager(infraManager);
         } catch (Exception e) {
             log.error("Error loading/configuring Infra Manager Class", e);
             throw new IllegalStateException("Could not load/configure Infra Manager class", e);
@@ -327,8 +322,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         configuration.getKafkaProducerConfig().getKafkaProducerProperties().forEach(producerProperties::put);
 
-        ManagedKafkaProducer managedKafkaProducer = new ManagedKafkaProducer(producerProperties, topicsConfig);
-        return managedKafkaProducer;
+        return new ManagedKafkaProducer(producerProperties, topicsConfig);
     }
 
     private StreamValidator createStreamValidator(final StreamRegistryConfiguration configuration, final Environment environment) {
@@ -340,8 +334,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         log.info("Connection Timeout:{}", configuration.getHttpClient().getConnectionTimeout());
         log.info("Connection Request Timeout:{}", configuration.getHttpClient().getConnectionRequestTimeout());
 
-        StreamValidator streamValidator = loadValidator(configuration, httpClient, regionService);
-        return streamValidator;
+        return loadValidator(configuration, httpClient, regionService);
     }
 
     private void initServiceAndDao(final StreamRegistryConfiguration configuration, final Environment environment, ManagedKStreams managedKStreams,
@@ -356,12 +349,11 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         regionService = new RegionServiceImpl(env, infraManager);
         clusterService = new ClusterServiceImpl(infraManager);
 
-        KafkaManager kafkaManager = new KafkaManagerImpl();
         SchemaManager schemaManager = loadSchemaManager(configuration);
         StreamValidator streamValidator = createStreamValidator(configuration, environment);
 
-        streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams);
-        streamService = new StreamServiceImpl(streamDao, env, regionService, clusterService, infraManager, streamValidator, schemaManager, kafkaManager);
+        StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams);
+        streamService = new StreamServiceImpl(streamDao, env, regionService, clusterService, infraManager, streamValidator, schemaManager);
         producerDao = new ProducerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
         consumerDao = new ConsumerServiceImpl(streamDao, env, regionService, clusterService, infraManager);
     }
