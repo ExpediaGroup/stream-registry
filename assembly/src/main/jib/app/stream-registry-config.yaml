@@ -22,7 +22,7 @@ healthCheckStreamConfig:
   name: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_NAME:-StreamRegistryHealthCheck}
   clusterRegion: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_REGION:-localRegion}
   partitions: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_PARTITIONS:-1}
-  replicationFactor: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_REPLICAFACTOR:-1}
+  replicationFactor: ${STREAM_REGISTRY_HEALTHCHECK_STREAM_REPLICATION_FACTOR:-1}
 
 # Validator Class that validates the stream from @PUT Stream
 streamValidatorConfig:
@@ -59,13 +59,13 @@ kafkaStreamsConfig:
 # eventStoreTopic name is the name of the underlying Kafka Topic that would store the Streams created by the application.
 # IMPORTANT: make sure the eventStoreTopic is compacted or retention.ms=-1 so that the created Streams are not lost.
 # IMPORTANT: Recommended overrides in Prod:
-#   STREAM_REGISTRY_EVENTSTORE_REPLICATIONFACTOR=3
+#   STREAM_REGISTRY_EVENTSTORE_REPLICATION_FACTOR=3
 #   STREAM_REGISTRY_EVENTSTORE_MININSYNCREPLICA=2
 topicsConfig:
   eventStoreTopic:
     name: _streamregistry_streams${STREAM_REGISTRY_EVENTSTORE_TOPIC_SUFFIX:-_v0.1}
     partitions: ${STREAM_REGISTRY_EVENTSTORE_PARTITIONCOUNT:-1}
-    replicationFactor: ${STREAM_REGISTRY_EVENTSTORE_REPLICATIONFACTOR:-1}
+    replicationFactor: ${STREAM_REGISTRY_EVENTSTORE_REPLICATION_FACTOR:-1}
     properties:
       min.insync.replicas: ${STREAM_REGISTRY_EVENTSTORE_MININSYNCREPLICA:-1}
       cleanup.policy: ${STREAM_REGISTRY_EVENTSTORE_CLEANUPPOLICY:-compact}

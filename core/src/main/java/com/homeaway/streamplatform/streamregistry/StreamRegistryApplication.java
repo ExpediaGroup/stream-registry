@@ -20,13 +20,23 @@ import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
+import com.homeaway.streamplatform.streamregistry.configuration.EventStoreTopic;
+import com.homeaway.streamplatform.streamregistry.configuration.InfraManagerConfig;
+import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
+import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
+import com.homeaway.streamplatform.streamregistry.configuration.StreamValidatorConfig;
+import com.homeaway.streamplatform.streamregistry.configuration.TopicsConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -46,7 +56,13 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
-import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
@@ -55,7 +71,6 @@ import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
 import org.rocksdb.Options;
 
-import com.homeaway.streamplatform.streamregistry.configuration.*;
 import com.homeaway.streamplatform.streamregistry.db.dao.KafkaManager;
 import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.KafkaManagerImpl;
@@ -177,7 +192,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
             } else {
                 createTopicWithCompactionEnabled(adminClient, configuration.getTopicsConfig().getEventStoreTopic());
             }
-        } catch (Exception e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(String.format("Error while communication with the underlying kafka data-store." +
                     " Topic={} BootstrapURI={}", topicName, kafkaBootstrapURI), e);
         }
