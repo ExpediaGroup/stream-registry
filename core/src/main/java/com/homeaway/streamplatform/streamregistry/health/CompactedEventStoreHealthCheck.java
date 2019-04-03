@@ -20,8 +20,6 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.Gauge;
@@ -50,13 +48,12 @@ import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryCo
 public class CompactedEventStoreHealthCheck extends HealthCheck {
     private static final String METRIC_IS_KAFKA_TOPIC_COMPACTED = "app.is_kafka_topic_compacted";
 
-    @Getter@Setter
     private boolean isKafkaTopicCompacted;
     private final AdminClient kafkaAdminClient;
     private final String topicName;
 
     public CompactedEventStoreHealthCheck(StreamRegistryConfiguration configuration, MetricRegistry metricRegistry) {
-        metricRegistry.register(METRIC_IS_KAFKA_TOPIC_COMPACTED, (Gauge<Integer>)() -> isKafkaTopicCompacted() ? 1 : 2);
+        metricRegistry.register(METRIC_IS_KAFKA_TOPIC_COMPACTED, (Gauge<Integer>)() -> isKafkaTopicCompacted ? 1 : 2);
 
         String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
         Properties properties = new Properties();
@@ -80,7 +77,7 @@ public class CompactedEventStoreHealthCheck extends HealthCheck {
         if (isKafkaTopicCompacted)
             return Result.builder()
                     .healthy()
-                    .withMessage("The Kafka Topic used as a Data store is Compacted.")
+                    .withMessage(String.format("The Kafka Topic used as a Data store is Compacted. %s", configs))
                     .build();
         else
             return Result.builder()

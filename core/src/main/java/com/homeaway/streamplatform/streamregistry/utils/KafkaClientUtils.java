@@ -31,21 +31,20 @@ import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeTopicsResult;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 
 @Slf4j
 public class KafkaClientUtils {
 
-    public static boolean isKafkaTopicPresent(String kafkaBootstrapURI, String topicName) {
+    public static boolean isKafkaTopicPresent(String kafkaBootstrapServers, String topicName) {
         Properties properties = new Properties();
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
         AdminClient adminClient = KafkaAdminClient.create(properties);
 
         DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Collections.singleton(topicName));
         try {
-            TopicDescription topicDescription = describeTopicsResult.values().get(topicName).get();
+            describeTopicsResult.values().get(topicName).get();
             return true;
         } catch (InterruptedException | ExecutionException e) {
             // If the exception is an instance of UnknownTopicOrPartitionException, then the topic is not available.
@@ -56,17 +55,17 @@ public class KafkaClientUtils {
             /* If exception is not an instance of UnknownTopicOrPartitionException, then the Kafka Cluster is not reachable,
              and it is better to halt the application by throwing back the exception. */
             throw new RuntimeException(String.format("Error while describing the Topic=%s. " +
-                    "Please make sure the cluster=%s is accessible" , topicName, kafkaBootstrapURI), e);
+                    "Please make sure the cluster=%s is accessible" , topicName, kafkaBootstrapServers), e);
         }
     }
 
-    public static void createTopic(String kafkaBootstrapURI,
+    public static void createTopic(String kafkaBootstrapServers,
                                    String topicName,
                                    int partitionCount,
                                    short replicationFactor,
                                    Map<String, String> configs) throws ExecutionException, InterruptedException {
         Properties properties = new Properties();
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
         AdminClient adminClient = KafkaAdminClient.create(properties);
 
         NewTopic streamRegistryTopic = new NewTopic(topicName, partitionCount, replicationFactor);
@@ -74,11 +73,11 @@ public class KafkaClientUtils {
         adminClient.createTopics(Collections.singleton(streamRegistryTopic)).values().get(topicName).get();
     }
 
-    public static void validateTopicConfigs(String kafkaBootstrapURI,
+    public static void validateTopicConfigs(String kafkaBootstrapServers,
                                      String topicName,
                                      Map<String, String> expectedProperties) throws ExecutionException, InterruptedException {
         Properties properties = new Properties();
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
         AdminClient adminClient = KafkaAdminClient.create(properties);
 
         ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
@@ -92,7 +91,7 @@ public class KafkaClientUtils {
                     configEntry.name().equals(key) && configEntry.value().equals(value));
             if (! isConfigAvailable)
                 throw new RuntimeException(String.format("Topic config mismatch. BootstrapURI=%s TopicName=%s Excepted Config=%s ;" +
-                        " Actual Config=%s", kafkaBootstrapURI, topicName, expectedProperties, actualProperties));
+                        " Actual Config=%s", kafkaBootstrapServers, topicName, expectedProperties, actualProperties));
         });
     }
 }
