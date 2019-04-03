@@ -4,14 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [0.4.10] - SNAPSHOT
+## [0.4.10] - 20190403
 ### Changed
 - Fixed Stream Validation signature and updated implementation (#117)
 - Fixed a NPE in get clusters(#145)
 - Migrated KafkaManager to InfraManager (fixes #109) (#149)
 
 ### Removed
-- Deleted KafkaManager and corresponding test
+- Deleted KafkaManager and corresponding test (#149)
 
 ## [0.4.9] - 20190321
 ### Changed
