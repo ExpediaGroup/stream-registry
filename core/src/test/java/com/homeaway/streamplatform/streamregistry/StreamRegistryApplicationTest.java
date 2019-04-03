@@ -41,7 +41,7 @@ public class StreamRegistryApplicationTest {
         ExecutionException executionException = new ExecutionException(new UnknownTopicOrPartitionException("Unknown topic name"));
         Mockito.when(topicDescriptionFuture.get()).thenThrow(executionException);
 
-        boolean isKafkaTopicPresent = streamRegistryApplication.isEventStoreKafkaTopicPresent(adminClient, topicName);
+        boolean isKafkaTopicPresent = streamRegistryApplication.isKafkaTopicPresent(adminClient, topicName);
         Assert.assertFalse(isKafkaTopicPresent);
     }
 
@@ -51,7 +51,7 @@ public class StreamRegistryApplicationTest {
         ExecutionException executionException = new ExecutionException(new kafka.common.UnknownTopicOrPartitionException("Unknown topic name"));
         Mockito.when(topicDescriptionFuture.get()).thenThrow(executionException);
 
-        streamRegistryApplication.isEventStoreKafkaTopicPresent(adminClient, topicName);
+        streamRegistryApplication.isKafkaTopicPresent(adminClient, topicName);
     }
 
     @Test(expected = RuntimeException.class)
@@ -59,7 +59,7 @@ public class StreamRegistryApplicationTest {
         KafkaFuture<TopicDescription> topicDescriptionFuture = mockDescribeTopics();
         Mockito.when(topicDescriptionFuture.get()).thenThrow(new RuntimeException());
 
-        streamRegistryApplication.isEventStoreKafkaTopicPresent(adminClient, topicName);
+        streamRegistryApplication.isKafkaTopicPresent(adminClient, topicName);
     }
 
     @Test

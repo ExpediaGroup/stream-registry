@@ -1,0 +1,82 @@
+package com.homeaway.streamplatform.streamregistry.utils;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+
+import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
+
+@Slf4j
+public class KafkaClientUtils {
+
+    public static boolean isKafkaTopicPresent(String kafkaBootstrapURI, String topicName) {
+        Properties properties = new Properties();
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
+        AdminClient adminClient = KafkaAdminClient.create(properties);
+
+        DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Collections.singleton(topicName));
+        try {
+            TopicDescription topicDescription = describeTopicsResult.values().get(topicName).get();
+            return true;
+        } catch (InterruptedException | ExecutionException e) {
+            // If the exception is an instance of UnknownTopicOrPartitionException, then the topic is not available.
+            if (e.getCause() instanceof UnknownTopicOrPartitionException) {
+                log.error("Topic {} not present.", topicName);
+                return false;
+            }
+            /* If exception is not an instance of UnknownTopicOrPartitionException, then the Kafka Cluster is not reachable,
+             and it is better to halt the application by throwing back the exception. */
+            throw new RuntimeException(String.format("Error while describing the Topic=%s. " +
+                    "Please make sure the cluster=%s is accessible" , topicName, kafkaBootstrapURI), e);
+        }
+    }
+
+    public static void createTopic(String kafkaBootstrapURI,
+                                   String topicName,
+                                   int partitionCount,
+                                   short replicationFactor,
+                                   Map<String, String> configs) throws ExecutionException, InterruptedException {
+        Properties properties = new Properties();
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
+        AdminClient adminClient = KafkaAdminClient.create(properties);
+
+        NewTopic streamRegistryTopic = new NewTopic(topicName, partitionCount, replicationFactor);
+        streamRegistryTopic.configs(configs);
+        adminClient.createTopics(Collections.singleton(streamRegistryTopic)).values().get(topicName).get();
+    }
+
+    public static void validateTopicConfigs(String kafkaBootstrapURI,
+                                     String topicName,
+                                     Map<String, String> expectedProperties) throws ExecutionException, InterruptedException {
+        Properties properties = new Properties();
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapURI);
+        AdminClient adminClient = KafkaAdminClient.create(properties);
+
+        ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
+        // check whether the compaction property is available
+        Config config = adminClient.describeConfigs(Collections.singleton(configResource)).values().get(configResource).get();
+
+        Collection<ConfigEntry> actualProperties = config.entries();
+
+        expectedProperties.forEach((key, value) -> {
+            boolean isConfigAvailable = actualProperties.stream().anyMatch(configEntry ->
+                    configEntry.name().equals(key) && configEntry.value().equals(value));
+            if (! isConfigAvailable)
+                throw new RuntimeException(String.format("Topic config mismatch. BootstrapURI=%s TopicName=%s Excepted Config=%s ;" +
+                        " Actual Config=%s", kafkaBootstrapURI, topicName, expectedProperties, actualProperties));
+        });
+    }
+}
