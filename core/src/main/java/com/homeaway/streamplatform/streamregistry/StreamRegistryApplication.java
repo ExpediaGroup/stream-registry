@@ -19,14 +19,10 @@ import static com.homeaway.streamplatform.streamregistry.extensions.schema.Schem
 import static com.homeaway.streamplatform.streamregistry.utils.KafkaClientUtils.createTopic;
 import static com.homeaway.streamplatform.streamregistry.utils.KafkaClientUtils.isKafkaTopicPresent;
 import static com.homeaway.streamplatform.streamregistry.utils.KafkaClientUtils.validateTopicConfigs;
-import static com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.createTopic;
-import static com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.isKafkaTopicPresent;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -55,13 +51,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
