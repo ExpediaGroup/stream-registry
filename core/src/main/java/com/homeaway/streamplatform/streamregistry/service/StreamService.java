@@ -59,7 +59,8 @@ public interface StreamService {
     /**
      * Validate the input schema against the SchemaRegistry.
      * @param stream - the Stream to be validated
+     * @return whether or not the schema could be validated
      */
-    void validateSchemaCompatibility(Stream stream);
+    boolean validateSchemaCompatibility(Stream stream);
 
 }

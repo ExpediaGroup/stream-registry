@@ -18,7 +18,7 @@
 
         <dependency>
             <groupId>com.homeaway.streamplatform</groupId>
-            <artifactId>infra-provider</artifactId>
+            <artifactId>stream-registry-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

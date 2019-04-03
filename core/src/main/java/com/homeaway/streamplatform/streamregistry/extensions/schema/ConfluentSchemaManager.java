@@ -94,9 +94,9 @@ public class ConfluentSchemaManager implements SchemaManager {
             String message = String.format("Could not check compatibility for subject '%s'", subject);
             log.error(message);
             return false;
-        } catch (IOException e) {
+        } catch (Exception e) {
             String message = String.format("Could not check compatibility for subject '%s'", subject);
-            log.error(message);
+            log.error(message, e);
             return false;
         }
     }

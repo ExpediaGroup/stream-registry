@@ -50,7 +50,7 @@ public class ClusterServiceImplTest {
     /**
      * The Infra manager.
      */
-    private static InfraManager infraManager;
+    private static InfraManager INFRA_MANAGER;
     /**
      * The Cluster dao.
      */
@@ -71,8 +71,8 @@ public class ClusterServiceImplTest {
      */
     @BeforeClass
     public static void setup() {
-        infraManager = mock(InfraManager.class);
-        clusterService = new ClusterServiceImpl(infraManager);
+        INFRA_MANAGER = mock(InfraManager.class);
+        clusterService = new ClusterServiceImpl(INFRA_MANAGER);
 
         clusterProperties = new HashMap<>();
         clusterProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -87,7 +87,7 @@ public class ClusterServiceImplTest {
     @Test
     public void testGetCluster() throws ClusterNotFoundException {
         com.homeaway.digitalplatform.streamregistry.ClusterValue expectedClusterValue = new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties);
-        when(infraManager.getClusterByKey(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class))).thenReturn(Optional.of(expectedClusterValue));
+        when(INFRA_MANAGER.getClusterByKey(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class))).thenReturn(Optional.of(expectedClusterValue));
 
         com.homeaway.digitalplatform.streamregistry.ClusterValue actualClusterValue = clusterService.getCluster("vpc", "env", "hint", "");
         Assert.assertEquals(expectedClusterValue, actualClusterValue);
@@ -109,7 +109,7 @@ public class ClusterServiceImplTest {
 
         avroClusterMap.put(new com.homeaway.digitalplatform.streamregistry.ClusterKey("vpc", "env", "hint", ""), new com.homeaway.digitalplatform.streamregistry.ClusterValue(clusterProperties));
 
-        when(infraManager.getAllClusters()).thenReturn(avroClusterMap);
+        when(INFRA_MANAGER.getAllClusters()).thenReturn(avroClusterMap);
         List<JsonCluster> allClusters = clusterService.getAllClusters();
 
         Assert.assertEquals(1, allClusters.size());
@@ -134,7 +134,7 @@ public class ClusterServiceImplTest {
 
         ArgumentCaptor<com.homeaway.digitalplatform.streamregistry.ClusterValue> clusterValueArgumentCaptor = ArgumentCaptor.forClass(com.homeaway.digitalplatform.streamregistry.ClusterValue.class);
 
-        verify(infraManager).upsertCluster(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class), clusterValueArgumentCaptor.capture());
+        verify(INFRA_MANAGER).upsertCluster(any(com.homeaway.digitalplatform.streamregistry.ClusterKey.class), clusterValueArgumentCaptor.capture());
 
         assertEquals("cluster_name", clusterValueArgumentCaptor.getValue().getClusterProperties().get(CLUSTER_NAME));
         assertEquals("localhost:9092", clusterValueArgumentCaptor.getValue().getClusterProperties().get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));

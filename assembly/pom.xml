@@ -32,11 +32,6 @@
                 <artifactId>infra-provider-kafka</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.homeaway.streamplatform</groupId>
-                <artifactId>infra-provider</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -52,11 +47,6 @@
         <dependency>
             <groupId>com.homeaway.streamplatform</groupId>
             <artifactId>infra-provider-kafka</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.homeaway.streamplatform</groupId>
-            <artifactId>infra-provider</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

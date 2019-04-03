@@ -128,11 +128,13 @@ public class StreamResource extends BaseResource{
                 throw new InvalidStreamException(String.format("Stream name provided in path param [%s] does not match that of the stream body [%s]",
                         streamName, stream.getName()));
             }
-            streamService.validateSchemaCompatibility(stream);
+            if (!streamService.validateSchemaCompatibility(stream)) {
+                throw new SchemaValidationException("Unable to validate Schema compatibility");
+            }
             return Response.ok()
                     .type("text/plain")
                     .entity("Schema Validation Successful").build();
-        } catch (InvalidStreamException | SchemaParseException e) {
+        } catch (InvalidStreamException | SchemaParseException | SchemaValidationException e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
         } catch (RuntimeException e) {
             return buildErrorMessage(Response.Status.INTERNAL_SERVER_ERROR, e);

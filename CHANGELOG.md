@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Fixed Stream Validation signature and updated implementation (#117)
 - Fixed a NPE in get clusters(#145)
-- Migrated KafkaManager to InfraManager (#109)
+- Migrated KafkaManager to InfraManager (fixes #109) (#149)
 
 ### Removed
 - Deleted KafkaManager and corresponding test

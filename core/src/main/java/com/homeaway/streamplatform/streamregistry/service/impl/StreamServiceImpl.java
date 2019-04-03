@@ -229,15 +229,14 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
     }
 
     @Override
-    public void validateSchemaCompatibility(Stream stream) {
+    public boolean validateSchemaCompatibility(Stream stream) {
         String keySubject = stream.getName() + "-key";
         String valueSubject = stream.getName() + "-value";
 
         String keySchema = stream.getLatestKeySchema().getSchemaString();
         String valueSchema = stream.getLatestValueSchema().getSchemaString();
 
-        schemaManager.checkCompatibility(keySubject, keySchema);
-        schemaManager.checkCompatibility(valueSubject, valueSchema);
+        return schemaManager.checkCompatibility(keySubject, keySchema) && schemaManager.checkCompatibility(valueSubject, valueSchema);
     }
 
 }
