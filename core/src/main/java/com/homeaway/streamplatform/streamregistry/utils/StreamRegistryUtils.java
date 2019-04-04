@@ -98,4 +98,5 @@ public final class StreamRegistryUtils {
                 .map(Actor::getName)
                 .filter(actorName -> actorName.equalsIgnoreCase(name));
     }
+
 }

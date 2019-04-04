@@ -34,7 +34,7 @@ public class ManagedKafkaProducerIT extends BaseResourceIT {
     @Test
     public void testManagedProducer() {
         // read to end of log
-        IntegrationTestUtils.readKeyValues(topicsConfig.getProducerTopic(), consumerConfig, 500, 10000);
+        IntegrationTestUtils.readKeyValues(topicsConfig.getEventStoreTopic().getName(), consumerConfig, 500, 10000);
 
         String streamName = "testStream_5689";
         AbstractMap.SimpleEntry<AvroStreamKey, AvroStream> avroMessage = new AvroModelBuilder().buildSampleMessage(streamName, OperationType.UPSERT);
@@ -43,7 +43,7 @@ public class ManagedKafkaProducerIT extends BaseResourceIT {
         managedKafkaProducer.log(avroMessage.getKey(), avroMessage.getValue());
 
         // Verify whether the message is available in the topic
-        List<KeyValue<AvroStreamKey, AvroStream>> keyValues = IntegrationTestUtils.readKeyValues(topicsConfig.getProducerTopic(), consumerConfig, 400, 1);
+        List<KeyValue<AvroStreamKey, AvroStream>> keyValues = IntegrationTestUtils.readKeyValues(topicsConfig.getEventStoreTopic().getName(), consumerConfig, 400, 1);
         Assert.assertEquals(1, keyValues.size());
         Assert.assertEquals(avroMessage.getKey().toString(), keyValues.get(0).key.toString());
     }

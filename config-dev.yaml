@@ -6,7 +6,7 @@ server:
     type: http
     port: 8080
 
-env: test
+env: local
 
 requestFilterClassNames:
 #  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter1
@@ -17,12 +17,12 @@ responseFilterClassNames:
 
 healthCheckStreamConfig:
   name: StreamRegistryHealthCheck
-  clusterRegion: vpc-localhost
+  clusterRegion: localRegion
   partitions: 1
   replicationFactor: 1
 
 streamValidatorConfig:
-  className: com.homeaway.streamplatform.streamregistry.extensions.validation.EmptyStreamValidator
+  className: com.homeaway.streamplatform.streamregistry.extensions.validation.DefaultStreamValidator
 
 schemaManagerConfig:
   className: com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager
@@ -49,8 +49,16 @@ kafkaStreamsConfig:
     replication.factor: 1
     num.stream.threads: 2
 
+# WARNING! This config is NOT RECOMMENDED for production. Dev-use only
+# recommended overrides in production = replicationFactor: 3
 topicsConfig:
-  producerTopic: _streamregistry_streams_v0.1
+  eventStoreTopic:
+    name: _streamregistry_streams_v0.1
+    partitions: 1
+    replicationFactor: 1
+    properties:
+      cleanup.policy: compact
+      min.insync.replicas: 1
   stateStoreName: _streamregistry_streams_kv_v0.1
 
 infraManagerConfig:

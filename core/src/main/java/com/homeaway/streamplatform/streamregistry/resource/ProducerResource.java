@@ -72,7 +72,7 @@ public class ProducerResource extends BaseResource{
             required = true) @PathParam("region") String region) {
         try {
             Optional<Producer> producer = producerDao.update(streamName, producerName, region);
-            log.info(" Producer upserted. producerName: " + producerName);
+            log.info("Producer={} upserted for stream={}", producerName, streamName);
             return Response.ok().entity(producer.get()).build();
         } catch (StreamNotFoundException  e) {
             return buildErrorMessage(Response.Status.BAD_REQUEST, e);
@@ -127,6 +127,7 @@ public class ProducerResource extends BaseResource{
         @ApiParam(value = "name of the producer", required = true) @PathParam("producerName") String producerName) {
         try {
             producerDao.delete(streamName, producerName);
+            log.info("Producer={} of stream={} successfully deleted.", producerName, streamName);
             return Response
                     .ok()
                     .type("text/plain")

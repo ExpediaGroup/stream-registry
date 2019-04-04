@@ -126,7 +126,6 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
 
         verifyAndUpsertTopics(stream, isNewStream);
         streamDao.upsertStream(key, avroStream);
-        log.info("Stream upserted for {}", stream.getName());
     }
 
     /**
