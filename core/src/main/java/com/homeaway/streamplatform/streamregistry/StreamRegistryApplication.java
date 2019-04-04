@@ -17,16 +17,19 @@ package com.homeaway.streamplatform.streamregistry;
 
 import static com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
+import com.homeaway.streamplatform.streamregistry.utils.KafkaTopicClient;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -52,6 +55,7 @@ import org.apache.kafka.streams.state.RocksDBConfigSetter;
 import org.rocksdb.BlockBasedTableConfig;
 import org.rocksdb.Options;
 
+import com.homeaway.streamplatform.streamregistry.configuration.EventStoreTopic;
 import com.homeaway.streamplatform.streamregistry.configuration.InfraManagerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.SchemaManagerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
@@ -61,6 +65,7 @@ import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
+import com.homeaway.streamplatform.streamregistry.health.CompactedEventStoreHealthCheck;
 import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
@@ -129,42 +134,59 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
     @Override
     public void run(final StreamRegistryConfiguration configuration, final Environment environment) {
-
-        // Step 1 - initialize managed beans
-
+        // Initialize managed beans
         ManagedKStreams managedKStreams = createManagedKStreams(configuration);
-
         ManagedInfraManager managedInfraManager = createManagedInfraManager(configuration);
         Preconditions.checkState(managedInfraManager != null, "managedInfraManager cannot be null.");
-
         ManagedKafkaProducer managedKafkaProducer = createManagedKafkaProducer(configuration);
 
-        // Step 2 - initialize the DAO's
+        // Create the Kafka topic used as EventStore
+        createEventStoreKafkaTopicIfNotExists(configuration);
 
+        // Initialize the DAO's
         initServiceAndDao(configuration, environment, managedKStreams, managedKafkaProducer);
 
-        // Step 3 - initialize and register the SR resources to JerseyEnvironment
-
+        // Initialize and register the SR resources to JerseyEnvironment
         initAndRegisterResource(environment);
 
-        // Step 4 - initialize and register monitoring and health check hooks
-
+        // Initialize and register monitoring and health check hooks
         environment.getApplicationContext().addServlet(PingServlet.class, "/ping");
         initAndRegisterHealthCheck(configuration, environment, managedKStreams);
 
-        // Step 5 - centralize initialization and configuration of SR server Object Mapper's
+        // Centralize initialization and configuration of SR server Object Mapper's
         registerServiceMapper(environment);
 
-        // Step 6 - In order to avoid muddle up with HK2 and Jersey lifecycle dependency
-        // we wrap up all managed beans in a centralized container to manage server
-        // components start and stop ordering
-
+        // In order to avoid muddle up with HK2 and Jersey lifecycle dependency we wrap up all managed beans in a
+        // centralized container to manage server components start and stop ordering
         registerManagedContainer(environment, managedKStreams, managedInfraManager, managedKafkaProducer);
 
-        // Step 7 - register list of Jersey Filters.
+        // Register list of Jersey Filters.
         registerFilters(environment, configuration);
 
         // TODO: Make project completely based on unit tests (integration should be a separate project) (#100)
+    }
+
+    private void createEventStoreKafkaTopicIfNotExists(StreamRegistryConfiguration configuration) {
+        EventStoreTopic eventStoreTopic = configuration.getTopicsConfig().getEventStoreTopic();
+        String topicName = eventStoreTopic.getName();
+        String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
+        KafkaTopicClient kafkaTopicClient = new KafkaTopicClient(kafkaBootstrapURI);
+        try {
+            if (kafkaTopicClient.isKafkaTopicPresent(topicName)) {
+                log.debug("Topic {} present. Topic Details = {}", topicName);
+                kafkaTopicClient.validateTopicConfigs(eventStoreTopic.getName(), eventStoreTopic.getProperties());
+                log.debug("Stream Registry underlying EventStore kafka topic config {} validation passed", eventStoreTopic.getProperties());
+            } else {
+                kafkaTopicClient.createTopic(eventStoreTopic.getName(),
+                        eventStoreTopic.getPartitions(),
+                        eventStoreTopic.getReplicationFactor(),
+                        eventStoreTopic.getProperties());
+                log.info("Stream Registry underlying kafka event store created : {}", eventStoreTopic.getName());
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(String.format("Error while communication with the underlying kafka data-store." +
+                    " Topic={} BootstrapURI={}", topicName, kafkaBootstrapURI), e);
+        }
     }
 
     private void registerFilters(Environment environment, StreamRegistryConfiguration configuration) {
@@ -358,6 +380,9 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
         Preconditions.checkState(streamResource != null, "streamResource cannot be null.");
 
+        CompactedEventStoreHealthCheck compactedEventStoreHealthCheck = new CompactedEventStoreHealthCheck(configuration, metricRegistry);
+        environment.healthChecks().register("compactedEventStoreHealthCheck", compactedEventStoreHealthCheck);
+
         StreamRegistryHealthCheck streamRegistryHealthCheck =
             new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
         environment.healthChecks().register("streamRegistryHealthCheck", streamRegistryHealthCheck);
@@ -382,4 +407,5 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
             new StreamRegistryManagedContainer(managedKStreams, managedInfraManager, managedKafkaProducer);
         environment.lifecycle().manage(managedContainer);
     }
+
 }

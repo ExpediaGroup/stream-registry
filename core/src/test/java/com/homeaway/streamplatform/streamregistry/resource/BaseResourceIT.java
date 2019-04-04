@@ -75,7 +75,11 @@ import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthChe
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
 import com.homeaway.streamplatform.streamregistry.provider.InfraManager;
-import com.homeaway.streamplatform.streamregistry.service.*;
+import com.homeaway.streamplatform.streamregistry.service.AbstractService;
+import com.homeaway.streamplatform.streamregistry.service.ClusterService;
+import com.homeaway.streamplatform.streamregistry.service.RegionService;
+import com.homeaway.streamplatform.streamregistry.service.StreamClientService;
+import com.homeaway.streamplatform.streamregistry.service.StreamService;
 import com.homeaway.streamplatform.streamregistry.service.impl.ClusterServiceImpl;
 import com.homeaway.streamplatform.streamregistry.service.impl.ConsumerServiceImpl;
 import com.homeaway.streamplatform.streamregistry.service.impl.ProducerServiceImpl;
@@ -198,7 +202,7 @@ public class BaseResourceIT {
 
         loadConfig("config-dev.yaml");
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
-        String producerTopic = topicsConfig.getProducerTopic();
+        String producerTopic = topicsConfig.getEventStoreTopic().getName();
         try {
             createTopic(producerTopic, new Properties());
         } catch (Exception exception) {
@@ -206,7 +210,7 @@ public class BaseResourceIT {
         }
 
         BaseResourceIT.topicsConfig = new TopicsConfig();
-        BaseResourceIT.topicsConfig.setProducerTopic(producerTopic);
+        BaseResourceIT.topicsConfig.setEventStoreTopic(topicsConfig.getEventStoreTopic());
         BaseResourceIT.topicsConfig.setStateStoreName(topicsConfig.getStateStoreName());
 
         BaseResourceIT.schemaManagerConfig = new SchemaManagerConfig("com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager");
