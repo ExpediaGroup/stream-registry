@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add health check to verify whether the underlying topic (used as Datastore) is compaction enabled to make sure Stream Metadata is not lost. (#144)
 
+### Changed
+- Migrated version of jib to 1.0.2 (#151)
+
 ## [0.4.10] - 20190403
 ### Changed
 - Fixed Stream Validation signature and updated implementation (#117)
