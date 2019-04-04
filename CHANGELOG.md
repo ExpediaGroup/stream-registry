@@ -113,6 +113,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Shell script for build commands (#43)
 
+[0.5.0]: https://github.com/HomeAway/stream-registry/compare/v0.4.10...v0.5.0
 [0.4.10]: https://github.com/HomeAway/stream-registry/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/HomeAway/stream-registry/compare/v0.4.8...v0.4.9
 [0.4.8]: https://github.com/HomeAway/stream-registry/compare/v0.4.7...v0.4.8
