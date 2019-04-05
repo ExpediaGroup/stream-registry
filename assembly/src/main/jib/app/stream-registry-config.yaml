@@ -11,7 +11,11 @@ env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
 # list (yaml syntax) of Jersey Filter Full Class Names loaded at runtime.
 requestFilterClassNames:
+#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter1
+#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter2
 responseFilterClassNames:
+#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter1
+#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter2
 
 # Properties of the Stream that got upserted in each HealthCheck
 healthCheckStreamConfig:

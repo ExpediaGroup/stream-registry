@@ -9,7 +9,11 @@ server:
 env: local
 
 requestFilterClassNames:
+#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter1
+#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter2
 responseFilterClassNames:
+#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter1
+#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter2
 
 healthCheckStreamConfig:
   name: StreamRegistryHealthCheck
