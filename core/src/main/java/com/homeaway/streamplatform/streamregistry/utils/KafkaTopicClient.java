@@ -82,6 +82,8 @@ public class KafkaTopicClient {
 
         Collection<ConfigEntry> actualProperties = config.entries();
 
+        log.debug("Actual Configs {} for topic {}.", actualProperties, topicName);
+
         expectedProperties.forEach((key, value) -> {
             boolean isConfigAvailable = actualProperties.stream().anyMatch(configEntry ->
                     configEntry.name().equals(key) && configEntry.value().equals(value));
