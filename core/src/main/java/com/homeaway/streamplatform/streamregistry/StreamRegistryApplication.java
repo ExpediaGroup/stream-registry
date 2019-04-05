@@ -29,7 +29,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
-import com.homeaway.streamplatform.streamregistry.utils.KafkaTopicClient;
+import com.homeaway.streamplatform.streamregistry.health.EventStoreConfigHealthCheck;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -65,7 +65,6 @@ import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
-import com.homeaway.streamplatform.streamregistry.health.CompactedEventStoreHealthCheck;
 import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
@@ -85,6 +84,7 @@ import com.homeaway.streamplatform.streamregistry.service.impl.StreamServiceImpl
 import com.homeaway.streamplatform.streamregistry.streams.ManagedInfraManager;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKStreams;
 import com.homeaway.streamplatform.streamregistry.streams.ManagedKafkaProducer;
+import com.homeaway.streamplatform.streamregistry.utils.KafkaTopicClient;
 
 /**
  * This is the main DropWizard application that bootstraps DropWizard, wires up the app,
@@ -380,8 +380,8 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
         Preconditions.checkState(managedKStreams != null, "managedKStreams cannot be null.");
         Preconditions.checkState(streamResource != null, "streamResource cannot be null.");
 
-        CompactedEventStoreHealthCheck compactedEventStoreHealthCheck = new CompactedEventStoreHealthCheck(configuration, metricRegistry);
-        environment.healthChecks().register("compactedEventStoreHealthCheck", compactedEventStoreHealthCheck);
+        EventStoreConfigHealthCheck eventStoreConfigHealthCheck = new EventStoreConfigHealthCheck(configuration, metricRegistry);
+        environment.healthChecks().register("eventStoreConfigHealthCheck", eventStoreConfigHealthCheck);
 
         StreamRegistryHealthCheck streamRegistryHealthCheck =
             new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, configuration.getHealthCheckStreamConfig());
