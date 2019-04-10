@@ -19,6 +19,7 @@ import static com.homeaway.streamplatform.streamregistry.extensions.schema.Schem
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
@@ -32,6 +33,7 @@ import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -60,6 +62,7 @@ import com.homeaway.digitalplatform.streamregistry.ClusterKey;
 import com.homeaway.digitalplatform.streamregistry.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.StreamRegistryApplication;
 import com.homeaway.streamplatform.streamregistry.StreamRegistryManagedContainer;
+import com.homeaway.streamplatform.streamregistry.configuration.EventStoreTopic;
 import com.homeaway.streamplatform.streamregistry.configuration.HealthCheckStreamConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaProducerConfig;
 import com.homeaway.streamplatform.streamregistry.configuration.KafkaStreamsConfig;
@@ -71,6 +74,7 @@ import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
 import com.homeaway.streamplatform.streamregistry.extensions.validator.StreamValidatorIT;
+import com.homeaway.streamplatform.streamregistry.health.EventStoreConfigHealthCheck;
 import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;
@@ -143,7 +147,9 @@ public class BaseResourceIT {
 
     protected static InfraManager infraManager;
 
-    protected static StreamRegistryHealthCheck healthCheck;
+    protected static StreamRegistryHealthCheck streamRegistryHealthCheck;
+
+    protected static EventStoreConfigHealthCheck eventStoreConfigHealthCheck;
 
     protected static RegionService regionService;
 
@@ -180,13 +186,23 @@ public class BaseResourceIT {
 
     private static StreamRegistryManagedContainer managedContainer;
 
-    private static void createTopic(String topic, Properties topicConfig) {
+    private static void createTopic(EventStoreTopic topic) {
         log.debug("Creating topic { name: {}, partitions: {}, replication: {}, config: {} }",
-                topic, 1, 1, topicConfig);
+                topic.getName(), topic.getPartitions(), topic.getReplicationFactor(), topic.getProperties());
+
         ZkUtils zkUtils = new ZkUtils(ZKCLIENT, new ZkConnection(zookeeperQuorum), false);
-        if (!AdminUtils.topicExists(zkUtils, topic)) {
-            AdminUtils.createTopic(zkUtils, topic, 1, 1, topicConfig, RackAwareMode.Enforced$.MODULE$);
+        if (!AdminUtils.topicExists(zkUtils, topic.getName())) {
+            Properties topicConfig = new Properties();
+            topic.getProperties().forEach(topicConfig::put);
+            AdminUtils.createTopic(zkUtils, topic.getName(), topic.getPartitions(), topic.getReplicationFactor(),
+                    topicConfig, RackAwareMode.Enforced$.MODULE$);
         }
+    }
+
+    protected static void changeTopicConfig(String topicName, Properties properties) {
+        ZkUtils zkUtils = new ZkUtils(ZKCLIENT, new ZkConnection(zookeeperQuorum), false);
+        AdminUtils.changeTopicConfig(zkUtils, topicName, properties);
+        log.debug("Updated the topic configuration. topic={} config={}", topicName, properties);
     }
 
     // TODO - Why do we start and stop kstreams on each integration test ? Shouldn't this be
@@ -202,11 +218,11 @@ public class BaseResourceIT {
 
         loadConfig("config-dev.yaml");
         TopicsConfig topicsConfig = configuration.getTopicsConfig();
-        String producerTopic = topicsConfig.getEventStoreTopic().getName();
+        EventStoreTopic eventStoreTopic = topicsConfig.getEventStoreTopic();
         try {
-            createTopic(producerTopic, new Properties());
+            createTopic(eventStoreTopic);
         } catch (Exception exception) {
-            throw new IllegalStateException("Could not create topic " + producerTopic, exception);
+            throw new IllegalStateException("Could not create topic " + eventStoreTopic, exception);
         }
 
         BaseResourceIT.topicsConfig = new TopicsConfig();
@@ -270,11 +286,16 @@ public class BaseResourceIT {
         clusterResource = new ClusterResource(clusterService);
 
         SchemaRegistryClient schemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryURL, 1);
-        schemaRegistryClient.register(producerTopic + "-key", AvroStreamKey.SCHEMA$);
-        schemaRegistryClient.register(producerTopic + "-value", AvroStream.SCHEMA$);
+        schemaRegistryClient.register(eventStoreTopic.getName() + "-key", AvroStreamKey.SCHEMA$);
+        schemaRegistryClient.register(eventStoreTopic.getName() + "-value", AvroStream.SCHEMA$);
 
         HealthCheckStreamConfig healthCheckStreamConfig = configuration.getHealthCheckStreamConfig();
-        healthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, new MetricRegistry(), healthCheckStreamConfig);
+        MetricRegistry metricRegistry = new MetricRegistry();
+        streamRegistryHealthCheck = new StreamRegistryHealthCheck(managedKStreams, streamResource, metricRegistry, healthCheckStreamConfig);
+        Map<String, String> eventStoreProducerProperties = configuration.getKafkaProducerConfig().getKafkaProducerProperties();
+        eventStoreProducerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        eventStoreProducerProperties.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
+        eventStoreConfigHealthCheck = new EventStoreConfigHealthCheck(configuration, metricRegistry);
 
         managedContainer = new StreamRegistryManagedContainer(managedKStreams, new ManagedInfraManager(infraManager), managedKafkaProducer);
         managedContainer.start();
@@ -353,6 +374,15 @@ public class BaseResourceIT {
                 .getResource(filename))
                 .getPath());
         configuration = factory.build(yaml);
+    }
+
+    protected Gauge getCurrentReadingForMetric(String metric) {
+        MetricRegistry metricRegistry = eventStoreConfigHealthCheck.getMetricRegistry();
+        return metricRegistry.getGauges()
+                .entrySet().stream()
+                .filter(guageEntry -> guageEntry.getKey().equals(metric))
+                .findFirst().get()
+                .getValue();
     }
 
     // TODO Why do we start and stop kstreams on each integration test ? Shouldn't this be part of the server (#18)
