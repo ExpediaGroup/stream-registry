@@ -29,7 +29,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 
-import com.homeaway.streamplatform.streamregistry.health.EventStoreConfigHealthCheck;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.MetricRegistry;
@@ -65,6 +64,7 @@ import com.homeaway.streamplatform.streamregistry.db.dao.StreamDao;
 import com.homeaway.streamplatform.streamregistry.db.dao.impl.StreamDaoImpl;
 import com.homeaway.streamplatform.streamregistry.extensions.schema.SchemaManager;
 import com.homeaway.streamplatform.streamregistry.extensions.validation.StreamValidator;
+import com.homeaway.streamplatform.streamregistry.health.EventStoreConfigHealthCheck;
 import com.homeaway.streamplatform.streamregistry.health.StreamRegistryHealthCheck;
 import com.homeaway.streamplatform.streamregistry.model.Consumer;
 import com.homeaway.streamplatform.streamregistry.model.Producer;

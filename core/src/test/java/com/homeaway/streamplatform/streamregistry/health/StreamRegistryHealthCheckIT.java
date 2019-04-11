@@ -22,7 +22,6 @@ import org.junit.Test;
 
 import com.homeaway.streamplatform.streamregistry.resource.BaseResourceIT;
 
-
 /**
  * Test class to validate whether the StreamRegistryHealthCheck could properly insert
  * a valid Stream, producer and consumer, and validate whether the StateStore is active
@@ -35,8 +34,14 @@ public class StreamRegistryHealthCheckIT extends BaseResourceIT {
         // The identityMapCapacity on CachedSchemaRegistryClient is set to 1 in BaseResourceIT.
         // so, hit healthcheck (update same schema) for more than 1 times to make sure the applied fix for issue#100 is working.
         for (int i=0 ; i < 2 ; i++) {
-            HealthCheck.Result healthCheckResult = healthCheck.check();
-            Assert.assertTrue(healthCheckResult.isHealthy());
+            HealthCheck.Result healthCheck = streamRegistryHealthCheck.check();
+            Assert.assertTrue(healthCheck.isHealthy());
+
+            Assert.assertEquals(1, getCurrentReadingForMetric(Metrics.STREAM_CREATION_HEALTH.getName()).getValue());
+            Assert.assertEquals(1, getCurrentReadingForMetric(Metrics.PRODUCER_REGISTRATION_HEALTH.getName()).getValue());
+            Assert.assertEquals(1, getCurrentReadingForMetric(Metrics.CONSUMER_REGISTRATION_HEALTH.getName()).getValue());
+            Assert.assertEquals(1, getCurrentReadingForMetric(Metrics.STATE_STORE_HEALTH.getName()).getValue());
+            Assert.assertEquals(1, getCurrentReadingForMetric(Metrics.STREAM_CREATION_HEALTH.getName()).getValue());
         }
     }
 

@@ -19,15 +19,16 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS
 
 import java.util.concurrent.ExecutionException;
 
-import com.homeaway.streamplatform.streamregistry.configuration.EventStoreTopic;
-import com.homeaway.streamplatform.streamregistry.utils.KafkaTopicClient;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 
+import com.homeaway.streamplatform.streamregistry.configuration.EventStoreTopic;
 import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryConfiguration;
+import com.homeaway.streamplatform.streamregistry.utils.KafkaTopicClient;
 
 /**
  * StreamRegistry uses Kafka as its Data-store.
@@ -40,15 +41,16 @@ import com.homeaway.streamplatform.streamregistry.configuration.StreamRegistryCo
  *
  */
 @Slf4j
+@Getter
 public class EventStoreConfigHealthCheck extends HealthCheck {
-    private static final String METRIC_IS_EVENT_STORE_KAFKA_TOPIC_CONFIG_VALID = "app.is_event_store_kafka_topic_config_valid";
-
     private boolean isEventStoreTopicConfigsValid;
     private final KafkaTopicClient kafkaTopicClient;
     private final EventStoreTopic eventStoreTopic;
+    private final MetricRegistry metricRegistry;
 
     public EventStoreConfigHealthCheck(StreamRegistryConfiguration configuration, MetricRegistry metricRegistry) {
-        metricRegistry.register(METRIC_IS_EVENT_STORE_KAFKA_TOPIC_CONFIG_VALID, (Gauge<Integer>)() -> isEventStoreTopicConfigsValid ? 1 : 2);
+        this.metricRegistry = metricRegistry;
+        metricRegistry.register(Metrics.IS_EVENT_STORE_KAFKA_TOPIC_CONFIG_VALID.getName(), (Gauge<Integer>)() -> isEventStoreTopicConfigsValid ? 1 : 2);
 
         String kafkaBootstrapURI = configuration.getKafkaProducerConfig().getKafkaProducerProperties().get(BOOTSTRAP_SERVERS_CONFIG);
         kafkaTopicClient = new KafkaTopicClient(kafkaBootstrapURI);
@@ -74,7 +76,7 @@ public class EventStoreConfigHealthCheck extends HealthCheck {
                     .build();
 
         } catch (RuntimeException e) {
-            isEventStoreTopicConfigsValid = true;
+            isEventStoreTopicConfigsValid = false;
             return Result.builder()
                     .unhealthy()
                     .withMessage(e.getMessage())
