@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.5.0] - SNAPSHOT
 ### Added
+- Updated `README` with Expedia Group stream registry announcement 
 - Add health check to verify whether the underlying topic (used as Datastore) is compaction enabled to make sure Stream Metadata is not lost. (#144)
 
 ### Changed
