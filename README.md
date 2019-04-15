@@ -7,6 +7,22 @@
 <img src="docs/docs/architecture/SR-logo.svg" alt="StreamRegistryLogo" style="max-width:50%;"/>
 </center>
 
+# Announcement: 12th April 2019
+We wanted to let you know that there are going to be some exciting developments with the Stream Registry project in the very near future. Stream Registry is being adopted by many brands at Expedia Group as a critical component of its digital nervous system for key streams across Expedia Group. Therefore, HomeAway stream registry is finding a new home.
+
+## What is changing
+* We will be investing in the project by expanding the existing team with full-time resources in several locations across Expedia Group. Expect greatly increased project activity: contributors, commits, issues, features, releases
+* The repository will relocate to the [ExpediaGroup open source GitHub org](https://github.com/ExpediaGroup) in its entirety, preserving the history and community
+
+## What isn't changing
+* The original vision of Stream Registry as a Stream Discovery and Stream Orchestration platform
+* The project will remain open source, and will be joined shortly by other supporting Expedia Group stream platform components
+* Licenses, conduct and contribution guidelines will remain unchanged
+* The value of your contributions - please keep them coming!
+
+We expect the start of this journey to be a little bumpy, but please bear with us as we work towards the first release of the **Expedia Group** Stream Registry!
+
+# About
 A Stream Registry is what its name implies: it is a registry of streams. As enterprises increasingly scale in size,
 the need to organize and develop around streams of data becomes paramount.  Synchronous calls are attracted to the edge,
 and a variety of synchronous and asynchronous calls permeate the enterprise.  The need for a declarative, central
