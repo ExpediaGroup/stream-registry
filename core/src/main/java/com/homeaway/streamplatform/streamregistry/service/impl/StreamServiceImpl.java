@@ -216,6 +216,8 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
             throw new StreamNotFoundException(String.format("Stream=%s not found.", streamName));
         }
 
+        // TODO: issue#156. Delete the underlying Topic when a Stream is deleted.
+        // It is dangerous to delete the topic in this case without enough authorization, monitoring and alerting in place
         streamDao.upsertStream(keyValue.getKey(), null);
     }
 

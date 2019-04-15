@@ -283,6 +283,7 @@ public class KafkaInfraManager implements InfraManager {
         Properties topicProperties = new Properties();
         topicProperties.putAll(configMap);
         AdminUtils.changeTopicConfig(zkUtils, topic, topicProperties);
+        log.info("Kafka Topic={} config updated to {}", topic, topicProperties);
     }
 
     // package scope so that PowerMock can verify
@@ -296,6 +297,8 @@ public class KafkaInfraManager implements InfraManager {
         Properties topicProperties = new Properties();
         topicProperties.putAll(topicConfigMap);
         AdminUtils.createTopic(zkUtils, topic, partitions, replicationFactor, topicProperties, RackAwareMode.Enforced$.MODULE$);
+        log.info("Kafka Topic={} created with partition={}, replicationFactor={}, config={}",
+                topic, partitions, replicationFactor, topicConfigMap);
     }
 
     private void shutdownZkUtils(ZkUtils zkUtils) {
