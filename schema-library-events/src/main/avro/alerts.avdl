@@ -12,9 +12,9 @@ protocol AlertProtocol {
     string type;
 
   /**
-   * Target method (slack channel, email address)
+   * Destination of alert (slack channel, email address)
    */
-    string method;
+    string destination;
 
   }
 

@@ -139,11 +139,11 @@ public class Stream {
      * "alerts": [
      *     {
      *         "type": "slack",
-     *         "channel": xyz
+     *         "destination": xyz
      *     },
      *     {
      *         "type": "email",
-     *         "to": "x@y.z"
+     *         "destination": "x@y.z"
      *     }
      * ]
      */

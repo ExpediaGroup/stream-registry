@@ -100,8 +100,8 @@ public class JsonToAvroDTO {
         }
         ArrayList<com.homeaway.digitalplatform.streamregistry.Alert> retList = new ArrayList<>();
         for (com.homeaway.streamplatform.streamregistry.model.Alert elem : list) {
-            if (elem != null && elem.getType() != null && elem.getMethod() != null) {
-                retList.add(new com.homeaway.digitalplatform.streamregistry.Alert(elem.getType(), elem.getMethod()));
+            if (elem != null && elem.getType() != null && elem.getDestination() != null) {
+                retList.add(new com.homeaway.digitalplatform.streamregistry.Alert(elem.getType(), elem.getDestination()));
             }
         }
         return retList;

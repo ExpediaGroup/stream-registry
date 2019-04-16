@@ -92,7 +92,7 @@ public class AvroToJsonDTO {
         ArrayList<Alert> retList = new ArrayList<>();
         for (com.homeaway.digitalplatform.streamregistry.Alert elem : list) {
             if (elem != null) {
-                retList.add(new Alert(elem.getType(), elem.getMethod()));
+                retList.add(new Alert(elem.getType(), elem.getDestination()));
             }
         }
         return retList;

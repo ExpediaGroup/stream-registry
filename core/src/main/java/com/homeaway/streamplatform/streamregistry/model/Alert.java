@@ -29,22 +29,22 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 public class Alert {
 
     @Builder
-    public Alert(String type, String method) {
+    public Alert(String type, String destination) {
         this.type = type;
-        this.method = method;
+        this.destination = destination;
     }
 
     /**
-     * Region where the Producer/Consumer is deployed.
+     * Type of alert.
      */
     @NotNull
     String type;
 
     /**
-     * Name of the cluster that Producer/Consumer is communicating to.
+     * Additional information to send alert (channel in case of slack, address in case of email, etc.)
      */
     @NotNull
-    String method;
+    String destination;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class AlertBuilder {}
