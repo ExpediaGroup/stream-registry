@@ -27,15 +27,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
-import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
-import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
-import com.homeaway.streamplatform.streamregistry.model.Consumer;
-import com.homeaway.streamplatform.streamregistry.model.Producer;
-import com.homeaway.streamplatform.streamregistry.model.RegionStreamConfig;
-import com.homeaway.streamplatform.streamregistry.model.Schema;
-import com.homeaway.streamplatform.streamregistry.model.Stream;
-import com.homeaway.streamplatform.streamregistry.model.StreamConfig;
-import com.homeaway.streamplatform.streamregistry.model.Tags;
+import com.homeaway.streamplatform.streamregistry.model.*;
 
 public class AvroToJsonDTO {
 
@@ -88,7 +80,22 @@ public class AvroToJsonDTO {
                 .topicConfig(avroStream.getTopicConfig())
                 .partitions(avroStream.getPartitions())
                 .replicationFactor(avroStream.getReplicationFactor())
+                .alertConfigList(convertAlertListToJson(avroStream.getAlertConfigList()))
+                .sinkConfigList(avroStream.getSinkConfigList())
                 .build();
+    }
+
+    public static List<Alert> convertAlertListToJson(List<com.homeaway.digitalplatform.streamregistry.Alert> list) {
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<Alert> retList = new ArrayList<>();
+        for (com.homeaway.digitalplatform.streamregistry.Alert elem : list) {
+            if (elem != null) {
+                retList.add(new Alert(elem.getType(), elem.getMethod()));
+            }
+        }
+        return retList;
     }
 
     public static Producer getJsonProducer(com.homeaway.digitalplatform.streamregistry.Producer avroProducer) {

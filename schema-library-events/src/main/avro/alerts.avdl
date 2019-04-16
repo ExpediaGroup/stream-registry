@@ -1,0 +1,31 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol AlertProtocol {
+
+  /**
+  * S3 Connector gets data from Kafka and dunps it in S3
+  */
+  record Alert {
+  /**
+   * Name of the alert
+   */
+    string type;
+
+  /**
+   * Target method (slack channel, email address)
+   */
+    string method;
+
+  }
+
+  /**
+  * Wrapper Record needed to store the Alert list in KafkaConnectDeployer
+  */
+  record AlertList {
+    /**
+    * Alert list with status
+    */
+    union {null, array<Alert>} alertList = null;
+  }
+
+}

@@ -1,0 +1,36 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol SinkProtocol {
+
+  /**
+  * S3 Connector gets data from Kafka and dunps it in S3
+  */
+  record Sink {
+  /**
+   * Name of the sink
+   */
+    string name;
+
+  /**
+   * status
+   * values: NOT_DEPLOYED, DEPLOYED
+   */
+    string status = "NOT_DEPLOYED";
+
+  /**
+  * Properties related to sink
+  */
+    union{null,map<string>} properties = null;
+  }
+
+  /**
+  * Wrapper Record needed to store the Sink list in KafkaConnectDeployer
+  */
+  record SinkList {
+    /**
+    * Sink list with status
+    */
+    union {null, array<Sink>} sinkList = null;
+  }
+
+}

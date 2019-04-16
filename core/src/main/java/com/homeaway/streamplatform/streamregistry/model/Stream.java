@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
+import com.homeaway.digitalplatform.streamregistry.*;
 
 @JsonDeserialize(builder = Stream.StreamBuilder.class)
 @Builder
@@ -133,6 +133,43 @@ public class Stream {
     @ApiModelProperty(example = "3")
     int replicationFactor;
 
+    /**
+     * Alerts Configuration list
+     * Example:
+     * "alerts": [
+     *     {
+     *         "type": "slack",
+     *         "channel": xyz
+     *     },
+     *     {
+     *         "type": "email",
+     *         "to": "x@y.z"
+     *     }
+     * ]
+     */
+    @Builder.Default
+    List<Alert> alertConfigList = null;
+
+    /**
+     * Sink Configuration list
+     * "sinks": [
+     *     {
+     *         "type": "s3",
+     *         "properties": {
+     *             ...
+     *         }
+     *     },
+     *     {
+     *         "type": "mongo",
+     *         "properties": {
+     *             ...
+     *         }
+     *     }
+     * ]
+     */
+    @Builder.Default
+    List<Sink> sinkConfigList = null;
+
     @JsonPOJOBuilder(withPrefix = "")
     public static final class StreamBuilder {
     }
@@ -158,13 +195,16 @@ public class Stream {
             Objects.equals(replicatedVpcList, stream.replicatedVpcList) &&
             Objects.equals(topicConfig, stream.topicConfig) &&
             Objects.equals(partitions, stream.partitions) &&
-            Objects.equals(replicationFactor, stream.replicationFactor);
+            Objects.equals(replicationFactor, stream.replicationFactor) &&
+            Objects.equals(alertConfigList, stream.alertConfigList) &&
+            Objects.equals(sinkConfigList, stream.sinkConfigList);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), name, schemaCompatibility, latestKeySchema, latestValueSchema, owner, created, updated,
-            isDataNeededAtRest, isAutomationNeeded, tags, vpcList, replicatedVpcList, topicConfig, partitions, replicationFactor);
+            isDataNeededAtRest, isAutomationNeeded, tags, vpcList, replicatedVpcList, topicConfig, partitions,
+            replicationFactor, alertConfigList, sinkConfigList);
     }
 
     @Override
@@ -186,6 +226,8 @@ public class Stream {
             ", topicConfig=" + topicConfig +
             ", partitions=" + partitions +
             ", replicationFactor=" + replicationFactor +
+            ", alertConfig=" + alertConfigList +
+            ", sinkConfig=" + sinkConfigList +
             '}';
     }
 }

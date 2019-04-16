@@ -15,16 +15,11 @@
  */
 package com.homeaway.streamplatform.streamregistry.dto;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.BadRequestException;
 
-import com.homeaway.digitalplatform.streamregistry.AvroStream;
-import com.homeaway.digitalplatform.streamregistry.OperationType;
-import com.homeaway.digitalplatform.streamregistry.Schema;
-import com.homeaway.digitalplatform.streamregistry.Tags;
+import com.homeaway.digitalplatform.streamregistry.*;
 import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
@@ -88,6 +83,8 @@ public class JsonToAvroDTO {
                 .setTopicConfig(jsonStream.getTopicConfig())
                 .setPartitions(jsonStream.getPartitions())
                 .setReplicationFactor(jsonStream.getReplicationFactor())
+                .setAlertConfigList(convertAlertListToAvro(jsonStream.getAlertConfigList()))
+                .setSinkConfigList(jsonStream.getSinkConfigList())
                 .build();
 
         if (jsonStream.getSchemaCompatibility() != null)
@@ -95,6 +92,19 @@ public class JsonToAvroDTO {
 
         return avroStream;
 
+    }
+
+    public static List<com.homeaway.digitalplatform.streamregistry.Alert> convertAlertListToAvro(List<com.homeaway.streamplatform.streamregistry.model.Alert> list) {
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<com.homeaway.digitalplatform.streamregistry.Alert> retList = new ArrayList<>();
+        for (com.homeaway.streamplatform.streamregistry.model.Alert elem : list) {
+            if (elem != null && elem.getType() != null && elem.getMethod() != null) {
+                retList.add(new com.homeaway.digitalplatform.streamregistry.Alert(elem.getType(), elem.getMethod()));
+            }
+        }
+        return retList;
     }
 
     public static com.homeaway.digitalplatform.streamregistry.ClusterKey getAvroClusterKey(ClusterKey jsonClusterKey){
