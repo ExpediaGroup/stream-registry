@@ -1,6 +1,6 @@
 @namespace("com.homeaway.digitalplatform.streamregistry")
 
-protocol ConnectorProtocol {
+protocol ConnectorConfigProtocol {
 
   /**
   * S3 Connector gets data from Kafka and dumps it in S3
