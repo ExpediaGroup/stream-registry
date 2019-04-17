@@ -181,7 +181,11 @@ curl -X PUT --header 'Content-Type: application/json' --header 'Accept: applicat
   ],
   "topicConfig": {},
   "partitions": 1,
-  "replicationFactor": 1
+  "replicationFactor": 1,
+  "alertConfigList": [
+  ],
+  "connectorConfigList": [
+  ]
 }' 'http://localhost:8080/v0/streams/sampleStream'
 ```
 
