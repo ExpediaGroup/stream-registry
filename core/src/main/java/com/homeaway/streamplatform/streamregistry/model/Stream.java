@@ -151,16 +151,18 @@ public class Stream {
     List<Alert> alertConfigList = null;
 
     /**
-     * Sink Configuration list
-     * "sinks": [
+     * Connector configuration list
+     * "connectorConfigList": [
      *     {
-     *         "type": "s3",
+     *         "name": "s3",
+     *         "type": "sink",
      *         "properties": {
      *             ...
      *         }
      *     },
      *     {
-     *         "type": "mongo",
+     *         "name": "mongo",
+     *         "type": "source",
      *         "properties": {
      *             ...
      *         }
@@ -168,7 +170,7 @@ public class Stream {
      * ]
      */
     @Builder.Default
-    List<Sink> sinkConfigList = null;
+    List<ConnectorConfig> connectorConfigList = null;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class StreamBuilder {
@@ -197,14 +199,14 @@ public class Stream {
             Objects.equals(partitions, stream.partitions) &&
             Objects.equals(replicationFactor, stream.replicationFactor) &&
             Objects.equals(alertConfigList, stream.alertConfigList) &&
-            Objects.equals(sinkConfigList, stream.sinkConfigList);
+            Objects.equals(connectorConfigList, stream.connectorConfigList);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), name, schemaCompatibility, latestKeySchema, latestValueSchema, owner, created, updated,
             isDataNeededAtRest, isAutomationNeeded, tags, vpcList, replicatedVpcList, topicConfig, partitions,
-            replicationFactor, alertConfigList, sinkConfigList);
+            replicationFactor, alertConfigList, connectorConfigList);
     }
 
     @Override
@@ -227,7 +229,7 @@ public class Stream {
             ", partitions=" + partitions +
             ", replicationFactor=" + replicationFactor +
             ", alertConfig=" + alertConfigList +
-            ", sinkConfig=" + sinkConfigList +
+            ", connectorConfigList=" + connectorConfigList +
             '}';
     }
 }

@@ -81,8 +81,22 @@ public class AvroToJsonDTO {
                 .partitions(avroStream.getPartitions())
                 .replicationFactor(avroStream.getReplicationFactor())
                 .alertConfigList(convertAlertListToJson(avroStream.getAlertConfigList()))
-                .sinkConfigList(avroStream.getSinkConfigList())
+                .connectorConfigList(convertConnectionConfigListToJson(avroStream.getConnectorConfigList()))
                 .build();
+    }
+
+    public static List<ConnectorConfig> convertConnectionConfigListToJson(List<com.homeaway.digitalplatform.streamregistry.Connector> list) {
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<ConnectorConfig> retList = new ArrayList<>();
+        for (com.homeaway.digitalplatform.streamregistry.Connector elem : list) {
+            if (elem != null) {
+                retList.add(new ConnectorConfig(elem.getName(), elem.getType(), elem.getProperties()));
+            }
+        }
+        return retList;
+
     }
 
     public static List<Alert> convertAlertListToJson(List<com.homeaway.digitalplatform.streamregistry.Alert> list) {

@@ -6,7 +6,7 @@ protocol StreamRegistryProtocol {
   import idl "producers.avdl";
   import idl "regionReplicator.avdl";
   import idl "s3Connector.avdl";
-  import idl "sinks.avdl";
+  import idl "connectorConfig.avdl";
   import idl "alerts.avdl";
 
   record Schema {
@@ -205,9 +205,9 @@ protocol StreamRegistryProtocol {
     union {null, array<Alert>} alertConfigList = null;
 
     /**
-    * List of configs for sinks
+    * List of configs for connectors
     */
-    union {null, array<Sink>} sinkConfigList = null;
+    union {null, array<Connector>} connectorConfigList = null;
   }
 
   record AvroStreamKey {

@@ -22,6 +22,7 @@ import javax.ws.rs.BadRequestException;
 import com.homeaway.digitalplatform.streamregistry.*;
 import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
+import com.homeaway.streamplatform.streamregistry.model.ConnectorConfig;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 
 public class JsonToAvroDTO {
@@ -84,7 +85,7 @@ public class JsonToAvroDTO {
                 .setPartitions(jsonStream.getPartitions())
                 .setReplicationFactor(jsonStream.getReplicationFactor())
                 .setAlertConfigList(convertAlertListToAvro(jsonStream.getAlertConfigList()))
-                .setSinkConfigList(jsonStream.getSinkConfigList())
+                .setConnectorConfigList(convertConnectorListToAvro(jsonStream.getConnectorConfigList()))
                 .build();
 
         if (jsonStream.getSchemaCompatibility() != null)
@@ -92,6 +93,23 @@ public class JsonToAvroDTO {
 
         return avroStream;
 
+    }
+
+    public static List<com.homeaway.digitalplatform.streamregistry.Connector> convertConnectorListToAvro(List<ConnectorConfig> list) {
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<com.homeaway.digitalplatform.streamregistry.Connector> retList = new ArrayList<>();
+        for (ConnectorConfig elem : list) {
+            if (elem != null) {
+                Map<String, String> configs = new HashMap<>();
+                if (elem.getProperties() != null) {
+                    elem.getProperties().forEach(configs::put);
+                }
+                retList.add(new com.homeaway.digitalplatform.streamregistry.Connector(elem.getName(), elem.getType(), configs));
+            }
+        }
+        return retList;
     }
 
     public static List<com.homeaway.digitalplatform.streamregistry.Alert> convertAlertListToAvro(List<com.homeaway.streamplatform.streamregistry.model.Alert> list) {

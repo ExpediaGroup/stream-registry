@@ -1,0 +1,36 @@
+@namespace("com.homeaway.digitalplatform.streamregistry")
+
+protocol ConnectorProtocol {
+
+  /**
+  * S3 Connector gets data from Kafka and dumps it in S3
+  */
+  record Connector {
+
+  /**
+   * Name of the connector
+   */
+    string name;
+
+  /**
+    * Type of connector (source or sink)
+  */
+    string type;
+
+  /**
+  * Properties related to connector
+  */
+    union{null, map<string>} properties = null;
+  }
+
+  /**
+  * Wrapper Record needed to store the Connector list in KafkaConnectDeployer
+  */
+  record ConnectorList {
+    /**
+    * Sink list with status
+    */
+    union {null, array<Connector>} connectorList = null;
+  }
+
+}
