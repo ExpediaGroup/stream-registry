@@ -148,7 +148,7 @@ public class Stream {
      * ]
      */
     @Builder.Default
-    List<Alert> alertConfigList = null;
+    List<AlertConfig> alertConfigList = null;
 
     /**
      * Connector configuration list

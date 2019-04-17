@@ -112,12 +112,12 @@ public class JsonToAvroDTO {
         return retList;
     }
 
-    public static List<com.homeaway.digitalplatform.streamregistry.Alert> convertAlertListToAvro(List<com.homeaway.streamplatform.streamregistry.model.Alert> list) {
+    public static List<com.homeaway.digitalplatform.streamregistry.Alert> convertAlertListToAvro(List<com.homeaway.streamplatform.streamregistry.model.AlertConfig> list) {
         if (list == null) {
             return new ArrayList<>();
         }
         ArrayList<com.homeaway.digitalplatform.streamregistry.Alert> retList = new ArrayList<>();
-        for (com.homeaway.streamplatform.streamregistry.model.Alert elem : list) {
+        for (com.homeaway.streamplatform.streamregistry.model.AlertConfig elem : list) {
             if (elem != null && elem.getType() != null && elem.getDestination() != null) {
                 retList.add(new com.homeaway.digitalplatform.streamregistry.Alert(elem.getType(), elem.getDestination()));
             }

@@ -99,14 +99,14 @@ public class AvroToJsonDTO {
 
     }
 
-    public static List<Alert> convertAlertListToJson(List<com.homeaway.digitalplatform.streamregistry.Alert> list) {
+    public static List<AlertConfig> convertAlertListToJson(List<com.homeaway.digitalplatform.streamregistry.Alert> list) {
         if (list == null) {
             return new ArrayList<>();
         }
-        ArrayList<Alert> retList = new ArrayList<>();
+        ArrayList<AlertConfig> retList = new ArrayList<>();
         for (com.homeaway.digitalplatform.streamregistry.Alert elem : list) {
             if (elem != null) {
-                retList.add(new Alert(elem.getType(), elem.getDestination()));
+                retList.add(new AlertConfig(elem.getType(), elem.getDestination()));
             }
         }
         return retList;

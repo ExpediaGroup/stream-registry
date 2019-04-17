@@ -23,13 +23,13 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = Alert.AlertBuilder.class)
+@JsonDeserialize(builder = AlertConfig.AlertConfigBuilder.class)
 @Builder
 @Data
-public class Alert {
+public class AlertConfig {
 
     @Builder
-    public Alert(String type, String destination) {
+    public AlertConfig(String type, String destination) {
         this.type = type;
         this.destination = destination;
     }
@@ -47,5 +47,5 @@ public class Alert {
     String destination;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class AlertBuilder {}
+    public static final class AlertConfigBuilder {}
 }
