@@ -3,7 +3,7 @@
 protocol AlertProtocol {
 
   /**
-  * S3 Connector gets data from Kafka and dunps it in S3
+  * S3 Connector gets data from Kafka and dumps it in S3
   */
   record Alert {
   /**

@@ -7,7 +7,7 @@ protocol StreamRegistryProtocol {
   import idl "regionReplicator.avdl";
   import idl "s3Connector.avdl";
   import idl "connectorConfig.avdl";
-  import idl "alerts.avdl";
+  import idl "alertConfig.avdl";
 
   record Schema {
 
