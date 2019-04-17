@@ -25,6 +25,7 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+
 @JsonDeserialize(builder = ConnectorConfig.ConnectorConfigBuilder.class)
 @Builder
 @Data

@@ -3,7 +3,8 @@
 protocol ConnectorConfigProtocol {
 
   /**
-  * S3 Connector gets data from Kafka and dumps it in S3
+  * Connector either gets data from Kafka and dumps it in a data store or
+  * gets it from a data store and dumps it in Kafka
   */
   record Connector {
 
@@ -28,7 +29,7 @@ protocol ConnectorConfigProtocol {
   */
   record ConnectorList {
     /**
-    * Sink list with status
+    * Connector list
     */
     union {null, array<Connector>} connectorList = null;
   }

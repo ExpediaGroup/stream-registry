@@ -15,11 +15,18 @@
  */
 package com.homeaway.streamplatform.streamregistry.dto;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
 
-import com.homeaway.digitalplatform.streamregistry.*;
+import com.homeaway.digitalplatform.streamregistry.AvroStream;
+import com.homeaway.digitalplatform.streamregistry.OperationType;
+import com.homeaway.digitalplatform.streamregistry.Schema;
+import com.homeaway.digitalplatform.streamregistry.Tags;
 import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
 import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
 import com.homeaway.streamplatform.streamregistry.model.ConnectorConfig;
@@ -118,8 +125,8 @@ public class JsonToAvroDTO {
         }
         ArrayList<com.homeaway.digitalplatform.streamregistry.Alert> retList = new ArrayList<>();
         for (com.homeaway.streamplatform.streamregistry.model.AlertConfig elem : list) {
-            if (elem != null && elem.getType() != null && elem.getDestination() != null) {
-                retList.add(new com.homeaway.digitalplatform.streamregistry.Alert(elem.getType(), elem.getDestination()));
+            if (elem != null && elem.getType() != null && elem.getProperties() != null) {
+                retList.add(new com.homeaway.digitalplatform.streamregistry.Alert(elem.getType(), elem.getProperties()));
             }
         }
         return retList;

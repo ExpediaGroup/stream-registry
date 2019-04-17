@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import com.homeaway.digitalplatform.streamregistry.*;
+import com.homeaway.digitalplatform.streamregistry.SchemaCompatibility;
 
 @JsonDeserialize(builder = Stream.StreamBuilder.class)
 @Builder
@@ -139,11 +139,17 @@ public class Stream {
      * "alerts": [
      *     {
      *         "type": "slack",
-     *         "destination": xyz
+     *         "properties": {
+     *             "destination": "slack-garbage-test"
+     *             ...
+     *         }
      *     },
      *     {
      *         "type": "email",
-     *         "destination": "x@y.z"
+     *         "properties": {
+     *             "destination": "x@y.z"
+     *             ...
+     *         }
      *     }
      * ]
      */

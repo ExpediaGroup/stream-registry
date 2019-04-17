@@ -17,7 +17,13 @@ package com.homeaway.streamplatform.streamregistry.resource;
 
 import static com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder.TEST_COMPONENT_ID;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.ws.rs.core.Response;
 
@@ -360,7 +366,10 @@ public class StreamResourceIT extends BaseResourceIT {
         String streamName = "junit-create-stream-valid-alert-config";
         Stream stream = JsonModelBuilder.buildJsonStream(streamName);
         ArrayList<AlertConfig> inList = new ArrayList<>();
-        inList.add(new AlertConfig("slack", "slack-garbage-test"));
+        // inList.add(new AlertConfig("slack", "slack-garbage-test"));
+        Map<String, String> configs = new HashMap<>();
+        configs.put("destination", "slack-garbage-test");
+        inList.add(new AlertConfig("slack", configs));
         stream.setAlertConfigList(inList);
 
         Response response = streamResource.upsertStream(streamName, stream);

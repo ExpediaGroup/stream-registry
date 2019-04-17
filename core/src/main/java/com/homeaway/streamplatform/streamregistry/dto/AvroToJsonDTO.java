@@ -27,7 +27,17 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.homeaway.digitalplatform.streamregistry.AvroStream;
 import com.homeaway.digitalplatform.streamregistry.RegionStreamConfiguration;
-import com.homeaway.streamplatform.streamregistry.model.*;
+import com.homeaway.streamplatform.streamregistry.model.AlertConfig;
+import com.homeaway.streamplatform.streamregistry.model.ClusterKey;
+import com.homeaway.streamplatform.streamregistry.model.ClusterValue;
+import com.homeaway.streamplatform.streamregistry.model.ConnectorConfig;
+import com.homeaway.streamplatform.streamregistry.model.Consumer;
+import com.homeaway.streamplatform.streamregistry.model.Producer;
+import com.homeaway.streamplatform.streamregistry.model.RegionStreamConfig;
+import com.homeaway.streamplatform.streamregistry.model.Schema;
+import com.homeaway.streamplatform.streamregistry.model.Stream;
+import com.homeaway.streamplatform.streamregistry.model.StreamConfig;
+import com.homeaway.streamplatform.streamregistry.model.Tags;
 
 public class AvroToJsonDTO {
 
@@ -106,7 +116,7 @@ public class AvroToJsonDTO {
         ArrayList<AlertConfig> retList = new ArrayList<>();
         for (com.homeaway.digitalplatform.streamregistry.Alert elem : list) {
             if (elem != null) {
-                retList.add(new AlertConfig(elem.getType(), elem.getDestination()));
+                retList.add(new AlertConfig(elem.getType(), elem.getProperties()));
             }
         }
         return retList;

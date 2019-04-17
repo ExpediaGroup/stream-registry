@@ -15,6 +15,8 @@
  */
 package com.homeaway.streamplatform.streamregistry.model;
 
+import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
@@ -23,15 +25,16 @@ import lombok.Data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+
 @JsonDeserialize(builder = AlertConfig.AlertConfigBuilder.class)
 @Builder
 @Data
 public class AlertConfig {
 
     @Builder
-    public AlertConfig(String type, String destination) {
+    public AlertConfig(String type, Map<String, String> properties) {
         this.type = type;
-        this.destination = destination;
+        this.properties = properties;
     }
 
     /**
@@ -41,10 +44,10 @@ public class AlertConfig {
     String type;
 
     /**
-     * Additional information to send alert (channel in case of slack, address in case of email, etc.)
+     * Destination of alert (channel in case of slack, address in case of email, etc.)
      */
     @NotNull
-    String destination;
+    Map<String, String> properties;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class AlertConfigBuilder {}

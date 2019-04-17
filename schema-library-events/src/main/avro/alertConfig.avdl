@@ -3,7 +3,7 @@
 protocol AlertProtocol {
 
   /**
-  * S3 Connector gets data from Kafka and dumps it in S3
+  * Alert mechanism to communicate a stream-specific event to owner.
   */
   record Alert {
   /**
@@ -12,9 +12,9 @@ protocol AlertProtocol {
     string type;
 
   /**
-   * Destination of alert (slack channel, email address)
-   */
-    string destination;
+  * Properties related to alert (destination, access token, server info, etc.)
+  */
+    union{null, map<string>} properties = null;
 
   }
 
@@ -23,7 +23,7 @@ protocol AlertProtocol {
   */
   record AlertList {
     /**
-    * Alert list with status
+    * Alert list
     */
     union {null, array<Alert>} alertList = null;
   }
