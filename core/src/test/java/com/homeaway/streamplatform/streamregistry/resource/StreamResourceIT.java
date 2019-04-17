@@ -17,12 +17,7 @@ package com.homeaway.streamplatform.streamregistry.resource;
 
 import static com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder.TEST_COMPONENT_ID;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import javax.ws.rs.core.Response;
 
@@ -31,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.homeaway.streamplatform.streamregistry.model.AlertConfig;
 import com.homeaway.streamplatform.streamregistry.model.Stream;
 import com.homeaway.streamplatform.streamregistry.utils.JsonModelBuilder;
 import com.homeaway.streamplatform.streamregistry.utils.StreamRegistryUtils.EntriesPage;
@@ -346,4 +342,31 @@ public class StreamResourceIT extends BaseResourceIT {
 
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
+
+    @Test
+    public void test_create_stream_empty_alert_config() throws InterruptedException {
+        String streamName = "junit-create-stream-empty-alert-config";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+        stream.setAlertConfigList(new ArrayList<>());
+
+        Response response = streamResource.upsertStream(streamName, stream);
+        Thread.sleep(TEST_SLEEP_WAIT_MS);
+
+        Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void test_create_stream_valid_alert_config() throws InterruptedException {
+        String streamName = "junit-create-stream-valid-alert-config";
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+        ArrayList<AlertConfig> inList = new ArrayList<>();
+        inList.add(new AlertConfig("slack", "slack-garbage-test"));
+        stream.setAlertConfigList(inList);
+
+        Response response = streamResource.upsertStream(streamName, stream);
+        Thread.sleep(TEST_SLEEP_WAIT_MS);
+
+        Assert.assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+    }
+
 }
