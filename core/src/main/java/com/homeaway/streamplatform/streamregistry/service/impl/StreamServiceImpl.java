@@ -162,12 +162,6 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
         for (String vpc : vpcList) {
             upsertTopics(stream, vpc, isNewStream);
         }
-        if (replicatedVpcList != null && !replicatedVpcList.isEmpty()) {
-            log.info("creating topics for replicatedVpcList: {}", replicatedVpcList);
-            for (String vpc : replicatedVpcList) {
-                upsertTopics(stream, vpc, isNewStream);
-            }
-        }
     }
 
     private void upsertTopics(Stream stream, String vpc, boolean isNewStream) throws StreamCreationException, ClusterNotFoundException {
