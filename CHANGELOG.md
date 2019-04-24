@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.5.1] - SNAPSHOT
 ### Added
 - Updated `README` with Expedia Group stream registry announcement 
+- Removed the creation of topics in the VPCs where it is to be replicated
 
 ### Changed
 
