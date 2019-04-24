@@ -1,7 +1,7 @@
 # stream-registry [![Build Status][build-icon]][build-link]
 
-[build-icon]: https://travis-ci.org/expediagroup/stream-registry.svg?branch=master
-[build-link]: https://travis-ci.org/expediagroup/stream-registry
+[build-icon]: https://travis-ci.org/ExpediaGroup/stream-registry.svg?branch=master
+[build-link]: https://travis-ci.org/ExpediaGroup/stream-registry
 
 <center>
 <img src="docs/docs/architecture/SR-logo.svg" alt="StreamRegistryLogo" style="max-width:50%;"/>
