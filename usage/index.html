@@ -13,7 +13,7 @@
         <meta name="description" content="Open Source Docs and Community Standards">
       
       
-        <link rel="canonical" href="https://homeaway.github.io/stream-registry/usage/">
+        <link rel="canonical" href="https://expediagroup.github.io/stream-registry/usage/">
       
       
         <meta name="author" content="Digital Platform">
@@ -113,7 +113,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="https://homeaway.github.io/stream-registry" title="Stream Registry Documentation" class="md-header-nav__button md-logo">
+        <a href="https://expediagroup.github.io/stream-registry" title="Stream Registry Documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -175,7 +175,7 @@
   
 
 
-  <a href="https://github.com/HomeAway/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
+  <a href="https://github.com/expediagroup/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
     
       <div class="md-source__icon">
         <svg viewBox="0 0 24 24" width="24" height="24">
@@ -184,7 +184,7 @@
       </div>
     
     <div class="md-source__repository">
-      homeaway/stream-registry
+      expediagroup/stream-registry
     </div>
   </a>
 
@@ -209,7 +209,7 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="https://homeaway.github.io/stream-registry" title="Stream Registry Documentation" class="md-nav__button md-logo">
+    <a href="https://expediagroup.github.io/stream-registry" title="Stream Registry Documentation" class="md-nav__button md-logo">
       
         <i class="md-icon"></i>
       
@@ -224,7 +224,7 @@
   
 
 
-  <a href="https://github.com/HomeAway/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
+  <a href="https://github.com/expediagroup/stream-registry/" title="Go to repository" class="md-source" data-md-source="github">
     
       <div class="md-source__icon">
         <svg viewBox="0 0 24 24" width="24" height="24">
@@ -233,7 +233,7 @@
       </div>
     
     <div class="md-source__repository">
-      homeaway/stream-registry
+      expediagroup/stream-registry
     </div>
   </a>
 
@@ -414,7 +414,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/HomeAway/stream-registry/edit/master/docs/docs/usage/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/expediagroup/stream-registry/edit/master/docs/docs/usage/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
                 <h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
@@ -458,19 +458,19 @@ confluent start schema-registry
 <h2 id="create-a-stream-locally">Create a Stream Locally<a class="headerlink" href="#create-a-stream-locally" title="Permanent link">&para;</a></h2>
 <p>Once stream registry is up insert your local cluster info</p>
 <div class="codehilite" style="background: #272822"><pre style="line-height: 125%"><span></span>curl -X PUT --header <span style="color: #e6db74">&#39;Content-Type: application/json&#39;</span> --header <span style="color: #e6db74">&#39;Accept: application/json&#39;</span> -d <span style="color: #e6db74">&#39;{</span>
-<span style="color: #e6db74">&gt;     &quot;clusterKey&quot;: {</span>
-<span style="color: #e6db74">&gt;       &quot;vpc&quot;: &quot;local&quot;,</span>
-<span style="color: #e6db74">&gt;       &quot;env&quot;: &quot;local&quot;,</span>
-<span style="color: #e6db74">&gt;       &quot;hint&quot;: &quot;primary&quot;,</span>
-<span style="color: #e6db74">&gt;       &quot;type&quot;: null</span>
-<span style="color: #e6db74">&gt;     },</span>
-<span style="color: #e6db74">&gt;     &quot;clusterValue&quot;: {</span>
-<span style="color: #e6db74">&gt;       &quot;clusterName&quot;: &quot;localCluster&quot;,</span>
-<span style="color: #e6db74">&gt;       &quot;bootstrapServers&quot;: &quot;localhost:9092&quot;,</span>
-<span style="color: #e6db74">&gt;       &quot;zookeeperQuorum&quot;: &quot;zookeeper:2181&quot;,</span>
-<span style="color: #e6db74">&gt;       &quot;schemaRegistryURL&quot;: &quot;http://localhost:8081&quot;</span>
-<span style="color: #e6db74">&gt;     }</span>
-<span style="color: #e6db74">&gt;   }&#39;</span> <span style="color: #e6db74">&#39;http://localhost:8080/v0/clusters&#39;</span>
+<span style="color: #e6db74">     &quot;clusterKey&quot;: {</span>
+<span style="color: #e6db74">       &quot;vpc&quot;: &quot;localRegion&quot;,</span>
+<span style="color: #e6db74">       &quot;env&quot;: &quot;local&quot;,</span>
+<span style="color: #e6db74">       &quot;hint&quot;: &quot;primary&quot;,</span>
+<span style="color: #e6db74">       &quot;type&quot;: null</span>
+<span style="color: #e6db74">     },</span>
+<span style="color: #e6db74">     &quot;clusterValue&quot;: {</span>
+<span style="color: #e6db74">       &quot;clusterName&quot;: &quot;localCluster&quot;,</span>
+<span style="color: #e6db74">       &quot;bootstrapServers&quot;: &quot;localhost:9092&quot;,</span>
+<span style="color: #e6db74">       &quot;zookeeperQuorum&quot;: &quot;zookeeper:2181&quot;,</span>
+<span style="color: #e6db74">       &quot;schemaRegistryURL&quot;: &quot;http://localhost:8081&quot;</span>
+<span style="color: #e6db74">     }</span>
+<span style="color: #e6db74">   }&#39;</span> <span style="color: #e6db74">&#39;http://localhost:8080/v0/clusters&#39;</span>
 </pre></div>
 
 <p>Now, add a stream using <code class="codehilite">vpcList</code> as <code class="codehilite">local</code> and <code class="codehilite">tags</code>-&gt;<code class="codehilite">hint</code> as <code class="codehilite">primary</code> </p>
@@ -507,7 +507,7 @@ confluent start schema-registry
 <span style="color: #e6db74">    &quot;hint&quot;: &quot;primary&quot;</span>
 <span style="color: #e6db74">  },</span>
 <span style="color: #e6db74">  &quot;vpcList&quot;: [</span>
-<span style="color: #e6db74">    &quot;local&quot;</span>
+<span style="color: #e6db74">    &quot;localRegion&quot;</span>
 <span style="color: #e6db74">  ],</span>
 <span style="color: #e6db74">  &quot;replicatedVpcList&quot;: [</span>
 <span style="color: #e6db74">  ],</span>
