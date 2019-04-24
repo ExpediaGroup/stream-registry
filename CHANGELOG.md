@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated `README` with Expedia Group stream registry announcement (#155) 
 
 ### Changed
-- Updated mkdocs.yml to `expediagroup`
+- Updated mkdocs.yml to `expediagroup` (#168)
 
 ## [0.5.0] - 20190412
 ### Added
