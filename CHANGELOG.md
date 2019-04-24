@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Updated `README` with Expedia Group stream registry announcement (#155) 
 - Increasing the WAIT time to 100ms in test cases to allow the underlying datastore to sync with the commits.
+- Removed the creation of topics in the VPCs where it is to be replicated
 
 ### Changed
 - Updated mkdocs.yml to `expediagroup` (#168)
