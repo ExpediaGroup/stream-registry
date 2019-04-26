@@ -49,7 +49,7 @@ public class InfraManagerImplStub implements InfraManager {
     }
 
     @Override
-    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream) {
+    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream, boolean forceSync) {
     }
 
     @Override

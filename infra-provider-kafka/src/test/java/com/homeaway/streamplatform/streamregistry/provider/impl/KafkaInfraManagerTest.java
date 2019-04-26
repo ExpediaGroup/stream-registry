@@ -97,7 +97,7 @@ public class KafkaInfraManagerTest {
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
         //New Stream
-        kafkaManager.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
+        kafkaManager.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true, false);
 
         // expecting an exception to be thrown because topic exists but request doesn't match the config
     }
@@ -110,7 +110,7 @@ public class KafkaInfraManagerTest {
         KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         // Existing Stream, but PROPS match!! should not have an exception
-        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, TOPIC_WITH_CNXN_PROPS, true);
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, TOPIC_WITH_CNXN_PROPS, true, false);
 
         // verify change topic DOES NOT HAPPEN because props match
         verifyStatic(AdminUtils.class, times(0));
@@ -129,7 +129,7 @@ public class KafkaInfraManagerTest {
         KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         //Existing Stream
-        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false, false);
 
         //verify change topic happens because isNewStream=false
         verifyStatic(AdminUtils.class, times(1));
@@ -147,7 +147,7 @@ public class KafkaInfraManagerTest {
         KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         // Not existing Stream
-        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true, false);
 
         //verify create topic happens when requested topic does not exist
         verifyStatic(AdminUtils.class, times(0));
@@ -164,7 +164,7 @@ public class KafkaInfraManagerTest {
         KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         //Existing Stream
-        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false, false);
 
         // note: this is a weird case, because somehow the stream exists in SR, but the underlying topic does NOT
         // might want to consider this corner case a bit more. Currently the behavior honors the request and creates the topic
@@ -175,5 +175,47 @@ public class KafkaInfraManagerTest {
         AdminUtils.changeTopicConfig(zkUtils, TOPIC, FILTERED_PROPS);
         verifyStatic(AdminUtils.class, times(1));
         AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, FILTERED_PROPS, RackAwareMode.Enforced$.MODULE$);
+    }
+
+    @Test(expected = StreamCreationException.class)
+    public void testUpsertTopicsForExistingStreamWithMismatchingConfigForceSyncDisabled() throws StreamCreationException {
+        // Mock it as an existing topic
+        when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
+
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
+
+        // Existing Stream, but PROPS match!! should not have an exception
+        Properties prop = new Properties();
+        prop.put("k1", "v1");
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, prop, true, false);
+
+        // verify change topic DOES NOT HAPPEN because props match
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.changeTopicConfig(zkUtils, TOPIC, TOPIC_PROPS);
+
+        // verify create topic DOES NOT HAPPEN because props match
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, TOPIC_PROPS, RackAwareMode.Enforced$.MODULE$);
+    }
+
+    @Test
+    public void testUpsertTopicsForExistingStreamWithMismatchingConfigForceSyncEnabled() throws StreamCreationException {
+        // Mock it as an existing topic
+        when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
+
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
+
+        // Existing Stream, but PROPS match!! should not have an exception
+        Properties prop = new Properties();
+        prop.put("k1", "v1");
+        kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, prop, true, true);
+
+        // verify change topic DOES NOT HAPPEN because props match
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.changeTopicConfig(zkUtils, TOPIC, TOPIC_PROPS);
+
+        // verify create topic DOES NOT HAPPEN because props match
+        verifyStatic(AdminUtils.class, times(0));
+        AdminUtils.createTopic(zkUtils, TOPIC, PARTITIONS, REPLICATION_FACTOR, TOPIC_PROPS, RackAwareMode.Enforced$.MODULE$);
     }
 }

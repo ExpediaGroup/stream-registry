@@ -133,6 +133,13 @@ public class Stream {
     @ApiModelProperty(example = "3")
     int replicationFactor;
 
+    /**
+     * Should the provided topic config be forcibly synced with the existing, underlying topic (if not the same)?
+     */
+    @ApiModelProperty(example = "false")
+    @Builder.Default
+    Boolean forceSync = false;
+
     @JsonPOJOBuilder(withPrefix = "")
     public static final class StreamBuilder {
     }

@@ -180,7 +180,7 @@ public class KafkaInfraManager implements InfraManager {
     }
 
     @Override
-    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isNewStream)
+    public void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties properties, boolean isNewStream, boolean forceSync)
         throws StreamCreationException {
         // TODO - Cannot guarantee against race conditions... should probably move to event-source paradigm to
         //      protect against this (and maybe employ optimistic locking for extra safety).
@@ -202,7 +202,7 @@ public class KafkaInfraManager implements InfraManager {
             List<String> topicsToCreate = partitionMaps.get(false);
 
             // update any topics that are necessary
-            updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isNewStream);
+            updateTopics(zkUtils, topicsToUpdate, topicConfigMap, isNewStream, forceSync);
 
             // now create any topics that were necessary to create this run
             createTopics(zkUtils, topicsToCreate, partitions, replicationFactor, topicConfigMap);
@@ -233,7 +233,7 @@ public class KafkaInfraManager implements InfraManager {
         return topicExists;
     }
 
-    void updateTopics(ZkUtils zkUtils, List<String> topicsToUpdate, Map<String, String> topicConfigMap, boolean isStreamNotAvailableInStreamRegistryDB)
+    void updateTopics(ZkUtils zkUtils, List<String> topicsToUpdate, Map<String, String> topicConfigMap, boolean isStreamNotAvailableInStreamRegistryDB, boolean forceSync)
         throws StreamCreationException {
         for (String topic : topicsToUpdate) {
             // update topic
@@ -254,8 +254,12 @@ public class KafkaInfraManager implements InfraManager {
             // to exactly match downstream config when the stream-registry has not "onboarded" existing topic
             // for the first time.
 
-            // TODO Alternatively we can add a forceSync=true flag, ignoring any user provided info, and only updating SR with the underlying settings
-            //      We should probably do forceSync=true anyway, as it provides a simple way to keep things in sync (#114)
+            // Added a forceSync=true flag, ignoring any user provided info, and only updating SR with the underlying settings (#114)
+            if (forceSync) {
+                // NOTHING TO DO!
+                log.info("topic config mismatch for {} ignored.", topic);
+                continue;
+            }
             if (isStreamNotAvailableInStreamRegistryDB) {
                 throw new StreamCreationException(String.format("Error: Input configs=%s and actual configs=%s are not same for topic=%s",
                     topicConfigMap, actualTopicConfig, topic));

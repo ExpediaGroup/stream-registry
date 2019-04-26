@@ -182,7 +182,7 @@ public class StreamServiceImpl extends AbstractService implements StreamService 
         topicConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         topicConfig.put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zkConnect);
 
-        infraManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isNewStream);
+        infraManager.upsertTopics(Collections.singleton(stream.getName()), stream.getPartitions(), stream.getReplicationFactor(), topicConfig, isNewStream, stream.getForceSync());
         log.info("Topic {} created/updated at {}", stream.getName(), bootstrapServer);
     }
 

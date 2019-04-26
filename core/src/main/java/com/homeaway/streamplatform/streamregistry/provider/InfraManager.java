@@ -98,11 +98,12 @@ public interface InfraManager {
      * @param replicationFactor replicationFactor for each of those topics
      * @param topicConfig topic config to use for each of these topics
      * @param isNewStream whether or not this invocation results from existing or new stream in stream registry.
+     * @param forceSync whether or not the provided topic config be forcibly synced with the existing, underlying topic (if not the same).
      * @throws StreamCreationException  when Stream could not be created in the underlying infrastructure for following reasons
      *      a) Input Configs and the existing configs does not match for a new Stream on-boarded to StreamRegistry,
      *      but already available in the infrastructure.
      */
-    void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream)
+    void upsertTopics(Collection<String> topics, int partitions, int replicationFactor, Properties topicConfig, boolean isNewStream, boolean forceSync)
         throws StreamCreationException;
 
 }

@@ -196,6 +196,12 @@ protocol StreamRegistryProtocol {
     * Replication Factor
     */
     int replicationFactor = 3;
+
+    /**
+    * Should the provided topic config be forcibly synced with the existing, underlying topic (if not the same)?
+    */
+    boolean forceSync = false;
+
   }
 
   record AvroStreamKey {
