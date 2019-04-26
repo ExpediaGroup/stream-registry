@@ -257,7 +257,7 @@ public class KafkaInfraManager implements InfraManager {
             // Added a forceSync=true flag, ignoring any user provided info, and only updating SR with the underlying settings (#114)
             if (forceSync) {
                 // NOTHING TO DO!
-                log.info("topic config mismatch for {} ignored.", topic);
+                log.info("topic config mismatch for {} ignored. Input config={}, actual (retained) config={}", topic, topicConfigMap, actualTopicConfig);
                 continue;
             }
             if (isStreamNotAvailableInStreamRegistryDB) {
