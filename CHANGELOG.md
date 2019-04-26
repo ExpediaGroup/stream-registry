@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.5.1] - SNAPSHOT
 ### Added
 - Updated `README` with Expedia Group stream registry announcement (#155) 
+- Added the `forceSync` flag for handling conflicting topic configs while upserting stream (#114)
 
 ### Changed
 - Updated mkdocs.yml to `expediagroup` (#168)
