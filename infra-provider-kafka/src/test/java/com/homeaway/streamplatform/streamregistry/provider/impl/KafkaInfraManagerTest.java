@@ -207,7 +207,7 @@ public class KafkaInfraManagerTest {
 
         // Existing Stream, but PROPS match!! should not have an exception
         Properties prop = new Properties();
-        prop.put("max.message.bytes", "64000");
+        prop.put("MAX_MESSAGE_BYTES_CONFIG", "64000");
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, prop, true, true);
 
         // verify change topic DOES NOT HAPPEN because props match
