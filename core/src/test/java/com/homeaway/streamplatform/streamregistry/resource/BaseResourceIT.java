@@ -131,6 +131,7 @@ public class BaseResourceIT {
     // TODO: Make resources "consistent" by having all writes (mutations)
     //     - wait some timeout period for the processor to process
     //     - THIS IS A TEMPORARY WORKAROUND for now... centralizing here so that we can soon remove it (#116)
+
     protected static final int TEST_SLEEP_WAIT_MS = 200;
 
     protected static ManagedKStreams managedKStreams;
