@@ -9,11 +9,11 @@ server:
 env: local
 
 requestFilterClassNames:
-#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter1
-#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter2
+#  - com.expediagroup.streamplatform.extensions.filters.YourRequestFilter1
+#  - com.expediagroup.streamplatform.extensions.filters.YourRequestFilter2
 responseFilterClassNames:
-#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter1
-#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter2
+#  - com.expediagroup.streamplatform.extensions.filters.YourResponseFilter1
+#  - com.expediagroup.streamplatform.extensions.filters.YourResponseFilter2
 
 healthCheckStreamConfig:
   name: StreamRegistryHealthCheck
@@ -22,10 +22,10 @@ healthCheckStreamConfig:
   replicationFactor: 1
 
 streamValidatorConfig:
-  className: com.homeaway.streamplatform.streamregistry.extensions.validation.DefaultStreamValidator
+  className: com.expediagroup.streamplatform.streamregistry.extensions.validation.DefaultStreamValidator
 
 schemaManagerConfig:
-  className: com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager
+  className: com.expediagroup.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager
   properties:
     schema.registry.url: http://localhost:8081
 
@@ -62,7 +62,7 @@ topicsConfig:
   stateStoreName: _streamregistry_streams_kv_v0.1
 
 infraManagerConfig:
-  className: com.homeaway.streamplatform.streamregistry.provider.impl.KafkaInfraManager
+  className: com.expediagroup.streamplatform.streamregistry.provider.impl.KafkaInfraManager
   config:
     infraManagerTopic: _streamregistry_infra_v0.1
     infraManagerStateStoreName: _streamregistry_infra_kv_v0.1
@@ -77,17 +77,17 @@ infraManagerConfig:
 logging:
   level: INFO
   loggers:
-    com.homeaway: DEBUG
+    com.expediagroup: DEBUG
   appenders:
     - type: console
       logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} - %msg %n"
 
 swagger:
-  resourcePackage: com.homeaway.streamplatform.streamregistry.resource
+  resourcePackage: com.expediagroup.streamplatform.streamregistry.resource
   title: Stream Registry API
   version: v0
   description: Stream Registry API
-  contact: stream-registry-committers@groups.homeawaycorp.com
+  contact: stream-registry-committers@expediagroup.com
   scan: true
 
 httpClient:

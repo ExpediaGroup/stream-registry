@@ -7,12 +7,12 @@ healthCheckStreamConfig:
   replicationFactor: 1
 
 streamValidatorConfig:
-  className: com.homeaway.streamplatform.streamregistry.extensions.validator.StreamValidatorIT$IntegrationTestStreamValidator
+  className: com.expediagroup.streamplatform.streamregistry.extensions.validator.StreamValidatorIT$IntegrationTestStreamValidator
   properties:
     validator.invalid-id: 13
 
 schemaManagerConfig:
-  className: com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager
+  className: ConfluentSchemaManager
   properties:
     # this will get overwritten by local schema.registry.url as integration tests run
     schema.registry.url: http://localhost:8081
@@ -53,7 +53,7 @@ kafkaProducerConfig:
     linger.ms: 0
 
 swagger:
-  resourcePackage: com.homeaway.streamplatform.streamregistry.resource
+  resourcePackage: com.expediagroup.streamplatform.streamregistry.resource
 
 httpClient:
   timeout: 10000ms

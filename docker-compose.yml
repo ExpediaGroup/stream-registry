@@ -3,7 +3,7 @@ version: '2'
 services:
 
   stream-registry:
-    image: homeaway/stream-registry
+    image: expediagroup/stream-registry
     ports:
       - "8080:8080"
     depends_on:

@@ -1,4 +1,4 @@
-@namespace("com.homeaway.digitalplatform.streamregistry")
+@namespace("com.expediagroup.streamplatform.streamregistry")
 
 protocol StreamRegistryProtocol {
 
@@ -63,7 +63,7 @@ protocol StreamRegistryProtocol {
 
     /**
      * brand: brand name.
-     * Example: HomeAway
+     * Example: ExpediaGroup
      */
     union{null, string} brand = null;
 

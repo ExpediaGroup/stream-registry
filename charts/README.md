@@ -1,5 +1,5 @@
 # Stream-Registry Helm Chart
-This helm chart creates a [Homeaway Stream-Registry server](https://homeaway.github.io/stream-registry/).
+This helm chart creates a [ExpediaGroup Stream-Registry server](https://expediagroup.github.io/stream-registry/).
 
 ## Prerequisites
 * Kubernetes 1.6
