@@ -22,6 +22,8 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
+import com.expediagroup.streamplatform.streamregistry.ClusterKey;
+import com.expediagroup.streamplatform.streamregistry.ClusterValue;
 import com.expediagroup.streamplatform.streamregistry.dto.AvroToJsonDTO;
 import com.expediagroup.streamplatform.streamregistry.dto.JsonToAvroDTO;
 import com.expediagroup.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
@@ -59,11 +61,11 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     public List<JsonCluster> getAllClusters() throws IllegalStateException {
         log.info("Get all clusters from infra manager...");
-        Map<com.expediagroup.streamplatform.streamregistry.ClusterKey, com.expediagroup.streamplatform.streamregistry.ClusterValue> allClusters = infraManager.getAllClusters();
+        Map<ClusterKey, ClusterValue> allClusters = infraManager.getAllClusters();
 
         List<JsonCluster> jsonClusterList = new ArrayList<>();
 
-        allClusters.forEach((com.expediagroup.streamplatform.streamregistry.ClusterKey clusterKey, com.expediagroup.streamplatform.streamregistry.ClusterValue clusterValue) ->
+        allClusters.forEach((ClusterKey clusterKey, ClusterValue clusterValue) ->
             jsonClusterList.add(
                 JsonCluster.builder().clusterKey(AvroToJsonDTO.getJsonClusterKey(clusterKey))
                 .clusterValue(AvroToJsonDTO.getJsonClusterValue(clusterValue))
@@ -83,13 +85,13 @@ public class ClusterServiceImpl implements ClusterService {
      * @return ClusterValue cluster details
      * @throws ClusterNotFoundException thrown if no cluster is found in the region
      */
-    public com.expediagroup.streamplatform.streamregistry.ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException {
+    public ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException {
         log.info("Cluster Details: vpc: {}, env: {}, hint: {}, actorType: {}", vpc, env, hint, actorType);
 
         // Because the default is to have producer/consumer be the same cluster, lets see first try actorType=null to see if a cluster exists
-        com.expediagroup.streamplatform.streamregistry.ClusterKey clusterKey = new com.expediagroup.streamplatform.streamregistry.ClusterKey(vpc, env, hint, null);
+        ClusterKey clusterKey = new ClusterKey(vpc, env, hint, null);
 
-        Optional<com.expediagroup.streamplatform.streamregistry.ClusterValue> clusterValue = infraManager.getClusterByKey(clusterKey);
+        Optional<ClusterValue> clusterValue = infraManager.getClusterByKey(clusterKey);
 
         if (!clusterValue.isPresent()) {
             // Second time set the actorType and look again.
@@ -102,7 +104,7 @@ public class ClusterServiceImpl implements ClusterService {
             }
         }
 
-        return new com.expediagroup.streamplatform.streamregistry.ClusterValue(clusterValue.get().getClusterProperties());
+        return new ClusterValue(clusterValue.get().getClusterProperties());
     }
 
     /**

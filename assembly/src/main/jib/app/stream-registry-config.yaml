@@ -26,11 +26,11 @@ healthCheckStreamConfig:
 
 # Validator Class that validates the stream from @PUT Stream
 streamValidatorConfig:
-  className: ${STREAM_REGISTRY_VALIDATOR:-DefaultStreamValidator}
+  className: ${STREAM_REGISTRY_VALIDATOR:-com.expediagroup.streamplatform.streamregistry.extensions.validation.DefaultStreamValidator}
 
 # SchemaManager class which would validate and register with the Underlying SchemaRegistry
 schemaManagerConfig:
-  className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-ConfluentSchemaManager}
+  className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-com.expediagroup.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager}
   properties:
     schema.registry.url: ${STREAM_REGISTRY_SCHEMA_REGISTRY_URL:-http://localhost:8081}
 
@@ -73,7 +73,7 @@ topicsConfig:
 
 # properties of the Kafka Topic that has all the Cluster details.
 infraManagerConfig:
-  className: KafkaInfraManager
+  className: com.expediagroup.streamplatform.streamregistry.provider.impl.KafkaInfraManager
   config:
     infraManagerTopic: _streamregistry_infra${STREAM_REGISTRY_INFRA_TOPIC_SUFFIX:-_v0.1}
     infraManagerStateStoreName: _streamregistry_infra_kv${STREAM_REGISTRY_INFRA_STATE_TOPIC_SUFFIX:-_v0.1}

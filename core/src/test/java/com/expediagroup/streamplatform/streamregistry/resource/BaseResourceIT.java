@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.resource;
 
+import static com.expediagroup.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
@@ -227,7 +229,7 @@ public class BaseResourceIT {
         BaseResourceIT.topicsConfig.setEventStoreTopic(topicsConfig.getEventStoreTopic());
         BaseResourceIT.topicsConfig.setStateStoreName(topicsConfig.getStateStoreName());
 
-        BaseResourceIT.schemaManagerConfig = new SchemaManagerConfig("ConfluentSchemaManager");
+        BaseResourceIT.schemaManagerConfig = new SchemaManagerConfig("com.expediagroup.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager");
         BaseResourceIT.schemaManagerConfig.setProperties(Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL));
 
         infraManager = buildInfraManager();
@@ -270,7 +272,7 @@ public class BaseResourceIT {
 
         configuration.getSchemaManagerConfig().getProperties().put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL);
         SchemaManager schemaManager = StreamRegistryApplication.loadSchemaManager(configuration);
-        configuration.getSchemaManagerConfig().getProperties().put(SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY, 1);
+        configuration.getSchemaManagerConfig().getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 1);
 
         StreamDao streamDao = new StreamDaoImpl(managedKafkaProducer, managedKStreams);
         StreamService streamService = new StreamServiceImpl(streamDao, env, regionService, clusterService,

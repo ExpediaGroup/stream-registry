@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.health;
 
+import static com.expediagroup.streamplatform.streamregistry.service.AbstractService.PRIMARY_HINT;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Tags;
 import com.expediagroup.streamplatform.streamregistry.resource.ConsumerResource;
 import com.expediagroup.streamplatform.streamregistry.resource.ProducerResource;
 import com.expediagroup.streamplatform.streamregistry.resource.StreamResource;
-import com.expediagroup.streamplatform.streamregistry.service.AbstractService;
 import com.expediagroup.streamplatform.streamregistry.streams.ManagedKStreams;
 
 @Slf4j
@@ -206,7 +207,7 @@ public class StreamRegistryHealthCheck extends HealthCheck {
         return Tags.builder()
                 .productId(PRODUCT_ID)
                 .componentId(COMPONENT_ID)
-                .hint(AbstractService.PRIMARY_HINT)
+                .hint(PRIMARY_HINT)
                 .build();
     }
 

@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.service;
 
 import java.util.List;
 
+import com.expediagroup.streamplatform.streamregistry.ClusterValue;
 import com.expediagroup.streamplatform.streamregistry.exceptions.ClusterNotFoundException;
 import com.expediagroup.streamplatform.streamregistry.exceptions.InvalidClusterException;
 import com.expediagroup.streamplatform.streamregistry.model.JsonCluster;
@@ -42,7 +43,7 @@ public interface ClusterService {
      * @return ClusterValue
      * @throws ClusterNotFoundException - if the cluster is not found
      */
-    com.expediagroup.streamplatform.streamregistry.ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException;
+    ClusterValue getCluster(String vpc, String env, String hint, String actorType) throws ClusterNotFoundException;
 
     /**
      * Upsert cluster.

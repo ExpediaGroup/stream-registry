@@ -71,8 +71,8 @@ public abstract class AbstractService {
         this.clusterService = clusterService;
     }
 
-    protected com.expediagroup.streamplatform.streamregistry.Actor populateActorStreamConfig(String streamName, String region,
-        com.expediagroup.streamplatform.streamregistry.Actor actor, String operation, List<String> topicNamePostFixes, String hint,
+    protected Actor populateActorStreamConfig(String streamName, String region,
+        Actor actor, String operation, List<String> topicNamePostFixes, String hint,
         String actorType) throws ClusterNotFoundException {
 
         Actor.Builder actorBuilder = Actor.newBuilder();
