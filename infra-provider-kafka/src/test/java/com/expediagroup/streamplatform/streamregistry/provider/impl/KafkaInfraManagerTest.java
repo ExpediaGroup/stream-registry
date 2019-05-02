@@ -1,12 +1,11 @@
-/* Copyright (c) 2018-2019 Expedia, Inc.
- * All rights reserved.  http://www.expediagroup.com
-
+/* Copyright (C) 2018-2019 Expedia, Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
-
- *      http://www.apache.org/licenses/LICENSE-2.0
-
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -108,7 +107,7 @@ public class KafkaInfraManagerTest {
         // Mock it as an existing topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
-        KafkaInfraManager kafkaManagerSpy = PowerMockito.spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         // Existing Stream, but PROPS match!! should not have an exception
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, TOPIC_WITH_CNXN_PROPS, true);
@@ -127,7 +126,7 @@ public class KafkaInfraManagerTest {
         // Mock it as an existing topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(true);
 
-        KafkaInfraManager kafkaManagerSpy = PowerMockito.spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         //Existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);
@@ -145,7 +144,7 @@ public class KafkaInfraManagerTest {
         // Mock it as a new topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 
-        KafkaInfraManager kafkaManagerSpy = PowerMockito.spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         // Not existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, true);
@@ -162,7 +161,7 @@ public class KafkaInfraManagerTest {
         // Mock it as a new topic
         when(AdminUtils.topicExists(zkUtils, TOPIC)).thenReturn(false);
 
-        KafkaInfraManager kafkaManagerSpy = PowerMockito.spy(kafkaManager);
+        KafkaInfraManager kafkaManagerSpy = spy(kafkaManager);
 
         //Existing Stream
         kafkaManagerSpy.upsertTopics(Collections.singleton(TOPIC), PARTITIONS, REPLICATION_FACTOR, PROPS, false);

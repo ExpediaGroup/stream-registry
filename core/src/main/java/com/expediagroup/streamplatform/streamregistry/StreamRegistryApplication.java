@@ -1,12 +1,11 @@
-/* Copyright (c) 2018-2019 Expedia, Inc.
- * All rights reserved.  http://www.expediagroup.com
-
+/* Copyright (C) 2018-2019 Expedia, Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
-
- *      http://www.apache.org/licenses/LICENSE-2.0
-
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +14,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry;
 
+import static com.expediagroup.streamplatform.streamregistry.extensions.schema.SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY;
 import static io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG;
@@ -245,7 +245,7 @@ public class StreamRegistryApplication extends Application<StreamRegistryConfigu
 
         try {
             SchemaManager schemaManager = Utils.newInstance(schemaManagerClass, SchemaManager.class);
-            schemaManagerConfig.getProperties().put(SchemaManager.MAX_SCHEMA_VERSIONS_CAPACITY, 100);
+            schemaManagerConfig.getProperties().put(MAX_SCHEMA_VERSIONS_CAPACITY, 100);
             schemaManager.configure(schemaManagerConfig.getProperties());
 
             return schemaManager;
