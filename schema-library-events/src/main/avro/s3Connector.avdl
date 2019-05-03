@@ -1,4 +1,4 @@
-@namespace("com.homeaway.digitalplatform.streamregistry")
+@namespace("com.expediagroup.streamplatform.streamregistry")
 
 protocol S3ConnectorProtocol {
 

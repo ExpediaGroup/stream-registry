@@ -11,11 +11,11 @@ env: ${STREAM_REGISTRY_ENVIRONMENT:-local}
 
 # list (yaml syntax) of Jersey Filter Full Class Names loaded at runtime.
 requestFilterClassNames:
-#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter1
-#  - com.homeaway.streamplatform.extensions.filters.YourRequestFilter2
+#  - com.expediagroup.streamplatform.extensions.filters.YourRequestFilter1
+#  - com.expediagroup.streamplatform.extensions.filters.YourRequestFilter2
 responseFilterClassNames:
-#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter1
-#  - com.homeaway.streamplatform.extensions.filters.YourResponseFilter2
+#  - com.expediagroup.streamplatform.extensions.filters.YourResponseFilter1
+#  - com.expediagroup.streamplatform.extensions.filters.YourResponseFilter2
 
 # Properties of the Stream that got upserted in each HealthCheck
 healthCheckStreamConfig:
@@ -26,11 +26,11 @@ healthCheckStreamConfig:
 
 # Validator Class that validates the stream from @PUT Stream
 streamValidatorConfig:
-  className: ${STREAM_REGISTRY_VALIDATOR:-com.homeaway.streamplatform.streamregistry.extensions.validation.DefaultStreamValidator}
+  className: ${STREAM_REGISTRY_VALIDATOR:-com.expediagroup.streamplatform.streamregistry.extensions.validation.DefaultStreamValidator}
 
 # SchemaManager class which would validate and register with the Underlying SchemaRegistry
 schemaManagerConfig:
-  className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-com.homeaway.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager}
+  className: ${STREAM_REGISTRY_SCHEMA_MANAGER:-com.expediagroup.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager}
   properties:
     schema.registry.url: ${STREAM_REGISTRY_SCHEMA_REGISTRY_URL:-http://localhost:8081}
 
@@ -73,7 +73,7 @@ topicsConfig:
 
 # properties of the Kafka Topic that has all the Cluster details.
 infraManagerConfig:
-  className: com.homeaway.streamplatform.streamregistry.provider.impl.KafkaInfraManager
+  className: com.expediagroup.streamplatform.streamregistry.provider.impl.KafkaInfraManager
   config:
     infraManagerTopic: _streamregistry_infra${STREAM_REGISTRY_INFRA_TOPIC_SUFFIX:-_v0.1}
     infraManagerStateStoreName: _streamregistry_infra_kv${STREAM_REGISTRY_INFRA_STATE_TOPIC_SUFFIX:-_v0.1}
@@ -88,17 +88,17 @@ infraManagerConfig:
 logging:
   level: INFO
   loggers:
-    com.homeaway: DEBUG
+    com.expediagroup: DEBUG
   appenders:
   - type: console
     logFormat: "[%d{HH:mm:ss.SSS}] [%t] %-6level %logger{5} - %msg %n"
 
 swagger:
-  resourcePackage: com.homeaway.streamplatform.streamregistry.resource
+  resourcePackage: com.expediagroup.streamplatform.streamregistry.resource
   title: Stream Registry API
   version: v0
   description: Stream Registry API
-  contact: stream-registry-committers@groups.homeawaycorp.com
+  contact: stream-registry-committers@expediagroup.com
   scan: true
 
 httpClient:

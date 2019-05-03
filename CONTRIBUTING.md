@@ -19,4 +19,4 @@ automatically built and momentarily deployed to [stream registry documentation].
 By contributing to stream-registry, you agree that your contributions will be licensed 
 under its Apache License.
 
-[stream registry documentation]: https://homeaway.github.io/pages/stream-registry
+[stream registry documentation]: https://expediagroup.github.io/stream-registry

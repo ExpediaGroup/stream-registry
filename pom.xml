@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.homeaway.streamplatform</groupId>
+    <groupId>com.expediagroup.streamplatform</groupId>
     <artifactId>stream-registry-parent</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <modules>
@@ -13,10 +13,10 @@
     </modules>
 
     <description>Stream Registry Parent POM</description>
-    <url>https://homeaway.github.io/stream-registry/</url>
+    <url>https://expediagroup.github.io/stream-registry/</url>
 
     <packaging>pom</packaging>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -27,18 +27,18 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/HomeAway/stream-registry/tree/master</url>
-        <connection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</developerConnection>
+        <url>https://github.com/ExpediaGroup/stream-registry/tree/master</url>
+        <connection>scm:git:ssh://git@github.com/ExpediaGroup/stream-registry.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/ExpediaGroup/stream-registry.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <developers>
         <developer>
             <name>Stream Registry Committers</name>
-            <email>stream-registry-committers@groups.homeawaycorp.com</email>
-            <organization>HomeAway</organization>
-            <organizationUrl>https://www.homeaway.com</organizationUrl>
+            <email>stream-registry-committers@expediagroup.com</email>
+            <organization>ExpediaGroup</organization>
+            <organizationUrl>https://www.expediagroup.com</organizationUrl>
         </developer>
     </developers>
 
@@ -55,7 +55,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <mainClass>com.homeaway.streamplatform.streamregistry.StreamRegistryApplication</mainClass>
+        <mainClass>com.expediagroup.streamplatform.streamregistry.StreamRegistryApplication</mainClass>
         <dropwizard.server.config>config-dev.yaml</dropwizard.server.config>
 
         <!-- JaCoCo Coverage -->
@@ -696,7 +696,7 @@
                             </licenseHeader>
                             <removeUnusedImports />
                             <importOrder>
-                                <order>java,javax,com,io,org,com.homeaway,</order>
+                                <order>java,javax,com,io,org,com.expediagroup,</order>
                             </importOrder>
                         </java>
                     </configuration>

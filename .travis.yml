@@ -28,7 +28,7 @@ after_failure:
 notifications:
   email:
     recipients:
-      - stream-registry-committers@groups.homeawaycorp.com
+      - stream-registry-committers@expediagroup.com
     on_success: change
     on_failure: always
 

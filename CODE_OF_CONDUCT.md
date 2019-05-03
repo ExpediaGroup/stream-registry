@@ -71,4 +71,4 @@ This Code of Conduct is adapted from the [Contributor Covenant][homepage], versi
 available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
 
 [homepage]: https://www.contributor-covenant.org
-[project administrators]: mailto:stream-registry-committers@groups.homeawaycorp.com
+[project administrators]: mailto:stream-registry-committers@expediagroup.com
