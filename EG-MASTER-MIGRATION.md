@@ -10,7 +10,7 @@ and should be removed when `eg-master` becomes the new master.
 
 # Migration tasks/notes
 
-##### - avdl change to `com.expediagroup` (#175)
+##### - avdl change to `com.expediagroup`([#175](https://github.com/ExpediaGroup/stream-registry/pull/175))
 
 This will result in an internal data migration of the schemas. 
 
