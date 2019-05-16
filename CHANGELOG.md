@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated mkdocs.yml to `expediagroup` (#168)
 
 ### Removed
-- Removed redundant topic creation in the replicated VPCs.
+- Removed redundant topic creation in the replicated VPCs. (#178)
 
 ## [0.5.0] - 20190412
 ### Added
