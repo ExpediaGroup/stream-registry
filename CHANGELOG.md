@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Updated mkdocs.yml to `expediagroup` (#168)
 
+### Removed
+- Removed redundant topic creation in the replicated VPCs. (#178)
+
 ## [0.5.0] - 20190412
 ### Added
 - Add health check to verify whether the underlying topic (used as Datastore) 
