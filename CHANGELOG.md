@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Changed groupId to `com.expediagroup.streamplatform`
 - Changed packages to `com.expediagroup.streamplatform.streamregistry`
+- Modularized - core, model, service-api/impl, repository-api/impl, graphql, app
+- Removed rest API
+- Removed consumer/producer service (to be reintroduced later)
+- Removed Dropwizard
+- Added Spring Boot
+- Removed charts (to be reintroduced later)
+- Removed health checks (to be reintroduced later)
+- Removed remaining unused files
+- Removed integration tests (a small number to be reintroduced later)
+- Replaced ConfluentSchemaManager with simple HTTP impl.
+- Reformat 2 spaces indent
+- Removed unused dependencies & plugins
+- License update  
 
 ## [0.5.1] - SNAPSHOT
 ### Added
