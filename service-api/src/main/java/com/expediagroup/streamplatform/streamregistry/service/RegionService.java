@@ -1,4 +1,5 @@
-/* Copyright (C) 2018-2019 Expedia, Inc.
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +21,30 @@ import java.util.Set;
 import com.expediagroup.streamplatform.streamregistry.model.Hint;
 
 // TODO consider splitting this interface into a ClusterService and NamespaceDao
+
 /**
  * The interface for the Region dao.
  */
 public interface RegionService {
-    // TODO hint name needs to become clustername or stream-binding
-    // TODO this method needs to move to a ClusterService
-    /**
-     * Returns a Collection of {@link Hint}s
-     *
-     * @return Collection of hints
-     */
-    Collection<Hint> getHints();
+  // TODO hint name needs to become clustername or stream-binding
+  // TODO this method needs to move to a ClusterService
 
-    // TODO regions need to become namespaces
-    // TODO there needs to be knowledge of a parent namespace
-    // TODO there needs to be knowledge of the current namespace
-    /**
-     * Get supported regions for a specific {@link Hint} and environment.
-     *
-     * @param hint {@link Hint}
-     * @return supported regions
-     */
-    Set<String> getSupportedRegions(String hint);
+  /**
+   * Returns a Collection of {@link Hint}s
+   *
+   * @return Collection of hints
+   */
+  Collection<Hint> getHints();
+
+  // TODO regions need to become namespaces
+  // TODO there needs to be knowledge of a parent namespace
+  // TODO there needs to be knowledge of the current namespace
+
+  /**
+   * Get supported regions for a specific {@link Hint} and environment.
+   *
+   * @param hint {@link Hint}
+   * @return supported regions
+   */
+  Set<String> getSupportedRegions(String hint);
 }

@@ -1,4 +1,5 @@
-/* Copyright (C) 2018-2019 Expedia, Inc.
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +15,22 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.NonNull;
+import lombok.Value;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-
-@JsonDeserialize(builder = ClusterValue.ClusterValueBuilder.class)
+@Value
 @Builder
-@Getter
-@ToString
-public class ClusterValue {
+public class StreamConfig {
+  /**
+   * Bootstrap Server for the Application
+   */
+  @NonNull Optional<String> bootstrapServers;
 
-    @NotNull
-    String clusterName;
-
-    @NotNull
-    String bootstrapServers;
-
-    @NotNull
-    String zookeeperQuorum;
-
-    String schemaRegistryURL;
-
-    @JsonPOJOBuilder(withPrefix = "")
-    public static final class ClusterValueBuilder{
-    }
+  /**
+   * Schema Registry URL
+   */
+  @NonNull Optional<String> schemaRegistryUrl;
 }
