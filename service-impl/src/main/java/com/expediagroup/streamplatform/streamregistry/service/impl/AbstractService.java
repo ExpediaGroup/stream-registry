@@ -32,9 +32,9 @@ import com.expediagroup.streamplatform.streamregistry.model.Actor.ActorBuilder;
 import com.expediagroup.streamplatform.streamregistry.model.ClusterValue;
 import com.expediagroup.streamplatform.streamregistry.model.RegionStreamConfig;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.repository.InfraManager;
 import com.expediagroup.streamplatform.streamregistry.service.ClusterService;
 import com.expediagroup.streamplatform.streamregistry.service.RegionService;
-import com.expediagroup.streamplatform.streamregistry.repository.InfraManager;
 
 @Slf4j
 public abstract class AbstractService {

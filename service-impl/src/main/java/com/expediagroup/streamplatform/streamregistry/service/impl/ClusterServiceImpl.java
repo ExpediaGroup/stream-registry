@@ -27,8 +27,8 @@ import com.expediagroup.streamplatform.streamregistry.core.extension.validation.
 import com.expediagroup.streamplatform.streamregistry.model.Cluster;
 import com.expediagroup.streamplatform.streamregistry.model.ClusterKey;
 import com.expediagroup.streamplatform.streamregistry.model.ClusterValue;
-import com.expediagroup.streamplatform.streamregistry.service.ClusterService;
 import com.expediagroup.streamplatform.streamregistry.repository.InfraManager;
+import com.expediagroup.streamplatform.streamregistry.service.ClusterService;
 
 /**
  * The type Cluster dao.

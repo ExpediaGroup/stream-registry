@@ -23,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.expediagroup.streamplatform.streamregistry.model.ClusterKey;
 import com.expediagroup.streamplatform.streamregistry.model.Hint;
-import com.expediagroup.streamplatform.streamregistry.service.RegionService;
 import com.expediagroup.streamplatform.streamregistry.repository.InfraManager;
+import com.expediagroup.streamplatform.streamregistry.service.RegionService;
 
 /**
  * Specific implementation of {@link RegionService} that uses {@link InfraManager}

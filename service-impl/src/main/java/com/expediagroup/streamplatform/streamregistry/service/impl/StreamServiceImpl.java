@@ -36,11 +36,11 @@ import com.expediagroup.streamplatform.streamregistry.core.schema.SchemaReferenc
 import com.expediagroup.streamplatform.streamregistry.model.Cluster;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tags;
+import com.expediagroup.streamplatform.streamregistry.repository.InfraManager;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamDao;
 import com.expediagroup.streamplatform.streamregistry.service.ClusterService;
 import com.expediagroup.streamplatform.streamregistry.service.RegionService;
 import com.expediagroup.streamplatform.streamregistry.service.StreamService;
-import com.expediagroup.streamplatform.streamregistry.repository.InfraManager;
-import com.expediagroup.streamplatform.streamregistry.repository.StreamDao;
 
 
 @Slf4j
