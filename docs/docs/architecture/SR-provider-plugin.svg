@@ -1,3 +1,115 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="47 32 468 344" width="39pc" height="344pt" xmlns:dc="http://purl.org/dc/elements/1.1/"><metadata> Produced by OmniGraffle 6.6.2 <dc:date>2018-10-27 19:35:17 +0000</dc:date></metadata><defs><filter id="Shadow" filterUnits="userSpaceOnUse"><feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="1.308"/><feOffset in="blur" result="offset" dx="2.25" dy="2"/><feFlood flood-color="black" flood-opacity=".5" result="flood"/><feComposite in="flood" in2="offset" operator="in" result="color"/><feMerge><feMergeNode in="color"/><feMergeNode in="SourceGraphic"/></feMerge></filter><font-face font-family="Arial" font-size="22" panose-1="2 11 6 4 2 2 2 2 2 4" units-per-em="1000" underline-position="-105.95703" underline-thickness="73.242188" slope="0" x-height="518.5547" cap-height="716.3086" ascent="905.27344" descent="-211.91406" font-weight="500"><font-face-src><font-face-name name="ArialMT"/></font-face-src></font-face><font-face font-family="Helvetica Neue" font-size="16" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.99585" descent="-212.99744" font-weight="500"><font-face-src><font-face-name name="HelveticaNeue"/></font-face-src></font-face><filter id="Shadow_2" filterUnits="userSpaceOnUse"><feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="1.3030978"/><feOffset in="blur" result="offset" dx="0" dy="2"/><feFlood flood-color="black" flood-opacity=".2" result="flood"/><feComposite in="flood" in2="offset" operator="in" result="color"/><feMerge><feMergeNode in="color"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1"><title>Stream Registry Wiki</title><g><title>Layer 2</title><path d="M 63.5 43.625 L 498.4375 43.625 C 501.19892 43.625 503.4375 45.863576 503.4375 48.625 L 503.4375 359.62972 C 503.4375 362.39115 501.19892 364.62972 498.4375 364.62972 L 63.5 364.62972 C 60.738576 364.62972 58.5 362.39115 58.5 359.62972 L 58.5 48.625 C 58.5 45.863576 60.738576 43.625 63.5 43.625 Z" fill="white"/><path d="M 63.5 43.625 L 498.4375 43.625 C 501.19892 43.625 503.4375 45.863576 503.4375 48.625 L 503.4375 359.62972 C 503.4375 362.39115 501.19892 364.62972 498.4375 364.62972 L 63.5 364.62972 C 60.738576 364.62972 58.5 362.39115 58.5 359.62972 L 58.5 48.625 C 58.5 45.863576 60.738576 43.625 63.5 43.625 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><g filter="url(#Shadow)"><rect x="67.5" y="185.625" width="426.9375" height="170.00472" fill="#dadada"/><path d="M 67.5 185.625 L 494.4375 185.625 L 494.4375 355.62972 L 67.5 355.62972 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/><text transform="translate(72.5 325.41)" fill="black"><tspan font-family="Arial" font-size="22" font-weight="500" x="257.9961" y="20" textLength="158.94141">Stream Provider</tspan></text></g><g filter="url(#Shadow)"><circle cx="280.96875" cy="140.625" r="72.000115" fill="#3a8eed"/><circle cx="280.96875" cy="140.625" r="72.000115" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/><text transform="translate(228.36875 122.177)" fill="black"><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="26.96" y="15" textLength="20.736">Str</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="47.408" y="15" textLength="30.832">eam</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="23.272" y="33.447998" textLength="58.656">Registry</tspan></text></g><g filter="url(#Shadow_2)"><path d="M 181.52417 221.7732 C 186.57658 216.72079 194.76815 216.72079 199.82056 221.7732 C 204.81072 226.76336 204.88114 234.83203 199.97882 239.90853" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g><path d="M 228.28935 193.3044 C 217.81686 203.77689 207.90071 213.69304 200.88121 220.71254" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M 333.64815 193.3044 C 344.12064 203.77689 354.0368 213.69304 361.05629 220.71254" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><g filter="url(#Shadow_2)"><path d="M 380.41333 221.7732 C 375.36092 216.72079 367.16935 216.72079 362.11694 221.7732 C 357.12678 226.76336 357.05636 234.83203 361.95868 239.90853" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g><text transform="translate(108.21875 221.69739)" fill="black"><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".432" y="15" textLength="87.136">SchemaMgr</tspan></text><text transform="translate(363.09375 204.30672)" fill="black"><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="36.36" y="15" textLength="20.736">Str</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="56.808" y="15" textLength="30.832">eam</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".216" y="33.447998" textLength="86.816">Infrastructur</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="86.744" y="33.447998" textLength="37.04">eMgr</tspan></text><g filter="url(#Shadow_2)"><path d="M 346.01744 252.78638 C 342.17833 246.76019 334.18093 244.98721 328.15475 248.82631 C 322.2028 252.61812 320.38767 260.4803 324.07503 266.49752" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g><g filter="url(#Shadow_2)"><path d="M 239.86941 265.29845 C 243.16869 258.9606 240.70543 251.14815 234.36758 247.84887 C 228.1078 244.59024 220.3914 246.94938 217.02401 253.15133" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g><g filter="url(#Shadow_2)"><path d="M 293.90625 273.125 C 293.90625 265.97982 288.11393 260.1875 280.96875 260.1875 C 273.91159 260.1875 268.15638 265.84312 268.03322 272.89921" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g><path d="M 311.80314 208.46671 C 318.42987 223.0468 324.7495 236.95125 329.13148 246.59244" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M 250.78975 208.76065 C 244.4624 223.04602 238.44263 236.63694 234.24077 246.12357" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M 280.96875 215.12504 C 280.96875 231.78827 280.96875 247.74424 280.96875 258.6875" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><text transform="translate(111.527464 253.37638)" fill="black"><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".076" y="15" textLength="20.736">Str</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="20.524" y="15" textLength="90.4">eamSinkMgr</tspan></text><text transform="translate(330.38542 253.32711)" fill="black"><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".3" y="15" textLength="20.736">Str</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="20.748" y="15" textLength="64.608">eamSour</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="85.068" y="15" textLength="45.632">ceMgr</tspan></text><text transform="translate(200.96875 276.8385)" fill="black"><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".136" y="15" textLength="20.736">Str</tspan><tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="20.584" y="15" textLength="139.28">eamReplicationMgr</tspan></text></g></g></svg>
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="47 32 468 344" width="39pc" height="344pt">
+  <metadata>Produced by OmniGraffle 6.6.2
+    <dc:date>2018-10-27 19:35:17 +0000</dc:date>
+  </metadata>
+  <defs>
+    <filter id="Shadow" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="1.308" />
+      <feOffset in="blur" result="offset" dx="2.25" dy="2" />
+      <feFlood flood-color="black" flood-opacity=".5" result="flood" />
+      <feComposite in="flood" in2="offset" operator="in" result="color" />
+      <feMerge>
+        <feMergeNode in="color" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <font-face font-family="Arial" font-size="22" panose-1="2 11 6 4 2 2 2 2 2 4" units-per-em="1000" underline-position="-105.95703" underline-thickness="73.242188" slope="0" x-height="518.5547" cap-height="716.3086" ascent="905.27344"
+               descent="-211.91406" font-weight="500">
+      <font-face-src>
+        <font-face-name name="ArialMT" />
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="16" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.99585"
+               descent="-212.99744" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue" />
+      </font-face-src>
+    </font-face>
+    <filter id="Shadow_2" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="1.3030978" />
+      <feOffset in="blur" result="offset" dx="0" dy="2" />
+      <feFlood flood-color="black" flood-opacity=".2" result="flood" />
+      <feComposite in="flood" in2="offset" operator="in" result="color" />
+      <feMerge>
+        <feMergeNode in="color" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>Stream Registry Wiki</title>
+    <g>
+      <title>Layer 2</title>
+      <path
+          d="M 63.5 43.625 L 498.4375 43.625 C 501.19892 43.625 503.4375 45.863576 503.4375 48.625 L 503.4375 359.62972 C 503.4375 362.39115 501.19892 364.62972 498.4375 364.62972 L 63.5 364.62972 C 60.738576 364.62972 58.5 362.39115 58.5 359.62972 L 58.5 48.625 C 58.5 45.863576 60.738576 43.625 63.5 43.625 Z"
+          fill="white" />
+      <path
+          d="M 63.5 43.625 L 498.4375 43.625 C 501.19892 43.625 503.4375 45.863576 503.4375 48.625 L 503.4375 359.62972 C 503.4375 362.39115 501.19892 364.62972 498.4375 364.62972 L 63.5 364.62972 C 60.738576 364.62972 58.5 362.39115 58.5 359.62972 L 58.5 48.625 C 58.5 45.863576 60.738576 43.625 63.5 43.625 Z"
+          stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+      <g filter="url(#Shadow)">
+        <rect x="67.5" y="185.625" width="426.9375" height="170.00472" fill="#dadada" />
+        <path d="M 67.5 185.625 L 494.4375 185.625 L 494.4375 355.62972 L 67.5 355.62972 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4" />
+        <text transform="translate(72.5 325.41)" fill="black">
+          <tspan font-family="Arial" font-size="22" font-weight="500" x="257.9961" y="20" textLength="158.94141">Stream Provider</tspan>
+        </text>
+      </g>
+      <g filter="url(#Shadow)">
+        <circle cx="280.96875" cy="140.625" r="72.000115" fill="#3a8eed" />
+        <circle cx="280.96875" cy="140.625" r="72.000115" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+        <text transform="translate(228.36875 122.177)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="26.96" y="15" textLength="20.736">Str</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="47.408" y="15" textLength="30.832">eam</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="23.272" y="33.447998" textLength="58.656">Registry</tspan>
+        </text>
+      </g>
+      <g filter="url(#Shadow_2)">
+        <path d="M 181.52417 221.7732 C 186.57658 216.72079 194.76815 216.72079 199.82056 221.7732 C 204.81072 226.76336 204.88114 234.83203 199.97882 239.90853" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="3" />
+      </g>
+      <path d="M 228.28935 193.3044 C 217.81686 203.77689 207.90071 213.69304 200.88121 220.71254" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+      <path d="M 333.64815 193.3044 C 344.12064 203.77689 354.0368 213.69304 361.05629 220.71254" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+      <g filter="url(#Shadow_2)">
+        <path d="M 380.41333 221.7732 C 375.36092 216.72079 367.16935 216.72079 362.11694 221.7732 C 357.12678 226.76336 357.05636 234.83203 361.95868 239.90853" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="3" />
+      </g>
+      <text transform="translate(108.21875 221.69739)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".432" y="15" textLength="87.136">SchemaMgr</tspan>
+      </text>
+      <text transform="translate(363.09375 204.30672)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="36.36" y="15" textLength="20.736">Str</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="56.808" y="15" textLength="30.832">eam</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".216" y="33.447998" textLength="86.816">Infrastructur</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="86.744" y="33.447998" textLength="37.04">eMgr</tspan>
+      </text>
+      <g filter="url(#Shadow_2)">
+        <path d="M 346.01744 252.78638 C 342.17833 246.76019 334.18093 244.98721 328.15475 248.82631 C 322.2028 252.61812 320.38767 260.4803 324.07503 266.49752" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="3" />
+      </g>
+      <g filter="url(#Shadow_2)">
+        <path d="M 239.86941 265.29845 C 243.16869 258.9606 240.70543 251.14815 234.36758 247.84887 C 228.1078 244.59024 220.3914 246.94938 217.02401 253.15133" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="3" />
+      </g>
+      <g filter="url(#Shadow_2)">
+        <path d="M 293.90625 273.125 C 293.90625 265.97982 288.11393 260.1875 280.96875 260.1875 C 273.91159 260.1875 268.15638 265.84312 268.03322 272.89921" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+      </g>
+      <path d="M 311.80314 208.46671 C 318.42987 223.0468 324.7495 236.95125 329.13148 246.59244" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+      <path d="M 250.78975 208.76065 C 244.4624 223.04602 238.44263 236.63694 234.24077 246.12357" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+      <path d="M 280.96875 215.12504 C 280.96875 231.78827 280.96875 247.74424 280.96875 258.6875" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+      <text transform="translate(111.527464 253.37638)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".076" y="15" textLength="20.736">Str</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="20.524" y="15" textLength="90.4">eamSinkMgr</tspan>
+      </text>
+      <text transform="translate(330.38542 253.32711)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".3" y="15" textLength="20.736">Str</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="20.748" y="15" textLength="64.608">eamSour</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="85.068" y="15" textLength="45.632">ceMgr</tspan>
+      </text>
+      <text transform="translate(200.96875 276.8385)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".136" y="15" textLength="20.736">Str</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="20.584" y="15" textLength="139.28">eamReplicationMgr</tspan>
+      </text>
+    </g>
+  </g>
+</svg>

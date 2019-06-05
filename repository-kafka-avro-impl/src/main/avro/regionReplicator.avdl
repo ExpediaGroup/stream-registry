@@ -1,0 +1,63 @@
+@namespace("com.expediagroup.streamplatform.streamregistry")
+
+protocol RegionReplicatorProtocol {
+
+/**
+* Region replicator is what replicates topics across regions.
+* This record includes all properties that are configurable on region replicator
+*/
+  record RegionReplicator {
+
+  /**
+  * This is the application name of the region replicator deployment
+  */
+    string appName;
+
+  /**
+  * Source Region for Region Replicator
+  */
+    union{null, string} src_region = null;
+
+  /**
+  * Destination Region for Region Replicator
+  */
+    union{null, string} dest_region = null;
+
+  /**
+  * Source Cluster for Region Replicator
+  */
+    union{null, string} src_cluster = null;
+
+  /**
+  * Dest cluster for Region Replicator
+  */
+    union{null, string} dest_cluster = null;
+
+  /**
+  * Region Replicator Source Topic Name
+  */
+    union{null, string} topic = null;
+
+  /**
+  * Region Replicator Status
+  * ex: NOT_DEPLOYED, CREATING_DEPLOYMENT, DEPLOYED, DEPLOYMENT_RED, DELETING_DEPLOYMENT, DELETED
+  */
+    string status = "NOT_DEPLOYED";
+
+  /**
+  * Properties related to Region Replicator
+  */
+    union{null, map<string>} properties = null;
+  }
+
+/**
+* Wrapper Record needed to store the Replicator list in MirrormakerDeployer
+*/
+  record RegionReplicatorList {
+  /**
+  * Region Replicator List
+  */
+    union {null, array<RegionReplicator>} regionReplicatorList = null;
+  }
+
+}

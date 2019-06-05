@@ -1,2 +1,0 @@
-ExpediaGroup Stream Registry is now installed on your Kubernetes cluster. For more information on
-Stream-Registry, please navigate to https://github.com/expediagroup/stream-registry

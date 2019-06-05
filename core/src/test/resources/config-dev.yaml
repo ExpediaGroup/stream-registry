@@ -12,7 +12,7 @@ streamValidatorConfig:
     validator.invalid-id: 13
 
 schemaManagerConfig:
-  className: com.expediagroup.streamplatform.streamregistry.extensions.schema.ConfluentSchemaManager
+  className: com.expediagroup.streamplatform.streamregistry.core.schema.ConfluentSchemaManager
   properties:
     # this will get overwritten by local schema.registry.url as integration tests run
     schema.registry.url: http://localhost:8081
