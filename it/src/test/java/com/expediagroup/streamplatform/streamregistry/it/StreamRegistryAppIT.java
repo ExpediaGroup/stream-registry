@@ -19,12 +19,15 @@ import java.time.Duration;
 
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
 
+//TODO Full IT
+@Ignore
 public class StreamRegistryAppIT {
 
   @ClassRule
