@@ -1,0 +1,51 @@
+@namespace("com.expediagroup.streamplatform.streamregistry.repository.avro")
+protocol StreamRegistry {
+
+  enum AvroKeyType {
+    DOMAIN, SCHEMA, STREAM, STREAM_VERSION
+  }
+
+  record AvroKey {
+    string id;
+    AvroKeyType type;
+    union {null, AvroKey} parent;
+  }
+
+  record AvroDomain {
+    string name;
+    string owner;
+    string description;
+    map<string> tags;
+  }
+
+  record AvroConfiguration {
+    string type;
+    map<string> properties;
+  }
+
+  record AvroSchema {
+    string name;
+    string owner;
+    string description;
+    map<string> tags;
+    AvroConfiguration configuration;
+    string domain;
+  }
+
+  record AvroNameDomain {
+    string name;
+    string domain;
+  }
+
+  record AvroStream {
+    string name;
+    string owner;
+    string description;
+    map<string> tags;
+    AvroConfiguration configuration;
+    string domain;
+    int version;
+    AvroNameDomain schemaRef;
+  }
+
+}

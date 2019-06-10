@@ -15,35 +15,36 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import java.util.Map;
+
 import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.Value;
 
-@Data
-@Builder
-public class Schema {
-  /**
-   * Id of the Subject in schema-registry
-   */
-  @NonNull String id;
+@Value
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Schema extends DomainConfiguredEntity<Schema.Key> {
+  @Builder
+  private Schema(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      Configuration configuration,
+      String domain) {
+    super(name, owner, description, tags, configuration, domain);
+  }
 
-  /**
-   * version of the Subject in schema-registry
-   */
-  int version;
+  @Override
+  public Key key() {
+    return new Key(getName(), getDomain());
+  }
 
-  /**
-   * complete schema
-   */
-  @NonNull String schemaString;
-
-  /**
-   * created timestamp in schema-registry
-   */
-  @NonNull String created;
-
-  /**
-   * updated timestamp in schema-registry
-   */
-  @NonNull String updated;
+  @Value
+  public static class Key {
+    String name;
+    String domain;
+  }
 }

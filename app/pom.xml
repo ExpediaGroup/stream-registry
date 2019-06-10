@@ -13,17 +13,22 @@
   <dependencies>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
       <artifactId>stream-registry-graphql</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-repository-kafka-avro-impl</artifactId>
+      <artifactId>stream-registry-handler-egsp</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-service-impl</artifactId>
+      <artifactId>stream-registry-repository-kafka</artifactId>
       <version>${project.version}</version>
     </dependency>
 
