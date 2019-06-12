@@ -1,0 +1,183 @@
+query Domains(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: [KeyValueInput!]
+) {
+  domains(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+  ) {
+    name
+    owner
+    description
+    tags {
+      key
+      value
+    }
+  }
+}
+
+query Schemas(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: [KeyValueInput!]
+  $configuration: ConfigurationInput
+  $domain: String
+) {
+  schemas(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    configuration: $configuration
+    domain: $domain
+  ) {
+    name
+    owner
+    description
+    tags {
+      key
+      value
+    }
+    configuration {
+      type
+      properties {
+        key
+        value
+      }
+    }
+    domain {
+      name
+      owner
+      description
+      tags {
+        key
+        value
+      }
+    }
+  }
+}
+
+query Streams(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: [KeyValueInput!]
+  $configuration: ConfigurationInput
+  $domain: String
+  $version: Int
+  $schema: NameDomainInput
+) {
+  streams(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    configuration: $configuration
+    domain: $domain
+    version: $version
+    schema: $schema
+  ) {
+    name
+    owner
+    description
+    tags {
+      key
+      value
+    }
+    configuration {
+      type
+      properties {
+        key
+        value
+      }
+    }
+    domain {
+      name
+      owner
+      description
+      tags {
+        key
+        value
+      }
+    }
+    version
+    schema {
+      name
+      owner
+      description
+      tags {
+        key
+        value
+      }
+      configuration {
+        type
+        properties {
+          key
+          value
+        }
+      }
+      domain {
+        name
+        owner
+        description
+        tags {
+          key
+          value
+        }
+      }
+    }
+  }
+}
+
+mutation Domain (
+  $name: String!
+  $description: String!
+  $tags: [KeyValueInput!]!
+){
+  upsertDomain(
+    name: $name
+    description: $description
+    tags: $tags
+  )
+}
+
+mutation Schema (
+  $name: String!
+  $description: String!
+  $tags: [KeyValueInput!]!
+  $configuration: ConfigurationInput!
+  $domain: String!
+){
+  upsertSchema(
+    name: $name
+    description: $description
+    tags: $tags
+    configuration: $configuration
+    domain: $domain
+  )
+}
+
+mutation Stream (
+  $name: String!
+  $description: String!
+  $tags: [KeyValueInput!]!
+  $configuration: ConfigurationInput!
+  $domain: String!
+  $version: Int!
+  $schema: NameDomainInput!
+){
+  upsertStream(
+    name: $name
+    description: $description
+    tags: $tags
+    configuration: $configuration
+    domain: $domain
+    version: $version
+    schema: $schema
+  )
+}

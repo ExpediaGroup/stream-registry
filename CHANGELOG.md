@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * New GraphQL API.
 * New internal model with service, handler and repository layers. 
 * Domain, Schema & Stream entities.
+* Reference GraphQL client.
 
 ### Changed
 - Changed groupId to `com.expediagroup.streamplatform`

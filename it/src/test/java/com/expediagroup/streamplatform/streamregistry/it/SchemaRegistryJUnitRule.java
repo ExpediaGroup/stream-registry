@@ -28,6 +28,7 @@ import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryRestApplication;
+
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.rules.ExternalResource;
 import org.slf4j.bridge.SLF4JBridgeHandler;

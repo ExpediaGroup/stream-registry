@@ -36,7 +36,9 @@
   <modules>
     <module>app</module>
     <module>core</module>
-    <module>graphql</module>
+    <module>graphql-api</module>
+    <module>graphql-client</module>
+    <module>graphql-maven-plugin</module>
     <module>handler-egsp</module>
     <module>handler-spi</module>
     <module>model</module>

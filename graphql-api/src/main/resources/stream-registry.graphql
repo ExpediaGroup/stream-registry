@@ -1,0 +1,102 @@
+type KeyValue {
+  key: String!
+  value: String!
+}
+
+type Configuration {
+  type: String!
+  properties: [KeyValue!]!
+}
+
+type Domain {
+  name: String!
+  owner: String!
+  description: String!
+  tags: [KeyValue!]!
+}
+
+type Schema {
+  name: String!
+  owner: String!
+  description: String!
+  tags: [KeyValue!]!
+  configuration: Configuration!
+  domain: Domain!
+}
+
+type Stream {
+  name: String!
+  owner: String!
+  description: String!
+  tags: [KeyValue!]!
+  configuration: Configuration!
+  domain: Domain!
+  version: Int!
+  schema: Schema!
+}
+
+input KeyValueInput {
+  key: String
+  value: String
+}
+
+input ConfigurationInput {
+  type: String
+  properties: [KeyValueInput!]
+}
+
+input NameDomainInput {
+  name: String
+  domain: String
+}
+
+type Query {
+  domains(
+    name: String
+    owner: String
+    description: String
+    tags: [KeyValueInput!]
+  ): [Domain!]!
+  schemas(
+    name: String
+    owner: String
+    description: String
+    tags: [KeyValueInput!]
+    configuration: ConfigurationInput
+    domain: String
+  ): [Schema!]!
+  streams(
+    name: String
+    owner: String
+    description: String
+    tags: [KeyValueInput!]
+    configuration: ConfigurationInput
+    domain: String
+    version: Int
+    schema: NameDomainInput
+  ): [Stream!]!
+}
+
+type Mutation {
+  upsertDomain(
+    name: String!
+    description: String!
+    tags: [KeyValueInput!]!
+  ): Boolean!
+  upsertSchema(
+    name: String!
+    description: String!
+    tags: [KeyValueInput!]!
+    configuration: ConfigurationInput!
+    domain: String!
+  ): Boolean!
+  upsertStream(
+    name: String!
+    description: String!
+    tags: [KeyValueInput!]!
+    configuration: ConfigurationInput!
+    domain: String!
+    version: Int!
+    schema: NameDomainInput!
+  ): Boolean!
+}
