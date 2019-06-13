@@ -40,7 +40,7 @@ public class MapPatternMatchPredicateFactory {
             .and(patternMatchPredicateFactory.create(ref, Entry::getValue)))
         .collect(toList());
     return e -> {
-      Map<String, String> map = function.apply(e);
+      Map<String, String> map = Optional.ofNullable(function.apply(e)).orElse(Map.of());
       return predicates
           .stream()
           .allMatch(map.entrySet().stream()::anyMatch);

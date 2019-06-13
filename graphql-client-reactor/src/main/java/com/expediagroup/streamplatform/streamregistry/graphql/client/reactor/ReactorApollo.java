@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.client;
+package com.expediagroup.streamplatform.streamregistry.graphql.client.reactor;
 
 import static com.apollographql.apollo.ApolloCall.StatusEvent.COMPLETED;
 
 import lombok.RequiredArgsConstructor;
-import reactor.core.Disposable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
-import reactor.core.publisher.FluxSink.OverflowStrategy;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoSink;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloCall.StatusEvent;
@@ -31,27 +25,28 @@ import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.internal.subscription.ApolloSubscriptionTerminatedException;
-import com.apollographql.apollo.internal.util.Cancelable;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.FluxSink.OverflowStrategy;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoSink;
 
 public final class ReactorApollo {
   private ReactorApollo() {}
 
   public static <T> Mono<Response<T>> from(ApolloCall<T> call) {
     return Mono.create(sink -> {
-      sink.onCancel(cancel(call));
+      sink.onCancel(call::cancel);
       call.enqueue(new MonoSinkCallback(sink));
     });
   }
 
   public static <T> Flux<Response<T>> from(ApolloSubscriptionCall<T> call, OverflowStrategy overflowStrategy) {
     return Flux.create(sink -> {
-      sink.onCancel(cancel(call));
+      sink.onCancel(call::cancel);
       call.execute(new FluxSinkCallback(sink));
     }, overflowStrategy);
-  }
-
-  private static Disposable cancel(Cancelable cancelable) {
-    return () -> cancelable.cancel();
   }
 
   @RequiredArgsConstructor

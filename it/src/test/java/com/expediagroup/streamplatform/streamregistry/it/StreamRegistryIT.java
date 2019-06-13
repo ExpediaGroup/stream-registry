@@ -37,7 +37,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ReactorApollo;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.KeyValueInput;
 
 public class StreamRegistryIT {

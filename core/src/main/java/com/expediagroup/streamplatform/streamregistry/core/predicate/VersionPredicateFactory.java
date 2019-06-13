@@ -29,7 +29,7 @@ public class VersionPredicateFactory {
     if (query.getVersion() == null) {
       return stream;
     } else if (query.getVersion() < 0) {
-      throw new IllegalArgumentException("version must be greate than or equal to 0");
+      throw new IllegalArgumentException("Version must be greater than or equal to 0.");
     } else if (query.getVersion() > 0) {
       return stream.filter(d -> query.getVersion().equals(d.getVersion()));
     }

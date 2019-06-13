@@ -21,6 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
+
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
@@ -28,11 +33,6 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
 
 public class GraphQLIntrospectionFileGenerator {
   public void generate(String sourceSdlResource, String targetIntrospectionFile) {

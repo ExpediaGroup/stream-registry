@@ -56,14 +56,28 @@ public class StreamService implements Service<Stream, Stream.Key> {
     configuredEntityValidator.validate(stream, existing);
     domainConfiguredEntityValidator.validate(stream, existing);
 
-
     Optional
         .ofNullable(stream.getVersion())
         .filter(v -> v > 0)
         .orElseThrow(() -> new IllegalArgumentException("Version must be provided and greater than 0."));
-    existing.ifPresent(e -> checkArgument(
-        stream.getVersion() > e.getVersion(),
-        "Version greater than the current version."));
+
+    if (existing.isPresent()) {
+      checkArgument(
+          stream.getVersion() > existing.get().getVersion(),
+          "Version greater than the current version.");
+    } else {
+      stream(Stream
+          .builder()
+          .name(stream.getName())
+          .domain(stream.getDomain())
+          .version(0) //get latest existing version
+          .build())
+          .findFirst()
+          .map(Stream::getVersion)
+          .ifPresent(latest -> checkArgument(
+              stream.getVersion() == latest + 1,
+              "Version must be 1 higher than the previous version."));
+    }
 
     checkNotNull(stream.getSchema(), "Schema must be provided.");
     checkArgument(schemaRepository.get(stream.schemaKey()).isPresent(), "Schema must exist.");

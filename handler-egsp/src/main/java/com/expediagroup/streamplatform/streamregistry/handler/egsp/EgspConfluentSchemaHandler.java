@@ -32,7 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
 @Component
 public class EgspConfluentSchemaHandler implements Handler<Schema> {
-  public static final String TYPE = "egsp.confluent";
+  public static final String TYPE = "egsp.confluent.alpha";
   public static final String KEY_SCHEMA_SUBJECT = "key.schema.subject";
   public static final String VALUE_SCHEMA_SUBJECTS = "value.schema.subjects";
   private static final String ERROR_TEMPLATE = "EGSP Schema configuration must contain %s";

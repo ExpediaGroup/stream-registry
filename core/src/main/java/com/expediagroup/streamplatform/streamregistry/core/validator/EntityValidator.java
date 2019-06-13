@@ -31,6 +31,6 @@ public class EntityValidator {
   public void validate(Entity<?> entity, Optional<? extends Entity<?>> existing) {
     nameValidator.validate(entity.getName());
 
-    //TODo owner is mandatory and exists
+    //TODO owner is mandatory and exists
   }
 }

@@ -67,15 +67,6 @@ public class Query implements GraphQLQueryResolver {
       Iterable<GraphQLKeyValue> tags,
       GraphQLConfiguration configuration,
       String domain) {
-    System.out.println(Schema
-        .builder()
-        .name(name)
-        .owner(owner)
-        .description(description)
-        .tags(GraphQLKeyValue.toDto(tags))
-        .configuration(GraphQLConfiguration.toDto(configuration))
-        .domain(domain)
-        .build());
     return schemaService
         .stream(Schema
             .builder()

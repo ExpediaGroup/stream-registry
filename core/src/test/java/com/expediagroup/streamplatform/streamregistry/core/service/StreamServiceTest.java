@@ -17,13 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.core.service;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,24 +56,10 @@ public class StreamServiceTest {
   private Repository<Stream, Stream.Key> streamRepository;
   @Mock
   private Repository<Schema, Schema.Key> schemaRepository;
-  @Mock
-  private DomainConfiguredEntityPredicateFactory domainConfiguredEntityPredicateFactory;
-  @Mock
-  private NameDomainPatternMatchPredicateFactory nameDomainPatternMatchPredicateFactory;
-  @Mock
-  private VersionPredicateFactory versionPredicateFactory;
-  @Mock
-  private java.util.stream.Stream<Stream> stream1;
-  @Mock
-  private java.util.stream.Stream<Stream> stream2;
-  @Mock
-  private java.util.stream.Stream<Stream> stream3;
-  @Mock
-  private Predicate<Stream> predicate1;
-  @Mock
-  private Predicate<Stream> predicate2;
-  @Mock
-  private Predicate<Stream> predicate3;
+
+  private final DomainConfiguredEntityPredicateFactory domainConfiguredEntityPredicateFactory = new DomainConfiguredEntityPredicateFactory();
+  private final NameDomainPatternMatchPredicateFactory nameDomainPatternMatchPredicateFactory = new NameDomainPatternMatchPredicateFactory();
+  private final VersionPredicateFactory versionPredicateFactory = new VersionPredicateFactory();
 
   private StreamService underTest;
 
@@ -131,9 +115,16 @@ public class StreamServiceTest {
 
   @Test
   public void upsertHigherVersion() {
-    Stream stream = Stream
+    Stream streamV1 = Stream
         .builder()
         .name("name")
+        .domain("domain")
+        .version(1)
+        .build();
+    Stream streamV2 = Stream
+        .builder()
+        .name("name")
+        .domain("domain")
         .version(2)
         .schema(NameDomain
             .builder()
@@ -141,32 +132,45 @@ public class StreamServiceTest {
             .domain("schemaDomain")
             .build())
         .build();
-    Optional<Stream> existing = Optional.of(Stream
-        .builder()
-        .version(1)
-        .build());
+    Optional<Stream> existing = Optional.empty();
 
-    when(streamRepository.get(stream.key())).thenReturn(existing);
-    when(schemaRepository.get(stream.schemaKey())).thenReturn(Optional.of(Schema.builder().build()));
-    when(streamHandler.handle(stream, existing)).thenReturn(stream);
+    when(streamRepository.get(streamV2.key())).thenReturn(existing);
+    when (streamRepository.stream()).thenReturn(java.util.stream.Stream.of(streamV1));
+    when(schemaRepository.get(streamV2.schemaKey())).thenReturn(Optional.of(Schema.builder().build()));
+    when(streamHandler.handle(streamV2, existing)).thenReturn(streamV2);
 
-    underTest.upsert(stream);
+    underTest.upsert(streamV2);
 
-    InOrder inOrder = inOrder(
-        entityValidator,
-        configuredEntityValidator,
-        domainConfiguredEntityValidator,
-        streamHandler,
-        streamRepository,
-        schemaRepository);
-    inOrder.verify(streamRepository).get(stream.key());
-    inOrder.verify(entityValidator).validate(stream, existing);
-    inOrder.verify(configuredEntityValidator).validate(stream, existing);
-    inOrder.verify(domainConfiguredEntityValidator).validate(stream, existing);
-    inOrder.verify(schemaRepository).get(stream.schemaKey());
-    inOrder.verify(streamHandler).handle(stream, existing);
-    inOrder.verify(streamRepository).upsert(stream);
+    verify(streamRepository).upsert(streamV2);
   }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void upsertHigherInvalidVersion() {
+    Stream streamV1 = Stream
+        .builder()
+        .name("name")
+        .domain("domain")
+        .version(1)
+        .build();
+    Stream streamV2 = Stream
+        .builder()
+        .name("name")
+        .domain("domain")
+        .version(3)
+        .schema(NameDomain
+            .builder()
+            .name("schemaName")
+            .domain("schemaDomain")
+            .build())
+        .build();
+    Optional<Stream> existing = Optional.empty();
+
+    when(streamRepository.get(streamV2.key())).thenReturn(existing);
+    when (streamRepository.stream()).thenReturn(java.util.stream.Stream.of(streamV1));
+
+    underTest.upsert(streamV2);
+  }
+
 
   @Test(expected = IllegalArgumentException.class)
   public void upsertNullVersion() {
@@ -200,23 +204,6 @@ public class StreamServiceTest {
             .build())
         .build();
     Optional<Stream> existing = Optional.empty();
-
-    when(streamRepository.get(stream.key())).thenReturn(existing);
-
-    underTest.upsert(stream);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void upsertLowerVersion() {
-    Stream stream = Stream
-        .builder()
-        .name("name")
-        .version(1)
-        .build();
-    Optional<Stream> existing = Optional.of(Stream
-        .builder()
-        .version(2)
-        .build());
 
     when(streamRepository.get(stream.key())).thenReturn(existing);
 
@@ -281,17 +268,13 @@ public class StreamServiceTest {
 
   @Test
   public void stream() {
-    Stream query = Stream.builder().build();
+    Stream query = Stream.builder().name("^foo$").build();
+    Stream stream = Stream.builder().name("foo").build();
 
-    when(streamRepository.stream()).thenReturn(stream1);
-    when(domainConfiguredEntityPredicateFactory.create(query)).thenReturn(predicate1);
-    when(nameDomainPatternMatchPredicateFactory.create(eq(query), any())).thenReturn(predicate2);
-    when(predicate1.and(predicate2)).thenReturn(predicate3);
-    when(stream1.filter(predicate3)).thenReturn(stream2);
-    when(versionPredicateFactory.filter(query, stream2)).thenReturn(stream3);
+    when(streamRepository.stream()).thenReturn(java.util.stream.Stream.of(stream));
 
-    java.util.stream.Stream<Stream> result = underTest.stream(query);
+    Stream result = underTest.stream(query).findFirst().get();
 
-    assertThat(result, is(stream3));
+    assertThat(result, is(stream));
   }
 }
