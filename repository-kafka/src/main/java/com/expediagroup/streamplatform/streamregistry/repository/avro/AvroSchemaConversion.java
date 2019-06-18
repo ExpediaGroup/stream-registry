@@ -47,7 +47,7 @@ public class AvroSchemaConversion implements Conversion<Schema, Schema.Key, Avro
         .setName(schema.getName())
         .setOwner(schema.getOwner())
         .setDescription(schema.getDescription())
-        .setTags(AvroMaps.fromDto(schema.getTags()))
+        .setTags(schema.getTags())
         .setConfiguration(AvroConfigurations.fromDto(schema.getConfiguration()))
         .setDomain(schema.getDomain())
         .build();
@@ -60,7 +60,7 @@ public class AvroSchemaConversion implements Conversion<Schema, Schema.Key, Avro
         .name(schema.getName().toString())
         .owner(schema.getOwner().toString())
         .description(schema.getDescription().toString())
-        .tags(AvroMaps.toDto(schema.getTags()))
+        .tags(schema.getTags())
         .configuration(AvroConfigurations.toDto(schema.getConfiguration()))
         .domain(schema.getDomain().toString())
         .build();

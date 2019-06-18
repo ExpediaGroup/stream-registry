@@ -47,7 +47,7 @@ public class AvroDomainConversion implements Conversion<Domain, Domain.Key, Avro
         .setName(domain.getName())
         .setOwner(domain.getOwner())
         .setDescription(domain.getDescription())
-        .setTags(AvroMaps.fromDto(domain.getTags()))
+        .setTags(domain.getTags())
         .build();
   }
 
@@ -58,7 +58,7 @@ public class AvroDomainConversion implements Conversion<Domain, Domain.Key, Avro
         .name(domain.getName().toString())
         .owner(domain.getOwner().toString())
         .description(domain.getDescription().toString())
-        .tags(AvroMaps.toDto(domain.getTags()))
+        .tags(domain.getTags())
         .build();
   }
 

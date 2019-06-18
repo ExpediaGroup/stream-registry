@@ -24,7 +24,7 @@ public final class AvroConfigurations {
     return AvroConfiguration
         .newBuilder()
         .setType(configuration.getType())
-        .setProperties(AvroMaps.fromDto(configuration.getProperties()))
+        .setProperties(configuration.getProperties())
         .build();
   }
 
@@ -32,7 +32,7 @@ public final class AvroConfigurations {
     return Configuration
         .builder()
         .type(configuration.getType().toString())
-        .properties(AvroMaps.toDto(configuration.getProperties()))
+        .properties(configuration.getProperties())
         .build();
   }
 }
