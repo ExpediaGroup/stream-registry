@@ -10,6 +10,13 @@
 
   <artifactId>stream-registry-app</artifactId>
 
+  <properties>
+    <jib.skip>false</jib.skip>
+    <docker.repo/>
+    <docker.image.name>stream-registry</docker.image.name>
+    <docker.image.base>openjdk:11</docker.image.base>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
@@ -38,6 +45,93 @@
     </dependency>
   </dependencies>
 
-  <!--  TODO jib-->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-api</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.expediagroup.streamplatform</groupId>
+                  <artifactId>stream-registry-graphql-api</artifactId>
+                  <version>${project.version}</version>
+                  <includes>*.graphql</includes>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>${main.class}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>${jib-maven-plugin.version}</version>
+        <configuration>
+          <to>
+            <image>${docker.repo}${docker.image.name}</image>
+            <tags>
+              <tag>${project.version}</tag>
+              <tag>latest</tag>
+            </tags>
+          </to>
+          <from>
+            <image>${docker.image.base}</image>
+          </from>
+          <container>
+            <mainClass>${main.class}</mainClass>
+            <jvmFlags>
+              <jvmFlag>-server</jvmFlag>
+              <jvmFlag>-Djava.awt.headless=true</jvmFlag>
+              <jvmFlag>-XX:MaxGCPauseMillis=20</jvmFlag>
+              <jvmFlag>-XX:InitiatingHeapOccupancyPercent=35</jvmFlag>
+              <jvmFlag>-XX:+ExplicitGCInvokesConcurrent</jvmFlag>
+            </jvmFlags>
+          </container>
+        </configuration>
+        <executions>
+          <execution>
+            <id>dockerBuild</id>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+          <!-- TODO : Docker push -->
+          <!-- <execution>
+            <id>dockerBuildAndPush</id>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <phase>deploy</phase>
+          </execution> -->
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

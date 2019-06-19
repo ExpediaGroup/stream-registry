@@ -55,6 +55,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
 
+    <main.class>com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp</main.class>
+
     <avro.version>1.8.2</avro.version>
     <bull.version>1.4.7.3</bull.version>
     <confluent.version>5.2.1</confluent.version>
@@ -80,9 +82,12 @@
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+    <jib-maven-plugin.version>1.3.0</jib-maven-plugin.version>
 
     <!-- OSSRH -->
     <nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
+
+    <jib.skip>true</jib.skip>
   </properties>
 
   <dependencyManagement>
@@ -164,11 +169,25 @@
   </dependencyManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>${maven-dependency-plugin.version}</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -325,7 +344,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>${maven-jar-plugin.version}</version>
         <configuration>
           <archive>
             <manifestEntries>
