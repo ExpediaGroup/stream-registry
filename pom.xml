@@ -55,6 +55,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
 
+    <main.class>com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp</main.class>
+
     <avro.version>1.8.2</avro.version>
     <confluent.version>5.2.1</confluent.version>
     <guava.version>27.1-jre</guava.version>
@@ -158,11 +160,25 @@
   </dependencyManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>${maven-dependency-plugin.version}</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -319,7 +335,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>${maven-jar-plugin.version}</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -366,6 +381,56 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>docker</id>
+      <activation>
+        <file>
+          <exists>Dockerfile</exists>
+        </file>
+      </activation>
+      <properties>
+        <docker.repo/>
+        <docker.image.name>stream-registry</docker.image.name>
+        <docker.image.base>openjdk:11</docker.image.base>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>dockerfile-maven-plugin</artifactId>
+            <version>1.4.10</version>
+            <executions>
+              <execution>
+                <id>default</id>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+                <configuration>
+                  <repository>${docker.repo}${docker.image.name}</repository>
+                  <tag>${project.version}</tag>
+                  <buildArgs>
+                    <BASE_CONTAINER>${docker.image.base}</BASE_CONTAINER>
+                    <CONTEXT_DIR>src/main/docker</CONTEXT_DIR>
+                    <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    <MAIN_CLASS_ARG>${main.class}</MAIN_CLASS_ARG>
+                  </buildArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>tag-latest</id>
+                <goals>
+                  <goal>tag</goal>
+                </goals>
+                <configuration>
+                  <repository>${docker.repo}${docker.image.name}</repository>
+                  <tag>latest</tag>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>source-and-javadoc</id>
       <activation>
