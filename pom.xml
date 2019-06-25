@@ -39,7 +39,7 @@
     <module>graphql-api</module>
     <module>graphql-client</module>
     <module>graphql-maven-plugin</module>
-    <module>handler-egsp</module>
+    <module>handler-default</module>
     <module>handler-spi</module>
     <module>model</module>
     <module>repository-api</module>

@@ -23,7 +23,7 @@
     </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-handler-egsp</artifactId>
+      <artifactId>stream-registry-handler-default</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

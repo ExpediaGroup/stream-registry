@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.handler.egsp;
+package com.expediagroup.streamplatform.streamregistry.handler;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
-
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.ConfiguredEntity;
 
-@Component
-public class EgspKafkaStreamHandler implements Handler<Stream> {
+public class DefaultHandler<E extends ConfiguredEntity<?>> implements Handler<E> {
   @Override
   public String type() {
-    return "egsp.kafka";
+    return "default";
   }
 
   @Override
-  public Stream handle(Stream stream, Optional<? extends Stream> existing) {
-
-    //TODO define stream egsp.kafka business rules
-
-    return stream;
+  public E handle(E entity, Optional<? extends E> existing) {
+    return entity;
   }
 }
