@@ -17,7 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.handler;
 
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.ConfiguredEntity;
 
 public class DefaultHandler<E extends ConfiguredEntity<?>> implements Handler<E> {
