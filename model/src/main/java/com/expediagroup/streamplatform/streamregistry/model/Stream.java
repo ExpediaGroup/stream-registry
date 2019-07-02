@@ -15,96 +15,48 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static com.expediagroup.streamplatform.streamregistry.model.SchemaCompatibility.FULL_TRANSITIVE;
-
-import java.util.List;
 import java.util.Map;
 
 import lombok.Builder;
-import lombok.Builder.Default;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.Value;
 
-@Data
-@Builder
-public class Stream {
-  /**
-   * name of the Stream
-   */
-  @NonNull String name;
+@Value
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Stream extends DomainConfiguredEntity<Stream.Key> {
+  Integer version;
+  NameDomain schema;
 
-  /**
-   * Schema Compatibility type for the stream.
-   */
-  @NonNull @Default SchemaCompatibility schemaCompatibility = FULL_TRANSITIVE;
+  @Builder
+  private Stream(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      Configuration configuration,
+      String domain,
+      Integer version,
+      NameDomain schema) {
+    super(name, owner, description, tags, configuration, domain);
+    this.version = version;
+    this.schema = schema;
+  }
 
-  /**
-   * Key Schema details of the latest Subject in Schema-registry
-   */
-  @NonNull Schema latestKeySchema;
+  @Override
+  public Key key() {
+    return new Key(getName(), getDomain(), getVersion());
+  }
 
-  /**
-   * Value Schema details of the latest Subject in Schema-registry
-   */
-  @NonNull Schema latestValueSchema;
+  public Schema.Key schemaKey() {
+    return new Schema.Key(getSchema().getName(), getSchema().getDomain());
+  }
 
-  /**
-   * Owner of the stream
-   */
-  @NonNull String owner;
-
-  /**
-   * Created timestamp of the stream in stream-registry
-   */
-  @NonNull @Default Long created = -1L;
-
-  /**
-   * Updated timestamp of the stream in stream-registry
-   */
-  @NonNull @Default Long updated = -1L;
-
-  /**
-   * gitHub url of the SMP project
-   */
-  @NonNull @Default String githubUrl = null;
-
-  /**
-   * Is data need in long term storage devices like Hadoop , S3 etc.
-   */
-  @Default boolean isDataNeededAtRest = false;
-
-  /**
-   * Is Automation Needed? i.e. Switch to deploy mirror makers
-   */
-  @Default boolean isAutomationNeeded = true;
-
-  /**
-   * Tags of the stream for cost evaluation, cluster identification, Portfolio identification etc.
-   */
-  @NonNull Tags tags;
-
-  /**
-   * List of VPC's the stream is available in
-   */
-  @NonNull @Default List<String> vpcList = null;
-
-  /**
-   * List of VPC's the stream is automatically replicated to
-   */
-  @NonNull @Default List<String> replicatedVpcList = null;
-
-  /**
-   * Topic Configuration map
-   */
-  @NonNull @Default Map<String, String> topicConfig = null;
-
-  /**
-   * Number of Partitions
-   */
-  int partitions;
-
-  /**
-   * Replication Factor
-   */
-  int replicationFactor;
+  @Value
+  public static class Key {
+    String name;
+    String domain;
+    Integer version;
+  }
 }

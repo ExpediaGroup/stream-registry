@@ -36,12 +36,18 @@
   <modules>
     <module>app</module>
     <module>core</module>
-    <module>graphql</module>
+    <module>graphql-api</module>
+    <module>graphql-client</module>
+    <module>graphql-maven-plugin</module>
+    <module>handler-default</module>
+    <module>handler-spi</module>
     <module>model</module>
     <module>repository-api</module>
-    <module>repository-kafka-avro-impl</module>
+    <module>repository-avro</module>
+    <module>repository-kafka</module>
+    <module>it</module>
     <module>service-api</module>
-    <module>service-impl</module>
+    <module>graphql-client-reactor</module>
   </modules>
 
   <properties>
@@ -52,7 +58,9 @@
     <avro.version>1.8.2</avro.version>
     <confluent.version>5.2.1</confluent.version>
     <guava.version>27.1-jre</guava.version>
+    <apollographql.version>1.0.0</apollographql.version>
     <kafka.version>2.2.0</kafka.version>
+    <kotlin.version>1.3.10</kotlin.version>
     <slf4j.version>1.7.25</slf4j.version>
     <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
 
@@ -87,6 +95,11 @@
       </dependency>
 
       <dependency>
+        <groupId>com.apollographql.apollo</groupId>
+        <artifactId>apollo-runtime</artifactId>
+        <version>${apollographql.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
@@ -108,13 +121,38 @@
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
+        <artifactId>connect-api</artifactId>
+        <version>${kafka.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>connect-json</artifactId>
+        <version>${kafka.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.kafka</groupId>
         <artifactId>kafka_2.12</artifactId>
+        <version>${kafka.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
         <version>${kafka.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-streams</artifactId>
         <version>${kafka.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-stdlib</artifactId>
+        <version>${kotlin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-reflect</artifactId>
+        <version>${kotlin.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -425,6 +463,10 @@
     <repository>
       <id>confluent</id>
       <url>http://packages.confluent.io/maven/</url>
+    </repository>
+    <repository>
+      <id>jcenter</id>
+      <url>http://jcenter.bintray.com/</url>
     </repository>
   </repositories>
 

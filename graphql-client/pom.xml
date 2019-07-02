@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.expediagroup.streamplatform</groupId>
+    <artifactId>stream-registry</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>stream-registry-graphql-client</artifactId>
+
+  <properties>
+    <introspectionFile>${project.build.directory}/graphql-schema/schema.json</introspectionFile>
+    <clientPackage>com.expediagroup.streamplatform.streamregistry.graphql.client</clientPackage>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.apollographql.apollo</groupId>
+      <artifactId>apollo-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>17.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.expediagroup.streamplatform</groupId>
+        <artifactId>stream-registry-graphql-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceSdlResource>stream-registry.graphql</sourceSdlResource>
+              <targetIntrospectionFile>${introspectionFile}</targetIntrospectionFile>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.expediagroup.streamplatform</groupId>
+            <artifactId>stream-registry-graphql-api</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.github.sparow199</groupId>
+        <artifactId>apollo-client-maven-plugin</artifactId>
+        <version>1.3.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <introspectionFile>${introspectionFile}</introspectionFile>
+              <basePackage>${clientPackage}</basePackage>
+              <outputPackage>${clientPackage}</outputPackage>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

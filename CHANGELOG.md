@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+* New GraphQL API.
+* New internal model with service, handler and repository layers. 
+* Domain, Schema & Stream entities.
+* Reference GraphQL client.
+
 ### Changed
 - Changed groupId to `com.expediagroup.streamplatform`
 - Changed packages to `com.expediagroup.streamplatform.streamregistry`
