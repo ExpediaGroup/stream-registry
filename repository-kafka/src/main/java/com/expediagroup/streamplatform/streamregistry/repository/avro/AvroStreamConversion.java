@@ -53,7 +53,8 @@ public class AvroStreamConversion implements Conversion<Stream, Stream.Key, Avro
         .setOwner(stream.getOwner())
         .setDescription(stream.getDescription())
         .setTags(stream.getTags())
-        .setConfiguration(AvroConfigurations.fromDto(stream.getConfiguration()))
+        .setType(stream.getType())
+        .setConfiguration(stream.getConfiguration())
         .setDomain(stream.getDomain())
         .setVersion(stream.getVersion())
         .setSchemaRef(AvroNameDomains.fromDto(stream.getSchema()))
@@ -64,12 +65,13 @@ public class AvroStreamConversion implements Conversion<Stream, Stream.Key, Avro
   public Stream toEntity(AvroStream stream) {
     return Stream
         .builder()
-        .name(stream.getName().toString())
-        .owner(stream.getOwner().toString())
-        .description(stream.getDescription().toString())
+        .name(stream.getName())
+        .owner(stream.getOwner())
+        .description(stream.getDescription())
         .tags(stream.getTags())
-        .configuration(AvroConfigurations.toDto(stream.getConfiguration()))
-        .domain(stream.getDomain().toString())
+        .type(stream.getType())
+        .configuration(stream.getConfiguration())
+        .domain(stream.getDomain())
         .version(stream.getVersion())
         .schema(AvroNameDomains.toDto(stream.getSchemaRef()))
         .build();

@@ -3,11 +3,6 @@ type KeyValue {
   value: String!
 }
 
-type Configuration {
-  type: String!
-  properties: [KeyValue!]!
-}
-
 type Domain {
   name: String!
   owner: String!
@@ -20,7 +15,8 @@ type Schema {
   owner: String!
   description: String!
   tags: [KeyValue!]!
-  configuration: Configuration!
+  type: String!
+  configuration: [KeyValue!]!
   domain: Domain!
 }
 
@@ -29,7 +25,8 @@ type Stream {
   owner: String!
   description: String!
   tags: [KeyValue!]!
-  configuration: Configuration!
+  type: String!
+  configuration: [KeyValue!]!
   domain: Domain!
   version: Int!
   schema: Schema!
@@ -38,11 +35,6 @@ type Stream {
 input KeyValueInput {
   key: String
   value: String
-}
-
-input ConfigurationInput {
-  type: String
-  properties: [KeyValueInput!]
 }
 
 input NameDomainInput {
@@ -62,7 +54,8 @@ type Query {
     owner: String
     description: String
     tags: [KeyValueInput!]
-    configuration: ConfigurationInput
+    type: String
+    configuration: [KeyValueInput!]
     domain: String
   ): [Schema!]!
   streams(
@@ -70,7 +63,8 @@ type Query {
     owner: String
     description: String
     tags: [KeyValueInput!]
-    configuration: ConfigurationInput
+    type: String
+    configuration: [KeyValueInput!]
     domain: String
     version: Int
     schema: NameDomainInput
@@ -87,14 +81,16 @@ type Mutation {
     name: String!
     description: String!
     tags: [KeyValueInput!]!
-    configuration: ConfigurationInput!
+    type: String!
+    configuration: [KeyValueInput!]!
     domain: String!
   ): Boolean!
   upsertStream(
     name: String!
     description: String!
     tags: [KeyValueInput!]!
-    configuration: ConfigurationInput!
+    type: String!
+    configuration: [KeyValueInput!]!
     domain: String!
     version: Int!
     schema: NameDomainInput!

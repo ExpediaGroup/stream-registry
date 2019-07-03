@@ -20,7 +20,6 @@ import java.util.function.Predicate;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.model.Configuration;
 import com.expediagroup.streamplatform.streamregistry.model.ConfiguredEntity;
 
 @Component
@@ -32,12 +31,10 @@ public class ConfiguredEntityPredicateFactory {
   public <E extends ConfiguredEntity<?>> Predicate<E> create(E query) {
     return entityPredicateFactory.create(query)
         .and(patternMatchPredicateFactory.create(query, e -> Optional
-            .ofNullable(e.getConfiguration())
-            .map(Configuration::getType)
+            .ofNullable(e.getType())
             .orElse(null)))
         .and(mapPatternMatchPredicateFactory.create(query, e -> Optional
             .ofNullable(e.getConfiguration())
-            .map(Configuration::getProperties)
             .orElse(null)));
   }
 }

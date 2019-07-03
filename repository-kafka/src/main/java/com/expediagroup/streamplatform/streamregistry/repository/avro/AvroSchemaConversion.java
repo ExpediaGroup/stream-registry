@@ -48,7 +48,8 @@ public class AvroSchemaConversion implements Conversion<Schema, Schema.Key, Avro
         .setOwner(schema.getOwner())
         .setDescription(schema.getDescription())
         .setTags(schema.getTags())
-        .setConfiguration(AvroConfigurations.fromDto(schema.getConfiguration()))
+        .setType(schema.getType())
+        .setConfiguration(schema.getConfiguration())
         .setDomain(schema.getDomain())
         .build();
   }
@@ -57,12 +58,13 @@ public class AvroSchemaConversion implements Conversion<Schema, Schema.Key, Avro
   public Schema toEntity(AvroSchema schema) {
     return Schema
         .builder()
-        .name(schema.getName().toString())
-        .owner(schema.getOwner().toString())
-        .description(schema.getDescription().toString())
+        .name(schema.getName())
+        .owner(schema.getOwner())
+        .description(schema.getDescription())
         .tags(schema.getTags())
-        .configuration(AvroConfigurations.toDto(schema.getConfiguration()))
-        .domain(schema.getDomain().toString())
+        .type(schema.getType())
+        .configuration(schema.getConfiguration())
+        .domain(schema.getDomain())
         .build();
   }
 

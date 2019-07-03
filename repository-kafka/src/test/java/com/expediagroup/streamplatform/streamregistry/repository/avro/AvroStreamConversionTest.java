@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.model.Configuration;
 import com.expediagroup.streamplatform.streamregistry.model.NameDomain;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
@@ -36,11 +35,8 @@ public class AvroStreamConversionTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
-      .configuration(Configuration
-          .builder()
-          .type("type")
-          .properties(Map.of("key", "value"))
-          .build())
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .domain("domain")
       .version(1)
       .schema(NameDomain
@@ -56,11 +52,8 @@ public class AvroStreamConversionTest {
       .setOwner("owner")
       .setDescription("description")
       .setTags(Map.of("key", "value"))
-      .setConfiguration(AvroConfiguration
-          .newBuilder()
-          .setType("type")
-          .setProperties(Map.of("key", "value"))
-          .build())
+      .setType("type")
+      .setConfiguration(Map.of("key", "value"))
       .setDomain("domain")
       .setVersion(1)
       .setSchemaRef(AvroNameDomain

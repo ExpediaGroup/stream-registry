@@ -31,8 +31,8 @@ public final class AvroNameDomains {
   public static NameDomain toDto(AvroNameDomain nameDomain) {
     return NameDomain
         .builder()
-        .name(nameDomain.getName().toString())
-        .domain(nameDomain.getDomain().toString())
+        .name(nameDomain.getName())
+        .domain(nameDomain.getDomain())
         .build();
   }
 }

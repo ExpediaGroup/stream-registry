@@ -25,7 +25,6 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConfiguration;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLNameDomain;
@@ -65,7 +64,8 @@ public class Query implements GraphQLQueryResolver {
       String owner,
       String description,
       Iterable<GraphQLKeyValue> tags,
-      GraphQLConfiguration configuration,
+      String type,
+      Iterable<GraphQLKeyValue> configuration,
       String domain) {
     return schemaService
         .stream(Schema
@@ -74,7 +74,8 @@ public class Query implements GraphQLQueryResolver {
             .owner(owner)
             .description(description)
             .tags(GraphQLKeyValue.toDto(tags))
-            .configuration(GraphQLConfiguration.toDto(configuration))
+            .type(type)
+            .configuration(GraphQLKeyValue.toDto(configuration))
             .domain(domain)
             .build())
         .map(schema -> GraphQLSchema.fromDto(schema, domain(schema.getDomain())))
@@ -86,7 +87,8 @@ public class Query implements GraphQLQueryResolver {
       String owner,
       String description,
       Iterable<GraphQLKeyValue> tags,
-      GraphQLConfiguration configuration,
+      String type,
+      Iterable<GraphQLKeyValue> configuration,
       String domain,
       Integer version,
       GraphQLNameDomain schema) {
@@ -97,7 +99,8 @@ public class Query implements GraphQLQueryResolver {
             .owner(owner)
             .description(description)
             .tags(GraphQLKeyValue.toDto(tags))
-            .configuration(GraphQLConfiguration.toDto(configuration))
+            .type(type)
+            .configuration(GraphQLKeyValue.toDto(configuration))
             .domain(domain)
             .version(version)
             .schema(GraphQLNameDomain.toDto(schema))

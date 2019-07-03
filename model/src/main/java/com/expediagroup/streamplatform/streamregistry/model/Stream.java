@@ -35,11 +35,12 @@ public class Stream extends DomainConfiguredEntity<Stream.Key> {
       String owner,
       String description,
       Map<String, String> tags,
-      Configuration configuration,
+      String type,
+      Map<String, String> configuration,
       String domain,
       Integer version,
       NameDomain schema) {
-    super(name, owner, description, tags, configuration, domain);
+    super(name, owner, description, tags, type, configuration, domain);
     this.version = version;
     this.schema = schema;
   }

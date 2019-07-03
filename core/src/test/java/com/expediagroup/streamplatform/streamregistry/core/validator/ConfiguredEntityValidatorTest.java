@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validator;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -22,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.expediagroup.streamplatform.streamregistry.model.Configuration;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,19 +36,28 @@ public class ConfiguredEntityValidatorTest {
   public void valid() {
     Stream entity = Stream
         .builder()
-        .configuration(Configuration
-            .builder()
-            .type("type")
-            .build())
+        .type("type")
+        .configuration(Map.of())
         .build();
 
     Optional<Stream> existing = Optional.of(Stream
         .builder()
-        .configuration(Configuration
-            .builder()
-            .type("type")
-            .build())
+        .type("type")
+        .configuration(Map.of())
         .build());
+
+    underTest.validate(entity, existing);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void nullType() {
+    Stream entity = Stream
+        .builder()
+        .type(null)
+        .configuration(Map.of())
+        .build();
+
+    Optional<Stream> existing = Optional.empty();
 
     underTest.validate(entity, existing);
   }
@@ -57,6 +66,7 @@ public class ConfiguredEntityValidatorTest {
   public void nullConfiguration() {
     Stream entity = Stream
         .builder()
+        .type("type")
         .configuration(null)
         .build();
 
@@ -66,21 +76,17 @@ public class ConfiguredEntityValidatorTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void changedConfigurationType() {
+  public void changedType() {
     Stream entity = Stream
         .builder()
-        .configuration(Configuration
-            .builder()
-            .type("type1")
-            .build())
+        .type("type1")
+        .configuration(Map.of())
         .build();
 
     Optional<Stream> existing = Optional.of(Stream
         .builder()
-        .configuration(Configuration
-            .builder()
-            .type("type2")
-            .build())
+        .type("type2")
+        .configuration(Map.of())
         .build());
 
     underTest.validate(entity, existing);

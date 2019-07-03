@@ -21,7 +21,6 @@ import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConfiguration;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLNameDomain;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -56,7 +55,8 @@ public class Mutation implements GraphQLMutationResolver {
       String name,
       String description,
       Iterable<GraphQLKeyValue> tags,
-      GraphQLConfiguration configuration,
+      String type,
+      Iterable<GraphQLKeyValue> configuration,
       String domain) {
     schemaService.upsert(
         Schema
@@ -65,7 +65,8 @@ public class Mutation implements GraphQLMutationResolver {
             .owner("root") //TODO inject user
             .description(description)
             .tags(GraphQLKeyValue.toDto(tags))
-            .configuration(GraphQLConfiguration.toDto(configuration))
+            .type(type)
+            .configuration(GraphQLKeyValue.toDto(configuration))
             .domain(domain)
             .build()
     );
@@ -76,7 +77,8 @@ public class Mutation implements GraphQLMutationResolver {
       String name,
       String description,
       Iterable<GraphQLKeyValue> tags,
-      GraphQLConfiguration configuration,
+      String type,
+      Iterable<GraphQLKeyValue> configuration,
       String domain,
       Integer version,
       GraphQLNameDomain schema) {
@@ -87,7 +89,8 @@ public class Mutation implements GraphQLMutationResolver {
             .owner("root") //TODO inject user
             .description(description)
             .tags(GraphQLKeyValue.toDto(tags))
-            .configuration(GraphQLConfiguration.toDto(configuration))
+            .type(type)
+            .configuration(GraphQLKeyValue.toDto(configuration))
             .domain(domain)
             .version(version)
             .schema(GraphQLNameDomain.toDto(schema))

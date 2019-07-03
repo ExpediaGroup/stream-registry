@@ -30,7 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.Configuration;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,11 +37,8 @@ public class HandlerWrapperTest {
   Stream entity = Stream
       .builder()
       .name("stream")
-      .configuration(Configuration
-          .builder()
-          .type("type")
-          .properties(Map.of())
-          .build())
+      .type("type")
+      .configuration(Map.of())
       .build();
   Optional<Stream> existing = Optional.of(entity);
   @Mock

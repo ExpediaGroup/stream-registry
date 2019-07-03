@@ -35,7 +35,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.repository.avro.AvroConfiguration;
 import com.expediagroup.streamplatform.streamregistry.repository.avro.AvroDomain;
 import com.expediagroup.streamplatform.streamregistry.repository.avro.AvroDomainConversion;
 import com.expediagroup.streamplatform.streamregistry.repository.avro.AvroKey;
@@ -71,11 +70,8 @@ public class KafkaRepositoryTest {
       .setOwner("owner")
       .setDescription("description")
       .setTags(Map.of("key", "value"))
-      .setConfiguration(AvroConfiguration
-          .newBuilder()
-          .setType("type")
-          .setProperties(Map.of("key", "value"))
-          .build())
+      .setType("type")
+      .setConfiguration(Map.of("key", "value"))
       .setDomain("domain")
       .build();
   private final AvroKey avroSchemaKey = AvroKey

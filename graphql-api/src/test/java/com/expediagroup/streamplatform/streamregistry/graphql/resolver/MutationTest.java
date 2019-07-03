@@ -28,10 +28,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConfiguration;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLNameDomain;
-import com.expediagroup.streamplatform.streamregistry.model.Configuration;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.NameDomain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -53,11 +51,8 @@ public class MutationTest {
       .owner("root")
       .description("description")
       .tags(Map.of("key", "value"))
-      .configuration(Configuration
-          .builder()
-          .type("type")
-          .properties(Map.of("key", "value"))
-          .build())
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .domain("domain")
       .build();
   private final Stream stream = Stream
@@ -66,11 +61,8 @@ public class MutationTest {
       .owner("root")
       .description("description")
       .tags(Map.of("key", "value"))
-      .configuration(Configuration
-          .builder()
-          .type("type")
-          .properties(Map.of("key", "value"))
-          .build())
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .domain("streamDomain")
       .version(1)
       .schema(NameDomain
@@ -110,11 +102,8 @@ public class MutationTest {
         schema.getName(),
         schema.getDescription(),
         List.of(new GraphQLKeyValue("key", "value")),
-        GraphQLConfiguration
-            .builder()
-            .type("type")
-            .properties(List.of(new GraphQLKeyValue("key", "value")))
-            .build(),
+        "type",
+        List.of(new GraphQLKeyValue("key", "value")),
         schema.getDomain()
     );
 
@@ -128,11 +117,8 @@ public class MutationTest {
         stream.getName(),
         stream.getDescription(),
         List.of(new GraphQLKeyValue("key", "value")),
-        GraphQLConfiguration
-            .builder()
-            .type("type")
-            .properties(List.of(new GraphQLKeyValue("key", "value")))
-            .build(),
+        "type",
+        List.of(new GraphQLKeyValue("key", "value")),
         stream.getDomain(),
         1,
         GraphQLNameDomain
