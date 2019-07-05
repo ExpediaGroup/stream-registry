@@ -112,6 +112,262 @@ query Streams(
   }
 }
 
+query ProducerBindings(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: Tags
+  $type: String
+  $configuration: Config
+  $producer: String
+  $zones: [String!]
+){
+  producerBindings(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    producer: $producer
+    zones: $zones
+  ){
+    name
+    owner
+    description
+    tags
+    type
+    configuration
+    producer {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      stream {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        domain {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+        version
+        schema {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+          domain {
+            name
+            owner
+            description
+            tags
+            type
+            configuration
+          }
+        }
+      }
+      zones
+    }
+    binding {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      stream {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        domain {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+        version
+        schema {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+          domain {
+            name
+            owner
+            description
+            tags
+            type
+            configuration
+          }
+        }
+      }
+      infrastructure {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        zone {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+      }
+    }
+  }
+}
+
+query ConsumerBindings(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: Tags
+  $type: String
+  $configuration: Config
+  $consumer: String
+  $zones: [String!]
+){
+  consumerBindings(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    consumer: $consumer
+    zones: $zones
+  ){
+    name
+    owner
+    description
+    tags
+    type
+    configuration
+    consumer {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      stream {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        domain {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+        version
+        schema {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+          domain {
+            name
+            owner
+            description
+            tags
+            type
+            configuration
+          }
+        }
+      }
+      zones
+    }
+    binding {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      stream {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        domain {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+        version
+        schema {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+          domain {
+            name
+            owner
+            description
+            tags
+            type
+            configuration
+          }
+        }
+      }
+      infrastructure {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        zone {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+      }
+    }
+  }
+}
+
 mutation Domain (
   $name: String!
   $description: String!

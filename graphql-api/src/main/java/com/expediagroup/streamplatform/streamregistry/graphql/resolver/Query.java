@@ -25,7 +25,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLTransformer;
@@ -49,10 +51,6 @@ public class Query implements GraphQLQueryResolver {
     this.schemaService = schemaService;
     this.streamService = streamService;
     this.transformer = new GraphQLTransformer(domainService, schemaService);
-  }
-
-  public List<GraphQLDomain> domains2(GraphQLDomain query) {
-    return List.of();
   }
 
   public List<GraphQLDomain> domains(
@@ -137,5 +135,31 @@ public class Query implements GraphQLQueryResolver {
             .build())
         .map(transformer::transform)
         .collect(toList());
+  }
+
+  public List<GraphQLProducerBinding> producerBindings(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String consumer,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public List<GraphQLConsumerBinding> consumerBindings(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String producer,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
   }
 }

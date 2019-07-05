@@ -32,6 +32,80 @@ type Stream {
   schema: Schema!
 }
 
+type Zone {
+  name: String!
+  owner: String!
+  description: String!
+  tags: Tags!
+  type: String!
+  configuration: Config!
+}
+
+type Infrastructure {
+  name: String!
+  owner: String!
+  description: String!
+  tags: Tags!
+  type: String!
+  configuration: Config!
+  zone: Zone!
+}
+
+type Producer {
+  name: String!
+  owner: String!
+  description: String!
+  tags: Tags!
+  type: String!
+  configuration: Config!
+  stream: Stream!
+  zones: [String!]!
+}
+
+type Consumer {
+  name: String!
+  owner: String!
+  description: String!
+  tags: Tags!
+  type: String!
+  configuration: Config!
+  stream: Stream!
+  zones: [String!]!
+}
+
+type StreamBinding {
+  name: String!
+  owner: String!
+  description: String!
+  tags: Tags!
+  type: String!
+  configuration: Config!
+  stream: Stream!
+  infrastructure: Infrastructure!
+}
+
+type ProducerBinding {
+  name: String!
+  owner: String!
+  description: String!
+  tags: Tags!
+  type: String!
+  configuration: Config!
+  producer: Producer!
+  binding: StreamBinding!
+}
+
+type ConsumerBinding {
+  name: String!
+  owner: String!
+  description: String!
+  tags: Tags!
+  type: String!
+  configuration: Config!
+  consumer: Consumer!
+  binding: StreamBinding!
+}
+
 input SchemaKeyQueryInput {
   name: String
   domain: String
@@ -40,6 +114,28 @@ input SchemaKeyQueryInput {
 input SchemaKeyInput {
   name: String!
   domain: String!
+}
+
+input StreamKeyQueryInput {
+  domain: String
+  name: String
+  version: Int
+}
+
+input StreamKeyInput {
+  domain: String!
+  name: String!
+  version: Int!
+}
+
+input InfrastructureKeyQueryInput {
+  name: String
+  zone: String
+}
+
+input InfrastructureKeyInput {
+  name: String!
+  zone: String!
 }
 
 type Query {
@@ -71,6 +167,26 @@ type Query {
     version: Int
     schema: SchemaKeyQueryInput
   ): [Stream!]!
+  producerBindings(
+    name: String
+    owner: String
+    description: String
+    tags: Tags
+    type: String
+    configuration: Config
+    producer: String
+    zones: [String!]
+  ): [ProducerBinding!]!
+  consumerBindings(
+    name: String
+    owner: String
+    description: String
+    tags: Tags
+    type: String
+    configuration: Config
+    consumer: String
+    zones: [String!]
+  ): [ConsumerBinding!]!
 }
 
 type Mutation {
