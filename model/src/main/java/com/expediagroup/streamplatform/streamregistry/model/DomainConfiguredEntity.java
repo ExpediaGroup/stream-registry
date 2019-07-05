@@ -34,9 +34,10 @@ public abstract class DomainConfiguredEntity<K> extends ConfiguredEntity<K> {
       String owner,
       String description,
       Map<String, String> tags,
-      Configuration configuration,
+      String type,
+      Map<String, String> configuration,
       String domain) {
-    super(name, owner, description, tags, configuration);
+    super(name, owner, description, tags, type, configuration);
     this.domain = domain;
   }
 

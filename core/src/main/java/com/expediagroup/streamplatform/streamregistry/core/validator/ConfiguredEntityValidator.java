@@ -32,10 +32,11 @@ import com.expediagroup.streamplatform.streamregistry.model.ConfiguredEntity;
 public class ConfiguredEntityValidator {
   public void validate(ConfiguredEntity<?> entity, Optional<? extends ConfiguredEntity<?>> existing) {
     checkNotNull(entity.getConfiguration(), "Configuration must not be null.");
+    checkNotNull(entity.getType(), "Type must not be null.");
 
     existing.ifPresent(e -> checkArgument(Objects.equals(
-        entity.getConfiguration().getType(),
-        e.getConfiguration().getType()),
+        entity.getType(),
+        e.getType()),
         "Configuration must be of the same type as the existing."));
   }
 }

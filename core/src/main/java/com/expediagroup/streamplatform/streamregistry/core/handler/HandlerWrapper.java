@@ -27,7 +27,7 @@ public class HandlerWrapper<T extends ConfiguredEntity<?>> {
   private final HandlerProvider<T> provider;
 
   public T handle(T entity, Optional<? extends T> existing) {
-    Handler<T> handler = provider.get(entity.getConfiguration().getType());
+    Handler<T> handler = provider.get(entity.getType());
     return handler.handle(entity, existing);
   }
 }

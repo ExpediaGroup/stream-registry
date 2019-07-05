@@ -25,7 +25,8 @@ query Schemas(
   $owner: String
   $description: String
   $tags: [KeyValueInput!]
-  $configuration: ConfigurationInput
+  $type: String
+  $configuration: [KeyValueInput!]
   $domain: String
 ) {
   schemas(
@@ -33,6 +34,7 @@ query Schemas(
     owner: $owner
     description: $description
     tags: $tags
+    type: $type
     configuration: $configuration
     domain: $domain
   ) {
@@ -43,12 +45,10 @@ query Schemas(
       key
       value
     }
+    type
     configuration {
-      type
-      properties {
-        key
-        value
-      }
+      key
+      value
     }
     domain {
       name
@@ -67,7 +67,8 @@ query Streams(
   $owner: String
   $description: String
   $tags: [KeyValueInput!]
-  $configuration: ConfigurationInput
+  $type: String
+  $configuration: [KeyValueInput!]
   $domain: String
   $version: Int
   $schema: NameDomainInput
@@ -77,6 +78,7 @@ query Streams(
     owner: $owner
     description: $description
     tags: $tags
+    type: $type
     configuration: $configuration
     domain: $domain
     version: $version
@@ -89,12 +91,10 @@ query Streams(
       key
       value
     }
+    type
     configuration {
-      type
-      properties {
-        key
-        value
-      }
+      key
+      value
     }
     domain {
       name
@@ -114,12 +114,10 @@ query Streams(
         key
         value
       }
+      type
       configuration {
-        type
-        properties {
-          key
-          value
-        }
+        key
+        value
       }
       domain {
         name
@@ -150,13 +148,15 @@ mutation Schema (
   $name: String!
   $description: String!
   $tags: [KeyValueInput!]!
-  $configuration: ConfigurationInput!
+  $type: String!
+  $configuration: [KeyValueInput!]!
   $domain: String!
 ){
   upsertSchema(
     name: $name
     description: $description
     tags: $tags
+    type: $type
     configuration: $configuration
     domain: $domain
   )
@@ -166,7 +166,8 @@ mutation Stream (
   $name: String!
   $description: String!
   $tags: [KeyValueInput!]!
-  $configuration: ConfigurationInput!
+  $type: String!
+  $configuration: [KeyValueInput!]!
   $domain: String!
   $version: Int!
   $schema: NameDomainInput!
@@ -175,6 +176,7 @@ mutation Stream (
     name: $name
     description: $description
     tags: $tags
+    type: $type
     configuration: $configuration
     domain: $domain
     version: $version

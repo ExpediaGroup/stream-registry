@@ -28,7 +28,8 @@ public class GraphQLSchema {
   String owner;
   String description;
   Iterable<GraphQLKeyValue> tags;
-  GraphQLConfiguration configuration;
+  String type;
+  Iterable<GraphQLKeyValue> configuration;
   GraphQLDomain domain;
 
   public static GraphQLSchema fromDto(
@@ -40,7 +41,8 @@ public class GraphQLSchema {
         .owner(schema.getOwner())
         .description(schema.getDescription())
         .tags(GraphQLKeyValue.fromDto(schema.getTags()))
-        .configuration(GraphQLConfiguration.fromDto(schema.getConfiguration()))
+        .type(schema.getType())
+        .configuration(GraphQLKeyValue.fromDto(schema.getConfiguration()))
         .domain(GraphQLDomain.fromDto(domain))
         .build();
   }

@@ -55,9 +55,9 @@ public class AvroDomainConversion implements Conversion<Domain, Domain.Key, Avro
   public Domain toEntity(AvroDomain domain) {
     return Domain
         .builder()
-        .name(domain.getName().toString())
-        .owner(domain.getOwner().toString())
-        .description(domain.getDescription().toString())
+        .name(domain.getName())
+        .owner(domain.getOwner())
+        .description(domain.getDescription())
         .tags(domain.getTags())
         .build();
   }

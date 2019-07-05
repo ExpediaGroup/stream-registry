@@ -29,7 +29,8 @@ public class GraphQLStream {
   String owner;
   String description;
   Iterable<GraphQLKeyValue> tags;
-  GraphQLConfiguration configuration;
+  String type;
+  Iterable<GraphQLKeyValue> configuration;
   GraphQLDomain domain;
   Integer version;
   GraphQLSchema schema;
@@ -45,7 +46,8 @@ public class GraphQLStream {
         .owner(stream.getOwner())
         .description(stream.getDescription())
         .tags(GraphQLKeyValue.fromDto(stream.getTags()))
-        .configuration(GraphQLConfiguration.fromDto(stream.getConfiguration()))
+        .type(schema.getType())
+        .configuration(GraphQLKeyValue.fromDto(schema.getConfiguration()))
         .domain(GraphQLDomain.fromDto(streamDomain))
         .version(stream.getVersion())
         .schema(GraphQLSchema.fromDto(schema, schemaDomain))

@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.model.Configuration;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.NameDomain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -52,11 +51,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
-      .configuration(Configuration
-          .builder()
-          .type("type")
-          .properties(Map.of("key", "value"))
-          .build())
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .domain("schemaDomain")
       .build();
 
@@ -66,11 +62,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
-      .configuration(Configuration
-          .builder()
-          .type("type")
-          .properties(Map.of("key", "value"))
-          .build())
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .domain("streamDomain")
       .version(1)
       .schema(NameDomain
@@ -102,11 +95,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
-      .configuration(GraphQLConfiguration
-          .builder()
-          .type("type")
-          .properties(List.of(new GraphQLKeyValue("key", "value")))
-          .build())
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .domain(schemaGraphQLDomain)
       .build();
 
@@ -116,11 +106,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
-      .configuration(GraphQLConfiguration
-          .builder()
-          .type("type")
-          .properties(List.of(new GraphQLKeyValue("key", "value")))
-          .build())
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .domain(streamGraphQLDomain)
       .version(1)
       .schema(graphQLSchema)

@@ -18,17 +18,13 @@ protocol StreamRegistry {
     map<string> tags;
   }
 
-  record AvroConfiguration {
-    string type;
-    map<string> properties;
-  }
-
   record AvroSchema {
     string name;
     string owner;
     string description;
     map<string> tags;
-    AvroConfiguration configuration;
+    string type;
+    map<string> configuration;
     string domain;
   }
 
@@ -42,7 +38,8 @@ protocol StreamRegistry {
     string owner;
     string description;
     map<string> tags;
-    AvroConfiguration configuration;
+    string type;
+    map<string> configuration;
     string domain;
     int version;
     AvroNameDomain schemaRef;

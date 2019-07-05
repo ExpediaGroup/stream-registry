@@ -27,15 +27,18 @@ import lombok.experimental.NonFinal;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class ConfiguredEntity<K> extends Entity<K> {
-  Configuration configuration;
+  String type;
+  Map<String, String> configuration;
 
   protected ConfiguredEntity(
       String name,
       String owner,
       String description,
       Map<String, String> tags,
-      Configuration configuration) {
+      String type,
+      Map<String, String> configuration) {
     super(name, owner, description, tags);
+    this.type = type;
     this.configuration = configuration;
   }
 }

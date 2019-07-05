@@ -32,9 +32,10 @@ public class Schema extends DomainConfiguredEntity<Schema.Key> {
       String owner,
       String description,
       Map<String, String> tags,
-      Configuration configuration,
+      String type,
+      Map<String, String> configuration,
       String domain) {
-    super(name, owner, description, tags, configuration, domain);
+    super(name, owner, description, tags, type, configuration, domain);
   }
 
   @Override
