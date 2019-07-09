@@ -20,3 +20,4 @@ logs/
 !/.mvn/wrapper/maven-wrapper.jar
 charts/charts/
 charts/requirements.lock
+pom.xml.versionsBackup
