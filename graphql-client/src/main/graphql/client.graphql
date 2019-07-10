@@ -3,17 +3,26 @@ query Domains(
   $owner: String
   $description: String
   $tags: [KeyValueInput!]
+  $type: String
+  $configuration: [KeyValueInput!]
 ) {
   domains(
     name: $name
     owner: $owner
     description: $description
     tags: $tags
+    type: $type
+    configuration: $configuration
   ) {
     name
     owner
     description
     tags {
+      key
+      value
+    }
+    type
+    configuration {
       key
       value
     }
@@ -104,6 +113,11 @@ query Streams(
         key
         value
       }
+      type
+      configuration {
+        key
+        value
+      }
     }
     version
     schema {
@@ -127,6 +141,11 @@ query Streams(
           key
           value
         }
+        type
+        configuration {
+          key
+          value
+        }
       }
     }
   }
@@ -136,11 +155,15 @@ mutation Domain (
   $name: String!
   $description: String!
   $tags: [KeyValueInput!]!
+  $type: String!
+  $configuration: [KeyValueInput!]!
 ){
   upsertDomain(
     name: $name
     description: $description
     tags: $tags
+    type: $type
+    configuration: $configuration
   )
 }
 

@@ -8,6 +8,8 @@ type Domain {
   owner: String!
   description: String!
   tags: [KeyValue!]!
+  type: String!
+  configuration: [KeyValue!]!
 }
 
 type Schema {
@@ -48,6 +50,8 @@ type Query {
     owner: String
     description: String
     tags: [KeyValueInput!]
+    type: String
+    configuration: [KeyValueInput!]
   ): [Domain!]!
   schemas(
     name: String
@@ -76,6 +80,8 @@ type Mutation {
     name: String!
     description: String!
     tags: [KeyValueInput!]!
+    type: String!
+    configuration: [KeyValueInput!]!
   ): Boolean!
   upsertSchema(
     name: String!

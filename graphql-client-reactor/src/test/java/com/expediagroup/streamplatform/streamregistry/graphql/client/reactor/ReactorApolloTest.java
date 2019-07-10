@@ -41,6 +41,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.Rea
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReactorApolloTest {
+  private final Operation<?, ?, ?> operation = mock(Operation.class);
+  private final Response<String> response = Response.<String>builder(operation).build();
+  private final ApolloException exception = new ApolloException(null);
   @Mock
   private ApolloCall<String> call;
   @Mock
@@ -49,10 +52,6 @@ public class ReactorApolloTest {
   private MonoSink<Response<String>> monoSink;
   @Mock
   private FluxSink<Response<String>> fluxSink;
-
-  private final Operation<?, ?, ?> operation = mock(Operation.class);
-  private final Response<String> response = Response.<String>builder(operation).build();
-  private final ApolloException exception = new ApolloException(null);
 
   @Test
   public void monoCancel() {

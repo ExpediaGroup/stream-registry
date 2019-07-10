@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.core.validator;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -43,12 +44,67 @@ public class EntityValidatorTest {
 
   @Test
   public void valid() {
+    Stream entity = Stream
+        .builder()
+        .type("type")
+        .configuration(Map.of())
+        .build();
+
+    Optional<Stream> existing = Optional.of(Stream
+        .builder()
+        .type("type")
+        .configuration(Map.of())
+        .build());
+
     underTest.validate(entity, existing);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void invalid() {
+  public void invalidName() {
     doThrow(IllegalArgumentException.class).when(nameValidator).validate(any());
+    underTest.validate(entity, existing);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void nullType() {
+    Stream entity = Stream
+        .builder()
+        .type(null)
+        .configuration(Map.of())
+        .build();
+
+    Optional<Stream> existing = Optional.empty();
+
+    underTest.validate(entity, existing);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void nullConfiguration() {
+    Stream entity = Stream
+        .builder()
+        .type("type")
+        .configuration(null)
+        .build();
+
+    Optional<Stream> existing = Optional.empty();
+
+    underTest.validate(entity, existing);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void changedType() {
+    Stream entity = Stream
+        .builder()
+        .type("type1")
+        .configuration(Map.of())
+        .build();
+
+    Optional<Stream> existing = Optional.of(Stream
+        .builder()
+        .type("type2")
+        .configuration(Map.of())
+        .build());
+
     underTest.validate(entity, existing);
   }
 }

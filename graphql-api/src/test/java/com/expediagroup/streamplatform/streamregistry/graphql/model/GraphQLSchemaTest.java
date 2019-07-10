@@ -33,6 +33,8 @@ public class GraphQLSchemaTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
 
   private final GraphQLDomain graphQLDomain = GraphQLDomain
@@ -41,6 +43,8 @@ public class GraphQLSchemaTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .build();
 
   private final Schema schema = Schema
@@ -51,7 +55,10 @@ public class GraphQLSchemaTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("domain")
+      .domain(Domain.Key
+          .builder()
+          .name("domain")
+          .build())
       .build();
 
   private final GraphQLSchema graphQLSchema = GraphQLSchema

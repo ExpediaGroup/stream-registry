@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.service;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -23,10 +25,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handler.HandlerWrapper;
-import com.expediagroup.streamplatform.streamregistry.core.predicate.DomainConfiguredEntityPredicateFactory;
-import com.expediagroup.streamplatform.streamregistry.core.validator.ConfiguredEntityValidator;
-import com.expediagroup.streamplatform.streamregistry.core.validator.DomainConfiguredEntityValidator;
+import com.expediagroup.streamplatform.streamregistry.core.predicate.PatternMatchPredicateFactory;
 import com.expediagroup.streamplatform.streamregistry.core.validator.EntityValidator;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.repository.Repository;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
@@ -35,18 +36,18 @@ import com.expediagroup.streamplatform.streamregistry.service.Service;
 @RequiredArgsConstructor
 public class SchemaService implements Service<Schema, Schema.Key> {
   private final EntityValidator entityValidator;
-  private final ConfiguredEntityValidator configuredEntityValidator;
-  private final DomainConfiguredEntityValidator domainConfiguredEntityValidator;
   private final HandlerWrapper<Schema> schemaHandler;
   private final Repository<Schema, Schema.Key> schemaRepository;
-  private final DomainConfiguredEntityPredicateFactory domainConfiguredEntityPredicateFactory;
+  private final Repository<Domain, Domain.Key> domainrepository;
+  private final PatternMatchPredicateFactory patternMatchPredicateFactory;
 
   @Override
   public void upsert(Schema schema) {
     Optional<Schema> existing = schemaRepository.get(schema.key());
     entityValidator.validate(schema, existing);
-    configuredEntityValidator.validate(schema, existing);
-    domainConfiguredEntityValidator.validate(schema, existing);
+
+    checkArgument(domainrepository.get(schema.getDomain()).isPresent(),
+        "Domain '%s' does not exist.", schema.getDomain().getName());
 
     Schema handled = schemaHandler.handle(schema, existing);
     schemaRepository.upsert(handled);
@@ -63,6 +64,6 @@ public class SchemaService implements Service<Schema, Schema.Key> {
   public Stream<Schema> stream(Schema query) {
     return schemaRepository
         .stream()
-        .filter(domainConfiguredEntityPredicateFactory.create(query));
+        .filter(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getDomain()).map(Domain.Key::getName).orElse(null)));
   }
 }

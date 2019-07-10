@@ -46,4 +46,11 @@ public class GraphQLSchema {
         .domain(GraphQLDomain.fromDto(domain))
         .build();
   }
+
+  @Value
+  @Builder
+  public static class Key {
+    String name;
+    String domain;
+  }
 }

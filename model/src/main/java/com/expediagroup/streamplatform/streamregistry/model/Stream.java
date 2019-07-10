@@ -25,9 +25,10 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Stream extends DomainConfiguredEntity<Stream.Key> {
+public class Stream extends Entity<Stream.Key> {
+  Domain.Key domain;
   Integer version;
-  NameDomain schema;
+  Schema.Key schema;
 
   @Builder
   private Stream(
@@ -37,10 +38,11 @@ public class Stream extends DomainConfiguredEntity<Stream.Key> {
       Map<String, String> tags,
       String type,
       Map<String, String> configuration,
-      String domain,
+      Domain.Key domain,
       Integer version,
-      NameDomain schema) {
-    super(name, owner, description, tags, type, configuration, domain);
+      Schema.Key schema) {
+    super(name, owner, description, tags, type, configuration);
+    this.domain = domain;
     this.version = version;
     this.schema = schema;
   }
@@ -50,14 +52,11 @@ public class Stream extends DomainConfiguredEntity<Stream.Key> {
     return new Key(getName(), getDomain(), getVersion());
   }
 
-  public Schema.Key schemaKey() {
-    return new Schema.Key(getSchema().getName(), getSchema().getDomain());
-  }
-
   @Value
+  @Builder
   public static class Key {
     String name;
-    String domain;
+    Domain.Key domain;
     Integer version;
   }
 }

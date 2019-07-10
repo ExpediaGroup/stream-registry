@@ -31,6 +31,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlerWrapper;
 import com.expediagroup.streamplatform.streamregistry.core.predicate.EntityPredicateFactory;
 import com.expediagroup.streamplatform.streamregistry.core.validator.EntityValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -40,6 +41,8 @@ import com.expediagroup.streamplatform.streamregistry.repository.Repository;
 public class DomainServiceTest {
   @Mock
   private EntityValidator entityValidator;
+  @Mock
+  private HandlerWrapper<Domain> domainHandler;
   @Mock
   private Repository<Domain, Domain.Key> domainRepository;
   @Mock
@@ -55,7 +58,7 @@ public class DomainServiceTest {
 
   @Before
   public void before() {
-    underTest = new DomainService(entityValidator, domainRepository, entityPredicateFactory);
+    underTest = new DomainService(entityValidator, domainHandler, domainRepository, entityPredicateFactory);
   }
 
   @Test
@@ -64,12 +67,14 @@ public class DomainServiceTest {
     Optional<Domain> existing = Optional.empty();
 
     when(domainRepository.get(domain.key())).thenReturn(existing);
+    when(domainHandler.handle(domain, existing)).thenReturn(domain);
 
     underTest.upsert(domain);
 
-    InOrder inOrder = inOrder(entityValidator, domainRepository);
+    InOrder inOrder = inOrder(entityValidator, domainHandler, domainRepository);
     inOrder.verify(domainRepository).get(domain.key());
     inOrder.verify(entityValidator).validate(domain, existing);
+    inOrder.verify(domainHandler).handle(domain, existing);
     inOrder.verify(domainRepository).upsert(domain);
   }
 

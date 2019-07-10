@@ -34,6 +34,8 @@ public class AvroDomainConversionTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
 
   private final AvroDomain avroDomain = AvroDomain
@@ -42,6 +44,8 @@ public class AvroDomainConversionTest {
       .setOwner("owner")
       .setDescription("description")
       .setTags(Map.of("key", "value"))
+      .setType("type")
+      .setConfiguration(Map.of("key", "value"))
       .build();
 
   private final AvroKey avroKey = AvroKey

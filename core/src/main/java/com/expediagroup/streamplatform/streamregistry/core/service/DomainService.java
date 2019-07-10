@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlerWrapper;
 import com.expediagroup.streamplatform.streamregistry.core.predicate.EntityPredicateFactory;
 import com.expediagroup.streamplatform.streamregistry.core.validator.EntityValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.service.Service;
 @RequiredArgsConstructor
 public class DomainService implements Service<Domain, Domain.Key> {
   private final EntityValidator entityValidator;
+  private final HandlerWrapper<Domain> domainHandler;
   private final Repository<Domain, Domain.Key> domainRepository;
   private final EntityPredicateFactory entityPredicateFactory;
 
@@ -39,7 +41,9 @@ public class DomainService implements Service<Domain, Domain.Key> {
   public void upsert(Domain domain) {
     Optional<Domain> existing = domainRepository.get(domain.key());
     entityValidator.validate(domain, existing);
-    domainRepository.upsert(domain);
+
+    Domain handled = domainHandler.handle(domain, existing);
+    domainRepository.upsert(handled);
   }
 
   @Override

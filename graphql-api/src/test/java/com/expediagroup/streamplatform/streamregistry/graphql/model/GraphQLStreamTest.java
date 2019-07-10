@@ -24,7 +24,6 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.NameDomain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
@@ -35,6 +34,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
 
   private final Domain schemaDomain = Domain
@@ -43,6 +44,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
 
   private final Schema schema = Schema
@@ -53,7 +56,10 @@ public class GraphQLStreamTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("schemaDomain")
+      .domain(Domain.Key
+          .builder()
+          .name("schemaDomain")
+          .build())
       .build();
 
   private final Stream stream = Stream
@@ -64,12 +70,18 @@ public class GraphQLStreamTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("streamDomain")
+      .domain(Domain.Key
+          .builder()
+          .name("streamDomain")
+          .build())
       .version(1)
-      .schema(NameDomain
+      .schema(Schema.Key
           .builder()
           .name("schemaName")
-          .domain("schemaDomain")
+          .domain(Domain.Key
+              .builder()
+              .name("schemaDomain")
+              .build())
           .build())
       .build();
 
@@ -79,6 +91,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .build();
 
   private final GraphQLDomain streamGraphQLDomain = GraphQLDomain
@@ -87,6 +101,8 @@ public class GraphQLStreamTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .build();
 
   private final GraphQLSchema graphQLSchema = GraphQLSchema

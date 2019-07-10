@@ -18,10 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
 import okhttp3.OkHttpClient;
+import reactor.core.publisher.Mono;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
@@ -87,10 +89,18 @@ public class StreamRegistryIT {
                 .key("key")
                 .value("value")
                 .build()))
+            .type("default")
+            .configuration(List.of(KeyValueInput
+                .builder()
+                .key("key")
+                .value("value")
+                .build()))
             .build()))
         .block();
 
     assertThat(mutation.data().get().isUpsertDomain(), is(true));
+
+    Mono.delay(Duration.ofSeconds(5)).block();
 
     Response<Optional<DomainsQuery.Data>> query = ReactorApollo.from(
         client.query(DomainsQuery

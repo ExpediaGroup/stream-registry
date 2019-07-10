@@ -30,6 +30,8 @@ public class EntityPredicateFactory {
     return patternMatchPredicateFactory.create(query, Entity::getName)
         .and(patternMatchPredicateFactory.create(query, Entity::getOwner))
         .and(patternMatchPredicateFactory.create(query, Entity::getDescription))
-        .and(mapPatternMatchPredicateFactory.create(query, Entity::getTags));
+        .and(mapPatternMatchPredicateFactory.create(query, Entity::getTags))
+        .and(patternMatchPredicateFactory.create(query, Entity::getType))
+        .and(mapPatternMatchPredicateFactory.create(query, Entity::getConfiguration));
   }
 }

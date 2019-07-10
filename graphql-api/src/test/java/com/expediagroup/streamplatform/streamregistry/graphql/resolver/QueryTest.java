@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolver;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -30,11 +31,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLNameDomain;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.NameDomain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
@@ -47,6 +46,8 @@ public class QueryTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
   private final Domain schemaDomain = Domain
       .builder()
@@ -54,6 +55,8 @@ public class QueryTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
   private final Schema schema = Schema
       .builder()
@@ -63,7 +66,10 @@ public class QueryTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("schemaDomain")
+      .domain(Domain.Key
+          .builder()
+          .name("schemaDomain")
+          .build())
       .build();
   private final Stream stream = Stream
       .builder()
@@ -73,12 +79,18 @@ public class QueryTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("streamDomain")
+      .domain(Domain.Key
+          .builder()
+          .name("streamDomain")
+          .build())
       .version(1)
-      .schema(NameDomain
+      .schema(Schema.Key
           .builder()
           .name("schemaName")
-          .domain("schemaDomain")
+          .domain(Domain.Key
+              .builder()
+              .name("schemaDomain")
+              .build())
           .build())
       .build();
   private final GraphQLDomain schemaGraphQLDomain = GraphQLDomain
@@ -87,6 +99,8 @@ public class QueryTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .build();
   private final GraphQLDomain streamGraphQLDomain = GraphQLDomain
       .builder()
@@ -94,6 +108,8 @@ public class QueryTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .build();
   private final GraphQLSchema graphQLSchema = GraphQLSchema
       .builder()
@@ -138,8 +154,12 @@ public class QueryTest {
         streamDomain.getName(),
         streamDomain.getOwner(),
         streamDomain.getDescription(),
+        List.of(new GraphQLKeyValue("key", "value")),
+        "type",
         List.of(new GraphQLKeyValue("key", "value"))
     );
+
+    verify(domainService).stream(streamDomain);
 
     assertThat(result.size(), is(1));
     assertThat(result.get(0), is(streamGraphQLDomain));
@@ -157,7 +177,7 @@ public class QueryTest {
         List.of(new GraphQLKeyValue("key", "value")),
         "type",
         List.of(new GraphQLKeyValue("key", "value")),
-        schema.getDomain()
+        schema.getDomain().getName()
     );
 
     assertThat(result.size(), is(1));
@@ -178,9 +198,9 @@ public class QueryTest {
         List.of(new GraphQLKeyValue("key", "value")),
         "type",
         List.of(new GraphQLKeyValue("key", "value")),
-        stream.getDomain(),
+        stream.getDomain().getName(),
         1,
-        GraphQLNameDomain
+        GraphQLSchema.Key
             .builder()
             .name("schemaName")
             .domain("schemaDomain")

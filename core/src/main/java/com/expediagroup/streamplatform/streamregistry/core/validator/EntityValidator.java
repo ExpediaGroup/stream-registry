@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validator;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Objects;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +34,14 @@ public class EntityValidator {
 
   public void validate(Entity<?> entity, Optional<? extends Entity<?>> existing) {
     nameValidator.validate(entity.getName());
+
+    checkNotNull(entity.getConfiguration(), "Configuration must not be null.");
+    checkNotNull(entity.getType(), "Type must not be null.");
+
+    existing.ifPresent(e -> checkArgument(Objects.equals(
+        entity.getType(),
+        e.getType()),
+        "Configuration must be of the same type as the existing."));
 
     //TODO owner is mandatory and exists
   }

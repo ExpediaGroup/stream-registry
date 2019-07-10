@@ -23,7 +23,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.model.NameDomain;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 public class AvroStreamConversionTest {
@@ -37,15 +38,38 @@ public class AvroStreamConversionTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("domain")
+      .domain(Domain.Key
+          .builder()
+          .name("domain")
+          .build())
       .version(1)
-      .schema(NameDomain
+      .schema(Schema.Key
           .builder()
           .name("schemaName")
-          .domain("schemaDomain")
+          .domain(Domain.Key
+              .builder()
+              .name("schemaDomain")
+              .build())
           .build())
       .build();
 
+  private final AvroKey domainAvroKey = AvroKey
+      .newBuilder()
+      .setId("domain")
+      .setType(AvroKeyType.DOMAIN)
+      .setParent(null)
+      .build();
+  private final AvroKey schemaAvroKey = AvroKey
+      .newBuilder()
+      .setId("schemaName")
+      .setType(AvroKeyType.SCHEMA)
+      .setParent(AvroKey
+          .newBuilder()
+          .setId("schemaDomain")
+          .setType(AvroKeyType.DOMAIN)
+          .setParent(null)
+          .build())
+      .build();
   private final AvroStream avroStream = AvroStream
       .newBuilder()
       .setName("name")
@@ -54,13 +78,9 @@ public class AvroStreamConversionTest {
       .setTags(Map.of("key", "value"))
       .setType("type")
       .setConfiguration(Map.of("key", "value"))
-      .setDomain("domain")
+      .setDomainKey(domainAvroKey)
       .setVersion(1)
-      .setSchemaRef(AvroNameDomain
-          .newBuilder()
-          .setName("schemaName")
-          .setDomain("schemaDomain")
-          .build())
+      .setSchemaKey(schemaAvroKey)
       .build();
 
   private final AvroKey avroKey = AvroKey

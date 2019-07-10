@@ -28,18 +28,16 @@ import org.apache.maven.plugins.annotations.Parameter;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class GraphQLIntrospectionFileGeneratorMojo extends AbstractMojo {
   private final GraphQLIntrospectionFileGenerator generator;
+  @Parameter(required = true, property = "sourceSdlResource")
+  @Setter(AccessLevel.PACKAGE)
+  private String sourceSdlResource;
+  @Parameter(required = true, property = "targetIntrospectionFile")
+  @Setter(AccessLevel.PACKAGE)
+  private String targetIntrospectionFile;
 
   public GraphQLIntrospectionFileGeneratorMojo() {
     this(new GraphQLIntrospectionFileGenerator());
   }
-
-  @Parameter(required = true, property = "sourceSdlResource")
-  @Setter(AccessLevel.PACKAGE)
-  private String sourceSdlResource;
-
-  @Parameter(required = true, property = "targetIntrospectionFile")
-  @Setter(AccessLevel.PACKAGE)
-  private String targetIntrospectionFile;
 
   @Override
   public void execute() {

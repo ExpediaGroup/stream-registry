@@ -29,9 +29,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLNameDomain;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.NameDomain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
@@ -44,6 +43,8 @@ public class MutationTest {
       .owner("root")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
   private final Schema schema = Schema
       .builder()
@@ -53,7 +54,10 @@ public class MutationTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("domain")
+      .domain(Domain.Key
+          .builder()
+          .name("domain")
+          .build())
       .build();
   private final Stream stream = Stream
       .builder()
@@ -63,12 +67,18 @@ public class MutationTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("streamDomain")
+      .domain(Domain.Key
+          .builder()
+          .name("streamDomain")
+          .build())
       .version(1)
-      .schema(NameDomain
+      .schema(Schema.Key
           .builder()
           .name("schemaName")
-          .domain("schemaDomain")
+          .domain(Domain.Key
+              .builder()
+              .name("schemaDomain")
+              .build())
           .build())
       .build();
   @Mock
@@ -89,6 +99,8 @@ public class MutationTest {
     boolean result = underTest.upsertDomain(
         domain.getName(),
         domain.getDescription(),
+        List.of(new GraphQLKeyValue("key", "value")),
+        "type",
         List.of(new GraphQLKeyValue("key", "value"))
     );
 
@@ -104,7 +116,7 @@ public class MutationTest {
         List.of(new GraphQLKeyValue("key", "value")),
         "type",
         List.of(new GraphQLKeyValue("key", "value")),
-        schema.getDomain()
+        schema.getDomain().getName()
     );
 
     assertThat(result, is(true));
@@ -119,9 +131,9 @@ public class MutationTest {
         List.of(new GraphQLKeyValue("key", "value")),
         "type",
         List.of(new GraphQLKeyValue("key", "value")),
-        stream.getDomain(),
+        stream.getDomain().getName(),
         1,
-        GraphQLNameDomain
+        GraphQLSchema.Key
             .builder()
             .name("schemaName")
             .domain("schemaDomain")
