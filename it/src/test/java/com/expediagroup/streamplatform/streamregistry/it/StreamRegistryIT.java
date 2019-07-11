@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import okhttp3.OkHttpClient;
-import reactor.core.publisher.Mono;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
@@ -35,6 +34,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import reactor.core.publisher.Mono;
 
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainMutation;

@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
-public interface Handler<T extends Entity> {
+public interface Handler<T extends Entity<?>> {
   String type();
 
   T handle(T entity, Optional<? extends T> existing);

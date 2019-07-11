@@ -32,7 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Configuration
-public class HandlerConfiguration {
+class HandlerConfiguration {
   @Bean
   HandlerWrapper<Domain> domainHandlerProvider(List<Handler<Domain>> handlers) {
     checkArgument(handlers.size() > 0, "There must be at least one Domain Handler.");
@@ -48,10 +48,10 @@ public class HandlerConfiguration {
   @Bean
   HandlerWrapper<Stream> streamHandlerProvider(List<Handler<Stream>> handlers) {
     checkArgument(handlers.size() > 0, "There must be at least one Stream Handler.");
-    return new HandlerWrapper(new HandlerProvider<>(index(handlers)));
+    return new HandlerWrapper<>(new HandlerProvider<>(index(handlers)));
   }
 
-  private <T extends Entity> Map<String, Handler<T>> index(List<Handler<T>> handlers) {
+  private <T extends Entity<?>> Map<String, Handler<T>> index(List<Handler<T>> handlers) {
     return handlers
         .stream()
         .collect(toMap(Handler::type, identity()));

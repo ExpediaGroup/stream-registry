@@ -38,14 +38,14 @@ public final class ReactorApollo {
   public static <T> Mono<Response<T>> from(ApolloCall<T> call) {
     return Mono.create(sink -> {
       sink.onCancel(call::cancel);
-      call.enqueue(new MonoSinkCallback(sink));
+      call.enqueue(new MonoSinkCallback<>(sink));
     });
   }
 
   public static <T> Flux<Response<T>> from(ApolloSubscriptionCall<T> call, OverflowStrategy overflowStrategy) {
     return Flux.create(sink -> {
       sink.onCancel(call::cancel);
-      call.execute(new FluxSinkCallback(sink));
+      call.execute(new FluxSinkCallback<>(sink));
     }, overflowStrategy);
   }
 

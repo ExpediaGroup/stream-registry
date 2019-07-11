@@ -98,7 +98,7 @@ public class KafkaRepositoryTest {
 
   @Before
   public void before() {
-    underTest = new KafkaRepository(producer, view, conversion);
+    underTest = new KafkaRepository<>(producer, view, conversion);
   }
 
   @Test
