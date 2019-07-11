@@ -39,7 +39,7 @@ input KeyValueInput {
   value: String
 }
 
-input NameDomainInput {
+input SchemaKey {
   name: String
   domain: String
 }
@@ -71,7 +71,7 @@ type Query {
     configuration: [KeyValueInput!]
     domain: String
     version: Int
-    schema: NameDomainInput
+    schema: SchemaKey
   ): [Stream!]!
 }
 
@@ -99,6 +99,6 @@ type Mutation {
     configuration: [KeyValueInput!]!
     domain: String!
     version: Int!
-    schema: NameDomainInput!
+    schema: SchemaKey!
   ): Boolean!
 }
