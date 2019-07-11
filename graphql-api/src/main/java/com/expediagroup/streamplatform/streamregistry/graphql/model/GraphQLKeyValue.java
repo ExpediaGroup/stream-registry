@@ -15,12 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.Value;
 
@@ -29,23 +28,20 @@ public class GraphQLKeyValue {
   String key;
   String value;
 
-  public static Iterable<GraphQLKeyValue> fromDto(Map<String, String> map) {
-    if (map == null) {
-      return List.of();
-    }
-    return map
-        .entrySet()
+  public static List<GraphQLKeyValue> toMap(Map<String, String> map) {
+    return Optional
+        .ofNullable(map)
         .stream()
+        .flatMap(m -> m.entrySet().stream())
         .map(e -> new GraphQLKeyValue(e.getKey(), e.getValue()))
-        .collect(toList());
+        .collect(Collectors.toList());
   }
 
-  public static Map<String, String> toDto(Iterable<GraphQLKeyValue> keyValues) {
-    if (keyValues == null) {
-      return Map.of();
-    }
-    return StreamSupport
-        .stream(keyValues.spliterator(), false)
+  public static Map<String, String> toList(List<GraphQLKeyValue> keyValues) {
+    return Optional
+        .ofNullable(keyValues)
+        .stream()
+        .flatMap(l -> l.stream())
         //Allow null keys and values in map but not duplicate keys
         .collect(HashMap::new, (m, kv) -> {
           if (m.containsKey(kv.getKey())) {

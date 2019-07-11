@@ -46,50 +46,18 @@ public class AvroStreamConversion implements Conversion<Stream, Stream.Key, Avro
   }
 
   @Override
-  public AvroKey key(Stream stream) {
-    return avroKey(stream.key());
-  }
-
-  @Override
   public AvroKey key(Stream.Key key) {
     return avroKey(key);
   }
 
   @Override
-  public AvroStream toAvro(Stream stream) {
-    return AvroStream
-        .newBuilder()
-        .setName(stream.getName())
-        .setOwner(stream.getOwner())
-        .setDescription(stream.getDescription())
-        .setTags(stream.getTags())
-        .setType(stream.getType())
-        .setConfiguration(stream.getConfiguration())
-        .setDomainKey(AvroDomainConversion.avroKey(stream.getDomain()))
-        .setVersion(stream.getVersion())
-        .setSchemaKey(AvroSchemaConversion.avroKey(stream.getSchema()))
-        .build();
-  }
-
-  @Override
-  public Stream toEntity(AvroStream stream) {
-    return Stream
-        .builder()
-        .name(stream.getName())
-        .owner(stream.getOwner())
-        .description(stream.getDescription())
-        .tags(stream.getTags())
-        .type(stream.getType())
-        .configuration(stream.getConfiguration())
-        .domain(AvroDomainConversion.modelKey(stream.getDomainKey()))
-        .version(stream.getVersion())
-        .schema(AvroSchemaConversion.modelKey(stream.getSchemaKey()))
-        .build();
-  }
-
-  @Override
   public Class<AvroStream> avroClass() {
     return AvroStream.class;
+  }
+
+  @Override
+  public Class<Stream> entityClass() {
+    return Stream.class;
   }
 
   @Override

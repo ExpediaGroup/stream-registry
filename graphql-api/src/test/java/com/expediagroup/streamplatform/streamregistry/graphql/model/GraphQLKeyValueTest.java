@@ -31,7 +31,7 @@ public class GraphQLKeyValueTest {
       "key3", null
   );
 
-  private final Iterable<GraphQLKeyValue> keyValues = List.of(
+  private final List<GraphQLKeyValue> keyValues = List.of(
       new GraphQLKeyValue("key1", "value1"),
       new GraphQLKeyValue(null, "value2"),
       new GraphQLKeyValue("key3", null)
@@ -48,20 +48,20 @@ public class GraphQLKeyValueTest {
 
   @Test
   public void fromDto() {
-    assertThat(GraphQLKeyValue.fromDto(map), is(keyValues));
+    assertThat(GraphQLKeyValue.toMap(map), is(keyValues));
   }
 
   @Test
   public void toDto() {
-    assertThat(GraphQLKeyValue.toDto(keyValues), is(map));
+    assertThat(GraphQLKeyValue.toList(keyValues), is(map));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void toDtoDuplicateKeys() {
-    Iterable<GraphQLKeyValue> keyValues = List.of(
+    List<GraphQLKeyValue> keyValues = List.of(
         new GraphQLKeyValue("key", "value1"),
         new GraphQLKeyValue("key", "value2")
     );
-    GraphQLKeyValue.toDto(keyValues);
+    GraphQLKeyValue.toList(keyValues);
   }
 }

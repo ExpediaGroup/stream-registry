@@ -133,6 +133,7 @@ public class QueryTest {
       .version(1)
       .schema(graphQLSchema)
       .build();
+
   @Mock
   private Service<Domain, Domain.Key> domainService;
   @Mock

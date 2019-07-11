@@ -38,44 +38,18 @@ public class AvroDomainConversion implements Conversion<Domain, Domain.Key, Avro
   }
 
   @Override
-  public AvroKey key(Domain domain) {
-    return avroKey(domain.key());
-  }
-
-  @Override
   public AvroKey key(Domain.Key key) {
     return avroKey(key);
   }
 
   @Override
-  public AvroDomain toAvro(Domain domain) {
-    return AvroDomain
-        .newBuilder()
-        .setName(domain.getName())
-        .setOwner(domain.getOwner())
-        .setDescription(domain.getDescription())
-        .setTags(domain.getTags())
-        .setType(domain.getType())
-        .setConfiguration(domain.getConfiguration())
-        .build();
-  }
-
-  @Override
-  public Domain toEntity(AvroDomain domain) {
-    return Domain
-        .builder()
-        .name(domain.getName())
-        .owner(domain.getOwner())
-        .description(domain.getDescription())
-        .tags(domain.getTags())
-        .type(domain.getType())
-        .configuration(domain.getConfiguration())
-        .build();
-  }
-
-  @Override
   public Class<AvroDomain> avroClass() {
     return AvroDomain.class;
+  }
+
+  @Override
+  public Class<Domain> entityClass() {
+    return Domain.class;
   }
 
   @Override

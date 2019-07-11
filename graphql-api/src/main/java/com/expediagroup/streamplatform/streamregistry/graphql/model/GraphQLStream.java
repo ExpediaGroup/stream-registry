@@ -18,10 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model;
 import lombok.Builder;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-
 @Value
 @Builder
 public class GraphQLStream {
@@ -34,23 +30,4 @@ public class GraphQLStream {
   GraphQLDomain domain;
   Integer version;
   GraphQLSchema schema;
-
-  public static GraphQLStream fromDto(
-      Stream stream,
-      Domain streamDomain,
-      Schema schema,
-      Domain schemaDomain) {
-    return GraphQLStream
-        .builder()
-        .name(stream.getName())
-        .owner(stream.getOwner())
-        .description(stream.getDescription())
-        .tags(GraphQLKeyValue.fromDto(stream.getTags()))
-        .type(schema.getType())
-        .configuration(GraphQLKeyValue.fromDto(schema.getConfiguration()))
-        .domain(GraphQLDomain.fromDto(streamDomain))
-        .version(stream.getVersion())
-        .schema(GraphQLSchema.fromDto(schema, schemaDomain))
-        .build();
-  }
 }

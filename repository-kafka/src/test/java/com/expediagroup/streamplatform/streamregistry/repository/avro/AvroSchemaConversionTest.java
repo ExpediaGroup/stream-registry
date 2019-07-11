@@ -19,8 +19,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Map;
-
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -29,36 +27,13 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 public class AvroSchemaConversionTest {
   private final AvroSchemaConversion underTest = new AvroSchemaConversion();
 
-  private final Schema schema = Schema
+  private final Schema.Key schemaKey = Schema.Key
       .builder()
       .name("name")
-      .owner("owner")
-      .description("description")
-      .tags(Map.of("key", "value"))
-      .type("type")
-      .configuration(Map.of("key", "value"))
       .domain(Domain.Key
           .builder()
           .name("domain")
           .build())
-      .build();
-
-  private final AvroKey domainAvroKey = AvroKey
-      .newBuilder()
-      .setId("domain")
-      .setType(AvroKeyType.DOMAIN)
-      .setParent(null)
-      .build();
-
-  private final AvroSchema avroSchema = AvroSchema
-      .newBuilder()
-      .setName("name")
-      .setOwner("owner")
-      .setDescription("description")
-      .setTags(Map.of("key", "value"))
-      .setType("type")
-      .setConfiguration(Map.of("key", "value"))
-      .setDomainKey(domainAvroKey)
       .build();
 
   private final AvroKey avroKey = AvroKey
@@ -74,23 +49,8 @@ public class AvroSchemaConversionTest {
       .build();
 
   @Test
-  public void avroKeyfromDomain() {
-    assertThat(underTest.key(schema), is(avroKey));
-  }
-
-  @Test
   public void avroKeyfromKey() {
-    assertThat(underTest.key(schema.key()), is(avroKey));
-  }
-
-  @Test
-  public void toAvro() {
-    assertThat(underTest.toAvro(schema), is(avroSchema));
-  }
-
-  @Test
-  public void toEntity() {
-    assertThat(underTest.toEntity(avroSchema), is(schema));
+    assertThat(underTest.key(schemaKey), is(avroKey));
   }
 
   @Test
