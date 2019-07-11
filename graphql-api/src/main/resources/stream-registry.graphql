@@ -34,14 +34,24 @@ type Stream {
   schema: Schema!
 }
 
-input KeyValueInput {
+input KeyValueQueryInput {
   key: String
   value: String
 }
 
-input SchemaKey {
+input KeyValueInput {
+  key: String!
+  value: String!
+}
+
+input SchemaKeyQueryInput {
   name: String
   domain: String
+}
+
+input SchemaKeyInput {
+  name: String!
+  domain: String!
 }
 
 type Query {
@@ -49,29 +59,29 @@ type Query {
     name: String
     owner: String
     description: String
-    tags: [KeyValueInput!]
+    tags: [KeyValueQueryInput!]
     type: String
-    configuration: [KeyValueInput!]
+    configuration: [KeyValueQueryInput!]
   ): [Domain!]!
   schemas(
     name: String
     owner: String
     description: String
-    tags: [KeyValueInput!]
+    tags: [KeyValueQueryInput!]
     type: String
-    configuration: [KeyValueInput!]
+    configuration: [KeyValueQueryInput!]
     domain: String
   ): [Schema!]!
   streams(
     name: String
     owner: String
     description: String
-    tags: [KeyValueInput!]
+    tags: [KeyValueQueryInput!]
     type: String
-    configuration: [KeyValueInput!]
+    configuration: [KeyValueQueryInput!]
     domain: String
     version: Int
-    schema: SchemaKey
+    schema: SchemaKeyQueryInput
   ): [Stream!]!
 }
 
@@ -99,6 +109,6 @@ type Mutation {
     configuration: [KeyValueInput!]!
     domain: String!
     version: Int!
-    schema: SchemaKey!
+    schema: SchemaKeyInput!
   ): Boolean!
 }
