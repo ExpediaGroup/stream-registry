@@ -50,6 +50,8 @@ public class KafkaRepositoryTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
   private final AvroDomain avroDomain = AvroDomain
       .newBuilder()
@@ -57,6 +59,8 @@ public class KafkaRepositoryTest {
       .setOwner("owner")
       .setDescription("description")
       .setTags(Map.of("key", "value"))
+      .setType("type")
+      .setConfiguration(Map.of("key", "value"))
       .build();
   private final AvroKey avroKey = AvroKey
       .newBuilder()
@@ -72,7 +76,7 @@ public class KafkaRepositoryTest {
       .setTags(Map.of("key", "value"))
       .setType("type")
       .setConfiguration(Map.of("key", "value"))
-      .setDomain("domain")
+      .setDomainKey(avroKey)
       .build();
   private final AvroKey avroSchemaKey = AvroKey
       .newBuilder()
@@ -94,7 +98,7 @@ public class KafkaRepositoryTest {
 
   @Before
   public void before() {
-    underTest = new KafkaRepository(producer, view, conversion);
+    underTest = new KafkaRepository<>(producer, view, conversion);
   }
 
   @Test

@@ -17,9 +17,9 @@ package com.expediagroup.streamplatform.streamregistry.handler;
 
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.model.ConfiguredEntity;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
-public interface Handler<T extends ConfiguredEntity> {
+public interface Handler<T extends Entity<?>> {
   String type();
 
   T handle(T entity, Optional<? extends T> existing);

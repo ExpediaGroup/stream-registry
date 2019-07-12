@@ -27,8 +27,14 @@ import lombok.Value;
 @ToString(callSuper = true)
 public class Domain extends Entity<Domain.Key> {
   @Builder
-  private Domain(String name, String owner, String description, Map<String, String> tags) {
-    super(name, owner, description, tags);
+  private Domain(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      Map<String, String> configuration) {
+    super(name, owner, description, tags, type, configuration);
   }
 
   @Override
@@ -37,6 +43,7 @@ public class Domain extends Entity<Domain.Key> {
   }
 
   @Value
+  @Builder
   public static class Key {
     String name;
   }

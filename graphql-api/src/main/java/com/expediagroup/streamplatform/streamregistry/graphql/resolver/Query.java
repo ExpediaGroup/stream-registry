@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLNameDomain;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -46,7 +45,9 @@ public class Query implements GraphQLQueryResolver {
       String name,
       String owner,
       String description,
-      Iterable<GraphQLKeyValue> tags) {
+      Iterable<GraphQLKeyValue> tags,
+      String type,
+      Iterable<GraphQLKeyValue> configuration) {
     return domainService
         .stream(Domain
             .builder()
@@ -54,6 +55,8 @@ public class Query implements GraphQLQueryResolver {
             .owner(owner)
             .description(description)
             .tags(GraphQLKeyValue.toDto(tags))
+            .type(type)
+            .configuration(GraphQLKeyValue.toDto(configuration))
             .build())
         .map(GraphQLDomain::fromDto)
         .collect(toList());
@@ -76,9 +79,12 @@ public class Query implements GraphQLQueryResolver {
             .tags(GraphQLKeyValue.toDto(tags))
             .type(type)
             .configuration(GraphQLKeyValue.toDto(configuration))
-            .domain(domain)
+            .domain(Domain.Key
+                .builder()
+                .name(domain)
+                .build())
             .build())
-        .map(schema -> GraphQLSchema.fromDto(schema, domain(schema.getDomain())))
+        .map(schema -> GraphQLSchema.fromDto(schema, domainService.get(schema.getDomain())))
         .collect(toList());
   }
 
@@ -91,7 +97,7 @@ public class Query implements GraphQLQueryResolver {
       Iterable<GraphQLKeyValue> configuration,
       String domain,
       Integer version,
-      GraphQLNameDomain schema) {
+      GraphQLSchema.Key schema) {
     return streamService
         .stream(Stream
             .builder()
@@ -101,27 +107,29 @@ public class Query implements GraphQLQueryResolver {
             .tags(GraphQLKeyValue.toDto(tags))
             .type(type)
             .configuration(GraphQLKeyValue.toDto(configuration))
-            .domain(domain)
+            .domain(Domain.Key
+                .builder()
+                .name(domain)
+                .build())
             .version(version)
-            .schema(GraphQLNameDomain.toDto(schema))
+            .schema(Schema.Key
+                .builder()
+                .name(schema.getName())
+                .domain(Domain.Key
+                    .builder()
+                    .name(schema.getDomain())
+                    .build())
+                .build())
             .build())
         .map(stream -> {
-          Schema streamSchema = schema(stream.getSchema().getName(), stream.getSchema().getDomain());
+          Schema streamSchema = schemaService.get(stream.getSchema());
           return GraphQLStream.fromDto(
               stream,
-              domain(stream.getDomain()),
+              domainService.get(stream.getDomain()),
               streamSchema,
-              domain(streamSchema.getDomain())
+              domainService.get(streamSchema.getDomain())
           );
         })
         .collect(toList());
-  }
-
-  private Domain domain(String name) {
-    return domainService.get(new Domain.Key(name));
-  }
-
-  private Schema schema(String name, String domain) {
-    return schemaService.get(new Schema.Key(name, domain));
   }
 }

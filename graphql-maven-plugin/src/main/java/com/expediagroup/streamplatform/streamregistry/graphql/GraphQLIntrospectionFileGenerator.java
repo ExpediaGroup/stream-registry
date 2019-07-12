@@ -35,6 +35,16 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 
 public class GraphQLIntrospectionFileGenerator {
+  private static void writeFile(String filename, String contents) {
+    File file = new File(filename);
+    try {
+      Files.createParentDirs(file);
+      Files.asCharSink(file, UTF_8).write(contents);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
   public void generate(String sourceSdlResource, String targetIntrospectionFile) {
     String schema = readResource(sourceSdlResource);
     TypeDefinitionRegistry registry = new SchemaParser().parse(schema);
@@ -58,16 +68,6 @@ public class GraphQLIntrospectionFileGenerator {
   private String serializeToJson(ExecutionResult result) {
     try {
       return new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(result);
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
-  private static void writeFile(String filename, String contents) {
-    File file = new File(filename);
-    try {
-      Files.createParentDirs(file);
-      Files.asCharSink(file, UTF_8).write(contents);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }

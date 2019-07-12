@@ -27,6 +27,8 @@ public class GraphQLDomain {
   String owner;
   String description;
   Iterable<GraphQLKeyValue> tags;
+  String type;
+  Iterable<GraphQLKeyValue> configuration;
 
   public static GraphQLDomain fromDto(Domain domain) {
     return GraphQLDomain
@@ -35,6 +37,8 @@ public class GraphQLDomain {
         .owner(domain.getOwner())
         .description(domain.getDescription())
         .tags(GraphQLKeyValue.fromDto(domain.getTags()))
+        .type(domain.getType())
+        .configuration(GraphQLKeyValue.fromDto(domain.getConfiguration()))
         .build();
   }
 }

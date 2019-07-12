@@ -20,10 +20,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.ConfiguredEntity;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
 @RequiredArgsConstructor
-public class HandlerWrapper<T extends ConfiguredEntity<?>> {
+public class HandlerWrapper<T extends Entity<?>> {
   private final HandlerProvider<T> provider;
 
   public T handle(T entity, Optional<? extends T> existing) {

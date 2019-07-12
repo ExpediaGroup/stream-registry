@@ -15,34 +15,44 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.avro;
 
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Component
 public class AvroStreamConversion implements Conversion<Stream, Stream.Key, AvroStream> {
-  static AvroKey key(String name, String domain, Integer version) {
+  public static AvroKey avroKey(Stream.Key key) {
     return AvroKey
         .newBuilder()
-        .setId(Integer.toString(version))
+        .setId(Integer.toString(key.getVersion()))
         .setType(AvroKeyType.STREAM_VERSION)
         .setParent(AvroKey
             .newBuilder()
-            .setId(name)
+            .setId(key.getName())
             .setType(AvroKeyType.STREAM)
-            .setParent(AvroDomainConversion.key(domain))
+            .setParent(AvroDomainConversion.avroKey(key.getDomain()))
             .build())
+        .build();
+  }
+
+  public static Stream.Key modelKey(AvroKey key) {
+    return Stream.Key
+        .builder()
+        .name(key.getParent().getId())
+        .domain(AvroDomainConversion.modelKey(key.getParent().getParent()))
+        .version(Integer.parseInt(key.getId()))
         .build();
   }
 
   @Override
   public AvroKey key(Stream stream) {
-    return key(stream.getName(), stream.getDomain(), stream.getVersion());
+    return avroKey(stream.key());
   }
 
   @Override
   public AvroKey key(Stream.Key key) {
-    return key(key.getName(), key.getDomain(), key.getVersion());
+    return avroKey(key);
   }
 
   @Override
@@ -55,9 +65,9 @@ public class AvroStreamConversion implements Conversion<Stream, Stream.Key, Avro
         .setTags(stream.getTags())
         .setType(stream.getType())
         .setConfiguration(stream.getConfiguration())
-        .setDomain(stream.getDomain())
+        .setDomainKey(AvroDomainConversion.avroKey(stream.getDomain()))
         .setVersion(stream.getVersion())
-        .setSchemaRef(AvroNameDomains.fromDto(stream.getSchema()))
+        .setSchemaKey(AvroSchemaConversion.avroKey(stream.getSchema()))
         .build();
   }
 
@@ -71,9 +81,9 @@ public class AvroStreamConversion implements Conversion<Stream, Stream.Key, Avro
         .tags(stream.getTags())
         .type(stream.getType())
         .configuration(stream.getConfiguration())
-        .domain(stream.getDomain())
+        .domain(AvroDomainConversion.modelKey(stream.getDomainKey()))
         .version(stream.getVersion())
-        .schema(AvroNameDomains.toDto(stream.getSchemaRef()))
+        .schema(AvroSchemaConversion.modelKey(stream.getSchemaKey()))
         .build();
   }
 

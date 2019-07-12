@@ -25,12 +25,17 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HandlerConfigurationTest {
   private final HandlerConfiguration underTest = new HandlerConfiguration();
+  @Mock
+  private Handler<Domain> domainHandler1;
+  @Mock
+  private Handler<Domain> domainHandler2;
   @Mock
   private Handler<Schema> schemaHandler1;
   @Mock
@@ -41,8 +46,27 @@ public class HandlerConfigurationTest {
   private Handler<Stream> streamHandler2;
 
   @Test(expected = IllegalArgumentException.class)
-  public void emptySchemaHandlersThrowsException() {
+  public void emptyDomainHandlersThrowsException() {
     underTest.schemaHandlerProvider(List.of());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void clashingDomainHandlersThrowsException() {
+    when(domainHandler1.type()).thenReturn("type");
+    when(domainHandler2.type()).thenReturn("type");
+    underTest.domainHandlerProvider(List.of(domainHandler1, domainHandler2));
+  }
+
+  @Test
+  public void domainHandlers() {
+    when(domainHandler1.type()).thenReturn("type1");
+    when(domainHandler2.type()).thenReturn("type2");
+    underTest.domainHandlerProvider(List.of(domainHandler1, domainHandler2));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void emptySchemaHandlersThrowsException() {
+    underTest.domainHandlerProvider(List.of());
   }
 
   @Test(expected = IllegalStateException.class)

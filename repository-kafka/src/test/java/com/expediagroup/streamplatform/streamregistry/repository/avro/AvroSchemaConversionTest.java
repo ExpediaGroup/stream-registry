@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
 public class AvroSchemaConversionTest {
@@ -36,7 +37,17 @@ public class AvroSchemaConversionTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(Map.of("key", "value"))
-      .domain("domain")
+      .domain(Domain.Key
+          .builder()
+          .name("domain")
+          .build())
+      .build();
+
+  private final AvroKey domainAvroKey = AvroKey
+      .newBuilder()
+      .setId("domain")
+      .setType(AvroKeyType.DOMAIN)
+      .setParent(null)
       .build();
 
   private final AvroSchema avroSchema = AvroSchema
@@ -47,7 +58,7 @@ public class AvroSchemaConversionTest {
       .setTags(Map.of("key", "value"))
       .setType("type")
       .setConfiguration(Map.of("key", "value"))
-      .setDomain("domain")
+      .setDomainKey(domainAvroKey)
       .build();
 
   private final AvroKey avroKey = AvroKey

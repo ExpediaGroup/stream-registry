@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import reactor.core.publisher.Mono;
 
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainMutation;
@@ -87,10 +90,18 @@ public class StreamRegistryIT {
                 .key("key")
                 .value("value")
                 .build()))
+            .type("default")
+            .configuration(List.of(KeyValueInput
+                .builder()
+                .key("key")
+                .value("value")
+                .build()))
             .build()))
         .block();
 
     assertThat(mutation.data().get().isUpsertDomain(), is(true));
+
+    Mono.delay(Duration.ofSeconds(5)).block();
 
     Response<Optional<DomainsQuery.Data>> query = ReactorApollo.from(
         client.query(DomainsQuery

@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.stereotype.Component;
+
+@Component
 @RequiredArgsConstructor
 public class PatternMatchPredicateFactory {
   public <T> Predicate<T> create(T query, Function<T, String> function) {

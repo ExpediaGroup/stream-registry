@@ -25,7 +25,9 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Schema extends DomainConfiguredEntity<Schema.Key> {
+public class Schema extends Entity<Schema.Key> {
+  Domain.Key domain;
+
   @Builder
   private Schema(
       String name,
@@ -34,8 +36,9 @@ public class Schema extends DomainConfiguredEntity<Schema.Key> {
       Map<String, String> tags,
       String type,
       Map<String, String> configuration,
-      String domain) {
-    super(name, owner, description, tags, type, configuration, domain);
+      Domain.Key domain) {
+    super(name, owner, description, tags, type, configuration);
+    this.domain = domain;
   }
 
   @Override
@@ -44,8 +47,9 @@ public class Schema extends DomainConfiguredEntity<Schema.Key> {
   }
 
   @Value
+  @Builder
   public static class Key {
     String name;
-    String domain;
+    Domain.Key domain;
   }
 }

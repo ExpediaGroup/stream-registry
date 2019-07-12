@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
-public interface Repository<E extends Entity, K> {
+public interface Repository<E extends Entity<K>, K> {
   void upsert(E entity);
 
   Optional<E> get(K key);

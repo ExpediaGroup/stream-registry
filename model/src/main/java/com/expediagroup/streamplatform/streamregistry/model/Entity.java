@@ -27,6 +27,8 @@ public abstract class Entity<K> {
   String owner;
   String description;
   Map<String, String> tags;
+  String type;
+  Map<String, String> configuration;
 
   public abstract K key();
 }

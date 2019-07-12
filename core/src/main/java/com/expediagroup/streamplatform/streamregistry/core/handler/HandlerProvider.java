@@ -21,10 +21,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.ConfiguredEntity;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
 @RequiredArgsConstructor
-public class HandlerProvider<T extends ConfiguredEntity> {
+public class HandlerProvider<T extends Entity<?>> {
   private final Map<String, Handler<T>> handlers;
 
   public Handler<T> get(String type) {

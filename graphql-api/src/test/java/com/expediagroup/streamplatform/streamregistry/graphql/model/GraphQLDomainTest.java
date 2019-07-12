@@ -32,6 +32,8 @@ public class GraphQLDomainTest {
       .owner("owner")
       .description("description")
       .tags(Map.of("key", "value"))
+      .type("type")
+      .configuration(Map.of("key", "value"))
       .build();
 
   private final GraphQLDomain graphQLDomain = GraphQLDomain
@@ -40,6 +42,8 @@ public class GraphQLDomainTest {
       .owner("owner")
       .description("description")
       .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .type("type")
+      .configuration(List.of(new GraphQLKeyValue("key", "value")))
       .build();
 
   @Test

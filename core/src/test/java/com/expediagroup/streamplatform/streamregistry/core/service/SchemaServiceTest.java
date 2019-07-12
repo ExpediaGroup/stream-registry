@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.core.service;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
 
@@ -32,10 +34,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handler.HandlerWrapper;
-import com.expediagroup.streamplatform.streamregistry.core.predicate.DomainConfiguredEntityPredicateFactory;
-import com.expediagroup.streamplatform.streamregistry.core.validator.ConfiguredEntityValidator;
-import com.expediagroup.streamplatform.streamregistry.core.validator.DomainConfiguredEntityValidator;
+import com.expediagroup.streamplatform.streamregistry.core.predicate.PatternMatchPredicateFactory;
 import com.expediagroup.streamplatform.streamregistry.core.validator.EntityValidator;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.repository.Repository;
 
@@ -44,15 +45,13 @@ public class SchemaServiceTest {
   @Mock
   private EntityValidator entityValidator;
   @Mock
-  private ConfiguredEntityValidator configuredEntityValidator;
-  @Mock
-  private DomainConfiguredEntityValidator domainConfiguredEntityValidator;
-  @Mock
   private HandlerWrapper<Schema> schemaHandler;
   @Mock
   private Repository<Schema, Schema.Key> schemaRepository;
   @Mock
-  private DomainConfiguredEntityPredicateFactory domainConfiguredEntityPredicateFactory;
+  private Repository<Domain, Domain.Key> domainRepository;
+  @Mock
+  private PatternMatchPredicateFactory patternMatchPredicateFactory;
 
   @Mock
   private Stream<Schema> stream1;
@@ -67,40 +66,37 @@ public class SchemaServiceTest {
   public void before() {
     underTest = new SchemaService(
         entityValidator,
-        configuredEntityValidator,
-        domainConfiguredEntityValidator,
         schemaHandler,
         schemaRepository,
-        domainConfiguredEntityPredicateFactory);
+        domainRepository,
+        patternMatchPredicateFactory);
   }
 
   @Test
   public void upsert() {
-    Schema schema = Schema.builder().name("name").build();
+    Domain domain = Domain.builder().name("domain").build();
+    Schema schema = Schema.builder().name("name").domain(domain.key()).build();
     Optional<Schema> existing = Optional.empty();
 
     when(schemaRepository.get(schema.key())).thenReturn(existing);
     when(schemaHandler.handle(schema, existing)).thenReturn(schema);
+    when(domainRepository.get(domain.key())).thenReturn(Optional.of(domain));
 
     underTest.upsert(schema);
 
     InOrder inOrder = inOrder(
         entityValidator,
-        configuredEntityValidator,
-        domainConfiguredEntityValidator,
         schemaHandler,
         schemaRepository);
     inOrder.verify(schemaRepository).get(schema.key());
     inOrder.verify(entityValidator).validate(schema, existing);
-    inOrder.verify(configuredEntityValidator).validate(schema, existing);
-    inOrder.verify(domainConfiguredEntityValidator).validate(schema, existing);
     inOrder.verify(schemaHandler).handle(schema, existing);
     inOrder.verify(schemaRepository).upsert(schema);
   }
 
   @Test
   public void getExisting() {
-    Schema schema = Schema.builder().name("name").build();
+    Schema schema = Schema.builder().name("name").domain(Domain.Key.builder().name("domain").build()).build();
     Optional<Schema> existing = Optional.of(schema);
 
     when(schemaRepository.get(schema.key())).thenReturn(existing);
@@ -112,7 +108,7 @@ public class SchemaServiceTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void getNotExisting() {
-    Schema schema = Schema.builder().name("name").build();
+    Schema schema = Schema.builder().name("name").domain(Domain.Key.builder().name("domain").build()).build();
     Optional<Schema> existing = Optional.empty();
 
     when(schemaRepository.get(schema.key())).thenReturn(existing);
@@ -125,7 +121,7 @@ public class SchemaServiceTest {
     Schema query = Schema.builder().build();
 
     when(schemaRepository.stream()).thenReturn(stream1);
-    when(domainConfiguredEntityPredicateFactory.create(query)).thenReturn(predicate);
+    when(patternMatchPredicateFactory.create(eq(query), any())).thenReturn(predicate);
     when(stream1.filter(predicate)).thenReturn(stream2);
 
     Stream<Schema> result = underTest.stream(query);
