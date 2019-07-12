@@ -20,15 +20,11 @@ import org.apache.avro.specific.SpecificRecord;
 import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
 public interface Conversion<E extends Entity<K>, K, A extends SpecificRecord> {
-  AvroKey key(E entity);
-
   AvroKey key(K key);
 
-  A toAvro(E entity);
-
-  E toEntity(A avro);
-
   Class<A> avroClass();
+
+  Class<E> entityClass();
 
   AvroKeyType keyType();
 }

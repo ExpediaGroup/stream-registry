@@ -39,46 +39,18 @@ public class AvroSchemaConversion implements Conversion<Schema, Schema.Key, Avro
   }
 
   @Override
-  public AvroKey key(Schema schema) {
-    return avroKey(schema.key());
-  }
-
-  @Override
   public AvroKey key(Schema.Key key) {
     return avroKey(key);
   }
 
   @Override
-  public AvroSchema toAvro(Schema schema) {
-    return AvroSchema
-        .newBuilder()
-        .setName(schema.getName())
-        .setOwner(schema.getOwner())
-        .setDescription(schema.getDescription())
-        .setTags(schema.getTags())
-        .setType(schema.getType())
-        .setConfiguration(schema.getConfiguration())
-        .setDomainKey(AvroDomainConversion.avroKey(schema.getDomain()))
-        .build();
-  }
-
-  @Override
-  public Schema toEntity(AvroSchema schema) {
-    return Schema
-        .builder()
-        .name(schema.getName())
-        .owner(schema.getOwner())
-        .description(schema.getDescription())
-        .tags(schema.getTags())
-        .type(schema.getType())
-        .configuration(schema.getConfiguration())
-        .domain(AvroDomainConversion.modelKey(schema.getDomainKey()))
-        .build();
-  }
-
-  @Override
   public Class<AvroSchema> avroClass() {
     return AvroSchema.class;
+  }
+
+  @Override
+  public Class<Schema> entityClass() {
+    return Schema.class;
   }
 
   @Override
