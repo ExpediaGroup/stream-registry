@@ -15,41 +15,33 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import static java.util.Collections.EMPTY_MAP;
+
 import java.util.Map;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.Value;
+import lombok.experimental.Wither;
 
+@Wither
 @Value
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class Stream extends Entity<Stream.Key> {
+@Builder
+public class Stream implements Entity<Stream.Key> {
+
+  String name;
+  String owner;
+  String description;
+  @Builder.Default Map<String, String> tags = EMPTY_MAP;
+  String type;
+  @Builder.Default Map<String, String> configuration = EMPTY_MAP;
+
   Domain.Key domain;
   Integer version;
   Schema.Key schema;
 
-  @Builder
-  private Stream(
-      String name,
-      String owner,
-      String description,
-      Map<String, String> tags,
-      String type,
-      Map<String, String> configuration,
-      Domain.Key domain,
-      Integer version,
-      Schema.Key schema) {
-    super(name, owner, description, tags, type, configuration);
-    this.domain = domain;
-    this.version = version;
-    this.schema = schema;
-  }
-
   @Override
   public Key key() {
-    return new Key(getName(), getDomain(), getVersion());
+    return new Key(name, domain, version);
   }
 
   @Value

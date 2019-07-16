@@ -13,36 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.handler;
 
-import static java.util.Collections.*;
+import java.util.Optional;
 
-import java.util.Map;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
-import lombok.Builder;
-import lombok.Value;
-import lombok.experimental.Wither;
-
-@Wither
-@Value
-@Builder
-public class Domain implements Entity<Domain.Key> {
-
-  String name;
-  String owner;
-  String description;
-  @Builder.Default Map<String, String> tags = EMPTY_MAP;
-  String type;
-  @Builder.Default Map<String, String> configuration = EMPTY_MAP;
+public class EgspKafkaStreamHandler<E extends Stream> implements Handler<E> {
 
   @Override
-  public Key key() {
-    return new Key(name);
+  public String type() {
+    return "egsp.kafka";
   }
 
-  @Value
-  @Builder
-  public static class Key {
-    String name;
+  @Override
+  public E handle(E stream, Optional<? extends E> existing) {
+    return stream;
   }
+
 }
