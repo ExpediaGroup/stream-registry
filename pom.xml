@@ -55,8 +55,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
 
-    <main.class>com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp</main.class>
-
     <avro.version>1.8.2</avro.version>
     <bull.version>1.4.7.3</bull.version>
     <confluent.version>5.2.1</confluent.version>
@@ -86,8 +84,6 @@
 
     <!-- OSSRH -->
     <nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
-
-    <jib.skip>true</jib.skip>
   </properties>
 
   <dependencyManagement>
