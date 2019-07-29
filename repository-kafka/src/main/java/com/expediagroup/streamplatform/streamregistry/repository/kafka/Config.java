@@ -30,6 +30,7 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.PostConstruct;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -44,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @lombok.Value
+@Builder
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class Config {
   static final int PARTITIONS = 1;

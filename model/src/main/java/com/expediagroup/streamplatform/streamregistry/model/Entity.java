@@ -17,18 +17,19 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import java.util.Map;
 
-import lombok.Value;
-import lombok.experimental.NonFinal;
+public interface Entity<K> {
 
-@Value
-@NonFinal
-public abstract class Entity<K> {
-  String name;
-  String owner;
-  String description;
-  Map<String, String> tags;
-  String type;
-  Map<String, String> configuration;
+  String getName();
 
-  public abstract K key();
+  String getOwner();
+
+  String getDescription();
+
+  Map<String, String> getTags();
+
+  String getType();
+
+  Map<String, String> getConfiguration();
+
+  K key();
 }
