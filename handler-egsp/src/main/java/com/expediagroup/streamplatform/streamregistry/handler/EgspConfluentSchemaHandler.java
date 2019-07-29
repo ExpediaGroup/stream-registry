@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.handler;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class EgspConfluentSchemaHandler implements Handler<Schema> {
   @Override
   public Schema handle(Schema schema, Optional<? extends Schema> existing) {
     if (!schema.getConfiguration().containsKey(SCHEMA_REGISTRY_URL)) {
-      HashMap<String, String> map = new HashMap<>(schema.getConfiguration());
+      Map<String, String> map = new HashMap<>(schema.getConfiguration());
       map.put(SCHEMA_REGISTRY_URL, config.getSchemaRegistryUrl());
       schema = schema.withConfiguration(map);
     }
