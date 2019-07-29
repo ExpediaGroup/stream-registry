@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed consumer/producer service (to be reintroduced later)
 - Removed Dropwizard
 - Added Spring Boot
+- Docker image accepts environment variables for Spring Configuration 
 - Removed charts (to be reintroduced later)
 - Removed health checks (to be reintroduced later)
 - Removed remaining unused files
