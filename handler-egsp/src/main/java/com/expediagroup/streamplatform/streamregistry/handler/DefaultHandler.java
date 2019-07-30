@@ -17,19 +17,16 @@ package com.expediagroup.streamplatform.streamregistry.handler;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-
-@Component
-public class EgspKafkaStreamHandler<E extends Stream> implements Handler<E> {
+public class DefaultHandler<E extends Entity<?>> implements Handler<E> {
   @Override
   public String type() {
-    return "egsp.kafka";
+    return "default";
   }
 
   @Override
-  public E handle(E stream, Optional<? extends E> existing) {
-    return stream;
+  public E handle(E entity, Optional<? extends E> existing) {
+    return entity;
   }
 }
