@@ -13,7 +13,7 @@
   <dependencies>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-app</artifactId>
+      <artifactId>stream-registry-spring-boot-starter</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

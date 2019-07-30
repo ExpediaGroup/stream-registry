@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Reference GraphQL client.
 
 ### Changed
+- Converted project into spring boot starter
 - 1.0.0-SNAPSHOT -> 0.7.0-SNAPSHOT
 - Changed groupId to `com.expediagroup.streamplatform`
 - Changed packages to `com.expediagroup.streamplatform.streamregistry`

@@ -13,22 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.handler;
+package com.expediagroup.streamplatform.streamregistry;
 
-import java.util.Optional;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-
-public class EgspKafkaStreamHandler<E extends Stream> implements Handler<E> {
-
-  @Override
-  public String type() {
-    return "egsp.kafka";
-  }
-
-  @Override
-  public E handle(E stream, Optional<? extends E> existing) {
-    return stream;
-  }
-
-}
+@Configuration
+@ComponentScan
+public class StreamRegistryConfiguration {}

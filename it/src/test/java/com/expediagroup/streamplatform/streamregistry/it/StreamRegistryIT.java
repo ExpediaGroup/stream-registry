@@ -33,15 +33,21 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 import reactor.core.publisher.Mono;
 
-import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.KeyValueInput;
+import com.expediagroup.streamplatform.streamregistry.handler.Handler;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 public class StreamRegistryIT {
   @ClassRule
@@ -51,6 +57,36 @@ public class StreamRegistryIT {
 
   private static ConfigurableApplicationContext context;
   private static String url;
+
+  static class DefaultHandler<E extends Entity<?>> implements Handler<E> {
+    @Override
+    public String type() {
+      return "default";
+    }
+
+    @Override
+    public E handle(E entity, Optional<? extends E> existing) {
+      return entity;
+    }
+  }
+
+  @SpringBootApplication
+  static class StreamRegistryApp {
+    @Bean
+    Handler<Domain> defaultDomainHandler() {
+      return new DefaultHandler<>();
+    }
+
+    @Bean
+    Handler<Schema> defaultSchemaHandler() {
+      return new DefaultHandler<>();
+    }
+
+    @Bean
+    Handler<Stream> defaultStreamHandler() {
+      return new DefaultHandler<>();
+    }
+  }
 
   @BeforeClass
   public static void beforeClass() {
