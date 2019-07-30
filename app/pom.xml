@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.expediagroup.streamplatform</groupId>
+    <artifactId>stream-registry</artifactId>
+    <version>0.7.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>stream-registry-app</artifactId>
+
+  <properties>
+    <docker.repo/>
+    <docker.image.name>stream-registry</docker.image.name>
+    <docker.image.base>openjdk:11-slim</docker.image.base>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-graphql-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-handler-default</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-handler-egsp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-repository-kafka</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>${jib-maven-plugin.version}</version>
+        <configuration>
+          <to>
+            <image>${docker.repo}${docker.image.name}</image>
+            <tags>
+              <tag>${project.version}</tag>
+              <tag>latest</tag>
+            </tags>
+          </to>
+          <from>
+            <image>${docker.image.base}</image>
+          </from>
+          <container>
+            <jvmFlags>
+              <jvmFlag>-Djava.awt.headless=true</jvmFlag>
+              <jvmFlag>-XX:InitialRAMPercentage=50</jvmFlag>
+              <jvmFlag>-XX:MaxRAMPercentage=70</jvmFlag>
+            </jvmFlags>
+          </container>
+        </configuration>
+        <executions>
+          <execution>
+            <id>dockerBuild</id>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+          <!-- TODO : Docker push -->
+          <!-- <execution>
+            <id>dockerBuildAndPush</id>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <phase>deploy</phase>
+          </execution> -->
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
