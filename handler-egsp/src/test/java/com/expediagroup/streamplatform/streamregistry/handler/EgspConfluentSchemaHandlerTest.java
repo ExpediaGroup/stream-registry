@@ -26,24 +26,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.repository.kafka.Config;
 
 public class EgspConfluentSchemaHandlerTest {
-
   private static final String URL = "some_url";
 
-  private Config config;
-  private EgspConfluentSchemaHandler handler;
+  private EgspConfluentSchemaHandler underTest;
 
   @Before
   public void before() {
-    config = Config.builder().schemaRegistryUrl(URL).build();
-    handler = new EgspConfluentSchemaHandler(config);
+    underTest = new EgspConfluentSchemaHandler(URL);
   }
 
   @Test
   public void type() {
-    assertEquals("egsp.confluent", handler.type());
+    assertEquals("egsp.confluent", underTest.type());
   }
 
   @Test
@@ -58,7 +54,7 @@ public class EgspConfluentSchemaHandlerTest {
 
   private Schema createAndHandle(String existingUrl) {
     Schema schema = createSchema(existingUrl);
-    return handler.handle(schema, Optional.empty());
+    return underTest.handle(schema, Optional.empty());
   }
 
   private Schema createSchema(String existingUrl) {

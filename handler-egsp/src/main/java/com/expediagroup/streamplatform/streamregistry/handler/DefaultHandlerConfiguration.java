@@ -15,21 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import java.util.Optional;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import org.springframework.stereotype.Component;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-
-@Component
-public class EgspKafkaStreamHandler<E extends Stream> implements Handler<E> {
-  @Override
-  public String type() {
-    return "egsp.kafka";
-  }
-
-  @Override
-  public E handle(E stream, Optional<? extends E> existing) {
-    return stream;
+@Configuration
+public class DefaultHandlerConfiguration {
+  @Bean
+  Handler<Domain> defaultDomainHandler() {
+    return new DefaultHandler<>();
   }
 }

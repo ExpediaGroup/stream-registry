@@ -38,8 +38,8 @@
     <module>core</module>
     <module>graphql-api</module>
     <module>graphql-client</module>
+    <module>graphql-client-reactor</module>
     <module>graphql-maven-plugin</module>
-    <module>handler-default</module>
     <module>handler-egsp</module>
     <module>handler-spi</module>
     <module>model</module>
@@ -48,7 +48,6 @@
     <module>repository-kafka</module>
     <module>it</module>
     <module>service-api</module>
-    <module>graphql-client-reactor</module>
   </modules>
 
   <properties>

@@ -19,19 +19,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.repository.kafka.Config;
 
 @Component
 public class EgspConfluentSchemaHandler implements Handler<Schema> {
-
   public static final String SCHEMA_REGISTRY_URL = "schema_registry_url";
-  private Config config;
+  private final String schemaRegistryUrl;
 
-  public EgspConfluentSchemaHandler(Config config) {
-    this.config = config;
+  public EgspConfluentSchemaHandler(
+          @Value("${schema.registry.url}") String schemaRegistryUrl) {
+    this.schemaRegistryUrl = schemaRegistryUrl;
   }
 
   @Override
@@ -43,7 +43,7 @@ public class EgspConfluentSchemaHandler implements Handler<Schema> {
   public Schema handle(Schema schema, Optional<? extends Schema> existing) {
     if (!schema.getConfiguration().containsKey(SCHEMA_REGISTRY_URL)) {
       Map<String, String> map = new HashMap<>(schema.getConfiguration());
-      map.put(SCHEMA_REGISTRY_URL, config.getSchemaRegistryUrl());
+      map.put(SCHEMA_REGISTRY_URL, schemaRegistryUrl);
       schema = schema.withConfiguration(map);
     }
     return schema;
