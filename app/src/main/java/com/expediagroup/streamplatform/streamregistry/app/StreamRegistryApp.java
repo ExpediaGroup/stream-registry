@@ -19,7 +19,7 @@ package com.expediagroup.streamplatform.streamregistry.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "com.expediagroup.streamplatform.streamregistry")
+@SpringBootApplication
 public class StreamRegistryApp {
   public static void main(String[] args) {
     SpringApplication.run(StreamRegistryApp.class, args);
