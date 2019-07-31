@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-import static avro.shaded.com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static kafka.log.LogConfig.CleanupPolicyProp;
 import static kafka.log.LogConfig.Compact;
