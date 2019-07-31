@@ -54,6 +54,7 @@
     <module>repository-kafka</module>
     <module>it</module>
     <module>service-api</module>
+    <module>spring-boot-starter</module>
   </modules>
 
   <properties>
