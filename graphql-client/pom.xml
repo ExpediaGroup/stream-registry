@@ -21,6 +21,10 @@
       <artifactId>apollo-runtime</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
       <version>17.0.0</version>
@@ -72,6 +76,11 @@
               <introspectionFile>${introspectionFile}</introspectionFile>
               <basePackage>${clientPackage}</basePackage>
               <outputPackage>${clientPackage}</outputPackage>
+              <customTypeMap>
+                <Tags>java.util.Map</Tags>
+                <Config>com.fasterxml.jackson.databind.node.ObjectNode</Config>
+              </customTypeMap>
+              <suppressRawTypesWarning>true</suppressRawTypesWarning>
             </configuration>
           </execution>
         </executions>

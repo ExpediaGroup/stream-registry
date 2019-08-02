@@ -1,3 +1,6 @@
+scalar Tags
+scalar Config
+
 type KeyValue {
   key: String!
   value: String!

@@ -44,8 +44,9 @@
     <module>core</module>
     <module>graphql-api</module>
     <module>graphql-client</module>
-    <module>graphql-client-reactor</module>
+    <module>graphql-client-support</module>
     <module>graphql-maven-plugin</module>
+    <module>graphql-scalars</module>
     <module>handler-egsp</module>
     <module>handler-spi</module>
     <module>model</module>
@@ -62,11 +63,13 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>11</jdk.version>
 
+    <apollographql.version>1.0.0</apollographql.version>
     <avro.version>1.9.0</avro.version>
     <bull.version>1.4.7.3</bull.version>
     <confluent.version>5.3.0</confluent.version>
     <guava.version>28.0-jre</guava.version>
-    <apollographql.version>1.0.0</apollographql.version>
+    <graphql.version>5.8.1</graphql.version>
+    <graphql-java.version>12.0</graphql-java.version>
     <kafka.version>2.3.0</kafka.version>
     <kotlin.version>1.3.10</kotlin.version>
     <slf4j.version>1.7.26</slf4j.version>
@@ -100,6 +103,11 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphql-java</artifactId>
+        <version>${graphql-java.version}</version>
       </dependency>
       <dependency>
         <groupId>com.hotels.beans</groupId>

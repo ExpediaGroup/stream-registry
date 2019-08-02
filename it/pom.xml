@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-graphql-client-reactor</artifactId>
+      <artifactId>stream-registry-graphql-client-support</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

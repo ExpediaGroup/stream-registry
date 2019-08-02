@@ -10,11 +10,12 @@
 
   <artifactId>stream-registry-graphql-api</artifactId>
 
-  <properties>
-    <graphql.version>5.8.1</graphql.version>
-  </properties>
-
   <dependencies>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-graphql-scalars</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
       <artifactId>stream-registry-model</artifactId>
