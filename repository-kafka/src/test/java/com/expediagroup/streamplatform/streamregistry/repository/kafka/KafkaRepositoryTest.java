@@ -28,6 +28,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +46,8 @@ import com.expediagroup.streamplatform.streamregistry.repository.avro.Conversion
 
 @RunWith(MockitoJUnitRunner.class)
 public class KafkaRepositoryTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   private final Domain domain = Domain
       .builder()
       .name("name")
@@ -51,7 +55,7 @@ public class KafkaRepositoryTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .build();
   private final AvroDomain avroDomain = AvroDomain
       .newBuilder()
@@ -60,7 +64,7 @@ public class KafkaRepositoryTest {
       .setDescription("description")
       .setTags(Map.of("key", "value"))
       .setType("type")
-      .setConfiguration(Map.of("key", "value"))
+      .setConfigurationString("{\"key\":\"value\"}")
       .build();
   private final AvroKey avroKey = AvroKey
       .newBuilder()
@@ -75,7 +79,7 @@ public class KafkaRepositoryTest {
       .setDescription("description")
       .setTags(Map.of("key", "value"))
       .setType("type")
-      .setConfiguration(Map.of("key", "value"))
+      .setConfigurationString("{\"key\":\"value\"}")
       .setDomainKey(avroKey)
       .build();
   private final AvroKey avroSchemaKey = AvroKey

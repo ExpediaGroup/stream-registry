@@ -15,13 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static java.util.Collections.EMPTY_MAP;
+import static java.util.Collections.emptyMap;
 
 import java.util.Map;
 
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Wither
 @Value
@@ -31,9 +33,9 @@ public class Schema implements Entity<Schema.Key> {
   String name;
   String owner;
   String description;
-  @Builder.Default Map<String, String> tags = EMPTY_MAP;
+  @Builder.Default Map<String, String> tags = emptyMap();
   String type;
-  @Builder.Default Map<String, String> configuration = EMPTY_MAP;
+  @Builder.Default ObjectNode configuration = mapper.createObjectNode();
 
   Domain.Key domain;
 

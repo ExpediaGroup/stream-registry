@@ -17,7 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public interface Entity<K> {
+  ObjectMapper mapper = new ObjectMapper();
 
   String getName();
 
@@ -29,7 +33,7 @@ public interface Entity<K> {
 
   String getType();
 
-  Map<String, String> getConfiguration();
+  ObjectNode getConfiguration();
 
   K key();
 }

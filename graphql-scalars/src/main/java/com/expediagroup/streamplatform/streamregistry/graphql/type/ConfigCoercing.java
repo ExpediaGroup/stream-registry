@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import graphql.language.ObjectValue;
 import graphql.schema.CoercingParseLiteralException;

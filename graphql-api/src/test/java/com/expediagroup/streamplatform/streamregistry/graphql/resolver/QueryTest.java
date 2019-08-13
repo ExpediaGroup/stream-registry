@@ -23,6 +23,8 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +32,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -40,6 +41,8 @@ import com.expediagroup.streamplatform.streamregistry.service.Service;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QueryTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   private final Domain streamDomain = Domain
       .builder()
       .name("streamDomain")
@@ -47,7 +50,7 @@ public class QueryTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .build();
   private final Domain schemaDomain = Domain
       .builder()
@@ -56,7 +59,7 @@ public class QueryTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .build();
   private final Schema schema = Schema
       .builder()
@@ -65,7 +68,7 @@ public class QueryTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(Domain.Key
           .builder()
           .name("schemaDomain")
@@ -78,7 +81,7 @@ public class QueryTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(Domain.Key
           .builder()
           .name("streamDomain")
@@ -98,27 +101,27 @@ public class QueryTest {
       .name("schemaDomain")
       .owner("owner")
       .description("description")
-      .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(List.of(new GraphQLKeyValue("key", "value")))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .build();
   private final GraphQLDomain streamGraphQLDomain = GraphQLDomain
       .builder()
       .name("streamDomain")
       .owner("owner")
       .description("description")
-      .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(List.of(new GraphQLKeyValue("key", "value")))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .build();
   private final GraphQLSchema graphQLSchema = GraphQLSchema
       .builder()
       .name("schemaName")
       .owner("owner")
       .description("description")
-      .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(List.of(new GraphQLKeyValue("key", "value")))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(schemaGraphQLDomain)
       .build();
   private final GraphQLStream graphQLStream = GraphQLStream
@@ -126,9 +129,9 @@ public class QueryTest {
       .name("name")
       .owner("owner")
       .description("description")
-      .tags(List.of(new GraphQLKeyValue("key", "value")))
+      .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(List.of(new GraphQLKeyValue("key", "value")))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(streamGraphQLDomain)
       .version(1)
       .schema(graphQLSchema)
@@ -155,9 +158,9 @@ public class QueryTest {
         streamDomain.getName(),
         streamDomain.getOwner(),
         streamDomain.getDescription(),
-        List.of(new GraphQLKeyValue("key", "value")),
-        "type",
-        List.of(new GraphQLKeyValue("key", "value"))
+        streamDomain.getTags(),
+        streamDomain.getType(),
+        streamDomain.getConfiguration()
     );
 
     verify(domainService).stream(streamDomain);
@@ -175,9 +178,9 @@ public class QueryTest {
         schema.getName(),
         schema.getOwner(),
         schema.getDescription(),
-        List.of(new GraphQLKeyValue("key", "value")),
-        "type",
-        List.of(new GraphQLKeyValue("key", "value")),
+        schema.getTags(),
+        schema.getType(),
+        schema.getConfiguration(),
         schema.getDomain().getName()
     );
 
@@ -196,11 +199,11 @@ public class QueryTest {
         stream.getName(),
         stream.getOwner(),
         stream.getDescription(),
-        List.of(new GraphQLKeyValue("key", "value")),
-        "type",
-        List.of(new GraphQLKeyValue("key", "value")),
+        stream.getTags(),
+        stream.getType(),
+        stream.getConfiguration(),
         stream.getDomain().getName(),
-        1,
+        stream.getVersion(),
         GraphQLSchema.Key
             .builder()
             .name("schemaName")

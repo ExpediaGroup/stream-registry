@@ -18,8 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.core.validator;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
-import java.util.Map;
 import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EntityValidatorTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   private final Stream entity = Stream.builder().build();
   private final Optional<Stream> existing = Optional.empty();
   @Mock
@@ -47,13 +50,13 @@ public class EntityValidatorTest {
     Stream entity = Stream
         .builder()
         .type("type")
-        .configuration(Map.of())
+        .configuration(mapper.createObjectNode())
         .build();
 
     Optional<Stream> existing = Optional.of(Stream
         .builder()
         .type("type")
-        .configuration(Map.of())
+        .configuration(mapper.createObjectNode())
         .build());
 
     underTest.validate(entity, existing);
@@ -70,7 +73,7 @@ public class EntityValidatorTest {
     Stream entity = Stream
         .builder()
         .type(null)
-        .configuration(Map.of())
+        .configuration(mapper.createObjectNode())
         .build();
 
     Optional<Stream> existing = Optional.empty();
@@ -96,13 +99,13 @@ public class EntityValidatorTest {
     Stream entity = Stream
         .builder()
         .type("type1")
-        .configuration(Map.of())
+        .configuration(mapper.createObjectNode())
         .build();
 
     Optional<Stream> existing = Optional.of(Stream
         .builder()
         .type("type2")
-        .configuration(Map.of())
+        .configuration(mapper.createObjectNode())
         .build());
 
     underTest.validate(entity, existing);

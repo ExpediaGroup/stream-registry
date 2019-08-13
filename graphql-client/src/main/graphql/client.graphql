@@ -2,10 +2,10 @@ query Domains(
   $name: String
   $owner: String
   $description: String
-  $tags: [KeyValueQueryInput!]
+  $tags: Tags
   $type: String
-  $configuration: [KeyValueQueryInput!]
-) {
+  $configuration: Config
+){
   domains(
     name: $name
     owner: $owner
@@ -13,19 +13,13 @@ query Domains(
     tags: $tags
     type: $type
     configuration: $configuration
-  ) {
+  ){
     name
     owner
     description
-    tags {
-      key
-      value
-    }
+    tags
     type
-    configuration {
-      key
-      value
-    }
+    configuration
   }
 }
 
@@ -33,11 +27,11 @@ query Schemas(
   $name: String
   $owner: String
   $description: String
-  $tags: [KeyValueQueryInput!]
+  $tags: Tags
   $type: String
-  $configuration: [KeyValueQueryInput!]
+  $configuration: Config
   $domain: String
-) {
+){
   schemas(
     name: $name
     owner: $owner
@@ -46,27 +40,18 @@ query Schemas(
     type: $type
     configuration: $configuration
     domain: $domain
-  ) {
+  ){
     name
     owner
     description
-    tags {
-      key
-      value
-    }
+    tags
     type
-    configuration {
-      key
-      value
-    }
+    configuration
     domain {
       name
       owner
       description
-      tags {
-        key
-        value
-      }
+      tags
     }
   }
 }
@@ -75,13 +60,13 @@ query Streams(
   $name: String
   $owner: String
   $description: String
-  $tags: [KeyValueQueryInput!]
+  $tags: Tags
   $type: String
-  $configuration: [KeyValueQueryInput!]
+  $configuration: Config
   $domain: String
   $version: Int
   $schema: SchemaKeyQueryInput
-) {
+){
   streams(
     name: $name
     owner: $owner
@@ -92,60 +77,36 @@ query Streams(
     domain: $domain
     version: $version
     schema: $schema
-  ) {
+  ){
     name
     owner
     description
-    tags {
-      key
-      value
-    }
+    tags
     type
-    configuration {
-      key
-      value
-    }
+    configuration
     domain {
       name
       owner
       description
-      tags {
-        key
-        value
-      }
+      tags
       type
-      configuration {
-        key
-        value
-      }
+      configuration
     }
     version
     schema {
       name
       owner
       description
-      tags {
-        key
-        value
-      }
+      tags
       type
-      configuration {
-        key
-        value
-      }
+      configuration
       domain {
         name
         owner
         description
-        tags {
-          key
-          value
-        }
+        tags
         type
-        configuration {
-          key
-          value
-        }
+        configuration
       }
     }
   }
@@ -154,9 +115,9 @@ query Streams(
 mutation Domain (
   $name: String!
   $description: String!
-  $tags: [KeyValueInput!]!
+  $tags: Tags!
   $type: String!
-  $configuration: [KeyValueInput!]!
+  $configuration: Config!
 ){
   upsertDomain(
     name: $name
@@ -170,9 +131,9 @@ mutation Domain (
 mutation Schema (
   $name: String!
   $description: String!
-  $tags: [KeyValueInput!]!
+  $tags: Tags!
   $type: String!
-  $configuration: [KeyValueInput!]!
+  $configuration: Config!
   $domain: String!
 ){
   upsertSchema(
@@ -188,9 +149,9 @@ mutation Schema (
 mutation Stream (
   $name: String!
   $description: String!
-  $tags: [KeyValueInput!]!
+  $tags: Tags!
   $type: String!
-  $configuration: [KeyValueInput!]!
+  $configuration: Config!
   $domain: String!
   $version: Int!
   $schema: SchemaKeyInput!

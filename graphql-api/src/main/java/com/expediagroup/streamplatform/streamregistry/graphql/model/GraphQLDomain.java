@@ -15,10 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
-import java.util.List;
+import java.util.Map;
 
 import lombok.Builder;
 import lombok.Value;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Value
 @Builder
@@ -26,7 +28,7 @@ public class GraphQLDomain {
   String name;
   String owner;
   String description;
-  List<GraphQLKeyValue> tags;
+  Map<String, String> tags;
   String type;
-  List<GraphQLKeyValue> configuration;
+  ObjectNode configuration;
 }

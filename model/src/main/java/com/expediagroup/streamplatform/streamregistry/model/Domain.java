@@ -23,6 +23,8 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 @Wither
 @Value
 @Builder
@@ -31,9 +33,9 @@ public class Domain implements Entity<Domain.Key> {
   String name;
   String owner;
   String description;
-  @Builder.Default Map<String, String> tags = EMPTY_MAP;
+  @Builder.Default Map<String, String> tags = emptyMap();
   String type;
-  @Builder.Default Map<String, String> configuration = EMPTY_MAP;
+  @Builder.Default ObjectNode configuration = mapper.createObjectNode();
 
   @Override
   public Key key() {

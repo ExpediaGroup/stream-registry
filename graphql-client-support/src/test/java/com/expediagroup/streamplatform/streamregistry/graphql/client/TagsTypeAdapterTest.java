@@ -15,15 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.client;
 
-import com.apollographql.apollo.response.CustomTypeValue;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.UncheckedIOException;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import com.apollographql.apollo.response.CustomTypeValue;
+
+import org.junit.Test;
 
 public class TagsTypeAdapterTest {
   private final TagsTypeAdapter underTest = new TagsTypeAdapter();

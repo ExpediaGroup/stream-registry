@@ -15,17 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.client;
 
-import com.apollographql.apollo.response.CustomTypeValue;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Test;
-
-import java.io.UncheckedIOException;
-import java.util.Map;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.io.UncheckedIOException;
+
+import com.apollographql.apollo.response.CustomTypeValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.junit.Test;
 
 public class ConfigTypeAdapterTest {
   private static final ObjectMapper mapper = new ObjectMapper();
@@ -56,6 +56,6 @@ public class ConfigTypeAdapterTest {
 
   @Test(expected = UncheckedIOException.class)
   public void decodeFailure() {
-    underTest.decode(CustomTypeValue.fromRawValue("[]"));
+    underTest.decode(CustomTypeValue.fromRawValue("{"));
   }
 }
