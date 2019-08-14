@@ -44,6 +44,7 @@
     <module>core</module>
     <module>graphql-api</module>
     <module>graphql-client</module>
+    <module>graphql-client-reactor</module>
     <module>graphql-client-support</module>
     <module>graphql-maven-plugin</module>
     <module>graphql-scalars</module>

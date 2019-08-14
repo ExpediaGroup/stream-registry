@@ -8,7 +8,7 @@
     <version>0.7.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>stream-registry-graphql-client-support</artifactId>
+  <artifactId>stream-registry-graphql-client-reactor</artifactId>
 
   <dependencies>
     <dependency>
@@ -16,8 +16,8 @@
       <artifactId>apollo-runtime</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
