@@ -17,8 +17,8 @@
 
   <scm>
     <url>https://github.com/ExpediaGroup/stream-registry/tree/master</url>
-    <connection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</connection>
-    <developerConnection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</developerConnection>
+    <connection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</connection>
+    <developerConnection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
