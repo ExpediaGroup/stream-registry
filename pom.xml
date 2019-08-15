@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>0.7.0-SNAPSHOT</version>
+  <version>0.7.0</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
 
@@ -19,7 +19,7 @@
     <url>https://github.com/ExpediaGroup/stream-registry/tree/master</url>
     <connection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</connection>
     <developerConnection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>stream-registry-0.7.0</tag>
   </scm>
 
   <developers>
