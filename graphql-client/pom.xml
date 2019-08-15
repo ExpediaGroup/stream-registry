@@ -73,7 +73,7 @@
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <nodeVersion>v12.8.0</nodeVersion>
+              <nodeVersion>v11.0.0</nodeVersion>
               <installDirectory>${project.build.directory}</installDirectory>
             </configuration>
           </execution>
