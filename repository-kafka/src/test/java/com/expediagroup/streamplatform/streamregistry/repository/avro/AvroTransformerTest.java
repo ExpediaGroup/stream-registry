@@ -20,6 +20,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -27,6 +29,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 public class AvroTransformerTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   private final Domain domain = Domain
       .builder()
       .name("name")
@@ -34,7 +38,7 @@ public class AvroTransformerTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .build();
 
   private final AvroDomain avroDomain = AvroDomain
@@ -44,7 +48,7 @@ public class AvroTransformerTest {
       .setDescription("description")
       .setTags(Map.of("key", "value"))
       .setType("type")
-      .setConfiguration(Map.of("key", "value"))
+      .setConfigurationString("{\"key\":\"value\"}")
       .build();
 
   private final Schema schema = Schema
@@ -54,7 +58,7 @@ public class AvroTransformerTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(Domain.Key
           .builder()
           .name("domain")
@@ -68,7 +72,7 @@ public class AvroTransformerTest {
       .setDescription("description")
       .setTags(Map.of("key", "value"))
       .setType("type")
-      .setConfiguration(Map.of("key", "value"))
+      .setConfigurationString("{\"key\":\"value\"}")
       .setDomainKey(AvroKey
           .newBuilder()
           .setId("domain")
@@ -84,7 +88,7 @@ public class AvroTransformerTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(Domain.Key
           .builder()
           .name("domain")
@@ -107,7 +111,7 @@ public class AvroTransformerTest {
       .setDescription("description")
       .setTags(Map.of("key", "value"))
       .setType("type")
-      .setConfiguration(Map.of("key", "value"))
+      .setConfigurationString("{\"key\":\"value\"}")
       .setDomainKey(AvroKey
           .newBuilder()
           .setId("domain")

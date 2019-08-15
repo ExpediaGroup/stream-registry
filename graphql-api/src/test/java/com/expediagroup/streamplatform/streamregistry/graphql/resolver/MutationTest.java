@@ -19,8 +19,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
-import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLKeyValue;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -37,6 +37,8 @@ import com.expediagroup.streamplatform.streamregistry.service.Service;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MutationTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   private final Domain domain = Domain
       .builder()
       .name("name")
@@ -44,7 +46,7 @@ public class MutationTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .build();
   private final Schema schema = Schema
       .builder()
@@ -53,7 +55,7 @@ public class MutationTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(Domain.Key
           .builder()
           .name("domain")
@@ -66,7 +68,7 @@ public class MutationTest {
       .description("description")
       .tags(Map.of("key", "value"))
       .type("type")
-      .configuration(Map.of("key", "value"))
+      .configuration(mapper.createObjectNode().put("key", "value"))
       .domain(Domain.Key
           .builder()
           .name("streamDomain")
@@ -99,9 +101,9 @@ public class MutationTest {
     boolean result = underTest.upsertDomain(
         domain.getName(),
         domain.getDescription(),
-        List.of(new GraphQLKeyValue("key", "value")),
-        "type",
-        List.of(new GraphQLKeyValue("key", "value"))
+        domain.getTags(),
+        domain.getType(),
+        domain.getConfiguration()
     );
 
     assertThat(result, is(true));
@@ -113,9 +115,9 @@ public class MutationTest {
     boolean result = underTest.upsertSchema(
         schema.getName(),
         schema.getDescription(),
-        List.of(new GraphQLKeyValue("key", "value")),
-        "type",
-        List.of(new GraphQLKeyValue("key", "value")),
+        schema.getTags(),
+        schema.getType(),
+        schema.getConfiguration(),
         schema.getDomain().getName()
     );
 
@@ -128,9 +130,9 @@ public class MutationTest {
     boolean result = underTest.upsertStream(
         stream.getName(),
         stream.getDescription(),
-        List.of(new GraphQLKeyValue("key", "value")),
-        "type",
-        List.of(new GraphQLKeyValue("key", "value")),
+        stream.getTags(),
+        stream.getType(),
+        stream.getConfiguration(),
         stream.getDomain().getName(),
         1,
         GraphQLSchema.Key

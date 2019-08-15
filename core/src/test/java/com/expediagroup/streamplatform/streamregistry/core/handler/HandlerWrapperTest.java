@@ -20,8 +20,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
 import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,11 +35,13 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HandlerWrapperTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   Stream entity = Stream
       .builder()
       .name("stream")
       .type("type")
-      .configuration(Map.of())
+      .configuration(mapper.createObjectNode())
       .build();
   Optional<Stream> existing = Optional.of(entity);
   @Mock

@@ -25,6 +25,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Entity;
 public class EntityPredicateFactory {
   private final PatternMatchPredicateFactory patternMatchPredicateFactory = new PatternMatchPredicateFactory();
   private final MapPatternMatchPredicateFactory mapPatternMatchPredicateFactory = new MapPatternMatchPredicateFactory();
+  private final ObjectNodePatternMatchPredicateFactory objectNodePatternMatchPredicateFactory = new ObjectNodePatternMatchPredicateFactory();
 
   public <E extends Entity<?>> Predicate<E> create(E query) {
     return patternMatchPredicateFactory.create(query, Entity::getName)
@@ -32,6 +33,6 @@ public class EntityPredicateFactory {
         .and(patternMatchPredicateFactory.create(query, Entity::getDescription))
         .and(mapPatternMatchPredicateFactory.create(query, Entity::getTags))
         .and(patternMatchPredicateFactory.create(query, Entity::getType))
-        .and(mapPatternMatchPredicateFactory.create(query, Entity::getConfiguration));
+        .and(objectNodePatternMatchPredicateFactory.create(query, Entity::getConfiguration));
   }
 }

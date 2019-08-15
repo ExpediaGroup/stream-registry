@@ -19,6 +19,8 @@ import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hotels.beans.BeanUtils;
 import com.hotels.beans.model.FieldTransformer;
 import com.hotels.beans.transformer.Transformer;
@@ -30,6 +32,8 @@ import com.expediagroup.streamplatform.streamregistry.service.Service;
 
 @RequiredArgsConstructor
 public class GraphQLTransformer {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   private final Transformer transformer;
 
   public GraphQLTransformer(
@@ -62,8 +66,7 @@ public class GraphQLTransformer {
         .transform(schemaService.get(key), GraphQLSchema.class);
 
     return transformer
-        .withFieldTransformer(new FieldTransformer<>("tags", GraphQLKeyValue::toMap))
-        .withFieldTransformer(new FieldTransformer<>("configuration", GraphQLKeyValue::toMap))
+        .withFieldTransformer(new FieldTransformer<>("configuration", ObjectNode::deepCopy))
         .withFieldTransformer(new FieldTransformer<>("domain", domainFunction))
         .withFieldTransformer(new FieldTransformer<>("schema", schemaFunction));
   }

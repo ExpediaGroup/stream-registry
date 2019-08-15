@@ -20,12 +20,14 @@ import static org.junit.Assert.assertThat;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.AfterClass;
@@ -38,12 +40,16 @@ import org.springframework.context.ConfigurableApplicationContext;
 import reactor.core.publisher.Mono;
 
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ConfigTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.TagsTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.KeyValueInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 
 public class StreamRegistryIT {
+  private static final ObjectMapper mapper = new ObjectMapper();
+
   @ClassRule
   public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1);
   @ClassRule
@@ -78,6 +84,8 @@ public class StreamRegistryIT {
         .builder()
         .serverUrl(url)
         .okHttpClient(new OkHttpClient.Builder().build())
+        .addCustomTypeAdapter(CustomType.TAGS, new TagsTypeAdapter())
+        .addCustomTypeAdapter(CustomType.CONFIG, new ConfigTypeAdapter())
         .build();
 
     Response<Optional<DomainMutation.Data>> mutation = ReactorApollo.from(
@@ -85,17 +93,9 @@ public class StreamRegistryIT {
             .builder()
             .name("domain")
             .description("description")
-            .tags(List.of(KeyValueInput
-                .builder()
-                .key("key")
-                .value("value")
-                .build()))
+            .tags(Map.of("key", "value"))
             .type("default")
-            .configuration(List.of(KeyValueInput
-                .builder()
-                .key("key")
-                .value("value")
-                .build()))
+            .configuration(mapper.createObjectNode().put("key", "value"))
             .build()))
         .block();
 

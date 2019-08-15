@@ -1,24 +1,22 @@
-type KeyValue {
-  key: String!
-  value: String!
-}
+scalar Tags
+scalar Config
 
 type Domain {
   name: String!
   owner: String!
   description: String!
-  tags: [KeyValue!]!
+  tags: Tags!
   type: String!
-  configuration: [KeyValue!]!
+  configuration: Config!
 }
 
 type Schema {
   name: String!
   owner: String!
   description: String!
-  tags: [KeyValue!]!
+  tags: Tags!
   type: String!
-  configuration: [KeyValue!]!
+  configuration: Config!
   domain: Domain!
 }
 
@@ -26,22 +24,12 @@ type Stream {
   name: String!
   owner: String!
   description: String!
-  tags: [KeyValue!]!
+  tags: Tags!
   type: String!
-  configuration: [KeyValue!]!
+  configuration: Config!
   domain: Domain!
   version: Int!
   schema: Schema!
-}
-
-input KeyValueQueryInput {
-  key: String
-  value: String
-}
-
-input KeyValueInput {
-  key: String!
-  value: String!
 }
 
 input SchemaKeyQueryInput {
@@ -59,26 +47,26 @@ type Query {
     name: String
     owner: String
     description: String
-    tags: [KeyValueQueryInput!]
+    tags: Tags
     type: String
-    configuration: [KeyValueQueryInput!]
+    configuration: Config
   ): [Domain!]!
   schemas(
     name: String
     owner: String
     description: String
-    tags: [KeyValueQueryInput!]
+    tags: Tags
     type: String
-    configuration: [KeyValueQueryInput!]
+    configuration: Config
     domain: String
   ): [Schema!]!
   streams(
     name: String
     owner: String
     description: String
-    tags: [KeyValueQueryInput!]
+    tags: Tags
     type: String
-    configuration: [KeyValueQueryInput!]
+    configuration: Config
     domain: String
     version: Int
     schema: SchemaKeyQueryInput
@@ -89,24 +77,24 @@ type Mutation {
   upsertDomain(
     name: String!
     description: String!
-    tags: [KeyValueInput!]!
+    tags: Tags!
     type: String!
-    configuration: [KeyValueInput!]!
+    configuration: Config!
   ): Boolean!
   upsertSchema(
     name: String!
     description: String!
-    tags: [KeyValueInput!]!
+    tags: Tags!
     type: String!
-    configuration: [KeyValueInput!]!
+    configuration: Config!
     domain: String!
   ): Boolean!
   upsertStream(
     name: String!
     description: String!
-    tags: [KeyValueInput!]!
+    tags: Tags!
     type: String!
-    configuration: [KeyValueInput!]!
+    configuration: Config!
     domain: String!
     version: Int!
     schema: SchemaKeyInput!
