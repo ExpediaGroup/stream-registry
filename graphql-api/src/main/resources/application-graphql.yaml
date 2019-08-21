@@ -1,3 +1,4 @@
+---
 graphql:
   tools:
     schema-location-pattern: "**/*.graphql"
