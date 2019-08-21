@@ -32,4 +32,11 @@ public class GraphQLInfrastructure {
   String type;
   ObjectNode configuration;
   GraphQLZone zone;
+
+  @Value
+  @Builder
+  public static class Key {
+    String name;
+    String zone;
+  }
 }

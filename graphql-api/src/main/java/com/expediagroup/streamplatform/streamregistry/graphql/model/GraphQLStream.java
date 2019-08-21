@@ -34,4 +34,12 @@ public class GraphQLStream {
   GraphQLDomain domain;
   Integer version;
   GraphQLSchema schema;
+
+  @Value
+  @Builder
+  public static class Key {
+    String name;
+    String domain;
+    Integer version;
+  }
 }

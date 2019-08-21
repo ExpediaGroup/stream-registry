@@ -41,9 +41,9 @@ import reactor.core.publisher.Mono;
 
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConfigTypeAdapter;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.TagsTypeAdapter;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 
@@ -88,8 +88,8 @@ public class StreamRegistryIT {
         .addCustomTypeAdapter(CustomType.CONFIG, new ConfigTypeAdapter())
         .build();
 
-    Response<Optional<DomainMutation.Data>> mutation = ReactorApollo.from(
-        client.mutate(DomainMutation
+    Response<Optional<UpsertDomainMutation.Data>> mutation = ReactorApollo.from(
+        client.mutate(UpsertDomainMutation
             .builder()
             .name("domain")
             .description("description")

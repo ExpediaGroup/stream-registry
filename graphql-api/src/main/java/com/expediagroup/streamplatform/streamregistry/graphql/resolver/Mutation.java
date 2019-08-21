@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolver;
 
+import java.util.List;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLInfrastructure;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
@@ -116,5 +119,86 @@ public class Mutation implements GraphQLMutationResolver {
             .build()
     );
     return true;
+  }
+
+  public boolean upsertZone(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public boolean upsertInfrastructure(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String zone) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public boolean upsertProducer(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public boolean upsertConsumer(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public boolean upsertStreamBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      GraphQLInfrastructure.Key infrastructure) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public boolean upsertProducerBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String producer,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public boolean upsertConsumerBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String consumer,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
   }
 }

@@ -35,7 +35,7 @@ public class GraphQLIntrospectionFileGeneratorTest {
   public void test() throws Exception {
     GraphQLIntrospectionFileGenerator underTest = new GraphQLIntrospectionFileGenerator();
     File introspectionFile = temp.newFile("schema.json");
-    underTest.generate("test.graphql", introspectionFile.getAbsolutePath());
+    underTest.generate("test.graphql.txt", introspectionFile.getAbsolutePath());
 
     JsonNode jsonNode = new ObjectMapper().readTree(introspectionFile);
 
