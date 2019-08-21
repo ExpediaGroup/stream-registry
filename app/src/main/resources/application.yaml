@@ -1,0 +1,4 @@
+---
+spring.profiles.active: default,graphql
+endpoints.prometheus.enabled: true
+management.endpoints.web.exposure.include: info,health,prometheus
