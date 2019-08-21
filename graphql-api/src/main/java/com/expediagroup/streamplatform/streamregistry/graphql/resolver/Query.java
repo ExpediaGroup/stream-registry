@@ -25,12 +25,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConsumer;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLInfrastructure;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLProducer;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLTransformer;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLZone;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
@@ -135,6 +140,68 @@ public class Query implements GraphQLQueryResolver {
             .build())
         .map(transformer::transform)
         .collect(toList());
+  }
+
+  public List<GraphQLZone> zones(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public List<GraphQLInfrastructure> infrastructures(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String zone) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public List<GraphQLProducer> producers(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public List<GraphQLConsumer> consumers(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
+  }
+
+  public List<GraphQLStreamBinding> streamBindings(
+      String name,
+      String owner,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      GraphQLInfrastructure.Key infrastructure) {
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented.");
   }
 
   public List<GraphQLProducerBinding> producerBindings(

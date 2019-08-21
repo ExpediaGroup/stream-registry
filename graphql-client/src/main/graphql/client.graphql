@@ -112,6 +112,270 @@ query Streams(
   }
 }
 
+query Zones(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: Tags
+  $type: String
+  $configuration: Config
+){
+  zones(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+  ){
+    name
+    owner
+    description
+    tags
+    type
+    configuration
+  }
+}
+
+query Infrastructures(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: Tags
+  $type: String
+  $configuration: Config
+  $zone: String
+){
+  infrastructures(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    zone: $zone
+  ){
+    name
+    owner
+    description
+    tags
+    type
+    configuration
+    zone {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+    }
+  }
+}
+
+query Producers(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: Tags
+  $type: String
+  $configuration: Config
+  $stream: StreamKeyQueryInput
+  $zones: [String!]
+){
+  producers(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    zones: $zones
+  ){
+    name
+    owner
+    description
+    tags
+    type
+    configuration
+    stream {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      domain {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+      }
+      version
+      schema {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        domain {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+      }
+    }
+    zones
+  }
+}
+
+query Consumers(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: Tags
+  $type: String
+  $configuration: Config
+  $stream: StreamKeyQueryInput
+  $zones: [String!]
+){
+  consumers(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    zones: $zones
+  ){
+    name
+    owner
+    description
+    tags
+    type
+    configuration
+    stream {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      domain {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+      }
+      version
+      schema {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        domain {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+      }
+    }
+    zones
+  }
+}
+
+query StreamBindings(
+  $name: String
+  $owner: String
+  $description: String
+  $tags: Tags
+  $type: String
+  $configuration: Config
+  $stream: StreamKeyQueryInput
+  $infrastructure: InfrastructureKeyQueryInput
+){
+  streamBindings(
+    name: $name
+    owner: $owner
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    infrastructure: $infrastructure
+  ){
+    name
+    owner
+    description
+    tags
+    type
+    configuration
+    stream {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      domain {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+      }
+      version
+      schema {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+        domain {
+          name
+          owner
+          description
+          tags
+          type
+          configuration
+        }
+      }
+    }
+    infrastructure {
+      name
+      owner
+      description
+      tags
+      type
+      configuration
+      zone {
+        name
+        owner
+        description
+        tags
+        type
+        configuration
+      }
+    }
+  }
+}
+
 query ProducerBindings(
   $name: String
   $owner: String
@@ -368,7 +632,7 @@ query ConsumerBindings(
   }
 }
 
-mutation Domain (
+mutation UpsertDomain (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -384,7 +648,7 @@ mutation Domain (
   )
 }
 
-mutation Schema (
+mutation UpsertSchema (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -402,7 +666,7 @@ mutation Schema (
   )
 }
 
-mutation Stream (
+mutation UpsertStream (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -421,5 +685,139 @@ mutation Stream (
     domain: $domain
     version: $version
     schema: $schema
+  )
+}
+
+mutation UpsertZone (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+){
+  upsertZone(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+  )
+}
+
+mutation UpsertInfrastructure (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $zone: String!
+){
+  upsertInfrastructure(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    zone: $zone
+  )
+}
+
+mutation UpsertProducer (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $stream: StreamKeyInput!
+  $zones: [String!]!
+){
+  upsertProducer(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    zones: $zones
+  )
+}
+
+mutation UpsertConsumer (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $stream: StreamKeyInput!
+  $zones: [String!]!
+){
+  upsertConsumer(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    zones: $zones
+  )
+}
+
+mutation upsertStreamBinding (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $stream: StreamKeyInput!
+  $infrastructure: InfrastructureKeyInput!
+){
+  upsertStreamBinding(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    infrastructure: $infrastructure
+  )
+}
+
+mutation UpsertProducerBinding (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $producer: String!
+  $zones: [String!]!
+){
+  upsertProducerBinding(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    producer: $producer
+    zones: $zones
+  )
+}
+
+mutation UpsertConsumerBinding (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $consumer: String!
+  $zones: [String!]!
+){
+  upsertConsumerBinding(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    consumer: $consumer
+    zones: $zones
   )
 }

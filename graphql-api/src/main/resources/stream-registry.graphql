@@ -167,6 +167,53 @@ type Query {
     version: Int
     schema: SchemaKeyQueryInput
   ): [Stream!]!
+  zones(
+    name: String
+    owner: String
+    description: String
+    tags: Tags
+    type: String
+    configuration: Config
+  ): [Zone!]!
+  infrastructures(
+    name: String
+    owner: String
+    description: String
+    tags: Tags
+    type: String
+    configuration: Config
+    zone: String
+  ): [Infrastructure!]!
+  producers(
+    name: String
+    owner: String
+    description: String
+    tags: Tags
+    type: String
+    configuration: Config
+    stream: StreamKeyQueryInput
+    zones: [String!]
+  ): [Producer!]!
+  consumers(
+    name: String
+    owner: String
+    description: String
+    tags: Tags
+    type: String
+    configuration: Config
+    stream: StreamKeyQueryInput
+    zones: [String!]
+  ): [Consumer!]!
+  streamBindings(
+    name: String
+    owner: String
+    description: String
+    tags: Tags
+    type: String
+    configuration: Config
+    stream: StreamKeyQueryInput
+    infrastructure: InfrastructureKeyQueryInput
+  ): [StreamBinding!]!
   producerBindings(
     name: String
     owner: String
@@ -214,5 +261,65 @@ type Mutation {
     domain: String!
     version: Int!
     schema: SchemaKeyInput!
+  ): Boolean!
+  upsertZone(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+  ): Boolean!
+  upsertInfrastructure(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    zone: String!
+  ): Boolean!
+  upsertProducer(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    stream: StreamKeyInput!
+    zones: [String!]!
+  ): Boolean!
+  upsertConsumer(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    stream: StreamKeyInput!
+    zones: [String!]!
+  ): Boolean!
+  upsertStreamBinding(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    stream: StreamKeyInput!
+    infrastructure: InfrastructureKeyInput!
+  ): Boolean!
+  upsertProducerBinding(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    producer: String!
+    zones: [String!]!
+  ): Boolean!
+  upsertConsumerBinding(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    consumer: String!
+    zones: [String!]!
   ): Boolean!
 }
