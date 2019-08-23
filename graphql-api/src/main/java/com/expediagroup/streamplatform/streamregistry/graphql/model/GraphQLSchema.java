@@ -31,7 +31,7 @@ public class GraphQLSchema {
   Map<String, String> tags;
   String type;
   ObjectNode configuration;
-  GraphQLDomain domain;
+  GraphQLDomain.Key domain;
 
   @Value
   @Builder

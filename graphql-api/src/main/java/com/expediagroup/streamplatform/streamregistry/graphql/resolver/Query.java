@@ -55,7 +55,7 @@ public class Query implements GraphQLQueryResolver {
     this.domainService = domainService;
     this.schemaService = schemaService;
     this.streamService = streamService;
-    this.transformer = new GraphQLTransformer(domainService, schemaService);
+    this.transformer = new GraphQLTransformer();
   }
 
   public List<GraphQLDomain> domains(
