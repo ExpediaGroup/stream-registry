@@ -17,10 +17,10 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import lombok.Builder;
 import lombok.Value;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Value
 @Builder
@@ -31,9 +31,9 @@ public class GraphQLStream {
   Map<String, String> tags;
   String type;
   ObjectNode configuration;
-  GraphQLDomain domain;
+  GraphQLDomain.Key domainKey;
   Integer version;
-  GraphQLSchema schema;
+  GraphQLSchema.Key schemaKey;
 
   @Value
   @Builder

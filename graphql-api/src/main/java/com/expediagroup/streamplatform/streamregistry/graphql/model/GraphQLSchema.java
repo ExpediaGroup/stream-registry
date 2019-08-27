@@ -17,10 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
 import java.util.Map;
 
-import lombok.Builder;
-import lombok.Value;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
 @Value
 @Builder
@@ -31,12 +32,16 @@ public class GraphQLSchema {
   Map<String, String> tags;
   String type;
   ObjectNode configuration;
-  GraphQLDomain.Key domain;
+  GraphQLDomain.Key domainKey;
+
+  public GraphQLSchema.Key getKey() {
+    return new Key(name, domainKey);
+  }
 
   @Value
-  @Builder
+  @RequiredArgsConstructor
   public static class Key {
     String name;
-    String domain;
+    GraphQLDomain.Key domain;
   }
 }

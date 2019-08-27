@@ -17,14 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolver;
 
 import static java.util.stream.Collectors.toList;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.resolver.KeyConvertor.convert;
+
 import java.util.List;
 import java.util.Map;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.springframework.stereotype.Component;
 
+import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConsumer;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
@@ -40,6 +40,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component
 public class Query implements GraphQLQueryResolver {
@@ -96,10 +97,7 @@ public class Query implements GraphQLQueryResolver {
             .tags(tags)
             .type(type)
             .configuration(configuration)
-            .domain(Domain.Key
-                .builder()
-                .name(domain)
-                .build())
+            .domainKey(new Domain.Key(domain))
             .build())
         .map(transformer::transform)
         .collect(toList());
@@ -124,19 +122,9 @@ public class Query implements GraphQLQueryResolver {
             .tags(tags)
             .type(type)
             .configuration(configuration)
-            .domain(Domain.Key
-                .builder()
-                .name(domain)
-                .build())
+            .domainKey(new Domain.Key(domain))
             .version(version)
-            .schema(Schema.Key
-                .builder()
-                .name(schema.getName())
-                .domain(Domain.Key
-                    .builder()
-                    .name(schema.getDomain())
-                    .build())
-                .build())
+            .schemaKey(convert(schema))
             .build())
         .map(transformer::transform)
         .collect(toList());

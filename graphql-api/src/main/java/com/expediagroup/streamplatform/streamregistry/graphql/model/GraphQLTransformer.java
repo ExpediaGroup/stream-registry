@@ -15,13 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
-import java.util.function.Function;
-
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.service.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.hotels.beans.BeanUtils;
@@ -32,8 +28,6 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class GraphQLTransformer {
-
-  private static final ObjectMapper mapper = new ObjectMapper();
 
   private final Transformer transformer;
 
@@ -58,10 +52,6 @@ public class GraphQLTransformer {
   }
 
   private static Transformer transformer() {
-    BeanUtils beanUtils = new BeanUtils();
-    Transformer transformer = beanUtils.getTransformer();
-
-    return transformer
-        .withFieldTransformer(new FieldTransformer<>("configuration", ObjectNode::deepCopy));
+    return new BeanUtils().getTransformer().withFieldTransformer(new FieldTransformer<>("configuration", ObjectNode::deepCopy));
   }
 }

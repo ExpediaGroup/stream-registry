@@ -20,8 +20,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handler.HandlerWrapper;
@@ -31,6 +29,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.repository.Repository;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -46,8 +46,8 @@ public class SchemaService implements Service<Schema, Schema.Key> {
     Optional<Schema> existing = schemaRepository.get(schema.key());
     entityValidator.validate(schema, existing);
 
-    checkArgument(domainrepository.get(schema.getDomain()).isPresent(),
-        "Domain '%s' does not exist.", schema.getDomain().getName());
+    checkArgument(domainrepository.get(schema.getDomainKey()).isPresent(),
+        "Domain '%s' does not exist.", schema.getDomainKey().getName());
 
     Schema handled = schemaHandler.handle(schema, existing);
     schemaRepository.upsert(handled);
@@ -64,6 +64,6 @@ public class SchemaService implements Service<Schema, Schema.Key> {
   public Stream<Schema> stream(Schema query) {
     return schemaRepository
         .stream()
-        .filter(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getDomain()).map(Domain.Key::getName).orElse(null)));
+        .filter(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getDomainKey()).map(Domain.Key::getName).orElse(null)));
   }
 }

@@ -18,16 +18,17 @@ package com.expediagroup.streamplatform.streamregistry.repository.avro;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.hotels.beans.BeanUtils;
 import com.hotels.beans.model.FieldMapping;
 import com.hotels.beans.model.FieldTransformer;
 import com.hotels.beans.transformer.Transformer;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -41,16 +42,21 @@ public class AvroTransformer {
         .getTransformer()
         .withFieldMapping(new FieldMapping("configurationString", "configuration"))
         .withFieldTransformer(new FieldTransformer<>("configuration", AvroTransformer::parseObjectNode))
+
         .withFieldMapping(new FieldMapping("configuration", "configurationString"))
         .withFieldTransformer(new FieldTransformer<>("configurationString", ObjectNode::toString))
-        .withFieldMapping(new FieldMapping("domainKey", "domain"))
-        .withFieldTransformer(new FieldTransformer<>("domain", AvroDomainConversion::modelKey))
-        .withFieldMapping(new FieldMapping("domain", "domainKey"))
-        .withFieldTransformer(new FieldTransformer<>("domainKey", AvroDomainConversion::avroKey))
-        .withFieldMapping(new FieldMapping("schemaKey", "schema"))
-        .withFieldTransformer(new FieldTransformer<>("schema", AvroSchemaConversion::modelKey))
-        .withFieldMapping(new FieldMapping("schema", "schemaKey"))
-        .withFieldTransformer(new FieldTransformer<>("schemaKey", AvroSchemaConversion::avroKey)));
+
+        .withFieldMapping(new FieldMapping("domainAvroKey", "domainKey"))
+        .withFieldTransformer(new FieldTransformer<>("domainKey", AvroDomainConversion::modelKey))
+
+        .withFieldMapping(new FieldMapping("domainKey", "domainAvroKey"))
+        .withFieldTransformer(new FieldTransformer<>("domainAvroKey", AvroDomainConversion::avroKey))
+
+        .withFieldMapping(new FieldMapping("schemaAvroKey", "schemaKey"))
+        .withFieldTransformer(new FieldTransformer<>("schemaKey", AvroSchemaConversion::modelKey))
+
+        .withFieldMapping(new FieldMapping("schemaKey", "schemaAvroKey"))
+        .withFieldTransformer(new FieldTransformer<>("schemaAvroKey", AvroSchemaConversion::avroKey)));
   }
 
   public <T, R> R transform(T sourceObj, Class<R> targetClass) {

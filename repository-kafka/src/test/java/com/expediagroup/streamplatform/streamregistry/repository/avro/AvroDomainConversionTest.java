@@ -26,10 +26,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 public class AvroDomainConversionTest {
   private final AvroDomainConversion underTest = new AvroDomainConversion();
 
-  private final Domain.Key domainKey = Domain.Key
-      .builder()
-      .name("name")
-      .build();
+  private final Domain.Key domainKey = new Domain.Key("name");
 
   private final AvroKey avroKey = AvroKey
       .newBuilder()

@@ -20,8 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handler.HandlerWrapper;
@@ -33,6 +31,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.repository.Repository;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -50,8 +50,8 @@ public class StreamService implements Service<Stream, Stream.Key> {
     Optional<Stream> existing = streamRepository.get(stream.key());
     entityValidator.validate(stream, existing);
 
-    checkArgument(domainrepository.get(stream.getDomain()).isPresent(),
-        "Domain '%s' does not exist.", stream.getDomain().getName());
+    checkArgument(domainrepository.get(stream.getDomainKey()).isPresent(),
+        "Domain '%s' does not exist.", stream.getDomainKey().getName());
 
     Optional
         .ofNullable(stream.getVersion())
@@ -66,7 +66,7 @@ public class StreamService implements Service<Stream, Stream.Key> {
       stream(Stream
           .builder()
           .name(stream.getName())
-          .domain(stream.getDomain())
+          .domainKey(stream.getDomainKey())
           .version(0) //get latest existing version
           .build())
           .findFirst()
@@ -76,8 +76,8 @@ public class StreamService implements Service<Stream, Stream.Key> {
               "Version must be 1 higher than the previous version."));
     }
 
-    checkNotNull(stream.getSchema(), "Schema must be provided.");
-    checkArgument(schemaRepository.get(stream.getSchema()).isPresent(), "Schema must exist.");
+    checkNotNull(stream.getSchemaKey(), "Schema must be provided.");
+    checkArgument(schemaRepository.get(stream.getSchemaKey()).isPresent(), "Schema must exist.");
 
     Stream handled = streamHandler.handle(stream, existing);
     streamRepository.upsert(handled);
@@ -94,8 +94,9 @@ public class StreamService implements Service<Stream, Stream.Key> {
   public java.util.stream.Stream<Stream> stream(Stream query) {
     return versionPredicateFactory.filter(query, streamRepository
         .stream()
-        .filter(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getDomain()).map(Domain.Key::getName).orElse(null))
-            .and(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getSchema()).map(Schema.Key::getDomain).map(Domain.Key::getName).orElse(null)))
-            .and(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getSchema()).map(Schema.Key::getName).orElse(null)))));
+        .filter(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getDomainKey()).map(Domain.Key::getName).orElse(null))
+            .and(patternMatchPredicateFactory.create(query,
+                s -> Optional.ofNullable(s.getSchemaKey()).map(Schema.Key::getDomain).map(Domain.Key::getName).orElse(null)))
+            .and(patternMatchPredicateFactory.create(query, s -> Optional.ofNullable(s.getSchemaKey()).map(Schema.Key::getName).orElse(null)))));
   }
 }

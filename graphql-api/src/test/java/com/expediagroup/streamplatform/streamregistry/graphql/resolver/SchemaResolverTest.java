@@ -1,5 +1,21 @@
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolver;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.service.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SchemaDomainResolverTest {
+public class SchemaResolverTest {
 
   @Mock
   Service<Domain, Domain.Key> domainKeyService;
@@ -28,7 +44,7 @@ public class SchemaDomainResolverTest {
   @Test
   public void resolve() {
 
-    Domain domain = Domain
+    when(domainKeyService.get(any())).thenReturn(Domain
         .builder()
         .name("streamDomain")
         .owner("owner")
@@ -36,20 +52,13 @@ public class SchemaDomainResolverTest {
         .tags(Map.of("key", "value"))
         .type("type")
         .configuration(mapper.createObjectNode().put("key", "value"))
-        .build();
-
-    when(domainKeyService.get(any())).thenReturn(domain);
-
-    SchemaDomainResolver schemaDomainResolver = new SchemaDomainResolver(
-        domainKeyService,
-        new GraphQLTransformer()
+        .build()
     );
 
-    GraphQLSchema schema = GraphQLSchema.builder().domain(
-        GraphQLDomain.Key.builder().name("theDomain").build()
-    ).build();
+    GraphQLDomain resolvedDomain = new SchemaResolver(domainKeyService, new GraphQLTransformer())
+        .domain(GraphQLSchema.builder().domainKey(new GraphQLDomain.Key("theDomain")).build()
+        );
 
-    GraphQLDomain out = schemaDomainResolver.domain(schema);
+    assertEquals("streamDomain", resolvedDomain.getName());
   }
-
 }

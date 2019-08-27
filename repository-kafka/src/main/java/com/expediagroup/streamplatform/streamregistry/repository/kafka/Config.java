@@ -15,11 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import static org.apache.kafka.common.config.ConfigResource.Type.TOPIC;
+
+import static com.google.common.base.Preconditions.checkState;
+
 import static kafka.log.LogConfig.CleanupPolicyProp;
 import static kafka.log.LogConfig.Compact;
-import static org.apache.kafka.common.config.ConfigResource.Type.TOPIC;
 
 import java.util.List;
 import java.util.Map;
@@ -29,11 +32,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PostConstruct;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -42,6 +40,11 @@ import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @lombok.Value

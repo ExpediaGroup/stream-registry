@@ -21,19 +21,19 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MutationTest {
@@ -56,10 +56,7 @@ public class MutationTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(Domain.Key
-          .builder()
-          .name("domain")
-          .build())
+      .domainKey(new Domain.Key("domainKey"))
       .build();
   private final Stream stream = Stream
       .builder()
@@ -69,19 +66,9 @@ public class MutationTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(Domain.Key
-          .builder()
-          .name("streamDomain")
-          .build())
+      .domainKey(new Domain.Key("streamDomain"))
       .version(1)
-      .schema(Schema.Key
-          .builder()
-          .name("schemaName")
-          .domain(Domain.Key
-              .builder()
-              .name("schemaDomain")
-              .build())
-          .build())
+      .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
       .build();
   @Mock
   private Service<Domain, Domain.Key> domainService;
@@ -118,7 +105,7 @@ public class MutationTest {
         schema.getTags(),
         schema.getType(),
         schema.getConfiguration(),
-        schema.getDomain().getName()
+        schema.getDomainKey().getName()
     );
 
     assertThat(result, is(true));
@@ -133,13 +120,9 @@ public class MutationTest {
         stream.getTags(),
         stream.getType(),
         stream.getConfiguration(),
-        stream.getDomain().getName(),
+        stream.getDomainKey().getName(),
         1,
-        GraphQLSchema.Key
-            .builder()
-            .name("schemaName")
-            .domain("schemaDomain")
-            .build()
+        new GraphQLSchema.Key("schemaName", new GraphQLDomain.Key("schemaDomain"))
 
     );
 

@@ -19,11 +19,11 @@ import static java.util.Collections.emptyMap;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Wither
 @Value
@@ -37,13 +37,13 @@ public class Stream implements Entity<Stream.Key> {
   String type;
   @Builder.Default ObjectNode configuration = mapper.createObjectNode();
 
-  Domain.Key domain;
+  Domain.Key domainKey;
   Integer version;
-  Schema.Key schema;
+  Schema.Key schemaKey;
 
   @Override
   public Key key() {
-    return new Key(name, domain, version);
+    return new Key(name, domainKey, version);
   }
 
   @Value

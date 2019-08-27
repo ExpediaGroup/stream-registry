@@ -20,6 +20,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
@@ -32,8 +33,12 @@ public class GraphQLDomain {
   String type;
   ObjectNode configuration;
 
+  public Key getKey() {
+    return new Key(name);
+  }
+
   @Value
-  @Builder
+  @RequiredArgsConstructor
   public static class Key {
     String name;
   }
