@@ -22,11 +22,14 @@ import com.hotels.beans.BeanUtils;
 import com.hotels.beans.model.FieldTransformer;
 import com.hotels.beans.transformer.Transformer;
 
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @RequiredArgsConstructor
+@Component
 public class GraphQLTransformer {
 
   private final Transformer transformer;
