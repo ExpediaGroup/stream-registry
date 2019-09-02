@@ -28,6 +28,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +43,6 @@ import com.expediagroup.streamplatform.streamregistry.repository.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.repository.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.repository.avro.AvroSchema;
 import com.expediagroup.streamplatform.streamregistry.repository.avro.Conversion;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KafkaRepositoryTest {

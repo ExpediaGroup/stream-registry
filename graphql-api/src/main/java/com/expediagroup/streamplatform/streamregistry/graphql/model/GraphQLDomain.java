@@ -17,11 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Value
 @Builder

@@ -20,6 +20,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handler.HandlerWrapper;
@@ -31,8 +33,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.repository.Repository;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

@@ -20,9 +20,13 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.resolver.Ke
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLInfrastructure;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
@@ -30,9 +34,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

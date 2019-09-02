@@ -15,16 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.RequiredArgsConstructor;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hotels.beans.BeanUtils;
 import com.hotels.beans.model.FieldTransformer;
 import com.hotels.beans.transformer.Transformer;
 
-import lombok.RequiredArgsConstructor;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @RequiredArgsConstructor
 public class GraphQLTransformer {

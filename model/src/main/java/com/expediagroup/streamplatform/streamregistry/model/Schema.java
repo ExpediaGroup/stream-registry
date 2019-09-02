@@ -19,12 +19,12 @@ import static java.util.Collections.emptyMap;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Wither;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Wither
 @Value

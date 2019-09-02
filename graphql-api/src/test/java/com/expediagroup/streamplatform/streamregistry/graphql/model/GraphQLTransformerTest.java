@@ -20,13 +20,14 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GraphQLTransformerTest {
   private static final ObjectMapper mapper = new ObjectMapper();

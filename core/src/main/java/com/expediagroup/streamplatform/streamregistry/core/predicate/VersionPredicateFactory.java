@@ -17,10 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.core.predicate;
 
 import java.util.Comparator;
 
+import com.google.common.collect.ImmutableListMultimap;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.google.common.collect.ImmutableListMultimap;
 
 @Component
 public class VersionPredicateFactory {

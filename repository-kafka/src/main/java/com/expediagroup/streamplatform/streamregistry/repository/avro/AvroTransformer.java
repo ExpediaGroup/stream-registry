@@ -18,17 +18,16 @@ package com.expediagroup.streamplatform.streamregistry.repository.avro;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.hotels.beans.BeanUtils;
 import com.hotels.beans.model.FieldMapping;
 import com.hotels.beans.model.FieldTransformer;
 import com.hotels.beans.transformer.Transformer;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

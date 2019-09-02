@@ -15,9 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolver;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLDomain;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchema;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLStream;
@@ -25,8 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLTrans
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

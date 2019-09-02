@@ -21,6 +21,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -31,7 +33,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLSchem
 import com.expediagroup.streamplatform.streamregistry.graphql.model.GraphQLTransformer;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.service.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SchemaResolverTest {

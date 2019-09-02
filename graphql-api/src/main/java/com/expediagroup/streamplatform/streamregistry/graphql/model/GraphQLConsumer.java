@@ -18,10 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.Builder;
 import lombok.Value;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Value
 @Builder
