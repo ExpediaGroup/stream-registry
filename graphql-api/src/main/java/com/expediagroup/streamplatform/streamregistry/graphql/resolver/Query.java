@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolver;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.resolver.KeyConvertor.convert;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class Query implements GraphQLQueryResolver {
     this.domainService = domainService;
     this.schemaService = schemaService;
     this.streamService = streamService;
-    this.transformer = new GraphQLTransformer(domainService, schemaService);
+    this.transformer = new GraphQLTransformer();
   }
 
   public List<GraphQLDomain> domains(
@@ -96,10 +97,7 @@ public class Query implements GraphQLQueryResolver {
             .tags(tags)
             .type(type)
             .configuration(configuration)
-            .domain(Domain.Key
-                .builder()
-                .name(domain)
-                .build())
+            .domainKey(new Domain.Key(domain))
             .build())
         .map(transformer::transform)
         .collect(toList());
@@ -124,19 +122,9 @@ public class Query implements GraphQLQueryResolver {
             .tags(tags)
             .type(type)
             .configuration(configuration)
-            .domain(Domain.Key
-                .builder()
-                .name(domain)
-                .build())
+            .domainKey(new Domain.Key(domain))
             .version(version)
-            .schema(Schema.Key
-                .builder()
-                .name(schema.getName())
-                .domain(Domain.Key
-                    .builder()
-                    .name(schema.getDomain())
-                    .build())
-                .build())
+            .schemaKey(convert(schema))
             .build())
         .map(transformer::transform)
         .collect(toList());

@@ -37,13 +37,13 @@ public class Stream implements Entity<Stream.Key> {
   String type;
   @Builder.Default ObjectNode configuration = mapper.createObjectNode();
 
-  Domain.Key domain;
+  Domain.Key domainKey;
   Integer version;
-  Schema.Key schema;
+  Schema.Key schemaKey;
 
   @Override
   public Key key() {
-    return new Key(name, domain, version);
+    return new Key(name, domainKey, version);
   }
 
   @Value

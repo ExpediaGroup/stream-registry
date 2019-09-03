@@ -69,10 +69,7 @@ public class QueryTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(Domain.Key
-          .builder()
-          .name("schemaDomain")
-          .build())
+      .domainKey(new Domain.Key("schemaDomain"))
       .build();
   private final Stream stream = Stream
       .builder()
@@ -82,19 +79,9 @@ public class QueryTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(Domain.Key
-          .builder()
-          .name("streamDomain")
-          .build())
+      .domainKey(new Domain.Key("streamDomain"))
       .version(1)
-      .schema(Schema.Key
-          .builder()
-          .name("schemaName")
-          .domain(Domain.Key
-              .builder()
-              .name("schemaDomain")
-              .build())
-          .build())
+      .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
       .build();
   private final GraphQLDomain schemaGraphQLDomain = GraphQLDomain
       .builder()
@@ -122,7 +109,7 @@ public class QueryTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(schemaGraphQLDomain)
+      .domainKey(schemaGraphQLDomain.getKey())
       .build();
   private final GraphQLStream graphQLStream = GraphQLStream
       .builder()
@@ -132,9 +119,9 @@ public class QueryTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(streamGraphQLDomain)
+      .domainKey(streamGraphQLDomain.getKey())
       .version(1)
-      .schema(graphQLSchema)
+      .schemaKey(graphQLSchema.getKey())
       .build();
 
   @Mock
@@ -172,7 +159,6 @@ public class QueryTest {
   @Test
   public void schemas() {
     when(schemaService.stream(schema)).thenReturn(java.util.stream.Stream.of(schema));
-    when(domainService.get(schemaDomain.key())).thenReturn(schemaDomain);
 
     List<GraphQLSchema> result = underTest.schemas(
         schema.getName(),
@@ -181,7 +167,7 @@ public class QueryTest {
         schema.getTags(),
         schema.getType(),
         schema.getConfiguration(),
-        schema.getDomain().getName()
+        schema.getDomainKey().getName()
     );
 
     assertThat(result.size(), is(1));
@@ -191,9 +177,6 @@ public class QueryTest {
   @Test
   public void streams() {
     when(streamService.stream(stream)).thenReturn(java.util.stream.Stream.of(stream));
-    when(schemaService.get(schema.key())).thenReturn(schema);
-    when(domainService.get(schemaDomain.key())).thenReturn(schemaDomain);
-    when(domainService.get(streamDomain.key())).thenReturn(streamDomain);
 
     List<GraphQLStream> result = underTest.streams(
         stream.getName(),
@@ -202,13 +185,9 @@ public class QueryTest {
         stream.getTags(),
         stream.getType(),
         stream.getConfiguration(),
-        stream.getDomain().getName(),
+        stream.getDomainKey().getName(),
         stream.getVersion(),
-        GraphQLSchema.Key
-            .builder()
-            .name("schemaName")
-            .domain("schemaDomain")
-            .build()
+        new GraphQLSchema.Key("schemaName", new GraphQLDomain.Key("schemaDomain"))
     );
 
     assertThat(result.size(), is(1));

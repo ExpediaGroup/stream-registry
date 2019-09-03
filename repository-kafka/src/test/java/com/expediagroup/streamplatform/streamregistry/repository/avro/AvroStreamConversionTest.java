@@ -30,10 +30,7 @@ public class AvroStreamConversionTest {
   private final Stream.Key streamKey = Stream.Key
       .builder()
       .name("name")
-      .domain(Domain.Key
-          .builder()
-          .name("domain")
-          .build())
+      .domain(new Domain.Key("domain"))
       .version(1)
       .build();
 

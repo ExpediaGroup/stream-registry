@@ -59,10 +59,7 @@ public class AvroTransformerTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(Domain.Key
-          .builder()
-          .name("domain")
-          .build())
+      .domainKey(new Domain.Key("domain"))
       .build();
 
   private final AvroSchema avroSchema = AvroSchema
@@ -73,7 +70,7 @@ public class AvroTransformerTest {
       .setTags(Map.of("key", "value"))
       .setType("type")
       .setConfigurationString("{\"key\":\"value\"}")
-      .setDomainKey(AvroKey
+      .setDomainAvroKey(AvroKey
           .newBuilder()
           .setId("domain")
           .setType(AvroKeyType.DOMAIN)
@@ -89,19 +86,9 @@ public class AvroTransformerTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(Domain.Key
-          .builder()
-          .name("domain")
-          .build())
+      .domainKey(new Domain.Key("domain"))
       .version(1)
-      .schema(Schema.Key
-          .builder()
-          .name("schemaName")
-          .domain(Domain.Key
-              .builder()
-              .name("schemaDomain")
-              .build())
-          .build())
+      .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
       .build();
 
   private final AvroStream avroStream = AvroStream
@@ -112,14 +99,14 @@ public class AvroTransformerTest {
       .setTags(Map.of("key", "value"))
       .setType("type")
       .setConfigurationString("{\"key\":\"value\"}")
-      .setDomainKey(AvroKey
+      .setDomainAvroKey(AvroKey
           .newBuilder()
           .setId("domain")
           .setType(AvroKeyType.DOMAIN)
           .setParent(null)
           .build())
       .setVersion(1)
-      .setSchemaKey(AvroKey
+      .setSchemaAvroKey(AvroKey
           .newBuilder()
           .setId("schemaName")
           .setType(AvroKeyType.SCHEMA)

@@ -17,7 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
@@ -25,16 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.service.Service;
 
-@RunWith(MockitoJUnitRunner.class)
 public class GraphQLTransformerTest {
   private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -63,7 +57,7 @@ public class GraphQLTransformerTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(domain1.key())
+      .domainKey(domain1.key())
       .build();
 
   private final Stream stream = Stream.builder()
@@ -73,9 +67,9 @@ public class GraphQLTransformerTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(domain2.key())
+      .domainKey(domain2.key())
       .version(1)
-      .schema(schema.key())
+      .schemaKey(schema.key())
       .build();
 
   private final GraphQLDomain graphQLDomain1 = GraphQLDomain.builder()
@@ -103,7 +97,7 @@ public class GraphQLTransformerTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(graphQLDomain1)
+      .domainKey(graphQLDomain1.getKey())
       .build();
 
   private final GraphQLStream graphQLStream = GraphQLStream.builder()
@@ -113,21 +107,16 @@ public class GraphQLTransformerTest {
       .tags(Map.of("key", "value"))
       .type("type")
       .configuration(mapper.createObjectNode().put("key", "value"))
-      .domain(graphQLDomain2)
+      .domainKey(graphQLDomain2.getKey())
       .version(1)
-      .schema(graphQLSchema)
+      .schemaKey(graphQLSchema.getKey())
       .build();
-
-  @Mock
-  private Service<Domain, Domain.Key> domainService;
-  @Mock
-  private Service<Schema, Schema.Key> schemaService;
 
   private GraphQLTransformer underTest;
 
   @Before
   public void before() {
-    underTest = new GraphQLTransformer(domainService, schemaService);
+    underTest = new GraphQLTransformer();
   }
 
   @Test
@@ -137,15 +126,11 @@ public class GraphQLTransformerTest {
 
   @Test
   public void schema() {
-    when(domainService.get(domain1.key())).thenReturn(domain1);
     assertThat(underTest.transform(schema), is(graphQLSchema));
   }
 
   @Test
   public void stream() {
-    when(domainService.get(domain1.key())).thenReturn(domain1);
-    when(domainService.get(domain2.key())).thenReturn(domain2);
-    when(schemaService.get(schema.key())).thenReturn(schema);
     assertThat(underTest.transform(stream), is(graphQLStream));
   }
 }

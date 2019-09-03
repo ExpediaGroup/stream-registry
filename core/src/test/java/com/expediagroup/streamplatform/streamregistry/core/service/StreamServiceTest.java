@@ -69,25 +69,18 @@ public class StreamServiceTest {
 
   @Test
   public void upsert() {
-    Domain domain = Domain.builder().name("domain").build();
+    Domain domain = Domain.builder().name("domainKey").build();
     Stream stream = Stream
         .builder()
         .name("name")
         .version(1)
-        .schema(Schema.Key
-            .builder()
-            .name("schemaName")
-            .domain(Domain.Key
-                .builder()
-                .name("schemaDomain")
-                .build())
-            .build())
-        .domain(domain.key())
+        .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
+        .domainKey(domain.key())
         .build();
     Optional<Stream> existing = Optional.empty();
 
     when(streamRepository.get(stream.key())).thenReturn(existing);
-    when(schemaRepository.get(stream.getSchema())).thenReturn(Optional.of(Schema.builder().build()));
+    when(schemaRepository.get(stream.getSchemaKey())).thenReturn(Optional.of(Schema.builder().build()));
     when(streamHandler.handle(stream, existing)).thenReturn(stream);
     when(domainRepository.get(domain.key())).thenReturn(Optional.of(domain));
 
@@ -100,39 +93,32 @@ public class StreamServiceTest {
         schemaRepository);
     inOrder.verify(streamRepository).get(stream.key());
     inOrder.verify(entityValidator).validate(stream, existing);
-    inOrder.verify(schemaRepository).get(stream.getSchema());
+    inOrder.verify(schemaRepository).get(stream.getSchemaKey());
     inOrder.verify(streamHandler).handle(stream, existing);
     inOrder.verify(streamRepository).upsert(stream);
   }
 
   @Test
   public void upsertHigherVersion() {
-    Domain domain = Domain.builder().name("domain").build();
+    Domain domain = Domain.builder().name("domainKey").build();
     Stream streamV1 = Stream
         .builder()
         .name("name")
-        .domain(domain.key())
+        .domainKey(domain.key())
         .version(1)
         .build();
     Stream streamV2 = Stream
         .builder()
         .name("name")
-        .domain(domain.key())
+        .domainKey(domain.key())
         .version(2)
-        .schema(Schema.Key
-            .builder()
-            .name("schemaName")
-            .domain(Domain.Key
-                .builder()
-                .name("schemaDomain")
-                .build())
-            .build())
+        .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
         .build();
     Optional<Stream> existing = Optional.empty();
 
     when(streamRepository.get(streamV2.key())).thenReturn(existing);
     when(streamRepository.stream()).thenReturn(java.util.stream.Stream.of(streamV1));
-    when(schemaRepository.get(streamV2.getSchema())).thenReturn(Optional.of(Schema.builder().build()));
+    when(schemaRepository.get(streamV2.getSchemaKey())).thenReturn(Optional.of(Schema.builder().build()));
     when(streamHandler.handle(streamV2, existing)).thenReturn(streamV2);
     when(domainRepository.get(domain.key())).thenReturn(Optional.of(domain));
 
@@ -143,26 +129,19 @@ public class StreamServiceTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void upsertHigherInvalidVersion() {
-    Domain domain = Domain.builder().name("domain").build();
+    Domain domain = Domain.builder().name("domainKey").build();
     Stream streamV1 = Stream
         .builder()
         .name("name")
-        .domain(domain.key())
+        .domainKey(domain.key())
         .version(1)
         .build();
     Stream streamV2 = Stream
         .builder()
         .name("name")
-        .domain(domain.key())
+        .domainKey(domain.key())
         .version(3)
-        .schema(Schema.Key
-            .builder()
-            .name("schemaName")
-            .domain(Domain.Key
-                .builder()
-                .name("schemaDomain")
-                .build())
-            .build())
+        .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
         .build();
     Optional<Stream> existing = Optional.empty();
 
@@ -173,23 +152,15 @@ public class StreamServiceTest {
     underTest.upsert(streamV2);
   }
 
-
   @Test(expected = IllegalArgumentException.class)
   public void upsertNullVersion() {
-    Domain domain = Domain.builder().name("domain").build();
+    Domain domain = Domain.builder().name("domainKey").build();
     Stream stream = Stream
         .builder()
         .name("name")
         .version(null)
-        .schema(Schema.Key
-            .builder()
-            .name("schemaName")
-            .domain(Domain.Key
-                .builder()
-                .name("schemaDomain")
-                .build())
-            .build())
-        .domain(domain.key())
+        .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
+        .domainKey(domain.key())
         .build();
     Optional<Stream> existing = Optional.empty();
 
@@ -200,20 +171,13 @@ public class StreamServiceTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void upsertZeroVersion() {
-    Domain domain = Domain.builder().name("domain").build();
+    Domain domain = Domain.builder().name("domainKey").build();
     Stream stream = Stream
         .builder()
         .name("name")
         .version(0)
-        .schema(Schema.Key
-            .builder()
-            .name("schemaName")
-            .domain(Domain.Key
-                .builder()
-                .name("schemaDomain")
-                .build())
-            .build())
-        .domain(domain.key())
+        .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
+        .domainKey(domain.key())
         .build();
     Optional<Stream> existing = Optional.empty();
 
@@ -228,7 +192,7 @@ public class StreamServiceTest {
         .builder()
         .name("name")
         .version(1)
-        .schema(null)
+        .schemaKey(null)
         .build();
     Optional<Stream> existing = Optional.empty();
 
@@ -239,20 +203,13 @@ public class StreamServiceTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void upsertSchemaNotExist() {
-    Domain domain = Domain.builder().name("domain").build();
+    Domain domain = Domain.builder().name("domainKey").build();
     Stream stream = Stream
         .builder()
         .name("name")
         .version(0)
-        .schema(Schema.Key
-            .builder()
-            .name("schemaName")
-            .domain(Domain.Key
-                .builder()
-                .name("schemaDomain")
-                .build())
-            .build())
-        .domain(domain.key())
+        .schemaKey(new Schema.Key("schemaName", new Domain.Key("schemaDomain")))
+        .domainKey(domain.key())
         .build();
     Optional<Stream> existing = Optional.empty();
 

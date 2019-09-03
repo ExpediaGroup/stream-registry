@@ -15,11 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static java.util.Collections.*;
+import static java.util.Collections.emptyMap;
 
 import java.util.Map;
 
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Wither;
 
@@ -43,7 +44,7 @@ public class Domain implements Entity<Domain.Key> {
   }
 
   @Value
-  @Builder
+  @RequiredArgsConstructor
   public static class Key {
     String name;
   }

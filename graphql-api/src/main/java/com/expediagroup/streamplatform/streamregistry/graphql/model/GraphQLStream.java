@@ -31,9 +31,9 @@ public class GraphQLStream {
   Map<String, String> tags;
   String type;
   ObjectNode configuration;
-  GraphQLDomain domain;
+  GraphQLDomain.Key domainKey;
   Integer version;
-  GraphQLSchema schema;
+  GraphQLSchema.Key schemaKey;
 
   @Value
   @Builder

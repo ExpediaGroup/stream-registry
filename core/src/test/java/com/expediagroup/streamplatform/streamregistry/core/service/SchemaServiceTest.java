@@ -74,8 +74,8 @@ public class SchemaServiceTest {
 
   @Test
   public void upsert() {
-    Domain domain = Domain.builder().name("domain").build();
-    Schema schema = Schema.builder().name("name").domain(domain.key()).build();
+    Domain domain = Domain.builder().name("domainKey").build();
+    Schema schema = Schema.builder().name("name").domainKey(domain.key()).build();
     Optional<Schema> existing = Optional.empty();
 
     when(schemaRepository.get(schema.key())).thenReturn(existing);
@@ -96,7 +96,7 @@ public class SchemaServiceTest {
 
   @Test
   public void getExisting() {
-    Schema schema = Schema.builder().name("name").domain(Domain.Key.builder().name("domain").build()).build();
+    Schema schema = Schema.builder().name("name").domainKey(new Domain.Key("domainKey")).build();
     Optional<Schema> existing = Optional.of(schema);
 
     when(schemaRepository.get(schema.key())).thenReturn(existing);
@@ -108,7 +108,7 @@ public class SchemaServiceTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void getNotExisting() {
-    Schema schema = Schema.builder().name("name").domain(Domain.Key.builder().name("domain").build()).build();
+    Schema schema = Schema.builder().name("name").domainKey(new Domain.Key("domainKey")).build();
     Optional<Schema> existing = Optional.empty();
 
     when(schemaRepository.get(schema.key())).thenReturn(existing);

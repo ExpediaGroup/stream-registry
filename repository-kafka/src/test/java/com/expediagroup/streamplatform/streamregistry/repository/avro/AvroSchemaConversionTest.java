@@ -27,14 +27,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 public class AvroSchemaConversionTest {
   private final AvroSchemaConversion underTest = new AvroSchemaConversion();
 
-  private final Schema.Key schemaKey = Schema.Key
-      .builder()
-      .name("name")
-      .domain(Domain.Key
-          .builder()
-          .name("domain")
-          .build())
-      .build();
+  private final Schema.Key schemaKey = new Schema.Key("name", new Domain.Key("domain"));
 
   private final AvroKey avroKey = AvroKey
       .newBuilder()

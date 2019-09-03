@@ -20,6 +20,7 @@ import static java.util.Collections.emptyMap;
 import java.util.Map;
 
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Wither;
 
@@ -37,15 +38,15 @@ public class Schema implements Entity<Schema.Key> {
   String type;
   @Builder.Default ObjectNode configuration = mapper.createObjectNode();
 
-  Domain.Key domain;
+  Domain.Key domainKey;
 
   @Override
   public Key key() {
-    return new Key(name,domain);
+    return new Key(name, domainKey);
   }
 
   @Value
-  @Builder
+  @RequiredArgsConstructor
   public static class Key {
     String name;
     Domain.Key domain;
