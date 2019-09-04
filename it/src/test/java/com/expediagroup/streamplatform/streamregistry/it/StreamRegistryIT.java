@@ -42,8 +42,8 @@ import reactor.core.publisher.Mono;
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConfigTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.TagsTypeAdapter;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 
@@ -88,8 +88,8 @@ public class StreamRegistryIT {
         .addCustomTypeAdapter(CustomType.CONFIG, new ConfigTypeAdapter())
         .build();
 
-    Response<Optional<UpsertDomainMutation.Data>> mutation = ReactorApollo.from(
-        client.mutate(UpsertDomainMutation
+    Response<Optional<InsertDomainMutation.Data>> mutation = ReactorApollo.from(
+        client.mutate(InsertDomainMutation
             .builder()
             .name("domain")
             .description("description")
@@ -99,7 +99,7 @@ public class StreamRegistryIT {
             .build()))
         .block();
 
-    assertThat(mutation.data().get().isUpsertDomain(), is(true));
+    assertThat(mutation.data().get().isInsertDomain(), is(true));
 
     Mono.delay(Duration.ofSeconds(5)).block();
 

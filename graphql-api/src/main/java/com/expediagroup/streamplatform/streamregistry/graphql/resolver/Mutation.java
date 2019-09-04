@@ -40,7 +40,25 @@ public class Mutation implements GraphQLMutationResolver {
   private final Service<Schema, Schema.Key> schemaService;
   private final Service<Stream, Stream.Key> streamService;
 
-  public boolean upsertDomain(
+  public boolean insertDomain(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration) {
+    return upsertDomain(name, description, tags, type, configuration);
+  }
+
+  public boolean updateDomain(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration) {
+    return upsertDomain(name, description, tags, type, configuration);
+  }
+
+  private boolean upsertDomain(
       String name,
       String description,
       Map<String, String> tags,
@@ -60,7 +78,27 @@ public class Mutation implements GraphQLMutationResolver {
     return true;
   }
 
-  public boolean upsertSchema(
+  public boolean insertSchema(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String domain) {
+    return upsertSchema(name,description,tags,type,configuration,domain);
+  }
+
+  public boolean updateSchema(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String domain) {
+    return upsertSchema(name,description,tags,type,configuration,domain);
+  }
+
+  private boolean upsertSchema(
       String name,
       String description,
       Map<String, String> tags,
@@ -85,7 +123,31 @@ public class Mutation implements GraphQLMutationResolver {
     return true;
   }
 
-  public boolean upsertStream(
+  public boolean insertStream(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String domain,
+      Integer version,
+      GraphQLSchema.Key schema) {
+    return upsertStream(name,description,tags,type,configuration,domain,version,schema);
+  }
+
+  public boolean updateStream(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String domain,
+      Integer version,
+      GraphQLSchema.Key schema) {
+    return upsertStream(name,description,tags,type,configuration,domain,version,schema);
+  }
+
+  private boolean upsertStream(
       String name,
       String description,
       Map<String, String> tags,
@@ -121,7 +183,25 @@ public class Mutation implements GraphQLMutationResolver {
     return true;
   }
 
-  public boolean upsertZone(
+  public boolean insertZone(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration) {
+    return updateZone(name,description,tags,type,configuration);
+  }
+
+  public boolean updateZone(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration) {
+    return updateZone(name,description,tags,type,configuration);
+  }
+
+  private boolean upsertZone(
       String name,
       String description,
       Map<String, String> tags,
@@ -131,7 +211,27 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean upsertInfrastructure(
+  public boolean insertInfrastructure(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String zone) {
+    return upsertInfrastructure(name,description,tags,type,configuration,zone);
+  }
+
+  public boolean updateInfrastructure(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String zone) {
+    return upsertInfrastructure(name,description,tags,type,configuration,zone);
+  }
+
+  private boolean upsertInfrastructure(
       String name,
       String description,
       Map<String, String> tags,
@@ -142,7 +242,29 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean upsertProducer(
+  public boolean insertProducer(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    return upsertProducer(name,description,tags,type,configuration,stream,zones);
+  }
+
+  public boolean updateProducer(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    return upsertProducer(name,description,tags,type,configuration,stream,zones);
+  }
+
+  private boolean upsertProducer(
       String name,
       String description,
       Map<String, String> tags,
@@ -154,7 +276,29 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean upsertConsumer(
+  public boolean insertConsumer(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    return upsertConsumer(name,description,tags,type,configuration,stream,zones);
+  }
+
+  public boolean updateConsumer(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      List<String> zones) {
+    return upsertConsumer(name,description,tags,type,configuration,stream,zones);
+  }
+
+  private boolean upsertConsumer(
       String name,
       String description,
       Map<String, String> tags,
@@ -166,7 +310,29 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean upsertStreamBinding(
+  public boolean insertStreamBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      GraphQLInfrastructure.Key infrastructure) {
+    return upsertStreamBinding(name,description,tags,type,configuration,stream,infrastructure);
+  }
+
+  public boolean updateStreamBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      GraphQLStream.Key stream,
+      GraphQLInfrastructure.Key infrastructure) {
+    return upsertStreamBinding(name,description,tags,type,configuration,stream,infrastructure);
+  }
+
+  private boolean upsertStreamBinding(
       String name,
       String description,
       Map<String, String> tags,
@@ -178,7 +344,29 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean upsertProducerBinding(
+  public boolean insertProducerBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String producer,
+      List<String> zones) {
+    return upsertProducerBinding(name,description,tags,type,configuration,producer,zones);
+  }
+
+  public boolean updateProducerBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String producer,
+      List<String> zones) {
+    return upsertProducerBinding(name,description,tags,type,configuration,producer,zones);
+  }
+
+  private boolean upsertProducerBinding(
       String name,
       String description,
       Map<String, String> tags,
@@ -190,7 +378,29 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean upsertConsumerBinding(
+  public boolean insertConsumerBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String consumer,
+      List<String> zones) {
+    return upsertConsumerBinding(name,description,tags,type,configuration,consumer,zones);
+  }
+
+  public boolean updateConsumerBinding(
+      String name,
+      String description,
+      Map<String, String> tags,
+      String type,
+      ObjectNode configuration,
+      String consumer,
+      List<String> zones) {
+    return upsertConsumerBinding(name,description,tags,type,configuration,consumer,zones);
+  }
+
+  private boolean upsertConsumerBinding(
       String name,
       String description,
       Map<String, String> tags,

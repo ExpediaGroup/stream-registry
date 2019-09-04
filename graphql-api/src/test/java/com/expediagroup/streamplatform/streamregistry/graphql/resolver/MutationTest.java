@@ -98,7 +98,7 @@ public class MutationTest {
 
   @Test
   public void upsertDomain() {
-    boolean result = underTest.upsertDomain(
+    boolean result = underTest.insertDomain(
         domain.getName(),
         domain.getDescription(),
         domain.getTags(),
@@ -112,7 +112,7 @@ public class MutationTest {
 
   @Test
   public void upsertSchema() {
-    boolean result = underTest.upsertSchema(
+    boolean result = underTest.insertSchema(
         schema.getName(),
         schema.getDescription(),
         schema.getTags(),
@@ -127,7 +127,7 @@ public class MutationTest {
 
   @Test
   public void upsertStream() {
-    boolean result = underTest.upsertStream(
+    boolean result = underTest.insertStream(
         stream.getName(),
         stream.getDescription(),
         stream.getTags(),
