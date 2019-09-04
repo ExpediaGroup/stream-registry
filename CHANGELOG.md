@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Reference GraphQL client.
 
 ### Changed
+- Seperated Upsert into Insert and Update _at the API layer only_
 - Converted project into spring boot starter
 - 1.0.0-SNAPSHOT -> 0.7.0-SNAPSHOT
 - Changed groupId to `com.expediagroup.streamplatform`
