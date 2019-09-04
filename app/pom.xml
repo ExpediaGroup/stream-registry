@@ -65,20 +65,12 @@
         </configuration>
         <executions>
           <execution>
-            <id>${jib-maven-plugin.goal}</id>
+            <id>${jib.goal}</id>
             <goals>
-              <goal>${jib-maven-plugin.goal}</goal>
+              <goal>${jib.goal}</goal>
             </goals>
             <phase>package</phase>
           </execution>
-          <!-- TODO : Docker push -->
-          <!-- <execution>
-            <id>dockerBuildAndPush</id>
-            <goals>
-              <goal>build</goal>
-            </goals>
-            <phase>deploy</phase>
-          </execution> -->
         </executions>
       </plugin>
     </plugins>
