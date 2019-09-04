@@ -31,11 +31,7 @@ public class AvroSchemaConversion implements Conversion<Schema, Schema.Key, Avro
   }
 
   public static Schema.Key modelKey(AvroKey key) {
-    return Schema.Key
-        .builder()
-        .name(key.getId())
-        .domain(AvroDomainConversion.modelKey(key.getParent()))
-        .build();
+    return new Schema.Key(key.getId(), AvroDomainConversion.modelKey(key.getParent()));
   }
 
   @Override

@@ -31,10 +31,7 @@ public class AvroDomainConversion implements Conversion<Domain, Domain.Key, Avro
   }
 
   public static Domain.Key modelKey(AvroKey key) {
-    return Domain.Key
-        .builder()
-        .name(key.getId())
-        .build();
+    return new Domain.Key(key.getId());
   }
 
   @Override

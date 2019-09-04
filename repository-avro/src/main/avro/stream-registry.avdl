@@ -27,7 +27,7 @@ protocol StreamRegistry {
     map<string> tags;
     string type;
     string configurationString;
-    AvroKey domainKey;
+    AvroKey domainAvroKey;
   }
 
   record AvroStream {
@@ -37,9 +37,9 @@ protocol StreamRegistry {
     map<string> tags;
     string type;
     string configurationString;
-    AvroKey domainKey;
+    AvroKey domainAvroKey;
     int version;
-    AvroKey schemaKey;
+    AvroKey schemaAvroKey;
   }
 
 }

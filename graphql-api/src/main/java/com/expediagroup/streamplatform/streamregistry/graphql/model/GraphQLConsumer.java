@@ -32,6 +32,6 @@ public class GraphQLConsumer {
   Map<String, String> tags;
   String type;
   ObjectNode configuration;
-  GraphQLStream stream;
+  GraphQLStream.Key streamKey;
   List<String> zones;
 }

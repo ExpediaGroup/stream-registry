@@ -35,7 +35,7 @@ public class VersionPredicateFactory {
     }
     return stream
         .collect(ImmutableListMultimap.toImmutableListMultimap(
-            s -> String.format("%s.%s", s.getDomain(), s.getName()),
+            s -> String.format("%s.%s", s.getDomainKey(), s.getName()),
             s -> s))
         .asMap()
         .values()

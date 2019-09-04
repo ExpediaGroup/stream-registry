@@ -15,35 +15,35 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model;
 
-import java.util.function.Function;
-
 import lombok.RequiredArgsConstructor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hotels.beans.BeanUtils;
 import com.hotels.beans.model.FieldTransformer;
 import com.hotels.beans.transformer.Transformer;
 
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.service.Service;
 
 @RequiredArgsConstructor
+@Component
 public class GraphQLTransformer {
-  private static final ObjectMapper mapper = new ObjectMapper();
 
   private final Transformer transformer;
 
-  public GraphQLTransformer(
-      Service<Domain, Domain.Key> domainService,
-      Service<Schema, Schema.Key> schemaService) {
-    this(transformer(domainService, schemaService));
+  public GraphQLTransformer() {
+    this(transformer());
   }
 
   public GraphQLDomain transform(Domain domain) {
     return transformer.transform(domain, GraphQLDomain.class);
+  }
+
+  public <T, K> K transform(T sourceObj, Class<? extends K> targetClass) {
+    return transformer.transform(sourceObj, targetClass);
   }
 
   public GraphQLSchema transform(Schema schema) {
@@ -54,20 +54,7 @@ public class GraphQLTransformer {
     return transformer.transform(stream, GraphQLStream.class);
   }
 
-  private static Transformer transformer(
-      Service<Domain, Domain.Key> domainService,
-      Service<Schema, Schema.Key> schemaService) {
-    BeanUtils beanUtils = new BeanUtils();
-    Transformer transformer = beanUtils.getTransformer();
-
-    Function<Domain.Key, GraphQLDomain> domainFunction = key -> transformer
-        .transform(domainService.get(key), GraphQLDomain.class);
-    Function<Schema.Key, GraphQLSchema> schemaFunction = key -> transformer
-        .transform(schemaService.get(key), GraphQLSchema.class);
-
-    return transformer
-        .withFieldTransformer(new FieldTransformer<>("configuration", ObjectNode::deepCopy))
-        .withFieldTransformer(new FieldTransformer<>("domain", domainFunction))
-        .withFieldTransformer(new FieldTransformer<>("schema", schemaFunction));
+  private static Transformer transformer() {
+    return new BeanUtils().getTransformer().withFieldTransformer(new FieldTransformer<>("configuration", ObjectNode::deepCopy));
   }
 }

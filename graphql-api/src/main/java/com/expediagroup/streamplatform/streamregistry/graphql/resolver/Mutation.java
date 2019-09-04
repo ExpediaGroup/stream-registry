@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolver;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.resolver.KeyConvertor.convert;
+
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.service.Service;
 @Component
 @RequiredArgsConstructor
 public class Mutation implements GraphQLMutationResolver {
+
   private final Service<Domain, Domain.Key> domainService;
   private final Service<Schema, Schema.Key> schemaService;
   private final Service<Stream, Stream.Key> streamService;
@@ -114,10 +117,7 @@ public class Mutation implements GraphQLMutationResolver {
             .tags(tags)
             .type(type)
             .configuration(configuration)
-            .domain(Domain.Key
-                .builder()
-                .name(domain)
-                .build())
+            .domainKey(new Domain.Key(domain))
             .build()
     );
     return true;
@@ -165,19 +165,9 @@ public class Mutation implements GraphQLMutationResolver {
             .tags(tags)
             .type(type)
             .configuration(configuration)
-            .domain(Domain.Key
-                .builder()
-                .name(domain)
-                .build())
+            .domainKey(new Domain.Key(domain))
             .version(version)
-            .schema(Schema.Key
-                .builder()
-                .domain(Domain.Key
-                    .builder()
-                    .name(schema.getDomain())
-                    .build())
-                .name(schema.getName())
-                .build())
+            .schemaKey(convert(schema))
             .build()
     );
     return true;
