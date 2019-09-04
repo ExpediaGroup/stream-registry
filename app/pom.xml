@@ -65,9 +65,9 @@
         </configuration>
         <executions>
           <execution>
-            <id>dockerBuild</id>
+            <id>${jib-maven-plugin.goal}</id>
             <goals>
-              <goal>dockerBuild</goal>
+              <goal>${jib-maven-plugin.goal}</goal>
             </goals>
             <phase>package</phase>
           </execution>
