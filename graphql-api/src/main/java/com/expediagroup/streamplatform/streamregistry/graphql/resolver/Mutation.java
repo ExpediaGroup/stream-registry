@@ -40,7 +40,7 @@ public class Mutation implements GraphQLMutationResolver {
   private final Service<Schema, Schema.Key> schemaService;
   private final Service<Stream, Stream.Key> streamService;
 
-  public boolean insertDomain(
+  public boolean createDomain(
       String name,
       String description,
       Map<String, String> tags,
@@ -78,7 +78,7 @@ public class Mutation implements GraphQLMutationResolver {
     return true;
   }
 
-  public boolean insertSchema(
+  public boolean createSchema(
       String name,
       String description,
       Map<String, String> tags,
@@ -123,7 +123,7 @@ public class Mutation implements GraphQLMutationResolver {
     return true;
   }
 
-  public boolean insertStream(
+  public boolean createStream(
       String name,
       String description,
       Map<String, String> tags,
@@ -183,7 +183,7 @@ public class Mutation implements GraphQLMutationResolver {
     return true;
   }
 
-  public boolean insertZone(
+  public boolean createZone(
       String name,
       String description,
       Map<String, String> tags,
@@ -211,7 +211,7 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean insertInfrastructure(
+  public boolean createInfrastructure(
       String name,
       String description,
       Map<String, String> tags,
@@ -242,7 +242,7 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean insertProducer(
+  public boolean createProducer(
       String name,
       String description,
       Map<String, String> tags,
@@ -276,7 +276,7 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean insertConsumer(
+  public boolean createConsumer(
       String name,
       String description,
       Map<String, String> tags,
@@ -310,7 +310,7 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean insertStreamBinding(
+  public boolean createStreamBinding(
       String name,
       String description,
       Map<String, String> tags,
@@ -344,7 +344,7 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean insertProducerBinding(
+  public boolean createProducerBinding(
       String name,
       String description,
       Map<String, String> tags,
@@ -378,7 +378,7 @@ public class Mutation implements GraphQLMutationResolver {
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 
-  public boolean insertConsumerBinding(
+  public boolean createConsumerBinding(
       String name,
       String description,
       Map<String, String> tags,

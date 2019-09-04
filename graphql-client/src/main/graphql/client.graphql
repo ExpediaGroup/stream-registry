@@ -632,14 +632,14 @@ query ConsumerBindings(
   }
 }
 
-mutation InsertDomain (
+mutation createDomain (
   $name: String!
   $description: String!
   $tags: Tags!
   $type: String!
   $configuration: Config!
 ){
-  insertDomain(
+  createDomain(
     name: $name
     description: $description
     tags: $tags
@@ -664,7 +664,7 @@ mutation UpdateDomain (
   )
 }
 
-mutation InsertSchema (
+mutation createSchema (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -672,7 +672,7 @@ mutation InsertSchema (
   $configuration: Config!
   $domain: String!
 ){
-  insertSchema(
+  createSchema(
     name: $name
     description: $description
     tags: $tags
@@ -700,7 +700,7 @@ mutation UpdateSchema (
   )
 }
 
-mutation InsertStream (
+mutation createStream (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -710,7 +710,7 @@ mutation InsertStream (
   $version: Int!
   $schema: SchemaKeyInput!
 ){
-  insertStream(
+  createStream(
     name: $name
     description: $description
     tags: $tags
@@ -744,14 +744,14 @@ mutation UpdateStream (
   )
 }
 
-mutation InsertZone (
+mutation createZone (
   $name: String!
   $description: String!
   $tags: Tags!
   $type: String!
   $configuration: Config!
 ){
-  insertZone(
+  createZone(
     name: $name
     description: $description
     tags: $tags
@@ -776,7 +776,7 @@ mutation UpdateZone (
   )
 }
 
-mutation InsertInfrastructure (
+mutation createInfrastructure (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -784,7 +784,7 @@ mutation InsertInfrastructure (
   $configuration: Config!
   $zone: String!
 ){
-  insertInfrastructure(
+  createInfrastructure(
     name: $name
     description: $description
     tags: $tags
@@ -812,7 +812,7 @@ mutation UpdateInfrastructure (
   )
 }
 
-mutation InsertProducer (
+mutation createProducer (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -821,7 +821,7 @@ mutation InsertProducer (
   $stream: StreamKeyInput!
   $zones: [String!]!
 ){
-  insertProducer(
+  createProducer(
     name: $name
     description: $description
     tags: $tags
@@ -852,7 +852,7 @@ mutation UpdateProducer (
   )
 }
 
-mutation InsertConsumer (
+mutation createConsumer (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -861,7 +861,7 @@ mutation InsertConsumer (
   $stream: StreamKeyInput!
   $zones: [String!]!
 ){
-  insertConsumer(
+  createConsumer(
     name: $name
     description: $description
     tags: $tags
@@ -892,7 +892,7 @@ mutation UpdateConsumer (
   )
 }
 
-mutation insertStreamBinding (
+mutation createStreamBinding (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -901,7 +901,7 @@ mutation insertStreamBinding (
   $stream: StreamKeyInput!
   $infrastructure: InfrastructureKeyInput!
 ){
-  insertStreamBinding(
+  createStreamBinding(
     name: $name
     description: $description
     tags: $tags
@@ -932,7 +932,7 @@ mutation updateStreamBinding (
   )
 }
 
-mutation InsertProducerBinding (
+mutation createProducerBinding (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -941,7 +941,7 @@ mutation InsertProducerBinding (
   $producer: String!
   $zones: [String!]!
 ){
-  insertProducerBinding(
+  createProducerBinding(
     name: $name
     description: $description
     tags: $tags
@@ -972,7 +972,7 @@ mutation UpdateProducerBinding (
   )
 }
 
-mutation InsertConsumerBinding (
+mutation createConsumerBinding (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -981,7 +981,7 @@ mutation InsertConsumerBinding (
   $consumer: String!
   $zones: [String!]!
 ){
-  insertConsumerBinding(
+  createConsumerBinding(
     name: $name
     description: $description
     tags: $tags
