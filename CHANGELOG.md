@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 * New GraphQL API.
-* New internal model with service, handler and repository layers. 
+* New internal model with service, handler and repository layers.
 * Domain, Schema & Stream entities.
 * Reference GraphQL client.
+* Docker pull and push repo url.
 
 ### Changed
 - Separated Upsert into Create and Update _at the API layer only_
@@ -22,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed consumer/producer service (to be reintroduced later)
 - Removed Dropwizard
 - Added Spring Boot
-- Docker image accepts environment variables for Spring Configuration 
+- Docker image accepts environment variables for Spring Configuration
 - Removed charts (to be reintroduced later)
 - Removed health checks (to be reintroduced later)
 - Removed remaining unused files
@@ -34,7 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.5.1] - SNAPSHOT
 ### Added
-- Updated `README` with Expedia Group stream registry announcement (#155) 
+- Updated `README` with Expedia Group stream registry announcement (#155)
 - Increasing the WAIT time to 100ms in test cases to allow the underlying datastore to sync with the commits.
 
 ### Changed
@@ -42,7 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.5.0] - 20190412
 ### Added
-- Add health check to verify whether the underlying topic (used as Datastore) 
+- Add health check to verify whether the underlying topic (used as Datastore)
   is compaction enabled to make sure Stream Metadata is not lost. (#144)
 
 ### Changed
@@ -68,7 +69,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.4.8] - 20190308
 ### Added
-- Added clusters Api (#131, #36) 
+- Added clusters Api (#131, #36)
 
 ### Changed
 - Updated license info to extend until Present (#138)
