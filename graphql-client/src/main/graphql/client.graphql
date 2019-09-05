@@ -632,14 +632,14 @@ query ConsumerBindings(
   }
 }
 
-mutation UpsertDomain (
+mutation createDomain (
   $name: String!
   $description: String!
   $tags: Tags!
   $type: String!
   $configuration: Config!
 ){
-  upsertDomain(
+  createDomain(
     name: $name
     description: $description
     tags: $tags
@@ -648,7 +648,23 @@ mutation UpsertDomain (
   )
 }
 
-mutation UpsertSchema (
+mutation UpdateDomain (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+){
+  updateDomain(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+  )
+}
+
+mutation createSchema (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -656,7 +672,7 @@ mutation UpsertSchema (
   $configuration: Config!
   $domain: String!
 ){
-  upsertSchema(
+  createSchema(
     name: $name
     description: $description
     tags: $tags
@@ -666,7 +682,25 @@ mutation UpsertSchema (
   )
 }
 
-mutation UpsertStream (
+mutation UpdateSchema (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $domain: String!
+){
+  updateSchema(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    domain: $domain
+  )
+}
+
+mutation createStream (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -676,7 +710,7 @@ mutation UpsertStream (
   $version: Int!
   $schema: SchemaKeyInput!
 ){
-  upsertStream(
+  createStream(
     name: $name
     description: $description
     tags: $tags
@@ -688,14 +722,36 @@ mutation UpsertStream (
   )
 }
 
-mutation UpsertZone (
+mutation UpdateStream (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $domain: String!
+  $version: Int!
+  $schema: SchemaKeyInput!
+){
+  updateStream(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    domain: $domain
+    version: $version
+    schema: $schema
+  )
+}
+
+mutation createZone (
   $name: String!
   $description: String!
   $tags: Tags!
   $type: String!
   $configuration: Config!
 ){
-  upsertZone(
+  createZone(
     name: $name
     description: $description
     tags: $tags
@@ -704,7 +760,23 @@ mutation UpsertZone (
   )
 }
 
-mutation UpsertInfrastructure (
+mutation UpdateZone (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+){
+  updateZone(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+  )
+}
+
+mutation createInfrastructure (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -712,7 +784,7 @@ mutation UpsertInfrastructure (
   $configuration: Config!
   $zone: String!
 ){
-  upsertInfrastructure(
+  createInfrastructure(
     name: $name
     description: $description
     tags: $tags
@@ -722,7 +794,25 @@ mutation UpsertInfrastructure (
   )
 }
 
-mutation UpsertProducer (
+mutation UpdateInfrastructure (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $zone: String!
+){
+  updateInfrastructure(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    zone: $zone
+  )
+}
+
+mutation createProducer (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -731,7 +821,7 @@ mutation UpsertProducer (
   $stream: StreamKeyInput!
   $zones: [String!]!
 ){
-  upsertProducer(
+  createProducer(
     name: $name
     description: $description
     tags: $tags
@@ -742,7 +832,7 @@ mutation UpsertProducer (
   )
 }
 
-mutation UpsertConsumer (
+mutation UpdateProducer (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -751,7 +841,7 @@ mutation UpsertConsumer (
   $stream: StreamKeyInput!
   $zones: [String!]!
 ){
-  upsertConsumer(
+  updateProducer(
     name: $name
     description: $description
     tags: $tags
@@ -762,7 +852,47 @@ mutation UpsertConsumer (
   )
 }
 
-mutation upsertStreamBinding (
+mutation createConsumer (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $stream: StreamKeyInput!
+  $zones: [String!]!
+){
+  createConsumer(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    zones: $zones
+  )
+}
+
+mutation UpdateConsumer (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $stream: StreamKeyInput!
+  $zones: [String!]!
+){
+  updateConsumer(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    zones: $zones
+  )
+}
+
+mutation createStreamBinding (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -771,7 +901,7 @@ mutation upsertStreamBinding (
   $stream: StreamKeyInput!
   $infrastructure: InfrastructureKeyInput!
 ){
-  upsertStreamBinding(
+  createStreamBinding(
     name: $name
     description: $description
     tags: $tags
@@ -782,7 +912,27 @@ mutation upsertStreamBinding (
   )
 }
 
-mutation UpsertProducerBinding (
+mutation updateStreamBinding (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $stream: StreamKeyInput!
+  $infrastructure: InfrastructureKeyInput!
+){
+  updateStreamBinding(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    stream: $stream
+    infrastructure: $infrastructure
+  )
+}
+
+mutation createProducerBinding (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -791,7 +941,7 @@ mutation UpsertProducerBinding (
   $producer: String!
   $zones: [String!]!
 ){
-  upsertProducerBinding(
+  createProducerBinding(
     name: $name
     description: $description
     tags: $tags
@@ -802,7 +952,27 @@ mutation UpsertProducerBinding (
   )
 }
 
-mutation UpsertConsumerBinding (
+mutation UpdateProducerBinding (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $producer: String!
+  $zones: [String!]!
+){
+  updateProducerBinding(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    producer: $producer
+    zones: $zones
+  )
+}
+
+mutation createConsumerBinding (
   $name: String!
   $description: String!
   $tags: Tags!
@@ -811,7 +981,27 @@ mutation UpsertConsumerBinding (
   $consumer: String!
   $zones: [String!]!
 ){
-  upsertConsumerBinding(
+  createConsumerBinding(
+    name: $name
+    description: $description
+    tags: $tags
+    type: $type
+    configuration: $configuration
+    consumer: $consumer
+    zones: $zones
+  )
+}
+
+mutation UpdateConsumerBinding (
+  $name: String!
+  $description: String!
+  $tags: Tags!
+  $type: String!
+  $configuration: Config!
+  $consumer: String!
+  $zones: [String!]!
+){
+  updateConsumerBinding(
     name: $name
     description: $description
     tags: $tags

@@ -237,14 +237,21 @@ type Query {
 }
 
 type Mutation {
-  upsertDomain(
+  createDomain(
     name: String!
     description: String!
     tags: Tags!
     type: String!
     configuration: Config!
   ): Boolean!
-  upsertSchema(
+  updateDomain(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+  ): Boolean!
+  createSchema(
     name: String!
     description: String!
     tags: Tags!
@@ -252,7 +259,15 @@ type Mutation {
     configuration: Config!
     domain: String!
   ): Boolean!
-  upsertStream(
+  updateSchema(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    domain: String!
+  ): Boolean!
+  createStream(
     name: String!
     description: String!
     tags: Tags!
@@ -262,14 +277,31 @@ type Mutation {
     version: Int!
     schema: SchemaKeyInput!
   ): Boolean!
-  upsertZone(
+  updateStream(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    domain: String!
+    version: Int!
+    schema: SchemaKeyInput!
+  ): Boolean!
+  createZone(
     name: String!
     description: String!
     tags: Tags!
     type: String!
     configuration: Config!
   ): Boolean!
-  upsertInfrastructure(
+  updateZone(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+  ): Boolean!
+  createInfrastructure(
     name: String!
     description: String!
     tags: Tags!
@@ -277,7 +309,15 @@ type Mutation {
     configuration: Config!
     zone: String!
   ): Boolean!
-  upsertProducer(
+  updateInfrastructure(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    zone: String!
+  ): Boolean!
+  createProducer(
     name: String!
     description: String!
     tags: Tags!
@@ -286,7 +326,7 @@ type Mutation {
     stream: StreamKeyInput!
     zones: [String!]!
   ): Boolean!
-  upsertConsumer(
+  updateProducer(
     name: String!
     description: String!
     tags: Tags!
@@ -295,7 +335,25 @@ type Mutation {
     stream: StreamKeyInput!
     zones: [String!]!
   ): Boolean!
-  upsertStreamBinding(
+  createConsumer(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    stream: StreamKeyInput!
+    zones: [String!]!
+  ): Boolean!
+  updateConsumer(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    stream: StreamKeyInput!
+    zones: [String!]!
+  ): Boolean!
+  createStreamBinding(
     name: String!
     description: String!
     tags: Tags!
@@ -304,7 +362,16 @@ type Mutation {
     stream: StreamKeyInput!
     infrastructure: InfrastructureKeyInput!
   ): Boolean!
-  upsertProducerBinding(
+  updateStreamBinding(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    stream: StreamKeyInput!
+    infrastructure: InfrastructureKeyInput!
+  ): Boolean!
+  createProducerBinding(
     name: String!
     description: String!
     tags: Tags!
@@ -313,7 +380,25 @@ type Mutation {
     producer: String!
     zones: [String!]!
   ): Boolean!
-  upsertConsumerBinding(
+  updateProducerBinding(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    producer: String!
+    zones: [String!]!
+  ): Boolean!
+  createConsumerBinding(
+    name: String!
+    description: String!
+    tags: Tags!
+    type: String!
+    configuration: Config!
+    consumer: String!
+    zones: [String!]!
+  ): Boolean!
+  updateConsumerBinding(
     name: String!
     description: String!
     tags: Tags!

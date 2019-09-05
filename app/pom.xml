@@ -66,20 +66,12 @@
         </configuration>
         <executions>
           <execution>
-            <id>dockerBuild</id>
+            <id>${jib.goal}</id>
             <goals>
-              <goal>dockerBuild</goal>
+              <goal>${jib.goal}</goal>
             </goals>
             <phase>package</phase>
           </execution>
-          <!-- TODO : Docker push -->
-          <!-- <execution>
-            <id>dockerBuildAndPush</id>
-            <goals>
-              <goal>build</goal>
-            </goals>
-            <phase>deploy</phase>
-          </execution> -->
         </executions>
       </plugin>
     </plugins>
