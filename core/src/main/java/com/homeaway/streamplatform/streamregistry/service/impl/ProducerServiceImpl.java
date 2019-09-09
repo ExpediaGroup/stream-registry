@@ -119,8 +119,9 @@ public class ProducerServiceImpl extends AbstractService implements StreamClient
     private Optional<com.homeaway.streamplatform.streamregistry.model.Producer> registerProducer(AvroStreamKey key, AvroStream avroStream, String producerName, String region)
             throws RegionNotFoundException, ClusterNotFoundException {
         log.info("Registering new Producer. Stream={} Producer={} ; region={}", avroStream.getName(), producerName, region);
-        if (!regionService.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
-            throw new RegionNotFoundException(String.format("Region=%s not supported for hint=%s", region, avroStream.getTags().getHint()));
+
+        if (!avroStream.getVpcList().contains(region))
+            throw new RegionNotFoundException(String.format("Region=%s not supported for regions=%s", region, avroStream.getVpcList()));
 
         List<com.homeaway.digitalplatform.streamregistry.Producer> listProducers = avroStream.getProducers();
         if (listProducers == null) {

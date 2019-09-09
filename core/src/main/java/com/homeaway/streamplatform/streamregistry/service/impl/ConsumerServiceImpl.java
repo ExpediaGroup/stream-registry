@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -127,8 +128,11 @@ public class ConsumerServiceImpl extends AbstractService implements StreamClient
         String region) throws RegionNotFoundException, ClusterNotFoundException {
         log.info("Registering new Consumer. Stream={} Consumer={} ; region={}", avroStream.getName(), consumerName, region);
 
-        if (!regionService.getSupportedRegions(avroStream.getTags().getHint()).contains(region))
-            throw new RegionNotFoundException(String.format("Region=%s is not supported for the Stream's hint=%s", region, avroStream.getTags().getHint()));
+        List<String> possibleRegions = Stream.concat(avroStream.getVpcList().stream(), avroStream.getReplicatedVpcList().stream())
+                .distinct()
+                .collect(Collectors.toList());
+        if (!possibleRegions.contains(region))
+            throw new RegionNotFoundException(String.format("Region=%s is not supported for regions=%s", region, possibleRegions));
 
         List<com.homeaway.digitalplatform.streamregistry.Consumer> listConsumers = avroStream.getConsumers();
         if (listConsumers == null) {
