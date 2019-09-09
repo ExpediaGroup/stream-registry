@@ -128,9 +128,13 @@ public class ConsumerServiceImpl extends AbstractService implements StreamClient
         String region) throws RegionNotFoundException, ClusterNotFoundException {
         log.info("Registering new Consumer. Stream={} Consumer={} ; region={}", avroStream.getName(), consumerName, region);
 
-        List<String> possibleRegions = Stream.concat(avroStream.getVpcList().stream(), avroStream.getReplicatedVpcList().stream())
-                .distinct()
-                .collect(Collectors.toList());
+        List<String> possibleRegions = avroStream.getVpcList();
+        if (avroStream.getReplicatedVpcList() != null) {
+            possibleRegions = Stream.concat(avroStream.getVpcList().stream(), avroStream.getReplicatedVpcList().stream())
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+
         if (!possibleRegions.contains(region))
             throw new RegionNotFoundException(String.format("Region=%s is not supported for regions=%s", region, possibleRegions));
 
