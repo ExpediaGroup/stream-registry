@@ -1,410 +1,377 @@
-scalar Tags
-scalar Config
+scalar ObjectNode
+
+############ Tag ############
+
+input TagInput {
+  name: String!
+  value: String
+}
+
+input TagQuery {
+  nameRegex: String
+  valueRegex: String
+}
+
+type Tag {
+  name: String!
+  value: String
+}
+
+############ Specification ############
+
+input SpecificationInput {
+  description: String!
+  tags: [TagInput!]
+  type: String!
+  configuration: ObjectNode!
+}
+
+input SpecificationQuery {
+  descriptionRegex: String
+  tags: [TagQuery!]
+  typeRegex: String
+}
+
+type Specification {
+  description: String
+  tags: [Tag!]!
+  type: String!
+  configuration: ObjectNode!
+}
+
+############ Domain ############
+
+type DomainKey {
+  name: String!
+}
+
+input DomainKeyInput {
+  name: String!
+}
+
+input DomainKeyQuery {
+  nameRegex: String
+}
 
 type Domain {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
+  key: DomainKey!
+  specification: Specification!
+  status: ObjectNode
 }
 
-type Schema {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  domain: Domain!
-}
+############ Schema ############
 
-type Stream {
+type SchemaKey {
+  domain: DomainKey!
   name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  domain: Domain!
-  version: Int!
-  schema: Schema!
-}
-
-type Zone {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-}
-
-type Infrastructure {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  zone: Zone!
-}
-
-type Producer {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  stream: Stream!
-  zones: [String!]!
-}
-
-type Consumer {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  stream: Stream!
-  zones: [String!]!
-}
-
-type StreamBinding {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  stream: Stream!
-  infrastructure: Infrastructure!
-}
-
-type ProducerBinding {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  producer: Producer!
-  binding: StreamBinding!
-}
-
-type ConsumerBinding {
-  name: String!
-  owner: String!
-  description: String!
-  tags: Tags!
-  type: String!
-  configuration: Config!
-  consumer: Consumer!
-  binding: StreamBinding!
-}
-
-input SchemaKeyQueryInput {
-  name: String
-  domain: String
 }
 
 input SchemaKeyInput {
+  domain: DomainKeyInput!
   name: String!
-  domain: String!
 }
 
-input StreamKeyQueryInput {
-  domain: String
-  name: String
-  version: Int
+input SchemaKeyQuery {
+  domain: DomainKeyQuery
+  nameRegex: String
 }
 
-input StreamKeyInput {
-  domain: String!
+type Schema {
+  key: SchemaKey!
+  specification: Specification!
+  configuration: ObjectNode!
+  status: ObjectNode
+  domain: Domain!
+}
+
+############ Stream ############
+
+type StreamKey {
+  domain: DomainKey!
   name: String!
   version: Int!
 }
 
-input InfrastructureKeyQueryInput {
-  name: String
-  zone: String
+input StreamKeyInput {
+  domain: DomainKeyInput!
+  name: String!
+  version: Int!
+}
+
+input StreamKeyQuery {
+  domain: DomainKeyQuery!
+  nameRegex: String
+  version: Int
+}
+
+type Stream {
+  key: StreamKey!
+  schema: Schema!
+  specification: Specification!
+  status: ObjectNode
+}
+
+############ Zone ############
+
+type ZoneKey {
+  name: String!
+}
+
+input ZoneKeyInput {
+  name: String!
+}
+
+input ZoneKeyQuery {
+  nameRegex: String
+}
+
+type Zone {
+  key: ZoneKey!
+  specification: Specification!
+  status: ObjectNode
+}
+
+############ Infrastructure ############
+
+type InfrastructureKey {
+  zone: ZoneKey!
+  name: String!
 }
 
 input InfrastructureKeyInput {
+  zone: ZoneKeyInput!
   name: String!
-  zone: String!
 }
 
-type Query {
-  domains(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-  ): [Domain!]!
-  schemas(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    domain: String
-  ): [Schema!]!
-  streams(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    domain: String
-    version: Int
-    schema: SchemaKeyQueryInput
-  ): [Stream!]!
-  zones(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-  ): [Zone!]!
-  infrastructures(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    zone: String
-  ): [Infrastructure!]!
-  producers(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    stream: StreamKeyQueryInput
-    zones: [String!]
-  ): [Producer!]!
-  consumers(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    stream: StreamKeyQueryInput
-    zones: [String!]
-  ): [Consumer!]!
-  streamBindings(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    stream: StreamKeyQueryInput
-    infrastructure: InfrastructureKeyQueryInput
-  ): [StreamBinding!]!
-  producerBindings(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    producer: String
-    zones: [String!]
-  ): [ProducerBinding!]!
-  consumerBindings(
-    name: String
-    owner: String
-    description: String
-    tags: Tags
-    type: String
-    configuration: Config
-    consumer: String
-    zones: [String!]
-  ): [ConsumerBinding!]!
+input InfrastructureKeyQuery {
+  zone: ZoneKeyQuery
+  nameRegex: String
 }
+
+type Infrastructure {
+  key: InfrastructureKey!
+  specification: Specification!
+  status: ObjectNode
+}
+
+############ Producer ############
+
+type ProducerKey {
+  stream: StreamKey!
+  name: String!
+}
+
+input ProducerKeyInput {
+  stream: StreamKeyInput!
+  name: String!
+}
+
+input ProducerKeyQuery {
+  stream: StreamKeyQuery
+  nameRegex: String
+}
+
+type Producer {
+  key: ProducerKey!
+  specification: Specification!
+  zones: [String!]!
+  status: ObjectNode
+}
+
+############ Consumer ############
+
+type ConsumerKey {
+  stream: StreamKey!
+  name: String!
+}
+
+input ConsumerKeyInput {
+  stream: StreamKeyInput!
+  name: String!
+}
+
+input ConsumerKeyQuery {
+  stream: StreamKeyQuery
+  nameRegex: String
+}
+
+type Consumer {
+  key: ConsumerKey!
+  specification: Specification!
+  zones: [String!]!
+  status: ObjectNode
+}
+
+############ StreamBinding ############
+
+type StreamBindingKey {
+  stream: StreamKey!
+  infrastructure: InfrastructureKey!
+}
+
+input StreamBindingKeyInput {
+  stream: StreamKeyInput
+  infrastructure: InfrastructureKeyInput
+}
+
+input StreamBindingKeyQuery {
+  stream: StreamKeyQuery
+  infrastructure: InfrastructureKeyQuery
+}
+
+type StreamBinding {
+  key: StreamBindingKey!
+  specification: Specification!
+  status: ObjectNode
+}
+
+############ ProducerBinding ############
+
+type ProducerBindingKey {
+  producer: ProducerKey!
+  binding: StreamBindingKey!
+}
+
+input ProducerBindingKeyInput {
+  producer: ProducerKeyInput!
+  binding: StreamBindingKeyInput!
+}
+
+input ProducerBindingKeyQuery {
+  producer: ProducerKeyQuery
+  binding: StreamBindingKeyQuery
+}
+
+type ProducerBinding {
+  key: ProducerBindingKey!
+  specification: Specification!
+  producer: Producer!
+  binding: StreamBinding!
+  status: ObjectNode
+}
+
+############ ConsumerBinding ############
+
+type ConsumerBindingKey {
+  consumer: ConsumerKey!
+  binding: StreamBindingKey!
+}
+
+input ConsumerBindingKeyInput {
+  consumer: ConsumerKeyInput!
+  binding: StreamBindingKeyInput!
+}
+
+input ConsumerBindingKeyQuery {
+  consumer: ConsumerKeyQuery
+  binding: StreamBindingKeyQuery
+}
+
+type ConsumerBinding {
+  key: ConsumerBindingKey!
+  specification: Specification!
+  consumer: Consumer!
+  binding: StreamBinding!
+  status: ObjectNode
+}
+
+############ Mutations ############
 
 type Mutation {
-  createDomain(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-  ): Boolean!
-  updateDomain(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-  ): Boolean!
-  createSchema(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    domain: String!
-  ): Boolean!
-  updateSchema(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    domain: String!
-  ): Boolean!
-  createStream(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    domain: String!
-    version: Int!
-    schema: SchemaKeyInput!
-  ): Boolean!
-  updateStream(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    domain: String!
-    version: Int!
-    schema: SchemaKeyInput!
-  ): Boolean!
-  createZone(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-  ): Boolean!
-  updateZone(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-  ): Boolean!
-  createInfrastructure(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    zone: String!
-  ): Boolean!
-  updateInfrastructure(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    zone: String!
-  ): Boolean!
-  createProducer(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    stream: StreamKeyInput!
-    zones: [String!]!
-  ): Boolean!
-  updateProducer(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    stream: StreamKeyInput!
-    zones: [String!]!
-  ): Boolean!
-  createConsumer(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    stream: StreamKeyInput!
-    zones: [String!]!
-  ): Boolean!
-  updateConsumer(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    stream: StreamKeyInput!
-    zones: [String!]!
-  ): Boolean!
-  createStreamBinding(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    stream: StreamKeyInput!
-    infrastructure: InfrastructureKeyInput!
-  ): Boolean!
-  updateStreamBinding(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    stream: StreamKeyInput!
-    infrastructure: InfrastructureKeyInput!
-  ): Boolean!
-  createProducerBinding(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    producer: String!
-    zones: [String!]!
-  ): Boolean!
-  updateProducerBinding(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    producer: String!
-    zones: [String!]!
-  ): Boolean!
-  createConsumerBinding(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    consumer: String!
-    zones: [String!]!
-  ): Boolean!
-  updateConsumerBinding(
-    name: String!
-    description: String!
-    tags: Tags!
-    type: String!
-    configuration: Config!
-    consumer: String!
-    zones: [String!]!
-  ): Boolean!
+
+  insertDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
+  updateDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
+  upsertDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
+  deleteDomain(key: DomainKeyInput!): Boolean!
+  updateDomainStatus(key: DomainKeyInput!, status: ObjectNode!): Domain!
+
+  insertSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
+  updateSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
+  upsertSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
+  deleteSchema(key: SchemaKeyInput!): Boolean!
+  updateSchemaStatus(key: SchemaKeyInput!, status: ObjectNode!): Schema!
+
+  insertStream(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
+  updateStream(key: StreamKeyInput!, specification: SpecificationInput!): Stream!
+  upsertStream(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput): Stream!
+  deleteStream(key: StreamKeyInput!): Boolean!
+  updateStreamStatus(key: StreamKeyInput!, status: ObjectNode!): Stream!
+
+  insertZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
+  updateZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
+  upsertZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
+  deleteZone(key: ZoneKeyInput!): Boolean!
+  updateZoneStatus(key: ZoneKeyInput!, status: ObjectNode!): Zone!
+
+  insertInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
+  updateInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
+  upsertInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
+  deleteInfrastructure(key: InfrastructureKeyInput!): Boolean!
+  updateInfrastructureStatus(key: InfrastructureKeyInput!, status: ObjectNode!): Infrastructure!
+
+  insertProducer(key: ProducerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!): Producer!
+  updateProducer(key: ProducerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Producer!
+  upsertProducer(key: ProducerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Producer!
+  deleteProducer(key: ProducerKeyInput!): Boolean!
+  updateProducerStatus(key: ProducerKeyInput!, status: ObjectNode!): Producer!
+
+  insertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!): Consumer!
+  updateConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Consumer!
+  upsertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Consumer!
+  deleteConsumer(key: ConsumerKeyInput!): Boolean!
+  updateConsumerStatus(key: ConsumerKeyInput!, status: ObjectNode!): Consumer!
+
+  insertStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
+  updateStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
+  upsertStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
+  deleteStreamBinding(key: StreamBindingKeyInput!): Boolean!
+  updateStreamBindingStatus(key: StreamBindingKeyInput!, status: ObjectNode!): StreamBinding!
+
+  insertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  updateProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  upsertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  deleteProducerBinding(key: ProducerBindingKeyInput!): Boolean!
+  updateProducerBindingStatus(key: ProducerBindingKeyInput!, status: ObjectNode!): ProducerBinding!
+
+  insertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  updateConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  upsertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  deleteConsumerBinding(key: ConsumerBindingKeyInput!): Boolean!
+  updateConsumerBindingStatus(key: ConsumerBindingKeyInput!, status: ObjectNode!): ConsumerBinding!
+}
+
+############ Queries ############
+
+type Query {
+
+  getDomain(key: DomainKeyInput!): Domain!
+  getDomains(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
+
+  getSchema(key: SchemaKeyInput!): Schema!
+  getSchemas(key: SchemaKeyQuery, specification: SpecificationQuery!): Schema!
+
+  getStream(key: StreamKeyInput!): Stream!
+  getStreams(key: StreamKeyQuery, specification: SpecificationQuery!): [Stream!]!
+
+  getZone(key: ZoneKeyInput!): Zone!
+  getZones(key: ZoneKeyQuery!, specification: SpecificationQuery): [Zone!]!
+
+  getInfrastructure(key: InfrastructureKeyInput!): Infrastructure!
+  getInfrastructures(key: InfrastructureKeyQuery!, specification: SpecificationQuery): [Infrastructure!]!
+
+  getProducer(key: ProducerKeyInput!): Producer!
+  getProducers(key: ProducerKeyQuery!, specification: SpecificationQuery): [Producer!]!
+
+  getConsumer(key: ConsumerKeyInput!): Consumer!
+  getConsumers(key: ConsumerKeyQuery!, specification: SpecificationQuery): [Consumer!]!
+
+  getStreamBinding(key: StreamBindingKeyInput!): StreamBinding!
+  getStreamBindings(key: StreamBindingKeyQuery!, specification: SpecificationQuery): [StreamBinding!]!
+
+  getProducerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
+  getProducerBindings(key: ProducerBindingKeyQuery!, specification: SpecificationQuery): [ProducerBinding!]!
+
+  getConsumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
+  getConsumerBindings(key: ConsumerBindingKeyQuery!, specification: SpecificationQuery): [ConsumerBinding!]!
+
 }
