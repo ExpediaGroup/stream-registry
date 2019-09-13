@@ -158,23 +158,25 @@ type Infrastructure {
 
 type ProducerKey {
   stream: StreamKey!
+  zone: ZoneKey!
   name: String!
 }
 
 input ProducerKeyInput {
   stream: StreamKeyInput!
+  zone: ZoneKeyInput!
   name: String!
 }
 
 input ProducerKeyQuery {
   stream: StreamKeyQuery
+  zone: ZoneKeyQuery
   nameRegex: String
 }
 
 type Producer {
   key: ProducerKey!
   specification: Specification!
-  zones: [String!]!
   status: ObjectNode
 }
 
@@ -182,23 +184,25 @@ type Producer {
 
 type ConsumerKey {
   stream: StreamKey!
+  zone: ZoneKey!
   name: String!
 }
 
 input ConsumerKeyInput {
   stream: StreamKeyInput!
+  zone: ZoneKeyInput!
   name: String!
 }
 
 input ConsumerKeyQuery {
   stream: StreamKeyQuery
+  zone: ZoneKeyQuery
   nameRegex: String
 }
 
 type Consumer {
   key: ConsumerKey!
   specification: Specification!
-  zones: [String!]!
   status: ObjectNode
 }
 
@@ -222,56 +226,6 @@ input StreamBindingKeyQuery {
 type StreamBinding {
   key: StreamBindingKey!
   specification: Specification!
-  status: ObjectNode
-}
-
-############ ProducerBinding ############
-
-type ProducerBindingKey {
-  producer: ProducerKey!
-  binding: StreamBindingKey!
-}
-
-input ProducerBindingKeyInput {
-  producer: ProducerKeyInput!
-  binding: StreamBindingKeyInput!
-}
-
-input ProducerBindingKeyQuery {
-  producer: ProducerKeyQuery
-  binding: StreamBindingKeyQuery
-}
-
-type ProducerBinding {
-  key: ProducerBindingKey!
-  specification: Specification!
-  producer: Producer!
-  binding: StreamBinding!
-  status: ObjectNode
-}
-
-############ ConsumerBinding ############
-
-type ConsumerBindingKey {
-  consumer: ConsumerKey!
-  binding: StreamBindingKey!
-}
-
-input ConsumerBindingKeyInput {
-  consumer: ConsumerKeyInput!
-  binding: StreamBindingKeyInput!
-}
-
-input ConsumerBindingKeyQuery {
-  consumer: ConsumerKeyQuery
-  binding: StreamBindingKeyQuery
-}
-
-type ConsumerBinding {
-  key: ConsumerBindingKey!
-  specification: Specification!
-  consumer: Consumer!
-  binding: StreamBinding!
   status: ObjectNode
 }
 
@@ -309,15 +263,15 @@ type Mutation {
   deleteInfrastructure(key: InfrastructureKeyInput!): Boolean!
   updateInfrastructureStatus(key: InfrastructureKeyInput!, status: ObjectNode!): Infrastructure!
 
-  insertProducer(key: ProducerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!): Producer!
-  updateProducer(key: ProducerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Producer!
-  upsertProducer(key: ProducerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Producer!
+  insertProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
+  updateProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
+  upsertProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
   deleteProducer(key: ProducerKeyInput!): Boolean!
   updateProducerStatus(key: ProducerKeyInput!, status: ObjectNode!): Producer!
 
-  insertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!): Consumer!
-  updateConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Consumer!
-  upsertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]): Consumer!
+  insertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
+  updateConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
+  upsertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
   deleteConsumer(key: ConsumerKeyInput!): Boolean!
   updateConsumerStatus(key: ConsumerKeyInput!, status: ObjectNode!): Consumer!
 
@@ -327,17 +281,6 @@ type Mutation {
   deleteStreamBinding(key: StreamBindingKeyInput!): Boolean!
   updateStreamBindingStatus(key: StreamBindingKeyInput!, status: ObjectNode!): StreamBinding!
 
-  insertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
-  updateProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
-  upsertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
-  deleteProducerBinding(key: ProducerBindingKeyInput!): Boolean!
-  updateProducerBindingStatus(key: ProducerBindingKeyInput!, status: ObjectNode!): ProducerBinding!
-
-  insertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
-  updateConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
-  upsertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
-  deleteConsumerBinding(key: ConsumerBindingKeyInput!): Boolean!
-  updateConsumerBindingStatus(key: ConsumerBindingKeyInput!, status: ObjectNode!): ConsumerBinding!
 }
 
 ############ Queries ############
@@ -367,11 +310,4 @@ type Query {
 
   getStreamBinding(key: StreamBindingKeyInput!): StreamBinding!
   getStreamBindings(key: StreamBindingKeyQuery!, specification: SpecificationQuery): [StreamBinding!]!
-
-  getProducerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
-  getProducerBindings(key: ProducerBindingKeyQuery!, specification: SpecificationQuery): [ProducerBinding!]!
-
-  getConsumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
-  getConsumerBindings(key: ConsumerBindingKeyQuery!, specification: SpecificationQuery): [ConsumerBinding!]!
-
 }
