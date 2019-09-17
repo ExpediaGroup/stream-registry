@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class ConfigTypeAdapter implements CustomTypeAdapter<Object> {
+public class ObjectNodeTypeAdapter implements CustomTypeAdapter<Object> {
   private static final ObjectMapper mapper = new ObjectMapper();
 
   @Override

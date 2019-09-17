@@ -18,15 +18,15 @@ package com.expediagroup.streamplatform.streamregistry.graphql.type;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import graphql.language.BooleanValue;
+import graphql.language.ArrayValue;
 import graphql.language.ObjectField;
 import graphql.language.ObjectValue;
 import graphql.language.StringValue;
@@ -34,8 +34,9 @@ import graphql.language.Value;
 import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingParseValueException;
 
-public class TagsCoercingTest {
-  private final TagsCoercing underTest = new TagsCoercing();
+public class ObjectNodeCoercingTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectNodeCoercing underTest = new ObjectNodeCoercing();
 
   @Test
   public void serialize() {
@@ -53,51 +54,31 @@ public class TagsCoercingTest {
             .build())
         .build();
 
-    TagsCoercing spy = Mockito.spy(underTest);
+    ObjectNodeCoercing spy = Mockito.spy(underTest);
     Object parsed = new Object();
     when(spy.parseLiteral(input, emptyMap())).thenReturn(parsed);
     Object result = spy.parseLiteral(input);
     assertThat(result, is(sameInstance(parsed)));
   }
 
-  @Test
-  public void parseLiteralObjectValue() {
-    Value input = ObjectValue.newObjectValue()
-        .objectField(ObjectField.newObjectField()
-            .name("a")
-            .value(StringValue.newStringValue("b").build())
-            .build())
-        .build();
-    Object result = underTest.parseLiteral(input, emptyMap());
-    assertThat(result, is(Map.of("a", "b")));
-  }
-
   @Test(expected = CoercingParseLiteralException.class)
-  public void parseLiteralNotAnObjectValue() {
-    Value input = StringValue.newStringValue("b").build();
-    underTest.parseLiteral(input, emptyMap());
-  }
-
-  @Test(expected = CoercingParseLiteralException.class)
-  public void parseLiteralNotAStringValue() {
-    Value input = ObjectValue.newObjectValue()
-        .objectField(ObjectField.newObjectField()
-            .name("a")
-            .value(BooleanValue.newBooleanValue(true).build())
-            .build())
-        .build();
-    underTest.parseLiteral(input, emptyMap());
+  public void parseLiteralNotAnObjectNode() {
+    underTest.parseLiteral(ArrayValue.newArrayValue().build(), emptyMap());
   }
 
   @Test
-  public void parseValueMap() {
+  public void parseValueObjectNode() {
     Object result = underTest.parseValue("{\"a\":\"b\"}");
-    assertThat(result, is(Map.of("a", "b")));
+    assertThat(result, is(mapper.createObjectNode().put("a", "b")));
   }
 
   @Test(expected = CoercingParseValueException.class)
-  public void parseValueNotAMap() {
+  public void parseValueNotAnObjectNode() {
     underTest.parseValue("[]");
   }
 
+  @Test(expected = CoercingParseValueException.class)
+  public void parseValueNotValidJson() {
+    underTest.parseValue("{");
+  }
 }

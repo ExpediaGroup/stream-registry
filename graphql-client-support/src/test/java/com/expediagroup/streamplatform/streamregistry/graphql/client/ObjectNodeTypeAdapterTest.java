@@ -15,38 +15,47 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.client;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.UncheckedIOException;
-import java.util.Map;
 
 import com.apollographql.apollo.response.CustomTypeValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.junit.Test;
 
-public class TagsTypeAdapterTest {
-  private final TagsTypeAdapter underTest = new TagsTypeAdapter();
+public class ObjectNodeTypeAdapterTest {
+  private static final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectNodeTypeAdapter underTest = new ObjectNodeTypeAdapter();
 
   @Test
-  public void encodeMap() {
-    CustomTypeValue result = underTest.encode(Map.of("a", "b"));
+  public void encodeObjectNode() {
+    CustomTypeValue result = underTest.encode(mapper.createObjectNode().put("a", "b"));
     assertThat(result.value, is("{\"a\":\"b\"}"));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void encodeNotAMap() {
+  public void encodeNotAnObjectNode() {
     underTest.encode(null);
   }
 
   @Test
-  public void decodeMap() {
+  public void decodeObjectNode() {
     Object result = underTest.decode(CustomTypeValue.fromRawValue("{\"a\":\"b\"}"));
-    assertThat(result, is(Map.of("a", "b")));
+    assertThat(result, is(instanceOf(ObjectNode.class)));
+    assertThat(result, is(mapper.createObjectNode().put("a", "b")));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void decodeNotAnObjectNode() {
+    underTest.decode(CustomTypeValue.fromRawValue("[{\"a\":\"b\"}]"));
   }
 
   @Test(expected = UncheckedIOException.class)
-  public void decodeNotAMap() {
-    underTest.decode(CustomTypeValue.fromRawValue("[{\"a\":\"b\"}]"));
+  public void decodeFailure() {
+    underTest.decode(CustomTypeValue.fromRawValue("{"));
   }
 }

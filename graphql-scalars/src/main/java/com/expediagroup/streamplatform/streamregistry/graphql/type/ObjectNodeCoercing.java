@@ -28,7 +28,7 @@ import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingParseValueException;
 
 @Slf4j
-class ConfigCoercing extends BaseCoercing {
+class ObjectNodeCoercing extends BaseCoercing {
   private static final ObjectMapper mapper = new ObjectMapper();
 
   @Override

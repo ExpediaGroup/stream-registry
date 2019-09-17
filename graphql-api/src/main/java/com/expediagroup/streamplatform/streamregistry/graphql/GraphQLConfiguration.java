@@ -24,12 +24,7 @@ import graphql.schema.GraphQLScalarType;
 @Configuration
 public class GraphQLConfiguration {
   @Bean
-  public GraphQLScalarType tagsScalar() {
-    return Scalars.tagsScalar();
-  }
-
-  @Bean
-  public GraphQLScalarType configScalar() {
-    return Scalars.configScalar();
+  public GraphQLScalarType objectNodeScalar() {
+    return Scalars.objectNodeScalar();
   }
 }

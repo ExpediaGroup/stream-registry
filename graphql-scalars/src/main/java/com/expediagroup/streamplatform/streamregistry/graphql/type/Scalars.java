@@ -21,12 +21,8 @@ import graphql.schema.GraphQLScalarType;
 public final class Scalars {
   private Scalars() {}
 
-  public static GraphQLScalarType tagsScalar() {
-    return scalar("Tags", new TagsCoercing());
-  }
-
-  public static GraphQLScalarType configScalar() {
-    return scalar("Config", new ConfigCoercing());
+  public static GraphQLScalarType objectNodeScalar() {
+    return scalar("ObjectNode", new ObjectNodeCoercing());
   }
 
   private static GraphQLScalarType scalar(String name, Coercing<?, ?> coercing) {

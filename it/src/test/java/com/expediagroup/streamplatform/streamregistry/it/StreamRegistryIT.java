@@ -20,7 +20,6 @@ import static org.junit.Assert.assertThat;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import okhttp3.OkHttpClient;
@@ -40,12 +39,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import reactor.core.publisher.Mono;
 
 import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConfigTypeAdapter;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.CreateDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.TagsTypeAdapter;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.GetDomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.TagInput;
 
 public class StreamRegistryIT {
   private static final ObjectMapper mapper = new ObjectMapper();
@@ -84,33 +85,44 @@ public class StreamRegistryIT {
         .builder()
         .serverUrl(url)
         .okHttpClient(new OkHttpClient.Builder().build())
-        .addCustomTypeAdapter(CustomType.TAGS, new TagsTypeAdapter())
-        .addCustomTypeAdapter(CustomType.CONFIG, new ConfigTypeAdapter())
+        .addCustomTypeAdapter(CustomType.OBJECTNODE, new ObjectNodeTypeAdapter())
         .build();
 
-    Response<Optional<CreateDomainMutation.Data>> mutation = ReactorApollo.from(
-        client.mutate(CreateDomainMutation
+    Response<Optional<InsertDomainMutation.Data>> mutation = ReactorApollo.from(
+        client.mutate(InsertDomainMutation
             .builder()
-            .name("domain")
-            .description("description")
-            .tags(Map.of("key", "value"))
-            .type("default")
-            .configuration(mapper.createObjectNode().put("key", "value"))
+            .key(DomainKeyInput
+                .builder()
+                .name("domain")
+                .build())
+            .specification(SpecificationInput
+                .builder()
+                .description("description")
+                .tags(List.of(TagInput
+                    .builder()
+                    .name("name")
+                    .value("value")
+                    .build()))
+                .type("default")
+                .configuration(mapper.createObjectNode().put("key", "value"))
+                .build())
             .build()))
         .block();
 
-    assertThat(mutation.data().get().isCreateDomain(), is(true));
+    assertThat(mutation.data().get().getInsertDomain().getKey().getName(), is("domain"));
 
     Mono.delay(Duration.ofSeconds(5)).block();
 
-    Response<Optional<DomainsQuery.Data>> query = ReactorApollo.from(
-        client.query(DomainsQuery
+    Response<Optional<GetDomainQuery.Data>> query = ReactorApollo.from(
+        client.query(GetDomainQuery
             .builder()
-            .name("^domain$")
+            .key(DomainKeyInput
+                .builder()
+                .name("domain")
+                .build())
             .build()))
         .block();
 
-    List<DomainsQuery.Domain> domains = query.data().get().getDomains();
-    assertThat(domains.size(), is(1));
+    assertThat(query.data().get().getGetDomain().getKey().getName(), is("domain"));
   }
 }
