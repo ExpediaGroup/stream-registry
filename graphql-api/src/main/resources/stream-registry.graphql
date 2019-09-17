@@ -62,17 +62,17 @@ type Domain {
 ############ Schema ############
 
 type SchemaKey {
-  domain: DomainKey!
+  domain: String!
   name: String!
 }
 
 input SchemaKeyInput {
-  domain: DomainKeyInput!
+  domain: String!
   name: String!
 }
 
 input SchemaKeyQuery {
-  domain: DomainKeyQuery
+  domainRegex: String
   nameRegex: String
 }
 
@@ -87,19 +87,19 @@ type Schema {
 ############ Stream ############
 
 type StreamKey {
-  domain: DomainKey!
+  domain: String!
   name: String!
   version: Int!
 }
 
 input StreamKeyInput {
-  domain: DomainKeyInput!
+  domain: String!
   name: String!
   version: Int!
 }
 
 input StreamKeyQuery {
-  domain: DomainKeyQuery!
+  domainRegex: String
   nameRegex: String
   version: Int
 }
@@ -134,17 +134,17 @@ type Zone {
 ############ Infrastructure ############
 
 type InfrastructureKey {
-  zone: ZoneKey!
+  zone: String!
   name: String!
 }
 
 input InfrastructureKeyInput {
-  zone: ZoneKeyInput!
+  zone: String!
   name: String!
 }
 
 input InfrastructureKeyQuery {
-  zone: ZoneKeyQuery
+  zoneRegex: String
   nameRegex: String
 }
 
@@ -158,20 +158,26 @@ type Infrastructure {
 ############ Producer ############
 
 type ProducerKey {
-  stream: StreamKey!
-  zone: ZoneKey!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  zone: String!
   name: String!
 }
 
 input ProducerKeyInput {
-  stream: StreamKeyInput!
-  zone: ZoneKeyInput!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  zone: String!
   name: String!
 }
 
 input ProducerKeyQuery {
-  stream: StreamKeyQuery
-  zone: ZoneKeyQuery
+  streamDomainRegex: String
+  streamNameRegex: String
+  streamVersion: Int
+  zoneRegex: String
   nameRegex: String
 }
 
@@ -186,20 +192,26 @@ type Producer {
 ############ Consumer ############
 
 type ConsumerKey {
-  stream: StreamKey!
-  zone: ZoneKey!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  zone: String!
   name: String!
 }
 
 input ConsumerKeyInput {
-  stream: StreamKeyInput!
-  zone: ZoneKeyInput!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  zone: String!
   name: String!
 }
 
 input ConsumerKeyQuery {
-  stream: StreamKeyQuery
-  zone: ZoneKeyQuery
+  streamDomainRegex: String
+  streamNameRegex: String
+  streamVersion: Int
+  zoneRegex: String
   nameRegex: String
 }
 
@@ -214,18 +226,27 @@ type Consumer {
 ############ StreamBinding ############
 
 type StreamBindingKey {
-  stream: StreamKey!
-  infrastructure: InfrastructureKey!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  infrastructureZone: String!
+  infrastructureName: String!
 }
 
 input StreamBindingKeyInput {
-  stream: StreamKeyInput
-  infrastructure: InfrastructureKeyInput
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  infrastructureZone: String!
+  infrastructureName: String!
 }
 
 input StreamBindingKeyQuery {
-  stream: StreamKeyQuery
-  infrastructure: InfrastructureKeyQuery
+  streamDomainRegex: String
+  streamNameRegex: String
+  streamVersion: Int
+  infrastructureZoneRegex: String
+  infrastructureNameRegex: String
 }
 
 type StreamBinding {
@@ -239,18 +260,30 @@ type StreamBinding {
 ############ ProducerBinding ############
 
 type ProducerBindingKey {
-  producer: ProducerKey!
-  binding: StreamBindingKey!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  infrastructureZone: String!
+  infrastructureName: String!
+  producerName: String!
 }
 
 input ProducerBindingKeyInput {
-  producer: ProducerKeyInput!
-  binding: StreamBindingKeyInput!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  infrastructureZone: String!
+  infrastructureName: String!
+  producerName: String!
 }
 
 input ProducerBindingKeyQuery {
-  producer: ProducerKeyQuery
-  binding: StreamBindingKeyQuery
+  streamDomainRegex: String
+  streamNameRegex: String
+  streamVersionRegex: Int
+  infrastructureZoneRegex: String
+  infrastructureNameRegex: String
+  producerNameRegex: String
 }
 
 type ProducerBinding {
@@ -264,18 +297,30 @@ type ProducerBinding {
 ############ ConsumerBinding ############
 
 type ConsumerBindingKey {
-  consumer: ConsumerKey!
-  binding: StreamBindingKey!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  infrastructureZone: String!
+  infrastructureName: String!
+  consumerName: String!
 }
 
 input ConsumerBindingKeyInput {
-  consumer: ConsumerKeyInput!
-  binding: StreamBindingKeyInput!
+  streamDomain: String!
+  streamName: String!
+  streamVersion: Int!
+  infrastructureZone: String!
+  infrastructureName: String!
+  consumerName: String!
 }
 
 input ConsumerBindingKeyQuery {
-  consumer: ConsumerKeyQuery
-  binding: StreamBindingKeyQuery
+  streamDomainRegex: String
+  streamNameRegex: String
+  streamVersionRegex: Int
+  infrastructureZoneRegex: String
+  infrastructureNameRegex: String
+  consumerNameRegex: String
 }
 
 type ConsumerBinding {

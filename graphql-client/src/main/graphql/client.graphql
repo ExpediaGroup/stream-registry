@@ -111,9 +111,7 @@ mutation InsertSchema(
     specification: $specification
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
     }
     specification {
@@ -150,9 +148,7 @@ mutation UpdateSchema(
     specification: $specification
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
     }
     specification {
@@ -189,9 +185,7 @@ mutation UpsertSchema(
     specification: $specification
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
     }
     specification {
@@ -236,9 +230,7 @@ mutation UpdateSchemaStatus(
     status: $status
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
     }
     specification {
@@ -279,17 +271,13 @@ mutation InsertStream(
     schema: $schema
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
       version
     }
     schema {
       key {
-        domain {
-          name
-        }
+        domain
         name
       }
       specification {
@@ -336,17 +324,13 @@ mutation UpdateStream(
     specification: $specification
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
       version
     }
     schema {
       key {
-        domain {
-          name
-        }
+        domain
         name
       }
       specification {
@@ -395,17 +379,13 @@ mutation UpsertStream(
     schema: $schema
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
       version
     }
     schema {
       key {
-        domain {
-          name
-        }
+        domain
         name
       }
       specification {
@@ -460,17 +440,13 @@ mutation UpdateStreamStatus(
     status: $status
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
       version
     }
     schema {
       key {
-        domain {
-          name
-        }
+        domain
         name
       }
       specification {
@@ -621,9 +597,7 @@ mutation InsertInfrastructure(
     specification: $specification
   ) {
     key {
-      zone {
-        name
-      }
+      zone
       name
     }
     specification {
@@ -660,9 +634,7 @@ mutation UpdateInfrastructure(
     specification: $specification
   ) {
     key {
-      zone {
-        name
-      }
+      zone
       name
     }
     specification {
@@ -699,9 +671,7 @@ mutation UpsertInfrastructure(
     specification: $specification
   ) {
     key {
-      zone {
-        name
-      }
+      zone
       name
     }
     specification {
@@ -746,9 +716,7 @@ mutation UpdateInfrastructureStatus(
     status: $status
   ) {
     key {
-      zone {
-        name
-      }
+      zone
       name
     }
     specification {
@@ -787,16 +755,10 @@ mutation InsertProducer(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -810,17 +772,13 @@ mutation InsertProducer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -882,16 +840,10 @@ mutation UpdateProducer(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -905,17 +857,13 @@ mutation UpdateProducer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -977,16 +925,10 @@ mutation UpsertProducer(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -1000,17 +942,13 @@ mutation UpsertProducer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1080,16 +1018,10 @@ mutation UpdateProducerStatus(
     status: $status
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -1103,17 +1035,13 @@ mutation UpdateProducerStatus(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1177,16 +1105,10 @@ mutation InsertConsumer(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -1200,17 +1122,13 @@ mutation InsertConsumer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1272,16 +1190,10 @@ mutation UpdateConsumer(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -1295,17 +1207,13 @@ mutation UpdateConsumer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1367,16 +1275,10 @@ mutation UpsertConsumer(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -1390,17 +1292,13 @@ mutation UpsertConsumer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1470,16 +1368,10 @@ mutation UpdateConsumerStatus(
     status: $status
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -1493,17 +1385,13 @@ mutation UpdateConsumerStatus(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1567,19 +1455,11 @@ mutation InsertStreamBinding(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      infrastructure {
-        zone {
-          name
-        }
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
     }
     specification {
       description
@@ -1592,17 +1472,13 @@ mutation InsertStreamBinding(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1640,9 +1516,7 @@ mutation InsertStreamBinding(
     }
     infrastructure {
       key {
-        zone {
-          name
-        }
+        zone
         name
       }
       specification {
@@ -1680,19 +1554,11 @@ mutation UpdateStreamBinding(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      infrastructure {
-        zone {
-          name
-        }
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
     }
     specification {
       description
@@ -1705,17 +1571,13 @@ mutation UpdateStreamBinding(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1753,9 +1615,7 @@ mutation UpdateStreamBinding(
     }
     infrastructure {
       key {
-        zone {
-          name
-        }
+        zone
         name
       }
       specification {
@@ -1793,19 +1653,11 @@ mutation UpsertStreamBinding(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      infrastructure {
-        zone {
-          name
-        }
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
     }
     specification {
       description
@@ -1818,17 +1670,13 @@ mutation UpsertStreamBinding(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1866,9 +1714,7 @@ mutation UpsertStreamBinding(
     }
     infrastructure {
       key {
-        zone {
-          name
-        }
+        zone
         name
       }
       specification {
@@ -1914,19 +1760,11 @@ mutation UpdateStreamBindingStatus(
     status: $status
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      infrastructure {
-        zone {
-          name
-        }
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
     }
     specification {
       description
@@ -1939,17 +1777,13 @@ mutation UpdateStreamBindingStatus(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -1987,9 +1821,7 @@ mutation UpdateStreamBindingStatus(
     }
     infrastructure {
       key {
-        zone {
-          name
-        }
+        zone
         name
       }
       specification {
@@ -2029,34 +1861,12 @@ mutation InsertProducerBinding(
     specification: $specification
   ) {
     key {
-      producer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      producerName
     }
     specification {
       description
@@ -2069,16 +1879,10 @@ mutation InsertProducerBinding(
     status
     producer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -2092,17 +1896,13 @@ mutation InsertProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2155,19 +1955,11 @@ mutation InsertProducerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -2180,17 +1972,13 @@ mutation InsertProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2228,9 +2016,7 @@ mutation InsertProducerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -2269,34 +2055,12 @@ mutation UpdateProducerBinding(
     specification: $specification
   ) {
     key {
-      producer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      producerName
     }
     specification {
       description
@@ -2309,16 +2073,10 @@ mutation UpdateProducerBinding(
     status
     producer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -2332,17 +2090,13 @@ mutation UpdateProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2395,19 +2149,11 @@ mutation UpdateProducerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -2420,17 +2166,13 @@ mutation UpdateProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2468,9 +2210,7 @@ mutation UpdateProducerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -2509,34 +2249,12 @@ mutation UpsertProducerBinding(
     specification: $specification
   ) {
     key {
-      producer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      producerName
     }
     specification {
       description
@@ -2549,16 +2267,10 @@ mutation UpsertProducerBinding(
     status
     producer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -2572,17 +2284,13 @@ mutation UpsertProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2635,19 +2343,11 @@ mutation UpsertProducerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -2660,17 +2360,13 @@ mutation UpsertProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2708,9 +2404,7 @@ mutation UpsertProducerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -2757,34 +2451,12 @@ mutation UpdateProducerBindingStatus(
     status: $status
   ) {
     key {
-      producer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      producerName
     }
     specification {
       description
@@ -2797,16 +2469,10 @@ mutation UpdateProducerBindingStatus(
     status
     producer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -2820,17 +2486,13 @@ mutation UpdateProducerBindingStatus(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2883,19 +2545,11 @@ mutation UpdateProducerBindingStatus(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -2908,17 +2562,13 @@ mutation UpdateProducerBindingStatus(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -2956,9 +2606,7 @@ mutation UpdateProducerBindingStatus(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -2999,34 +2647,12 @@ mutation InsertConsumerBinding(
     specification: $specification
   ) {
     key {
-      consumer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      consumerName
     }
     specification {
       description
@@ -3039,16 +2665,10 @@ mutation InsertConsumerBinding(
     status
     consumer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -3062,17 +2682,13 @@ mutation InsertConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3125,19 +2741,11 @@ mutation InsertConsumerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -3150,17 +2758,13 @@ mutation InsertConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3198,9 +2802,7 @@ mutation InsertConsumerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -3239,34 +2841,12 @@ mutation UpdateConsumerBinding(
     specification: $specification
   ) {
     key {
-      consumer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      consumerName
     }
     specification {
       description
@@ -3279,16 +2859,10 @@ mutation UpdateConsumerBinding(
     status
     consumer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -3302,17 +2876,13 @@ mutation UpdateConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3365,19 +2935,11 @@ mutation UpdateConsumerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -3390,17 +2952,13 @@ mutation UpdateConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3438,9 +2996,7 @@ mutation UpdateConsumerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -3479,34 +3035,12 @@ mutation UpsertConsumerBinding(
     specification: $specification
   ) {
     key {
-      consumer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      consumerName
     }
     specification {
       description
@@ -3519,16 +3053,10 @@ mutation UpsertConsumerBinding(
     status
     consumer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -3542,17 +3070,13 @@ mutation UpsertConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3605,19 +3129,11 @@ mutation UpsertConsumerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -3630,17 +3146,13 @@ mutation UpsertConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3678,9 +3190,7 @@ mutation UpsertConsumerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -3727,34 +3237,12 @@ mutation UpdateConsumerBindingStatus(
     status: $status
   ) {
     key {
-      consumer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      consumerName
     }
     specification {
       description
@@ -3767,16 +3255,10 @@ mutation UpdateConsumerBindingStatus(
     status
     consumer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -3790,17 +3272,13 @@ mutation UpdateConsumerBindingStatus(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3853,19 +3331,11 @@ mutation UpdateConsumerBindingStatus(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -3878,17 +3348,13 @@ mutation UpdateConsumerBindingStatus(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -3926,9 +3392,7 @@ mutation UpdateConsumerBindingStatus(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -4013,9 +3477,7 @@ query GetSchema(
     key: $key
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
     }
     specification {
@@ -4052,9 +3514,7 @@ query GetSchemas(
     specification: $specification
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
     }
     specification {
@@ -4091,17 +3551,13 @@ query GetStream(
     key: $key
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
       version
     }
     schema {
       key {
-        domain {
-          name
-        }
+        domain
         name
       }
       specification {
@@ -4150,17 +3606,13 @@ query GetStreams(
     schema: $schema
   ) {
     key {
-      domain {
-        name
-      }
+      domain
       name
       version
     }
     schema {
       key {
-        domain {
-          name
-        }
+        domain
         name
       }
       specification {
@@ -4253,9 +3705,7 @@ query GetInfrastructure(
     key: $key
   ) {
     key {
-      zone {
-        name
-      }
+      zone
       name
     }
     specification {
@@ -4292,9 +3742,7 @@ query GetInfrastructures(
     specification: $specification
   ) {
     key {
-      zone {
-        name
-      }
+      zone
       name
     }
     specification {
@@ -4331,16 +3779,10 @@ query GetProducer(
     key: $key
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -4354,17 +3796,13 @@ query GetProducer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -4426,16 +3864,10 @@ query GetProducers(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -4449,17 +3881,13 @@ query GetProducers(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -4521,16 +3949,10 @@ query GetConsumer(
     key: $key
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -4544,17 +3966,13 @@ query GetConsumer(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -4616,16 +4034,10 @@ query GetConsumers(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      zone {
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      zone
       name
     }
     specification {
@@ -4639,17 +4051,13 @@ query GetConsumers(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -4711,19 +4119,11 @@ query GetStreamBinding(
     key: $key
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      infrastructure {
-        zone {
-          name
-        }
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
     }
     specification {
       description
@@ -4736,17 +4136,13 @@ query GetStreamBinding(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -4784,9 +4180,7 @@ query GetStreamBinding(
     }
     infrastructure {
       key {
-        zone {
-          name
-        }
+        zone
         name
       }
       specification {
@@ -4824,19 +4218,11 @@ query GetStreamBindings(
     specification: $specification
   ) {
     key {
-      stream {
-        domain {
-          name
-        }
-        name
-        version
-      }
-      infrastructure {
-        zone {
-          name
-        }
-        name
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
     }
     specification {
       description
@@ -4849,17 +4235,13 @@ query GetStreamBindings(
     status
     stream {
       key {
-        domain {
-          name
-        }
+        domain
         name
         version
       }
       schema {
         key {
-          domain {
-            name
-          }
+          domain
           name
         }
         specification {
@@ -4897,9 +4279,7 @@ query GetStreamBindings(
     }
     infrastructure {
       key {
-        zone {
-          name
-        }
+        zone
         name
       }
       specification {
@@ -4937,34 +4317,12 @@ query GetProducerBinding(
     key: $key
   ) {
     key {
-      producer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      producerName
     }
     specification {
       description
@@ -4977,16 +4335,10 @@ query GetProducerBinding(
     status
     producer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -5000,17 +4352,13 @@ query GetProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5063,19 +4411,11 @@ query GetProducerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -5088,17 +4428,13 @@ query GetProducerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5136,9 +4472,7 @@ query GetProducerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -5177,34 +4511,12 @@ query GetProducerBindings(
     specification: $specification
   ) {
     key {
-      producer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      producerName
     }
     specification {
       description
@@ -5217,16 +4529,10 @@ query GetProducerBindings(
     status
     producer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -5240,17 +4546,13 @@ query GetProducerBindings(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5303,19 +4605,11 @@ query GetProducerBindings(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -5328,17 +4622,13 @@ query GetProducerBindings(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5376,9 +4666,7 @@ query GetProducerBindings(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -5418,34 +4706,12 @@ query GetConsumerBinding(
     key: $key
   ) {
     key {
-      consumer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      consumerName
     }
     specification {
       description
@@ -5458,16 +4724,10 @@ query GetConsumerBinding(
     status
     consumer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -5481,17 +4741,13 @@ query GetConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5544,19 +4800,11 @@ query GetConsumerBinding(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -5569,17 +4817,13 @@ query GetConsumerBinding(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5617,9 +4861,7 @@ query GetConsumerBinding(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
@@ -5658,34 +4900,12 @@ query GetConsumerBindings(
     specification: $specification
   ) {
     key {
-      consumer {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
-        name
-      }
-      binding {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
-      }
+      streamDomain
+      streamName
+      streamVersion
+      infrastructureZone
+      infrastructureName
+      consumerName
     }
     specification {
       description
@@ -5698,16 +4918,10 @@ query GetConsumerBindings(
     status
     consumer {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        zone {
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        zone
         name
       }
       specification {
@@ -5721,17 +4935,13 @@ query GetConsumerBindings(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5784,19 +4994,11 @@ query GetConsumerBindings(
     }
     binding {
       key {
-        stream {
-          domain {
-            name
-          }
-          name
-          version
-        }
-        infrastructure {
-          zone {
-            name
-          }
-          name
-        }
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
       }
       specification {
         description
@@ -5809,17 +5011,13 @@ query GetConsumerBindings(
       status
       stream {
         key {
-          domain {
-            name
-          }
+          domain
           name
           version
         }
         schema {
           key {
-            domain {
-              name
-            }
+            domain
             name
           }
           specification {
@@ -5857,9 +5055,7 @@ query GetConsumerBindings(
       }
       infrastructure {
         key {
-          zone {
-            name
-          }
+          zone
           name
         }
         specification {
