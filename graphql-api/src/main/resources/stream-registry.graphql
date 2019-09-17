@@ -152,6 +152,7 @@ type Infrastructure {
   key: InfrastructureKey!
   specification: Specification!
   status: ObjectNode
+  zone: Zone
 }
 
 ############ Producer ############
@@ -178,6 +179,8 @@ type Producer {
   key: ProducerKey!
   specification: Specification!
   status: ObjectNode
+  stream: Stream!
+  zone: Zone!
 }
 
 ############ Consumer ############
@@ -204,6 +207,8 @@ type Consumer {
   key: ConsumerKey!
   specification: Specification!
   status: ObjectNode
+  stream: Stream!
+  zone: Zone!
 }
 
 ############ StreamBinding ############
@@ -227,6 +232,8 @@ type StreamBinding {
   key: StreamBindingKey!
   specification: Specification!
   status: ObjectNode
+  stream: Stream!
+  infrastructure: Infrastructure!
 }
 
 ############ Mutations ############
@@ -291,23 +298,23 @@ type Query {
   getDomains(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
 
   getSchema(key: SchemaKeyInput!): Schema!
-  getSchemas(key: SchemaKeyQuery, specification: SpecificationQuery!): Schema!
+  getSchemas(key: SchemaKeyQuery, specification: SpecificationQuery): Schema!
 
   getStream(key: StreamKeyInput!): Stream!
-  getStreams(key: StreamKeyQuery, specification: SpecificationQuery!): [Stream!]!
+  getStreams(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
 
   getZone(key: ZoneKeyInput!): Zone!
-  getZones(key: ZoneKeyQuery!, specification: SpecificationQuery): [Zone!]!
+  getZones(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
 
   getInfrastructure(key: InfrastructureKeyInput!): Infrastructure!
-  getInfrastructures(key: InfrastructureKeyQuery!, specification: SpecificationQuery): [Infrastructure!]!
+  getInfrastructures(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
 
   getProducer(key: ProducerKeyInput!): Producer!
-  getProducers(key: ProducerKeyQuery!, specification: SpecificationQuery): [Producer!]!
+  getProducers(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
 
   getConsumer(key: ConsumerKeyInput!): Consumer!
-  getConsumers(key: ConsumerKeyQuery!, specification: SpecificationQuery): [Consumer!]!
+  getConsumers(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
 
   getStreamBinding(key: StreamBindingKeyInput!): StreamBinding!
-  getStreamBindings(key: StreamBindingKeyQuery!, specification: SpecificationQuery): [StreamBinding!]!
+  getStreamBindings(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
 }
