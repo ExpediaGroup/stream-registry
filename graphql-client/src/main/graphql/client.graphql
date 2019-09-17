@@ -2018,7 +2018,1945 @@ mutation UpdateStreamBindingStatus(
   }
 }
 
-#----------
+############ ProducerBinding Mutations ############
+
+mutation InsertProducerBinding(
+  $key: ProducerBindingKeyInput!
+  $specification: SpecificationInput!
+) {
+  insertProducerBinding(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      producer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    producer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+mutation UpdateProducerBinding(
+  $key: ProducerBindingKeyInput!
+  $specification: SpecificationInput!
+) {
+  updateProducerBinding(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      producer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    producer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+mutation UpsertProducerBinding(
+  $key: ProducerBindingKeyInput!
+  $specification: SpecificationInput!
+) {
+  upsertProducerBinding(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      producer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    producer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+mutation DeleteProducerBinding(
+  $key: ProducerBindingKeyInput!
+) {
+  deleteProducerBinding(
+    key: $key
+  )
+}
+
+mutation UpdateProducerBindingStatus(
+  $key: ProducerBindingKeyInput!
+  $status: ObjectNode!
+) {
+  updateProducerBindingStatus(
+    key: $key
+    status: $status
+  ) {
+    key {
+      producer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    producer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+############ ConsumeBinding Mutations ############
+
+mutation InsertConsumerBinding(
+  $key: ConsumerBindingKeyInput!
+  $specification: SpecificationInput!
+) {
+  insertConsumerBinding(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      consumer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    consumer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+mutation UpdateConsumerBinding(
+  $key: ConsumerBindingKeyInput!
+  $specification: SpecificationInput!
+) {
+  updateConsumerBinding(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      consumer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    consumer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+mutation UpsertConsumerBinding(
+  $key: ConsumerBindingKeyInput!
+  $specification: SpecificationInput!
+) {
+  upsertConsumerBinding(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      consumer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    consumer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+mutation DeleteConsumerBinding(
+  $key: ConsumerBindingKeyInput!
+) {
+  deleteConsumerBinding(
+    key: $key
+  )
+}
+
+mutation UpdateConsumerBindingStatus(
+  $key: ConsumerBindingKeyInput!
+  $status: ObjectNode!
+) {
+  updateConsumerBindingStatus(
+    key: $key
+    status: $status
+  ) {
+    key {
+      consumer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    consumer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
 
 ############ Domain Queries ############
 
@@ -2986,6 +4924,967 @@ query GetStreamBindings(
         }
       }
       status
+    }
+  }
+}
+
+############ ProducerBinding Queries ############
+
+query GetProducerBinding(
+  $key: ProducerBindingKeyInput!
+) {
+  getProducerBinding(
+    key: $key
+  ) {
+    key {
+      producer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    producer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+query GetProducerBindings(
+  $key: ProducerBindingKeyQuery
+  $specification: SpecificationQuery
+) {
+  getProducerBindings(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      producer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    producer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+
+############ ConsumeBinding Queries ############
+
+query GetConsumerBinding(
+  $key: ConsumerBindingKeyInput!
+) {
+  getConsumerBinding(
+    key: $key
+  ) {
+    key {
+      consumer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    consumer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
+    }
+  }
+}
+
+query GetConsumerBindings(
+  $key: ConsumerBindingKeyQuery
+  $specification: SpecificationQuery
+) {
+  getConsumerBindings(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      consumer {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      binding {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status
+    consumer {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        zone {
+          name
+        }
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      zone {
+        key {
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+    }
+    binding {
+      key {
+        stream {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        infrastructure {
+          zone {
+            name
+          }
+          name
+        }
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status
+      stream {
+        key {
+          domain {
+            name
+          }
+          name
+          version
+        }
+        schema {
+          key {
+            domain {
+              name
+            }
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+          domain {
+            key {
+              name
+            }
+            specification {
+              description
+              tags {
+                name
+                value
+              }
+              configuration
+            }
+          }
+          status
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        status
+      }
+      infrastructure {
+        key {
+          zone {
+            name
+          }
+          name
+        }
+        specification {
+          description
+          tags {
+            name
+            value
+          }
+          configuration
+        }
+        zone {
+          key {
+            name
+          }
+          specification {
+            description
+            tags {
+              name
+              value
+            }
+            configuration
+          }
+        }
+        status
+      }
     }
   }
 }

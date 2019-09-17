@@ -236,6 +236,57 @@ type StreamBinding {
   infrastructure: Infrastructure!
 }
 
+############ ProducerBinding ############
+
+type ProducerBindingKey {
+  producer: ProducerKey!
+  binding: StreamBindingKey!
+}
+
+input ProducerBindingKeyInput {
+  producer: ProducerKeyInput!
+  binding: StreamBindingKeyInput!
+}
+
+input ProducerBindingKeyQuery {
+  producer: ProducerKeyQuery
+  binding: StreamBindingKeyQuery
+}
+
+type ProducerBinding {
+  key: ProducerBindingKey!
+  specification: Specification!
+  producer: Producer!
+  binding: StreamBinding!
+  status: ObjectNode
+}
+
+############ ConsumerBinding ############
+
+type ConsumerBindingKey {
+  consumer: ConsumerKey!
+  binding: StreamBindingKey!
+}
+
+input ConsumerBindingKeyInput {
+  consumer: ConsumerKeyInput!
+  binding: StreamBindingKeyInput!
+}
+
+input ConsumerBindingKeyQuery {
+  consumer: ConsumerKeyQuery
+  binding: StreamBindingKeyQuery
+}
+
+type ConsumerBinding {
+  key: ConsumerBindingKey!
+  specification: Specification!
+  consumer: Consumer!
+  binding: StreamBinding!
+  status: ObjectNode
+}
+
+
 ############ Mutations ############
 
 type Mutation {
@@ -288,6 +339,18 @@ type Mutation {
   deleteStreamBinding(key: StreamBindingKeyInput!): Boolean!
   updateStreamBindingStatus(key: StreamBindingKeyInput!, status: ObjectNode!): StreamBinding!
 
+  insertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  updateProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  upsertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  deleteProducerBinding(key: ProducerBindingKeyInput!): Boolean!
+  updateProducerBindingStatus(key: ProducerBindingKeyInput!, status: ObjectNode!): ProducerBinding!
+
+  insertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  updateConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  upsertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  deleteConsumerBinding(key: ConsumerBindingKeyInput!): Boolean!
+  updateConsumerBindingStatus(key: ConsumerBindingKeyInput!, status: ObjectNode!): ConsumerBinding!
+
 }
 
 ############ Queries ############
@@ -317,4 +380,11 @@ type Query {
 
   getStreamBinding(key: StreamBindingKeyInput!): StreamBinding!
   getStreamBindings(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
+
+  getProducerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
+  getProducerBindings(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
+
+  getConsumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
+  getConsumerBindings(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
+
 }
