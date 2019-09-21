@@ -30,7 +30,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replaced ConfluentSchemaManager with simple HTTP impl.
 - Reformat 2 spaces indent
 - Removed unused dependencies & plugins
-- License update  
+- License update
+- docker-compose support
 
 ## [0.5.1] - SNAPSHOT
 ### Added
