@@ -156,6 +156,21 @@ public class ConsumerResourceIT extends BaseResourceIT {
     }
 
     @Test
+    public void test_put_consumer_invalid_region_with_same_hint() throws InterruptedException {
+        String streamName = "junit-stream-put-invalid-region";
+        String consumerName = "C2";
+        // Stream exists in US_EAST_REGION
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        streamResource.upsertStream(streamName, stream);
+        Thread.sleep(TEST_SLEEP_WAIT_MS); // wait for operation to propagate
+
+        Response response = consumerResource.upsertConsumer(streamName, consumerName, US_EAST_REGION_2);
+
+        Assert.assertEquals(Response.Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void test_put_consumer_with_no_stream() {
         String streamName = "junit-stream-consumer-with-no-stream";
         String consumerName = "C1";

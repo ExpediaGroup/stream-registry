@@ -99,6 +99,8 @@ public class BaseResourceIT {
 
     public static final String US_EAST_REGION = "us-east-1-vpc-defa0000";
 
+    public static final String US_EAST_REGION_2 = "us-east-2-vpc-defa0000";
+
     public static final String US_EAST_CLUSTER_NAME = "us-east-1_cluster001";
 
     public static final String US_EAST_CLUSTER_GENERAL = "us-east-1_clustergeneral";
@@ -327,6 +329,16 @@ public class BaseResourceIT {
             .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
             .build();
         infraManagerImplStub.upsertCluster(clusterKey,  new ClusterValue(clusterPropertiesMap));
+
+        // Inserting a second cluster with the same primary hint
+        ClusterKey clusterSameHintKey = new ClusterKey(US_EAST_REGION_2, ENV_TEST, AbstractService.PRIMARY_HINT, null);
+        final ImmutableMap<String, String> clusterSameHintPropertiesMap = new ImmutableMap.Builder<String, String>()
+                .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
+                .put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryURL)
+                .put(AbstractService.CLUSTER_NAME, US_EAST_CLUSTER_NAME)
+                .put(KafkaProducerConfig.ZOOKEEPER_QUORUM, zookeeperQuorum)
+                .build();
+        infraManagerImplStub.upsertCluster(clusterSameHintKey,  new ClusterValue(clusterSameHintPropertiesMap));
 
         // inserting another cluster with SOME_HINT
         ClusterKey motClusterKey = new ClusterKey(US_WEST_REGION, ENV_TEST, SOME_HINT, null);

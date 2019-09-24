@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.5.2] - SNAPSHOT
 ### Added
 
+### Changed
+- Fixed Consumers registering with invalid regions
+- Fixed Producers registering with invalid regions
+
 ## [0.5.1] - 20190627
 ### Added
 - Updated `README` with Expedia Group stream registry announcement (#155) 

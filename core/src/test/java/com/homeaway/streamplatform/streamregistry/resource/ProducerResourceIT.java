@@ -159,6 +159,23 @@ public class ProducerResourceIT extends BaseResourceIT {
     }
 
     @Test
+    public void test_put_producer_invalid_region_with_same_hint() throws InterruptedException {
+        String streamName = "junit-stream-invalid-region-1";
+        String producerName = "P2";
+        // Stream is created in US_EAST_REGION
+        Stream stream = JsonModelBuilder.buildJsonStream(streamName);
+
+        streamResource.upsertStream(streamName, stream);
+        Thread.sleep(TEST_SLEEP_WAIT_MS*2);
+
+        Assert.assertEquals(streamName, ((Stream) streamResource.getStream(streamName).getEntity()).getName());
+
+        Response response = producerResource.upsertProducer(streamName, producerName, US_EAST_REGION_2);
+
+        Assert.assertEquals(Response.Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void test_put_producer_with_no_stream() {
         String streamName = "junit-stream-put-producer-with-no-stream";
         String producerName = "P1";
