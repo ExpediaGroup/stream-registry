@@ -16,7 +16,7 @@
     <url>https://homeaway.github.io/stream-registry/</url>
 
     <packaging>pom</packaging>
-    <version>0.5.2</version>
+    <version>0.5.3-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -30,7 +30,7 @@
         <url>https://github.com/HomeAway/stream-registry/tree/master</url>
         <connection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/HomeAway/stream-registry.git</developerConnection>
-        <tag>v0.5.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
