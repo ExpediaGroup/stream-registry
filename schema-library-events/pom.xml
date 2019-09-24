@@ -5,7 +5,7 @@
     <parent>
         <artifactId>stream-registry-parent</artifactId>
         <groupId>com.homeaway.streamplatform</groupId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.5.2</version>
     </parent>
 
     <artifactId>schema-library-events</artifactId>
