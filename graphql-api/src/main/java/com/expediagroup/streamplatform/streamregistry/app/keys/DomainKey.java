@@ -1,5 +1,6 @@
+package com.expediagroup.streamplatform.streamregistry.app.keys;
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2016-2019 Expedia Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.app;
 
+import java.io.Serializable;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
-@SpringBootApplication(scanBasePackages = "com.expediagroup.streamplatform.streamregistry")
-public class StreamRegistryApp {
-  public static void main(String[] args) {
-    SpringApplication.run(StreamRegistryApp.class, new String[]{"--schema.registry.url=x"});
-  }
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Embeddable
+public class DomainKey implements Serializable {
+
+  @Column(length = 100)
+  private String name;
 }

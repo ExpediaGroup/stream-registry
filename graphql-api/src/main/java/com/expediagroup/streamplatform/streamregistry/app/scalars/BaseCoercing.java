@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.app;
+package com.expediagroup.streamplatform.streamregistry.app.scalars;
 
+import graphql.schema.Coercing;
+import graphql.schema.CoercingParseLiteralException;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+abstract class BaseCoercing implements Coercing<Object, Object> {
 
-@SpringBootApplication(scanBasePackages = "com.expediagroup.streamplatform.streamregistry")
-public class StreamRegistryApp {
-  public static void main(String[] args) {
-    SpringApplication.run(StreamRegistryApp.class, new String[]{"--schema.registry.url=x"});
+  @Override
+  public Object serialize(Object input) {
+    return input;
   }
+
+  @Override
+  public Object parseLiteral(Object input) throws CoercingParseLiteralException {
+    return parseLiteral(input);
+  }
+
 }

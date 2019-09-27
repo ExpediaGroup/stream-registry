@@ -1,5 +1,6 @@
+package com.expediagroup.streamplatform.streamregistry.app.convertors;
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2016-2019 Expedia Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.app;
 
+import com.expediagroup.streamplatform.streamregistry.app.inputs.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.app.keys.ZoneKey;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.Data;
 
-@SpringBootApplication(scanBasePackages = "com.expediagroup.streamplatform.streamregistry")
-public class StreamRegistryApp {
-  public static void main(String[] args) {
-    SpringApplication.run(StreamRegistryApp.class, new String[]{"--schema.registry.url=x"});
+@Data
+public class ZoneKeyInputConvertor {
+
+  public static ZoneKey convert(ZoneKeyInput zoneKeyInput) {
+    return new ZoneKey(
+        zoneKeyInput.getName()
+    );
   }
 }

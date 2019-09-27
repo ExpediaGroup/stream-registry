@@ -1,5 +1,6 @@
+package com.expediagroup.streamplatform.streamregistry.app.queries;
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2016-2019 Expedia Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.app;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Value;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+@Value
+@Builder
+public class TagQuery {
 
-@SpringBootApplication(scanBasePackages = "com.expediagroup.streamplatform.streamregistry")
-public class StreamRegistryApp {
-  public static void main(String[] args) {
-    SpringApplication.run(StreamRegistryApp.class, new String[]{"--schema.registry.url=x"});
-  }
+  public TagQuery() {}
+
+  @Getter @Setter String nameRegex = null;
+  @Getter @Setter String valueRegex = null;
 }

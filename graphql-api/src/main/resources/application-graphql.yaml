@@ -4,3 +4,22 @@ graphql:
     schema-location-pattern: "**/*.graphql"
   servlet:
     exception-handlers-enabled: true
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/streamregistry"
+    username: "streamregistry"
+    password:
+      hikari:
+        connectionTimeout: 20000
+        maximumPoolSize: 5
+  jpa:
+    hibernate:
+      temp:
+        use_jdbc_metadata_defaults: false
+      jdbc:
+        lob:
+          non_contextual_creation: true
+      ddl-auto: create
+    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+    show-sql: true

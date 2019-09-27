@@ -1,0 +1,59 @@
+package com.expediagroup.streamplatform.streamregistry.app;
+/**
+ * Copyright (C) 2016-2019 Expedia Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+
+import lombok.Data;
+
+@Data
+@Embeddable
+public class Specification {
+
+  private String description;
+
+  @Column(name = "rword_type")
+  private String type;
+
+  @Lob
+  @Column(name = "configJson", length = 20000)
+  private String configJson;
+
+  @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
+  private List<Tag> tags = new ArrayList<>();
+
+  public Specification(String description, String type, String configJson, List<Tag> tags) {
+    this.description = description;
+    this.type = type;
+    this.configJson = configJson;
+    this.tags = tags;
+  }
+
+  public Specification() {}
+
+  public List<Tag> getTags() {
+    return tags == null ? Collections.emptyList() : tags;
+  }
+}

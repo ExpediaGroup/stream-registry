@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.app;
+package com.expediagroup.streamplatform.streamregistry.app.scalars;
 
+import graphql.schema.Coercing;
+import graphql.schema.GraphQLScalarType;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+public final class Scalars {
 
-@SpringBootApplication(scanBasePackages = "com.expediagroup.streamplatform.streamregistry")
-public class StreamRegistryApp {
-  public static void main(String[] args) {
-    SpringApplication.run(StreamRegistryApp.class, new String[]{"--schema.registry.url=x"});
+  private Scalars() {}
+
+  public static GraphQLScalarType objectNodeScalar() {
+    return scalar("ObjectNode", new ObjectNodeCoercing());
+  }
+
+  private static GraphQLScalarType scalar(String name, Coercing<?, ?> coercing) {
+    return GraphQLScalarType
+        .newScalar()
+        .name(name)
+        .description(name + " Scalar")
+        .coercing(coercing)
+        .build();
   }
 }

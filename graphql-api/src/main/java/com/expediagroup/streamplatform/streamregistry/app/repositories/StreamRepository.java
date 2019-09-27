@@ -1,5 +1,7 @@
+package com.expediagroup.streamplatform.streamregistry.app.repositories;
+
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2016-2019 Expedia Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.app;
 
+import org.springframework.data.repository.CrudRepository;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import com.expediagroup.streamplatform.streamregistry.app.Stream;
+import com.expediagroup.streamplatform.streamregistry.app.keys.StreamKey;
 
-@SpringBootApplication(scanBasePackages = "com.expediagroup.streamplatform.streamregistry")
-public class StreamRegistryApp {
-  public static void main(String[] args) {
-    SpringApplication.run(StreamRegistryApp.class, new String[]{"--schema.registry.url=x"});
-  }
+public interface StreamRepository extends CrudRepository<Stream, StreamKey> {
+
 }

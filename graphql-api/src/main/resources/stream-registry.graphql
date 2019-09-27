@@ -1,5 +1,19 @@
 scalar ObjectNode
 
+############ Status ############
+
+input StatusInput {
+  agentStatus: ObjectNode!
+}
+
+input StatusQuery {
+  descriptionRegex: String
+}
+
+type Status {
+  agentStatus: ObjectNode!
+}
+
 ############ Tag ############
 
 input TagInput {
@@ -56,7 +70,9 @@ input DomainKeyQuery {
 type Domain {
   key: DomainKey!
   specification: Specification!
-  status: ObjectNode
+  status: Status!
+  schemas: [Schema!]
+  #streams: [Stream!]
 }
 
 ############ Schema ############
@@ -79,9 +95,10 @@ input SchemaKeyQuery {
 type Schema {
   key: SchemaKey!
   specification: Specification!
-  configuration: ObjectNode!
+  ##configuration: ObjectNode!
   status: ObjectNode
   domain: Domain!
+  #streams: [Stream!]
 }
 
 ############ Stream ############
@@ -109,6 +126,8 @@ type Stream {
   schema: Schema!
   specification: Specification!
   status: ObjectNode
+  #producers: [Producer!]
+  #consumers: [Consumer!]
 }
 
 ############ Zone ############
@@ -129,6 +148,7 @@ type Zone {
   key: ZoneKey!
   specification: Specification!
   status: ObjectNode
+  #infrastructures: [Infrastructure!]
 }
 
 ############ Infrastructure ############
@@ -153,6 +173,7 @@ type Infrastructure {
   specification: Specification!
   status: ObjectNode
   zone: Zone
+  #streamBindings: [StreamBinding!]
 }
 
 ############ Producer ############
@@ -187,6 +208,7 @@ type Producer {
   status: ObjectNode
   stream: Stream!
   zone: Zone!
+  #bindings: [ProducerBinding!]
 }
 
 ############ Consumer ############
@@ -221,6 +243,7 @@ type Consumer {
   status: ObjectNode
   stream: Stream!
   zone: Zone!
+  #bindings: [ConsumerBinding!]
 }
 
 ############ StreamBinding ############
@@ -255,6 +278,8 @@ type StreamBinding {
   status: ObjectNode
   stream: Stream!
   infrastructure: Infrastructure!
+  #producerBinding: ProducerBinding!
+  #consumerBinding: ConsumerBinding!
 }
 
 ############ ProducerBinding ############
@@ -280,7 +305,7 @@ input ProducerBindingKeyInput {
 input ProducerBindingKeyQuery {
   streamDomainRegex: String
   streamNameRegex: String
-  streamVersionRegex: Int
+  streamVersion: Int
   infrastructureZoneRegex: String
   infrastructureNameRegex: String
   producerNameRegex: String
@@ -317,7 +342,7 @@ input ConsumerBindingKeyInput {
 input ConsumerBindingKeyQuery {
   streamDomainRegex: String
   streamNameRegex: String
-  streamVersionRegex: Int
+  streamVersion: Int
   infrastructureZoneRegex: String
   infrastructureNameRegex: String
   consumerNameRegex: String
@@ -340,61 +365,61 @@ type Mutation {
   updateDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
   upsertDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
   deleteDomain(key: DomainKeyInput!): Boolean!
-  updateDomainStatus(key: DomainKeyInput!, status: ObjectNode!): Domain!
+  updateDomainStatus(key: DomainKeyInput!, status: StatusInput!): Domain!
 
   insertSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
   updateSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
   upsertSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
   deleteSchema(key: SchemaKeyInput!): Boolean!
-  updateSchemaStatus(key: SchemaKeyInput!, status: ObjectNode!): Schema!
+  updateSchemaStatus(key: SchemaKeyInput!, status: StatusInput!): Schema!
 
   insertStream(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
   updateStream(key: StreamKeyInput!, specification: SpecificationInput!): Stream!
   upsertStream(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput): Stream!
   deleteStream(key: StreamKeyInput!): Boolean!
-  updateStreamStatus(key: StreamKeyInput!, status: ObjectNode!): Stream!
+  updateStreamStatus(key: StreamKeyInput!, status: StatusInput!): Stream!
 
   insertZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
   updateZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
   upsertZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
   deleteZone(key: ZoneKeyInput!): Boolean!
-  updateZoneStatus(key: ZoneKeyInput!, status: ObjectNode!): Zone!
+  updateZoneStatus(key: ZoneKeyInput!, status: StatusInput!): Zone!
 
   insertInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
   updateInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
   upsertInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
   deleteInfrastructure(key: InfrastructureKeyInput!): Boolean!
-  updateInfrastructureStatus(key: InfrastructureKeyInput!, status: ObjectNode!): Infrastructure!
+  updateInfrastructureStatus(key: InfrastructureKeyInput!, status: StatusInput!): Infrastructure!
 
   insertProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
   updateProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
   upsertProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
   deleteProducer(key: ProducerKeyInput!): Boolean!
-  updateProducerStatus(key: ProducerKeyInput!, status: ObjectNode!): Producer!
+  updateProducerStatus(key: ProducerKeyInput!, status: StatusInput!): Producer!
 
   insertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
   updateConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
   upsertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
   deleteConsumer(key: ConsumerKeyInput!): Boolean!
-  updateConsumerStatus(key: ConsumerKeyInput!, status: ObjectNode!): Consumer!
+  updateConsumerStatus(key: ConsumerKeyInput!, status: StatusInput!): Consumer!
 
   insertStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
   updateStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
   upsertStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
   deleteStreamBinding(key: StreamBindingKeyInput!): Boolean!
-  updateStreamBindingStatus(key: StreamBindingKeyInput!, status: ObjectNode!): StreamBinding!
+  updateStreamBindingStatus(key: StreamBindingKeyInput!, status: StatusInput!): StreamBinding!
 
   insertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
   updateProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
   upsertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
   deleteProducerBinding(key: ProducerBindingKeyInput!): Boolean!
-  updateProducerBindingStatus(key: ProducerBindingKeyInput!, status: ObjectNode!): ProducerBinding!
+  updateProducerBindingStatus(key: ProducerBindingKeyInput!, status: StatusInput!): ProducerBinding!
 
   insertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
   updateConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
   upsertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
   deleteConsumerBinding(key: ConsumerBindingKeyInput!): Boolean!
-  updateConsumerBindingStatus(key: ConsumerBindingKeyInput!, status: ObjectNode!): ConsumerBinding!
+  updateConsumerBindingStatus(key: ConsumerBindingKeyInput!, status: StatusInput!): ConsumerBinding!
 
 }
 
@@ -402,11 +427,14 @@ type Mutation {
 
 type Query {
 
+  bugfixq(v:TagQuery): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
+  bugfixi(v:TagInput): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
+
   getDomain(key: DomainKeyInput!): Domain!
   getDomains(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
 
   getSchema(key: SchemaKeyInput!): Schema!
-  getSchemas(key: SchemaKeyQuery, specification: SpecificationQuery): Schema!
+  getSchemas(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
 
   getStream(key: StreamKeyInput!): Stream!
   getStreams(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
