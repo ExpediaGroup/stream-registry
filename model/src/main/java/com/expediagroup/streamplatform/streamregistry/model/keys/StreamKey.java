@@ -36,4 +36,9 @@ public class StreamKey implements Serializable {
   private String name;
   @Column(length = 100)
   private Integer version;
+
+  private DomainKey getDomainKey(){
+    return new DomainKey(domain);
+  }
+
 }

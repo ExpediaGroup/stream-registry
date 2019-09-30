@@ -22,13 +22,13 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 @Component
-public class StreamBindingValidator { //todo implements Validator<T>
+public class StreamBindingValidator implements Validator<StreamBinding>{
 
-  //@Override
+  @Override
   public void validateForCreate(StreamBinding streambinding) throws ValidationException {
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(StreamBinding streambinding, StreamBinding existing) throws ValidationException {
   }
 }

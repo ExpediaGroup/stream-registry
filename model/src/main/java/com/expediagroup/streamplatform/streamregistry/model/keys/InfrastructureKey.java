@@ -34,4 +34,9 @@ public class InfrastructureKey implements Serializable {
   private String zone;
   @Column(length = 100)
   private String name;
+
+  public ZoneKey getZoneKey(){
+    return new ZoneKey(zone);
+  }
+
 }

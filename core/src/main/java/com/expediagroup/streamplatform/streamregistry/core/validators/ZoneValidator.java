@@ -22,13 +22,13 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
-public class ZoneValidator { //todo implements Validator<T>
+public class ZoneValidator implements Validator<Zone> {
 
-  //@Override
+  @Override
   public void validateForCreate(Zone zone) throws ValidationException {
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(Zone zone, Zone existing) throws ValidationException {
   }
 }

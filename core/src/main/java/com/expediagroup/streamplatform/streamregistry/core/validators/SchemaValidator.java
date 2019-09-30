@@ -24,20 +24,20 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
-public class SchemaValidator {
+public class SchemaValidator implements Validator<Schema> {
 
-  private DomainService domainService; //todo implements Validator<T>
+  private DomainService domainService;
 
   public SchemaValidator(DomainService domainService) {
     this.domainService = domainService;
   }
 
-  //@Override
+  @Override
   public void validateForCreate(Schema schema) throws ValidationException {
     validateForCreateAndUpdate(schema);
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(Schema schema, Schema existing) throws ValidationException {
     validateForCreateAndUpdate(schema);
   }

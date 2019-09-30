@@ -22,13 +22,13 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 @Component
-public class ConsumerValidator { //todo implements Validator<T>
+public class ConsumerValidator implements Validator<Consumer> {
 
-  //@Override
+  @Override
   public void validateForCreate(Consumer consumer) throws ValidationException {
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(Consumer consumer, Consumer existing) throws ValidationException {
   }
 }

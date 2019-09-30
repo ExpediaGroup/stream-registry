@@ -40,4 +40,13 @@ public class StreamBindingKey implements Serializable {
   private String infrastructureZone;
   @Column(length = 100)
   private String infrastructureName;
+
+  public StreamKey getStreamKey() {
+    return new StreamKey(streamDomain,streamName,streamVersion);
+  }
+
+  public InfrastructureKey getInfrastructureKey() {
+    return new InfrastructureKey(infrastructureZone,infrastructureName);
+  }
+
 }

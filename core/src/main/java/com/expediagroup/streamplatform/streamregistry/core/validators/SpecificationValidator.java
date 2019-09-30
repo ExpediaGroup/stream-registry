@@ -22,13 +22,13 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 @Component
-public class SpecificationValidator { //todo implements Validator<T>
+public class SpecificationValidator implements Validator<Specification>{
 
-  //@Override
+  @Override
   public void validateForCreate(Specification specification) throws ValidationException {
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(Specification specification, Specification existing) throws ValidationException {
   }
 }

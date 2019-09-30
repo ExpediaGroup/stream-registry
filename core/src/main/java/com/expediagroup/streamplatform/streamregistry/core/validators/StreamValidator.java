@@ -25,9 +25,9 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
-public class StreamValidator { //todo implements Validator<T>
+public class StreamValidator implements Validator<Stream>{
 
-  private DomainService domainService; //todo implements Validator<T>
+  private DomainService domainService;
   private SchemaService schemaService;
 
   public StreamValidator(DomainService domainService, SchemaService schemaService) {
@@ -35,12 +35,12 @@ public class StreamValidator { //todo implements Validator<T>
     this.schemaService = schemaService;
   }
 
-  //@Override
+  @Override
   public void validateForCreate(Stream stream) throws ValidationException {
     validateForCreateAndUpdate(stream);
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(Stream stream, Stream existing) throws ValidationException {
     validateForCreateAndUpdate(stream);
   }

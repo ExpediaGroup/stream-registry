@@ -32,4 +32,6 @@ public class ProducerBinding {
   //private String producerId; //Resolves to Producer
   //private String bindingId; //Resolves to StreamBinding
   private Status status;
+
+
 }

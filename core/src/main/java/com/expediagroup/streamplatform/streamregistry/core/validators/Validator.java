@@ -1,5 +1,3 @@
-package com.expediagroup.streamplatform.streamregistry.core.validators;
-
 /**
  * Copyright (C) 2016-2019 Expedia Inc.
  *
@@ -16,19 +14,14 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
  * limitations under the License.
  */
 
-import org.springframework.stereotype.Component;
+package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
-@Component
-public class DomainValidator implements Validator<Domain>{
+public interface Validator<T> {
 
-  @Override
-  public void validateForCreate(Domain domain) throws ValidationException {
-  }
+  void validateForCreate(T type) throws ValidationException;
 
-  @Override
-  public void validateForUpdate(Domain domain, Domain existing) throws ValidationException {
-  }
+  void validateForUpdate(T type, T existing) throws ValidationException;
 }
+

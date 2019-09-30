@@ -19,16 +19,17 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 @Component
-public class ConsumerBindingValidator { //todo implements Validator<T>
+public class ConsumerBindingValidator  implements Validator<ConsumerBinding>{
 
-  //@Override
+  @Override
   public void validateForCreate(ConsumerBinding consumerbinding) throws ValidationException {
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(ConsumerBinding consumerbinding, ConsumerBinding existing) throws ValidationException {
   }
 }

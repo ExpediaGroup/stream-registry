@@ -18,17 +18,37 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 @Component
-public class ProducerBindingValidator { //todo implements Validator<T>
+public class ProducerBindingValidator implements Validator<ProducerBinding>{
 
-  //@Override
+  private ProducerService producerService;
+
+  public ProducerBindingValidator(ProducerService producerService) {
+    this.producerService = producerService;
+  }
+
+  @Override
   public void validateForCreate(ProducerBinding producerbinding) throws ValidationException {
+    validateForCreateAndUpdate(producerbinding);
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(ProducerBinding producerbinding, ProducerBinding existing) throws ValidationException {
+    validateForCreateAndUpdate(producerbinding);
   }
-}
+
+  public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
+    if(producerService.read(producerbinding.getKey().getProducerKey()).isEmpty()){
+      throw new ValidationException("Producer does not exist");
+    }
+  }
+
+
+  }

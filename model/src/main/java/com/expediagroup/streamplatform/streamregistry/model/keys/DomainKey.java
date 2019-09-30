@@ -32,4 +32,5 @@ public class DomainKey implements Serializable {
 
   @Column(length = 100)
   private String name;
+
 }

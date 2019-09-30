@@ -42,4 +42,12 @@ public class ConsumerBindingKey implements Serializable {
   private String infrastructureName;
   @Column(length = 100)
   private String consumerName;
+
+  public StreamKey getStreamKey() {
+    return new StreamKey(streamDomain,streamName,streamVersion);
+  }
+
+  public InfrastructureKey getInfrastructureKey() {
+    return new InfrastructureKey(infrastructureZone,infrastructureName);
+  }
 }

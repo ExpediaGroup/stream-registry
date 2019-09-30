@@ -172,7 +172,6 @@ public class MyMutationImpl implements MutationImpl {
 
   private Zone asZone(ZoneKeyInput key, SpecificationInput specification) {
     Zone zone = new Zone();
-    //zone.setId(zk.toString()); //todo
     zone.setKey(key.asZoneKey());
     zone.setSpecification(specification.asSpecification());
     return zone;
@@ -287,22 +286,29 @@ public class MyMutationImpl implements MutationImpl {
 
   @Override
   public StreamBinding insertStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getStreamBindingService().create(asStreamBinding(key,specification)).get();
   }
 
   @Override
   public StreamBinding updateStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getStreamBindingService().update(asStreamBinding(key,specification)).get();
   }
 
   @Override
   public StreamBinding upsertStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getStreamBindingService().upsert(asStreamBinding(key,specification)).get();
   }
 
   @Override
   public Boolean deleteStreamBinding(StreamBindingKeyInput key) {
     throw new UnsupportedOperationException("delete");
+  }
+
+  private StreamBinding asStreamBinding(StreamBindingKeyInput key, SpecificationInput specification){
+    StreamBinding streamBinding=new StreamBinding();
+    streamBinding.setKey(key.asStreamBindingKey());
+    streamBinding.setSpecification(specification.asSpecification());
+    return streamBinding;
   }
 
   @Override
@@ -314,17 +320,17 @@ public class MyMutationImpl implements MutationImpl {
 
   @Override
   public ProducerBinding insertProducerBinding(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getProducerBindingService().upsert(asProducerBinding(key, specification)).get();
   }
 
   @Override
   public ProducerBinding updateProducerBinding(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getProducerBindingService().update(asProducerBinding(key, specification)).get();
   }
 
   @Override
   public ProducerBinding upsertProducerBinding(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getProducerBindingService().upsert(asProducerBinding(key, specification)).get();
   }
 
   @Override
@@ -339,19 +345,26 @@ public class MyMutationImpl implements MutationImpl {
     return services.getProducerBindingService().update(producerBinding).get();
   }
 
+  private ProducerBinding asProducerBinding(ProducerBindingKeyInput key, SpecificationInput specification) {
+    ProducerBinding producerBinding=new ProducerBinding();
+    producerBinding.setKey(key.asProducerBindingKey());
+    producerBinding.setSpecification(specification.asSpecification());
+    return producerBinding;
+  }
+
   @Override
   public ConsumerBinding insertConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getConsumerBindingService().create(asConsumerBinding(key, specification)).get();
   }
 
   @Override
   public ConsumerBinding updateConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getConsumerBindingService().update(asConsumerBinding(key, specification)).get();
   }
 
   @Override
   public ConsumerBinding upsertConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getConsumerBindingService().upsert(asConsumerBinding(key, specification)).get();
   }
 
   @Override
@@ -364,6 +377,13 @@ public class MyMutationImpl implements MutationImpl {
     ConsumerBinding consumerBinding = services.getConsumerBindingService().read(key.asConsumerBindingKey()).get();
     consumerBinding.setStatus(status.asStatus());
     return services.getConsumerBindingService().update(consumerBinding).get();
+  }
+
+  private ConsumerBinding asConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {
+    ConsumerBinding consumerBinding=new ConsumerBinding();
+    consumerBinding.setKey(key.asConsumerBindingKey());
+    consumerBinding.setSpecification(specification.asSpecification());
+    return consumerBinding;
   }
 }
 

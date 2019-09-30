@@ -40,4 +40,14 @@ public class ConsumerKey implements Serializable {
   private String zone;
   @Column(length = 100)
   private String name;
+
+
+  public StreamKey getStreamKey() {
+    return new StreamKey(streamDomain,streamName,streamVersion);
+  }
+
+  public InfrastructureKey getInfrastructureKey() {
+    return new InfrastructureKey(zone,name);
+  }
+
 }

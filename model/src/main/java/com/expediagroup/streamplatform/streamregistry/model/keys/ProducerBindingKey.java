@@ -42,4 +42,12 @@ public class ProducerBindingKey implements Serializable {
   private String infrastructureName;
   @Column(length = 100)
   private String producerName;
+
+  public StreamKey getStreamKey() {
+    return new StreamKey(streamDomain,streamName,streamVersion);
+  }
+
+  public ProducerKey getProducerKey(){
+    return new ProducerKey(streamDomain,streamName,streamVersion,infrastructureZone,producerName);
+  }
 }

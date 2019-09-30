@@ -22,13 +22,14 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
 @Component
-public class InfrastructureValidator { //todo implements Validator<T>
+public class InfrastructureValidator implements Validator<Infrastructure> {
 
-  //@Override
+  @Override
   public void validateForCreate(Infrastructure infrastructure) throws ValidationException {
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(Infrastructure infrastructure, Infrastructure existing) throws ValidationException {
   }
+
 }

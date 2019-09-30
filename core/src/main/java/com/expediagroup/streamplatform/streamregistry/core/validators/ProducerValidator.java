@@ -18,29 +18,26 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Component
-public class ProducerValidator {
+public class ProducerValidator implements Validator<Producer> {
 
-  private final DomainService domainService;
   private StreamService streamService;
 
-  public ProducerValidator(DomainService domainService, StreamService streamService) {
-    this.domainService = domainService;
+  public ProducerValidator(StreamService streamService) {
     this.streamService = streamService;
   }
 
-  //@Override
+  @Override
   public void validateForCreate(Producer producer) throws ValidationException {
     validateForCreateAndUpdate(producer);
   }
 
-  //@Override
+  @Override
   public void validateForUpdate(Producer producer, Producer existing) throws ValidationException {
     validateForCreateAndUpdate(producer);
   }
@@ -50,13 +47,7 @@ public class ProducerValidator {
   }
 
   private void validateStreamExists(Producer producer) {
-    //todo: get StreamKey as an object from producer, not as fields
-    StreamKey streamKey = new StreamKey(
-        producer.getKey().getStreamDomain(),
-        producer.getKey().getStreamName(),
-        producer.getKey().getStreamVersion()
-    );
-    if (streamService.read(streamKey).isEmpty()) {
+    if (streamService.read(producer.getKey().getStreamKey()).isEmpty()) {
       throw new ValidationException("Stream does not exist");
     }
   }
