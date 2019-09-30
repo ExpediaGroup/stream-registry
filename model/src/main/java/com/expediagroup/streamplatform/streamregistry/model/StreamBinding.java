@@ -24,7 +24,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class StreamBinding {
+public class StreamBinding implements Stated{
 
   @EmbeddedId
   private StreamBindingKey key;

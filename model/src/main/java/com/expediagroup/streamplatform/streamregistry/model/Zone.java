@@ -24,7 +24,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Zone {
+public class Zone implements Stated{
 
   @EmbeddedId
   private ZoneKey key;

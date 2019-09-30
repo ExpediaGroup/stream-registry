@@ -24,7 +24,7 @@ import lombok.Data;
 
 @Data
 @Entity(name = "rword_schema")
-public class Schema {
+public class Schema implements Stated{
 
   @EmbeddedId
   private SchemaKey key;

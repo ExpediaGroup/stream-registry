@@ -24,7 +24,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class ConsumerBinding {
+public class ConsumerBinding implements Stated{
 
   @EmbeddedId
   private ConsumerBindingKey key;

@@ -1,4 +1,3 @@
-package com.expediagroup.streamplatform.streamregistry.model;
 /**
  * Copyright (C) 2016-2019 Expedia Inc.
  *
@@ -15,19 +14,12 @@ package com.expediagroup.streamplatform.streamregistry.model;
  * limitations under the License.
  */
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+package com.expediagroup.streamplatform.streamregistry.model;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+public interface Stated {
 
-import lombok.Data;
+  Status getStatus();
 
-@Data
-@Entity
-public class Domain implements Stated{
+  void setStatus(Status status);
 
-  @EmbeddedId
-  private DomainKey key;
-  private Specification specification;
-  private Status status;
 }

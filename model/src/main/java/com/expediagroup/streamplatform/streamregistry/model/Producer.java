@@ -24,7 +24,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Producer {
+public class Producer implements Stated{
 
   @EmbeddedId
   private ProducerKey key;

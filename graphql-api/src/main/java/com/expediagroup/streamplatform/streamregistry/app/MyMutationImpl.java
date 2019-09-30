@@ -16,6 +16,8 @@
 
 package com.expediagroup.streamplatform.streamregistry.app;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerBindingKeyInput;
@@ -39,6 +41,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stated;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
@@ -83,6 +86,7 @@ public class MyMutationImpl implements MutationImpl {
     Domain domain = new Domain();
     domain.setKey(key.asDomainKey());
     domain.setSpecification(specification.asSpecification());
+    maintainState(domain, services.getDomainService().read(domain.getKey()));
     return domain;
   }
 
@@ -117,6 +121,7 @@ public class MyMutationImpl implements MutationImpl {
     Schema schema = new Schema();
     schema.setKey(key.asSchemaKey());
     schema.setSpecification(specification.asSpecification());
+    maintainState(schema,services.getSchemaService().read(schema.getKey()));
     return schema;
   }
 
@@ -152,6 +157,7 @@ public class MyMutationImpl implements MutationImpl {
     stream.setKey(key.asStreamKey());
     stream.setSpecification(specification.asSpecification());
     stream.setSchemaKey(schema.asSchemaKey());
+    maintainState(stream,services.getStreamService().read(stream.getKey()));
     return stream;
   }
 
@@ -174,6 +180,7 @@ public class MyMutationImpl implements MutationImpl {
     Zone zone = new Zone();
     zone.setKey(key.asZoneKey());
     zone.setSpecification(specification.asSpecification());
+    maintainState(zone,services.getZoneService().read(zone.getKey()));
     return zone;
   }
 
@@ -235,6 +242,7 @@ public class MyMutationImpl implements MutationImpl {
     Producer producer = new Producer();
     producer.setKey(key.asProducerKey());
     producer.setSpecification(specification.asSpecification());
+    maintainState(producer,services.getProducerService().read(producer.getKey()));
     return producer;
   }
 
@@ -269,6 +277,7 @@ public class MyMutationImpl implements MutationImpl {
     Consumer consumer = new Consumer();
     consumer.setKey(key.asConsumerKey());
     consumer.setSpecification(specification.asSpecification());
+    maintainState(consumer, services.getConsumerService().read(consumer.getKey()));
     return consumer;
   }
 
@@ -308,6 +317,7 @@ public class MyMutationImpl implements MutationImpl {
     StreamBinding streamBinding=new StreamBinding();
     streamBinding.setKey(key.asStreamBindingKey());
     streamBinding.setSpecification(specification.asSpecification());
+    maintainState(streamBinding,services.getStreamBindingService().read(streamBinding.getKey()));
     return streamBinding;
   }
 
@@ -349,6 +359,7 @@ public class MyMutationImpl implements MutationImpl {
     ProducerBinding producerBinding=new ProducerBinding();
     producerBinding.setKey(key.asProducerBindingKey());
     producerBinding.setSpecification(specification.asSpecification());
+    maintainState(producerBinding,services.getProducerBindingService().read(producerBinding.getKey()));
     return producerBinding;
   }
 
@@ -383,7 +394,15 @@ public class MyMutationImpl implements MutationImpl {
     ConsumerBinding consumerBinding=new ConsumerBinding();
     consumerBinding.setKey(key.asConsumerBindingKey());
     consumerBinding.setSpecification(specification.asSpecification());
+
+    maintainState(consumerBinding, services.getConsumerBindingService().read(key.asConsumerBindingKey()));
     return consumerBinding;
+  }
+
+  private void maintainState(Stated stated,Optional<? extends Stated> existing){
+    if(existing.isPresent()){
+      stated.setStatus(existing.get().getStatus());
+    }
   }
 }
 

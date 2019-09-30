@@ -24,7 +24,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Infrastructure {
+public class Infrastructure implements Stated{
 
   @EmbeddedId
   private InfrastructureKey key;

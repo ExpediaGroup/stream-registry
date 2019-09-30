@@ -23,7 +23,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Consumer {
+public class Consumer implements Stated{
 
   @EmbeddedId
   private ConsumerKey key;

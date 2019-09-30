@@ -26,7 +26,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Stream {
+public class Stream implements Stated{
 
   @EmbeddedId
   private StreamKey key;
