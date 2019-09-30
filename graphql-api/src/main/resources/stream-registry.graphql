@@ -359,68 +359,97 @@ type ConsumerBinding {
 
 ############ Mutations ############
 
+type ConsumerMutation {
+  insert(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
+  update(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
+  upsert(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
+  delete(key: ConsumerKeyInput!): Boolean!
+  updateStatus(key: ConsumerKeyInput!, status: StatusInput!): Consumer!
+}
+
+type DomainMutation {
+  insert(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
+  update(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
+  upsert(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
+  delete(key: DomainKeyInput!): Boolean!
+  updateStatus(key: DomainKeyInput!, status: StatusInput!): Domain!
+}
+
+type SchemaMutation{
+  insert(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
+  update(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
+  upsert(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
+  delete(key: SchemaKeyInput!): Boolean!
+  updateStatus(key: SchemaKeyInput!, status: StatusInput!): Schema!
+}
+
+type StreamMutation{
+  insert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
+  update(key: StreamKeyInput!, specification: SpecificationInput!): Stream!
+  upsert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput): Stream!
+  delete(key: StreamKeyInput!): Boolean!
+  updateStatus(key: StreamKeyInput!, status: StatusInput!): Stream!
+}
+
+type ZoneMutation{
+  insert(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
+  update(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
+  upsert(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
+  delete(key: ZoneKeyInput!): Boolean!
+  updateStatus(key: ZoneKeyInput!, status: StatusInput!): Zone!
+}
+
+type InfrastructureMutation{
+  insert(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
+  update(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
+  upsert(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
+  delete(key: InfrastructureKeyInput!): Boolean!
+  updateStatus(key: InfrastructureKeyInput!, status: StatusInput!): Infrastructure!
+}
+
+type ProducerMutation{
+  insert(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
+  update(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
+  upsert(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
+  delete(key: ProducerKeyInput!): Boolean!
+  updateStatus(key: ProducerKeyInput!, status: StatusInput!): Producer!
+}
+
+type StreamBindingMutation{
+  insert(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
+  update(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
+  upsert(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
+  delete(key: StreamBindingKeyInput!): Boolean!
+  updateStatus(key: StreamBindingKeyInput!, status: StatusInput!): StreamBinding!
+}
+
+type ProducerBindingMutation{
+  insert(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  update(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  upsert(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
+  delete(key: ProducerBindingKeyInput!): Boolean!
+  updateStatus(key: ProducerBindingKeyInput!, status: StatusInput!): ProducerBinding!
+}
+
+type ConsumerBindingMutation{
+  insert(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  update(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  upsert(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
+  delete(key: ConsumerBindingKeyInput!): Boolean!
+  updateStatus(key: ConsumerBindingKeyInput!, status: StatusInput!): ConsumerBinding!
+}
+
 type Mutation {
-
-  insertDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
-  updateDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
-  upsertDomain(key: DomainKeyInput!, specification: SpecificationInput!): Domain!
-  deleteDomain(key: DomainKeyInput!): Boolean!
-  updateDomainStatus(key: DomainKeyInput!, status: StatusInput!): Domain!
-
-  insertSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
-  updateSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
-  upsertSchema(key: SchemaKeyInput!, specification: SpecificationInput!): Schema!
-  deleteSchema(key: SchemaKeyInput!): Boolean!
-  updateSchemaStatus(key: SchemaKeyInput!, status: StatusInput!): Schema!
-
-  insertStream(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
-  updateStream(key: StreamKeyInput!, specification: SpecificationInput!): Stream!
-  upsertStream(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput): Stream!
-  deleteStream(key: StreamKeyInput!): Boolean!
-  updateStreamStatus(key: StreamKeyInput!, status: StatusInput!): Stream!
-
-  insertZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
-  updateZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
-  upsertZone(key: ZoneKeyInput!, specification: SpecificationInput!): Zone!
-  deleteZone(key: ZoneKeyInput!): Boolean!
-  updateZoneStatus(key: ZoneKeyInput!, status: StatusInput!): Zone!
-
-  insertInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
-  updateInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
-  upsertInfrastructure(key: InfrastructureKeyInput!, specification: SpecificationInput!): Infrastructure!
-  deleteInfrastructure(key: InfrastructureKeyInput!): Boolean!
-  updateInfrastructureStatus(key: InfrastructureKeyInput!, status: StatusInput!): Infrastructure!
-
-  insertProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
-  updateProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
-  upsertProducer(key: ProducerKeyInput!, specification: SpecificationInput!): Producer!
-  deleteProducer(key: ProducerKeyInput!): Boolean!
-  updateProducerStatus(key: ProducerKeyInput!, status: StatusInput!): Producer!
-
-  insertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
-  updateConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
-  upsertConsumer(key: ConsumerKeyInput!, specification: SpecificationInput!): Consumer!
-  deleteConsumer(key: ConsumerKeyInput!): Boolean!
-  updateConsumerStatus(key: ConsumerKeyInput!, status: StatusInput!): Consumer!
-
-  insertStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
-  updateStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
-  upsertStreamBinding(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
-  deleteStreamBinding(key: StreamBindingKeyInput!): Boolean!
-  updateStreamBindingStatus(key: StreamBindingKeyInput!, status: StatusInput!): StreamBinding!
-
-  insertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
-  updateProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
-  upsertProducerBinding(key: ProducerBindingKeyInput!, specification: SpecificationInput!): ProducerBinding!
-  deleteProducerBinding(key: ProducerBindingKeyInput!): Boolean!
-  updateProducerBindingStatus(key: ProducerBindingKeyInput!, status: StatusInput!): ProducerBinding!
-
-  insertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
-  updateConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
-  upsertConsumerBinding(key: ConsumerBindingKeyInput!, specification: SpecificationInput!): ConsumerBinding!
-  deleteConsumerBinding(key: ConsumerBindingKeyInput!): Boolean!
-  updateConsumerBindingStatus(key: ConsumerBindingKeyInput!, status: StatusInput!): ConsumerBinding!
-
+  consumer: ConsumerMutation!
+  domain: DomainMutation!
+  schema: SchemaMutation!
+  stream: StreamMutation!
+  zone: ZoneMutation!
+  infrastructure: InfrastructureMutation!
+  producer: ProducerMutation!
+  streamBinding: StreamBindingMutation!
+  producerBinding: ProducerBindingMutation!
+  consumerBinding: ConsumerBindingMutation!
 }
 
 ############ Queries ############
