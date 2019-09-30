@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MapPatternMatchPredicateFactory {
+
   private final PatternMatchPredicateFactory patternMatchPredicateFactory = new PatternMatchPredicateFactory();
 
   public <T> Predicate<T> create(T query, Function<T, Map<String, String>> function) {

@@ -16,7 +16,7 @@ package com.expediagroup.streamplatform.streamregistry.app.convertors;
  */
 
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.app.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 import lombok.Data;
 

@@ -17,17 +17,18 @@ package com.expediagroup.streamplatform.streamregistry.core.handler;
 
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
-
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
+import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
-public class HandlerWrapper<T extends Entity<?>> {
+public class HandlerWrapper<T> {
+
   private final HandlerProvider<T> provider;
 
   public T handle(T entity, Optional<? extends T> existing) {
-    Handler<T> handler = provider.get(entity.getType());
+    Handler<T> handler = provider.get(entity);
     return handler.handle(entity, existing);
   }
 }

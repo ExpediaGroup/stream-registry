@@ -15,14 +15,13 @@ package com.expediagroup.streamplatform.streamregistry.app.resolvers;
  * limitations under the License.
  */
 
-
-import static com.expediagroup.streamplatform.streamregistry.app.scalars.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.deserialise;
 
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Status;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component

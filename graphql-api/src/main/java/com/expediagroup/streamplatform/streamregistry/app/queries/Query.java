@@ -1,16 +1,6 @@
 package com.expediagroup.streamplatform.streamregistry.app.queries;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Consumer;
-import com.expediagroup.streamplatform.streamregistry.app.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Domain;
-import com.expediagroup.streamplatform.streamregistry.app.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.app.Producer;
-import com.expediagroup.streamplatform.streamregistry.app.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Schema;
-import com.expediagroup.streamplatform.streamregistry.app.Stream;
-import com.expediagroup.streamplatform.streamregistry.app.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Zone;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.DomainKeyInput;
@@ -22,6 +12,16 @@ import com.expediagroup.streamplatform.streamregistry.app.inputs.StreamBindingKe
 import com.expediagroup.streamplatform.streamregistry.app.inputs.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.TagInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 public interface Query extends GraphQLQueryResolver {
 

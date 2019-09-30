@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NameValidator {
+
   private static final Pattern pattern = Pattern
       .compile("^([a-z][a-z0-9]*(-[a-z][a-z0-9]*)*)+(\\.[a-z][a-z0-9]*(-[a-z][a-z0-9]*)*)*$");
 

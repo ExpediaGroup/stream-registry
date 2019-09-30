@@ -21,15 +21,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Objects;
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
 @RequiredArgsConstructor
 public class EntityValidator {
+
   private final NameValidator nameValidator;
 
   public void validate(Entity<?> entity, Optional<? extends Entity<?>> existing) {

@@ -16,13 +16,11 @@ package com.expediagroup.streamplatform.streamregistry.app.resolvers;
  */
 
 
-import static com.expediagroup.streamplatform.streamregistry.app.scalars.ObjectNodeMapper.deserialise;
-
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Specification;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component
@@ -34,7 +32,4 @@ public class SpecificationResolver implements GraphQLResolver<Specification> {
     this.services = services;
   }
 
-  public ObjectNode getConfiguration(Specification specification) {
-    return deserialise(specification.getConfigJson());
-  }
 }

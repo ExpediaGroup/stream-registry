@@ -18,9 +18,13 @@ package com.expediagroup.streamplatform.streamregistry.handler;
 import static com.expediagroup.streamplatform.streamregistry.handler.EgspConfluentSchemaHandler.SCHEMA_REGISTRY_URL;
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -47,12 +51,12 @@ public class EgspConfluentSchemaHandlerTest {
 
   @Test
   public void handle() {
-    assertEquals("some_url", createAndHandle(null).getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
+    assertEquals("some_url", createAndHandle(null).getSpecification().getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
   }
 
   @Test
   public void handleWithExistingURL() {
-    assertEquals("some_existing_url", createAndHandle("some_existing_url").getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
+    assertEquals("some_existing_url", createAndHandle("some_existing_url").getSpecification().getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
   }
 
   private Schema createAndHandle(String existingUrl) {
@@ -65,6 +69,14 @@ public class EgspConfluentSchemaHandlerTest {
     if (existingUrl != null) {
       configuration.put(SCHEMA_REGISTRY_URL, existingUrl);
     }
-    return Schema.builder().tags(new HashMap<>()).configuration(configuration).build();
+
+    Specification specification=new Specification();
+    specification.setTags(new ArrayList<>());
+    specification.setConfigJson(ObjectNodeMapper.serialise(configuration));
+
+    Schema schema=new Schema();
+    schema.setSpecification(specification);
+
+    return schema;
   }
 }

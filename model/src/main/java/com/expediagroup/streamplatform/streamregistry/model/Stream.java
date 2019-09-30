@@ -1,5 +1,6 @@
+package com.expediagroup.streamplatform.streamregistry.model;
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2016-2019 Expedia Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,44 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
 
-import static java.util.Collections.emptyMap;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 
-import java.util.Map;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 import lombok.Builder;
-import lombok.Value;
-import lombok.experimental.Wither;
+import lombok.Data;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+@Data
+@Entity
+public class Stream {
 
-@Wither
-@Value
-@Builder
-public class Stream implements Entity<Stream.Key> {
+  @EmbeddedId
+  private StreamKey key;
 
-  String name;
-  String owner;
-  String description;
-  @Builder.Default Map<String, String> tags = emptyMap();
-  String type;
-  @Builder.Default ObjectNode configuration = mapper.createObjectNode();
-
-  Domain.Key domainKey;
-  Integer version;
-  Schema.Key schemaKey;
-
-  @Override
-  public Key key() {
-    return new Key(name, domainKey, version);
-  }
-
-  @Value
-  @Builder
-  public static class Key {
-    String name;
-    Domain.Key domain;
-    Integer version;
-  }
+  private SchemaKey schemaKey;
+  private Specification specification;
+  private Status status;
 }

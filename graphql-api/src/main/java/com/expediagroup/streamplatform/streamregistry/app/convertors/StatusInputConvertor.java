@@ -15,11 +15,10 @@ package com.expediagroup.streamplatform.streamregistry.app.convertors;
  * limitations under the License.
  */
 
+import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
 
-import static com.expediagroup.streamplatform.streamregistry.app.scalars.ObjectNodeMapper.serialise;
-
-import com.expediagroup.streamplatform.streamregistry.app.Status;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.StatusInput;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 import lombok.Data;
 

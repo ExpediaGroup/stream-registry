@@ -21,13 +21,14 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class PatternMatchPredicateFactory {
+
   public <T> Predicate<T> create(T query, Function<T, String> function) {
     return Optional
         .ofNullable(query)

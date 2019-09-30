@@ -18,9 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.app.resolvers;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Schema;
-import com.expediagroup.streamplatform.streamregistry.app.Stream;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Component
 public class StreamResolver implements GraphQLResolver<Stream> {

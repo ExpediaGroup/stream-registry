@@ -18,10 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.app.resolvers;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.app.Zone;
-import com.expediagroup.streamplatform.streamregistry.app.keys.ZoneKey;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 public class InfrastructureResolver implements GraphQLResolver<Infrastructure> {

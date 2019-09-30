@@ -38,7 +38,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import reactor.core.publisher.Mono;
 
-import com.expediagroup.streamplatform.streamregistry.app.StreamRegistryApp;
+import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.GetDomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;

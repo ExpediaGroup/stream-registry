@@ -18,12 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.app.resolvers;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.app.Stream;
-import com.expediagroup.streamplatform.streamregistry.app.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.app.keys.InfrastructureKey;
-import com.expediagroup.streamplatform.streamregistry.app.keys.StreamKey;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Component
 public class StreamBindingResolver implements GraphQLResolver<StreamBinding> {

@@ -19,14 +19,15 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Predicates;
 
-import org.springframework.stereotype.Component;
-
 @Component
 public class ObjectNodePatternMatchPredicateFactory {
+
   private static final ObjectNode emptyObjectNode = new ObjectMapper().createObjectNode();
   private final PatternMatchPredicateFactory patternMatchPredicateFactory = new PatternMatchPredicateFactory();
 

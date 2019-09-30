@@ -15,8 +15,8 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
-import com.expediagroup.streamplatform.streamregistry.app.Status;
 import com.expediagroup.streamplatform.streamregistry.app.convertors.StatusInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Builder;

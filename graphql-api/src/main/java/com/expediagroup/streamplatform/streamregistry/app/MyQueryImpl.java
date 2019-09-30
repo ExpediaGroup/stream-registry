@@ -20,26 +20,6 @@ import static com.expediagroup.streamplatform.streamregistry.app.convertors.Zone
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.app.Consumer;
-import com.expediagroup.streamplatform.streamregistry.app.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Domain;
-import com.expediagroup.streamplatform.streamregistry.app.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.app.Producer;
-import com.expediagroup.streamplatform.streamregistry.app.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Schema;
-import com.expediagroup.streamplatform.streamregistry.app.Stream;
-import com.expediagroup.streamplatform.streamregistry.app.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Zone;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.ConsumerBindingFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.ConsumerFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.DomainFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.InfrastructureFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.ProducerBindingFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.ProducerFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.SchemaFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.StreamBindingFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.StreamFilter;
-import com.expediagroup.streamplatform.streamregistry.app.filters.queryFilters.ZoneFilter;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.DomainKeyInput;
@@ -64,7 +44,27 @@ import com.expediagroup.streamplatform.streamregistry.app.queries.StreamBindingK
 import com.expediagroup.streamplatform.streamregistry.app.queries.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queries.TagQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queries.ZoneKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ConsumerBindingFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ConsumerFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.DomainFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.InfrastructureFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ProducerBindingFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ProducerFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.SchemaFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.StreamBindingFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.StreamFilter;
+import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ZoneFilter;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
 public class MyQueryImpl implements Query {
@@ -160,7 +160,7 @@ public class MyQueryImpl implements Query {
 
   @Override
   public Iterable<StreamBinding> getStreamBindings(StreamBindingKeyQuery key, SpecificationQuery specification) {
-    return services.getStreamBindingService().findAll(new StreamBindingFilter(key,specification));
+    return services.getStreamBindingService().findAll(new StreamBindingFilter(key, specification));
   }
 
   @Override
@@ -180,7 +180,7 @@ public class MyQueryImpl implements Query {
 
   @Override
   public Iterable<ConsumerBinding> getConsumerBindings(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
-    return services.getConsumerBindingService().findAll(new ConsumerBindingFilter(key,specification));
+    return services.getConsumerBindingService().findAll(new ConsumerBindingFilter(key, specification));
   }
 }
 

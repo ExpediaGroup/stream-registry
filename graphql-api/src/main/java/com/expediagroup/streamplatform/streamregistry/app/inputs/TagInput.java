@@ -15,7 +15,7 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
-import com.expediagroup.streamplatform.streamregistry.app.Tag;
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 import lombok.Builder;
 import lombok.Getter;

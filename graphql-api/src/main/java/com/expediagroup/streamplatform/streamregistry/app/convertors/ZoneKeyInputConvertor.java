@@ -16,7 +16,7 @@ package com.expediagroup.streamplatform.streamregistry.app.convertors;
  */
 
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ZoneKeyInput;
-import com.expediagroup.streamplatform.streamregistry.app.keys.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 import lombok.Data;
 

@@ -18,10 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.app.resolvers;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Domain;
-import com.expediagroup.streamplatform.streamregistry.app.Schema;
-import com.expediagroup.streamplatform.streamregistry.app.keys.DomainKey;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
 public class SchemaResolver implements GraphQLResolver<Schema> {

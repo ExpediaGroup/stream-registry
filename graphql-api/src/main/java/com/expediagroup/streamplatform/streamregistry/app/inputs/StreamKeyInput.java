@@ -16,7 +16,7 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  */
 
 import com.expediagroup.streamplatform.streamregistry.app.convertors.StreamKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.app.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 import lombok.Builder;
 import lombok.Getter;

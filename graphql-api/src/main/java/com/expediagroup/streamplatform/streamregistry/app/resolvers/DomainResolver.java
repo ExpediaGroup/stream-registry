@@ -21,10 +21,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.expediagroup.streamplatform.streamregistry.app.Domain;
-import com.expediagroup.streamplatform.streamregistry.app.Schema;
-import com.expediagroup.streamplatform.streamregistry.app.Status;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 @Component
 public class DomainResolver implements GraphQLResolver<Domain> {

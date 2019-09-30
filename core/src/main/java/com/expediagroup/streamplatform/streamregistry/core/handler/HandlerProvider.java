@@ -18,16 +18,17 @@ package com.expediagroup.streamplatform.streamregistry.core.handler;
 import java.util.Map;
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
-
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
-@RequiredArgsConstructor
-public class HandlerProvider<T extends Entity<?>> {
-  private final Map<String, Handler<T>> handlers;
+import lombok.RequiredArgsConstructor;
 
-  public Handler<T> get(String type) {
+@RequiredArgsConstructor
+public class HandlerProvider<T> {
+
+  private final Map<T, Handler<T>> handlers;
+
+  public Handler<T> get(T type) {
     return Optional
         .ofNullable(handlers.get(type))
         .orElseThrow(() -> new IllegalArgumentException("Unknown handler type '" + type + "'."));

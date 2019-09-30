@@ -15,9 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.handler;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 import java.util.Map;
@@ -33,25 +34,26 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Configuration
 class HandlerConfiguration {
+
   @Bean
   HandlerWrapper<Domain> domainHandlerProvider(List<Handler<Domain>> handlers) {
     checkArgument(handlers.size() > 0, "There must be at least one Domain Handler.");
-    return new HandlerWrapper<>(new HandlerProvider<>(index(handlers)));
+    return new HandlerWrapper(new HandlerProvider(index(handlers)));
   }
 
   @Bean
   HandlerWrapper<Schema> schemaHandlerProvider(List<Handler<Schema>> handlers) {
     checkArgument(handlers.size() > 0, "There must be at least one Schema Handler.");
-    return new HandlerWrapper<>(new HandlerProvider<>(index(handlers)));
+    return new HandlerWrapper(new HandlerProvider(index(handlers)));
   }
 
   @Bean
   HandlerWrapper<Stream> streamHandlerProvider(List<Handler<Stream>> handlers) {
     checkArgument(handlers.size() > 0, "There must be at least one Stream Handler.");
-    return new HandlerWrapper<>(new HandlerProvider<>(index(handlers)));
+    return new HandlerWrapper(new HandlerProvider(index(handlers)));
   }
 
-  private <T extends Entity<?>> Map<String, Handler<T>> index(List<Handler<T>> handlers) {
+  private <T> Map<String, Handler<T>> index(List<Handler<T>> handlers) {
     return handlers
         .stream()
         .collect(toMap(Handler::type, identity()));

@@ -18,16 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.app;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.app.Consumer;
-import com.expediagroup.streamplatform.streamregistry.app.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Domain;
-import com.expediagroup.streamplatform.streamregistry.app.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.app.Producer;
-import com.expediagroup.streamplatform.streamregistry.app.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Schema;
-import com.expediagroup.streamplatform.streamregistry.app.Stream;
-import com.expediagroup.streamplatform.streamregistry.app.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.app.Zone;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.DomainKeyInput;
@@ -41,7 +31,17 @@ import com.expediagroup.streamplatform.streamregistry.app.inputs.StreamBindingKe
 import com.expediagroup.streamplatform.streamregistry.app.inputs.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.mutation.MutationImpl;
-import com.expediagroup.streamplatform.streamregistry.app.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
 public class MyMutationImpl implements MutationImpl {

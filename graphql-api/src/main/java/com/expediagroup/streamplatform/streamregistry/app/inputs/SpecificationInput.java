@@ -17,8 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
 
 import java.util.List;
 
-import com.expediagroup.streamplatform.streamregistry.app.Specification;
 import com.expediagroup.streamplatform.streamregistry.app.convertors.SpecificationInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Builder;

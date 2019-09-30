@@ -23,6 +23,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
 @Component
 public class EntityPredicateFactory {
+
   private final PatternMatchPredicateFactory patternMatchPredicateFactory = new PatternMatchPredicateFactory();
   private final MapPatternMatchPredicateFactory mapPatternMatchPredicateFactory = new MapPatternMatchPredicateFactory();
   private final ObjectNodePatternMatchPredicateFactory objectNodePatternMatchPredicateFactory = new ObjectNodePatternMatchPredicateFactory();
