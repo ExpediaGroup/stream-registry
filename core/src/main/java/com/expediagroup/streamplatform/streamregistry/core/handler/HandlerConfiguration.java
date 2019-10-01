@@ -18,8 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.core.handler;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.List;
 import java.util.Map;
 
@@ -27,33 +25,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 
 @Configuration
 class HandlerConfiguration {
 
-  @Bean
-  HandlerWrapper<Domain> domainHandlerProvider(List<Handler<Domain>> handlers) {
-    checkArgument(handlers.size() > 0, "There must be at least one Domain Handler.");
-    return new HandlerWrapper(new HandlerProvider(index(handlers)));
-  }
+  private static final String EGSP_KAFKA = "egsp-kafka";
 
   @Bean
-  HandlerWrapper<Schema> schemaHandlerProvider(List<Handler<Schema>> handlers) {
-    checkArgument(handlers.size() > 0, "There must be at least one Schema Handler.");
-    return new HandlerWrapper(new HandlerProvider(index(handlers)));
+  HandlersForServices handlerRegistryProvider(List<Handler> handlers) {
+    HandlersForServices handlerRegistry=new HandlersForServices();
+    for (Handler h : handlers) {
+      handlerRegistry.Register(h.type(),h.target(),h);
+    }
+    return handlerRegistry;
   }
 
-  @Bean
-  HandlerWrapper<Stream> streamHandlerProvider(List<Handler<Stream>> handlers) {
-    checkArgument(handlers.size() > 0, "There must be at least one Stream Handler.");
-    return new HandlerWrapper(new HandlerProvider(index(handlers)));
-  }
-
-  private <T> Map<String, Handler<T>> index(List<Handler<T>> handlers) {
+  private <T extends ManagedType> Map<String, Handler<T>> index(List<Handler> handlers) {
     return handlers
         .stream()
         .collect(toMap(Handler::type, identity()));

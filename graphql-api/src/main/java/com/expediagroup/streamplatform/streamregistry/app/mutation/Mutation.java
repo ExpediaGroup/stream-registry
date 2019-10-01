@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016-2019 Expedia Inc.
+ * Copyright (C) 2018-2019 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.expediagroup.streamplatform.streamregistry.app.mutation;
+
+import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 
 @Component
@@ -89,4 +89,3 @@ public class Mutation implements GraphQLMutationResolver {
     return consumerBindingMutation;
   }
 }
-

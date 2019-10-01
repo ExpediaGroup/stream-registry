@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.handler;
+package com.expediagroup.streamplatform.streamregistry.model;
 
-import java.util.Map;
-import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.Entity;
 
-import lombok.RequiredArgsConstructor;
+public interface ManagedType<K> extends Stated,Specified{
 
-@RequiredArgsConstructor
-public class HandlerProvider<T> {
-
-  private final Map<T, Handler<T>> handlers;
-
-  public Handler<T> get(T type) {
-    return Optional
-        .ofNullable(handlers.get(type))
-        .orElseThrow(() -> new IllegalArgumentException("Unknown handler type '" + type + "'."));
-  }
+//  ObjectMapper mapper = new ObjectMapper();
+//
+//  String getName();
+//
+//  String getOwner();
+//
+//  String getDescription();
+//
+//  Map<String, String> getTags();
+//
+//  String getType();
+//
+//  ObjectNode getConfiguration();
+//
+//  K key();
 }

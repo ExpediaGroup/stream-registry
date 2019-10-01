@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 /**
@@ -23,7 +38,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.augmentors.ProducerBindingAugmentor;
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
@@ -34,15 +49,15 @@ public class ProducerBindingService {
 
   ProducerBindingRepository producerbindingRepository;
   ProducerBindingValidator producerbindingValidator;
-  ProducerBindingAugmentor producerbindingAugmentor;
+  private HandlersForServices handlerService;
 
   public ProducerBindingService(
       ProducerBindingRepository producerbindingRepository,
       ProducerBindingValidator producerbindingValidator,
-      ProducerBindingAugmentor producerbindingAugmentor) {
+      HandlersForServices handlerService) {
     this.producerbindingRepository = producerbindingRepository;
     this.producerbindingValidator = producerbindingValidator;
-    this.producerbindingAugmentor = producerbindingAugmentor;
+    this.handlerService = handlerService;
   }
 
   public Optional<ProducerBinding> create(ProducerBinding producerbinding) throws ValidationException {
@@ -50,7 +65,7 @@ public class ProducerBindingService {
       throw new ValidationException("Can't create because it already exists");
     }
     producerbindingValidator.validateForCreate(producerbinding);
-    producerbinding = producerbindingAugmentor.augmentForCreate(producerbinding);
+    producerbinding.setSpecification(handlerService.handleInsert(producerbinding));
     return Optional.ofNullable(producerbindingRepository.save(producerbinding));
   }
 
@@ -67,8 +82,8 @@ public class ProducerBindingService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    producerbinding = producerbindingAugmentor.augmentForUpdate(producerbinding, existing.get());
     producerbindingValidator.validateForUpdate(producerbinding, existing.get());
+    producerbinding.setSpecification(handlerService.handleUpdate(producerbinding, existing.get()));
     return Optional.ofNullable(producerbindingRepository.save(producerbinding));
   }
 

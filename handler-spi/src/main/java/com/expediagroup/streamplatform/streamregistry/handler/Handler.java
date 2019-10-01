@@ -15,12 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import java.util.Optional;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Stated;
 
-import com.expediagroup.streamplatform.streamregistry.model.Entity;
+public interface Handler<T extends Stated> {
 
-public interface Handler<T> {
   String type();
 
-  T handle(T entity, Optional<? extends T> existing);
+  Class target();
+
+  Specification handleInsert(T entity) throws HandlerException;
+
+  Specification handleUpdate(T entity, T existing) throws HandlerException;
+
 }

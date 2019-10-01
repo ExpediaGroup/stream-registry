@@ -15,18 +15,5 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import java.util.Optional;
-
-import com.expediagroup.streamplatform.streamregistry.model.Entity;
-
-public class DefaultHandler<E extends Entity<?>> implements Handler<E> {
-  @Override
-  public String type() {
-    return "default";
-  }
-
-  @Override
-  public E handle(E entity, Optional<? extends E> existing) {
-    return entity;
-  }
+public class HandlerException extends Exception {
 }

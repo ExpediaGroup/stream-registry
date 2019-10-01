@@ -19,12 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.handler.EgspConflue
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
-import com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -32,6 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper;
 
 public class EgspConfluentSchemaHandlerTest {
   private static final ObjectMapper mapper = new ObjectMapper();
@@ -50,18 +47,19 @@ public class EgspConfluentSchemaHandlerTest {
   }
 
   @Test
-  public void handle() {
+  public void handle() throws HandlerException {
     assertEquals("some_url", createAndHandle(null).getSpecification().getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
   }
 
   @Test
-  public void handleWithExistingURL() {
+  public void handleWithExistingURL() throws HandlerException {
     assertEquals("some_existing_url", createAndHandle("some_existing_url").getSpecification().getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
   }
 
-  private Schema createAndHandle(String existingUrl) {
+  private Schema createAndHandle(String existingUrl) throws HandlerException {
     Schema schema = createSchema(existingUrl);
-    return underTest.handle(schema, Optional.empty());
+    schema.setSpecification(underTest.handleInsert(schema));
+    return schema;
   }
 
   private Schema createSchema(String existingUrl) {

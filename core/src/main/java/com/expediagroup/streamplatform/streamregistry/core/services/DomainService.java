@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 /**
@@ -23,7 +38,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.augmentors.DomainAugmentor;
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -34,15 +49,15 @@ public class DomainService {
 
   DomainRepository domainRepository;
   DomainValidator domainValidator;
-  DomainAugmentor domainAugmentor;
+  private HandlersForServices handlerService;
 
   public DomainService(
       DomainRepository domainRepository,
       DomainValidator domainValidator,
-      DomainAugmentor domainAugmentor) {
+      HandlersForServices handlerService) {
     this.domainRepository = domainRepository;
     this.domainValidator = domainValidator;
-    this.domainAugmentor = domainAugmentor;
+    this.handlerService = handlerService;
   }
 
   public Optional<Domain> create(Domain domain) throws ValidationException {
@@ -50,7 +65,7 @@ public class DomainService {
       throw new ValidationException("Can't create because it already exists");
     }
     domainValidator.validateForCreate(domain);
-    domain = domainAugmentor.augmentForCreate(domain);
+    domain.setSpecification(handlerService.handleInsert(domain));
     return Optional.ofNullable(domainRepository.save(domain));
   }
 
@@ -67,8 +82,8 @@ public class DomainService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    domain = domainAugmentor.augmentForUpdate(domain, existing.get());
     domainValidator.validateForUpdate(domain, existing.get());
+    domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
     return Optional.ofNullable(domainRepository.save(domain));
   }
 

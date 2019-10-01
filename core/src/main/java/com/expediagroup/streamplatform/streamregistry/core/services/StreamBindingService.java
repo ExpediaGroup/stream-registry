@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 /**
@@ -23,7 +38,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.augmentors.StreamBindingAugmentor;
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -34,15 +49,15 @@ public class StreamBindingService {
 
   StreamBindingRepository streambindingRepository;
   StreamBindingValidator streambindingValidator;
-  StreamBindingAugmentor streambindingAugmentor;
+  private HandlersForServices handlerService;
 
   public StreamBindingService(
       StreamBindingRepository streambindingRepository,
       StreamBindingValidator streambindingValidator,
-      StreamBindingAugmentor streambindingAugmentor) {
+      HandlersForServices handlerService) {
     this.streambindingRepository = streambindingRepository;
     this.streambindingValidator = streambindingValidator;
-    this.streambindingAugmentor = streambindingAugmentor;
+    this.handlerService = handlerService;
   }
 
   public Optional<StreamBinding> create(StreamBinding streambinding) throws ValidationException {
@@ -50,7 +65,7 @@ public class StreamBindingService {
       throw new ValidationException("Can't create because it already exists");
     }
     streambindingValidator.validateForCreate(streambinding);
-    streambinding = streambindingAugmentor.augmentForCreate(streambinding);
+    streambinding.setSpecification(handlerService.handleInsert(streambinding));
     return Optional.ofNullable(streambindingRepository.save(streambinding));
   }
 
@@ -67,8 +82,8 @@ public class StreamBindingService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    streambinding = streambindingAugmentor.augmentForUpdate(streambinding, existing.get());
     streambindingValidator.validateForUpdate(streambinding, existing.get());
+    streambinding.setSpecification(handlerService.handleUpdate(streambinding, existing.get()));
     return Optional.ofNullable(streambindingRepository.save(streambinding));
   }
 

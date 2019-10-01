@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 /**
@@ -23,7 +38,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.augmentors.ProducerAugmentor;
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
@@ -34,15 +49,16 @@ public class ProducerService {
 
   ProducerRepository producerRepository;
   ProducerValidator producerValidator;
-  ProducerAugmentor producerAugmentor;
+  private HandlersForServices handlerService;
 
   public ProducerService(
       ProducerRepository producerRepository,
       ProducerValidator producerValidator,
-      ProducerAugmentor producerAugmentor) {
+      HandlersForServices handlerService) {
+
     this.producerRepository = producerRepository;
     this.producerValidator = producerValidator;
-    this.producerAugmentor = producerAugmentor;
+    this.handlerService = handlerService;
   }
 
   public Optional<Producer> create(Producer producer) throws ValidationException {
@@ -50,7 +66,7 @@ public class ProducerService {
       throw new ValidationException("Can't create because it already exists");
     }
     producerValidator.validateForCreate(producer);
-    producer = producerAugmentor.augmentForCreate(producer);
+    producer.setSpecification(handlerService.handleInsert(producer));
     return Optional.ofNullable(producerRepository.save(producer));
   }
 
@@ -67,8 +83,8 @@ public class ProducerService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    producer = producerAugmentor.augmentForUpdate(producer, existing.get());
     producerValidator.validateForUpdate(producer, existing.get());
+    producer.setSpecification(handlerService.handleUpdate(producer, existing.get()));
     return Optional.ofNullable(producerRepository.save(producer));
   }
 

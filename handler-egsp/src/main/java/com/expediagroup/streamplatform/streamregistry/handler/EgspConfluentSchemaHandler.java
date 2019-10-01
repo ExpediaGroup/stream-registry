@@ -15,22 +15,22 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import java.util.Optional;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 @Component
 public class EgspConfluentSchemaHandler implements Handler<Schema> {
+
   public static final String SCHEMA_REGISTRY_URL = "schema_registry_url";
   private final String schemaRegistryUrl;
 
   public EgspConfluentSchemaHandler(
-          @Value("${schema.registry.url}") String schemaRegistryUrl) {
+      @Value("${schema.registry.url}") String schemaRegistryUrl) {
     this.schemaRegistryUrl = schemaRegistryUrl;
   }
 
@@ -40,11 +40,26 @@ public class EgspConfluentSchemaHandler implements Handler<Schema> {
   }
 
   @Override
-  public Schema handle(Schema schema, Optional<? extends Schema> existing) {
-    ObjectNode configuration = schema.getConfiguration();
+  public Class target() {
+    return Schema.class;
+  }
+
+  @Override
+  public Specification handleInsert(Schema schema) throws HandlerException {
+    return handle(schema);
+  }
+
+  @Override
+  public Specification handleUpdate(Schema schema, Schema existing) throws HandlerException {
+    return handle(schema);
+  }
+
+  public Specification handle(Schema schema) throws HandlerException {
+    ObjectNode configuration = schema.getSpecification().getConfiguration();
     if (!configuration.has(SCHEMA_REGISTRY_URL)) {
       configuration.put(SCHEMA_REGISTRY_URL, schemaRegistryUrl);
     }
-    return schema;
+    schema.getSpecification().setConfiguration(configuration);
+    return schema.getSpecification();
   }
 }

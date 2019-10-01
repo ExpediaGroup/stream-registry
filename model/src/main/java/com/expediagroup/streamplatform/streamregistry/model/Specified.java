@@ -15,25 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import java.util.Map;
+public interface Specified {
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+  Specification getSpecification();
 
-public interface Entity<K> {
-  ObjectMapper mapper = new ObjectMapper();
-
-  String getName();
-
-  String getOwner();
-
-  String getDescription();
-
-  Map<String, String> getTags();
-
-  String getType();
-
-  ObjectNode getConfiguration();
-
-  K key();
 }

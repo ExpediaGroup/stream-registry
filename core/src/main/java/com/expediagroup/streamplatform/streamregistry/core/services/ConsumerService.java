@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018-2019 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 /**
@@ -23,7 +38,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.augmentors.ConsumerAugmentor;
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
@@ -34,15 +49,15 @@ public class ConsumerService {
 
   ConsumerRepository consumerRepository;
   ConsumerValidator consumerValidator;
-  ConsumerAugmentor consumerAugmentor;
+  private HandlersForServices handlerService;
 
   public ConsumerService(
       ConsumerRepository consumerRepository,
       ConsumerValidator consumerValidator,
-      ConsumerAugmentor consumerAugmentor) {
+      HandlersForServices handlerService) {
     this.consumerRepository = consumerRepository;
     this.consumerValidator = consumerValidator;
-    this.consumerAugmentor = consumerAugmentor;
+    this.handlerService = handlerService;
   }
 
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
@@ -50,7 +65,7 @@ public class ConsumerService {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerValidator.validateForCreate(consumer);
-    consumer = consumerAugmentor.augmentForCreate(consumer);
+    consumer.setSpecification(handlerService.handleInsert(consumer));
     return Optional.ofNullable(consumerRepository.save(consumer));
   }
 
@@ -67,8 +82,8 @@ public class ConsumerService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    consumer = consumerAugmentor.augmentForUpdate(consumer, existing.get());
     consumerValidator.validateForUpdate(consumer, existing.get());
+    consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
     return Optional.ofNullable(consumerRepository.save(consumer));
   }
 
