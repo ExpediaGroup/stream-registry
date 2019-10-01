@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.augmentors.ProducerBindingAugmentor;
-import com.expediagroup.streamplatform.streamregistry.core.filters.Filter;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;

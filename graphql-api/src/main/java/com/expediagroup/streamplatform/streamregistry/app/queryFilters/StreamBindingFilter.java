@@ -20,7 +20,7 @@ import static com.expediagroup.streamplatform.streamregistry.app.queryFilters.Sp
 
 import com.expediagroup.streamplatform.streamregistry.app.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queries.StreamBindingKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.core.filters.Filter;
+import com.expediagroup.streamplatform.streamregistry.core.services.Filter;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 public class StreamBindingFilter implements Filter<StreamBinding> {

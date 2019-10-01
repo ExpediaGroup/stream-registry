@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.expediagroup.streamplatform.streamregistry.core.filters;
+package com.expediagroup.streamplatform.streamregistry.core.services;
 
 public interface Filter<R> {
 

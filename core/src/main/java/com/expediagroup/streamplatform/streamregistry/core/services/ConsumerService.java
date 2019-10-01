@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.augmentors.ConsumerAugmentor;
-import com.expediagroup.streamplatform.streamregistry.core.filters.Filter;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;

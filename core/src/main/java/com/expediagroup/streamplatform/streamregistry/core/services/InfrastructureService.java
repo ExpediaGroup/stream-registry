@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.augmentors.InfrastructureAugmentor;
-import com.expediagroup.streamplatform.streamregistry.core.filters.Filter;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.InfrastructureRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;

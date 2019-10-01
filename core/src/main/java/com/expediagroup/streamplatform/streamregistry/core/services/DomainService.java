@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.augmentors.DomainAugmentor;
-import com.expediagroup.streamplatform.streamregistry.core.filters.Filter;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
