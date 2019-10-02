@@ -33,7 +33,7 @@ class HandlerConfiguration {
   private static final String EGSP_KAFKA = "egsp-kafka";
 
   @Bean
-  HandlersForServices handlerRegistryProvider(List<Handler> handlers) {
+  HandlersForServices handlersForServicesProvider(List<Handler> handlers) {
     HandlersForServices handlerRegistry=new HandlersForServices();
     for (Handler h : handlers) {
       handlerRegistry.Register(h.type(),h.target(),h);

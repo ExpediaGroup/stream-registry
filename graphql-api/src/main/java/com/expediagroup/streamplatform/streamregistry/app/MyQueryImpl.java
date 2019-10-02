@@ -53,6 +53,7 @@ import com.expediagroup.streamplatform.streamregistry.app.queryFilters.SchemaFil
 import com.expediagroup.streamplatform.streamregistry.app.queryFilters.StreamBindingFilter;
 import com.expediagroup.streamplatform.streamregistry.app.queryFilters.StreamFilter;
 import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ZoneFilter;
+import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -69,17 +70,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 public class MyQueryImpl implements Query {
 
   private Services services;
+  private HandlersForServices handlersForServices;
 
-  public MyQueryImpl(Services services) {this.services = services;}
-
-  @Override
-  public Domain bugfixq(TagQuery v) {
-    return null;
-  }
-
-  @Override
-  public Domain bugfixi(TagInput v) {
-    return null;
+  public MyQueryImpl(Services services, HandlersForServices handlersForServices) {
+    this.services = services;
+    this.handlersForServices = handlersForServices;
   }
 
   @Override
@@ -180,5 +175,10 @@ public class MyQueryImpl implements Query {
   @Override
   public Iterable<ConsumerBinding> getConsumerBindings(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
     return services.getConsumerBindingService().findAll(new ConsumerBindingFilter(key, specification));
+  }
+
+  @Override
+  public Iterable<String> types(){
+    return handlersForServices.getTypes();
   }
 }

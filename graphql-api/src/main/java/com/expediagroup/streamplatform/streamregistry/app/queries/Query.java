@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.app.queries;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.DomainKeyInput;
@@ -41,13 +40,15 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 public interface Query extends GraphQLQueryResolver {
 
-  Domain bugfixq(
-      TagQuery v
-  );
+  default Domain bugfixq(TagQuery v)
+  {
+    return null;
+  }
 
-  Domain bugfixi(
-      TagInput v
-  );
+  default Domain bugfixi(TagInput v)
+  {
+    return null;
+  }
 
   Domain getDomain(
       DomainKeyInput key
@@ -128,4 +129,6 @@ public interface Query extends GraphQLQueryResolver {
   Iterable<ConsumerBinding> getConsumerBindings(
       ConsumerBindingKeyQuery key, SpecificationQuery specification
   );
+
+  Iterable<String> types();
 }

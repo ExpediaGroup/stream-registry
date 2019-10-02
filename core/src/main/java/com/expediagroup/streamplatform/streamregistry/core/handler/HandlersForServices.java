@@ -35,7 +35,7 @@ public class HandlersForServices {
 
   private Handler get(ManagedType managedType) {
     if(! map.containsKey(managedType.getSpecification().getType())){
-      throw new ValidationException(managedType.getSpecification().getType()+" has no handlers");
+      throw new ValidationException(managedType.getSpecification().getType()+" has no handlers, requires one of "+getTypes());
     }
     try {
       return map.get(managedType.getSpecification().getType()).get(managedType.getClass().getCanonicalName());
@@ -66,5 +66,9 @@ public class HandlersForServices {
     } catch (HandlerException e) {
       throw new ValidationException(e);
     }
+  }
+
+  public Iterable<String> getTypes() {
+    return map.keySet();
   }
 }

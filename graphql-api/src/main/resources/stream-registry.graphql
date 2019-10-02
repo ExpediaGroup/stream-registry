@@ -459,34 +459,34 @@ type Query {
   bugfixq(v:TagQuery): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
   bugfixi(v:TagInput): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
 
-  getDomain(key: DomainKeyInput!): Domain!
-  getDomains(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
+  domain(key: DomainKeyInput!): Domain!
+  domains(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
 
-  getSchema(key: SchemaKeyInput!): Schema!
-  getSchemas(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
+  schema(key: SchemaKeyInput!): Schema!
+  schemas(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
 
-  getStream(key: StreamKeyInput!): Stream!
-  getStreams(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
+  stream(key: StreamKeyInput!): Stream!
+  streams(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
 
-  getZone(key: ZoneKeyInput!): Zone!
-  getZones(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
+  zone(key: ZoneKeyInput!): Zone!
+  zones(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
 
-  getInfrastructure(key: InfrastructureKeyInput!): Infrastructure!
-  getInfrastructures(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
+  infrastructure(key: InfrastructureKeyInput!): Infrastructure!
+  infrastructures(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
 
-  getProducer(key: ProducerKeyInput!): Producer!
-  getProducers(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
+  producer(key: ProducerKeyInput!): Producer!
+  producers(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
 
-  getConsumer(key: ConsumerKeyInput!): Consumer!
-  getConsumers(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
+  consumer(key: ConsumerKeyInput!): Consumer!
+  consumers(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
 
-  getStreamBinding(key: StreamBindingKeyInput!): StreamBinding!
-  getStreamBindings(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
+  streamBinding(key: StreamBindingKeyInput!): StreamBinding!
+  streamBindings(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
 
-  getProducerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
-  getProducerBindings(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
+  producerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
+  producerBindings(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
 
-  getConsumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
-  getConsumerBindings(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
+  consumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
+  consumerBindings(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
 
 }
