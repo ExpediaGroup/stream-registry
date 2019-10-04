@@ -15,15 +15,31 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
-@Configuration
-public class DefaultHandlerConfiguration {
-  @Bean
-  Handler<Domain> defaultDomainHandler() {
-    return new DefaultHandler<>();
+@Component
+public class DomainDefaultHandler implements Handler<Domain> {
+
+  @Override
+  public String type() {
+    return "default";
+  }
+
+  @Override
+  public Class target() {
+    return Domain.class;
+  }
+
+  @Override
+  public Specification handleInsert(Domain entity) throws HandlerException {
+    return entity.getSpecification();
+  }
+
+  @Override
+  public Specification handleUpdate(Domain entity, Domain existing) throws HandlerException {
+    return entity.getSpecification();
   }
 }
