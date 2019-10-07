@@ -1,140 +1,98 @@
+fragment specificationPart on Specification {
+    description
+    tags{
+        name
+        value
+    }
+    type
+    configuration
+}
+
+fragment DomainPart on Domain{
+    __typename
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+}
+
 ############ Domain Mutations ############
 
 mutation UpsertDomain(
-  $key: DomainKeyInput!
-  $specification: SpecificationInput!
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
 ) {
-  domain{
-    upsert(key: $key,specification: $specification){
-      key{
-        name
-      }
-      specification{
-        configuration
-        description
-      }
+    domain{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...DomainPart
+        }
     }
-  }
 }
 
-query MyDomainQuery(
-  $key: DomainKeyInput!
+query domainQuery(
+    $key: DomainKeyInput!
 ){
-  domain(key: $key){
-    key{
-      name
+    domain(key: $key){
+        __typename
+        ...DomainPart
     }
-    specification{
-      configuration
-      description
-    }
-  }
 }
-
-
-############ Domain Mutations ############
 
 mutation InsertDomain(
-  $key: DomainKeyInput!
-  $specification: SpecificationInput!
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
 ) {
-  domain{
-    insert
-    (
-      key: $key
-      specification: $specification
-    ) {
-      key {
-        name
-      }
-      specification {
-        description
-        tags {
-          name
-          value
+    domain{
+        insert
+        (
+            key: $key
+            specification: $specification
+        ){
+            __typename
+            ...DomainPart
         }
-        configuration
-      }
-      status {
-        agentStatus
-      }
     }
-  }
 }
 
 
 mutation UpdateDomain(
-  $key: DomainKeyInput!
-  $specification: SpecificationInput!
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
 ) {
-  domain{ update(
-    key: $key
-    specification: $specification
-  ) {
-    key {
-      name
+    domain{ update(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...DomainPart
     }
-    specification {
-      description
-      tags {
-        name
-        value
-      }
-      configuration
     }
-    status {
-      agentStatus
-    }
-  }
-  }
 }
 
-
-
 query GetDomain(
-  $key: DomainKeyInput!
+    $key: DomainKeyInput!
 ) {
-  domain(
-    key: $key
-  ) {
-    key {
-      name
+    domain(
+        key: $key
+    ) {
+        __typename
+        ...DomainPart
     }
-    specification {
-      description
-      tags {
-        name
-        value
-      }
-      configuration
-    }
-    status {
-      agentStatus
-    }
-  }
 }
 
 query GetDomains(
-  $key: DomainKeyQuery
-  $specification: SpecificationQuery
+    $key: DomainKeyQuery
+    $specification: SpecificationQuery
 ) {
-  domains(
-    key: $key
-    specification: $specification
-  ) {
-    key {
-      name
+    domains(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...DomainPart
     }
-    specification {
-      description
-      tags {
-        name
-        value
-      }
-      configuration
-    }
-    status {
-      agentStatus
-    }
-  }
 }

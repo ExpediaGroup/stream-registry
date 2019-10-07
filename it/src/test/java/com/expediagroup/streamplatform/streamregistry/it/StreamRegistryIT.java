@@ -15,18 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.domainKeyInputBuilder;
+import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.specificationInputBuilder;
+import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.upsertDomainMutation;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collections;
-import java.util.Optional;
-
-import okhttp3.OkHttpClient;
-
-import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.MyDomainQuery;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
@@ -38,16 +32,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
 
 public class StreamRegistryIT {
-
-  private static final ObjectMapper mapper = new ObjectMapper();
 
   @ClassRule
   public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1);
@@ -56,6 +45,8 @@ public class StreamRegistryIT {
 
   private static ConfigurableApplicationContext context;
   private static String url;
+
+  static Client client;
 
   @BeforeClass
   public static void beforeClass() {
@@ -67,6 +58,8 @@ public class StreamRegistryIT {
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
     url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
+
+    client = new Client(url);
   }
 
   @AfterClass
@@ -77,55 +70,47 @@ public class StreamRegistryIT {
     }
   }
 
+//  @Test
+////  public void insertDomain() {
+////    DomainKeyInput key = domainKeyInputBuilder().build();
+////    InsertDomainMutation upsert = upsertDomainMutation(key, specificationInputBuilder().build());
+////
+////    UpsertDomainMutation.Upsert domain =  client.domainUpsert(upsert);
+////
+////    assertThat(domain.getKey().getName(), is("domainName"));
+////    assertThat(domain.getSpecification().getDescription().get(), is("description"));
+////    assertThat(domain.getSpecification().getConfiguration().get("a").asText(), is("b"));
+////  }
+
   @Test
   public void upsertDomain() {
+    DomainKeyInput key = domainKeyInputBuilder().build();
+    UpsertDomainMutation upsert = upsertDomainMutation(key, specificationInputBuilder().build());
 
-    ApolloClient client = ApolloClient
-        .builder()
-        .serverUrl(url)
-        .okHttpClient(new OkHttpClient.Builder().build())
-        .addCustomTypeAdapter(CustomType.OBJECTNODE, new ObjectNodeTypeAdapter())
-        .build();
+    UpsertDomainMutation.Upsert domain =  client.domainUpsert(upsert);
 
-    DomainKeyInput key = DomainKeyInput.builder().name("domainName").build();
-
-    SpecificationInput spec = SpecificationInput.builder()
-        .configuration(mapper.createObjectNode().put("a","b"))
-        .description("description")
-        .tags(Collections.emptyList())
-        .type("default")
-        .build();
-
-    UpsertDomainMutation upsertDomainMutation = UpsertDomainMutation.builder()
-        .key(key)
-        .specification(spec).build();
-
-    Response<Optional<UpsertDomainMutation.Data>> mutation =
-        ReactorApollo.from(client.mutate(upsertDomainMutation)).block();
-
-    assertThat(mutation.data().get().getDomain().getUpsert().getKey().getName(), is("domainName"));
-
-    assertThat(mutation.data().get().getDomain().getUpsert().getSpecification().getDescription().get(), is("description"));
-
-    ObjectNode n=mutation.data().get().getDomain().getUpsert().getSpecification().getConfiguration();
-
-    assertThat(n.get("a").asText(), is("b"));
-
-    MyDomainQuery query=MyDomainQuery.builder().key(key).build();
-
-    Response<Optional<MyDomainQuery.Data>> out =
-        ReactorApollo.from(client.query(query)).block();
-
-    assertThat(out.data().get().getDomain().getKey().getName(), is("domainName"));
-
-    assertThat(out.data().get().getDomain().getSpecification().getDescription().get(), is("description"));
-
-    ObjectNode on=out.data().get().getDomain().getSpecification().getConfiguration();
-
-    assertThat(on.get("a").asText(), is("b"));
-
+    assertThat(domain.getKey().getName(), is("domainName"));
+    assertThat(domain.getSpecification().getDescription().get(), is("description"));
+    assertThat(domain.getSpecification().getConfiguration().get("a").asText(), is("b"));
   }
 
+  @Test
+  public void queryDomain() {
 
+    DomainKeyInput key = domainKeyInputBuilder().build();
+    UpsertDomainMutation upsert = upsertDomainMutation(key, specificationInputBuilder().build());
 
+    UpsertDomainMutation.Upsert domain =  client.domainUpsert(upsert);
+
+    assertThat(domain.getKey().getName(), is("domainName"));
+    assertThat(domain.getSpecification().getDescription().get(), is("description"));
+    assertThat(domain.getSpecification().getConfiguration().get("a").asText(), is("b"));
+
+    DomainQuery.Domain out =client.domainQuery(DomainQuery.builder().key(key).build());
+
+    assertThat(out.getKey().getName(), is("domainName"));
+    assertThat(out.getSpecification().getDescription().get(), is("description"));
+    ObjectNode on = out.getSpecification().getConfiguration();
+    assertThat(on.get("a").asText(), is("b"));
+  }
 }
