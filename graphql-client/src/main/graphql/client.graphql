@@ -23,6 +23,22 @@ fragment ConsumerPart on Consumer{
     }
 }
 
+fragment ConsumerBindingPart on ConsumerBinding{
+    __typename
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
+        consumerName
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+}
+
 fragment DomainPart on Domain{
     __typename
     key{
@@ -112,6 +128,83 @@ query GetConsumers(
     }
 }
 
+############ ConsumerBinding ############
+
+mutation UpsertConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumerBinding{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+query consumerBindingQuery(
+    $key: ConsumerBindingKeyInput!
+){
+    consumerBinding(key: $key){
+        __typename
+        ...ConsumerBindingPart
+    }
+}
+
+mutation InsertConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumerBinding{
+        insert
+        (
+            key: $key
+            specification: $specification
+        ){
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+
+mutation UpdateConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumerBinding{ update(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ConsumerBindingPart
+    }
+    }
+}
+
+query GetConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+) {
+    consumerBinding(
+        key: $key
+    ) {
+        __typename
+        ...ConsumerBindingPart
+    }
+}
+
+query GetConsumerBindings(
+    $key: ConsumerBindingKeyQuery
+    $specification: SpecificationQuery
+) {
+    consumerBindings(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ConsumerBindingPart
+    }
+}
 
 ############ Domain Mutations ############
 
