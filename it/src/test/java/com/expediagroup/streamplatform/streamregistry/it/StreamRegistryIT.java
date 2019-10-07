@@ -18,7 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import okhttp3.OkHttpClient;
@@ -26,6 +28,7 @@ import okhttp3.OkHttpClient;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.AfterClass;
@@ -35,14 +38,19 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import reactor.core.publisher.Mono;
+
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.GetDomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.TagInput;
+
 
 public class StreamRegistryIT {
 
@@ -111,4 +119,52 @@ public class StreamRegistryIT {
     assertThat(n.get("a").asText(), is("b"));
 
   }
+
+  @Test
+  public void testInsert() {
+    ApolloClient client = ApolloClient
+        .builder()
+        .serverUrl(url)
+        .okHttpClient(new OkHttpClient.Builder().build())
+        .addCustomTypeAdapter(CustomType.OBJECTNODE, new ObjectNodeTypeAdapter())
+        .build();
+
+    Response<Optional<InsertDomainMutation.Data>> mutation = ReactorApollo.from(
+        client.mutate(InsertDomainMutation
+            .builder()
+            .key(DomainKeyInput
+                .builder()
+                .name("domain")
+                .build())
+            .specification(SpecificationInput
+                .builder()
+                .description("description")
+                .tags(List.of(TagInput
+                    .builder()
+                    .name("name")
+                    .value("value")
+                    .build()))
+                .type("default")
+                .configuration(mapper.createObjectNode().put("key", "value"))
+                .build())
+            .build()))
+        .block();
+
+    assertThat(mutation.data().get().getDomain().getInsert().getKey().getName(), is("domain"));
+
+    Mono.delay(Duration.ofSeconds(5)).block();
+
+    Response<Optional<GetDomainQuery.Data>> query = ReactorApollo.from(
+        client.query(GetDomainQuery
+            .builder()
+            .key(DomainKeyInput
+                .builder()
+                .name("domain")
+                .build())
+            .build()))
+        .block();
+
+    assertThat(query.data().get().getDomain().getKey().getName(), is("domain"));
+  }
+
 }
