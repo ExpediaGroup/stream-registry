@@ -30,3 +30,111 @@ query MyDomainQuery(
     }
   }
 }
+
+
+############ Domain Mutations ############
+
+mutation InsertDomain(
+  $key: DomainKeyInput!
+  $specification: SpecificationInput!
+) {
+  domain{
+    insert
+    (
+      key: $key
+      specification: $specification
+    ) {
+      key {
+        name
+      }
+      specification {
+        description
+        tags {
+          name
+          value
+        }
+        configuration
+      }
+      status {
+        agentStatus
+      }
+    }
+  }
+}
+
+
+mutation UpdateDomain(
+  $key: DomainKeyInput!
+  $specification: SpecificationInput!
+) {
+  domain{ update(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      name
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status {
+      agentStatus
+    }
+  }
+  }
+}
+
+
+
+query GetDomain(
+  $key: DomainKeyInput!
+) {
+  domain(
+    key: $key
+  ) {
+    key {
+      name
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status {
+      agentStatus
+    }
+  }
+}
+
+query GetDomains(
+  $key: DomainKeyQuery
+  $specification: SpecificationQuery
+) {
+  domains(
+    key: $key
+    specification: $specification
+  ) {
+    key {
+      name
+    }
+    specification {
+      description
+      tags {
+        name
+        value
+      }
+      configuration
+    }
+    status {
+      agentStatus
+    }
+  }
+}
