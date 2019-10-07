@@ -25,7 +25,9 @@ import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.MyDomainQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.AfterClass;
@@ -42,7 +44,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.Rea
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StreamRegistryIT {
 
@@ -110,5 +111,21 @@ public class StreamRegistryIT {
 
     assertThat(n.get("a").asText(), is("b"));
 
+    MyDomainQuery query=MyDomainQuery.builder().key(key).build();
+
+    Response<Optional<MyDomainQuery.Data>> out =
+        ReactorApollo.from(client.query(query)).block();
+
+    assertThat(out.data().get().getDomain().getKey().getName(), is("domainName"));
+
+    assertThat(out.data().get().getDomain().getSpecification().getDescription().get(), is("description"));
+
+    ObjectNode on=out.data().get().getDomain().getSpecification().getConfiguration();
+
+    assertThat(on.get("a").asText(), is("b"));
+
   }
+
+
+
 }

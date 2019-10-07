@@ -15,5 +15,18 @@ mutation UpsertDomain(
       }
     }
   }
+}
 
+query MyDomainQuery(
+  $key: DomainKeyInput!
+){
+  domain(key: $key){
+    key{
+      name
+    }
+    specification{
+      configuration
+      description
+    }
+  }
 }
