@@ -61,7 +61,7 @@ mutation UpsertConsumer(
     }
 }
 
-query GetConsumer(
+query Consumer(
     $key: ConsumerKeyInput!
 ) {
     consumer(
@@ -72,7 +72,7 @@ query GetConsumer(
     }
 }
 
-query GetConsumers(
+query Consumers(
     $key: ConsumerKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -136,7 +136,7 @@ mutation UpsertConsumerBinding(
     }
 }
 
-query GetConsumerBinding(
+query ConsumerBinding(
     $key: ConsumerBindingKeyInput!
 ) {
     consumerBinding(
@@ -147,7 +147,7 @@ query GetConsumerBinding(
     }
 }
 
-query GetConsumerBindings(
+query ConsumerBindings(
     $key: ConsumerBindingKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -209,7 +209,7 @@ mutation UpsertDomain(
     }
 }
 
-query GetDomain(
+query Domain(
     $key: DomainKeyInput!
 ) {
     domain(
@@ -220,7 +220,7 @@ query GetDomain(
     }
 }
 
-query GetDomains(
+query Domains(
     $key: DomainKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -283,7 +283,7 @@ mutation UpsertInfrastructure(
     }
 }
 
-query GetInfrastructure(
+query Infrastructure(
     $key: InfrastructureKeyInput!
 ) {
     infrastructure(
@@ -294,7 +294,7 @@ query GetInfrastructure(
     }
 }
 
-query GetInfrastructures(
+query Infrastructures(
     $key: InfrastructureKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -360,7 +360,7 @@ mutation UpsertProducer(
     }
 }
 
-query GetProducer(
+query Producer(
     $key: ProducerKeyInput!
 ) {
     producer(
@@ -371,7 +371,7 @@ query GetProducer(
     }
 }
 
-query GetProducers(
+query Producers(
     $key: ProducerKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -435,7 +435,7 @@ mutation UpsertProducerBinding(
     }
 }
 
-query GetProducerBinding(
+query ProducerBinding(
     $key: ProducerBindingKeyInput!
 ) {
     producerBinding(
@@ -446,7 +446,7 @@ query GetProducerBinding(
     }
 }
 
-query GetProducerBindings(
+query ProducerBindings(
     $key: ProducerBindingKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -508,7 +508,7 @@ mutation UpsertSchema(
     }
 }
 
-query GetSchema(
+query Schema(
     $key: SchemaKeyInput!
 ) {
     schema(
@@ -519,7 +519,7 @@ query GetSchema(
     }
 }
 
-query GetSchemas(
+query Schemas(
     $key: SchemaKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -582,7 +582,7 @@ mutation UpsertStream(
     }
 }
 
-query GetStream(
+query Stream(
     $key: StreamKeyInput!
 ) {
     stream(
@@ -593,7 +593,7 @@ query GetStream(
     }
 }
 
-query GetStreams(
+query Streams(
     $key: StreamKeyQuery
     $specification: SpecificationQuery
 ) {
@@ -657,7 +657,7 @@ mutation UpsertStreamBinding(
     }
 }
 
-query GetStreamBinding(
+query StreamBinding(
     $key: StreamBindingKeyInput!
 ) {
     streamBinding(
@@ -668,7 +668,7 @@ query GetStreamBinding(
     }
 }
 
-query GetStreamBindings(
+query StreamBindings(
     $key: StreamBindingKeyQuery
     $specification: SpecificationQuery
 ) {

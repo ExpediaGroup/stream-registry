@@ -34,7 +34,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.GetDomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
@@ -113,7 +113,7 @@ public class StreamRegistryIT {
     assertThat(domain.getSpecification().getDescription().get(), is("description"));
     assertThat(domain.getSpecification().getConfiguration().get("a").asText(), is("b"));
 
-    GetDomainQuery.Domain out =client.domainQuery(GetDomainQuery.builder().key(key).build());
+    DomainQuery.Domain out =client.domainQuery(DomainQuery.builder().key(key).build());
 
     assertThat(out.getKey().getName(), is("domainName"));
     assertThat(out.getSpecification().getDescription().get(), is("description"));

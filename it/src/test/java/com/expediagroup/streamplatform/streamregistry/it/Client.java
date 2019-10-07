@@ -25,7 +25,7 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.GetDomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
@@ -68,8 +68,8 @@ public class Client {
     return ((Optional<UpsertDomainMutation.Data>) invoke(operation).data()).get().getDomain().getUpsert();
   }
 
-  public GetDomainQuery.Domain domainQuery(Operation operation) {
-    return ((Optional<GetDomainQuery.Data>) invoke(operation).data()).get().getDomain();
+  public DomainQuery.Domain domainQuery(Operation operation) {
+    return ((Optional<DomainQuery.Data>) invoke(operation).data()).get().getDomain();
   }
 
   public UpsertConsumerMutation.Upsert consumerUpsert(UpsertConsumerMutation operation) {
