@@ -27,6 +27,7 @@ import com.apollographql.apollo.api.Response;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
@@ -44,32 +45,34 @@ public class Client {
         .build();
   }
 
-  public Response invoke(Operation operation){
-    if(operation instanceof Mutation){
-      return mutate((Mutation)operation);
+  public Response invoke(Operation operation) {
+    if (operation instanceof Mutation) {
+      return mutate((Mutation) operation);
     }
     return query((Query) operation);
   }
 
-  public Object data(Operation operation){
+  public Object data(Operation operation) {
     return invoke(operation).data();
   }
 
-  public Response mutate(Mutation mutation){
-    return (Response)ReactorApollo.from(apollo.mutate(mutation)).block();
+  public Response mutate(Mutation mutation) {
+    return (Response) ReactorApollo.from(apollo.mutate(mutation)).block();
   }
 
-  public Response query(Query query){
-    return (Response)ReactorApollo.from(apollo.query(query)).block();
+  public Response query(Query query) {
+    return (Response) ReactorApollo.from(apollo.query(query)).block();
   }
 
-  public UpsertDomainMutation.Upsert domainUpsert(Operation operation){
-    return  ((Optional<UpsertDomainMutation.Data>) invoke(operation).data()).get().getDomain().getUpsert();
+  public UpsertDomainMutation.Upsert domainUpsert(Operation operation) {
+    return ((Optional<UpsertDomainMutation.Data>) invoke(operation).data()).get().getDomain().getUpsert();
   }
 
-  public DomainQuery.Domain domainQuery(Operation operation){
-    return  ((Optional<DomainQuery.Data>) invoke(operation).data()).get().getDomain();
+  public DomainQuery.Domain domainQuery(Operation operation) {
+    return ((Optional<DomainQuery.Data>) invoke(operation).data()).get().getDomain();
   }
 
-
+  public UpsertConsumerMutation.Upsert consumerUpsert(UpsertConsumerMutation operation) {
+    return ((Optional<UpsertConsumerMutation.Data>) invoke(operation).data()).get().getConsumer().getUpsert();
+  }
 }

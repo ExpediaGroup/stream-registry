@@ -8,6 +8,21 @@ fragment specificationPart on Specification {
     configuration
 }
 
+fragment ConsumerPart on Consumer{
+    __typename
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        zone
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+}
+
 fragment DomainPart on Domain{
     __typename
     key{
@@ -18,6 +33,85 @@ fragment DomainPart on Domain{
         ...specificationPart
     }
 }
+
+############ Consumer ############
+
+mutation UpsertConsumer(
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumer{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+query consumerQuery(
+    $key: ConsumerKeyInput!
+){
+    consumer(key: $key){
+        __typename
+        ...ConsumerPart
+    }
+}
+
+mutation InsertConsumer(
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumer{
+        insert
+        (
+            key: $key
+            specification: $specification
+        ){
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+
+mutation UpdateConsumer(
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumer{ update(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ConsumerPart
+    }
+    }
+}
+
+query GetConsumer(
+    $key: ConsumerKeyInput!
+) {
+    consumer(
+        key: $key
+    ) {
+        __typename
+        ...ConsumerPart
+    }
+}
+
+query GetConsumers(
+    $key: ConsumerKeyQuery
+    $specification: SpecificationQuery
+) {
+    consumers(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ConsumerPart
+    }
+}
+
 
 ############ Domain Mutations ############
 
@@ -96,3 +190,5 @@ query GetDomains(
         ...DomainPart
     }
 }
+
+

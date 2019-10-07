@@ -19,7 +19,9 @@ import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
 
@@ -59,4 +61,21 @@ public class ITHelper {
   ) {
     return upsertDomainMutationBuilder(key,spec).build();
   }
+
+  public static UpsertConsumerMutation upsertConsumerMutation(ConsumerKeyInput key, SpecificationInput spec) {
+    return UpsertConsumerMutation.builder()
+        .key(key)
+        .specification(spec)
+        .build();
+  }
+
+  public static ConsumerKeyInput.Builder consumerKeyInputBuilder() {
+    return ConsumerKeyInput.builder()
+        .name("consumerName")
+        .zone("zone")
+        .streamDomain("streamDomain")
+        .streamName("streamName")
+        .streamVersion(1);
+  }
+
 }

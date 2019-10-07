@@ -15,8 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.consumerKeyInputBuilder;
 import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.domainKeyInputBuilder;
 import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.specificationInputBuilder;
+import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.upsertConsumerMutation;
 import static com.expediagroup.streamplatform.streamregistry.it.ITHelper.upsertDomainMutation;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -33,7 +35,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 
 public class StreamRegistryIT {
@@ -70,17 +74,19 @@ public class StreamRegistryIT {
     }
   }
 
-//  @Test
-////  public void insertDomain() {
-////    DomainKeyInput key = domainKeyInputBuilder().build();
-////    InsertDomainMutation upsert = upsertDomainMutation(key, specificationInputBuilder().build());
-////
-////    UpsertDomainMutation.Upsert domain =  client.domainUpsert(upsert);
-////
-////    assertThat(domain.getKey().getName(), is("domainName"));
-////    assertThat(domain.getSpecification().getDescription().get(), is("description"));
-////    assertThat(domain.getSpecification().getConfiguration().get("a").asText(), is("b"));
-////  }
+  @Test
+  public void upsertConsumer() {
+    ConsumerKeyInput key = consumerKeyInputBuilder().build();
+    UpsertConsumerMutation upsert = upsertConsumerMutation(key, specificationInputBuilder().build());
+
+    UpsertConsumerMutation.Upsert consumer =  client.consumerUpsert(upsert);
+
+    assertThat(consumer.getKey().getName(), is("consumerName"));
+    assertThat(consumer.getSpecification().getDescription().get(), is("description"));
+    assertThat(consumer.getSpecification().getConfiguration().get("a").asText(), is("b"));
+
+  }
+
 
   @Test
   public void upsertDomain() {
@@ -93,6 +99,7 @@ public class StreamRegistryIT {
     assertThat(domain.getSpecification().getDescription().get(), is("description"));
     assertThat(domain.getSpecification().getConfiguration().get("a").asText(), is("b"));
   }
+
 
   @Test
   public void queryDomain() {
