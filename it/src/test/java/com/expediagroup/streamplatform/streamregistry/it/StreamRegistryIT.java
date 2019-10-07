@@ -18,8 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.time.Duration;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 import okhttp3.OkHttpClient;
@@ -36,19 +35,17 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import reactor.core.publisher.Mono;
-
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.GetDomainQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.TagInput;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StreamRegistryIT {
+
   private static final ObjectMapper mapper = new ObjectMapper();
 
   @ClassRule
@@ -61,7 +58,7 @@ public class StreamRegistryIT {
 
   @BeforeClass
   public static void beforeClass() {
-    String[] args = new String[]{
+    String[] args = new String[] {
         "--server.port=0",
         "--repository.kafka.bootstrap-servers=" + kafka.bootstrapServers(),
         "--repository.kafka.replicationFactor=1",
@@ -80,7 +77,8 @@ public class StreamRegistryIT {
   }
 
   @Test
-  public void test() {
+  public void upsertDomain() {
+
     ApolloClient client = ApolloClient
         .builder()
         .serverUrl(url)
@@ -88,41 +86,29 @@ public class StreamRegistryIT {
         .addCustomTypeAdapter(CustomType.OBJECTNODE, new ObjectNodeTypeAdapter())
         .build();
 
-    Response<Optional<InsertDomainMutation.Data>> mutation = ReactorApollo.from(
-        client.mutate(InsertDomainMutation
-            .builder()
-            .key(DomainKeyInput
-                .builder()
-                .name("domain")
-                .build())
-            .specification(SpecificationInput
-                .builder()
-                .description("description")
-                .tags(List.of(TagInput
-                    .builder()
-                    .name("name")
-                    .value("value")
-                    .build()))
-                .type("default")
-                .configuration(mapper.createObjectNode().put("key", "value"))
-                .build())
-            .build()))
-        .block();
+    DomainKeyInput key = DomainKeyInput.builder().name("domainName").build();
 
-    assertThat(mutation.data().get().getInsertDomain().getKey().getName(), is("domain"));
+    SpecificationInput spec = SpecificationInput.builder()
+        .configuration(mapper.createObjectNode().put("a","b"))
+        .description("description")
+        .tags(Collections.emptyList())
+        .type("default")
+        .build();
 
-    Mono.delay(Duration.ofSeconds(5)).block();
+    UpsertDomainMutation upsertDomainMutation = UpsertDomainMutation.builder()
+        .key(key)
+        .specification(spec).build();
 
-    Response<Optional<GetDomainQuery.Data>> query = ReactorApollo.from(
-        client.query(GetDomainQuery
-            .builder()
-            .key(DomainKeyInput
-                .builder()
-                .name("domain")
-                .build())
-            .build()))
-        .block();
+    Response<Optional<UpsertDomainMutation.Data>> mutation =
+        ReactorApollo.from(client.mutate(upsertDomainMutation)).block();
 
-    assertThat(query.data().get().getGetDomain().getKey().getName(), is("domain"));
+    assertThat(mutation.data().get().getDomain().getUpsert().getKey().getName(), is("domainName"));
+
+    assertThat(mutation.data().get().getDomain().getUpsert().getSpecification().getDescription().get(), is("description"));
+
+    ObjectNode n=mutation.data().get().getDomain().getUpsert().getSpecification().getConfiguration();
+
+    assertThat(n.get("a").asText(), is("b"));
+
   }
 }

@@ -28,7 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.app.inputs.ProducerKeyInpu
 import com.expediagroup.streamplatform.streamregistry.app.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.StreamKeyInput;
-import com.expediagroup.streamplatform.streamregistry.app.inputs.TagInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.queries.ConsumerBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queries.ConsumerKeyQuery;
@@ -41,7 +40,6 @@ import com.expediagroup.streamplatform.streamregistry.app.queries.SchemaKeyQuery
 import com.expediagroup.streamplatform.streamregistry.app.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queries.StreamBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queries.StreamKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.app.queries.TagQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queries.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ConsumerBindingFilter;
 import com.expediagroup.streamplatform.streamregistry.app.queryFilters.ConsumerFilter;

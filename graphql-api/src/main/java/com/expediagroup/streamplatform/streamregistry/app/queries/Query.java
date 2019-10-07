@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.app.queries;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.DomainKeyInput;
