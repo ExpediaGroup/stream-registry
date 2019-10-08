@@ -61,6 +61,18 @@ mutation UpsertConsumer(
     }
 }
 
+mutation UpdateConsumerStatus(
+    $key: ConsumerKeyInput!
+    $status: StatusInput!
+){
+    consumer{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
 query Consumer(
     $key: ConsumerKeyInput!
 ) {
@@ -130,6 +142,18 @@ mutation UpsertConsumerBinding(
 ) {
     consumerBinding{
         upsert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+mutation updateConsumerBindingStatus(
+    $key: ConsumerBindingKeyInput!
+    $status: StatusInput!
+){
+    consumerBinding{
+        updateStatus(key: $key,status: $status){
             __typename
             ...ConsumerBindingPart
         }
@@ -209,6 +233,18 @@ mutation UpsertDomain(
     }
 }
 
+mutation UpdateDomainStatus(
+    $key: DomainKeyInput!
+    $status: StatusInput!
+){
+    domain{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...DomainPart
+        }
+    }
+}
+
 query Domain(
     $key: DomainKeyInput!
 ) {
@@ -277,6 +313,18 @@ mutation UpsertInfrastructure(
 ) {
     infrastructure{
         upsert(key: $key,specification: $specification){
+            __typename
+            ...InfrastructurePart
+        }
+    }
+}
+
+mutation UpdateInfrastructureStatus(
+    $key: InfrastructureKeyInput!
+    $status: StatusInput!
+){
+    infrastructure{
+        updateStatus(key: $key,status: $status){
             __typename
             ...InfrastructurePart
         }
@@ -360,6 +408,18 @@ mutation UpsertProducer(
     }
 }
 
+mutation UpdateProducerStatus(
+    $key: ProducerKeyInput!
+    $status: StatusInput!
+){
+    producer{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ProducerPart
+        }
+    }
+}
+
 query Producer(
     $key: ProducerKeyInput!
 ) {
@@ -429,6 +489,18 @@ mutation UpsertProducerBinding(
 ) {
     producerBinding{
         upsert(key: $key,specification: $specification){
+            __typename
+            ...ProducerBindingPart
+        }
+    }
+}
+
+mutation UpdateProducerBindingStatus(
+    $key: ProducerBindingKeyInput!
+    $status: StatusInput!
+){
+    producerBinding{
+        updateStatus(key: $key,status: $status){
             __typename
             ...ProducerBindingPart
         }
@@ -508,6 +580,18 @@ mutation UpsertSchema(
     }
 }
 
+mutation UpdateSchemaStatus(
+    $key: SchemaKeyInput!
+    $status: StatusInput!
+){
+    schema{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...SchemaPart
+        }
+    }
+}
+
 query Schema(
     $key: SchemaKeyInput!
 ) {
@@ -576,6 +660,18 @@ mutation UpsertStream(
 ) {
     stream{
         upsert(key: $key,specification: $specification){
+            __typename
+            ...StreamPart
+        }
+    }
+}
+
+mutation UpdateStreamStatus(
+    $key: StreamKeyInput!
+    $status: StatusInput!
+){
+    stream{
+        updateStatus(key: $key,status: $status){
             __typename
             ...StreamPart
         }
@@ -657,6 +753,18 @@ mutation UpsertStreamBinding(
     }
 }
 
+mutation UpdateStreamBindingStatus(
+    $key: StreamBindingKeyInput!
+    $status: StatusInput!
+){
+    streamBinding{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...StreamBindingPart
+        }
+    }
+}
+
 query StreamBinding(
     $key: StreamBindingKeyInput!
 ) {
@@ -680,3 +788,89 @@ query StreamBindings(
         ...StreamBindingPart
     }
 }
+
+############ Zone ############
+
+fragment ZonePart on Zone{
+    __typename
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+}
+
+mutation InsertZone(
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
+) {
+    zone{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+mutation UpdateZone(
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
+) {
+    zone{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+mutation UpsertZone(
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
+) {
+    zone{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+mutation UpdateZoneStatus(
+    $key: ZoneKeyInput!
+    $status: StatusInput!
+){
+    zone{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+query Zone(
+    $key: ZoneKeyInput!
+) {
+    zone(
+        key: $key
+    ) {
+        __typename
+        ...ZonePart
+    }
+}
+
+query Zones(
+    $key: ZoneKeyQuery,
+    $specification: SpecificationQuery
+) {
+    zones(
+        key: $key,
+        specification: $specification
+    ) {
+        __typename
+        ...ZonePart
+    }
+}
+

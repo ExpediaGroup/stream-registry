@@ -25,10 +25,7 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 
@@ -53,7 +50,11 @@ public class Client {
   }
 
   public Object data(Operation operation) {
-    return invoke(operation).data();
+    Object out=invoke(operation).data();
+    if(out instanceof Optional){
+      return ((Optional)out).get();
+    }
+    return out;
   }
 
   public Response mutate(Mutation mutation) {
@@ -64,15 +65,4 @@ public class Client {
     return (Response) ReactorApollo.from(apollo.query(query)).block();
   }
 
-  public UpsertDomainMutation.Upsert domainUpsert(Operation operation) {
-    return ((Optional<UpsertDomainMutation.Data>) invoke(operation).data()).get().getDomain().getUpsert();
-  }
-
-  public DomainQuery.Domain domainQuery(Operation operation) {
-    return ((Optional<DomainQuery.Data>) invoke(operation).data()).get().getDomain();
-  }
-
-  public UpsertConsumerMutation.Upsert consumerUpsert(UpsertConsumerMutation operation) {
-    return ((Optional<UpsertConsumerMutation.Data>) invoke(operation).data()).get().getConsumer().getUpsert();
-  }
 }
