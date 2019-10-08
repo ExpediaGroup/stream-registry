@@ -16,53 +16,18 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
-import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
-import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 
-public class ConsumerIT {
-
-  @ClassRule
-  public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1);
-  @ClassRule
-  public static SchemaRegistryJUnitRule schemaRegistry = new SchemaRegistryJUnitRule();
-
-  private static ConfigurableApplicationContext context;
-  private static String url;
-
-  static Client client;
-
-  @BeforeClass
-  public static void beforeClass() {
-    String[] args = new String[] {
-        "--server.port=0",
-        "--repository.kafka.bootstrap-servers=" + kafka.bootstrapServers(),
-        "--repository.kafka.replicationFactor=1",
-        "--schema.registry.url=" + schemaRegistry.url()
-    };
-    context = SpringApplication.run(StreamRegistryApp.class, args);
-    url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
-
-    client = new Client(url);
-  }
-
-  @AfterClass
-  public static void afterClass() {
-    if (context != null) {
-      context.close();
-      context = null;
-    }
-  }
+public class ConsumerIT extends ObjectIT{
 
   @Test
   public void upsertConsumer() {
@@ -72,24 +37,70 @@ public class ConsumerIT {
 
     UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data)data).getConsumer().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is("consumerName"));
-    assertThat(upsert.getSpecification().getDescription().get(), is("description"));
-    assertThat(upsert.getSpecification().getConfiguration().get("a").asText(), is("b"));
+    assertThat(upsert.getKey().getName(), is(factory.consumerName.getValue()));
+
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.getValue()));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
   }
 
   @Test
   public void insertConsumer() {
     ITestDataFactory factory = new ITestDataFactory();
 
-    factory.consumerKeyInputBuilder().streamName("dsdsd");
-
     Object data = client.data(factory.insertConsumerMutationBuilder().build());
 
     InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data)data).getConsumer().getInsert();
 
-    assertThat(insert.getKey().getName(), is("consumerName"));
-    assertThat(insert.getSpecification().getDescription().get(), is("description"));
-    assertThat(insert.getSpecification().getConfiguration().get("a").asText(), is("b"));
+    assertThat(insert.getKey().getName(), is(factory.consumerName.getValue()));
+
+    assertThat(insert.getSpecification().getDescription().get(), is(factory.description.getValue()));
+    assertThat(insert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+
+  }
+
+  @Test
+  public void updateConsumer() {
+    ITestDataFactory factory = new ITestDataFactory();
+
+    try {
+      client.data(factory.updateConsumerMutationBuilder().build());
+      fail("Expected a ValidationException");
+    }catch (RuntimeException e ) {
+      assertEquals("Can't update because it doesn't exist",e.getMessage());
+    }
+
+    client.mutate(factory.insertConsumerMutationBuilder().build());
+
+    Object data = client.data(factory.updateConsumerMutationBuilder().build());
+
+    UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data)data).getConsumer().getUpdate();
+
+    assertThat(update.getKey().getName(), is(factory.consumerName.getValue()));
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description.getValue()));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+
+  }
+
+  @Test
+  public void updateConsumerStatus() {
+    ITestDataFactory factory = new ITestDataFactory();
+
+    client.data(factory.upsertConsumerMutationBuilder().build());
+
+    Object data =  client.data(factory.updateConsumerStatusBuilder().build());
+
+    UpdateConsumerStatusMutation.UpdateStatus update =
+        ((UpdateConsumerStatusMutation.Data)data).getConsumer().getUpdateStatus();
+
+
+    assertThat(update.getKey().getName(), is(factory.consumerName.getValue()));
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description.getValue()));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+
+   // assertThat(update.getStatus().get().get(0).get("skey").asText(), is("svalue"));
+
   }
 
 }

@@ -50,8 +50,12 @@ public class Client {
   }
 
   public Object data(Operation operation) {
-    Object out=invoke(operation).data();
-    if(out instanceof Optional){
+    Response response=invoke(operation);
+    if (response.hasErrors()) {
+      throw new RuntimeException(((com.apollographql.apollo.api.Error)response.errors().get(0)).message());
+    }
+    Object out=response.data();
+    if(out instanceof Optional && ((Optional) out).isPresent()){
       return ((Optional)out).get();
     }
     return out;

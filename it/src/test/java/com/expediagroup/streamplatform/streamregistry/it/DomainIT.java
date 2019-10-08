@@ -18,50 +18,11 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
-import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 
-public class DomainIT {
-
-  @ClassRule
-  public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1);
-  @ClassRule
-  public static SchemaRegistryJUnitRule schemaRegistry = new SchemaRegistryJUnitRule();
-
-  private static ConfigurableApplicationContext context;
-  private static String url;
-
-  static Client client;
-
-  @BeforeClass
-  public static void beforeClass() {
-    String[] args = new String[] {
-        "--server.port=0",
-        "--repository.kafka.bootstrap-servers=" + kafka.bootstrapServers(),
-        "--repository.kafka.replicationFactor=1",
-        "--schema.registry.url=" + schemaRegistry.url()
-    };
-    context = SpringApplication.run(StreamRegistryApp.class, args);
-    url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
-
-    client = new Client(url);
-  }
-
-  @AfterClass
-  public static void afterClass() {
-    if (context != null) {
-      context.close();
-      context = null;
-    }
-  }
+public class DomainIT extends ObjectIT {
 
   @Test
   public void upsertDomain() {
@@ -71,8 +32,9 @@ public class DomainIT {
 
     UpsertDomainMutation.Upsert upsert = ((UpsertDomainMutation.Data) data).getDomain().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is("domainName"));
-    assertThat(upsert.getSpecification().getDescription().get(), is("description"));
-    assertThat(upsert.getSpecification().getConfiguration().get("a").asText(), is("b"));
+    assertThat(upsert.getKey().getName(), is(factory.domainName.getValue()));
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.getValue()));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
   }
+
 }

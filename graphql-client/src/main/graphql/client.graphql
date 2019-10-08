@@ -23,6 +23,7 @@ fragment ConsumerPart on Consumer{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertConsumer(
@@ -110,6 +111,7 @@ fragment ConsumerBindingPart on ConsumerBinding{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertConsumerBinding(
@@ -195,6 +197,7 @@ fragment DomainPart on Domain{
         __typename
         ...specificationPart
     }
+    ## status
 }
 
 mutation InsertDomain(
@@ -281,6 +284,7 @@ fragment InfrastructurePart on Infrastructure{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertInfrastructure(
@@ -370,6 +374,7 @@ fragment ProducerPart on Producer{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertProducer(
@@ -457,6 +462,7 @@ fragment ProducerBindingPart on ProducerBinding{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertProducerBinding(
@@ -542,6 +548,7 @@ fragment SchemaPart on Schema{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertSchema(
@@ -627,6 +634,7 @@ fragment StreamPart on Stream{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertStream(
@@ -715,6 +723,7 @@ fragment StreamBindingPart on StreamBinding{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertStreamBinding(
@@ -800,6 +809,7 @@ fragment ZonePart on Zone{
         __typename
         ...specificationPart
     }
+    status
 }
 
 mutation InsertZone(

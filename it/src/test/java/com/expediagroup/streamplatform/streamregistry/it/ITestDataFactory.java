@@ -17,9 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.it;
 
 import java.util.Collections;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
@@ -32,49 +36,53 @@ public class ITestDataFactory {
 
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  private static final String DOMAIN_NAME = "domainName";
-  private static final String DESCRIPTION = "description";
-  private static final String DEFAULT = "default";
-  private static final String A = "a";
-  private static final String B = "b";
+//  private static final String DOMAIN_NAME = "domainName";
+//  private static final String DESCRIPTION = "description";
+//  private static final String DEFAULT = "default";
+//  private static final String A = "a";
+//  private static final String B = "b";
+
+  public StringValue zoneName = new StringValue();
+  public StringValue domainName = new StringValue();
+  public StringValue consumerName = new StringValue();
+  public StringValue streamName = new StringValue();
+
+  public StringValue key = new StringValue();
+  public StringValue value = new StringValue();
+  public StringValue description = new StringValue();
 
   private DomainKeyInput.Builder domainKeyInputBuilder;
-  private SpecificationInput.Builder specificationInputBuilder;
-
-  private ConsumerKeyInput.Builder consumerKeyInputBuilder;
 
   public final DomainKeyInput.Builder domainKeyInputBuilder() {
     if (domainKeyInputBuilder == null) {
-      domainKeyInputBuilder = DomainKeyInput.builder().name(DOMAIN_NAME);
+      domainKeyInputBuilder = DomainKeyInput.builder().name(domainName.getValue());
     }
     return domainKeyInputBuilder;
   }
 
   public final ConsumerKeyInput.Builder consumerKeyInputBuilder() {
-    if (consumerKeyInputBuilder == null) {
-      consumerKeyInputBuilder = ConsumerKeyInput.builder()
-          .name("consumerName")
-          .streamDomain(domainKeyInputBuilder().build().name())
-          .streamName("stream_name")
-          .streamVersion(1)
-          .zone("zone");
-    }
-    return consumerKeyInputBuilder;
+    return ConsumerKeyInput.builder()
+        .name(consumerName.getValue())
+        .streamDomain(domainName.getValue())
+        .streamName(streamName.getValue())
+        .streamVersion(1)
+        .zone(zoneName.getValue());
   }
+
+  private SpecificationInput.Builder specificationInputBuilder;
 
   public SpecificationInput.Builder specificationInputBuilder() {
     if (specificationInputBuilder == null) {
       specificationInputBuilder = SpecificationInput.builder()
-          .configuration(mapper.createObjectNode().put(A, B))
-          .description(DESCRIPTION)
+          .configuration(mapper.createObjectNode().put(key.getValue(), value.getValue()))
+          .description(description.getValue())
           .tags(Collections.emptyList())
-          .type(DEFAULT);
+          .type("default");
     }
     return specificationInputBuilder;
   }
 
-  public UpsertDomainMutation.Builder upsertDomainMutationBuilder(
-  ) {
+  public UpsertDomainMutation.Builder upsertDomainMutationBuilder() {
     return UpsertDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
         .specification(specificationInputBuilder().build());
@@ -99,9 +107,26 @@ public class ITestDataFactory {
         ;
   }
 
+  private ZoneKeyInput.Builder ZoneKeyInputBuilder;
+
   private ZoneKeyInput.Builder ZoneKeyInputBuilder() {
-    return ZoneKeyInput.builder()
-        .name("zoneName")
-        ;
+    if (ZoneKeyInputBuilder == null) {
+      ZoneKeyInputBuilder = ZoneKeyInput.builder().name(zoneName.getValue());
+    }
+    return ZoneKeyInputBuilder;
+  }
+
+  public UpdateConsumerMutation.Builder updateConsumerMutationBuilder() {
+    return UpdateConsumerMutation.builder()
+        .key(consumerKeyInputBuilder().build())
+        .specification(specificationInputBuilder().build());
+  }
+
+  public UpdateConsumerStatusMutation.Builder updateConsumerStatusBuilder() {
+    return UpdateConsumerStatusMutation.builder()
+        .key(consumerKeyInputBuilder().build())
+        .status(StatusInput.builder().agentStatus(
+            mapper.createObjectNode().put("skey", "svalue")
+        ).build());
   }
 }
