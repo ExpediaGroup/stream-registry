@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2016-2019 Expedia Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
-
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
-public class DomainIT extends ObjectIT {
+public class InfrastructureIT extends ObjectIT {
 
-  @Test
+  @Override
   public void create() {
 
   }
@@ -37,11 +37,10 @@ public class DomainIT extends ObjectIT {
 
   @Override
   public void upsert() {
-    Object data = client.data(factory.upsertDomainMutationBuilder().build());
+    Object data = client.data(factory.upsertInfrastructureMutationBuilder().build());
 
-    UpsertDomainMutation.Upsert upsert = ((UpsertDomainMutation.Data) data).getDomain().getUpsert();
+    UpsertInfrastructureMutation.Upsert upsert = ((UpsertInfrastructureMutation.Data)data).getInfrastructure().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is(factory.domainName.getValue()));
     assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.getValue()));
     assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
   }
@@ -61,3 +60,4 @@ public class DomainIT extends ObjectIT {
 
   }
 }
+

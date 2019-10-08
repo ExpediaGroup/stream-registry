@@ -18,17 +18,24 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
-
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
-public class ZoneIT extends ObjectIT{
+public class ZoneIT extends ObjectIT {
 
-  @Test
-  public void upsertZone() {
-    ITestDataFactory factory = new ITestDataFactory();
 
+  @Override
+  public void create() {
+
+  }
+
+  @Override
+  public void update() {
+
+  }
+
+  @Override
+  public void upsert() {
     Object data = client.data(factory.upsertZoneMutationBuilder().build());
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data)data).getZone().getUpsert();
@@ -38,10 +45,8 @@ public class ZoneIT extends ObjectIT{
     assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
   }
 
-  @Test
-  public void updateZoneStatus() {
-    ITestDataFactory factory = new ITestDataFactory();
-
+  @Override
+  public void updateStatus() {
     Object data = client.data(factory.upsertZoneMutationBuilder().build());
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data)data).getZone().getUpsert();
@@ -51,19 +56,13 @@ public class ZoneIT extends ObjectIT{
     assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
   }
 
-
-  @Test
-  public void insertConsumer() {
-    ITestDataFactory factory = new ITestDataFactory();
-
-    Object data = client.data(factory.insertConsumerMutationBuilder().build());
-
-    InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data)data).getConsumer().getInsert();
-
-    assertThat(insert.getKey().getName(), is(factory.consumerName.toString()));
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description.toString()));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+  @Override
+  public void queryByKey() {
 
   }
 
+  @Override
+  public void queryByRegex() {
+
+  }
 }

@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.it;
+package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 
-public class ObjectIT {
+public abstract class ObjectIT {
+
+  public ITestDataFactory factory = new ITestDataFactory();
 
   @ClassRule
   public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1);
@@ -34,7 +37,7 @@ public class ObjectIT {
   private static ConfigurableApplicationContext context;
   private static String url;
 
-  static Client client;
+  public static Client client;
 
   @BeforeClass
   public static void beforeClass() {
@@ -57,5 +60,24 @@ public class ObjectIT {
       context = null;
     }
   }
+
+  @Test
+  public abstract void create();
+
+  @Test
+  public abstract void update();
+
+  @Test
+  public abstract void upsert();
+
+  @Test
+  public abstract void updateStatus();
+
+  @Test
+  public abstract void queryByKey();
+
+  @Test
+  public abstract void queryByRegex();
+
 
 }

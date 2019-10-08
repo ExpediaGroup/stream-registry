@@ -13,38 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.it;
+package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Collections;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 
   private static final ObjectMapper mapper = new ObjectMapper();
 
-//  private static final String DOMAIN_NAME = "domainName";
-//  private static final String DESCRIPTION = "description";
-//  private static final String DEFAULT = "default";
-//  private static final String A = "a";
-//  private static final String B = "b";
-
   public StringValue zoneName = new StringValue();
   public StringValue domainName = new StringValue();
   public StringValue consumerName = new StringValue();
   public StringValue streamName = new StringValue();
+  private StringValue infrastructureName = new StringValue();
+  private StringValue infrastructureZone = new StringValue();
+  private StringValue streamDomain = new StringValue();
 
   public StringValue key = new StringValue();
   public StringValue value = new StringValue();
@@ -127,5 +129,42 @@ public class ITestDataFactory {
         .status(StatusInput.builder().agentStatus(
             mapper.createObjectNode().put("skey", "svalue")
         ).build());
+  }
+
+  public UpsertConsumerBindingMutation.Builder upsertConsumerBindingMutationBuilder() {
+    return UpsertConsumerBindingMutation.builder()
+        .key(consumerBindingKeyInputBuilder().build())
+        .specification(specificationInputBuilder().build());
+  }
+
+  private ConsumerBindingKeyInput.Builder consumerBindingKeyInputBuilder() {
+    return ConsumerBindingKeyInput.builder()
+        .consumerName(consumerName.getValue())
+        .infrastructureName(infrastructureName.getValue())
+        .infrastructureZone(infrastructureZone.getValue())
+        .streamDomain(streamDomain.getValue())
+        .streamName(streamName.getValue())
+        .streamVersion(1);
+  }
+
+  public UpdateConsumerBindingStatusMutation.Builder updateConsumerBindingStatusBuilder() {
+    return UpdateConsumerBindingStatusMutation.builder()
+        .key(consumerBindingKeyInputBuilder().build())
+        .status(StatusInput.builder().agentStatus(
+            mapper.createObjectNode().put("skey", "svalue")
+        ).build());
+  }
+
+  public UpsertInfrastructureMutation.Builder upsertInfrastructureMutationBuilder() {
+    return UpsertInfrastructureMutation.builder()
+        .key(infrastructureKey())
+        .specification(specificationInputBuilder().build());
+  }
+
+  private InfrastructureKeyInput infrastructureKey() {
+    return InfrastructureKeyInput.builder()
+        .name(infrastructureName.getValue())
+        .zone(zoneName.getValue())
+        .build();
   }
 }

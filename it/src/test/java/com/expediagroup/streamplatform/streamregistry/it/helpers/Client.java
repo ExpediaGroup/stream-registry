@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.it;
+package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Optional;
 
@@ -69,4 +69,13 @@ public class Client {
     return (Response) ReactorApollo.from(apollo.query(query)).block();
   }
 
+  //helper methods
+
+  public Object upsertConsumer(ITestDataFactory factory){
+    return data(factory.upsertConsumerMutationBuilder().build());
+  }
+
+  public Object upsertDomain(ITestDataFactory factory){
+    return data(factory.upsertDomainMutationBuilder().build());
+  }
 }

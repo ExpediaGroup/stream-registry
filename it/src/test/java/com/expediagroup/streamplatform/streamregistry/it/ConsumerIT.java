@@ -26,12 +26,12 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
-public class ConsumerIT extends ObjectIT{
+public class ConsumerIT extends ObjectIT {
 
   @Test
-  public void upsertConsumer() {
-    ITestDataFactory factory = new ITestDataFactory();
+  public void upsert() {
 
     Object data = client.data(factory.upsertConsumerMutationBuilder().build());
 
@@ -43,24 +43,21 @@ public class ConsumerIT extends ObjectIT{
     assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
   }
 
-  @Test
-  public void insertConsumer() {
-    ITestDataFactory factory = new ITestDataFactory();
+  @Override
+  public void create() {
+      Object data = client.data(factory.insertConsumerMutationBuilder().build());
 
-    Object data = client.data(factory.insertConsumerMutationBuilder().build());
+      InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data)data).getConsumer().getInsert();
 
-    InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data)data).getConsumer().getInsert();
+      assertThat(insert.getKey().getName(), is(factory.consumerName.getValue()));
 
-    assertThat(insert.getKey().getName(), is(factory.consumerName.getValue()));
+      assertThat(insert.getSpecification().getDescription().get(), is(factory.description.getValue()));
+      assertThat(insert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
 
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description.getValue()));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
-
-  }
+    }
 
   @Test
-  public void updateConsumer() {
-    ITestDataFactory factory = new ITestDataFactory();
+  public void update() {
 
     try {
       client.data(factory.updateConsumerMutationBuilder().build());
@@ -83,8 +80,7 @@ public class ConsumerIT extends ObjectIT{
   }
 
   @Test
-  public void updateConsumerStatus() {
-    ITestDataFactory factory = new ITestDataFactory();
+  public void updateStatus() {
 
     client.data(factory.upsertConsumerMutationBuilder().build());
 
@@ -92,7 +88,6 @@ public class ConsumerIT extends ObjectIT{
 
     UpdateConsumerStatusMutation.UpdateStatus update =
         ((UpdateConsumerStatusMutation.Data)data).getConsumer().getUpdateStatus();
-
 
     assertThat(update.getKey().getName(), is(factory.consumerName.getValue()));
 
@@ -103,4 +98,13 @@ public class ConsumerIT extends ObjectIT{
 
   }
 
+  @Override
+  public void queryByKey() {
+
+  }
+
+  @Override
+  public void queryByRegex() {
+
+  }
 }

@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.app.mutation;
 
+import static com.expediagroup.streamplatform.streamregistry.app.StateHelper.maintainState;
+
 import com.expediagroup.streamplatform.streamregistry.app.inputs.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.StatusInput;
@@ -30,15 +32,23 @@ public class InfrastructureMutation {
   }
 
   public Infrastructure insert(InfrastructureKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getInfrastructureService().create(asInfrastructure(key, specification)).get();
+  }
+
+  private Infrastructure asInfrastructure(InfrastructureKeyInput key, SpecificationInput specification) {
+    Infrastructure out = new Infrastructure();
+    out.setKey(key.asInfrastructureKey());
+    out.setSpecification(specification.asSpecification());
+    maintainState(out, services.getInfrastructureService().read(out.getKey()));
+    return out;
   }
 
   public Infrastructure update(InfrastructureKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getInfrastructureService().update(asInfrastructure(key, specification)).get();
   }
 
   public Infrastructure upsert(InfrastructureKeyInput key, SpecificationInput specification) {
-    return null;
+    return services.getInfrastructureService().upsert(asInfrastructure(key, specification)).get();
   }
 
   public Boolean delete(InfrastructureKeyInput key) {
