@@ -17,19 +17,18 @@ package com.expediagroup.streamplatform.streamregistry.it;
 
 import java.util.Collections;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 
 public class ITestDataFactory {

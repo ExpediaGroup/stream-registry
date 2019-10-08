@@ -205,7 +205,7 @@ input ProducerKeyQuery {
 type Producer {
   key: ProducerKey!
   specification: Specification!
-  status: ObjectNode
+  status: Status
   stream: Stream!
   zone: Zone!
   #bindings: [ProducerBinding!]
@@ -240,7 +240,7 @@ input ConsumerKeyQuery {
 type Consumer {
   key: ConsumerKey!
   specification: Specification!
-  status: ObjectNode
+  status: Status
   stream: Stream!
   zone: Zone!
   #bindings: [ConsumerBinding!]
@@ -275,7 +275,7 @@ input StreamBindingKeyQuery {
 type StreamBinding {
   key: StreamBindingKey!
   specification: Specification!
-  status: ObjectNode
+  status: Status
   stream: Stream!
   infrastructure: Infrastructure!
   #producerBinding: ProducerBinding!
@@ -316,7 +316,7 @@ type ProducerBinding {
   specification: Specification!
   producer: Producer!
   binding: StreamBinding!
-  status: ObjectNode
+  status: Status
 }
 
 ############ ConsumerBinding ############
@@ -353,7 +353,7 @@ type ConsumerBinding {
   specification: Specification!
   consumer: Consumer!
   binding: StreamBinding!
-  status: ObjectNode
+  status: Status
 }
 
 

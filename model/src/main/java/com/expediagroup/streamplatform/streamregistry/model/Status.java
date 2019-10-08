@@ -15,24 +15,36 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 @Data
 @Embeddable
 public class Status {
 
   @Lob
   @Column(name = "statusJson", length = 20000)
-  private String statusJson; //agentStatus
+  private String statusJson;
+
+  public Status() {}
 
   public Status(String statusJson) {
-
     this.statusJson = statusJson;
+  }
+
+  public ObjectNode getAgentStatus() {
+    return deserialise(getStatusJson());
+  }
+
+  public void setAgentStatus(ObjectNode configuration) {
+    statusJson = serialise(configuration);
   }
 }

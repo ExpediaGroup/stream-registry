@@ -8,6 +8,10 @@ fragment specificationPart on Specification {
     configuration
 }
 
+fragment StatusPart on Status{
+    agentStatus
+}
+
 ############ Consumer ############
 
 fragment ConsumerPart on Consumer{
@@ -23,7 +27,10 @@ fragment ConsumerPart on Consumer{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertConsumer(
@@ -111,7 +118,10 @@ fragment ConsumerBindingPart on ConsumerBinding{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertConsumerBinding(
@@ -374,7 +384,10 @@ fragment ProducerPart on Producer{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertProducer(
@@ -462,7 +475,10 @@ fragment ProducerBindingPart on ProducerBinding{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertProducerBinding(
@@ -723,7 +739,10 @@ fragment StreamBindingPart on StreamBinding{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertStreamBinding(

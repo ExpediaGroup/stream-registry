@@ -99,7 +99,7 @@ public class ConsumerIT extends ObjectIT{
     assertThat(update.getSpecification().getDescription().get(), is(factory.description.getValue()));
     assertThat(update.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
 
-   // assertThat(update.getStatus().get().get(0).get("skey").asText(), is("svalue"));
+    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
 
   }
 
