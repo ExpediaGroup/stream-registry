@@ -26,7 +26,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 public class StreamMutation {
 
-
   private Services services;
 
   public StreamMutation(Services services) {

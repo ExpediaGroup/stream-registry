@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016-2019 Expedia Inc.
+ * Copyright (C) 2018-2019 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,49 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import org.junit.Ignore;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class StreamBindingIT extends ObjectIT {
 
   @Override
-  @Ignore
   public void create() {
 
   }
 
   @Override
-  @Ignore
   public void update() {
 
   }
 
   @Override
-  @Ignore
   public void upsert() {
 
+    Object data = client.data(factory.upsertStreamBindingMutationBuilder().build());
+
+    UpsertStreamBindingMutation.Upsert upsert = ((UpsertStreamBindingMutation.Data) data).getStreamBinding().getUpsert();
+
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
-  @Ignore
   public void updateStatus() {
 
   }
 
   @Override
-  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
-  @Ignore
   public void queryByRegex() {
 
   }
-}
 
+  @Override
+  public void createRequiredDatastoreState() {
+
+  }
+}

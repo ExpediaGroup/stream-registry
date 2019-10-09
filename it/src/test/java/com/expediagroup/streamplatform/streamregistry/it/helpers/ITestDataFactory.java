@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
@@ -28,6 +29,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfra
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
@@ -39,43 +41,59 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Produc
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 
+  private static AtomicInteger count = new AtomicInteger(0);
+
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  public StringValue zoneName = new StringValue();
-  public StringValue domainName = new StringValue();
-  public StringValue consumerName = new StringValue();
-  public StringValue streamName = new StringValue();
-  private StringValue infrastructureName = new StringValue();
-  private StringValue infrastructureZone = new StringValue();
-  private StringValue streamDomain = new StringValue();
-  private StringValue producerName = new StringValue();
+  public ITestDataFactory() {
+    count.incrementAndGet();
+    zoneName = "zoneName" + count;
+    domainName = "domainName" + count;
+    consumerName = "consumerName" + count;
+    streamName = "streamName" + count;
 
-  public StringValue key = new StringValue();
-  public StringValue value = new StringValue();
-  public StringValue description = new StringValue();
+    infrastructureName = "infrastructureName" + count;
+    producerName = "producerName" + count;
+
+    key = "key" + count;
+    value = "value" + count;
+    description = "description" + count;
+  }
+
+  public String zoneName;
+  public String domainName;
+  public String consumerName;
+  public String streamName;
+  private String infrastructureName;
+  private String producerName;
+
+  public String key;
+  public String value;
+  public String description;
 
   private DomainKeyInput.Builder domainKeyInputBuilder;
 
   public final DomainKeyInput.Builder domainKeyInputBuilder() {
     if (domainKeyInputBuilder == null) {
-      domainKeyInputBuilder = DomainKeyInput.builder().name(domainName.getValue());
+      domainKeyInputBuilder = DomainKeyInput.builder().name(domainName);
     }
     return domainKeyInputBuilder;
   }
 
   public final ConsumerKeyInput.Builder consumerKeyInputBuilder() {
     return ConsumerKeyInput.builder()
-        .name(consumerName.getValue())
-        .streamDomain(domainName.getValue())
-        .streamName(streamName.getValue())
+        .name(consumerName)
+        .streamDomain(domainName)
+        .streamName(streamName)
         .streamVersion(1)
-        .zone(zoneName.getValue());
+        .zone(zoneName);
   }
 
   private SpecificationInput.Builder specificationInputBuilder;
@@ -83,8 +101,8 @@ public class ITestDataFactory {
   public SpecificationInput.Builder specificationInputBuilder() {
     if (specificationInputBuilder == null) {
       specificationInputBuilder = SpecificationInput.builder()
-          .configuration(mapper.createObjectNode().put(key.getValue(), value.getValue()))
-          .description(description.getValue())
+          .configuration(mapper.createObjectNode().put(key, value))
+          .description(description)
           .tags(Collections.emptyList())
           .type("default");
     }
@@ -120,7 +138,7 @@ public class ITestDataFactory {
 
   private ZoneKeyInput.Builder ZoneKeyInputBuilder() {
     if (ZoneKeyInputBuilder == null) {
-      ZoneKeyInputBuilder = ZoneKeyInput.builder().name(zoneName.getValue());
+      ZoneKeyInputBuilder = ZoneKeyInput.builder().name(zoneName);
     }
     return ZoneKeyInputBuilder;
   }
@@ -147,11 +165,11 @@ public class ITestDataFactory {
 
   private ConsumerBindingKeyInput.Builder consumerBindingKeyInputBuilder() {
     return ConsumerBindingKeyInput.builder()
-        .consumerName(consumerName.getValue())
-        .infrastructureName(infrastructureName.getValue())
-        .infrastructureZone(infrastructureZone.getValue())
-        .streamDomain(streamDomain.getValue())
-        .streamName(streamName.getValue())
+        .consumerName(consumerName)
+        .infrastructureName(infrastructureName)
+        .infrastructureZone(zoneName)
+        .streamDomain(domainName)
+        .streamName(streamName)
         .streamVersion(1);
   }
 
@@ -171,8 +189,8 @@ public class ITestDataFactory {
 
   private InfrastructureKeyInput infrastructureKey() {
     return InfrastructureKeyInput.builder()
-        .name(infrastructureName.getValue())
-        .zone(zoneName.getValue())
+        .name(infrastructureName)
+        .zone(zoneName)
         .build();
   }
 
@@ -184,11 +202,11 @@ public class ITestDataFactory {
 
   private ProducerBindingKeyInput.Builder producerBindingKeyInputBuilder() {
     return ProducerBindingKeyInput.builder()
-        .infrastructureName(infrastructureName.getValue())
-        .infrastructureZone(infrastructureZone.getValue())
-        .producerName(producerName.getValue())
-        .streamDomain(streamDomain.getValue())
-        .streamName(streamName.getValue())
+        .infrastructureName(infrastructureName)
+        .infrastructureZone(zoneName)
+        .producerName(producerName)
+        .streamDomain(domainName)
+        .streamName(streamName)
         .streamVersion(1);
   }
 
@@ -200,24 +218,24 @@ public class ITestDataFactory {
 
   private ProducerKeyInput.Builder producerKeyInputBuilder() {
     return ProducerKeyInput.builder()
-        .name(producerName.getValue())
-        .streamDomain(streamDomain.getValue())
-        .streamName(streamName.getValue())
+        .name(producerName)
+        .streamDomain(domainName)
+        .streamName(streamName)
         .streamVersion(1)
-        .zone(zoneName.getValue());
+        .zone(zoneName);
   }
 
   public UpsertStreamMutation.Builder upsertStreamMutationBuilder() {
     return UpsertStreamMutation.builder()
         .specification(specificationInputBuilder().build())
-        .key(streamKeyInputBuilder().build()
-        );
+        .schema(schemaKeyInputBuilder().build())
+        .key(streamKeyInputBuilder().build());
   }
 
   private StreamKeyInput.Builder streamKeyInputBuilder() {
     return StreamKeyInput.builder()
-        .domain(domainName.getValue())
-        .name(streamName.getValue())
+        .domain(domainName)
+        .name(streamName)
         .version(1);
   }
 
@@ -230,7 +248,23 @@ public class ITestDataFactory {
 
   private SchemaKeyInput.Builder schemaKeyInputBuilder() {
     return SchemaKeyInput.builder()
-        .domain(domainName.getValue())
-        .name(streamName.getValue());
+        .domain(domainName)
+        .name(streamName);
+  }
+
+  public UpsertStreamBindingMutation.Builder upsertStreamBindingMutationBuilder() {
+    return UpsertStreamBindingMutation.builder()
+        .specification(specificationInputBuilder().build())
+        .key(streamBindingKeyInputBuilder().build()
+        );
+  }
+
+  private StreamBindingKeyInput.Builder streamBindingKeyInputBuilder() {
+    return StreamBindingKeyInput.builder()
+        .infrastructureName(infrastructureName)
+        .infrastructureZone(zoneName)
+        .streamDomain(domainName)
+        .streamName(streamName)
+        .streamVersion(1);
   }
 }

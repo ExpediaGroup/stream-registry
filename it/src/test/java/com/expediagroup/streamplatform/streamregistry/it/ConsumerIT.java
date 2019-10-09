@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
@@ -36,26 +35,26 @@ public class ConsumerIT extends ObjectIT {
 
     Object data = client.data(factory.upsertConsumerMutationBuilder().build());
 
-    UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data)data).getConsumer().getUpsert();
+    UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data) data).getConsumer().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is(factory.consumerName.getValue()));
+    assertThat(upsert.getKey().getName(), is(factory.consumerName));
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.getValue()));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void create() {
-      Object data = client.data(factory.insertConsumerMutationBuilder().build());
 
-      InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data)data).getConsumer().getInsert();
+    Object data = client.data(factory.insertConsumerMutationBuilder().build());
 
-      assertThat(insert.getKey().getName(), is(factory.consumerName.getValue()));
+    InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data) data).getConsumer().getInsert();
 
-      assertThat(insert.getSpecification().getDescription().get(), is(factory.description.getValue()));
-      assertThat(insert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+    assertThat(insert.getKey().getName(), is(factory.consumerName));
 
-    }
+    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+  }
 
   @Test
   public void update() {
@@ -63,21 +62,20 @@ public class ConsumerIT extends ObjectIT {
     try {
       client.data(factory.updateConsumerMutationBuilder().build());
       fail("Expected a ValidationException");
-    }catch (RuntimeException e ) {
-      assertEquals("Can't update because it doesn't exist",e.getMessage());
+    } catch (RuntimeException e) {
+      assertEquals("Can't update because it doesn't exist", e.getMessage());
     }
 
     client.mutate(factory.insertConsumerMutationBuilder().build());
 
     Object data = client.data(factory.updateConsumerMutationBuilder().build());
 
-    UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data)data).getConsumer().getUpdate();
+    UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data) data).getConsumer().getUpdate();
 
-    assertThat(update.getKey().getName(), is(factory.consumerName.getValue()));
+    assertThat(update.getKey().getName(), is(factory.consumerName));
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description.getValue()));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
-
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Test
@@ -85,30 +83,31 @@ public class ConsumerIT extends ObjectIT {
 
     client.data(factory.upsertConsumerMutationBuilder().build());
 
-    Object data =  client.data(factory.updateConsumerStatusBuilder().build());
+    Object data = client.data(factory.updateConsumerStatusBuilder().build());
 
     UpdateConsumerStatusMutation.UpdateStatus update =
-        ((UpdateConsumerStatusMutation.Data)data).getConsumer().getUpdateStatus();
+        ((UpdateConsumerStatusMutation.Data) data).getConsumer().getUpdateStatus();
 
-    assertThat(update.getKey().getName(), is(factory.consumerName.getValue()));
+    assertThat(update.getKey().getName(), is(factory.consumerName));
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description.getValue()));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
 
     assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
-
   }
 
   @Override
-  @Ignore
-
   public void queryByKey() {
 
   }
 
   @Override
-  @Ignore
   public void queryByRegex() {
+
+  }
+
+  @Override
+  public void createRequiredDatastoreState() {
 
   }
 }

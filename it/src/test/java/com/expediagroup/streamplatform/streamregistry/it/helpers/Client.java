@@ -17,17 +17,16 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Optional;
 
-import okhttp3.OkHttpClient;
-
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
+
+import okhttp3.OkHttpClient;
 
 public class Client {
 
@@ -50,13 +49,13 @@ public class Client {
   }
 
   public Object data(Operation operation) {
-    Response response=invoke(operation);
+    Response response = invoke(operation);
     if (response.hasErrors()) {
-      throw new RuntimeException(((com.apollographql.apollo.api.Error)response.errors().get(0)).message());
+      throw new RuntimeException(((com.apollographql.apollo.api.Error) response.errors().get(0)).message());
     }
-    Object out=response.data();
-    if(out instanceof Optional && ((Optional) out).isPresent()){
-      return ((Optional)out).get();
+    Object out = response.data();
+    if (out instanceof Optional && ((Optional) out).isPresent()) {
+      return ((Optional) out).get();
     }
     return out;
   }
@@ -67,31 +66,5 @@ public class Client {
 
   public Response query(Query query) {
     return (Response) ReactorApollo.from(apollo.query(query)).block();
-  }
-
-  //helper methods
-
-  public Object upsertConsumer(ITestDataFactory factory){
-    return data(factory.upsertConsumerMutationBuilder().build());
-  }
-
-  public Object upsertDomain(ITestDataFactory factory){
-    return data(factory.upsertDomainMutationBuilder().build());
-  }
-
-
-
-
-  public void createProducer(ITestDataFactory factory) {
-    createStream(factory);
-    data(factory.upsertProducerMutationBuilder().build());
-  }
-
-  public void createStream(ITestDataFactory factory) {
-    data(factory.upsertStreamMutationBuilder().build());
-  }
-
-  public void createDomain(ITestDataFactory factory) {
-    data(factory.upsertDomainMutationBuilder().build());
   }
 }

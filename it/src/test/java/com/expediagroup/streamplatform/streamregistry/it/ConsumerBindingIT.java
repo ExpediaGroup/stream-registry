@@ -16,31 +16,20 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ConsumerBindingIT extends ObjectIT {
 
   @Override
-  @Ignore
   public void create() {
 
   }
 
   @Override
-  @Ignore
   public void update() {
 
   }
@@ -50,33 +39,36 @@ public class ConsumerBindingIT extends ObjectIT {
 
     Object data = client.data(factory.upsertConsumerBindingMutationBuilder().build());
 
-    UpsertConsumerBindingMutation.Upsert upsert = ((UpsertConsumerBindingMutation.Data)data).getConsumerBinding().getUpsert();
+    UpsertConsumerBindingMutation.Upsert upsert = ((UpsertConsumerBindingMutation.Data) data).getConsumerBinding().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.getValue()));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void updateStatus() {
     client.data(factory.upsertConsumerBindingMutationBuilder().build());
-    Object data =  client.data(factory.updateConsumerBindingStatusBuilder().build());
+    Object data = client.data(factory.updateConsumerBindingStatusBuilder().build());
 
     UpdateConsumerBindingStatusMutation.UpdateStatus update =
-        ((UpdateConsumerBindingStatusMutation.Data)data).getConsumerBinding().getUpdateStatus();
+        ((UpdateConsumerBindingStatusMutation.Data) data).getConsumerBinding().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description.getValue()));
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
     assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
-  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
-  @Ignore
   public void queryByRegex() {
+
+  }
+
+  @Override
+  public void createRequiredDatastoreState() {
 
   }
 }

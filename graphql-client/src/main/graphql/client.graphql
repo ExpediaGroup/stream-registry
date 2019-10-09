@@ -681,9 +681,10 @@ mutation UpdateStream(
 mutation UpsertStream(
     $key: StreamKeyInput!
     $specification: SpecificationInput!
+    $schema: SchemaKeyInput
 ) {
     stream{
-        upsert(key: $key,specification: $specification){
+        upsert(key: $key,specification: $specification,schema: $schema){
             __typename
             ...StreamPart
         }

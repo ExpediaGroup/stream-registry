@@ -18,22 +18,17 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ZoneIT extends ObjectIT {
 
-
   @Override
-  @Ignore
   public void create() {
 
   }
 
   @Override
-  @Ignore
   public void update() {
 
   }
@@ -42,33 +37,36 @@ public class ZoneIT extends ObjectIT {
   public void upsert() {
     Object data = client.data(factory.upsertZoneMutationBuilder().build());
 
-    UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data)data).getZone().getUpsert();
+    UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is(factory.zoneName.toString()));
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.toString()));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+    assertThat(upsert.getKey().getName(), is(factory.zoneName));
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void updateStatus() {
     Object data = client.data(factory.upsertZoneMutationBuilder().build());
 
-    UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data)data).getZone().getUpsert();
+    UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is(factory.zoneName.toString()));
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.toString()));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+    assertThat(upsert.getKey().getName(), is(factory.zoneName));
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
-  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
-  @Ignore
   public void queryByRegex() {
+
+  }
+
+  @Override
+  public void createRequiredDatastoreState() {
 
   }
 }

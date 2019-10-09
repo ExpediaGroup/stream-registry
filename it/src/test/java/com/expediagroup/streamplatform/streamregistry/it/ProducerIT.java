@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016-2019 Expedia Inc.
+ * Copyright (C) 2018-2019 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
-
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ProducerIT extends ObjectIT {
 
   @Override
-  @Ignore
   public void create() {
 
   }
 
   @Override
-  @Ignore
   public void update() {
 
   }
@@ -44,28 +38,34 @@ public class ProducerIT extends ObjectIT {
 
     Object data = client.data(factory.upsertProducerMutationBuilder().build());
 
-    UpsertProducerMutation.Upsert upsert = ((UpsertProducerMutation.Data)data).getProducer().getUpsert();
+    UpsertProducerMutation.Upsert upsert = ((UpsertProducerMutation.Data) data).getProducer().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.getValue()));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
-  @Ignore
   public void updateStatus() {
 
   }
 
   @Override
-  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
-  @Ignore
   public void queryByRegex() {
 
   }
-}
 
+  @Override
+  public void createRequiredDatastoreState() {
+
+    client.mutate(factory.upsertDomainMutationBuilder().build());
+
+    client.mutate(factory.upsertSchemaMutationBuilder().build());
+
+    client.mutate(factory.upsertStreamMutationBuilder().build());
+  }
+}

@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -53,6 +54,16 @@ public abstract class ObjectIT {
     client = new Client(url);
   }
 
+  boolean createdState = false;
+
+  @Before
+  public final void before() {
+    if (!createdState) {
+      createRequiredDatastoreState();
+      createdState = true;
+    }
+  }
+
   @AfterClass
   public static void afterClass() {
     if (context != null) {
@@ -79,5 +90,5 @@ public abstract class ObjectIT {
   @Test
   public abstract void queryByRegex();
 
-
+  public abstract void createRequiredDatastoreState();
 }
