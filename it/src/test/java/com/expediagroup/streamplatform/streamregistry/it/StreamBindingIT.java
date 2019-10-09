@@ -16,36 +16,44 @@
 
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import org.junit.Ignore;
+
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class StreamBindingIT extends ObjectIT {
 
   @Override
+  @Ignore
   public void create() {
 
   }
 
   @Override
+  @Ignore
   public void update() {
 
   }
 
   @Override
+  @Ignore
   public void upsert() {
 
   }
 
   @Override
+  @Ignore
   public void updateStatus() {
 
   }
 
   @Override
+  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
+  @Ignore
   public void queryByRegex() {
 
   }

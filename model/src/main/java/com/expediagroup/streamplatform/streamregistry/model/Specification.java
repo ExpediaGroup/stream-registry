@@ -43,7 +43,7 @@ public class Specification {
   private String type;
 
   @Lob
-  @Column(name = "configJson", length = 20000)
+  @Column(name = "config_json", length = 20000)
   private String configJson;
 
   @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)

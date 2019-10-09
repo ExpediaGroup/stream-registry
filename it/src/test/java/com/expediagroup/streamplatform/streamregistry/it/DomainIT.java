@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
@@ -26,11 +27,13 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 public class DomainIT extends ObjectIT {
 
   @Test
+  @Ignore
   public void create() {
 
   }
 
   @Override
+  @Ignore
   public void update() {
 
   }
@@ -47,16 +50,19 @@ public class DomainIT extends ObjectIT {
   }
 
   @Override
+  @Ignore
   public void updateStatus() {
 
   }
 
   @Override
+  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
+  @Ignore
   public void queryByRegex() {
 
   }

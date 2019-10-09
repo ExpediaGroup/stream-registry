@@ -78,4 +78,20 @@ public class Client {
   public Object upsertDomain(ITestDataFactory factory){
     return data(factory.upsertDomainMutationBuilder().build());
   }
+
+
+
+
+  public void createProducer(ITestDataFactory factory) {
+    createStream(factory);
+    data(factory.upsertProducerMutationBuilder().build());
+  }
+
+  public void createStream(ITestDataFactory factory) {
+    data(factory.upsertStreamMutationBuilder().build());
+  }
+
+  public void createDomain(ITestDataFactory factory) {
+    data(factory.upsertDomainMutationBuilder().build());
+  }
 }

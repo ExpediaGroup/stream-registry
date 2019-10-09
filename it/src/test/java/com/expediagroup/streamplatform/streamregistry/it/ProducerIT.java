@@ -16,16 +16,25 @@
 
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Ignore;
+
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ProducerIT extends ObjectIT {
 
   @Override
+  @Ignore
   public void create() {
 
   }
 
   @Override
+  @Ignore
   public void update() {
 
   }
@@ -33,19 +42,28 @@ public class ProducerIT extends ObjectIT {
   @Override
   public void upsert() {
 
+    Object data = client.data(factory.upsertProducerMutationBuilder().build());
+
+    UpsertProducerMutation.Upsert upsert = ((UpsertProducerMutation.Data)data).getProducer().getUpsert();
+
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description.getValue()));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key.toString()).asText(), is(factory.value.toString()));
   }
 
   @Override
+  @Ignore
   public void updateStatus() {
 
   }
 
   @Override
+  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
+  @Ignore
   public void queryByRegex() {
 
   }

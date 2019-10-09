@@ -45,8 +45,8 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class SchemaKey implements Serializable {
 
-  @Column(name = "SKdomain", length = 32)
+  @Column(name = "SKdomain", length = 100)
   private String domain;
-  @Column(name = "SKname", length = 32)
+  @Column(name = "SKname", length = 100)
   private String name;
 }

@@ -19,6 +19,8 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Ignore;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
@@ -26,11 +28,13 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 public class InfrastructureIT extends ObjectIT {
 
   @Override
+  @Ignore
   public void create() {
 
   }
 
   @Override
+  @Ignore
   public void update() {
 
   }
@@ -46,16 +50,19 @@ public class InfrastructureIT extends ObjectIT {
   }
 
   @Override
+  @Ignore
   public void updateStatus() {
 
   }
 
   @Override
+  @Ignore
   public void queryByKey() {
 
   }
 
   @Override
+  @Ignore
   public void queryByRegex() {
 
   }

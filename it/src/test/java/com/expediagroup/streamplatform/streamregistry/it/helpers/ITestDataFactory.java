@@ -17,7 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Collections;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
@@ -26,13 +25,21 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,6 +54,7 @@ public class ITestDataFactory {
   private StringValue infrastructureName = new StringValue();
   private StringValue infrastructureZone = new StringValue();
   private StringValue streamDomain = new StringValue();
+  private StringValue producerName = new StringValue();
 
   public StringValue key = new StringValue();
   public StringValue value = new StringValue();
@@ -166,5 +174,63 @@ public class ITestDataFactory {
         .name(infrastructureName.getValue())
         .zone(zoneName.getValue())
         .build();
+  }
+
+  public UpsertProducerBindingMutation.Builder upsertProducerBindingMutationBuilder() {
+    return UpsertProducerBindingMutation.builder()
+        .key(producerBindingKeyInputBuilder().build())
+        .specification(specificationInputBuilder().build());
+  }
+
+  private ProducerBindingKeyInput.Builder producerBindingKeyInputBuilder() {
+    return ProducerBindingKeyInput.builder()
+        .infrastructureName(infrastructureName.getValue())
+        .infrastructureZone(infrastructureZone.getValue())
+        .producerName(producerName.getValue())
+        .streamDomain(streamDomain.getValue())
+        .streamName(streamName.getValue())
+        .streamVersion(1);
+  }
+
+  public UpsertProducerMutation.Builder upsertProducerMutationBuilder() {
+    return UpsertProducerMutation.builder()
+        .key(producerKeyInputBuilder().build())
+        .specification(specificationInputBuilder().build());
+  }
+
+  private ProducerKeyInput.Builder producerKeyInputBuilder() {
+    return ProducerKeyInput.builder()
+        .name(producerName.getValue())
+        .streamDomain(streamDomain.getValue())
+        .streamName(streamName.getValue())
+        .streamVersion(1)
+        .zone(zoneName.getValue());
+  }
+
+  public UpsertStreamMutation.Builder upsertStreamMutationBuilder() {
+    return UpsertStreamMutation.builder()
+        .specification(specificationInputBuilder().build())
+        .key(streamKeyInputBuilder().build()
+        );
+  }
+
+  private StreamKeyInput.Builder streamKeyInputBuilder() {
+    return StreamKeyInput.builder()
+        .domain(domainName.getValue())
+        .name(streamName.getValue())
+        .version(1);
+  }
+
+  public UpsertSchemaMutation.Builder upsertSchemaMutationBuilder() {
+    return UpsertSchemaMutation.builder()
+        .specification(specificationInputBuilder().build())
+        .key(schemaKeyInputBuilder().build()
+        );
+  }
+
+  private SchemaKeyInput.Builder schemaKeyInputBuilder() {
+    return SchemaKeyInput.builder()
+        .domain(domainName.getValue())
+        .name(streamName.getValue());
   }
 }

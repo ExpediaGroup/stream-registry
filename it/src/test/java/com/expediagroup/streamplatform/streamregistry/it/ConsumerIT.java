@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
@@ -99,11 +100,14 @@ public class ConsumerIT extends ObjectIT {
   }
 
   @Override
+  @Ignore
+
   public void queryByKey() {
 
   }
 
   @Override
+  @Ignore
   public void queryByRegex() {
 
   }
