@@ -207,7 +207,10 @@ fragment DomainPart on Domain{
         __typename
         ...specificationPart
     }
-    ## status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertDomain(
@@ -294,7 +297,10 @@ fragment InfrastructurePart on Infrastructure{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertInfrastructure(
@@ -564,7 +570,10 @@ fragment SchemaPart on Schema{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertSchema(
@@ -650,7 +659,10 @@ fragment StreamPart on Stream{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertStream(
@@ -829,7 +841,10 @@ fragment ZonePart on Zone{
         __typename
         ...specificationPart
     }
-    status
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertZone(

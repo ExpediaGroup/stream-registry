@@ -37,7 +37,7 @@ public class ConsumerBindingIT extends ObjectIT {
   @Override
   public void upsert() {
 
-    Object data = client.data(factory.upsertConsumerBindingMutationBuilder().build());
+    Object data = client.getData(factory.upsertConsumerBindingMutationBuilder().build());
 
     UpsertConsumerBindingMutation.Upsert upsert = ((UpsertConsumerBindingMutation.Data) data).getConsumerBinding().getUpsert();
 
@@ -47,8 +47,8 @@ public class ConsumerBindingIT extends ObjectIT {
 
   @Override
   public void updateStatus() {
-    client.data(factory.upsertConsumerBindingMutationBuilder().build());
-    Object data = client.data(factory.updateConsumerBindingStatusBuilder().build());
+    client.getData(factory.upsertConsumerBindingMutationBuilder().build());
+    Object data = client.getData(factory.updateConsumerBindingStatusBuilder().build());
 
     UpdateConsumerBindingStatusMutation.UpdateStatus update =
         ((UpdateConsumerBindingStatusMutation.Data) data).getConsumerBinding().getUpdateStatus();

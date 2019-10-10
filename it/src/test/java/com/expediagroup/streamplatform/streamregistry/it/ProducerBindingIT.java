@@ -36,7 +36,7 @@ public class ProducerBindingIT extends ObjectIT {
   @Override
   public void upsert() {
 
-    Object data = client.data(factory.upsertProducerBindingMutationBuilder().build());
+    Object data = client.getData(factory.upsertProducerBindingMutationBuilder().build());
 
     UpsertProducerBindingMutation.Upsert upsert = ((UpsertProducerBindingMutation.Data) data).getProducerBinding().getUpsert();
 
@@ -61,9 +61,9 @@ public class ProducerBindingIT extends ObjectIT {
   @Override
   public void createRequiredDatastoreState() {
 
-    client.mutate(factory.upsertDomainMutationBuilder().build());
-    client.mutate(factory.upsertSchemaMutationBuilder().build());
-    client.mutate(factory.upsertStreamMutationBuilder().build());
-    client.mutate(factory.upsertProducerMutationBuilder().build());
+    client.invoke(factory.upsertDomainMutationBuilder().build());
+    client.invoke(factory.upsertSchemaMutationBuilder().build());
+    client.invoke(factory.upsertStreamMutationBuilder().build());
+    client.invoke(factory.upsertProducerMutationBuilder().build());
   }
 }

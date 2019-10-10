@@ -36,7 +36,7 @@ public class StreamBindingIT extends ObjectIT {
   @Override
   public void upsert() {
 
-    Object data = client.data(factory.upsertStreamBindingMutationBuilder().build());
+    Object data = client.getData(factory.upsertStreamBindingMutationBuilder().build());
 
     UpsertStreamBindingMutation.Upsert upsert = ((UpsertStreamBindingMutation.Data) data).getStreamBinding().getUpsert();
 

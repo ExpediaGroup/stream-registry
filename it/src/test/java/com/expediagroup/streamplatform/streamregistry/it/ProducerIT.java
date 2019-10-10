@@ -18,6 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import com.apollographql.apollo.api.Mutation;
+
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
@@ -26,17 +30,38 @@ public class ProducerIT extends ObjectIT {
   @Override
   public void create() {
 
+    Mutation createMutation=factory.insertProducerMutationBuilder().build();
+
+    Object data = client.getData(createMutation);
+
+    InsertProducerMutation.Insert update = ((InsertProducerMutation.Data) data).getProducer().getInsert();
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+
+    assertMutationFails(createMutation);
   }
 
   @Override
   public void update() {
 
+    Mutation updateMutation=factory.updateProducerMutationBuilder().build();
+
+    assertMutationFails(updateMutation);
+
+    client.invoke(factory.insertProducerMutationBuilder().build());
+
+    Object data = client.getData(updateMutation);
+    UpdateProducerMutation.Update update = ((UpdateProducerMutation.Data) data).getProducer().getUpdate();
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void upsert() {
 
-    Object data = client.data(factory.upsertProducerMutationBuilder().build());
+    Object data = client.getData(factory.upsertProducerMutationBuilder().build());
 
     UpsertProducerMutation.Upsert upsert = ((UpsertProducerMutation.Data) data).getProducer().getUpsert();
 
@@ -61,11 +86,8 @@ public class ProducerIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
-
-    client.mutate(factory.upsertDomainMutationBuilder().build());
-
-    client.mutate(factory.upsertSchemaMutationBuilder().build());
-
-    client.mutate(factory.upsertStreamMutationBuilder().build());
+    client.invoke(factory.upsertDomainMutationBuilder().build());
+    client.invoke(factory.upsertSchemaMutationBuilder().build());
+    client.invoke(factory.upsertStreamMutationBuilder().build());
   }
 }

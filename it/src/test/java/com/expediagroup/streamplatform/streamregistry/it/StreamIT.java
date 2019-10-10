@@ -36,7 +36,7 @@ public class StreamIT extends ObjectIT {
   @Override
   public void upsert() {
 
-    Object data = client.data(factory.upsertStreamMutationBuilder().build());
+    Object data = client.getData(factory.upsertStreamMutationBuilder().build());
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();
 
@@ -61,7 +61,7 @@ public class StreamIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
-    client.mutate(factory.upsertDomainMutationBuilder().build());
-    client.mutate(factory.upsertSchemaMutationBuilder().build());
+    client.invoke(factory.upsertDomainMutationBuilder().build());
+    client.invoke(factory.upsertSchemaMutationBuilder().build());
   }
 }

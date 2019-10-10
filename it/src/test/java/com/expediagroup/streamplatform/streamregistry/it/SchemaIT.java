@@ -36,7 +36,7 @@ public class SchemaIT extends ObjectIT {
   @Override
   public void upsert() {
 
-    Object data = client.data(factory.upsertSchemaMutationBuilder().build());
+    Object data = client.getData(factory.upsertSchemaMutationBuilder().build());
 
     UpsertSchemaMutation.Upsert upsert = ((UpsertSchemaMutation.Data) data).getSchema().getUpsert();
 
@@ -61,6 +61,6 @@ public class SchemaIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
-    client.mutate(factory.upsertDomainMutationBuilder().build());
+    client.invoke(factory.upsertDomainMutationBuilder().build());
   }
 }

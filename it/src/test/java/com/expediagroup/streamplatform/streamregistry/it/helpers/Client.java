@@ -17,16 +17,17 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Optional;
 
+import okhttp3.OkHttpClient;
+
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
-
-import okhttp3.OkHttpClient;
 
 public class Client {
 
@@ -42,29 +43,23 @@ public class Client {
   }
 
   public Response invoke(Operation operation) {
+    Response response;
     if (operation instanceof Mutation) {
-      return mutate((Mutation) operation);
+      response = (Response) ReactorApollo.from(apollo.mutate((Mutation) operation)).block();
+    } else {
+      response = (Response) ReactorApollo.from(apollo.query((Query) operation)).block();
     }
-    return query((Query) operation);
-  }
-
-  public Object data(Operation operation) {
-    Response response = invoke(operation);
     if (response.hasErrors()) {
       throw new RuntimeException(((com.apollographql.apollo.api.Error) response.errors().get(0)).message());
     }
-    Object out = response.data();
+    return response;
+  }
+
+  public Object getData(Operation operation) {
+    Object out = invoke(operation).data();
     if (out instanceof Optional && ((Optional) out).isPresent()) {
       return ((Optional) out).get();
     }
     return out;
-  }
-
-  public Response mutate(Mutation mutation) {
-    return (Response) ReactorApollo.from(apollo.mutate(mutation)).block();
-  }
-
-  public Response query(Query query) {
-    return (Response) ReactorApollo.from(apollo.query(query)).block();
   }
 }

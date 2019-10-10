@@ -16,9 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+
+import com.apollographql.apollo.api.Mutation;
 
 import org.junit.Test;
 
@@ -33,7 +33,7 @@ public class ConsumerIT extends ObjectIT {
   @Test
   public void upsert() {
 
-    Object data = client.data(factory.upsertConsumerMutationBuilder().build());
+    Object data = client.getData(factory.upsertConsumerMutationBuilder().build());
 
     UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data) data).getConsumer().getUpsert();
 
@@ -46,7 +46,7 @@ public class ConsumerIT extends ObjectIT {
   @Override
   public void create() {
 
-    Object data = client.data(factory.insertConsumerMutationBuilder().build());
+    Object data = client.getData(factory.insertConsumerMutationBuilder().build());
 
     InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data) data).getConsumer().getInsert();
 
@@ -59,18 +59,14 @@ public class ConsumerIT extends ObjectIT {
   @Test
   public void update() {
 
-    try {
-      client.data(factory.updateConsumerMutationBuilder().build());
-      fail("Expected a ValidationException");
-    } catch (RuntimeException e) {
-      assertEquals("Can't update because it doesn't exist", e.getMessage());
-    }
+    Mutation updateMutation = factory.updateConsumerMutationBuilder().build();
 
-    client.mutate(factory.insertConsumerMutationBuilder().build());
+    assertMutationFails(updateMutation);
 
-    Object data = client.data(factory.updateConsumerMutationBuilder().build());
+    client.invoke(factory.insertConsumerMutationBuilder().build());
 
-    UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data) data).getConsumer().getUpdate();
+    UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data) client.getData(updateMutation))
+        .getConsumer().getUpdate();
 
     assertThat(update.getKey().getName(), is(factory.consumerName));
 
@@ -81,15 +77,14 @@ public class ConsumerIT extends ObjectIT {
   @Test
   public void updateStatus() {
 
-    client.data(factory.upsertConsumerMutationBuilder().build());
+    client.getData(factory.upsertConsumerMutationBuilder().build());
 
-    Object data = client.data(factory.updateConsumerStatusBuilder().build());
+    Object data = client.getData(factory.updateConsumerStatusBuilder().build());
 
     UpdateConsumerStatusMutation.UpdateStatus update =
         ((UpdateConsumerStatusMutation.Data) data).getConsumer().getUpdateStatus();
 
     assertThat(update.getKey().getName(), is(factory.consumerName));
-
     assertThat(update.getSpecification().getDescription().get(), is(factory.description));
     assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
 

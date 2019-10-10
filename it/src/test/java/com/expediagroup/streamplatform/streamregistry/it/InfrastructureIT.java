@@ -35,7 +35,7 @@ public class InfrastructureIT extends ObjectIT {
 
   @Override
   public void upsert() {
-    Object data = client.data(factory.upsertInfrastructureMutationBuilder().build());
+    Object data = client.getData(factory.upsertInfrastructureMutationBuilder().build());
 
     UpsertInfrastructureMutation.Upsert upsert = ((UpsertInfrastructureMutation.Data) data).getInfrastructure().getUpsert();
 
@@ -55,6 +55,7 @@ public class InfrastructureIT extends ObjectIT {
 
   @Override
   public void queryByRegex() {
+
 
   }
 

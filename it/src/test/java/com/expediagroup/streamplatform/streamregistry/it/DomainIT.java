@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
@@ -38,7 +39,7 @@ public class DomainIT extends ObjectIT {
 
   @Override
   public void upsert() {
-    Object data = client.data(factory.upsertDomainMutationBuilder().build());
+    Object data = client.getData(factory.upsertDomainMutationBuilder().build());
 
     UpsertDomainMutation.Upsert upsert = ((UpsertDomainMutation.Data) data).getDomain().getUpsert();
 
@@ -49,7 +50,14 @@ public class DomainIT extends ObjectIT {
 
   @Override
   public void updateStatus() {
+    client.getData(factory.upsertDomainMutationBuilder().build());
+    Object data = client.getData(factory.updateDomainStatusMutation().build());
 
+    UpdateDomainStatusMutation.UpdateStatus update =
+        ((UpdateDomainStatusMutation.Data) data).getDomain().getUpdateStatus();
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    //assertThat(update..get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override

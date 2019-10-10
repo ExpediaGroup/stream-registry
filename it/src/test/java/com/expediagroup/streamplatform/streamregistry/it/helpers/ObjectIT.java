@@ -15,6 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
+import static org.junit.Assert.assertEquals;
+
+import junit.framework.TestCase;
+
+import com.apollographql.apollo.api.Mutation;
+
 import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,7 +37,7 @@ public abstract class ObjectIT {
   public ITestDataFactory factory = new ITestDataFactory();
 
   @ClassRule
-  public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1);
+  public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1); //todo: remove
   @ClassRule
   public static SchemaRegistryJUnitRule schemaRegistry = new SchemaRegistryJUnitRule();
 
@@ -54,14 +60,9 @@ public abstract class ObjectIT {
     client = new Client(url);
   }
 
-  boolean createdState = false;
-
   @Before
   public final void before() {
-    if (!createdState) {
-      createRequiredDatastoreState();
-      createdState = true;
-    }
+    createRequiredDatastoreState();
   }
 
   @AfterClass
@@ -91,4 +92,32 @@ public abstract class ObjectIT {
   public abstract void queryByRegex();
 
   public abstract void createRequiredDatastoreState();
+
+  public Mutation assertMutationFails(Mutation mutation) {
+    if (mutation.getClass().getSimpleName().toLowerCase().contains("insert")) {
+      assertRequiresObjectIsAbsent(mutation);
+    }
+    if (mutation.getClass().getSimpleName().toLowerCase().contains("update")) {
+      assertRequiresObjectIsPresent(mutation);
+    }
+    return mutation;
+  }
+
+  public void assertRequiresObjectIsAbsent(Mutation m) {
+    try {
+      client.invoke(m);
+      TestCase.fail("Expected a ValidationException");
+    } catch (RuntimeException e) {
+      assertEquals("Can't create because it already exists", e.getMessage());
+    }
+  }
+
+  public void assertRequiresObjectIsPresent(Mutation m) {
+    try {
+      client.invoke(m);
+      TestCase.fail("Expected a ValidationException");
+    } catch (RuntimeException e) {
+      assertEquals("Can't update because it doesn't exist", e.getMessage());
+    }
+  }
 }

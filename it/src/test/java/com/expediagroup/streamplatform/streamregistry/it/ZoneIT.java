@@ -35,7 +35,7 @@ public class ZoneIT extends ObjectIT {
 
   @Override
   public void upsert() {
-    Object data = client.data(factory.upsertZoneMutationBuilder().build());
+    Object data = client.getData(factory.upsertZoneMutationBuilder().build());
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 
@@ -46,7 +46,7 @@ public class ZoneIT extends ObjectIT {
 
   @Override
   public void updateStatus() {
-    Object data = client.data(factory.upsertZoneMutationBuilder().build());
+    Object data = client.getData(factory.upsertZoneMutationBuilder().build());
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 

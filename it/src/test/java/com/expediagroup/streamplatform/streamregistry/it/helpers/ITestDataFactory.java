@@ -18,10 +18,15 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
@@ -44,7 +49,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Status
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 
@@ -266,5 +270,25 @@ public class ITestDataFactory {
         .streamDomain(domainName)
         .streamName(streamName)
         .streamVersion(1);
+  }
+
+  public UpdateProducerMutation.Builder updateProducerMutationBuilder() {
+    return UpdateProducerMutation.builder()
+        .key(producerKeyInputBuilder().build())
+        .specification(specificationInputBuilder().build());
+  }
+
+  public InsertProducerMutation.Builder  insertProducerMutationBuilder() {
+    return InsertProducerMutation.builder()
+        .key(producerKeyInputBuilder().build())
+        .specification(specificationInputBuilder().build());
+  }
+
+  public UpdateDomainStatusMutation.Builder updateDomainStatusMutation() {
+    return UpdateDomainStatusMutation.builder()
+        .key(domainKeyInputBuilder().build())
+        .status(StatusInput.builder().agentStatus(
+            mapper.createObjectNode().put("skey", "svalue"))
+        .build());
   }
 }
