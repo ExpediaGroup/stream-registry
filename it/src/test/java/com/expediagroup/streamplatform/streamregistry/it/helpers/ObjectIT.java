@@ -17,11 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
-
-import com.apollographql.apollo.api.Mutation;
-
-import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,15 +24,25 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.testcontainers.containers.FixedHostPortGenericContainer;
 
+import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
+
+import junit.framework.TestCase;
 
 public abstract class ObjectIT {
 
   public ITestDataFactory factory = new ITestDataFactory();
 
   @ClassRule
-  public static EmbeddedKafkaCluster kafka = new EmbeddedKafkaCluster(1); //todo: remove
+  public static FixedHostPortGenericContainer postgreSQLContainer =
+      new FixedHostPortGenericContainer<>("postgres:latest")
+          .withEnv("POSTGRES_USER", "streamregistry")
+          .withEnv("POSTGRES_PASSWORD", "")
+          .withEnv("POSTGRES_DB", "streamregistry")
+          .withFixedExposedPort(5432, 5432);
+
   @ClassRule
   public static SchemaRegistryJUnitRule schemaRegistry = new SchemaRegistryJUnitRule();
 
@@ -50,7 +55,7 @@ public abstract class ObjectIT {
   public static void beforeClass() {
     String[] args = new String[] {
         "--server.port=0",
-        "--repository.kafka.bootstrap-servers=" + kafka.bootstrapServers(),
+        "--repository.kafka.bootstrap-servers=x",
         "--repository.kafka.replicationFactor=1",
         "--schema.registry.url=" + schemaRegistry.url()
     };
