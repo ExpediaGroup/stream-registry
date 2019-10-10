@@ -18,6 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
@@ -46,7 +48,14 @@ public class ProducerBindingIT extends ObjectIT {
 
   @Override
   public void updateStatus() {
+    client.getData(factory.upsertProducerBindingMutationBuilder().build());
+    Object data = client.getData(factory.updateProducerBindingStatusBuilder().build());
 
+    UpdateProducerBindingStatusMutation.UpdateStatus update =
+        ((UpdateProducerBindingStatusMutation.Data) data).getProducerBinding().getUpdateStatus();
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override

@@ -18,15 +18,19 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
@@ -49,6 +53,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Status
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 
@@ -177,12 +182,14 @@ public class ITestDataFactory {
         .streamVersion(1);
   }
 
+  public StatusInput statusInput() {
+    return StatusInput.builder().agentStatus(mapper.createObjectNode().put("skey", "svalue")).build();
+  }
+
   public UpdateConsumerBindingStatusMutation.Builder updateConsumerBindingStatusBuilder() {
     return UpdateConsumerBindingStatusMutation.builder()
         .key(consumerBindingKeyInputBuilder().build())
-        .status(StatusInput.builder().agentStatus(
-            mapper.createObjectNode().put("skey", "svalue")
-        ).build());
+        .status(statusInput());
   }
 
   public UpsertInfrastructureMutation.Builder upsertInfrastructureMutationBuilder() {
@@ -278,7 +285,7 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder().build());
   }
 
-  public InsertProducerMutation.Builder  insertProducerMutationBuilder() {
+  public InsertProducerMutation.Builder insertProducerMutationBuilder() {
     return InsertProducerMutation.builder()
         .key(producerKeyInputBuilder().build())
         .specification(specificationInputBuilder().build());
@@ -287,8 +294,42 @@ public class ITestDataFactory {
   public UpdateDomainStatusMutation.Builder updateDomainStatusMutation() {
     return UpdateDomainStatusMutation.builder()
         .key(domainKeyInputBuilder().build())
-        .status(StatusInput.builder().agentStatus(
-            mapper.createObjectNode().put("skey", "svalue"))
-        .build());
+        .status(statusInput());
+  }
+
+  public UpdateInfrastructureStatusMutation.Builder updateInfrastructureStatusBuilder() {
+    return UpdateInfrastructureStatusMutation.builder()
+        .key(infrastructureKey())
+        .status(statusInput());
+  }
+
+  public UpdateProducerBindingStatusMutation.Builder updateProducerBindingStatusBuilder() {
+    return UpdateProducerBindingStatusMutation.builder()
+        .key(producerBindingKeyInputBuilder().build())
+        .status(statusInput());
+  }
+
+  public UpdateProducerStatusMutation.Builder updateProducerStatusBuilder() {
+    return UpdateProducerStatusMutation.builder()
+        .key(producerKeyInputBuilder().build())
+        .status(statusInput());
+  }
+
+  public UpdateSchemaStatusMutation.Builder updateSchemaStatusBuilder() {
+    return UpdateSchemaStatusMutation.builder()
+        .key(schemaKeyInputBuilder().build())
+        .status(statusInput());
+  }
+
+  public UpdateStreamBindingStatusMutation.Builder updateStreamBindingStatusBuilder() {
+    return UpdateStreamBindingStatusMutation.builder()
+        .key(streamBindingKeyInputBuilder().build())
+        .status(statusInput());
+  }
+
+  public UpdateStreamStatusMutation.Builder updateStreamStatusBuilder() {
+    return UpdateStreamStatusMutation.builder()
+        .key(streamKeyInputBuilder().build())
+        .status(statusInput());
   }
 }

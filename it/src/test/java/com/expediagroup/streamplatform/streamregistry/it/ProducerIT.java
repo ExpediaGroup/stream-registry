@@ -21,7 +21,9 @@ import static org.junit.Assert.assertThat;
 import com.apollographql.apollo.api.Mutation;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
@@ -71,8 +73,16 @@ public class ProducerIT extends ObjectIT {
 
   @Override
   public void updateStatus() {
+    client.getData(factory.upsertProducerMutationBuilder().build());
+    Object data = client.getData(factory.updateProducerStatusBuilder().build());
 
+    UpdateProducerStatusMutation.UpdateStatus update =
+        ((UpdateProducerStatusMutation.Data) data).getProducer().getUpdateStatus();
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
+
 
   @Override
   public void queryByKey() {
