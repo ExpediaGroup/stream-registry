@@ -21,9 +21,9 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

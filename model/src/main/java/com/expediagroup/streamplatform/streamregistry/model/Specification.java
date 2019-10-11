@@ -21,6 +21,7 @@ import static com.expediagroup.streamplatform.streamregistry.model.scalars.Objec
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -28,9 +29,9 @@ import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.Data;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Data
 @Embeddable

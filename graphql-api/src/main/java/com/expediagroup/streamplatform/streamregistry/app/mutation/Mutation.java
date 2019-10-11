@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.app.mutation;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;

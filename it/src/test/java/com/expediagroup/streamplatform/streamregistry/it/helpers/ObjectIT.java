@@ -17,7 +17,10 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import static org.junit.Assert.assertEquals;
 
+import junit.framework.TestCase;
+
 import com.apollographql.apollo.api.Mutation;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,8 +31,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
-
-import junit.framework.TestCase;
 
 public abstract class ObjectIT {
 
