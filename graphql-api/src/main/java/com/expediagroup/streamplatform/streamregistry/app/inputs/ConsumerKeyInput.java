@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.ConsumerKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Value
@@ -46,6 +45,12 @@ public class ConsumerKeyInput {
   String name = null;
 
   public ConsumerKey asConsumerKey() {
-    return ConsumerKeyInputConvertor.convert(this);
+    return new ConsumerKey(
+        getStreamDomain(),
+        getStreamName(),
+        getStreamVersion(),
+        getZone(),
+        getName()
+    );
   }
 }

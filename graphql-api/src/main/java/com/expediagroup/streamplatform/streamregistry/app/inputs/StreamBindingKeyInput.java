@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.StreamBindingKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Value
@@ -46,6 +45,12 @@ public class StreamBindingKeyInput {
   String infrastructureName = null;
 
   public StreamBindingKey asStreamBindingKey() {
-    return StreamBindingKeyInputConvertor.convert(this);
+    return new StreamBindingKey(
+        getStreamDomain(),
+        getStreamName(),
+        getStreamVersion(),
+        getInfrastructureZone(),
+        getInfrastructureName()
+    );
   }
 }

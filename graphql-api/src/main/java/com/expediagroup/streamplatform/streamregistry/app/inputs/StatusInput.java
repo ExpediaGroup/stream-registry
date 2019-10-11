@@ -15,12 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.app.inputs;
 
+import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
+
 import lombok.Builder;
 import lombok.Data;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.StatusInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 @Data
@@ -30,6 +31,8 @@ public class StatusInput {
   ObjectNode agentStatus = null;
 
   public Status asStatus() {
-    return StatusInputConvertor.convert(this);
+    return new Status(
+        serialise(getAgentStatus())
+    );
   }
 }

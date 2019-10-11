@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.ZoneKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Value
@@ -34,6 +33,8 @@ public class ZoneKeyInput {
   String name = null;
 
   public ZoneKey asZoneKey() {
-    return ZoneKeyInputConvertor.convert(this);
+    return new ZoneKey(
+        getName()
+    );
   }
 }

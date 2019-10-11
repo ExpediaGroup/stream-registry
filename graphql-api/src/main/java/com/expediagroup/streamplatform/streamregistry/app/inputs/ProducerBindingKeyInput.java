@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.ProducerBindingKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
 @Value
@@ -49,6 +48,13 @@ public class ProducerBindingKeyInput {
   String producerName = null;
 
   public ProducerBindingKey asProducerBindingKey() {
-    return ProducerBindingKeyInputConvertor.convert(this);
+    return new ProducerBindingKey(
+        getStreamDomain(),
+        getStreamName(),
+        getStreamVersion(),
+        getInfrastructureZone(),
+        getInfrastructureName(),
+        getProducerName()
+    );
   }
 }

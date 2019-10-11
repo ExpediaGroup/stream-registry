@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.app.inputs;
 
+import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Builder;
@@ -22,8 +25,8 @@ import lombok.Data;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.SpecificationInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 @Data
 @Builder
@@ -35,6 +38,21 @@ public class SpecificationInput {
   ObjectNode configuration = null;
 
   public Specification asSpecification() {
-    return SpecificationInputConvertor.convert(this);
+    return new Specification(
+        getDescription(),
+        getType(),
+        serialise(getConfiguration()),
+        tags()
+    );
+  }
+
+  private List<Tag> tags() {
+    List out = new ArrayList<>();
+    if (tags != null) {
+      for (TagInput t : tags) {
+        out.add(new Tag(t.getName(), t.getValue()));
+      }
+    }
+    return out;
   }
 }

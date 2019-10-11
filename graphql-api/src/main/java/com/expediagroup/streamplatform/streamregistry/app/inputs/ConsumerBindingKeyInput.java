@@ -15,13 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.app.inputs;
 
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.ConsumerBindingKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
 @Value
@@ -50,6 +48,13 @@ public class ConsumerBindingKeyInput {
   String consumerName = null;
 
   public ConsumerBindingKey asConsumerBindingKey() {
-    return ConsumerBindingKeyInputConvertor.convert(this);
+    return new ConsumerBindingKey(
+        getStreamDomain(),
+        getStreamName(),
+        getStreamVersion(),
+        getInfrastructureZone(),
+        getInfrastructureName(),
+        getConsumerName()
+    );
   }
 }

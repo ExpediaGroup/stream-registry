@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.app;
 
-import static com.expediagroup.streamplatform.streamregistry.app.convertors.ZoneKeyInputConvertor.convert;
 
 import org.springframework.stereotype.Component;
 
@@ -107,7 +106,7 @@ public class MyQueryImpl implements Query {
 
   @Override
   public Zone getZone(ZoneKeyInput key) {
-    return services.getZoneService().read(convert(key)).get();
+    return services.getZoneService().read(key.asZoneKey()).get();
   }
 
   @Override

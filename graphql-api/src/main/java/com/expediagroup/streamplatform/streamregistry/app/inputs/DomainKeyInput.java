@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.DomainKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Value
@@ -34,6 +33,6 @@ public class DomainKeyInput {
   String name = null;
 
   public DomainKey asDomainKey() {
-    return DomainKeyInputConvertor.convert(this);
+    return new DomainKey(getName());
   }
 }

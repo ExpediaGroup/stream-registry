@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.InfrastructureKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
 @Value
@@ -37,6 +36,9 @@ public class InfrastructureKeyInput {
   String name = null;
 
   public InfrastructureKey asInfrastructureKey() {
-    return InfrastructureKeyInputConvertor.convert(this);
+    return new InfrastructureKey(
+        getZone(),
+        getName()
+    );
   }
 }

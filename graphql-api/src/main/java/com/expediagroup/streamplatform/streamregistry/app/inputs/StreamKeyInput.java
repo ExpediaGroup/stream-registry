@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.app.convertors.StreamKeyInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Value
@@ -40,6 +39,10 @@ public class StreamKeyInput {
   Integer version = null;
 
   public StreamKey asStreamKey() {
-    return StreamKeyInputConvertor.convert(this);
+    return new StreamKey(
+        getDomain(),
+        getName(),
+        getVersion()
+    );
   }
 }
