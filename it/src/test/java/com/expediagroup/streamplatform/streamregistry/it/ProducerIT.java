@@ -16,14 +16,24 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducersQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ProducerIT extends ObjectIT {
@@ -86,11 +96,35 @@ public class ProducerIT extends ObjectIT {
   @Override
   public void queryByKey() {
 
+    ProducerKeyInput input = factory.producerKeyInputBuilder().build();
+
+    try {
+      client.getData(ProducerQuery.builder().key(input).build());
+    }catch ( RuntimeException e){
+      assertEquals(e.getMessage(),"No value present");
+    }
+
+    client.getData(factory.upsertProducerMutationBuilder().build());
+
+    ProducerQuery.Data after = (ProducerQuery.Data) client.getData(ProducerQuery.builder().key(input).build());
+
+    assertEquals(after.getProducer().getKey().getName(),input.name());
+
   }
 
   @Override
   public void queryByRegex() {
 
+    ProducerKeyQuery query = ProducerKeyQuery.builder().nameRegex("producerName.*").build();
+
+    ProducersQuery.Data before = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
+
+    client.getData(factory.upsertProducerMutationBuilder().build());
+    client.getData(factory.upsertProducerMutationBuilder().build());
+
+    ProducersQuery.Data after = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
+
+    assertTrue(after.getProducers().size() == before.getProducers().size() + 1);
   }
 
   @Override

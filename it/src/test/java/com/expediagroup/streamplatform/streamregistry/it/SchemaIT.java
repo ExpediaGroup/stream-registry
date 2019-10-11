@@ -16,10 +16,17 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import static junit.framework.TestCase.assertTrue;
+
+import com.expediagroup.streamplatform.streamregistry.graphql.client.SchemaQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.SchemasQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class SchemaIT extends ObjectIT {
@@ -60,11 +67,35 @@ public class SchemaIT extends ObjectIT {
   @Override
   public void queryByKey() {
 
+    SchemaKeyInput input = factory.schemaKeyInputBuilder().build();
+
+    try {
+      client.getData(SchemaQuery.builder().key(input).build());
+    }catch ( RuntimeException e){
+      assertEquals(e.getMessage(),"No value present");
+    }
+
+    client.getData(factory.upsertSchemaMutationBuilder().build());
+
+    SchemaQuery.Data after = (SchemaQuery.Data) client.getData(SchemaQuery.builder().key(input).build());
+
+    assertEquals(after.getSchema().getKey().getName(),input.name());
+
   }
 
   @Override
   public void queryByRegex() {
 
+    SchemaKeyQuery query = SchemaKeyQuery.builder().domainRegex("domainName.*").build();
+
+    SchemasQuery.Data before = (SchemasQuery.Data) client.getData(SchemasQuery.builder().key(query).build());
+
+    client.getData(factory.upsertSchemaMutationBuilder().build());
+    client.getData(factory.upsertSchemaMutationBuilder().build());
+
+    SchemasQuery.Data after = (SchemasQuery.Data) client.getData(SchemasQuery.builder().key(query).build());
+
+    assertTrue(after.getSchemas().size() == before.getSchemas().size() + 1);
   }
 
   @Override

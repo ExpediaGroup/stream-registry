@@ -16,10 +16,20 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ProducerBindingIT extends ObjectIT {
@@ -60,10 +70,35 @@ public class ProducerBindingIT extends ObjectIT {
   @Override
   public void queryByKey() {
 
+    ProducerBindingKeyInput input = factory.producerBindingKeyInputBuilder().build();
+
+    try {
+      client.getData(ProducerBindingQuery.builder().key(input).build());
+    }catch ( RuntimeException e){
+      assertEquals(e.getMessage(),"No value present");
+    }
+
+    client.getData(factory.upsertProducerBindingMutationBuilder().build());
+
+    ProducerBindingQuery.Data after = (ProducerBindingQuery.Data) client.getData(ProducerBindingQuery.builder().key(input).build());
+
+    assertEquals(after.getProducerBinding().getKey().getStreamDomain(),input.streamDomain());
+
   }
 
   @Override
   public void queryByRegex() {
+
+    ProducerBindingKeyQuery query = ProducerBindingKeyQuery.builder().producerNameRegex("producerName.*").build();
+
+    ProducerBindingsQuery.Data before = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
+
+    client.getData(factory.upsertProducerBindingMutationBuilder().build());
+    client.getData(factory.upsertProducerBindingMutationBuilder().build());
+
+    ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
+
+    assertTrue(after.getProducerBindings().size() == before.getProducerBindings().size() + 1);
   }
 
   @Override
