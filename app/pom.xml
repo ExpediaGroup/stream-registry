@@ -11,8 +11,8 @@
   <artifactId>stream-registry-app</artifactId>
 
   <properties>
-    <docker.to.repo />
-    <docker.from.repo />
+    <docker.to.repo/>
+    <docker.from.repo/>
     <docker.image.name>stream-registry</docker.image.name>
     <docker.image.base>openjdk:11-slim</docker.image.base>
   </properties>
@@ -20,12 +20,12 @@
   <dependencies>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-spring-boot-starter</artifactId>
+      <artifactId>stream-registry-handler-egsp</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-handler-egsp</artifactId>
+      <artifactId>stream-registry-spring-boot-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
 

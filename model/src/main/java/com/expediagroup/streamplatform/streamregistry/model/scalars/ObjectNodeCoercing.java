@@ -18,14 +18,13 @@ package com.expediagroup.streamplatform.streamregistry.model.scalars;
 import java.io.IOException;
 import java.util.Collections;
 
-import lombok.extern.slf4j.Slf4j;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import graphql.language.ObjectValue;
 import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingParseValueException;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class ObjectNodeCoercing extends BaseCoercing {

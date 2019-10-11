@@ -30,10 +30,10 @@ package com.expediagroup.streamplatform.streamregistry.app.convertors;
  * limitations under the License.
  */
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.app.inputs.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+
+import lombok.Data;
 
 @Data
 public class InfrastructureKeyInputConvertor {

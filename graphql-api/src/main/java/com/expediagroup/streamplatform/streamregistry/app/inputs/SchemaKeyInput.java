@@ -30,13 +30,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.app.convertors.SchemaKeyInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.app.convertors.SchemaKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
 @Value
 @Builder
@@ -44,8 +44,12 @@ public class SchemaKeyInput {
 
   public SchemaKeyInput() {}
 
-  @Getter @Setter String domain = null;
-  @Getter @Setter String name = null;
+  @Getter
+  @Setter
+  String domain = null;
+  @Getter
+  @Setter
+  String name = null;
 
   public SchemaKey asSchemaKey() {
     return SchemaKeyInputConvertor.convert(this);

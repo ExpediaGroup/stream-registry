@@ -31,7 +31,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
  */
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 

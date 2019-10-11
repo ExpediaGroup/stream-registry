@@ -48,7 +48,7 @@ public class StreamBindingValidator implements Validator<StreamBinding> {
   @Override
   public void validateForUpdate(StreamBinding streambinding, StreamBinding existing) throws ValidationException {
     validateForCreateAndUpdate(streambinding);
-    new SpecificationValidator().validateForUpdate(streambinding.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(streambinding.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(StreamBinding streambinding) throws ValidationException {

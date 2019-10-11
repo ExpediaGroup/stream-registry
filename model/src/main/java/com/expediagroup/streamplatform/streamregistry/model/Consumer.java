@@ -29,16 +29,17 @@ package com.expediagroup.streamplatform.streamregistry.model;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+
+import lombok.Data;
 
 @Data
 @Entity
-public class Consumer implements ManagedType{
+public class Consumer implements ManagedType {
 
   @EmbeddedId
   private ConsumerKey key;

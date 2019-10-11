@@ -28,14 +28,14 @@ public class HandlersForServices {
 
   private Map<String, Map<String, Handler>> map = new HashMap<>();
 
-  public void Register(String typeName, Class clazz, Handler handler) {
-    Map<String, Handler> m = map.computeIfAbsent(typeName, h->new HashMap<>());
+  public void register(String typeName, Class clazz, Handler handler) {
+    Map<String, Handler> m = map.computeIfAbsent(typeName, h -> new HashMap<>());
     m.putIfAbsent(clazz.getCanonicalName(), handler);
   }
 
   private Handler get(ManagedType managedType) {
-    if(! map.containsKey(managedType.getSpecification().getType())){
-      throw new ValidationException(managedType.getSpecification().getType()+" has no handlers, requires one of "+getTypes());
+    if (!map.containsKey(managedType.getSpecification().getType())) {
+      throw new ValidationException(managedType.getSpecification().getType() + " has no handlers, requires one of " + getTypes());
     }
     try {
       return map.get(managedType.getSpecification().getType()).get(managedType.getClass().getCanonicalName());
@@ -44,9 +44,9 @@ public class HandlersForServices {
     return null;
   }
 
-  public Specification handleInsert(ManagedType managedType){
-    Handler handler=get(managedType);
-    if(handler==null){
+  public Specification handleInsert(ManagedType managedType) {
+    Handler handler = get(managedType);
+    if (handler == null) {
       return managedType.getSpecification();
     }
     try {
@@ -56,13 +56,13 @@ public class HandlersForServices {
     }
   }
 
-  public Specification handleUpdate(ManagedType managedType,ManagedType existing){
-    Handler handler=get(managedType);
-    if(handler==null){
+  public Specification handleUpdate(ManagedType managedType, ManagedType existing) {
+    Handler handler = get(managedType);
+    if (handler == null) {
       return managedType.getSpecification();
     }
     try {
-      return get(managedType).handleUpdate(managedType,existing);
+      return get(managedType).handleUpdate(managedType, existing);
     } catch (HandlerException e) {
       throw new ValidationException(e);
     }

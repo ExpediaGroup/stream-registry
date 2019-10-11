@@ -55,7 +55,7 @@ public class ProducerValidator implements Validator<Producer> {
   @Override
   public void validateForUpdate(Producer producer, Producer existing) throws ValidationException {
     validateForCreateAndUpdate(producer);
-    new SpecificationValidator().validateForUpdate(producer.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(producer.getSpecification(), existing.getSpecification());
 
   }
 

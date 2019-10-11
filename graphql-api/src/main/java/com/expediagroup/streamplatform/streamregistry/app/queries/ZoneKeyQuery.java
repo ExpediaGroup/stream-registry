@@ -41,5 +41,7 @@ public class ZoneKeyQuery {
 
   public ZoneKeyQuery() {}
 
-  @Getter @Setter String nameRegex = null;
+  @Getter
+  @Setter
+  String nameRegex = null;
 }

@@ -40,7 +40,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
-public class StreamValidator implements Validator<Stream>{
+public class StreamValidator implements Validator<Stream> {
 
   private DomainService domainService;
   private SchemaService schemaService;
@@ -59,7 +59,7 @@ public class StreamValidator implements Validator<Stream>{
   @Override
   public void validateForUpdate(Stream stream, Stream existing) throws ValidationException {
     validateForCreateAndUpdate(stream);
-    new SpecificationValidator().validateForUpdate(stream.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(stream.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(Stream stream) throws ValidationException {

@@ -32,10 +32,10 @@ package com.expediagroup.streamplatform.streamregistry.app.convertors;
 
 import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.app.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+
+import lombok.Data;
 
 @Data
 public class StatusInputConvertor {

@@ -33,14 +33,14 @@ package com.expediagroup.streamplatform.streamregistry.model;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
+import lombok.Data;
+
 @Data
 @Entity
-public class Stream implements ManagedType{
+public class Stream implements ManagedType {
 
   @EmbeddedId
   private StreamKey key;

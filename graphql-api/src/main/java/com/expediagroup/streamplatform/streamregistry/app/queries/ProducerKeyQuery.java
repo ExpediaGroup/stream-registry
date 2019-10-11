@@ -41,9 +41,19 @@ public class ProducerKeyQuery {
 
   public ProducerKeyQuery() {}
 
-  @Getter @Setter String streamDomainRegex = null;
-  @Getter @Setter String streamNameRegex = null;
-  @Getter @Setter Integer streamVersion = null;
-  @Getter @Setter String zoneRegex = null;
-  @Getter @Setter String nameRegex = null;
+  @Getter
+  @Setter
+  String streamDomainRegex = null;
+  @Getter
+  @Setter
+  String streamNameRegex = null;
+  @Getter
+  @Setter
+  Integer streamVersion = null;
+  @Getter
+  @Setter
+  String zoneRegex = null;
+  @Getter
+  @Setter
+  String nameRegex = null;
 }

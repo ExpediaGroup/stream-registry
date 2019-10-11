@@ -30,10 +30,10 @@ package com.expediagroup.streamplatform.streamregistry.app.convertors;
  * limitations under the License.
  */
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+
+import lombok.Data;
 
 @Data
 public class ConsumerKeyInputConvertor {

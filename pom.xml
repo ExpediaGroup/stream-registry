@@ -181,7 +181,7 @@
         </executions>
         <configuration>
           <java>
-            <removeUnusedImports />
+            <removeUnusedImports/>
             <importOrder>
               <order>java,javax,com,io,org,com.expediagroup,</order>
             </importOrder>

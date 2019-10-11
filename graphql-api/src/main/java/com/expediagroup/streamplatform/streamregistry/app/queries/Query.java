@@ -41,13 +41,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 public interface Query extends GraphQLQueryResolver {
 
-  default Domain bugfixq(TagQuery v)
-  {
+  default Domain bugfixq(TagQuery v) {
     return null;
   }
 
-  default Domain bugfixi(TagInput v)
-  {
+  default Domain bugfixi(TagInput v) {
     return null;
   }
 

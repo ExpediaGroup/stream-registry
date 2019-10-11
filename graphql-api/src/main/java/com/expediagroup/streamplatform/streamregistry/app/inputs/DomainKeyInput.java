@@ -30,13 +30,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.app.convertors.DomainKeyInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.app.convertors.DomainKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Value
 @Builder
@@ -44,7 +44,9 @@ public class DomainKeyInput {
 
   public DomainKeyInput() {}
 
-  @Getter @Setter String name = null;
+  @Getter
+  @Setter
+  String name = null;
 
   public DomainKey asDomainKey() {
     return DomainKeyInputConvertor.convert(this);

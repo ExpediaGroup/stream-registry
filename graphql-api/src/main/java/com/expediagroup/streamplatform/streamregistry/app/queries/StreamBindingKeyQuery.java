@@ -41,9 +41,19 @@ public class StreamBindingKeyQuery {
 
   public StreamBindingKeyQuery() {}
 
-  @Getter @Setter String streamDomainRegex = null;
-  @Getter @Setter String streamNameRegex = null;
-  @Getter @Setter Integer streamVersion = null;
-  @Getter @Setter String infrastructureZoneRegex = null;
-  @Getter @Setter String infrastructureNameRegex = null;
+  @Getter
+  @Setter
+  String streamDomainRegex = null;
+  @Getter
+  @Setter
+  String streamNameRegex = null;
+  @Getter
+  @Setter
+  Integer streamVersion = null;
+  @Getter
+  @Setter
+  String infrastructureZoneRegex = null;
+  @Getter
+  @Setter
+  String infrastructureNameRegex = null;
 }

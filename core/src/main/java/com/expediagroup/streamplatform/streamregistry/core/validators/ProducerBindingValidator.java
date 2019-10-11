@@ -38,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 @Component
-public class ProducerBindingValidator implements Validator<ProducerBinding>{
+public class ProducerBindingValidator implements Validator<ProducerBinding> {
 
   private ProducerService producerService;
 
@@ -55,14 +55,14 @@ public class ProducerBindingValidator implements Validator<ProducerBinding>{
   @Override
   public void validateForUpdate(ProducerBinding producerbinding, ProducerBinding existing) throws ValidationException {
     validateForCreateAndUpdate(producerbinding);
-    new SpecificationValidator().validateForUpdate(producerbinding.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(producerbinding.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
-    if(producerService.read(producerbinding.getKey().getProducerKey()).isEmpty()){
-      throw new ValidationException("Producer does not exist " +producerbinding.getKey().getProducerKey());
+    if (producerService.read(producerbinding.getKey().getProducerKey()).isEmpty()) {
+      throw new ValidationException("Producer does not exist " + producerbinding.getKey().getProducerKey());
     }
   }
 
 
-  }
+}

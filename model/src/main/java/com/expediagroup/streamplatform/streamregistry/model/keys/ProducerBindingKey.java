@@ -31,7 +31,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
  */
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -59,10 +58,10 @@ public class ProducerBindingKey implements Serializable {
   private String producerName;
 
   public StreamKey getStreamKey() {
-    return new StreamKey(streamDomain,streamName,streamVersion);
+    return new StreamKey(streamDomain, streamName, streamVersion);
   }
 
-  public ProducerKey getProducerKey(){
-    return new ProducerKey(streamDomain,streamName,streamVersion,infrastructureZone,producerName);
+  public ProducerKey getProducerKey() {
+    return new ProducerKey(streamDomain, streamName, streamVersion, infrastructureZone, producerName);
   }
 }

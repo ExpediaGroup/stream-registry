@@ -21,8 +21,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Stated;
 
 public class StateHelper {
 
-  public static void maintainState(Stated stated, Optional<? extends Stated> existing){
-    if(existing.isPresent()){
+  public static void maintainState(Stated stated, Optional<? extends Stated> existing) {
+    if (existing.isPresent()) {
       stated.setStatus(existing.get().getStatus());
     }
   }

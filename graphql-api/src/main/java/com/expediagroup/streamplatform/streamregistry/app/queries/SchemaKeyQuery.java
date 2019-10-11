@@ -41,6 +41,10 @@ public class SchemaKeyQuery {
 
   public SchemaKeyQuery() {}
 
-  @Getter @Setter String domainRegex = null;
-  @Getter @Setter String nameRegex = null;
+  @Getter
+  @Setter
+  String domainRegex = null;
+  @Getter
+  @Setter
+  String nameRegex = null;
 }

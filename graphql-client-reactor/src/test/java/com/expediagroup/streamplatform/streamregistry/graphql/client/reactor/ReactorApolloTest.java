@@ -27,17 +27,16 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.internal.subscription.ApolloSubscriptionTerminatedException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import reactor.core.publisher.FluxSink;
-import reactor.core.publisher.MonoSink;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo.FluxSinkCallback;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo.MonoSinkCallback;
+
+import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.MonoSink;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReactorApolloTest {

@@ -17,8 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Optional;
 
-import okhttp3.OkHttpClient;
-
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation;
@@ -28,6 +26,8 @@ import com.apollographql.apollo.api.Response;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
+
+import okhttp3.OkHttpClient;
 
 public class Client {
 

@@ -30,12 +30,12 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 @Value
 @Builder
@@ -43,8 +43,12 @@ public class TagInput {
 
   public TagInput() {}
 
-  @Getter @Setter String name = null;
-  @Getter @Setter String value = null;
+  @Getter
+  @Setter
+  String name = null;
+  @Getter
+  @Setter
+  String value = null;
 
   public Tag asTag() {
     return new Tag(name, value);

@@ -43,7 +43,13 @@ public class SpecificationQuery {
 
   public SpecificationQuery() {}
 
-  @Getter @Setter String descriptionRegex = null;
-  @Getter @Setter List<TagQuery> tags = null;
-  @Getter @Setter String typeRegex = null;
+  @Getter
+  @Setter
+  String descriptionRegex = null;
+  @Getter
+  @Setter
+  List<TagQuery> tags = null;
+  @Getter
+  @Setter
+  String typeRegex = null;
 }

@@ -30,13 +30,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.app.convertors.ProducerKeyInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.app.convertors.ProducerKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
 @Value
 @Builder
@@ -44,11 +44,21 @@ public class ProducerKeyInput {
 
   public ProducerKeyInput() {}
 
-  @Getter @Setter String streamDomain = null;
-  @Getter @Setter String streamName = null;
-  @Getter @Setter Integer streamVersion = null;
-  @Getter @Setter String zone = null;
-  @Getter @Setter String name = null;
+  @Getter
+  @Setter
+  String streamDomain = null;
+  @Getter
+  @Setter
+  String streamName = null;
+  @Getter
+  @Setter
+  Integer streamVersion = null;
+  @Getter
+  @Setter
+  String zone = null;
+  @Getter
+  @Setter
+  String name = null;
 
   public ProducerKey asProducerKey() {
     return ProducerKeyInputConvertor.convert(this);

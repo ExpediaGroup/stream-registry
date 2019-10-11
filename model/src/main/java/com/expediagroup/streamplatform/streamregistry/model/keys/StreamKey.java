@@ -31,7 +31,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
  */
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -52,7 +51,7 @@ public class StreamKey implements Serializable {
   @Column(length = 100)
   private Integer version;
 
-  private DomainKey getDomainKey(){
+  private DomainKey getDomainKey() {
     return new DomainKey(domain);
   }
 

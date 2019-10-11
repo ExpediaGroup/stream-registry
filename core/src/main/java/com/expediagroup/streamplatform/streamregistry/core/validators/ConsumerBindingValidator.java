@@ -48,7 +48,7 @@ public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
   @Override
   public void validateForUpdate(ConsumerBinding consumerbinding, ConsumerBinding existing) throws ValidationException {
     validateForCreateAndUpdate(consumerbinding);
-    new SpecificationValidator().validateForUpdate(consumerbinding.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(consumerbinding.getSpecification(), existing.getSpecification());
   }
 
   private void validateForCreateAndUpdate(ConsumerBinding consumerbinding) {

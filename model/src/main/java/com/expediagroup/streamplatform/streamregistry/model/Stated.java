@@ -19,7 +19,8 @@ public interface Stated {
 
   Status getStatus();
 
-  @Deprecated // we should be using immutable 'Stated' objects.
+  @Deprecated
+    // we should be using immutable 'Stated' objects.
   void setStatus(Status status);
 
 }

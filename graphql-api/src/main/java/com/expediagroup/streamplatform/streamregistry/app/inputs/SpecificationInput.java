@@ -32,13 +32,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
 
 import java.util.List;
 
-import lombok.Builder;
-import lombok.Data;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.expediagroup.streamplatform.streamregistry.app.convertors.SpecificationInputConvertor;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder

@@ -30,13 +30,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.app.convertors.ZoneKeyInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.app.convertors.ZoneKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Value
 @Builder
@@ -44,7 +44,9 @@ public class ZoneKeyInput {
 
   public ZoneKeyInput() {}
 
-  @Getter @Setter String name = null;
+  @Getter
+  @Setter
+  String name = null;
 
   public ZoneKey asZoneKey() {
     return ZoneKeyInputConvertor.convert(this);

@@ -41,6 +41,10 @@ public class TagQuery {
 
   public TagQuery() {}
 
-  @Getter @Setter String nameRegex = null;
-  @Getter @Setter String valueRegex = null;
+  @Getter
+  @Setter
+  String nameRegex = null;
+  @Getter
+  @Setter
+  String valueRegex = null;
 }

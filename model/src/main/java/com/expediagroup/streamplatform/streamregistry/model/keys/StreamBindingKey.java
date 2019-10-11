@@ -31,7 +31,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
  */
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -57,11 +56,11 @@ public class StreamBindingKey implements Serializable {
   private String infrastructureName;
 
   public StreamKey getStreamKey() {
-    return new StreamKey(streamDomain,streamName,streamVersion);
+    return new StreamKey(streamDomain, streamName, streamVersion);
   }
 
   public InfrastructureKey getInfrastructureKey() {
-    return new InfrastructureKey(infrastructureZone,infrastructureName);
+    return new InfrastructureKey(infrastructureZone, infrastructureName);
   }
 
 }

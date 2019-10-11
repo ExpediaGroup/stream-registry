@@ -30,10 +30,10 @@ package com.expediagroup.streamplatform.streamregistry.app.convertors;
  * limitations under the License.
  */
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.app.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+
+import lombok.Data;
 
 @Data
 public class ZoneKeyInputConvertor {

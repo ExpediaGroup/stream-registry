@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,11 +67,11 @@ public class EgspConfluentSchemaHandlerTest {
       configuration.put(SCHEMA_REGISTRY_URL, existingUrl);
     }
 
-    Specification specification=new Specification();
+    Specification specification = new Specification();
     specification.setTags(new ArrayList<>());
     specification.setConfigJson(ObjectNodeMapper.serialise(configuration));
 
-    Schema schema=new Schema();
+    Schema schema = new Schema();
     schema.setSpecification(specification);
 
     return schema;

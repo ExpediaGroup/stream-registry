@@ -29,14 +29,11 @@ import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 
 @Configuration
 class HandlerConfiguration {
-
-  private static final String EGSP_KAFKA = "egsp-kafka";
-
   @Bean
   HandlersForServices handlersForServicesProvider(List<Handler> handlers) {
-    HandlersForServices handlerRegistry=new HandlersForServices();
+    HandlersForServices handlerRegistry = new HandlersForServices();
     for (Handler h : handlers) {
-      handlerRegistry.Register(h.type(),h.target(),h);
+      handlerRegistry.register(h.type(), h.target(), h);
     }
     return handlerRegistry;
   }

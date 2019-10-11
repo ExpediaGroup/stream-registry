@@ -8,45 +8,45 @@ edit_uri: 'edit/master/docs/docs/'
 theme:
   name: material
 nav:
-- Home: index.md
-- Architecture: architecture/index.md
-- Usage Guide: usage/index.md
+  - Home: index.md
+  - Architecture: architecture/index.md
+  - Usage Guide: usage/index.md
 markdown_extensions:
-- toc:
-    permalink: true
-- admonition
-- pymdownx.betterem
-- pymdownx.progressbar
-- pymdownx.details
-- pymdownx.keys
-- pymdownx.smartsymbols
-- pymdownx.magiclink:
-    repo_url_shortener: True
-    repo_url_shorthand: True
-    social_url_shorthand: True
-    # more options on magiclink https://facelessuser.github.io/pymdown-extensions/extensions/magiclink/#options
-    provider: 'github'
-- codehilite:
-    # https://help.farbox.com/pygments.html
-    pygments_style: 'monokai'
-    linenums: False
-    # set to false to turn off pygments_style
-    noclasses: True
-- pymdownx.inlinehilite
-- pymdownx.betterem
-- pymdownx.tilde
-- pymdownx.emoji
-- pymdownx.tasklist
-- pymdownx.superfences
+  - toc:
+      permalink: true
+  - admonition
+  - pymdownx.betterem
+  - pymdownx.progressbar
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.smartsymbols
+  - pymdownx.magiclink:
+      repo_url_shortener: True
+      repo_url_shorthand: True
+      social_url_shorthand: True
+      # more options on magiclink https://facelessuser.github.io/pymdown-extensions/extensions/magiclink/#options
+      provider: 'github'
+  - codehilite:
+      # https://help.farbox.com/pygments.html
+      pygments_style: 'monokai'
+      linenums: False
+      # set to false to turn off pygments_style
+      noclasses: True
+  - pymdownx.inlinehilite
+  - pymdownx.betterem
+  - pymdownx.tilde
+  - pymdownx.emoji
+  - pymdownx.tasklist
+  - pymdownx.superfences
 extra_javascript:
-- js/flowchart-loader.js
-- js/details.js
-- https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js
-- https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js
-- https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js
-- https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.8.0/flowchart.min.js
+  - js/flowchart-loader.js
+  - js/details.js
+  - https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.8.0/flowchart.min.js
 extra_css:
-- css/progress_bar.css
-- css/details.css
-- css/tasklist.css
-- css/custom_tasklist.css
+  - css/progress_bar.css
+  - css/details.css
+  - css/tasklist.css
+  - css/custom_tasklist.css

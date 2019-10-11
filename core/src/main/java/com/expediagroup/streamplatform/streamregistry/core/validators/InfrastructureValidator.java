@@ -48,7 +48,7 @@ public class InfrastructureValidator implements Validator<Infrastructure> {
   @Override
   public void validateForUpdate(Infrastructure infrastructure, Infrastructure existing) throws ValidationException {
     validateForCreateAndUpdate(infrastructure);
-    new SpecificationValidator().validateForUpdate(infrastructure.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(infrastructure.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(Infrastructure infrastructure) throws ValidationException {

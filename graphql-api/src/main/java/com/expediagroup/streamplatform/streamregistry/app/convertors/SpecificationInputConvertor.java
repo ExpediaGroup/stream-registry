@@ -35,12 +35,12 @@ import static com.expediagroup.streamplatform.streamregistry.model.scalars.Objec
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.app.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.app.inputs.TagInput;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
+
+import lombok.Data;
 
 @Data
 public class SpecificationInputConvertor {

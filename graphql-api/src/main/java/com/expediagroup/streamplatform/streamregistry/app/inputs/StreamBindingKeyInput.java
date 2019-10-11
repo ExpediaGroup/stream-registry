@@ -30,13 +30,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.app.convertors.StreamBindingKeyInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.app.convertors.StreamBindingKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Value
 @Builder
@@ -44,11 +44,21 @@ public class StreamBindingKeyInput {
 
   public StreamBindingKeyInput() {}
 
-  @Getter @Setter String streamDomain = null;
-  @Getter @Setter String streamName = null;
-  @Getter @Setter Integer streamVersion = null;
-  @Getter @Setter String infrastructureZone = null;
-  @Getter @Setter String infrastructureName = null;
+  @Getter
+  @Setter
+  String streamDomain = null;
+  @Getter
+  @Setter
+  String streamName = null;
+  @Getter
+  @Setter
+  Integer streamVersion = null;
+  @Getter
+  @Setter
+  String infrastructureZone = null;
+  @Getter
+  @Setter
+  String infrastructureName = null;
 
   public StreamBindingKey asStreamBindingKey() {
     return StreamBindingKeyInputConvertor.convert(this);

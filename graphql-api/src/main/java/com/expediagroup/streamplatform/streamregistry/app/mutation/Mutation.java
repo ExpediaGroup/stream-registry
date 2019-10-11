@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.app.mutation;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
@@ -44,8 +43,8 @@ public class Mutation implements GraphQLMutationResolver {
     zoneMutation = new ZoneMutation(services);
     infrastructureMutation = new InfrastructureMutation(services);
     streamBindingMutation = new StreamBindingMutation(services);
-    producerBindingMutation=new ProducerBindingMutation(services);
-    consumerBindingMutation=new ConsumerBindingMutation(services);
+    producerBindingMutation = new ProducerBindingMutation(services);
+    consumerBindingMutation = new ConsumerBindingMutation(services);
 
   }
 

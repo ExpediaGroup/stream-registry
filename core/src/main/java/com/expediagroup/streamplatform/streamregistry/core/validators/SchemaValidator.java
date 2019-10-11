@@ -56,7 +56,7 @@ public class SchemaValidator implements Validator<Schema> {
   @Override
   public void validateForUpdate(Schema schema, Schema existing) throws ValidationException {
     validateForCreateAndUpdate(schema);
-    new SpecificationValidator().validateForUpdate(schema.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(schema.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(Schema schema) throws ValidationException {

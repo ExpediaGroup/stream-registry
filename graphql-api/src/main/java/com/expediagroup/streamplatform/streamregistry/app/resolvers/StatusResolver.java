@@ -34,7 +34,6 @@ import static com.expediagroup.streamplatform.streamregistry.model.scalars.Objec
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;

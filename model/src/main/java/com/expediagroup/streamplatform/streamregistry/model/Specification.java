@@ -21,7 +21,6 @@ import static com.expediagroup.streamplatform.streamregistry.model.scalars.Objec
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -29,9 +28,9 @@ import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
-import lombok.Data;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.Data;
 
 @Data
 @Embeddable
@@ -46,7 +45,7 @@ public class Specification {
   @Column(name = "config_json", length = 20000)
   private String configJson;
 
-  @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
   private List<Tag> tags = new ArrayList<>();
 
   public Specification(String description, String type, String configJson, List<Tag> tags) {
@@ -67,7 +66,7 @@ public class Specification {
   }
 
   public void setConfiguration(ObjectNode configuration) {
-    configJson= serialise(configuration);
+    configJson = serialise(configuration);
   }
 
 }

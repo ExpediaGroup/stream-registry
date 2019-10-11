@@ -41,6 +41,10 @@ public class InfrastructureKeyQuery {
 
   public InfrastructureKeyQuery() {}
 
-  @Getter @Setter String zoneRegex = null;
-  @Getter @Setter String nameRegex = null;
+  @Getter
+  @Setter
+  String zoneRegex = null;
+  @Getter
+  @Setter
+  String nameRegex = null;
 }

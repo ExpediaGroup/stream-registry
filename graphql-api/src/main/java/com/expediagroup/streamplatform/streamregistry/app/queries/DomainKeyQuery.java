@@ -41,5 +41,7 @@ public class DomainKeyQuery {
 
   public DomainKeyQuery() {}
 
-  @Getter @Setter String nameRegex = null;
+  @Getter
+  @Setter
+  String nameRegex = null;
 }

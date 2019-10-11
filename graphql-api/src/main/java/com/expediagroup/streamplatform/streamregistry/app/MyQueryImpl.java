@@ -176,7 +176,7 @@ public class MyQueryImpl implements Query {
   }
 
   @Override
-  public Iterable<String> types(){
+  public Iterable<String> types() {
     return handlersForServices.getTypes();
   }
 }

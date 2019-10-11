@@ -41,7 +41,13 @@ public class StreamKeyQuery {
 
   public StreamKeyQuery() {}
 
-  @Getter @Setter String domainRegex = null;
-  @Getter @Setter String nameRegex = null;
-  @Getter @Setter Integer version = null;
+  @Getter
+  @Setter
+  String domainRegex = null;
+  @Getter
+  @Setter
+  String nameRegex = null;
+  @Getter
+  @Setter
+  Integer version = null;
 }

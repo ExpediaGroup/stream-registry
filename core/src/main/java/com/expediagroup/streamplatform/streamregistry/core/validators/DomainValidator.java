@@ -49,7 +49,7 @@ public class DomainValidator implements Validator<Domain> {
   @Override
   public void validateForUpdate(Domain domain, Domain existing) throws ValidationException {
     validateForCreateAndUpdate(domain);
-    new SpecificationValidator().validateForUpdate(domain.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(domain.getSpecification(), existing.getSpecification());
 
   }
 

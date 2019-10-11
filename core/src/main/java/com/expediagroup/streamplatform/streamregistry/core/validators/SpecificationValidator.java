@@ -42,7 +42,7 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 @Component
-public class SpecificationValidator implements Validator<Specification>{
+public class SpecificationValidator implements Validator<Specification> {
 
   @Override
   public void validateForCreate(Specification specification) throws ValidationException {
@@ -56,7 +56,7 @@ public class SpecificationValidator implements Validator<Specification>{
         "Configuration must be of the same type as the existing.");
   }
 
-  private void validateForCreateAndUpdate(Specification specification){
+  private void validateForCreateAndUpdate(Specification specification) {
     checkNotNull(specification.getConfiguration(), "Configuration must not be null.");
     checkNotNull(specification.getType(), "Type must not be null.");
   }

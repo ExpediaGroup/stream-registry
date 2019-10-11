@@ -30,13 +30,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.app.convertors.InfrastructureKeyInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.app.convertors.InfrastructureKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
 @Value
 @Builder
@@ -44,8 +44,12 @@ public class InfrastructureKeyInput {
 
   public InfrastructureKeyInput() {}
 
-  @Getter @Setter String zone = null;
-  @Getter @Setter String name = null;
+  @Getter
+  @Setter
+  String zone = null;
+  @Getter
+  @Setter
+  String name = null;
 
   public InfrastructureKey asInfrastructureKey() {
     return InfrastructureKeyInputConvertor.convert(this);

@@ -31,7 +31,7 @@ public class ProducerIT extends ObjectIT {
   @Override
   public void create() {
 
-    Mutation createMutation=factory.insertProducerMutationBuilder().build();
+    Mutation createMutation = factory.insertProducerMutationBuilder().build();
 
     Object data = client.getData(createMutation);
 
@@ -46,7 +46,7 @@ public class ProducerIT extends ObjectIT {
   @Override
   public void update() {
 
-    Mutation updateMutation=factory.updateProducerMutationBuilder().build();
+    Mutation updateMutation = factory.updateProducerMutationBuilder().build();
 
     assertMutationFails(updateMutation);
 

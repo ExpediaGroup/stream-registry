@@ -48,7 +48,7 @@ public class ConsumerValidator implements Validator<Consumer> {
   @Override
   public void validateForUpdate(Consumer consumer, Consumer existing) throws ValidationException {
     validateForCreateAndUpdate(consumer);
-    new SpecificationValidator().validateForUpdate(consumer.getSpecification(),existing.getSpecification());
+    new SpecificationValidator().validateForUpdate(consumer.getSpecification(), existing.getSpecification());
   }
 
   private void validateForCreateAndUpdate(Consumer consumer) {

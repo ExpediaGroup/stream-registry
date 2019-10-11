@@ -31,7 +31,6 @@ package com.expediagroup.streamplatform.streamregistry.app.resolvers;
  */
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;

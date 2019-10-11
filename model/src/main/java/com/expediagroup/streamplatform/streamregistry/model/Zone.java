@@ -33,13 +33,13 @@ package com.expediagroup.streamplatform.streamregistry.model;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+
+import lombok.Data;
 
 @Data
 @Entity
-public class Zone implements ManagedType{
+public class Zone implements ManagedType {
 
   @EmbeddedId
   private ZoneKey key;

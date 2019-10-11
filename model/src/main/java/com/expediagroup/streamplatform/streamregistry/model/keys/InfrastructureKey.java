@@ -31,7 +31,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
  */
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -50,7 +49,7 @@ public class InfrastructureKey implements Serializable {
   @Column(length = 100)
   private String name;
 
-  public ZoneKey getZoneKey(){
+  public ZoneKey getZoneKey() {
     return new ZoneKey(zone);
   }
 

@@ -30,13 +30,13 @@ package com.expediagroup.streamplatform.streamregistry.app.inputs;
  * limitations under the License.
  */
 
+import com.expediagroup.streamplatform.streamregistry.app.convertors.ConsumerKeyInputConvertor;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.app.convertors.ConsumerKeyInputConvertor;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Value
 @Builder
@@ -44,11 +44,21 @@ public class ConsumerKeyInput {
 
   public ConsumerKeyInput() {}
 
-  @Getter @Setter String streamDomain = null;
-  @Getter @Setter String streamName = null;
-  @Getter @Setter Integer streamVersion = null;
-  @Getter @Setter String zone = null;
-  @Getter @Setter String name = null;
+  @Getter
+  @Setter
+  String streamDomain = null;
+  @Getter
+  @Setter
+  String streamName = null;
+  @Getter
+  @Setter
+  Integer streamVersion = null;
+  @Getter
+  @Setter
+  String zone = null;
+  @Getter
+  @Setter
+  String name = null;
 
   public ConsumerKey asConsumerKey() {
     return ConsumerKeyInputConvertor.convert(this);

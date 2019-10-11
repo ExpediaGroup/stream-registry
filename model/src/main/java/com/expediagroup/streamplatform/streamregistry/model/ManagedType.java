@@ -16,8 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.model;
 
 
-
-public interface ManagedType<K> extends Stated,Specified{
+public interface ManagedType<K> extends Stated, Specified {
 
 //  ObjectMapper mapper = new ObjectMapper();
 //
