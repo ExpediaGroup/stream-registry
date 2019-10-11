@@ -17,11 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.handler;
 
 import lombok.RequiredArgsConstructor;
 
+import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Specified;
 
 @RequiredArgsConstructor
-public class IdentityHandler<T extends Specified> implements Handler<T> {
+public class IdentityHandler<T extends ManagedType> implements Handler<T> {
   private final String type;
   private final Class<T> target;
 

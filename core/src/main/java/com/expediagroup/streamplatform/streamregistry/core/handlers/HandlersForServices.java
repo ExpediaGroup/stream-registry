@@ -15,60 +15,63 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.handlers;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import lombok.Value;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.handler.HandlerException;
 import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Specified;
 
 public class HandlersForServices {
 
-  private Map<String, Map<String, Handler>> map = new HashMap<>();
+  private Map<Key, Handler<?>> handlers = new HashMap<>();
 
-  public void register(String typeName, Class clazz, Handler handler) {
-    Map<String, Handler> m = map.computeIfAbsent(typeName, h -> new HashMap<>());
-    m.putIfAbsent(clazz.getCanonicalName(), handler);
+  public void register(String type, Class<? extends Specified> entityClass, Handler<?> handler) {
+    handlers.put(new Key(type, entityClass), handler);
   }
 
-  private Handler get(ManagedType managedType) {
-    if (!map.containsKey(managedType.getSpecification().getType())) {
-      throw new ValidationException(managedType.getSpecification().getType() + " has no handlers, requires one of " + getTypes());
-    }
-    try {
-      return map.get(managedType.getSpecification().getType()).get(managedType.getClass().getCanonicalName());
-    } catch (NullPointerException e) {
-    }
-    return null;
-  }
-
-  public Specification handleInsert(ManagedType managedType) {
-    Handler handler = get(managedType);
+  private <T extends ManagedType> Handler<T> getHandler(T managedType) {
+    Handler<?> handler = handlers.get(new Key(managedType.getSpecification().getType(), managedType.getClass()));
     if (handler == null) {
-      return managedType.getSpecification();
+      Set<String> supportedTypes = handlers.keySet().stream()
+          .filter(k -> k.entityClass.equals(managedType.getClass()))
+          .map(Key::getType)
+          .collect(toSet());
+      throw new ValidationException(
+          "There is no handler for " + managedType.getClass().getName()
+              + " entities with type " + managedType.getSpecification().getType()
+              + ". Expected one of " + supportedTypes);
     }
+    return (Handler<T>) handler;
+  }
+
+  public <T extends ManagedType> Specification handleInsert(T managedType) {
     try {
-      return get(managedType).handleInsert(managedType);
+      return getHandler(managedType).handleInsert(managedType);
     } catch (HandlerException e) {
       throw new ValidationException(e);
     }
   }
 
   public Specification handleUpdate(ManagedType managedType, ManagedType existing) {
-    Handler handler = get(managedType);
-    if (handler == null) {
-      return managedType.getSpecification();
-    }
     try {
-      return get(managedType).handleUpdate(managedType, existing);
+      return getHandler(managedType).handleUpdate(managedType, existing);
     } catch (HandlerException e) {
       throw new ValidationException(e);
     }
   }
 
-  public Iterable<String> getTypes() {
-    return map.keySet();
+  @Value
+  static class Key {
+    String type;
+    Class<? extends Specified> entityClass;
   }
 }
