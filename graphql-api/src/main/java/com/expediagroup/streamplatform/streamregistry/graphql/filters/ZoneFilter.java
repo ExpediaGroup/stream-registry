@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.SpecificationMatchUtility.matchesSpecification;
 
 import java.util.function.Predicate;
@@ -34,12 +35,12 @@ public class ZoneFilter implements Predicate<Zone> {
   }
 
   @Override
-  public boolean test(Zone d) {
+  public boolean test(Zone zone) {
     if (keyQuery != null) {
-      if (!d.getKey().getName().matches(keyQuery.getNameRegex())) {
+      if(! matches(zone.getKey().getName(),keyQuery.getNameRegex())){
         return false;
       }
     }
-    return matchesSpecification(d.getSpecification(), specQuery);
+    return matchesSpecification(zone.getSpecification(), specQuery);
   }
 }

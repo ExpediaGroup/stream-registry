@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.SpecificationMatchUtility.matchesSpecification;
 
 import java.util.function.Predicate;
@@ -36,16 +37,16 @@ public class ConsumerFilter implements Predicate<Consumer> {
   @Override
   public boolean test(Consumer consumer) {
     if (keyQuery != null) {
-      if (!consumer.getKey().getName().matches(keyQuery.getNameRegex())) {
+      if (!matches(consumer.getKey().getName(), keyQuery.getNameRegex())) {
         return false;
       }
-      if (!consumer.getKey().getStreamDomain().matches(keyQuery.getStreamDomainRegex())) {
+      if (!matches(consumer.getKey().getStreamDomain(), keyQuery.getStreamDomainRegex())) {
         return false;
       }
-      if (!consumer.getKey().getStreamName().matches(keyQuery.getStreamNameRegex())) {
+      if (!matches(consumer.getKey().getStreamName(), keyQuery.getStreamNameRegex())) {
         return false;
       }
-      if (!consumer.getKey().getZone().matches(keyQuery.getZoneRegex())) {
+      if (!matches(consumer.getKey().getZone(), keyQuery.getZoneRegex())) {
         return false;
       }
       if (keyQuery.getStreamVersion() != null && consumer.getKey().getStreamVersion() != keyQuery.getStreamVersion()) {

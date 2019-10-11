@@ -51,7 +51,7 @@ public abstract class ObjectIT {
 
   @BeforeClass
   public static void beforeClass() {
-    String[] args = new String[]{
+    String[] args = new String[] {
         "--server.port=0",
         "--repository.kafka.bootstrap-servers=x",
         "--repository.kafka.replicationFactor=1",

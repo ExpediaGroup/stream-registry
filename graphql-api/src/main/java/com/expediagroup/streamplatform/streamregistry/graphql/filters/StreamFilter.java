@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.SpecificationMatchUtility.matchesSpecification;
 
 import java.util.function.Predicate;
@@ -40,10 +41,10 @@ public class StreamFilter implements Predicate<Stream> {
   public boolean test(Stream stream) {
 
     if (keyQuery != null) {
-      if (!stream.getKey().getName().matches(keyQuery.getNameRegex())) {
+      if (! matches(stream.getKey().getName(),keyQuery.getNameRegex())) {
         return false;
       }
-      if (!stream.getKey().getDomain().matches(keyQuery.getDomainRegex())) {
+      if (!matches(stream.getKey().getDomain(),keyQuery.getDomainRegex())) {
         return false;
       }
       if (keyQuery.getVersion() != null && stream.getKey().getVersion() != keyQuery.getVersion()) {
