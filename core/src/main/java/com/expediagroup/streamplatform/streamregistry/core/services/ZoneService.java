@@ -34,11 +34,12 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ZoneRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
@@ -96,9 +97,9 @@ public class ZoneService {
   public void delete(Zone zone) {
   }
 
-  public Iterable<Zone> findAll(Filter<Zone> filter) {
+  public Iterable<Zone> findAll(Predicate<Zone> filter) {
     return stream(zoneRepository.findAll().spliterator(), false)
-        .filter(r -> filter.matches(r))
+        .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
 }

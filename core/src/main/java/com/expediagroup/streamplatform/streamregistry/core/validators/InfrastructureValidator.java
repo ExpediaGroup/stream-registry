@@ -35,6 +35,5 @@ public class InfrastructureValidator implements Validator<Infrastructure> {
     new SpecificationValidator().validateForUpdate(infrastructure.getSpecification(), existing.getSpecification());
   }
 
-  public void validateForCreateAndUpdate(Infrastructure infrastructure) throws ValidationException {
-  }
+  public void validateForCreateAndUpdate(Infrastructure infrastructure) throws ValidationException {}
 }

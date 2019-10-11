@@ -39,6 +39,9 @@ public class Specification {
 
   private String description;
 
+  @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
+  private List<Tag> tags = new ArrayList<>();
+
   @Column(name = "rword_type")
   private String type;
 
@@ -46,14 +49,11 @@ public class Specification {
   @Column(name = "config_json", length = 20000)
   private String configJson;
 
-  @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
-  private List<Tag> tags = new ArrayList<>();
-
-  public Specification(String description, String type, String configJson, List<Tag> tags) {
+  public Specification(String description, List<Tag> tags, String type, String configJson) {
     this.description = description;
+    this.tags = tags;
     this.type = type;
     this.configJson = configJson;
-    this.tags = tags;
   }
 
   public Specification() {}

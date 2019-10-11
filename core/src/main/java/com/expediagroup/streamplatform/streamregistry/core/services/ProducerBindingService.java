@@ -18,11 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
@@ -80,9 +81,9 @@ public class ProducerBindingService {
   public void delete(ProducerBinding producerbinding) {
   }
 
-  public Iterable<ProducerBinding> findAll(Filter<ProducerBinding> filter) {
+  public Iterable<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
     return stream(producerbindingRepository.findAll().spliterator(), false)
-        .filter(r -> filter.matches(r))
+        .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
 }

@@ -30,6 +30,4 @@ public class StreamBinding implements ManagedType {
   private StreamBindingKey key;
   private Specification specification;
   private Status status;
-  //private String streamId; //Resolves to Stream
-  //private String infrastructureId; //Resolves to Infrastructure
 }

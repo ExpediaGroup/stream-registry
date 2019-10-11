@@ -44,9 +44,6 @@ public abstract class ObjectIT {
           .withEnv("POSTGRES_DB", "streamregistry")
           .withFixedExposedPort(5432, 5432);
 
-  @ClassRule
-  public static SchemaRegistryJUnitRule schemaRegistry = new SchemaRegistryJUnitRule();
-
   private static ConfigurableApplicationContext context;
   private static String url;
 
@@ -58,7 +55,7 @@ public abstract class ObjectIT {
         "--server.port=0",
         "--repository.kafka.bootstrap-servers=x",
         "--repository.kafka.replicationFactor=1",
-        "--schema.registry.url=" + schemaRegistry.url()
+        "--schema.registry.url=http://schema-registry"
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
     url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";

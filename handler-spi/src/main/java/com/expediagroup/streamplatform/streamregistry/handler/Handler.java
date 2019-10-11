@@ -16,13 +16,13 @@
 package com.expediagroup.streamplatform.streamregistry.handler;
 
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Stated;
+import com.expediagroup.streamplatform.streamregistry.model.Specified;
 
-public interface Handler<T extends Stated> {
+public interface Handler<T extends Specified> {
 
   String type();
 
-  Class target();
+  Class<?> target();
 
   Specification handleInsert(T entity) throws HandlerException;
 

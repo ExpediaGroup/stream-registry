@@ -18,11 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
@@ -81,9 +82,9 @@ public class ProducerService {
   public void delete(Producer producer) {
   }
 
-  public Iterable<Producer> findAll(Filter<Producer> filter) {
+  public Iterable<Producer> findAll(Predicate<Producer> filter) {
     return stream(producerRepository.findAll().spliterator(), false)
-        .filter(r -> filter.matches(r))
+        .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
 }

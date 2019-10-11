@@ -18,11 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.InfrastructureRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
@@ -81,9 +82,9 @@ public class InfrastructureService {
   public void delete(Infrastructure infrastructure) {
   }
 
-  public Iterable<Infrastructure> findAll(Filter<Infrastructure> filter) {
+  public Iterable<Infrastructure> findAll(Predicate<Infrastructure> filter) {
     return stream(infrastructureRepository.findAll().spliterator(), false)
-        .filter(r -> filter.matches(r))
+        .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
 }

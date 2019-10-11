@@ -18,11 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
@@ -80,9 +81,9 @@ public class ConsumerService {
   public void delete(Consumer consumer) {
   }
 
-  public Iterable<Consumer> findAll(Filter<Consumer> filter) {
+  public Iterable<Consumer> findAll(Predicate<Consumer> filter) {
     return stream(consumerRepository.findAll().spliterator(), false)
-        .filter(r -> filter.matches(r))
+        .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
 }

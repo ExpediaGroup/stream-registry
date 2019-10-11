@@ -2,3 +2,22 @@
 spring.profiles.active: default,graphql
 endpoints.prometheus.enabled: true
 management.endpoints.web.exposure.include: info,health,prometheus
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/streamregistry"
+    username: "streamregistry"
+    password:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+  jpa:
+    hibernate:
+      temp:
+        use_jdbc_metadata_defaults: false
+      jdbc:
+        lob:
+          non_contextual_creation: true
+      ddl-auto: create
+    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+    show-sql: true

@@ -29,8 +29,6 @@ public class ProducerBinding implements ManagedType {
   @EmbeddedId
   private ProducerBindingKey key;
   private Specification specification;
-  //private String producerId; //Resolves to Producer
-  //private String bindingId; //Resolves to StreamBinding
   private Status status;
 
 

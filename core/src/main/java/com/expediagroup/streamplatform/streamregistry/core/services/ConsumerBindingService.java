@@ -18,11 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handler.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -80,9 +81,9 @@ public class ConsumerBindingService {
   public void delete(ConsumerBinding consumerbinding) {
   }
 
-  public Iterable<ConsumerBinding> findAll(Filter<ConsumerBinding> filter) {
+  public Iterable<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
     return stream(consumerbindingRepository.findAll().spliterator(), false)
-        .filter(r -> filter.matches(r))
+        .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
 }

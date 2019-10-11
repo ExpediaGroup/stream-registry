@@ -30,5 +30,4 @@ public class Infrastructure implements ManagedType {
   private InfrastructureKey key;
   private Specification specification;
   private Status status;
-  //private String zoneId; //Resolves to Zone
 }
