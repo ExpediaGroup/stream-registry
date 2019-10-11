@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.TagMatchUtility.matchesAllTagQueries;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
@@ -25,11 +26,11 @@ public class SpecificationMatchUtility {
   public static boolean matchesSpecification(Specification specification, SpecificationQuery specQuery) {
     if (specQuery != null) {
 
-      if (!regex(specification.getDescription(), specQuery.getDescriptionRegex())) {
+      if (!matches(specification.getDescription(), specQuery.getDescriptionRegex())) {
         return false;
       }
 
-      if (!regex(specification.getType(), specQuery.getTypeRegex())) {
+      if (!matches(specification.getType(), specQuery.getTypeRegex())) {
         return false;
       }
 
@@ -38,14 +39,4 @@ public class SpecificationMatchUtility {
     return true;
   }
 
-  public static boolean regex(String value, String regex) {
-    if (value == null) {
-      return regex != null;
-    }
-    return value.matches(regexOf(regex));
-  }
-
-  private static String regexOf(String input) {
-    return input == null ? ".*" : input;
-  }
 }

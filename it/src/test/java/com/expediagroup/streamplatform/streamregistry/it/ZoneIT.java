@@ -25,7 +25,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestDataFactory;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ZoneIT extends ObjectIT {
@@ -65,9 +64,7 @@ public class ZoneIT extends ObjectIT {
   @Override
   public void queryByKey() {
 
-    ITestDataFactory newZoneFactory = new ITestDataFactory();
-
-    ZoneKeyInput input = newZoneFactory.zoneKeyInputBuilder().build();
+    ZoneKeyInput input = factory.zoneKeyInputBuilder().build();
 
     try {
       client.getData(ZoneQuery.builder().key(input).build());
@@ -75,7 +72,7 @@ public class ZoneIT extends ObjectIT {
       assertEquals(e.getMessage(),"No value present");
     }
 
-    client.getData(newZoneFactory.upsertZoneMutationBuilder().build());
+    client.getData(factory.upsertZoneMutationBuilder().build());
 
     ZoneQuery.Data after = (ZoneQuery.Data) client.getData(ZoneQuery.builder().key(input).build());
 
@@ -90,12 +87,12 @@ public class ZoneIT extends ObjectIT {
 
     ZonesQuery.Data before = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
 
-    client.getData(new ITestDataFactory().upsertZoneMutationBuilder().build());
-    client.getData(new ITestDataFactory().upsertZoneMutationBuilder().build());
+    client.getData(factory.upsertZoneMutationBuilder().build());
+    client.getData(factory.upsertZoneMutationBuilder().build());
 
     ZonesQuery.Data after = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
 
-    assertTrue(after.getZones().size() == before.getZones().size() + 2);
+    assertTrue(after.getZones().size() == before.getZones().size() + 1);
   }
 
   @Override

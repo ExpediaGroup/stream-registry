@@ -16,10 +16,17 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamBindingQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamBindingsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestDataFactory;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class StreamBindingIT extends ObjectIT {
@@ -60,11 +67,37 @@ public class StreamBindingIT extends ObjectIT {
   @Override
   public void queryByKey() {
 
+    ITestDataFactory newStreamBindingFactory = new ITestDataFactory();
+
+    StreamBindingKeyInput input = newStreamBindingFactory.streamBindingKeyInputBuilder().build();
+
+    try {
+      client.getData(StreamBindingQuery.builder().key(input).build());
+    }catch ( RuntimeException e){
+      assertEquals(e.getMessage(),"No value present");
+    }
+
+    client.getData(newStreamBindingFactory.upsertStreamBindingMutationBuilder().build());
+
+    StreamBindingQuery.Data after = (StreamBindingQuery.Data) client.getData(StreamBindingQuery.builder().key(input).build());
+
+    assertEquals(after.getStreamBinding().getKey().getStreamName(),input.streamName());
+
   }
 
   @Override
   public void queryByRegex() {
 
+    StreamBindingKeyQuery query = StreamBindingKeyQuery.builder().streamNameRegex("streamName.*").build();
+
+    StreamBindingsQuery.Data before = (StreamBindingsQuery.Data) client.getData(StreamBindingsQuery.builder().key(query).build());
+
+    client.getData(factory.upsertStreamBindingMutationBuilder().build());
+    client.getData(factory.upsertStreamBindingMutationBuilder().build());
+
+    StreamBindingsQuery.Data after = (StreamBindingsQuery.Data) client.getData(StreamBindingsQuery.builder().key(query).build());
+
+    assertTrue(after.getStreamBindings().size() == before.getStreamBindings().size() + 1);
   }
 
   @Override

@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.SpecificationMatchUtility.matchesSpecification;
 
 import java.util.function.Predicate;
@@ -36,16 +37,16 @@ public class ProducerBindingFilter implements Predicate<ProducerBinding> {
   @Override
   public boolean test(ProducerBinding d) {
     if (keyQuery != null) {
-      if (!d.getKey().getInfrastructureName().matches(keyQuery.getInfrastructureNameRegex())) {
+      if (!matches(d.getKey().getInfrastructureName(),keyQuery.getInfrastructureNameRegex())) {
         return false;
       }
-      if (!d.getKey().getInfrastructureZone().matches(keyQuery.getInfrastructureZoneRegex())) {
+      if (!matches(d.getKey().getInfrastructureZone(),keyQuery.getInfrastructureZoneRegex())) {
         return false;
       }
-      if (!d.getKey().getStreamDomain().matches(keyQuery.getStreamDomainRegex())) {
+      if (!matches(d.getKey().getStreamDomain(),keyQuery.getStreamDomainRegex())) {
         return false;
       }
-      if (!d.getKey().getStreamName().matches(keyQuery.getStreamNameRegex())) {
+      if (!matches(d.getKey().getStreamName(),keyQuery.getStreamNameRegex())) {
         return false;
       }
       if (keyQuery.getStreamVersion() != null && d.getKey().getStreamVersion() != keyQuery.getStreamVersion()) {
