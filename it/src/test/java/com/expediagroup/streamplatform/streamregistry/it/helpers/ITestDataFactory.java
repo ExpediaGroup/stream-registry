@@ -101,37 +101,36 @@ public class ITestDataFactory {
         .zone(zoneName);
   }
 
-  public SpecificationInput.Builder specificationInputBuilder() {
+  public SpecificationInput.Builder specificationInputBuilder(String type) {
     return SpecificationInput.builder()
         .configuration(mapper.createObjectNode().put(key, value))
         .description(description)
         .tags(Collections.emptyList())
-        .type("default");
+        .type(type);
   }
 
   public UpsertDomainMutation.Builder upsertDomainMutationBuilder() {
     return UpsertDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("default").build());
   }
 
   public UpsertConsumerMutation.Builder upsertConsumerMutationBuilder() {
     return UpsertConsumerMutation.builder()
         .key(consumerKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public InsertConsumerMutation.Builder insertConsumerMutationBuilder() {
     return InsertConsumerMutation.builder()
         .key(consumerKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public UpsertZoneMutation.Builder upsertZoneMutationBuilder() {
     return UpsertZoneMutation.builder()
         .key(zoneKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build())
-        ;
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public ZoneKeyInput.Builder zoneKeyInputBuilder() {
@@ -141,7 +140,7 @@ public class ITestDataFactory {
   public UpdateConsumerMutation.Builder updateConsumerMutationBuilder() {
     return UpdateConsumerMutation.builder()
         .key(consumerKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public UpdateConsumerStatusMutation.Builder updateConsumerStatusBuilder() {
@@ -155,7 +154,7 @@ public class ITestDataFactory {
   public UpsertConsumerBindingMutation.Builder upsertConsumerBindingMutationBuilder() {
     return UpsertConsumerBindingMutation.builder()
         .key(consumerBindingKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public ConsumerBindingKeyInput.Builder consumerBindingKeyInputBuilder() {
@@ -181,7 +180,7 @@ public class ITestDataFactory {
   public UpsertInfrastructureMutation.Builder upsertInfrastructureMutationBuilder() {
     return UpsertInfrastructureMutation.builder()
         .key(infrastructureKey())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public InfrastructureKeyInput infrastructureKey() {
@@ -194,7 +193,7 @@ public class ITestDataFactory {
   public UpsertProducerBindingMutation.Builder upsertProducerBindingMutationBuilder() {
     return UpsertProducerBindingMutation.builder()
         .key(producerBindingKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public ProducerBindingKeyInput.Builder producerBindingKeyInputBuilder() {
@@ -210,7 +209,7 @@ public class ITestDataFactory {
   public UpsertProducerMutation.Builder upsertProducerMutationBuilder() {
     return UpsertProducerMutation.builder()
         .key(producerKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public ProducerKeyInput.Builder producerKeyInputBuilder() {
@@ -224,7 +223,7 @@ public class ITestDataFactory {
 
   public UpsertStreamMutation.Builder upsertStreamMutationBuilder() {
     return UpsertStreamMutation.builder()
-        .specification(specificationInputBuilder().build())
+        .specification(specificationInputBuilder("egsp.kafka").build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
@@ -238,9 +237,8 @@ public class ITestDataFactory {
 
   public UpsertSchemaMutation.Builder upsertSchemaMutationBuilder() {
     return UpsertSchemaMutation.builder()
-        .specification(specificationInputBuilder().build())
-        .key(schemaKeyInputBuilder().build()
-        );
+        .specification(specificationInputBuilder("egsp.confluent").build())
+        .key(schemaKeyInputBuilder().build());
   }
 
   public SchemaKeyInput.Builder schemaKeyInputBuilder() {
@@ -251,9 +249,8 @@ public class ITestDataFactory {
 
   public UpsertStreamBindingMutation.Builder upsertStreamBindingMutationBuilder() {
     return UpsertStreamBindingMutation.builder()
-        .specification(specificationInputBuilder().build())
-        .key(streamBindingKeyInputBuilder().build()
-        );
+        .specification(specificationInputBuilder("egsp.kafka").build())
+        .key(streamBindingKeyInputBuilder().build());
   }
 
   public StreamBindingKeyInput.Builder streamBindingKeyInputBuilder() {
@@ -268,13 +265,13 @@ public class ITestDataFactory {
   public UpdateProducerMutation.Builder updateProducerMutationBuilder() {
     return UpdateProducerMutation.builder()
         .key(producerKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public InsertProducerMutation.Builder insertProducerMutationBuilder() {
     return InsertProducerMutation.builder()
         .key(producerKeyInputBuilder().build())
-        .specification(specificationInputBuilder().build());
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public UpdateDomainStatusMutation.Builder updateDomainStatusMutation() {

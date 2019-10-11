@@ -164,8 +164,4 @@ public class Query implements GraphQLQueryResolver {
   public Iterable<ConsumerBinding> getConsumerBindings(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
     return services.getConsumerBindingService().findAll(new ConsumerBindingFilter(key, specification));
   }
-
-  public Iterable<String> types() {
-    return handlersForServices.getTypes();
-  }
 }

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import junit.framework.TestCase;
 
 import com.apollographql.apollo.api.Mutation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,6 +34,7 @@ import org.testcontainers.containers.FixedHostPortGenericContainer;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 
 public abstract class ObjectIT {
+  public static ObjectMapper mapper = new ObjectMapper();
 
   public ITestDataFactory factory = new ITestDataFactory();
 
@@ -42,7 +44,7 @@ public abstract class ObjectIT {
           .withEnv("POSTGRES_USER", "streamregistry")
           .withEnv("POSTGRES_PASSWORD", "")
           .withEnv("POSTGRES_DB", "streamregistry")
-          .withFixedExposedPort(5432, 5432);
+          .withFixedExposedPort(5432, 5432); //TODO expose on random port
 
   private static ConfigurableApplicationContext context;
   private static String url;

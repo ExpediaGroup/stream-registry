@@ -15,10 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
+import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Specified;
 
-public interface Handler<T extends Specified> {
+public interface Handler<T extends ManagedType> {
 
   String type();
 
