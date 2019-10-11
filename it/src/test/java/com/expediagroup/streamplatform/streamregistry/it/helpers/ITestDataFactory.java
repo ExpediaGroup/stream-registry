@@ -18,6 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
@@ -53,7 +55,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Status
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 

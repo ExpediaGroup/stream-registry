@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;

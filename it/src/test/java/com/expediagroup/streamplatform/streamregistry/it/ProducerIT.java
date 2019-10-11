@@ -21,7 +21,6 @@ import static org.junit.Assert.assertThat;
 import com.apollographql.apollo.api.Mutation;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
