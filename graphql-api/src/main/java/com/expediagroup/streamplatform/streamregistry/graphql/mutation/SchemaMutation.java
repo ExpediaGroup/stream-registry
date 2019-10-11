@@ -18,9 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.SpecificationInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.StatusInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
 public class SchemaMutation {

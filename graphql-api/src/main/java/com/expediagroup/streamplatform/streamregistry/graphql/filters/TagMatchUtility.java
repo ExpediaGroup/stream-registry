@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
 import java.util.List;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.queries.TagQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.TagQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 

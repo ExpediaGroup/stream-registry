@@ -13,29 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.inputs;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.queries;
+
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
-
 @Value
 @Builder
-public class ProducerKeyInput {
-  String streamDomain;
-  String streamName;
-  Integer streamVersion;
-  String zone;
-  String name;
-
-  public ProducerKey asProducerKey() {
-    return new ProducerKey(
-        streamDomain,
-        streamName,
-        streamVersion,
-        zone,
-        name
-    );
-  }
+public class SpecificationQuery {
+  String descriptionRegex;
+  List<TagQuery> tags;
+  String typeRegex;
 }

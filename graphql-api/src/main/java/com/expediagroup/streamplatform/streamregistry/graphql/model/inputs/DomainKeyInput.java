@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.inputs;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import lombok.Builder;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Value
 @Builder
-public class SchemaKeyInput {
-  String domain;
+public class DomainKeyInput {
   String name;
 
-  public SchemaKey asSchemaKey() {
-    return new SchemaKey(
-        domain,
-        name
-    );
+  public DomainKey asDomainKey() {
+    return new DomainKey(name);
   }
 }

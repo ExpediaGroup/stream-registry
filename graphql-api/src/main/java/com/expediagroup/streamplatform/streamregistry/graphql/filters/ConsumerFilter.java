@@ -19,8 +19,8 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.filters.Spe
 
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.queries.ConsumerKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ConsumerKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 public class ConsumerFilter implements Predicate<Consumer> {

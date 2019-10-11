@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.queries;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import lombok.Builder;
 import lombok.Value;
 
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
+
 @Value
 @Builder
-public class StreamBindingKeyQuery {
-  String streamDomainRegex;
-  String streamNameRegex;
-  Integer streamVersion;
-  String infrastructureZoneRegex;
-  String infrastructureNameRegex;
+public class TagInput {
+  String name;
+  String value;
+
+  public Tag asTag() {
+    return new Tag(name, value);
+  }
 }

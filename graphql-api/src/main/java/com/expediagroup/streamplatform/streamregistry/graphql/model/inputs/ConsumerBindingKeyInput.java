@@ -13,18 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.queries;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import lombok.Builder;
 import lombok.Value;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+
 @Value
 @Builder
-public class ConsumerBindingKeyQuery {
-  String streamDomainRegex;
-  String streamNameRegex;
+public class ConsumerBindingKeyInput {
+  String streamDomain;
+  String streamName;
   Integer streamVersion;
-  String infrastructureZoneRegex;
-  String infrastructureNameRegex;
-  String consumerNameRegex;
+  String infrastructureZone;
+  String infrastructureName;
+  String consumerName;
+
+  public ConsumerBindingKey asConsumerBindingKey() {
+    return new ConsumerBindingKey(
+        streamDomain,
+        streamName,
+        streamVersion,
+        infrastructureZone,
+        infrastructureName,
+        consumerName
+    );
+  }
 }

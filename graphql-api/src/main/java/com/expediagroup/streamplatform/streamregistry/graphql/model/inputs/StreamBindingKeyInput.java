@@ -13,23 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.inputs;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import lombok.Builder;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Value
 @Builder
-public class InfrastructureKeyInput {
-  String zone;
-  String name;
+public class StreamBindingKeyInput {
+  String streamDomain;
+  String streamName;
+  Integer streamVersion;
+  String infrastructureZone;
+  String infrastructureName;
 
-  public InfrastructureKey asInfrastructureKey() {
-    return new InfrastructureKey(
-        zone,
-        name
+  public StreamBindingKey asStreamBindingKey() {
+    return new StreamBindingKey(
+        streamDomain,
+        streamName,
+        streamVersion,
+        infrastructureZone,
+        infrastructureName
     );
   }
 }

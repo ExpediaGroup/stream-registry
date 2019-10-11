@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.queries;
+package com.expediagroup.streamplatform.streamregistry.graphql.query;
+
+import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerBindingFilter;
@@ -30,17 +31,29 @@ import com.expediagroup.streamplatform.streamregistry.graphql.filters.SchemaFilt
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamBindingFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ZoneFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.ConsumerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.DomainKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.InfrastructureKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.ProducerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.ProducerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.StreamBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.StreamKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.TagInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.inputs.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.TagInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ConsumerBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ConsumerKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.DomainKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.InfrastructureKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.TagQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;

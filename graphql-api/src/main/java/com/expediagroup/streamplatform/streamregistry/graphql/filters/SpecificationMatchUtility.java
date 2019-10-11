@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.TagMatchUtility.matchesAllTagQueries;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 public class SpecificationMatchUtility {

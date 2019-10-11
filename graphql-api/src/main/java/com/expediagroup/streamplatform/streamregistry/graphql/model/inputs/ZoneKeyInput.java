@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.queries;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import lombok.Builder;
 import lombok.Value;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+
 @Value
 @Builder
-public class SchemaKeyQuery {
-  String domainRegex;
-  String nameRegex;
+public class ZoneKeyInput {
+  String name;
+
+  public ZoneKey asZoneKey() {
+    return new ZoneKey(
+        name
+    );
+  }
 }

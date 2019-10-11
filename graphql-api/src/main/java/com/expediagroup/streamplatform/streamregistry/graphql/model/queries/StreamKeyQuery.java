@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.queries;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.queries;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Value
 @Builder
-public class TagQuery {
+public class StreamKeyQuery {
+  String domainRegex;
   String nameRegex;
-  String valueRegex;
+  Integer version;
 }

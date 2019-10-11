@@ -20,8 +20,8 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.filters.Spe
 
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.queries.ProducerKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 public class ProducerFilter implements Predicate<Producer> {

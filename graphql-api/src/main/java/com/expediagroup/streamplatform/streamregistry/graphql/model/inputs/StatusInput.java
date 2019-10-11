@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.queries;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
+
+import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
 
 import lombok.Builder;
 import lombok.Value;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import com.expediagroup.streamplatform.streamregistry.model.Status;
+
 @Value
 @Builder
-public class ProducerKeyQuery {
-  String streamDomainRegex;
-  String streamNameRegex;
-  Integer streamVersion;
-  String zoneRegex;
-  String nameRegex;
+public class StatusInput {
+  ObjectNode agentStatus;
+
+  public Status asStatus() {
+    return new Status(
+        serialise(agentStatus)
+    );
+  }
 }
