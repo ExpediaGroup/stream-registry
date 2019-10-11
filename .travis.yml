@@ -5,20 +5,11 @@ dist: trusty
 jdk:
 - openjdk11
 
-before_install:
-- ./.travis/setup-deploy.sh
-
 # 'true' means do NOT do `mvn install`
 # See https://docs.travis-ci.com/user/job-lifecycle/#skipping-the-installation-phase
 install: true
 
-script: make build
-
-deploy:
-  provider: script
-  # skip_cleanup is to keep the artifacts from the build phase
-  skip_cleanup: true
-  script: make just-deploy
+script: ./mvnw clean install -Djib.skip -B
 
 after_failure:
 - cat infra-provider-kafka/surefire-reports/*.txt
