@@ -15,12 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.queries;
 
-import lombok.RequiredArgsConstructor;
-
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-
 import org.springframework.stereotype.Component;
 
+import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerBindingFilter;
@@ -56,15 +53,21 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
-@RequiredArgsConstructor
 public class Query implements GraphQLQueryResolver {
-  private Services services;
-  private HandlersForServices handlersForServices;
+
+  public Query(Services services, HandlersForServices handlersForServices) {
+    this.services = services;
+    this.handlersForServices = handlersForServices;
+  }
+
+  private final Services services;
+  private final HandlersForServices handlersForServices;
 
   // TODO to work around a graphql bug, remove when fixed
   public Domain bugfixq(TagQuery v) {
     return null;
   }
+
   public Domain bugfixi(TagInput v) {
     return null;
   }

@@ -16,9 +16,16 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestDataFactory;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ZoneIT extends ObjectIT {
@@ -58,11 +65,37 @@ public class ZoneIT extends ObjectIT {
   @Override
   public void queryByKey() {
 
+    ITestDataFactory newZoneFactory = new ITestDataFactory();
+
+    ZoneKeyInput input = newZoneFactory.zoneKeyInputBuilder().build();
+
+    try {
+      client.getData(ZoneQuery.builder().key(input).build());
+    }catch ( RuntimeException e){
+      assertEquals(e.getMessage(),"No value present");
+    }
+
+    client.getData(newZoneFactory.upsertZoneMutationBuilder().build());
+
+    ZoneQuery.Data after = (ZoneQuery.Data) client.getData(ZoneQuery.builder().key(input).build());
+
+    assertEquals(after.getZone().getKey().getName(),input.name());
+
   }
 
   @Override
   public void queryByRegex() {
 
+    ZoneKeyQuery query = ZoneKeyQuery.builder().nameRegex("zoneName.*").build();
+
+    ZonesQuery.Data before = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
+
+    client.getData(new ITestDataFactory().upsertZoneMutationBuilder().build());
+    client.getData(new ITestDataFactory().upsertZoneMutationBuilder().build());
+
+    ZonesQuery.Data after = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
+
+    assertTrue(after.getZones().size() == before.getZones().size() + 2);
   }
 
   @Override

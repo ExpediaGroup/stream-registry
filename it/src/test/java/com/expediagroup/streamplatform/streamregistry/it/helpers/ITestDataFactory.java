@@ -18,8 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
@@ -55,6 +53,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Status
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 
@@ -88,13 +87,8 @@ public class ITestDataFactory {
   public String value;
   public String description;
 
-  private DomainKeyInput.Builder domainKeyInputBuilder;
-
   public final DomainKeyInput.Builder domainKeyInputBuilder() {
-    if (domainKeyInputBuilder == null) {
-      domainKeyInputBuilder = DomainKeyInput.builder().name(domainName);
-    }
-    return domainKeyInputBuilder;
+    return DomainKeyInput.builder().name(domainName);
   }
 
   public final ConsumerKeyInput.Builder consumerKeyInputBuilder() {
@@ -106,17 +100,12 @@ public class ITestDataFactory {
         .zone(zoneName);
   }
 
-  private SpecificationInput.Builder specificationInputBuilder;
-
   public SpecificationInput.Builder specificationInputBuilder() {
-    if (specificationInputBuilder == null) {
-      specificationInputBuilder = SpecificationInput.builder()
-          .configuration(mapper.createObjectNode().put(key, value))
-          .description(description)
-          .tags(Collections.emptyList())
-          .type("default");
-    }
-    return specificationInputBuilder;
+    return SpecificationInput.builder()
+        .configuration(mapper.createObjectNode().put(key, value))
+        .description(description)
+        .tags(Collections.emptyList())
+        .type("default");
   }
 
   public UpsertDomainMutation.Builder upsertDomainMutationBuilder() {
@@ -139,18 +128,13 @@ public class ITestDataFactory {
 
   public UpsertZoneMutation.Builder upsertZoneMutationBuilder() {
     return UpsertZoneMutation.builder()
-        .key(ZoneKeyInputBuilder().build())
+        .key(zoneKeyInputBuilder().build())
         .specification(specificationInputBuilder().build())
         ;
   }
 
-  private ZoneKeyInput.Builder ZoneKeyInputBuilder;
-
-  private ZoneKeyInput.Builder ZoneKeyInputBuilder() {
-    if (ZoneKeyInputBuilder == null) {
-      ZoneKeyInputBuilder = ZoneKeyInput.builder().name(zoneName);
-    }
-    return ZoneKeyInputBuilder;
+  public ZoneKeyInput.Builder zoneKeyInputBuilder() {
+    return ZoneKeyInput.builder().name(zoneName);
   }
 
   public UpdateConsumerMutation.Builder updateConsumerMutationBuilder() {
@@ -173,7 +157,7 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder().build());
   }
 
-  private ConsumerBindingKeyInput.Builder consumerBindingKeyInputBuilder() {
+  public ConsumerBindingKeyInput.Builder consumerBindingKeyInputBuilder() {
     return ConsumerBindingKeyInput.builder()
         .consumerName(consumerName)
         .infrastructureName(infrastructureName)
@@ -199,7 +183,7 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder().build());
   }
 
-  private InfrastructureKeyInput infrastructureKey() {
+  public InfrastructureKeyInput infrastructureKey() {
     return InfrastructureKeyInput.builder()
         .name(infrastructureName)
         .zone(zoneName)
@@ -212,7 +196,7 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder().build());
   }
 
-  private ProducerBindingKeyInput.Builder producerBindingKeyInputBuilder() {
+  public ProducerBindingKeyInput.Builder producerBindingKeyInputBuilder() {
     return ProducerBindingKeyInput.builder()
         .infrastructureName(infrastructureName)
         .infrastructureZone(zoneName)
@@ -228,7 +212,7 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder().build());
   }
 
-  private ProducerKeyInput.Builder producerKeyInputBuilder() {
+  public ProducerKeyInput.Builder producerKeyInputBuilder() {
     return ProducerKeyInput.builder()
         .name(producerName)
         .streamDomain(domainName)
@@ -244,7 +228,7 @@ public class ITestDataFactory {
         .key(streamKeyInputBuilder().build());
   }
 
-  private StreamKeyInput.Builder streamKeyInputBuilder() {
+  public StreamKeyInput.Builder streamKeyInputBuilder() {
     return StreamKeyInput.builder()
         .domain(domainName)
         .name(streamName)
@@ -258,7 +242,7 @@ public class ITestDataFactory {
         );
   }
 
-  private SchemaKeyInput.Builder schemaKeyInputBuilder() {
+  public SchemaKeyInput.Builder schemaKeyInputBuilder() {
     return SchemaKeyInput.builder()
         .domain(domainName)
         .name(streamName);
@@ -271,7 +255,7 @@ public class ITestDataFactory {
         );
   }
 
-  private StreamBindingKeyInput.Builder streamBindingKeyInputBuilder() {
+  public StreamBindingKeyInput.Builder streamBindingKeyInputBuilder() {
     return StreamBindingKeyInput.builder()
         .infrastructureName(infrastructureName)
         .infrastructureZone(zoneName)
