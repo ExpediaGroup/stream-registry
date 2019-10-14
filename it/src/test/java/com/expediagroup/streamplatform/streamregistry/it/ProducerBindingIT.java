@@ -24,12 +24,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBin
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ProducerBindingIT extends ObjectIT {

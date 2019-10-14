@@ -28,12 +28,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducersQu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ProducerIT extends ObjectIT {
