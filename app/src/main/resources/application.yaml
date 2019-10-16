@@ -5,9 +5,6 @@ management.endpoints.web.exposure.include: info,health,prometheus
 
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:5432/streamregistry"
-    username: "streamregistry"
-    password:
     hikari:
       connectionTimeout: 20000
       maximumPoolSize: 5

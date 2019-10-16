@@ -18,6 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.ServerSocket;
+
 import junit.framework.TestCase;
 
 import com.apollographql.apollo.api.Mutation;
@@ -38,13 +42,15 @@ public abstract class ObjectIT {
 
   public ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName());
 
+  private static final int POSTGRES_PORT = randomPort();
+
   @ClassRule
   public static FixedHostPortGenericContainer postgreSQLContainer =
       new FixedHostPortGenericContainer<>("postgres:latest")
           .withEnv("POSTGRES_USER", "streamregistry")
-          .withEnv("POSTGRES_PASSWORD", "")
+          .withEnv("POSTGRES_PASSWORD", "streamregistry")
           .withEnv("POSTGRES_DB", "streamregistry")
-          .withFixedExposedPort(5432, 5432); //TODO expose on random port
+          .withFixedExposedPort(POSTGRES_PORT, 5432);
 
   private static ConfigurableApplicationContext context;
   private static String url;
@@ -53,11 +59,14 @@ public abstract class ObjectIT {
 
   @BeforeClass
   public static void beforeClass() {
-    String[] args = new String[] {
+    String[] args = new String[]{
         "--server.port=0",
         "--repository.kafka.bootstrap-servers=x",
         "--repository.kafka.replicationFactor=1",
-        "--schema.registry.url=http://schema-registry"
+        "--schema.registry.url=http://schema-registry",
+        "--spring.datasource.url=jdbc:postgresql://localhost:" + POSTGRES_PORT + "/streamregistry",
+        "--spring.datasource.username=streamregistry",
+        "--spring.datasource.password=streamregistry"
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
     url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
@@ -128,6 +137,14 @@ public abstract class ObjectIT {
       TestCase.fail("Expected a ValidationException");
     } catch (RuntimeException e) {
       assertTrue(e.getMessage().startsWith("Can't update"));
+    }
+  }
+
+  private static int randomPort() {
+    try (ServerSocket socket = new ServerSocket(0)) {
+      return socket.getLocalPort();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 }
