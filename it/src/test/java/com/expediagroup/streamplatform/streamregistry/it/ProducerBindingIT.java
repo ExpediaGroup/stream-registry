@@ -85,21 +85,21 @@ public class ProducerBindingIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
+
     ProducerBindingKeyQuery query = ProducerBindingKeyQuery.builder().producerNameRegex("producerName.*").build();
 
     ProducerBindingsQuery.Data before = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
 
-    client.getData(factory.upsertProducerBindingMutationBuilder().build());
-    client.getData(factory.upsertProducerBindingMutationBuilder().build());
+    client.invoke(factory.upsertProducerBindingMutationBuilder().build());
 
     ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
 
-    assertTrue(after.getProducerBindings().size() == before.getProducerBindings().size() + 1);
-  }
+    assertEquals(after.getProducerBindings().size(),before.getProducerBindings().size() + 1);
+}
 
   @Override
   public void createRequiredDatastoreState() {
-
     client.invoke(factory.upsertDomainMutationBuilder().build());
     client.invoke(factory.upsertSchemaMutationBuilder().build());
     client.invoke(factory.upsertStreamMutationBuilder().build());

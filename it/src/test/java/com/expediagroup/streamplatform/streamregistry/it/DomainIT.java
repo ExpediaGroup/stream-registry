@@ -20,23 +20,54 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.apollographql.apollo.api.Mutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class DomainIT extends ObjectIT {
 
-  @Test
-
+  @Override
   public void create() {
 
+    setFactorySuffix("Create");
+
+    assertMutationFails(factory.updateDomainMutationBuilder().build());
+
+    Object data = client.getData(factory.insertDomainMutationBuilder().build());
+
+    InsertDomainMutation.Insert insert = ((InsertDomainMutation.Data) data).getDomain().getInsert();
+
+    assertThat(insert.getKey().getName(), is(factory.domainName));
+
+    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
-  @Override
+  @Test
   public void update() {
 
-  }
+    setFactorySuffix("Update");
 
+    Mutation updateMutation = factory.updateDomainMutationBuilder().build();
+
+    assertMutationFails(updateMutation);
+
+    client.invoke(factory.upsertDomainMutationBuilder().build());
+
+    UpdateDomainMutation.Update update =
+        ((UpdateDomainMutation.Data) client.getData(updateMutation)).getDomain().getUpdate();
+
+    assertThat(update.getKey().getName(), is(factory.domainName));
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+  }
+  
   @Override
   public void upsert() {
     Object data = client.getData(factory.upsertDomainMutationBuilder().build());
@@ -57,7 +88,6 @@ public class DomainIT extends ObjectIT {
         ((UpdateDomainStatusMutation.Data) data).getDomain().getUpdateStatus();
 
     assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    //assertThat(update..get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override

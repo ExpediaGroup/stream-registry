@@ -52,6 +52,8 @@ public class ProducerIT extends ObjectIT {
   @Override
   public void update() {
 
+    setFactorySuffix("Update");
+
     Mutation updateMutation = factory.updateProducerMutationBuilder().build();
 
     assertMutationFails(updateMutation);
@@ -111,16 +113,17 @@ public class ProducerIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
+
     ProducerKeyQuery query = ProducerKeyQuery.builder().nameRegex("producerName.*").build();
 
     ProducersQuery.Data before = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
 
-    client.getData(factory.upsertProducerMutationBuilder().build());
-    client.getData(factory.upsertProducerMutationBuilder().build());
+    client.invoke(factory.upsertProducerMutationBuilder().build());
 
     ProducersQuery.Data after = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
 
-    assertTrue(after.getProducers().size() == before.getProducers().size() + 1);
+    assertEquals(after.getProducers().size(), before.getProducers().size() + 1);
   }
 
   @Override

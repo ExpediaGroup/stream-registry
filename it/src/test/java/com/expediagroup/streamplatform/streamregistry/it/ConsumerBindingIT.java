@@ -18,7 +18,14 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Test;
+
+import com.apollographql.apollo.api.Mutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
@@ -27,11 +34,38 @@ public class ConsumerBindingIT extends ObjectIT {
   @Override
   public void create() {
 
+    setFactorySuffix("create");
+
+    assertMutationFails(factory.updateConsumerBindingMutationBuilder().build());
+
+    Object data = client.getData(factory.insertConsumerBindingMutationBuilder().build());
+
+    InsertConsumerBindingMutation.Insert insert = ((InsertConsumerBindingMutation.Data) data).getConsumerBinding().getInsert();
+
+    assertThat(insert.getKey().getStreamName(), is(factory.streamName));
+
+    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
-  @Override
+  @Test
   public void update() {
 
+    setFactorySuffix("update");
+
+    Mutation updateMutation = factory.updateConsumerBindingMutationBuilder().build();
+
+    assertMutationFails(updateMutation);
+
+    client.invoke(factory.insertConsumerBindingMutationBuilder().build());
+
+    UpdateConsumerBindingMutation.Update update = ((UpdateConsumerBindingMutation.Data) client.getData(updateMutation))
+        .getConsumerBinding().getUpdate();
+
+    assertThat(update.getKey().getStreamName(), is(factory.streamName));
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override

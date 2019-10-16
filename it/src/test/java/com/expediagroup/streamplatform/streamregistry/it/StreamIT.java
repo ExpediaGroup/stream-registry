@@ -85,15 +85,17 @@ public class StreamIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
+
     StreamKeyQuery query = StreamKeyQuery.builder().nameRegex("streamName.*").build();
 
     StreamsQuery.Data before = (StreamsQuery.Data) client.getData(StreamsQuery.builder().key(query).build());
 
-    client.getData(factory.upsertStreamMutationBuilder().build());
+    client.invoke(factory.upsertStreamMutationBuilder().build());
 
     StreamsQuery.Data after = (StreamsQuery.Data) client.getData(StreamsQuery.builder().key(query).build());
 
-    assertTrue(after.getStreams().size() == before.getStreams().size() + 1);
+    assertEquals(after.getStreams().size(), before.getStreams().size() + 1);
   }
 
   @Override

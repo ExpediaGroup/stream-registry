@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import junit.framework.TestCase;
 
@@ -34,9 +35,8 @@ import org.testcontainers.containers.FixedHostPortGenericContainer;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 
 public abstract class ObjectIT {
-  public static ObjectMapper mapper = new ObjectMapper();
 
-  public ITestDataFactory factory = new ITestDataFactory();
+  public ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName());
 
   @ClassRule
   public static FixedHostPortGenericContainer postgreSQLContainer =
@@ -117,12 +117,17 @@ public abstract class ObjectIT {
     }
   }
 
+  public void setFactorySuffix(String suffix){
+    factory=new ITestDataFactory(suffix);
+    createRequiredDatastoreState();
+  }
+
   public void assertRequiresObjectIsPresent(Mutation m) {
     try {
       client.invoke(m);
       TestCase.fail("Expected a ValidationException");
     } catch (RuntimeException e) {
-      assertEquals("Can't update because it doesn't exist", e.getMessage());
+      assertTrue(e.getMessage().startsWith("Can't update"));
     }
   }
 }

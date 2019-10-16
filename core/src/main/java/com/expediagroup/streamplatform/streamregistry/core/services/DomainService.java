@@ -81,7 +81,7 @@ public class DomainService {
   public Optional<Domain> update(Domain domain) throws ValidationException {
     Optional<Domain> existing = domainRepository.findById(domain.getKey());
     if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
+      throw new ValidationException("Can't update "+domain.getKey()+ " because it doesn't exist");
     }
     domainValidator.validateForUpdate(domain, existing.get());
     domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));

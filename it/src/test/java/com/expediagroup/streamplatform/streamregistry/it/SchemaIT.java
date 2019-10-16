@@ -85,16 +85,17 @@ public class SchemaIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
+
     SchemaKeyQuery query = SchemaKeyQuery.builder().domainRegex("domainName.*").build();
 
     SchemasQuery.Data before = (SchemasQuery.Data) client.getData(SchemasQuery.builder().key(query).build());
 
-    client.getData(factory.upsertSchemaMutationBuilder().build());
-    client.getData(factory.upsertSchemaMutationBuilder().build());
+    client.invoke(factory.upsertSchemaMutationBuilder().build());
 
     SchemasQuery.Data after = (SchemasQuery.Data) client.getData(SchemasQuery.builder().key(query).build());
 
-    assertTrue(after.getSchemas().size() == before.getSchemas().size() + 1);
+    assertEquals(after.getSchemas().size(), before.getSchemas().size() + 1);
   }
 
   @Override

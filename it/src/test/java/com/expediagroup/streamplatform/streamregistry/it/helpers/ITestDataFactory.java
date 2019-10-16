@@ -18,6 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
@@ -58,23 +62,20 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKe
 
 public class ITestDataFactory {
 
-  private static AtomicInteger count = new AtomicInteger(0);
-
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  public ITestDataFactory() {
-    count.incrementAndGet();
-    zoneName = "zoneName" + count;
-    domainName = "domainName" + count;
-    consumerName = "consumerName" + count;
-    streamName = "streamName" + count;
+  public ITestDataFactory(String suffix) {
+    zoneName = "zoneName" + suffix;
+    domainName = "domainName" + suffix;
+    consumerName = "consumerName" + suffix;
+    streamName = "streamName" + suffix;
 
-    infrastructureName = "infrastructureName" + count;
-    producerName = "producerName" + count;
+    infrastructureName = "infrastructureName" + suffix;
+    producerName = "producerName" + suffix;
 
-    key = "key" + count;
-    value = "value" + count;
-    description = "description" + count;
+    key = "key" + suffix;
+    value = "value" + suffix;
+    description = "description" + suffix;
   }
 
   public String zoneName;
@@ -315,4 +316,30 @@ public class ITestDataFactory {
         .key(streamKeyInputBuilder().build())
         .status(statusInput());
   }
+
+  public UpdateConsumerBindingMutation.Builder updateConsumerBindingMutationBuilder() {
+    return UpdateConsumerBindingMutation.builder()
+        .key(consumerBindingKeyInputBuilder().build())
+        .specification(specificationInputBuilder("egsp.kafka").build());
+  }
+
+  public InsertConsumerBindingMutation.Builder insertConsumerBindingMutationBuilder() {
+    return InsertConsumerBindingMutation.builder()
+        .key(consumerBindingKeyInputBuilder().build())
+        .specification(specificationInputBuilder("egsp.kafka").build());
+  }
+
+  public InsertDomainMutation.Builder insertDomainMutationBuilder() {
+    return InsertDomainMutation.builder()
+        .key(domainKeyInputBuilder().build())
+        .specification(specificationInputBuilder("default").build());
+  }
+
+  public UpdateDomainMutation.Builder updateDomainMutationBuilder() {
+    return UpdateDomainMutation.builder()
+        .key(domainKeyInputBuilder().build())
+        .specification(specificationInputBuilder("default").build());
+  }
+
+
 }

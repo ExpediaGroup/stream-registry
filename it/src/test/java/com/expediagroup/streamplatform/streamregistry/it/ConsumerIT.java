@@ -26,6 +26,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestDataFactory;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ConsumerIT extends ObjectIT {
@@ -46,6 +47,10 @@ public class ConsumerIT extends ObjectIT {
   @Override
   public void create() {
 
+    setFactorySuffix("create");
+
+    assertMutationFails(factory.updateConsumerMutationBuilder().build());
+
     Object data = client.getData(factory.insertConsumerMutationBuilder().build());
 
     InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data) data).getConsumer().getInsert();
@@ -58,6 +63,8 @@ public class ConsumerIT extends ObjectIT {
 
   @Test
   public void update() {
+
+    setFactorySuffix("update");
 
     Mutation updateMutation = factory.updateConsumerMutationBuilder().build();
 

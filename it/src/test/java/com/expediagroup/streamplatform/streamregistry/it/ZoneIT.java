@@ -83,16 +83,17 @@ public class ZoneIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
+
     ZoneKeyQuery query = ZoneKeyQuery.builder().nameRegex("zoneName.*").build();
 
     ZonesQuery.Data before = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
 
-    client.getData(factory.upsertZoneMutationBuilder().build());
-    client.getData(factory.upsertZoneMutationBuilder().build());
+    client.invoke(factory.upsertZoneMutationBuilder().build());
 
     ZonesQuery.Data after = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
 
-    assertTrue(after.getZones().size() == before.getZones().size() + 1);
+    assertEquals(after.getZones().size() , before.getZones().size() + 1);
   }
 
   @Override
