@@ -4,7 +4,7 @@ endpoints.prometheus.enabled: true
 management.endpoints.web.exposure.include: info,health,prometheus
 
 spring:
-  datasource: 
+  datasource:
     hikari:
       connectionTimeout: 20000
       maximumPoolSize: 5
