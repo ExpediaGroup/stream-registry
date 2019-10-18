@@ -40,5 +40,4 @@ public class StreamKey implements Serializable {
   private DomainKey getDomainKey() {
     return new DomainKey(domain);
   }
-
 }

@@ -47,6 +47,4 @@ public class ProducerBindingValidator implements Validator<ProducerBinding> {
       throw new ValidationException("Producer does not exist " + producerbinding.getKey().getProducerKey());
     }
   }
-
-
 }

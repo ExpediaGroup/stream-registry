@@ -17,12 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
 
-import lombok.Builder;
-import lombok.Value;
-
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.expediagroup.streamplatform.streamregistry.model.Status;
+import lombok.Builder;
+import lombok.Value;
 
 @Value
 @Builder

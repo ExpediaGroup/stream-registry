@@ -20,12 +20,12 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GraphQLIntrospectionFileGeneratorTest {
   @Rule

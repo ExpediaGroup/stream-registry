@@ -37,7 +37,7 @@ public class ZoneFilter implements Predicate<Zone> {
   @Override
   public boolean test(Zone zone) {
     if (keyQuery != null) {
-      if(! matches(zone.getKey().getName(),keyQuery.getNameRegex())){
+      if (!matches(zone.getKey().getName(), keyQuery.getNameRegex())) {
         return false;
       }
     }

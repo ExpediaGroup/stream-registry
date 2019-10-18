@@ -16,15 +16,16 @@
 package com.expediagroup.streamplatform.streamregistry.graphql.type;
 
 import static java.util.Collections.emptyMap;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import graphql.language.ArrayValue;
 import graphql.language.ObjectField;

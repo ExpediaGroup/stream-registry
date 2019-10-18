@@ -27,5 +27,4 @@ public interface Handler<T extends ManagedType> {
   Specification handleInsert(T entity) throws HandlerException;
 
   Specification handleUpdate(T entity, T existing) throws HandlerException;
-
 }

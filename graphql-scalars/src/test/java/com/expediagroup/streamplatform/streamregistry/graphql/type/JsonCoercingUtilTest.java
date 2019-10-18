@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.graphql.type;
 
 import static java.util.Collections.emptyMap;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

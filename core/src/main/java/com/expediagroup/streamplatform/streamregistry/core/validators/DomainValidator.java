@@ -27,17 +27,14 @@ public class DomainValidator implements Validator<Domain> {
   public void validateForCreate(Domain domain) throws ValidationException {
     validateForCreateAndUpdate(domain);
     new SpecificationValidator().validateForCreate(domain.getSpecification());
-
   }
 
   @Override
   public void validateForUpdate(Domain domain, Domain existing) throws ValidationException {
     validateForCreateAndUpdate(domain);
     new SpecificationValidator().validateForUpdate(domain.getSpecification(), existing.getSpecification());
-
   }
 
   private void validateForCreateAndUpdate(Domain domain) {
   }
-
 }

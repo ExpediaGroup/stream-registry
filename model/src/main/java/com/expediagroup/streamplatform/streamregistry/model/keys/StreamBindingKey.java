@@ -48,5 +48,4 @@ public class StreamBindingKey implements Serializable {
   public InfrastructureKey getInfrastructureKey() {
     return new InfrastructureKey(infrastructureZone, infrastructureName);
   }
-
 }

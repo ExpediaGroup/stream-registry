@@ -38,5 +38,4 @@ public class SpecificationMatchUtility {
     }
     return true;
   }
-
 }

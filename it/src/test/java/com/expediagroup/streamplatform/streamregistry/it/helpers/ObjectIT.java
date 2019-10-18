@@ -22,11 +22,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 
-import junit.framework.TestCase;
-
-import com.apollographql.apollo.api.Mutation;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -36,7 +31,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 
+import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
+
+import junit.framework.TestCase;
 
 public abstract class ObjectIT {
 
@@ -59,7 +57,7 @@ public abstract class ObjectIT {
 
   @BeforeClass
   public static void beforeClass() {
-    String[] args = new String[]{
+    String[] args = new String[] {
         "--server.port=0",
         "--repository.kafka.bootstrap-servers=x",
         "--repository.kafka.replicationFactor=1",
@@ -127,8 +125,8 @@ public abstract class ObjectIT {
     }
   }
 
-  public void setFactorySuffix(String suffix){
-    factory=new ITestDataFactory(suffix);
+  public void setFactorySuffix(String suffix) {
+    factory = new ITestDataFactory(suffix);
     createRequiredDatastoreState();
   }
 

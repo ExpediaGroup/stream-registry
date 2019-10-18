@@ -41,7 +41,6 @@ public class ConsumerKey implements Serializable {
   @Column(length = 100)
   private String name;
 
-
   public StreamKey getStreamKey() {
     return new StreamKey(streamDomain, streamName, streamVersion);
   }
@@ -49,5 +48,4 @@ public class ConsumerKey implements Serializable {
   public InfrastructureKey getInfrastructureKey() {
     return new InfrastructureKey(zone, name);
   }
-
 }

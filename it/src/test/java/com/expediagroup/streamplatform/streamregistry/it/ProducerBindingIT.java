@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingsQuery;
@@ -70,16 +69,15 @@ public class ProducerBindingIT extends ObjectIT {
 
     try {
       client.getData(ProducerBindingQuery.builder().key(input).build());
-    }catch ( RuntimeException e){
-      assertEquals(e.getMessage(),"No value present");
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
     }
 
     client.getData(factory.upsertProducerBindingMutationBuilder().build());
 
     ProducerBindingQuery.Data after = (ProducerBindingQuery.Data) client.getData(ProducerBindingQuery.builder().key(input).build());
 
-    assertEquals(after.getProducerBinding().getKey().getStreamDomain(),input.streamDomain());
-
+    assertEquals(after.getProducerBinding().getKey().getStreamDomain(), input.streamDomain());
   }
 
   @Override
@@ -95,8 +93,8 @@ public class ProducerBindingIT extends ObjectIT {
 
     ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
 
-    assertEquals(after.getProducerBindings().size(),before.getProducerBindings().size() + 1);
-}
+    assertEquals(after.getProducerBindings().size(), before.getProducerBindings().size() + 1);
+  }
 
   @Override
   public void createRequiredDatastoreState() {

@@ -42,5 +42,4 @@ public class EgspKafkaStreamHandler<E extends Stream> implements Handler<E> {
   public Specification handleUpdate(E stream, E existing) throws HandlerException {
     return stream.getSpecification();
   }
-
 }

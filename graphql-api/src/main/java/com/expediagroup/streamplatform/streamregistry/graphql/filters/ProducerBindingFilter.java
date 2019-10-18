@@ -37,16 +37,16 @@ public class ProducerBindingFilter implements Predicate<ProducerBinding> {
   @Override
   public boolean test(ProducerBinding d) {
     if (keyQuery != null) {
-      if (!matches(d.getKey().getInfrastructureName(),keyQuery.getInfrastructureNameRegex())) {
+      if (!matches(d.getKey().getInfrastructureName(), keyQuery.getInfrastructureNameRegex())) {
         return false;
       }
-      if (!matches(d.getKey().getInfrastructureZone(),keyQuery.getInfrastructureZoneRegex())) {
+      if (!matches(d.getKey().getInfrastructureZone(), keyQuery.getInfrastructureZoneRegex())) {
         return false;
       }
-      if (!matches(d.getKey().getStreamDomain(),keyQuery.getStreamDomainRegex())) {
+      if (!matches(d.getKey().getStreamDomain(), keyQuery.getStreamDomainRegex())) {
         return false;
       }
-      if (!matches(d.getKey().getStreamName(),keyQuery.getStreamNameRegex())) {
+      if (!matches(d.getKey().getStreamName(), keyQuery.getStreamNameRegex())) {
         return false;
       }
       if (keyQuery.getStreamVersion() != null && d.getKey().getStreamVersion() != keyQuery.getStreamVersion()) {

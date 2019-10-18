@@ -24,18 +24,12 @@ import org.junit.Test;
 import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructureQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructuresQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class DomainIT extends ObjectIT {
@@ -76,7 +70,7 @@ public class DomainIT extends ObjectIT {
     assertThat(update.getSpecification().getDescription().get(), is(factory.description));
     assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
-  
+
   @Override
   public void upsert() {
 

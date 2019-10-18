@@ -29,9 +29,9 @@ import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
-import lombok.Data;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.Data;
 
 @Data
 @Embeddable
@@ -39,7 +39,7 @@ public class Specification {
 
   private String description;
 
-  @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
   private List<Tag> tags = new ArrayList<>();
 
   @Column(name = "rword_type")
@@ -69,5 +69,4 @@ public class Specification {
   public void setConfiguration(ObjectNode configuration) {
     configJson = serialise(configuration);
   }
-
 }

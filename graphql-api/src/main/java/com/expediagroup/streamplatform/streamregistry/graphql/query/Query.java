@@ -15,10 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-
 import org.springframework.stereotype.Component;
 
+import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerBindingFilter;

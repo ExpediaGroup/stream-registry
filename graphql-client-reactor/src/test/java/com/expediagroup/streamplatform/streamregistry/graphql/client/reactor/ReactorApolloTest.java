@@ -15,11 +15,18 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.client.reactor;
 
-import static com.apollographql.apollo.ApolloCall.StatusEvent.COMPLETED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import static com.apollographql.apollo.ApolloCall.StatusEvent.COMPLETED;
+
 import static reactor.core.publisher.FluxSink.OverflowStrategy.BUFFER;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloSubscriptionCall;
@@ -27,22 +34,16 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.internal.subscription.ApolloSubscriptionTerminatedException;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo.FluxSinkCallback;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo.MonoSinkCallback;
 
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.MonoSink;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo.FluxSinkCallback;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo.MonoSinkCallback;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ReactorApolloTest {
   private final Operation<?, ?, ?> operation = mock(Operation.class);
-  private final Response<String> response = Response.<String>builder(operation).build();
+  private final Response<String> response = Response.<String> builder(operation).build();
   private final ApolloException exception = new ApolloException(null);
   @Mock
   private ApolloCall<String> call;

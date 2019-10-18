@@ -22,5 +22,4 @@ public interface Stated {
   @Deprecated
     // we should be using immutable 'Stated' objects.
   void setStatus(Status status);
-
 }

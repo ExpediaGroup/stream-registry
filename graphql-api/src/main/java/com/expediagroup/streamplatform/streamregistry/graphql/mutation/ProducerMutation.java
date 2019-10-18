@@ -60,5 +60,4 @@ public class ProducerMutation {
     producer.setStatus(status.asStatus());
     return services.getProducerService().update(producer).get();
   }
-
 }

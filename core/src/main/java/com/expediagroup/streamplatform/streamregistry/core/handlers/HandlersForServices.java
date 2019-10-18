@@ -21,14 +21,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.Value;
-
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.handler.HandlerException;
 import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Specified;
+
+import lombok.Value;
 
 public class HandlersForServices {
 

@@ -22,9 +22,9 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
-import lombok.Data;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.Data;
 
 @Data
 @Embeddable

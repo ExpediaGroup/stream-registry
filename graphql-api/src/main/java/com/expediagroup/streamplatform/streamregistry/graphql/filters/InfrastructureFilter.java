@@ -37,10 +37,10 @@ public class InfrastructureFilter implements Predicate<Infrastructure> {
   @Override
   public boolean test(Infrastructure d) {
     if (keyQuery != null) {
-      if (! matches(d.getKey().getName(),keyQuery.getNameRegex())) {
+      if (!matches(d.getKey().getName(), keyQuery.getNameRegex())) {
         return false;
       }
-      if (! matches(d.getKey().getZone(),keyQuery.getZoneRegex())) {
+      if (!matches(d.getKey().getZone(), keyQuery.getZoneRegex())) {
         return false;
       }
     }

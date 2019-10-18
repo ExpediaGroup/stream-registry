@@ -38,5 +38,4 @@ public class InfrastructureKey implements Serializable {
   public ZoneKey getZoneKey() {
     return new ZoneKey(zone);
   }
-
 }

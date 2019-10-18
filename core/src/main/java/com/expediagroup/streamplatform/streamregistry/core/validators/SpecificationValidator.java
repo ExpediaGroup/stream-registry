@@ -44,5 +44,4 @@ public class SpecificationValidator implements Validator<Specification> {
     checkNotNull(specification.getConfiguration(), "Configuration must not be null.");
     checkNotNull(specification.getType(), "Type must not be null.");
   }
-
 }

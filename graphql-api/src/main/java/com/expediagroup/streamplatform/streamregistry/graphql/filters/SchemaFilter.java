@@ -37,10 +37,10 @@ public class SchemaFilter implements Predicate<Schema> {
   @Override
   public boolean test(Schema d) {
     if (keyQuery != null) {
-      if (!matches(d.getKey().getName(),keyQuery.getNameRegex())) {
+      if (!matches(d.getKey().getName(), keyQuery.getNameRegex())) {
         return false;
       }
-      if (!matches(d.getKey().getDomain(),keyQuery.getDomainRegex())) {
+      if (!matches(d.getKey().getDomain(), keyQuery.getDomainRegex())) {
         return false;
       }
     }

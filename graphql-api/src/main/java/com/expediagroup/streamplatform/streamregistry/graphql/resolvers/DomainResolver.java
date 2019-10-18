@@ -18,10 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
 
+import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;

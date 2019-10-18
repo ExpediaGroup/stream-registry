@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
@@ -68,16 +67,15 @@ public class ZoneIT extends ObjectIT {
 
     try {
       client.getData(ZoneQuery.builder().key(input).build());
-    }catch ( RuntimeException e){
-      assertEquals(e.getMessage(),"No value present");
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
     }
 
     client.getData(factory.upsertZoneMutationBuilder().build());
 
     ZoneQuery.Data after = (ZoneQuery.Data) client.getData(ZoneQuery.builder().key(input).build());
 
-    assertEquals(after.getZone().getKey().getName(),input.name());
-
+    assertEquals(after.getZone().getKey().getName(), input.name());
   }
 
   @Override
@@ -93,7 +91,7 @@ public class ZoneIT extends ObjectIT {
 
     ZonesQuery.Data after = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
 
-    assertEquals(after.getZones().size() , before.getZones().size() + 1);
+    assertEquals(after.getZones().size(), before.getZones().size() + 1);
   }
 
   @Override

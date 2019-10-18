@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-
 import org.springframework.data.repository.CrudRepository;
 
 import com.expediagroup.streamplatform.streamregistry.model.Domain;

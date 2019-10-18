@@ -15,10 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+
 import lombok.Builder;
 import lombok.Value;
-
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
 @Value
 @Builder

@@ -15,13 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import static com.expediagroup.streamplatform.streamregistry.handler.EgspConfluentSchemaHandler.SCHEMA_REGISTRY_URL;
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspConfluentSchemaHandler.SCHEMA_REGISTRY_URL;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +27,8 @@ import org.junit.Test;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class EgspConfluentSchemaHandlerTest {
   private static final ObjectMapper mapper = new ObjectMapper();

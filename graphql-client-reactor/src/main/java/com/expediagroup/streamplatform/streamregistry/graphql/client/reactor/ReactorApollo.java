@@ -17,8 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.graphql.client.reactor;
 
 import static com.apollographql.apollo.ApolloCall.StatusEvent.COMPLETED;
 
-import lombok.RequiredArgsConstructor;
-
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloCall.StatusEvent;
 import com.apollographql.apollo.ApolloSubscriptionCall;
@@ -26,6 +24,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.internal.subscription.ApolloSubscriptionTerminatedException;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.FluxSink.OverflowStrategy;
@@ -102,6 +101,4 @@ public final class ReactorApollo {
     @Override
     public void onConnected() {}
   }
-
-
 }

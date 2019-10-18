@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamsQuery;
@@ -70,16 +69,15 @@ public class StreamIT extends ObjectIT {
 
     try {
       client.getData(StreamQuery.builder().key(input).build());
-    }catch ( RuntimeException e){
-      assertEquals(e.getMessage(),"No value present");
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
     }
 
     client.getData(factory.upsertStreamMutationBuilder().build());
 
     StreamQuery.Data after = (StreamQuery.Data) client.getData(StreamQuery.builder().key(input).build());
 
-    assertEquals(after.getStream().getKey().getName(),input.name());
-
+    assertEquals(after.getStream().getKey().getName(), input.name());
   }
 
   @Override

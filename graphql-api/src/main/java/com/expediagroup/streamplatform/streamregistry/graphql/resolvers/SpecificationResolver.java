@@ -15,10 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
 
+import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
@@ -30,5 +29,4 @@ public class SpecificationResolver implements GraphQLResolver<Specification> {
   public SpecificationResolver(Services services) {
     this.services = services;
   }
-
 }

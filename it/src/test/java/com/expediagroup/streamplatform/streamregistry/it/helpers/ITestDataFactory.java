@@ -16,23 +16,19 @@
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
@@ -62,6 +58,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Status
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 
@@ -361,6 +358,4 @@ public class ITestDataFactory {
         .key(domainKeyInputBuilder().build())
         .specification(specificationInputBuilder("default").build());
   }
-
-
 }

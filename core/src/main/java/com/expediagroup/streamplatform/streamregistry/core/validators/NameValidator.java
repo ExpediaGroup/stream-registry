@@ -29,7 +29,8 @@ public class NameValidator {
    * Pattern allows for groups of lowercase alphanumerics separated by ${code -} and ${code .}. Each group of alphanumerics must
    * begin with an alpha character. There may not be consecutive instances or clashes of ${code -} and ${code .}.
    *
-   * @param name The input name
+   * @param name
+   *     The input name
    */
   public void validate(String name) {
     if (!pattern.matcher(name).matches()) {

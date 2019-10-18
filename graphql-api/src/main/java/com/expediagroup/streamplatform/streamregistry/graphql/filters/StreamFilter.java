@@ -41,10 +41,10 @@ public class StreamFilter implements Predicate<Stream> {
   public boolean test(Stream stream) {
 
     if (keyQuery != null) {
-      if (! matches(stream.getKey().getName(),keyQuery.getNameRegex())) {
+      if (!matches(stream.getKey().getName(), keyQuery.getNameRegex())) {
         return false;
       }
-      if (!matches(stream.getKey().getDomain(),keyQuery.getDomainRegex())) {
+      if (!matches(stream.getKey().getDomain(), keyQuery.getDomainRegex())) {
         return false;
       }
       if (keyQuery.getVersion() != null && stream.getKey().getVersion() != keyQuery.getVersion()) {

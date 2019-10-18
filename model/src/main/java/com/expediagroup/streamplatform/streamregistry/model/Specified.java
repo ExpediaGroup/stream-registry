@@ -18,5 +18,4 @@ package com.expediagroup.streamplatform.streamregistry.model;
 public interface Specified {
 
   Specification getSpecification();
-
 }

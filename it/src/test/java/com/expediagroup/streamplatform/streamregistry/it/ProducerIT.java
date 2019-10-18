@@ -18,10 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducersQuery;
@@ -90,7 +88,6 @@ public class ProducerIT extends ObjectIT {
     assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
-
   @Override
   public void queryByKey() {
 
@@ -98,16 +95,15 @@ public class ProducerIT extends ObjectIT {
 
     try {
       client.getData(ProducerQuery.builder().key(input).build());
-    }catch ( RuntimeException e){
-      assertEquals(e.getMessage(),"No value present");
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
     }
 
     client.getData(factory.upsertProducerMutationBuilder().build());
 
     ProducerQuery.Data after = (ProducerQuery.Data) client.getData(ProducerQuery.builder().key(input).build());
 
-    assertEquals(after.getProducer().getKey().getName(),input.name());
-
+    assertEquals(after.getProducer().getKey().getName(), input.name());
   }
 
   @Override

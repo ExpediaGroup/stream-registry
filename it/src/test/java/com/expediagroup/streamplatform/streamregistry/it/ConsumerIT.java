@@ -19,23 +19,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import com.apollographql.apollo.api.Mutation;
-
 import org.junit.Test;
 
+import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumersQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestDataFactory;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ConsumerIT extends ObjectIT {

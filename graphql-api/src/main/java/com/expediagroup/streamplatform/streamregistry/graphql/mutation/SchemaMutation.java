@@ -60,5 +60,4 @@ public class SchemaMutation {
     maintainState(schema, services.getSchemaService().read(schema.getKey()));
     return schema;
   }
-
 }

@@ -18,9 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.model;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
-import lombok.Data;
-
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+
+import lombok.Data;
 
 @Data
 @Entity(name = "rword_schema")

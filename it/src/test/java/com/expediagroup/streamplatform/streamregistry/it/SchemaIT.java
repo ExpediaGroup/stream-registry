@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -70,16 +69,15 @@ public class SchemaIT extends ObjectIT {
 
     try {
       client.getData(SchemaQuery.builder().key(input).build());
-    }catch ( RuntimeException e){
-      assertEquals(e.getMessage(),"No value present");
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
     }
 
     client.getData(factory.upsertSchemaMutationBuilder().build());
 
     SchemaQuery.Data after = (SchemaQuery.Data) client.getData(SchemaQuery.builder().key(input).build());
 
-    assertEquals(after.getSchema().getKey().getName(),input.name());
-
+    assertEquals(after.getSchema().getKey().getName(), input.name());
   }
 
   @Override
