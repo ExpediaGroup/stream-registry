@@ -34,6 +34,8 @@ public class ConsumerIT extends ObjectIT {
   @Test
   public void upsert() {
 
+    setFactorySuffix("upsert");
+
     Object data = client.getData(factory.upsertConsumerMutationBuilder().build());
 
     UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data) data).getConsumer().getUpsert();

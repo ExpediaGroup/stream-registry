@@ -22,10 +22,8 @@ import org.junit.Test;
 
 import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
@@ -70,6 +68,8 @@ public class ConsumerBindingIT extends ObjectIT {
 
   @Override
   public void upsert() {
+
+    setFactorySuffix("upsert");
 
     Object data = client.getData(factory.upsertConsumerBindingMutationBuilder().build());
 

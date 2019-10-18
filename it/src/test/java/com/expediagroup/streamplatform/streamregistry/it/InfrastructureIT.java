@@ -18,21 +18,54 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Test;
+
+import com.apollographql.apollo.api.Mutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class InfrastructureIT extends ObjectIT {
 
+
   @Override
   public void create() {
 
+    setFactorySuffix("Create");
+
+    assertMutationFails(factory.updateInfrastructureMutationBuilder().build());
+
+    Object data = client.getData(factory.insertInfrastructureMutationBuilder().build());
+
+    InsertInfrastructureMutation.Insert insert = ((InsertInfrastructureMutation.Data) data).getInfrastructure().getInsert();
+
+
+    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
-  @Override
+  @Test
   public void update() {
 
+    setFactorySuffix("Update");
+
+    Mutation updateMutation = factory.updateInfrastructureMutationBuilder().build();
+
+    assertMutationFails(updateMutation);
+
+    client.invoke(factory.upsertInfrastructureMutationBuilder().build());
+
+    UpdateInfrastructureMutation.Update update =
+        ((UpdateInfrastructureMutation.Data) client.getData(updateMutation)).getInfrastructure().getUpdate();
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
+  
 
   @Override
   public void upsert() {

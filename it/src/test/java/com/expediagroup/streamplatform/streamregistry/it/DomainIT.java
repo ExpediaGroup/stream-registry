@@ -70,6 +70,9 @@ public class DomainIT extends ObjectIT {
   
   @Override
   public void upsert() {
+
+    setFactorySuffix("upsert");
+
     Object data = client.getData(factory.upsertDomainMutationBuilder().build());
 
     UpsertDomainMutation.Upsert upsert = ((UpsertDomainMutation.Data) data).getDomain().getUpsert();

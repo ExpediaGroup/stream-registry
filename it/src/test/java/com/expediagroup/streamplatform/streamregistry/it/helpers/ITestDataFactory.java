@@ -18,10 +18,13 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
@@ -279,6 +282,18 @@ public class ITestDataFactory {
     return UpdateDomainStatusMutation.builder()
         .key(domainKeyInputBuilder().build())
         .status(statusInput());
+  }
+
+  public InsertInfrastructureMutation.Builder insertInfrastructureMutationBuilder() {
+    return InsertInfrastructureMutation.builder()
+        .key(infrastructureKey())
+        .specification(specificationInputBuilder("egsp.kafka").build());
+  }
+
+  public UpdateInfrastructureMutation.Builder updateInfrastructureMutationBuilder() {
+    return UpdateInfrastructureMutation.builder()
+        .key(infrastructureKey())
+        .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
   public UpdateInfrastructureStatusMutation.Builder updateInfrastructureStatusBuilder() {
