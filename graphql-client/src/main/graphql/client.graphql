@@ -654,6 +654,8 @@ fragment StreamPart on Stream{
   __typename
   key{
     name
+    domain
+    version
   }
   specification{
     __typename
