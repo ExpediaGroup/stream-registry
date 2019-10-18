@@ -16,21 +16,23 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import com.apollographql.apollo.api.Mutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructureQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructuresQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class InfrastructureIT extends ObjectIT {
-
 
   @Override
   public void create() {
@@ -42,7 +44,6 @@ public class InfrastructureIT extends ObjectIT {
     Object data = client.getData(factory.insertInfrastructureMutationBuilder().build());
 
     InsertInfrastructureMutation.Insert insert = ((InsertInfrastructureMutation.Data) data).getInfrastructure().getInsert();
-
 
     assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
     assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
@@ -65,7 +66,6 @@ public class InfrastructureIT extends ObjectIT {
     assertThat(update.getSpecification().getDescription().get(), is(factory.description));
     assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
-  
 
   @Override
   public void upsert() {
@@ -89,16 +89,38 @@ public class InfrastructureIT extends ObjectIT {
     assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
-
   @Override
   public void queryByKey() {
 
+    InfrastructureKeyInput input = factory.infrastructureKeyInputBuilder().build();
+
+    try {
+      client.getData(InfrastructureQuery.builder().key(input).build());
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
+    }
+
+    client.getData(factory.upsertInfrastructureMutationBuilder().build());
+
+    InfrastructureQuery.Data after = (InfrastructureQuery.Data) client.getData(InfrastructureQuery.builder().key(input).build());
+
+    assertEquals(after.getInfrastructure().getKey().getName(), input.name());
   }
 
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
 
+    InfrastructureKeyQuery query = InfrastructureKeyQuery.builder().nameRegex(".*").build();
+
+    InfrastructuresQuery.Data before = (InfrastructuresQuery.Data) client.getData(InfrastructuresQuery.builder().key(query).build());
+
+    client.invoke(factory.upsertInfrastructureMutationBuilder().build());
+
+    InfrastructuresQuery.Data after = (InfrastructuresQuery.Data) client.getData(InfrastructuresQuery.builder().key(query).build());
+
+    assertEquals(before.getInfrastructures().size() + 1, after.getInfrastructures().size());
   }
 
   @Override

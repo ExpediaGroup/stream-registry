@@ -16,17 +16,26 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import com.apollographql.apollo.api.Mutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructureQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructuresQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class DomainIT extends ObjectIT {
@@ -96,12 +105,37 @@ public class DomainIT extends ObjectIT {
   @Override
   public void queryByKey() {
 
+    DomainKeyInput input = factory.domainKeyInputBuilder().build();
+
+    try {
+      client.getData(DomainQuery.builder().key(input).build());
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
+    }
+
+    client.getData(factory.upsertDomainMutationBuilder().build());
+
+    DomainQuery.Data after = (DomainQuery.Data) client.getData(DomainQuery.builder().key(input).build());
+
+    assertEquals(after.getDomain().getKey().getName(), input.name());
   }
 
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
+
+    DomainKeyQuery query = DomainKeyQuery.builder().nameRegex(".*").build();
+
+    DomainsQuery.Data before = (DomainsQuery.Data) client.getData(DomainsQuery.builder().key(query).build());
+
+    client.invoke(factory.upsertDomainMutationBuilder().build());
+
+    DomainsQuery.Data after = (DomainsQuery.Data) client.getData(DomainsQuery.builder().key(query).build());
+
+    assertEquals(before.getDomains().size() + 1, after.getDomains().size());
   }
+
 
   @Override
   public void createRequiredDatastoreState() {

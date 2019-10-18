@@ -200,6 +200,12 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder("egsp.kafka").build());
   }
 
+  public InfrastructureKeyInput.Builder infrastructureKeyInputBuilder() {
+    return InfrastructureKeyInput.builder()
+        .name(infrastructureName)
+        .zone(zoneName);
+  }
+
   public ProducerBindingKeyInput.Builder producerBindingKeyInputBuilder() {
     return ProducerBindingKeyInput.builder()
         .infrastructureName(infrastructureName)
