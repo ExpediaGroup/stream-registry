@@ -136,7 +136,6 @@ public class DomainIT extends ObjectIT {
     assertEquals(before.getDomains().size() + 1, after.getDomains().size());
   }
 
-
   @Override
   public void createRequiredDatastoreState() {
 

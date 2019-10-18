@@ -16,15 +16,24 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import com.apollographql.apollo.api.Mutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
 
 public class ConsumerBindingIT extends ObjectIT {
@@ -91,14 +100,39 @@ public class ConsumerBindingIT extends ObjectIT {
     assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
+
   @Override
   public void queryByKey() {
 
+    ConsumerBindingKeyInput input = factory.consumerBindingKeyInputBuilder().build();
+
+    try {
+      client.getData(ConsumerBindingQuery.builder().key(input).build());
+    } catch (RuntimeException e) {
+      assertEquals(e.getMessage(), "No value present");
+    }
+
+    client.getData(factory.upsertConsumerBindingMutationBuilder().build());
+
+    ConsumerBindingQuery.Data after = (ConsumerBindingQuery.Data) client.getData(ConsumerBindingQuery.builder().key(input).build());
+
+    assertEquals(after.getConsumerBinding().getKey().getStreamName(), input.streamName());
   }
 
   @Override
   public void queryByRegex() {
 
+    setFactorySuffix("queryByRegex");
+
+    ConsumerBindingKeyQuery query = ConsumerBindingKeyQuery.builder().consumerNameRegex(".*").build();
+
+    ConsumerBindingsQuery.Data before = (ConsumerBindingsQuery.Data) client.getData(ConsumerBindingsQuery.builder().key(query).build());
+
+    client.invoke(factory.upsertConsumerBindingMutationBuilder().build());
+
+    ConsumerBindingsQuery.Data after = (ConsumerBindingsQuery.Data) client.getData(ConsumerBindingsQuery.builder().key(query).build());
+
+    assertEquals(before.getConsumerBindings().size() + 1, after.getConsumerBindings().size());
   }
 
   @Override
