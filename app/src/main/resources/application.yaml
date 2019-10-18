@@ -15,6 +15,6 @@ spring:
       jdbc:
         lob:
           non_contextual_creation: true
-      ddl-auto: create
+      ddl-auto: validate
     database-platform: "org.hibernate.dialect.PostgreSQLDialect"
     show-sql: true

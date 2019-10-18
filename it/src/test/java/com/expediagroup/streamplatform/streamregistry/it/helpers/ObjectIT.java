@@ -66,6 +66,7 @@ public abstract class ObjectIT {
         "--schema.registry.url=http://schema-registry",
         "--spring.datasource.url=jdbc:postgresql://localhost:" + POSTGRES_PORT + "/streamregistry",
         "--spring.datasource.username=streamregistry",
+        "--spring.jpa.hibernate.ddl-auto=create",
         "--spring.datasource.password=streamregistry"
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
