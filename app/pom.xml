@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,8 +12,8 @@
   <artifactId>stream-registry-app</artifactId>
 
   <properties>
-    <docker.to.repo/>
-    <docker.from.repo/>
+    <docker.to.repo />
+    <docker.from.repo />
     <docker.image.name>stream-registry</docker.image.name>
     <docker.image.base>openjdk:11-slim</docker.image.base>
   </properties>
@@ -45,6 +46,14 @@
 
   <build>
     <plugins>
+
+      <!--
+      Create a docker image of the stream-registry running on
+      a slim openJDK image
+
+      Jib Maven plugin builds Docker and OCI images from Java applications.
+      https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin
+      -->
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
         <artifactId>jib-maven-plugin</artifactId>
@@ -78,6 +87,14 @@
           </execution>
         </executions>
       </plugin>
+
+      <!--
+          Generate the postgre SQL schema for the model during a build.
+          This schema is not automatically applied to the production Database but must be manually
+          validated and applied.
+
+          See http://jpdigital.github.io/hibernate5-ddl-maven-plugin/usage.html
+      -->
       <plugin>
         <groupId>de.jpdigital</groupId>
         <artifactId>hibernate54-ddl-maven-plugin</artifactId>
