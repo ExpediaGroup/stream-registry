@@ -263,7 +263,7 @@ public class ITestDataFactory {
   public UpdateStreamMutation.Builder updateStreamMutationBuilder() {
     return UpdateStreamMutation.builder()
         .specification(specificationInputBuilder(EGSP_KAFKA).build())
-        // .schema(schemaKeyInputBuilder().build())
+        .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
