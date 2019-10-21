@@ -17,11 +17,20 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 @Component
 public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
+
+  private ConsumerService consumerService;
+
+  public ConsumerBindingValidator(ConsumerService consumerService) {
+    this.consumerService = consumerService;
+  }
+
 
   @Override
   public void validateForCreate(ConsumerBinding consumerbinding) throws ValidationException {
@@ -36,5 +45,8 @@ public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
   }
 
   private void validateForCreateAndUpdate(ConsumerBinding consumerbinding) {
+    if (consumerService.read(consumerbinding.getKey().getConsumerKey()).isEmpty()) {
+      throw new ValidationException("Consumer does not exist " + consumerbinding.getKey().getConsumerKey());
+    }
   }
 }

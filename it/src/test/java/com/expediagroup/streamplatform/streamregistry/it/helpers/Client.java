@@ -85,4 +85,10 @@ public class Client {
     createStream(factory);
     invoke(factory.upsertProducerMutationBuilder().build());
   }
+
+  public void createConsumer(ITestDataFactory factory) {
+    createStream(factory);
+    invoke(factory.upsertConsumerMutationBuilder().build());
+  }
+
 }

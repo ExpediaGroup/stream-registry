@@ -43,11 +43,8 @@ public class ConsumerBindingKey implements Serializable {
   @Column(length = 100)
   private String consumerName;
 
-  public StreamKey getStreamKey() {
-    return new StreamKey(streamDomain, streamName, streamVersion);
+  public ConsumerKey getConsumerKey(){
+    return new ConsumerKey(streamDomain,streamName,streamVersion,infrastructureZone,consumerName);
   }
 
-  public InfrastructureKey getInfrastructureKey() {
-    return new InfrastructureKey(infrastructureZone, infrastructureName);
-  }
 }

@@ -132,6 +132,7 @@ public class ConsumerBindingIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
+    client.createConsumer(factory);
 
   }
 }
