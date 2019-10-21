@@ -1,923 +1,924 @@
 fragment specificationPart on Specification {
-  description
-  tags{
-    name
-    value
-  }
-  type
-  configuration
+    description
+    tags{
+        name
+        value
+    }
+    type
+    configuration
 }
 
 fragment StatusPart on Status{
-  agentStatus
+    agentStatus
 }
 
 ############ Consumer ############
 
 fragment ConsumerPart on Consumer{
-  __typename
-  key{
-    streamDomain
-    streamName
-    streamVersion
-    zone
-    name
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        zone
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertConsumer(
-  $key: ConsumerKeyInput!
-  $specification: SpecificationInput!
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
 ) {
-  consumer{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...ConsumerPart
+    consumer{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerPart
+        }
     }
-  }
 }
 
 mutation UpdateConsumer(
-  $key: ConsumerKeyInput!
-  $specification: SpecificationInput!
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
 ) {
-  consumer{
-    update(key: $key,specification: $specification){
-      __typename
-      ...ConsumerPart
+    consumer{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ConsumerPart
+        }
     }
-  }
 }
 
 mutation UpsertConsumer(
-  $key: ConsumerKeyInput!
-  $specification: SpecificationInput!
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
 ) {
-  consumer{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...ConsumerPart
+    consumer{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerPart
+        }
     }
-  }
 }
 
 mutation UpdateConsumerStatus(
-  $key: ConsumerKeyInput!
-  $status: StatusInput!
+    $key: ConsumerKeyInput!
+    $status: StatusInput!
 ){
-  consumer{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...ConsumerPart
+    consumer{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ConsumerPart
+        }
     }
-  }
 }
 
 query Consumer(
-  $key: ConsumerKeyInput!
+    $key: ConsumerKeyInput!
 ) {
-  consumer(
-    key: $key
-  ) {
-    __typename
-    ...ConsumerPart
-  }
+    consumer(
+        key: $key
+    ) {
+        __typename
+        ...ConsumerPart
+    }
 }
 
 query Consumers(
-  $key: ConsumerKeyQuery
-  $specification: SpecificationQuery
+    $key: ConsumerKeyQuery
+    $specification: SpecificationQuery
 ) {
-  consumers(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...ConsumerPart
-  }
+    consumers(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ConsumerPart
+    }
 }
 
 ############ ConsumerBinding ############
 
 fragment ConsumerBindingPart on ConsumerBinding{
-  __typename
-  key{
-    streamDomain
-    streamName
-    streamVersion
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        streamDomain
+        streamName
+        streamVersion
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertConsumerBinding(
-  $key: ConsumerBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  consumerBinding{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...ConsumerBindingPart
+    consumerBinding{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
     }
-  }
 }
 
 mutation UpdateConsumerBinding(
-  $key: ConsumerBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  consumerBinding{
-    update(key: $key,specification: $specification){
-      __typename
-      ...ConsumerBindingPart
+    consumerBinding{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
     }
-  }
 }
 
 mutation UpsertConsumerBinding(
-  $key: ConsumerBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  consumerBinding{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...ConsumerBindingPart
+    consumerBinding{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
     }
-  }
 }
 
 mutation updateConsumerBindingStatus(
-  $key: ConsumerBindingKeyInput!
-  $status: StatusInput!
+    $key: ConsumerBindingKeyInput!
+    $status: StatusInput!
 ){
-  consumerBinding{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...ConsumerBindingPart
+    consumerBinding{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ConsumerBindingPart
+        }
     }
-  }
 }
 
 query ConsumerBinding(
-  $key: ConsumerBindingKeyInput!
+    $key: ConsumerBindingKeyInput!
 ) {
-  consumerBinding(
-    key: $key
-  ) {
-    __typename
-    ...ConsumerBindingPart
-  }
+    consumerBinding(
+        key: $key
+    ) {
+        __typename
+        ...ConsumerBindingPart
+    }
 }
 
 query ConsumerBindings(
-  $key: ConsumerBindingKeyQuery
-  $specification: SpecificationQuery
+    $key: ConsumerBindingKeyQuery
+    $specification: SpecificationQuery
 ) {
-  consumerBindings(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...ConsumerBindingPart
-  }
+    consumerBindings(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ConsumerBindingPart
+    }
 }
 
 ############ Domain ############
 
 fragment DomainPart on Domain{
-  __typename
-  key{
-    name
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertDomain(
-  $key: DomainKeyInput!
-  $specification: SpecificationInput!
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
 ) {
-  domain{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...DomainPart
+    domain{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...DomainPart
+        }
     }
-  }
 }
 
 mutation UpdateDomain(
-  $key: DomainKeyInput!
-  $specification: SpecificationInput!
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
 ) {
-  domain{
-    update(key: $key,specification: $specification){
-      __typename
-      ...DomainPart
+    domain{
+        update(key: $key,specification: $specification){
+            __typename
+            ...DomainPart
+        }
     }
-  }
 }
 
 mutation UpsertDomain(
-  $key: DomainKeyInput!
-  $specification: SpecificationInput!
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
 ) {
-  domain{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...DomainPart
+    domain{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...DomainPart
+        }
     }
-  }
 }
 
 mutation UpdateDomainStatus(
-  $key: DomainKeyInput!
-  $status: StatusInput!
+    $key: DomainKeyInput!
+    $status: StatusInput!
 ){
-  domain{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...DomainPart
+    domain{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...DomainPart
+        }
     }
-  }
 }
 
 query Domain(
-  $key: DomainKeyInput!
+    $key: DomainKeyInput!
 ) {
-  domain(
-    key: $key
-  ) {
-    __typename
-    ...DomainPart
-  }
+    domain(
+        key: $key
+    ) {
+        __typename
+        ...DomainPart
+    }
 }
 
 query Domains(
-  $key: DomainKeyQuery
-  $specification: SpecificationQuery
+    $key: DomainKeyQuery
+    $specification: SpecificationQuery
 ) {
-  domains(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...DomainPart
-  }
+    domains(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...DomainPart
+    }
 }
 
 ############ Infrastructure ############
 
 fragment InfrastructurePart on Infrastructure{
-  __typename
-  key{
-    zone
-    name
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        zone
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertInfrastructure(
-  $key: InfrastructureKeyInput!
-  $specification: SpecificationInput!
+    $key: InfrastructureKeyInput!
+    $specification: SpecificationInput!
 ) {
-  infrastructure{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...InfrastructurePart
+    infrastructure{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...InfrastructurePart
+        }
     }
-  }
 }
 
 mutation UpdateInfrastructure(
-  $key: InfrastructureKeyInput!
-  $specification: SpecificationInput!
+    $key: InfrastructureKeyInput!
+    $specification: SpecificationInput!
 ) {
-  infrastructure{
-    update(key: $key,specification: $specification){
-      __typename
-      ...InfrastructurePart
+    infrastructure{
+        update(key: $key,specification: $specification){
+            __typename
+            ...InfrastructurePart
+        }
     }
-  }
 }
 
 mutation UpsertInfrastructure(
-  $key: InfrastructureKeyInput!
-  $specification: SpecificationInput!
+    $key: InfrastructureKeyInput!
+    $specification: SpecificationInput!
 ) {
-  infrastructure{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...InfrastructurePart
+    infrastructure{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...InfrastructurePart
+        }
     }
-  }
 }
 
 mutation UpdateInfrastructureStatus(
-  $key: InfrastructureKeyInput!
-  $status: StatusInput!
+    $key: InfrastructureKeyInput!
+    $status: StatusInput!
 ){
-  infrastructure{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...InfrastructurePart
+    infrastructure{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...InfrastructurePart
+        }
     }
-  }
 }
 
 query Infrastructure(
-  $key: InfrastructureKeyInput!
+    $key: InfrastructureKeyInput!
 ) {
-  infrastructure(
-    key: $key
-  ) {
-    __typename
-    ...InfrastructurePart
-  }
+    infrastructure(
+        key: $key
+    ) {
+        __typename
+        ...InfrastructurePart
+    }
 }
 
 query Infrastructures(
-  $key: InfrastructureKeyQuery
-  $specification: SpecificationQuery
+    $key: InfrastructureKeyQuery
+    $specification: SpecificationQuery
 ) {
-  infrastructures(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...InfrastructurePart
-  }
+    infrastructures(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...InfrastructurePart
+    }
 }
 
 ############ Producer ############
 
 fragment ProducerPart on Producer{
-  __typename
-  key{
-    streamDomain
-    streamName
-    streamVersion
-    zone
-    name
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        zone
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertProducer(
-  $key: ProducerKeyInput!
-  $specification: SpecificationInput!
+    $key: ProducerKeyInput!
+    $specification: SpecificationInput!
 ) {
-  producer{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...ProducerPart
+    producer{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ProducerPart
+        }
     }
-  }
 }
 
 mutation UpdateProducer(
-  $key: ProducerKeyInput!
-  $specification: SpecificationInput!
+    $key: ProducerKeyInput!
+    $specification: SpecificationInput!
 ) {
-  producer{
-    update(key: $key,specification: $specification){
-      __typename
-      ...ProducerPart
+    producer{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ProducerPart
+        }
     }
-  }
 }
 
 mutation UpsertProducer(
-  $key: ProducerKeyInput!
-  $specification: SpecificationInput!
+    $key: ProducerKeyInput!
+    $specification: SpecificationInput!
 ) {
-  producer{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...ProducerPart
+    producer{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ProducerPart
+        }
     }
-  }
 }
 
 mutation UpdateProducerStatus(
-  $key: ProducerKeyInput!
-  $status: StatusInput!
+    $key: ProducerKeyInput!
+    $status: StatusInput!
 ){
-  producer{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...ProducerPart
+    producer{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ProducerPart
+        }
     }
-  }
 }
 
 query Producer(
-  $key: ProducerKeyInput!
+    $key: ProducerKeyInput!
 ) {
-  producer(
-    key: $key
-  ) {
-    __typename
-    ...ProducerPart
-  }
+    producer(
+        key: $key
+    ) {
+        __typename
+        ...ProducerPart
+    }
 }
 
 query Producers(
-  $key: ProducerKeyQuery
-  $specification: SpecificationQuery
+    $key: ProducerKeyQuery
+    $specification: SpecificationQuery
 ) {
-  producers(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...ProducerPart
-  }
+    producers(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ProducerPart
+    }
 }
 
 ############ ProducerBinding ############
 
 fragment ProducerBindingPart on ProducerBinding{
-  __typename
-  key{
-    streamDomain
-    streamName
-    streamVersion
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        streamDomain
+        streamName
+        streamVersion
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertProducerBinding(
-  $key: ProducerBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: ProducerBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  producerBinding{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...ProducerBindingPart
+    producerBinding{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ProducerBindingPart
+        }
     }
-  }
 }
 
 mutation UpdateProducerBinding(
-  $key: ProducerBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: ProducerBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  producerBinding{
-    update(key: $key,specification: $specification){
-      __typename
-      ...ProducerBindingPart
+    producerBinding{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ProducerBindingPart
+        }
     }
-  }
 }
 
 mutation UpsertProducerBinding(
-  $key: ProducerBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: ProducerBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  producerBinding{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...ProducerBindingPart
+    producerBinding{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ProducerBindingPart
+        }
     }
-  }
 }
 
 mutation UpdateProducerBindingStatus(
-  $key: ProducerBindingKeyInput!
-  $status: StatusInput!
+    $key: ProducerBindingKeyInput!
+    $status: StatusInput!
 ){
-  producerBinding{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...ProducerBindingPart
+    producerBinding{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ProducerBindingPart
+        }
     }
-  }
 }
 
 query ProducerBinding(
-  $key: ProducerBindingKeyInput!
+    $key: ProducerBindingKeyInput!
 ) {
-  producerBinding(
-    key: $key
-  ) {
-    __typename
-    ...ProducerBindingPart
-  }
+    producerBinding(
+        key: $key
+    ) {
+        __typename
+        ...ProducerBindingPart
+    }
 }
 
 query ProducerBindings(
-  $key: ProducerBindingKeyQuery
-  $specification: SpecificationQuery
+    $key: ProducerBindingKeyQuery
+    $specification: SpecificationQuery
 ) {
-  producerBindings(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...ProducerBindingPart
-  }
+    producerBindings(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...ProducerBindingPart
+    }
 }
 
 ############ Schema ############
 
 fragment SchemaPart on Schema{
-  __typename
-  key{
-    name
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertSchema(
-  $key: SchemaKeyInput!
-  $specification: SpecificationInput!
+    $key: SchemaKeyInput!
+    $specification: SpecificationInput!
 ) {
-  schema{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...SchemaPart
+    schema{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...SchemaPart
+        }
     }
-  }
 }
 
 mutation UpdateSchema(
-  $key: SchemaKeyInput!
-  $specification: SpecificationInput!
+    $key: SchemaKeyInput!
+    $specification: SpecificationInput!
 ) {
-  schema{
-    update(key: $key,specification: $specification){
-      __typename
-      ...SchemaPart
+    schema{
+        update(key: $key,specification: $specification){
+            __typename
+            ...SchemaPart
+        }
     }
-  }
 }
 
 mutation UpsertSchema(
-  $key: SchemaKeyInput!
-  $specification: SpecificationInput!
+    $key: SchemaKeyInput!
+    $specification: SpecificationInput!
 ) {
-  schema{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...SchemaPart
+    schema{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...SchemaPart
+        }
     }
-  }
 }
 
 mutation UpdateSchemaStatus(
-  $key: SchemaKeyInput!
-  $status: StatusInput!
+    $key: SchemaKeyInput!
+    $status: StatusInput!
 ){
-  schema{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...SchemaPart
+    schema{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...SchemaPart
+        }
     }
-  }
 }
 
 query Schema(
-  $key: SchemaKeyInput!
+    $key: SchemaKeyInput!
 ) {
-  schema(
-    key: $key
-  ) {
-    __typename
-    ...SchemaPart
-  }
+    schema(
+        key: $key
+    ) {
+        __typename
+        ...SchemaPart
+    }
 }
 
 query Schemas(
-  $key: SchemaKeyQuery
-  $specification: SpecificationQuery
+    $key: SchemaKeyQuery
+    $specification: SpecificationQuery
 ) {
-  schemas(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...SchemaPart
-  }
+    schemas(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...SchemaPart
+    }
 }
 
 ############ Stream ############
 
 fragment StreamPart on Stream{
-  __typename
-  key{
-    name
-    domain
-    version
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        name
+        domain
+        version
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertStream(
-  $key: StreamKeyInput!
-  $specification: SpecificationInput!
-  $schema: SchemaKeyInput!
+    $key: StreamKeyInput!
+    $specification: SpecificationInput!
+    $schema: SchemaKeyInput!
 ) {
-  stream{
-    insert(key: $key,specification: $specification, schema: $schema){
-      __typename
-      ...StreamPart
+    stream{
+        insert(key: $key,specification: $specification, schema: $schema){
+            __typename
+            ...StreamPart
+        }
     }
-  }
 }
 
 mutation UpdateStream(
-  $key: StreamKeyInput!
-  $specification: SpecificationInput!
+    $key: StreamKeyInput!
+    $specification: SpecificationInput!
+    $schema: SchemaKeyInput!
 ) {
-  stream{
-    update(key: $key,specification: $specification){
-      __typename
-      ...StreamPart
+    stream{
+        update(key: $key,specification: $specification, schema: $schema){
+            __typename
+            ...StreamPart
+        }
     }
-  }
 }
 
 mutation UpsertStream(
-  $key: StreamKeyInput!
-  $specification: SpecificationInput!
-  $schema: SchemaKeyInput
+    $key: StreamKeyInput!
+    $specification: SpecificationInput!
+    $schema: SchemaKeyInput
 ) {
-  stream{
-    upsert(key: $key,specification: $specification,schema: $schema){
-      __typename
-      ...StreamPart
+    stream{
+        upsert(key: $key,specification: $specification,schema: $schema){
+            __typename
+            ...StreamPart
+        }
     }
-  }
 }
 
 mutation UpdateStreamStatus(
-  $key: StreamKeyInput!
-  $status: StatusInput!
+    $key: StreamKeyInput!
+    $status: StatusInput!
 ){
-  stream{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...StreamPart
+    stream{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...StreamPart
+        }
     }
-  }
 }
 
 query Stream(
-  $key: StreamKeyInput!
+    $key: StreamKeyInput!
 ) {
-  stream(
-    key: $key
-  ) {
-    __typename
-    ...StreamPart
-  }
+    stream(
+        key: $key
+    ) {
+        __typename
+        ...StreamPart
+    }
 }
 
 query Streams(
-  $key: StreamKeyQuery
-  $specification: SpecificationQuery
+    $key: StreamKeyQuery
+    $specification: SpecificationQuery
 ) {
-  streams(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...StreamPart
-  }
+    streams(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...StreamPart
+    }
 }
 
 ############ StreamBinding ############
 
 fragment StreamBindingPart on StreamBinding{
-  __typename
-  key{
-    streamDomain
-    streamName
-    streamVersion
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        streamDomain
+        streamName
+        streamVersion
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertStreamBinding(
-  $key: StreamBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: StreamBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  streamBinding{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...StreamBindingPart
+    streamBinding{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...StreamBindingPart
+        }
     }
-  }
 }
 
 mutation UpdateStreamBinding(
-  $key: StreamBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: StreamBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  streamBinding{
-    update(key: $key,specification: $specification){
-      __typename
-      ...StreamBindingPart
+    streamBinding{
+        update(key: $key,specification: $specification){
+            __typename
+            ...StreamBindingPart
+        }
     }
-  }
 }
 
 mutation UpsertStreamBinding(
-  $key: StreamBindingKeyInput!
-  $specification: SpecificationInput!
+    $key: StreamBindingKeyInput!
+    $specification: SpecificationInput!
 ) {
-  streamBinding{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...StreamBindingPart
+    streamBinding{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...StreamBindingPart
+        }
     }
-  }
 }
 
 mutation UpdateStreamBindingStatus(
-  $key: StreamBindingKeyInput!
-  $status: StatusInput!
+    $key: StreamBindingKeyInput!
+    $status: StatusInput!
 ){
-  streamBinding{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...StreamBindingPart
+    streamBinding{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...StreamBindingPart
+        }
     }
-  }
 }
 
 query StreamBinding(
-  $key: StreamBindingKeyInput!
+    $key: StreamBindingKeyInput!
 ) {
-  streamBinding(
-    key: $key
-  ) {
-    __typename
-    ...StreamBindingPart
-  }
+    streamBinding(
+        key: $key
+    ) {
+        __typename
+        ...StreamBindingPart
+    }
 }
 
 query StreamBindings(
-  $key: StreamBindingKeyQuery
-  $specification: SpecificationQuery
+    $key: StreamBindingKeyQuery
+    $specification: SpecificationQuery
 ) {
-  streamBindings(
-    key: $key
-    specification: $specification
-  ) {
-    __typename
-    ...StreamBindingPart
-  }
+    streamBindings(
+        key: $key
+        specification: $specification
+    ) {
+        __typename
+        ...StreamBindingPart
+    }
 }
 
 ############ Zone ############
 
 fragment ZonePart on Zone{
-  __typename
-  key{
-    name
-  }
-  specification{
     __typename
-    ...specificationPart
-  }
-  status{
-    __typename
-    ...StatusPart
-  }
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
 }
 
 mutation InsertZone(
-  $key: ZoneKeyInput!
-  $specification: SpecificationInput!
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
 ) {
-  zone{
-    insert(key: $key,specification: $specification){
-      __typename
-      ...ZonePart
+    zone{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
     }
-  }
 }
 
 mutation UpdateZone(
-  $key: ZoneKeyInput!
-  $specification: SpecificationInput!
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
 ) {
-  zone{
-    update(key: $key,specification: $specification){
-      __typename
-      ...ZonePart
+    zone{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
     }
-  }
 }
 
 mutation UpsertZone(
-  $key: ZoneKeyInput!
-  $specification: SpecificationInput!
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
 ) {
-  zone{
-    upsert(key: $key,specification: $specification){
-      __typename
-      ...ZonePart
+    zone{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
     }
-  }
 }
 
 mutation UpdateZoneStatus(
-  $key: ZoneKeyInput!
-  $status: StatusInput!
+    $key: ZoneKeyInput!
+    $status: StatusInput!
 ){
-  zone{
-    updateStatus(key: $key,status: $status){
-      __typename
-      ...ZonePart
+    zone{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ZonePart
+        }
     }
-  }
 }
 
 query Zone(
-  $key: ZoneKeyInput!
+    $key: ZoneKeyInput!
 ) {
-  zone(
-    key: $key
-  ) {
-    __typename
-    ...ZonePart
-  }
+    zone(
+        key: $key
+    ) {
+        __typename
+        ...ZonePart
+    }
 }
 
 query Zones(
-  $key: ZoneKeyQuery,
-  $specification: SpecificationQuery
+    $key: ZoneKeyQuery,
+    $specification: SpecificationQuery
 ) {
-  zones(
-    key: $key,
-    specification: $specification
-  ) {
-    __typename
-    ...ZonePart
-  }
+    zones(
+        key: $key,
+        specification: $specification
+    ) {
+        __typename
+        ...ZonePart
+    }
 }
 

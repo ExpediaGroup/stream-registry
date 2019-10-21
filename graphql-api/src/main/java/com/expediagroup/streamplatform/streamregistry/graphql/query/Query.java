@@ -67,13 +67,12 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 @Component
 public class Query implements GraphQLQueryResolver {
 
+  private final Services services;
+  private final HandlersForServices handlersForServices;
   public Query(Services services, HandlersForServices handlersForServices) {
     this.services = services;
     this.handlersForServices = handlersForServices;
   }
-
-  private final Services services;
-  private final HandlersForServices handlersForServices;
 
   // TODO to work around a graphql bug, remove when fixed
   public Domain bugfixq(TagQuery v) {

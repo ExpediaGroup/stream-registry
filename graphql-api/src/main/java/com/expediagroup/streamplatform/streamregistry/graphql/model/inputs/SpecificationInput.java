@@ -35,15 +35,6 @@ public class SpecificationInput {
   String type;
   ObjectNode configuration;
 
-  public Specification asSpecification() {
-    return new Specification(
-        description,
-        getTags(tags),
-        type,
-        serialise(configuration)
-    );
-  }
-
   private static List<Tag> getTags(List<TagInput> input) {
     List<Tag> out = new ArrayList<>();
     if (input != null) {
@@ -52,5 +43,14 @@ public class SpecificationInput {
       }
     }
     return out;
+  }
+
+  public Specification asSpecification() {
+    return new Specification(
+        description,
+        getTags(tags),
+        type,
+        serialise(configuration)
+    );
   }
 }

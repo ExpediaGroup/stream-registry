@@ -63,7 +63,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ITestDataFactory {
 
   private static final ObjectMapper mapper = new ObjectMapper();
-
+  public String zoneName;
+  public String domainName;
+  public String consumerName;
+  public String streamName;
+  public String key;
+  public String value;
+  public String description;
+  private String infrastructureName;
+  private String producerName;
   public ITestDataFactory(String suffix) {
     zoneName = "zoneName" + suffix;
     domainName = "domainName" + suffix;
@@ -77,17 +85,6 @@ public class ITestDataFactory {
     value = "value" + suffix;
     description = "description" + suffix;
   }
-
-  public String zoneName;
-  public String domainName;
-  public String consumerName;
-  public String streamName;
-  private String infrastructureName;
-  private String producerName;
-
-  public String key;
-  public String value;
-  public String description;
 
   public final DomainKeyInput.Builder domainKeyInputBuilder() {
     return DomainKeyInput.builder().name(domainName);

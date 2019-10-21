@@ -38,10 +38,7 @@ import junit.framework.TestCase;
 
 public abstract class ObjectIT {
 
-  public ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName());
-
   private static final int POSTGRES_PORT = randomPort();
-
   @ClassRule
   public static FixedHostPortGenericContainer postgreSQLContainer =
       new FixedHostPortGenericContainer<>("postgres:latest")
@@ -49,11 +46,10 @@ public abstract class ObjectIT {
           .withEnv("POSTGRES_PASSWORD", "streamregistry")
           .withEnv("POSTGRES_DB", "streamregistry")
           .withFixedExposedPort(POSTGRES_PORT, 5432);
-
+  public static Client client;
   private static ConfigurableApplicationContext context;
   private static String url;
-
-  public static Client client;
+  public ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName());
 
   @BeforeClass
   public static void beforeClass() {
@@ -73,17 +69,25 @@ public abstract class ObjectIT {
     client = new Client(url);
   }
 
-  @Before
-  public final void before() {
-    createRequiredDatastoreState();
-  }
-
   @AfterClass
   public static void afterClass() {
     if (context != null) {
       context.close();
       context = null;
     }
+  }
+
+  private static int randomPort() {
+    try (ServerSocket socket = new ServerSocket(0)) {
+      return socket.getLocalPort();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @Before
+  public final void before() {
+    createRequiredDatastoreState();
   }
 
   @Test
@@ -136,14 +140,6 @@ public abstract class ObjectIT {
       TestCase.fail("Expected a ValidationException");
     } catch (RuntimeException e) {
       assertTrue(e.getMessage().startsWith("Can't update"));
-    }
-  }
-
-  private static int randomPort() {
-    try (ServerSocket socket = new ServerSocket(0)) {
-      return socket.getLocalPort();
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
     }
   }
 }

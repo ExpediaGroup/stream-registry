@@ -36,8 +36,8 @@ public class StreamMutation {
     return services.getStreamService().create(asStream(key, specification, schema)).get();
   }
 
-  public Stream update(StreamKeyInput key, SpecificationInput specification) {
-    return services.getStreamService().update(asStream(key, specification, null)).get();
+  public Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
+    return services.getStreamService().update(asStream(key, specification, schema)).get();
   }
 
   public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
