@@ -48,4 +48,8 @@ public class ProducerKey implements Serializable {
   public InfrastructureKey getInfrastructureKey() {
     return new InfrastructureKey(zone, name);
   }
+
+  public ZoneKey getZoneKey() {
+    return new ZoneKey(zone);
+  }
 }

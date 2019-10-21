@@ -35,14 +35,17 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @Component
 public class ProducerValidator implements Validator<Producer> {
 
   private StreamService streamService;
+  private ZoneService zoneService;
 
-  public ProducerValidator(StreamService streamService) {
+  public ProducerValidator(StreamService streamService, ZoneService zoneService) {
+    this.zoneService=zoneService;
     this.streamService = streamService;
   }
 
@@ -60,11 +63,18 @@ public class ProducerValidator implements Validator<Producer> {
 
   public void validateForCreateAndUpdate(Producer producer) throws ValidationException {
     validateStreamExists(producer);
+    validateZoneExists(producer);
   }
 
   private void validateStreamExists(Producer producer) {
     if (streamService.read(producer.getKey().getStreamKey()).isEmpty()) {
       throw new ValidationException("Stream does not exist");
+    }
+  }
+
+  private void validateZoneExists(Producer producer) {
+    if (zoneService.read(producer.getKey().getZoneKey()).isEmpty()) {
+      throw new ValidationException("Zone does not exist");
     }
   }
 }
