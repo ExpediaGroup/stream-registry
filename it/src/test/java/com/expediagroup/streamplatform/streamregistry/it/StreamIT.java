@@ -110,7 +110,6 @@ public class StreamIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
-    client.invoke(factory.upsertDomainMutationBuilder().build());
-    client.invoke(factory.upsertSchemaMutationBuilder().build());
+    client.createSchema(factory);
   }
 }

@@ -17,11 +17,22 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @Component
 public class ConsumerValidator implements Validator<Consumer> {
+
+  private StreamService streamService;
+  private ZoneService zoneService;
+
+  public ConsumerValidator(StreamService streamService, ZoneService zoneService) {
+    this.zoneService=zoneService;
+    this.streamService = streamService;
+  }
 
   @Override
   public void validateForCreate(Consumer consumer) throws ValidationException {
@@ -35,5 +46,19 @@ public class ConsumerValidator implements Validator<Consumer> {
     new SpecificationValidator().validateForUpdate(consumer.getSpecification(), existing.getSpecification());
   }
 
-  private void validateForCreateAndUpdate(Consumer consumer) {}
-}
+  public void validateForCreateAndUpdate(Consumer consumer) throws ValidationException {
+    validateStreamExists(consumer);
+    validateZoneExists(consumer);
+  }
+
+  private void validateStreamExists(Consumer consumer) {
+    if (streamService.read(consumer.getKey().getStreamKey()).isEmpty()) {
+      throw new ValidationException("Stream does not exist");
+    }
+  }
+
+  private void validateZoneExists(Consumer consumer) {
+    if (zoneService.read(consumer.getKey().getZoneKey()).isEmpty()) {
+      throw new ValidationException("Zone does not exist");
+    }
+  }}

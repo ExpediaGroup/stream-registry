@@ -111,6 +111,6 @@ public class SchemaIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
-    client.invoke(factory.upsertDomainMutationBuilder().build());
+    client.createDomain(factory);
   }
 }

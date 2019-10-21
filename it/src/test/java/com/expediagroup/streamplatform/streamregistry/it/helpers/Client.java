@@ -61,4 +61,28 @@ public class Client {
     }
     return out;
   }
+
+  public void createZone(ITestDataFactory factory) {
+    invoke(factory.upsertZoneMutationBuilder().build());
+  }
+
+  public void createDomain(ITestDataFactory factory) {
+    createZone(factory);
+    invoke(factory.upsertDomainMutationBuilder().build());
+  }
+
+  public void createSchema(ITestDataFactory factory) {
+    createDomain(factory);
+    invoke(factory.upsertSchemaMutationBuilder().build());
+  }
+
+  public void createStream(ITestDataFactory factory) {
+    createSchema(factory);
+    invoke(factory.upsertStreamMutationBuilder().build());
+  }
+
+  public void createProducer(ITestDataFactory factory) {
+    createStream(factory);
+    invoke(factory.upsertProducerMutationBuilder().build());
+  }
 }

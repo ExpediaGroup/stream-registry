@@ -139,6 +139,6 @@ public class ConsumerIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
-
+    client.createStream(factory);
   }
 }
