@@ -34,4 +34,8 @@ public class SchemaKey implements Serializable {
   private String domain;
   @Column(name = "SKname", length = 100)
   private String name;
+
+  public DomainKey getDomainKey() {
+    return new DomainKey(domain);
+  }
 }

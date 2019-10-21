@@ -44,6 +44,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRe
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
 @Component
 public class DomainService {
@@ -101,5 +102,11 @@ public class DomainService {
     return stream(domainRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
+  }
+
+  public void validateDomainExists(DomainKey key) {
+    if (read(key).isEmpty()) {
+      throw new ValidationException("Domain does not exist");
+    }
   }
 }

@@ -125,6 +125,6 @@ public class InfrastructureIT extends ObjectIT {
 
   @Override
   public void createRequiredDatastoreState() {
-
+    client.createZone(factory);
   }
 }

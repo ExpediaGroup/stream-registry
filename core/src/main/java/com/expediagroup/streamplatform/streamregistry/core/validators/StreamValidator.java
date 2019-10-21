@@ -62,19 +62,8 @@ public class StreamValidator implements Validator<Stream> {
   }
 
   public void validateForCreateAndUpdate(Stream stream) throws ValidationException {
-    validateSchemaExists(stream);
-    validateDomainExists(stream);
+    schemaService.validateSchemaBindingExists(stream.getSchemaKey());
+    domainService.validateDomainExists(stream.getKey().getDomainKey());
   }
 
-  private void validateSchemaExists(Stream stream) {
-    if (schemaService.read(stream.getSchemaKey()).isEmpty()) {
-      throw new ValidationException("Schema does not exist");
-    }
-  }
-
-  private void validateDomainExists(Stream stream) {
-    if (domainService.read(stream.getKey().getDomainKey()).isEmpty()) {
-      throw new ValidationException("Domain does not exist");
-    }
-  }
 }

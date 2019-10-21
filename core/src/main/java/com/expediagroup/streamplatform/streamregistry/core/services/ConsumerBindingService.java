@@ -28,6 +28,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Consumer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Component
 public class ConsumerBindingService {
@@ -85,5 +86,11 @@ public class ConsumerBindingService {
     return stream(consumerbindingRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
+  }
+
+  public void validateConsumerBindingExists(ConsumerBindingKey key) {
+    if (read(key).isEmpty()) {
+      throw new ValidationException("ConsumerBinding does not exist");
+    }
   }
 }

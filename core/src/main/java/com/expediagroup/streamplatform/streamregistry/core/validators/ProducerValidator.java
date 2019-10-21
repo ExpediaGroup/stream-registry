@@ -62,19 +62,8 @@ public class ProducerValidator implements Validator<Producer> {
   }
 
   public void validateForCreateAndUpdate(Producer producer) throws ValidationException {
-    validateStreamExists(producer);
-    validateZoneExists(producer);
+    streamService.validateStreamExists(producer.getKey().getStreamKey());
+    zoneService.validateZoneExists(producer.getKey().getZoneKey());
   }
 
-  private void validateStreamExists(Producer producer) {
-    if (streamService.read(producer.getKey().getStreamKey()).isEmpty()) {
-      throw new ValidationException("Stream does not exist");
-    }
-  }
-
-  private void validateZoneExists(Producer producer) {
-    if (zoneService.read(producer.getKey().getZoneKey()).isEmpty()) {
-      throw new ValidationException("Zone does not exist");
-    }
-  }
 }

@@ -28,6 +28,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRe
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
 public class SchemaService {
@@ -86,4 +87,11 @@ public class SchemaService {
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
+
+  public void validateSchemaBindingExists(SchemaKey key) {
+    if (read(key).isEmpty()) {
+      throw new ValidationException("Schema does not exist");
+    }
+  }
+
 }

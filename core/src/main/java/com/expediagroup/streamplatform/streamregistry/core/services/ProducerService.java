@@ -28,6 +28,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Producer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
 public class ProducerService {
@@ -86,5 +87,11 @@ public class ProducerService {
     return stream(producerRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
+  }
+
+  public void validateProducerBindingExists(ProducerKey key) {
+    if (read(key).isEmpty()) {
+      throw new ValidationException("Producer does not exist");
+    }
   }
 }

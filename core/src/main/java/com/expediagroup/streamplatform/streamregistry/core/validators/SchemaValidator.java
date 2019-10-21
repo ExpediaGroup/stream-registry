@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
 public class SchemaValidator implements Validator<Schema> {
@@ -60,13 +59,6 @@ public class SchemaValidator implements Validator<Schema> {
   }
 
   public void validateForCreateAndUpdate(Schema schema) throws ValidationException {
-    validateDomainExists(schema);
-  }
-
-  private void validateDomainExists(Schema schema) {
-    DomainKey domainKey = new DomainKey(schema.getKey().getDomain());
-    if (domainService.read(domainKey).isEmpty()) {
-      throw new ValidationException("Domain does not exist");
-    }
+    domainService.validateDomainExists(schema.getKey().getDomainKey());
   }
 }

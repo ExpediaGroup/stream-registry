@@ -31,7 +31,6 @@ public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
     this.consumerService = consumerService;
   }
 
-
   @Override
   public void validateForCreate(ConsumerBinding consumerbinding) throws ValidationException {
     validateForCreateAndUpdate(consumerbinding);
@@ -45,8 +44,6 @@ public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
   }
 
   private void validateForCreateAndUpdate(ConsumerBinding consumerbinding) {
-    if (consumerService.read(consumerbinding.getKey().getConsumerKey()).isEmpty()) {
-      throw new ValidationException("Consumer does not exist " + consumerbinding.getKey().getConsumerKey());
-    }
+    consumerService.validateConsumerExists(consumerbinding.getKey().getConsumerKey());
   }
 }

@@ -28,6 +28,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamBi
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 public class StreamBindingService {
@@ -85,5 +86,11 @@ public class StreamBindingService {
     return stream(streambindingRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
+  }
+
+  public void validateStreamBindingExists(StreamBindingKey key) {
+    if (read(key).isEmpty()) {
+      throw new ValidationException("StreamBinding does not exist");
+    }
   }
 }

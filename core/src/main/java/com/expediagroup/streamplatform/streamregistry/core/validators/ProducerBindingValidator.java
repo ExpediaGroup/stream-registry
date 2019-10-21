@@ -43,8 +43,6 @@ public class ProducerBindingValidator implements Validator<ProducerBinding> {
   }
 
   public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
-    if (producerService.read(producerbinding.getKey().getProducerKey()).isEmpty()) {
-      throw new ValidationException("Producer does not exist " + producerbinding.getKey().getProducerKey());
-    }
+    producerService.validateProducerBindingExists(producerbinding.getKey().getProducerKey());
   }
 }

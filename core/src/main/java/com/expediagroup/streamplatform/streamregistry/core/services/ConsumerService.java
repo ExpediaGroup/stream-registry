@@ -28,6 +28,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Consumer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
 public class ConsumerService {
@@ -85,5 +86,11 @@ public class ConsumerService {
     return stream(consumerRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
+  }
+
+  public void validateConsumerExists(ConsumerKey key) {
+    if (read(key).isEmpty()) {
+      throw new ValidationException("Consumer does not exist");
+    }
   }
 }

@@ -47,18 +47,10 @@ public class ConsumerValidator implements Validator<Consumer> {
   }
 
   public void validateForCreateAndUpdate(Consumer consumer) throws ValidationException {
-    validateStreamExists(consumer);
-    validateZoneExists(consumer);
+    streamService.validateStreamExists(consumer.getKey().getStreamKey());
+    zoneService.validateZoneExists(consumer.getKey().getZoneKey());
   }
 
-  private void validateStreamExists(Consumer consumer) {
-    if (streamService.read(consumer.getKey().getStreamKey()).isEmpty()) {
-      throw new ValidationException("Stream does not exist");
-    }
-  }
 
-  private void validateZoneExists(Consumer consumer) {
-    if (zoneService.read(consumer.getKey().getZoneKey()).isEmpty()) {
-      throw new ValidationException("Zone does not exist");
-    }
-  }}
+
+}

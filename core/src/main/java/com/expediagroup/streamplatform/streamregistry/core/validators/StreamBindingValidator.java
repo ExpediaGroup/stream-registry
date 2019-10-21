@@ -44,12 +44,7 @@ public class StreamBindingValidator implements Validator<StreamBinding> {
   }
 
   private void validateForCreateAndUpdate(StreamBinding streambinding) throws ValidationException {
-    validateStreamExists(streambinding);
+    streamService.validateStreamExists(streambinding.getKey().getStreamKey());
   }
 
-  private void validateStreamExists(StreamBinding streamBinding) {
-    if (streamService.read(streamBinding.getKey().getStreamKey()).isEmpty()) {
-      throw new ValidationException("Stream does not exist");
-    }
-  }
 }

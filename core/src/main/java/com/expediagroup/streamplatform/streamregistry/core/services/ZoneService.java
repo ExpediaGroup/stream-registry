@@ -102,4 +102,10 @@ public class ZoneService {
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
+
+  public void validateZoneExists(ZoneKey key) {
+    if (read(key).isEmpty()) {
+      throw new ValidationException("Zone does not exist");
+    }
+  }
 }
