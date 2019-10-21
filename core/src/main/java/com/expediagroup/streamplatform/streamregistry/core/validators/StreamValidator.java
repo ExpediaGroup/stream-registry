@@ -37,7 +37,6 @@ import com.expediagroup.streamplatform.streamregistry.core.services.DomainServic
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
 public class StreamValidator implements Validator<Stream> {
@@ -74,8 +73,7 @@ public class StreamValidator implements Validator<Stream> {
   }
 
   private void validateDomainExists(Stream stream) {
-    DomainKey domainKey = new DomainKey(stream.getKey().getDomain());
-    if (domainService.read(domainKey).isEmpty()) {
+    if (domainService.read(stream.getKey().getDomainKey()).isEmpty()) {
       throw new ValidationException("Domain does not exist");
     }
   }

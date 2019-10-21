@@ -17,24 +17,39 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 @Component
 public class StreamBindingValidator implements Validator<StreamBinding> {
 
+  private StreamService streamService;
+  private SpecificationValidator specificationValidator = new SpecificationValidator();
+
+  public StreamBindingValidator(StreamService streamService) {
+    this.streamService = streamService;
+  }
+
   @Override
   public void validateForCreate(StreamBinding streambinding) throws ValidationException {
     validateForCreateAndUpdate(streambinding);
-    new SpecificationValidator().validateForCreate(streambinding.getSpecification());
+    specificationValidator.validateForCreate(streambinding.getSpecification());
   }
 
   @Override
   public void validateForUpdate(StreamBinding streambinding, StreamBinding existing) throws ValidationException {
     validateForCreateAndUpdate(streambinding);
-    new SpecificationValidator().validateForUpdate(streambinding.getSpecification(), existing.getSpecification());
+    specificationValidator.validateForUpdate(streambinding.getSpecification(), existing.getSpecification());
   }
 
-  public void validateForCreateAndUpdate(StreamBinding streambinding) throws ValidationException {
+  private void validateForCreateAndUpdate(StreamBinding streambinding) throws ValidationException {
+    validateStreamExists(streambinding);
+  }
+
+  private void validateStreamExists(StreamBinding streamBinding) {
+    if (streamService.read(streamBinding.getKey().getStreamKey()).isEmpty()) {
+      throw new ValidationException("Stream does not exist");
+    }
   }
 }
