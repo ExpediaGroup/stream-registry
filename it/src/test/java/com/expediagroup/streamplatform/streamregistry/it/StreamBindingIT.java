@@ -19,8 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
@@ -31,12 +33,22 @@ public class StreamBindingIT extends ObjectIT {
 
   @Override
   public void create() {
+    Object data = client.getData(factory.insertStreamBindingMutationBuilder().build());
 
+    InsertStreamBindingMutation.Insert insert = ((InsertStreamBindingMutation.Data) data).getStreamBinding().getInsert();
+
+    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void update() {
+    Object data = client.getData(factory.updateStreamBindingMutationBuilder().build());
 
+    UpdateStreamBindingMutation.Update update = ((UpdateStreamBindingMutation.Data) data).getStreamBinding().getUpdate();
+
+    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override

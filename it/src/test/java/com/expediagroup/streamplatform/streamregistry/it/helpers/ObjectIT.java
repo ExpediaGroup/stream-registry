@@ -32,6 +32,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 
 import com.apollographql.apollo.api.Mutation;
+import com.apollographql.apollo.api.Response;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 
 import junit.framework.TestCase;
@@ -109,6 +110,15 @@ public abstract class ObjectIT {
   public abstract void queryByRegex();
 
   public abstract void createRequiredDatastoreState();
+
+  public Response assertMutationSucceeds(Mutation mutation) {
+    try {
+      return client.invoke(mutation);
+    } catch (RuntimeException e) {
+      TestCase.fail("Mutation failed");
+    }
+    return null;
+  }
 
   public Mutation assertMutationFails(Mutation mutation) {
     if (mutation.getClass().getSimpleName().toLowerCase().contains("insert")) {

@@ -19,8 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.SchemaQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.SchemasQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
@@ -31,12 +33,23 @@ public class SchemaIT extends ObjectIT {
 
   @Override
   public void create() {
+    Object data = client.getData(factory.insertSchemaMutationBuilder().build());
 
+    InsertSchemaMutation.Insert upsert = ((InsertSchemaMutation.Data) data).getSchema().getInsert();
+
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void update() {
 
+    Object data = client.getData(factory.updateSchemaMutationBuilder().build());
+
+    UpdateSchemaMutation.Update upsert = ((UpdateSchemaMutation.Data) data).getSchema().getUpdate();
+
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override

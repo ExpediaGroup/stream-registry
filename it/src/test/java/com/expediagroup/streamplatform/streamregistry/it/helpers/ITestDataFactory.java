@@ -21,7 +21,12 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
@@ -30,11 +35,15 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomai
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
@@ -63,6 +72,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ITestDataFactory {
 
   private static final ObjectMapper mapper = new ObjectMapper();
+  private static final String EGSP_KAFKA = "egsp.kafka";
   public String zoneName;
   public String domainName;
   public String consumerName;
@@ -116,19 +126,25 @@ public class ITestDataFactory {
   public UpsertConsumerMutation.Builder upsertConsumerMutationBuilder() {
     return UpsertConsumerMutation.builder()
         .key(consumerKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public InsertConsumerMutation.Builder insertConsumerMutationBuilder() {
     return InsertConsumerMutation.builder()
         .key(consumerKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
+  }
+
+  public InsertZoneMutation.Builder insertZoneMutationBuilder() {
+    return InsertZoneMutation.builder()
+        .key(zoneKeyInputBuilder().build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public UpsertZoneMutation.Builder upsertZoneMutationBuilder() {
     return UpsertZoneMutation.builder()
         .key(zoneKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public ZoneKeyInput.Builder zoneKeyInputBuilder() {
@@ -138,7 +154,7 @@ public class ITestDataFactory {
   public UpdateConsumerMutation.Builder updateConsumerMutationBuilder() {
     return UpdateConsumerMutation.builder()
         .key(consumerKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public UpdateConsumerStatusMutation.Builder updateConsumerStatusBuilder() {
@@ -152,7 +168,7 @@ public class ITestDataFactory {
   public UpsertConsumerBindingMutation.Builder upsertConsumerBindingMutationBuilder() {
     return UpsertConsumerBindingMutation.builder()
         .key(consumerBindingKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public ConsumerBindingKeyInput.Builder consumerBindingKeyInputBuilder() {
@@ -178,7 +194,7 @@ public class ITestDataFactory {
   public UpsertInfrastructureMutation.Builder upsertInfrastructureMutationBuilder() {
     return UpsertInfrastructureMutation.builder()
         .key(infrastructureKey())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public InfrastructureKeyInput infrastructureKey() {
@@ -188,10 +204,22 @@ public class ITestDataFactory {
         .build();
   }
 
+  public InsertProducerBindingMutation.Builder insertProducerBindingMutationBuilder() {
+    return InsertProducerBindingMutation.builder()
+        .key(producerBindingKeyInputBuilder().build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
+  }
+
+  public UpdateProducerBindingMutation.Builder updateProducerBindingMutationBuilder() {
+    return UpdateProducerBindingMutation.builder()
+        .key(producerBindingKeyInputBuilder().build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
+  }
+
   public UpsertProducerBindingMutation.Builder upsertProducerBindingMutationBuilder() {
     return UpsertProducerBindingMutation.builder()
         .key(producerBindingKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public InfrastructureKeyInput.Builder infrastructureKeyInputBuilder() {
@@ -213,7 +241,7 @@ public class ITestDataFactory {
   public UpsertProducerMutation.Builder upsertProducerMutationBuilder() {
     return UpsertProducerMutation.builder()
         .key(producerKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public ProducerKeyInput.Builder producerKeyInputBuilder() {
@@ -225,9 +253,23 @@ public class ITestDataFactory {
         .zone(zoneName);
   }
 
+  public InsertStreamMutation.Builder insertStreamMutationBuilder() {
+    return InsertStreamMutation.builder()
+        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .schema(schemaKeyInputBuilder().build())
+        .key(streamKeyInputBuilder().build());
+  }
+
+  public UpdateStreamMutation.Builder updateStreamMutationBuilder() {
+    return UpdateStreamMutation.builder()
+        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        // .schema(schemaKeyInputBuilder().build())
+        .key(streamKeyInputBuilder().build());
+  }
+
   public UpsertStreamMutation.Builder upsertStreamMutationBuilder() {
     return UpsertStreamMutation.builder()
-        .specification(specificationInputBuilder("egsp.kafka").build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
@@ -237,6 +279,18 @@ public class ITestDataFactory {
         .domain(domainName)
         .name(streamName)
         .version(1);
+  }
+
+  public InsertSchemaMutation.Builder insertSchemaMutationBuilder() {
+    return InsertSchemaMutation.builder()
+        .specification(specificationInputBuilder("egsp.confluent").build())
+        .key(schemaKeyInputBuilder().build());
+  }
+
+  public UpdateSchemaMutation.Builder updateSchemaMutationBuilder() {
+    return UpdateSchemaMutation.builder()
+        .specification(specificationInputBuilder("egsp.confluent").build())
+        .key(schemaKeyInputBuilder().build());
   }
 
   public UpsertSchemaMutation.Builder upsertSchemaMutationBuilder() {
@@ -251,9 +305,21 @@ public class ITestDataFactory {
         .name(streamName);
   }
 
+  public InsertStreamBindingMutation.Builder insertStreamBindingMutationBuilder() {
+    return InsertStreamBindingMutation.builder()
+        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .key(streamBindingKeyInputBuilder().build());
+  }
+
+  public UpdateStreamBindingMutation.Builder updateStreamBindingMutationBuilder() {
+    return UpdateStreamBindingMutation.builder()
+        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .key(streamBindingKeyInputBuilder().build());
+  }
+
   public UpsertStreamBindingMutation.Builder upsertStreamBindingMutationBuilder() {
     return UpsertStreamBindingMutation.builder()
-        .specification(specificationInputBuilder("egsp.kafka").build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).build())
         .key(streamBindingKeyInputBuilder().build());
   }
 
@@ -269,13 +335,13 @@ public class ITestDataFactory {
   public UpdateProducerMutation.Builder updateProducerMutationBuilder() {
     return UpdateProducerMutation.builder()
         .key(producerKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public InsertProducerMutation.Builder insertProducerMutationBuilder() {
     return InsertProducerMutation.builder()
         .key(producerKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public UpdateDomainStatusMutation.Builder updateDomainStatusMutation() {
@@ -287,13 +353,13 @@ public class ITestDataFactory {
   public InsertInfrastructureMutation.Builder insertInfrastructureMutationBuilder() {
     return InsertInfrastructureMutation.builder()
         .key(infrastructureKey())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public UpdateInfrastructureMutation.Builder updateInfrastructureMutationBuilder() {
     return UpdateInfrastructureMutation.builder()
         .key(infrastructureKey())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public UpdateInfrastructureStatusMutation.Builder updateInfrastructureStatusBuilder() {
@@ -335,13 +401,13 @@ public class ITestDataFactory {
   public UpdateConsumerBindingMutation.Builder updateConsumerBindingMutationBuilder() {
     return UpdateConsumerBindingMutation.builder()
         .key(consumerBindingKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public InsertConsumerBindingMutation.Builder insertConsumerBindingMutationBuilder() {
     return InsertConsumerBindingMutation.builder()
         .key(consumerBindingKeyInputBuilder().build())
-        .specification(specificationInputBuilder("egsp.kafka").build());
+        .specification(specificationInputBuilder(EGSP_KAFKA).build());
   }
 
   public InsertDomainMutation.Builder insertDomainMutationBuilder() {

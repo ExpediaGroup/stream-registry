@@ -32,7 +32,7 @@ public class ProducerBindingMutation {
   }
 
   public ProducerBinding insert(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return services.getProducerBindingService().upsert(asProducerBinding(key, specification)).get();
+    return services.getProducerBindingService().create(asProducerBinding(key, specification)).get();
   }
 
   public ProducerBinding update(ProducerBindingKeyInput key, SpecificationInput specification) {

@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
@@ -30,12 +31,24 @@ public class ZoneIT extends ObjectIT {
 
   @Override
   public void create() {
+    Object data = client.getData(factory.insertZoneMutationBuilder().build());
 
+    InsertZoneMutation.Insert Insert = ((InsertZoneMutation.Data) data).getZone().getInsert();
+
+    assertThat(Insert.getKey().getName(), is(factory.zoneName));
+    assertThat(Insert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(Insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void update() {
+    Object data = client.getData(factory.upsertZoneMutationBuilder().build());
 
+    UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
+
+    assertThat(upsert.getKey().getName(), is(factory.zoneName));
+    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
