@@ -50,7 +50,7 @@ public abstract class ObjectIT {
   public static Client client;
   private static ConfigurableApplicationContext context;
   private static String url;
-  public ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName());
+  public ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName().toLowerCase());
 
   @BeforeClass
   public static void beforeClass() {

@@ -83,17 +83,17 @@ public class ITestDataFactory {
   private String infrastructureName;
   private String producerName;
   public ITestDataFactory(String suffix) {
-    zoneName = "zoneName" + suffix;
-    domainName = "domainName" + suffix;
-    consumerName = "consumerName" + suffix;
-    streamName = "streamName" + suffix;
+    zoneName = "zone_name_" + suffix;
+    domainName = "domain_name_" + suffix;
+    consumerName = "consumer_name_" + suffix;
+    streamName = "stream_name_" + suffix;
 
-    infrastructureName = "infrastructureName" + suffix;
-    producerName = "producerName" + suffix;
+    infrastructureName = "infrastructure_name_" + suffix;
+    producerName = "producer_name_" + suffix;
 
-    key = "key" + suffix;
-    value = "value" + suffix;
-    description = "description" + suffix;
+    key = "key_" + suffix;
+    value = "value_" + suffix;
+    description = "description_" + suffix;
   }
 
   public final DomainKeyInput.Builder domainKeyInputBuilder() {

@@ -124,7 +124,7 @@ public class ConsumerIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("queryByRegex");
+    setFactorySuffix("query_by_regex");
 
     ConsumerKeyQuery query = ConsumerKeyQuery.builder().nameRegex(".*").build();
 

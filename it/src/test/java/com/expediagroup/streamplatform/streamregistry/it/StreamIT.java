@@ -95,9 +95,9 @@ public class StreamIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("queryByRegex");
+    setFactorySuffix("query_by_regex");
 
-    StreamKeyQuery query = StreamKeyQuery.builder().nameRegex("streamName.*").build();
+    StreamKeyQuery query = StreamKeyQuery.builder().nameRegex("stream_name.*").build();
 
     StreamsQuery.Data before = (StreamsQuery.Data) client.getData(StreamsQuery.builder().key(query).build());
 

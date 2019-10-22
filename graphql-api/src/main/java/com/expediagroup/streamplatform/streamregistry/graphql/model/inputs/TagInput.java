@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.NameNormaliser.normalise;
+
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 import lombok.Builder;
@@ -27,6 +29,6 @@ public class TagInput {
   String value;
 
   public Tag asTag() {
-    return new Tag(name, value);
+    return new Tag(normalise(name), value);
   }
 }

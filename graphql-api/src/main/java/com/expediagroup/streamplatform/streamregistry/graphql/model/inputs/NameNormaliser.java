@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.validators;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class NameValidator {
+public class NameNormaliser {
 
   private static final Pattern pattern = Pattern
-      .compile("^([a-z][a-z0-9]*(-[a-z][a-z0-9]*)*)+(\\.[a-z][a-z0-9]*(-[a-z][a-z0-9]*)*)*$");
+      .compile("^([a-z][a-z0-9]*(\\_[a-z0-9]*)*)$");
 
-  /**
-   * Pattern allows for groups of lowercase alphanumerics separated by ${code -} and ${code .}. Each group of alphanumerics must
-   * begin with an alpha character. There may not be consecutive instances or clashes of ${code -} and ${code .}.
-   *
-   * @param name
-   *     The input name
-   */
-  public void validate(String name) {
+  public static String normalise(String name) {
+    name = name.trim();
     if (!pattern.matcher(name).matches()) {
-      throw new IllegalArgumentException(String.format("Invalid name '%s'", name));
+      throw new IllegalArgumentException(String.format("Invalid name '%s' must be lowercase alphanumeric with optional dashes, starting with alpha", name));
     }
+    return name;
   }
 }

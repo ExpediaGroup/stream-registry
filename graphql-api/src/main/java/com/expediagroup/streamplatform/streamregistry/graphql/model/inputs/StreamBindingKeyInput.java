@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.NameNormaliser.normalise;
+
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 import lombok.Builder;
@@ -31,11 +33,11 @@ public class StreamBindingKeyInput {
 
   public StreamBindingKey asStreamBindingKey() {
     return new StreamBindingKey(
-        streamDomain,
-        streamName,
+        normalise(streamDomain),
+        normalise(streamName),
         streamVersion,
-        infrastructureZone,
-        infrastructureName
+        normalise(infrastructureZone),
+        normalise(infrastructureName)
     );
   }
 }

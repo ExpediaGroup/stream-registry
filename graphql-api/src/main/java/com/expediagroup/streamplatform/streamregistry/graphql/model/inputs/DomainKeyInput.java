@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.NameNormaliser.normalise;
+
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 import lombok.Builder;
@@ -26,6 +28,6 @@ public class DomainKeyInput {
   String name;
 
   public DomainKey asDomainKey() {
-    return new DomainKey(name);
+    return new DomainKey(normalise(name));
   }
 }

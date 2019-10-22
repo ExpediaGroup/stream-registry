@@ -94,9 +94,9 @@ public class ZoneIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("queryByRegex");
+    setFactorySuffix("query_by_regex");
 
-    ZoneKeyQuery query = ZoneKeyQuery.builder().nameRegex("zoneName.*").build();
+    ZoneKeyQuery query = ZoneKeyQuery.builder().nameRegex("zone_name.*").build();
 
     ZonesQuery.Data before = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
 

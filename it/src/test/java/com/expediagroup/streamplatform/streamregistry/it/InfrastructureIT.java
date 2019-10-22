@@ -37,7 +37,7 @@ public class InfrastructureIT extends ObjectIT {
   @Override
   public void create() {
 
-    setFactorySuffix("Create");
+    setFactorySuffix("create");
 
     assertMutationFails(factory.updateInfrastructureMutationBuilder().build());
 
@@ -52,7 +52,7 @@ public class InfrastructureIT extends ObjectIT {
   @Test
   public void update() {
 
-    setFactorySuffix("Update");
+    setFactorySuffix("update");
 
     Mutation updateMutation = factory.updateInfrastructureMutationBuilder().build();
 
@@ -110,7 +110,7 @@ public class InfrastructureIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("queryByRegex");
+    setFactorySuffix("query_by_regex");
 
     InfrastructureKeyQuery query = InfrastructureKeyQuery.builder().nameRegex(".*").build();
 

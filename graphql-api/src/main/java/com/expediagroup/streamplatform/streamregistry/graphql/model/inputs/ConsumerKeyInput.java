@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.NameNormaliser.normalise;
+
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 import lombok.Builder;
@@ -31,11 +33,11 @@ public class ConsumerKeyInput {
 
   public ConsumerKey asConsumerKey() {
     return new ConsumerKey(
-        streamDomain,
-        streamName,
+        normalise(streamDomain),
+        normalise(streamName),
         streamVersion,
-        zone,
-        name
+        normalise(zone),
+        normalise(name)
     );
   }
 }

@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.NameNormaliser.normalise;
+
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
 import lombok.Builder;
@@ -28,8 +30,8 @@ public class InfrastructureKeyInput {
 
   public InfrastructureKey asInfrastructureKey() {
     return new InfrastructureKey(
-        zone,
-        name
+        normalise(zone),
+        normalise(name)
     );
   }
 }

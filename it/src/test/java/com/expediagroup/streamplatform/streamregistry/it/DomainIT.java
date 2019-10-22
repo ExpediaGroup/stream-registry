@@ -37,7 +37,7 @@ public class DomainIT extends ObjectIT {
   @Override
   public void create() {
 
-    setFactorySuffix("Create");
+    setFactorySuffix("create");
 
     assertMutationFails(factory.updateDomainMutationBuilder().build());
 
@@ -54,7 +54,7 @@ public class DomainIT extends ObjectIT {
   @Test
   public void update() {
 
-    setFactorySuffix("Update");
+    setFactorySuffix("update");
 
     Mutation updateMutation = factory.updateDomainMutationBuilder().build();
 
@@ -117,7 +117,7 @@ public class DomainIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("queryByRegex");
+    setFactorySuffix("query_by_regex");
 
     DomainKeyQuery query = DomainKeyQuery.builder().nameRegex(".*").build();
 

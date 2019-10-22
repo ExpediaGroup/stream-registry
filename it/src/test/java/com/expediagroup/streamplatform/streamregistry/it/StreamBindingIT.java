@@ -95,9 +95,9 @@ public class StreamBindingIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("queryByRegex");
+    setFactorySuffix("query_by_regex");
 
-    StreamBindingKeyQuery query = StreamBindingKeyQuery.builder().streamNameRegex("streamName.*").build();
+    StreamBindingKeyQuery query = StreamBindingKeyQuery.builder().streamNameRegex("stream_name.*").build();
 
     StreamBindingsQuery.Data before = (StreamBindingsQuery.Data) client.getData(StreamBindingsQuery.builder().key(query).build());
 

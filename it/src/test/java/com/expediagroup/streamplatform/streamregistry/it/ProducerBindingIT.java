@@ -35,7 +35,7 @@ public class ProducerBindingIT extends ObjectIT {
   @Override
   public void create() {
 
-    setFactorySuffix("Create");
+    setFactorySuffix("create");
 
     Mutation insertMutation = factory.insertProducerBindingMutationBuilder().build();
 
@@ -52,7 +52,7 @@ public class ProducerBindingIT extends ObjectIT {
   @Override
   public void update() {
 
-    setFactorySuffix("Update");
+    setFactorySuffix("update");
 
     Mutation updateMutation = factory.updateProducerBindingMutationBuilder().build();
 
@@ -111,7 +111,7 @@ public class ProducerBindingIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("queryByRegex");
+    setFactorySuffix("query_by_regex");
 
     ProducerBindingKeyQuery query = ProducerBindingKeyQuery.builder().producerNameRegex("producerName.*").build();
 
