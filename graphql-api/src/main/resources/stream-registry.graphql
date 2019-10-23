@@ -458,46 +458,63 @@ type DomainQuery{
 }
 
 type SchemaQuery{
+    byKey(key: SchemaKeyInput!): Schema!
+    byQuery(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
     schema(key: SchemaKeyInput!): Schema!
     schemas(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
 }
 
+
 type StreamQuery{
+    byKey(key: StreamKeyInput!): Stream!
+    byQuery(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
     stream(key: StreamKeyInput!): Stream!
     streams(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
 }
 
 type ZoneQuery{
+    byKey(key: ZoneKeyInput!): Zone!
+    byQuery(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
     zone(key: ZoneKeyInput!): Zone!
     zones(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
 }
-
 type InfrastructureQuery{
+    byKey(key: InfrastructureKeyInput!): Infrastructure!
+    byQuery(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
     infrastructure(key: InfrastructureKeyInput!): Infrastructure!
     infrastructures(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
 }
 
 type ProducerQuery{
+    byKey(key: ProducerKeyInput!): Producer!
+    byQuery(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
     producer(key: ProducerKeyInput!): Producer!
     producers(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
 }
 
 type ConsumerQuery{
+    byKey(key: ConsumerKeyInput!): Consumer!
+    byQuery(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
     consumer(key: ConsumerKeyInput!): Consumer!
     consumers(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
 }
-
 type StreamBindingQuery{
+    byKey(key: StreamBindingKeyInput!): StreamBinding!
+    byQuery(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
     streamBinding(key: StreamBindingKeyInput!): StreamBinding!
     streamBindings(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
 }
 
 type ProducerBindingQuery{
+    byKey(key: ProducerBindingKeyInput!): ProducerBinding!
+    byQuery(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
     producerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
     producerBindings(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
 }
 
 type ConsumerBindingQuery{
+    byKey(key: ConsumerBindingKeyInput!): ConsumerBinding!
+    byQuery(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
     consumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
     consumerBindings(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
 }

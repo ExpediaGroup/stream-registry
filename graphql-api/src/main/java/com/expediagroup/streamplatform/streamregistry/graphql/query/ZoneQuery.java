@@ -37,4 +37,13 @@ public class ZoneQuery {
   public Iterable<Zone> getZones(ZoneKeyQuery key, SpecificationQuery specification) {
     return service.findAll(new ZoneFilter(key, specification));
   }
+
+  public Zone getByKey(ZoneKeyInput key) {
+    return service.read(key.asZoneKey()).get();
+  }
+
+  public Iterable<Zone> getByQuery(ZoneKeyQuery key, SpecificationQuery specification) {
+    return service.findAll(new ZoneFilter(key, specification));
+  }
+
 }

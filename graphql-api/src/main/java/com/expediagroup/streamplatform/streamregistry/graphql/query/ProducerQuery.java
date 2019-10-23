@@ -37,4 +37,12 @@ public class ProducerQuery {
   public Iterable<Producer> getProducers(ProducerKeyQuery key, SpecificationQuery specification) {
     return service.findAll(new ProducerFilter(key, specification));
   }
+
+  public Producer getByKey(ProducerKeyInput key) {
+    return service.read(key.asProducerKey()).get();
+  }
+
+  public Iterable<Producer> getByQuery(ProducerKeyQuery key, SpecificationQuery specification) {
+    return service.findAll(new ProducerFilter(key, specification));
+  }
 }

@@ -37,4 +37,12 @@ public class ConsumerBindingQuery {
   public Iterable<ConsumerBinding> getConsumerBindings(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
     return service.findAll(new ConsumerBindingFilter(key, specification));
   }
+
+  public ConsumerBinding getByKey(ConsumerBindingKeyInput key) {
+    return service.read(key.asConsumerBindingKey()).get();
+  }
+
+  public Iterable<ConsumerBinding> getByQuery(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
+    return service.findAll(new ConsumerBindingFilter(key, specification));
+  }
 }
