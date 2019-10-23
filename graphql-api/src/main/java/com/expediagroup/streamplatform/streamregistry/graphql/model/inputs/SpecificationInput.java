@@ -20,12 +20,13 @@ import static com.expediagroup.streamplatform.streamregistry.model.scalars.Objec
 import java.util.ArrayList;
 import java.util.List;
 
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.Builder;
 import lombok.Value;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 @Value
 @Builder

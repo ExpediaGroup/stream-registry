@@ -21,6 +21,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class StreamRegistryApp {
   public static void main(String[] args) {
-    SpringApplication.run(StreamRegistryApp.class, new String[] { "--schema.registry.url=x" });
+    SpringApplication.run(StreamRegistryApp.class, args);
   }
 }

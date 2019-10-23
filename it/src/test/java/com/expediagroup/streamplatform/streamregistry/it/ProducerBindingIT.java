@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingsQuery;

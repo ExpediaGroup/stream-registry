@@ -21,7 +21,6 @@ import com.expediagroup.streamplatform.streamregistry.core.services.StreamServic
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @Component
 public class ConsumerValidator implements Validator<Consumer> {

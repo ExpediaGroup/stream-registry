@@ -44,7 +44,6 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRe
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
 @Component
 public class DomainService {

@@ -28,7 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamBi
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 public class StreamBindingService {

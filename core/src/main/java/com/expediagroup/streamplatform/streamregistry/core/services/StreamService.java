@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 

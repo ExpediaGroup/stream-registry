@@ -22,6 +22,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 
+import junit.framework.TestCase;
+
+import com.apollographql.apollo.api.Mutation;
+import com.apollographql.apollo.api.Response;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -31,11 +36,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 
-import com.apollographql.apollo.api.Mutation;
-import com.apollographql.apollo.api.Response;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
-
-import junit.framework.TestCase;
 
 public abstract class ObjectIT {
 

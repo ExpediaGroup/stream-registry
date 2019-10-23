@@ -19,9 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.apollographql.apollo.api.Mutation;
+
 import org.junit.Test;
 
-import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumersQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;

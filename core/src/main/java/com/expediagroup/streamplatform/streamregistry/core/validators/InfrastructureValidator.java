@@ -17,12 +17,9 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 public class InfrastructureValidator implements Validator<Infrastructure> {

@@ -28,7 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Producer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
 public class ProducerBindingService {

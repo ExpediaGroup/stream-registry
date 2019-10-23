@@ -28,7 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Infrastr
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
 @Component
 public class InfrastructureService {
