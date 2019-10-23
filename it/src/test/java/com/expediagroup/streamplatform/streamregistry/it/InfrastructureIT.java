@@ -105,7 +105,7 @@ public class InfrastructureIT extends ObjectIT {
 
     InfrastructureQuery.Data after = (InfrastructureQuery.Data) client.getData(InfrastructureQuery.builder().key(input).build());
 
-    assertEquals(after.getInfrastructureQuery().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getInfrastructure().getByKey().getKey().getName(), input.name());
   }
 
   @Override
@@ -121,7 +121,7 @@ public class InfrastructureIT extends ObjectIT {
 
     InfrastructuresQuery.Data after = (InfrastructuresQuery.Data) client.getData(InfrastructuresQuery.builder().key(query).build());
 
-    assertEquals(before.getInfrastructureQuery().getByQuery().size() + 1, after.getInfrastructureQuery().getByQuery().size());
+    assertEquals(before.getInfrastructure().getByQuery().size() + 1, after.getInfrastructure().getByQuery().size());
   }
 
   @Override

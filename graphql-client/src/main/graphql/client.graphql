@@ -84,7 +84,7 @@ mutation UpdateConsumerStatus(
 query Consumer(
     $key: ConsumerKeyInput!
 ) {
-    consumerQuery{
+    consumer{
         byKey(
             key: $key
         ) {
@@ -98,7 +98,7 @@ query Consumers(
     $key: ConsumerKeyQuery
     $specification: SpecificationQuery
 ) {
-    consumerQuery{
+    consumer{
         byQuery(
             key: $key
             specification: $specification
@@ -179,7 +179,7 @@ mutation updateConsumerBindingStatus(
 query ConsumerBinding(
     $key: ConsumerBindingKeyInput!
 ) {
-    consumerBindingQuery{
+    consumerBinding{
         byKey(
             key: $key
         ) {
@@ -194,7 +194,7 @@ query ConsumerBindings(
     $key: ConsumerBindingKeyQuery
     $specification: SpecificationQuery
 ) {
-    consumerBindingQuery{
+    consumerBinding{
         byQuery(
             key: $key
             specification: $specification
@@ -273,7 +273,7 @@ mutation UpdateDomainStatus(
 query Domain(
     $key: DomainKeyInput!
 ) {
-    domainQuery{
+    domain{
         byKey(
             key: $key
         ) {
@@ -287,7 +287,7 @@ query Domains(
     $key: DomainKeyQuery
     $specification: SpecificationQuery
 ) {
-    domainQuery{
+    domain{
         byQuery(
             key: $key
             specification: $specification
@@ -368,7 +368,7 @@ mutation UpdateInfrastructureStatus(
 query Infrastructure(
     $key: InfrastructureKeyInput!
 ) {
-    infrastructureQuery{
+    infrastructure{
         byKey(
             key: $key
         ) {
@@ -382,7 +382,7 @@ query Infrastructures(
     $key: InfrastructureKeyQuery
     $specification: SpecificationQuery
 ) {
-    infrastructureQuery{
+    infrastructure{
         byQuery(
             key: $key
             specification: $specification
@@ -465,7 +465,7 @@ mutation UpdateProducerStatus(
 query Producer(
     $key: ProducerKeyInput!
 ) {
-    producerQuery{
+    producer{
         byKey(
             key: $key
         ) {
@@ -479,7 +479,7 @@ query Producers(
     $key: ProducerKeyQuery
     $specification: SpecificationQuery
 ) {
-    producerQuery{
+    producer{
         byQuery(
             key: $key
             specification: $specification
@@ -561,7 +561,7 @@ mutation UpdateProducerBindingStatus(
 query ProducerBinding(
     $key: ProducerBindingKeyInput!
 ) {
-    producerBindingQuery{
+    producerBinding{
         byKey(
             key: $key
         ) {
@@ -576,7 +576,7 @@ query ProducerBindings(
     $key: ProducerBindingKeyQuery
     $specification: SpecificationQuery
 ) {
-    producerBindingQuery{
+    producerBinding{
         byQuery(
             key: $key
             specification: $specification
@@ -655,7 +655,7 @@ mutation UpdateSchemaStatus(
 query Schema(
     $key: SchemaKeyInput!
 ) {
-    schemaQuery{
+    schema{
         byKey(
             key: $key
         ) {
@@ -669,7 +669,7 @@ query Schemas(
     $key: SchemaKeyQuery
     $specification: SpecificationQuery
 ) {
-    schemaQuery{
+    schema{
         byQuery(
             key: $key
             specification: $specification
@@ -753,7 +753,7 @@ mutation UpdateStreamStatus(
 query Stream(
     $key: StreamKeyInput!
 ) {
-    streamQuery{
+    stream{
         byKey(
             key: $key
         ) {
@@ -767,7 +767,7 @@ query Streams(
     $key: StreamKeyQuery
     $specification: SpecificationQuery
 ) {
-    streamQuery{
+    stream{
         byQuery(
             key: $key
             specification: $specification
@@ -848,7 +848,7 @@ mutation UpdateStreamBindingStatus(
 query StreamBinding(
     $key: StreamBindingKeyInput!
 ) {
-    streamBindingQuery{
+    streamBinding{
         byKey(
             key: $key
         ) {
@@ -862,7 +862,7 @@ query StreamBindings(
     $key: StreamBindingKeyQuery
     $specification: SpecificationQuery
 ) {
-    streamBindingQuery{
+    streamBinding{
         byQuery(
             key: $key
             specification: $specification
@@ -941,7 +941,7 @@ mutation UpdateZoneStatus(
 query Zone(
     $key: ZoneKeyInput!
 ) {
-    zoneQuery{
+    zone{
         byKey(
             key: $key
         ) {
@@ -955,7 +955,7 @@ query Zones(
     $key: ZoneKeyQuery,
     $specification: SpecificationQuery
 ) {
-    zoneQuery{
+    zone{
         byQuery(
             key: $key,
             specification: $specification

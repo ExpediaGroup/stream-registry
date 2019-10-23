@@ -59,43 +59,43 @@ public class Query implements GraphQLQueryResolver {
     return null;
   }
 
-  public DomainQuery getDomainQuery() {
+  public DomainQuery getDomain() {
     return domainQuery;
   }
 
-  public SchemaQuery getSchemaQuery() {
+  public SchemaQuery getSchema() {
     return schemaQuery;
   }
 
-  public StreamQuery getStreamQuery() {
+  public StreamQuery getStream() {
     return streamQuery;
   }
 
-  public ZoneQuery getZoneQuery() {
+  public ZoneQuery getZone() {
     return zoneQuery;
   }
 
-  public InfrastructureQuery getInfrastructureQuery() {
+  public InfrastructureQuery getInfrastructure() {
     return infrastructureQuery;
   }
 
-  public ProducerQuery getProducerQuery() {
+  public ProducerQuery getProducer() {
     return producerQuery;
   }
 
-  public ConsumerQuery getConsumerQuery() {
+  public ConsumerQuery getConsumer() {
     return consumerQuery;
   }
 
-  public StreamBindingQuery getStreamBindingQuery() {
+  public StreamBindingQuery getStreamBinding() {
     return streamBindingQuery;
   }
 
-  public ProducerBindingQuery getProducerBindingQuery() {
+  public ProducerBindingQuery getProducerBinding() {
     return producerBindingQuery;
   }
 
-  public ConsumerBindingQuery getConsumerBindingQuery() {
+  public ConsumerBindingQuery getConsumerBinding() {
     return consumerBindingQuery;
   }
 }

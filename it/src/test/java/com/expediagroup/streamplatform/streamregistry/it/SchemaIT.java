@@ -90,7 +90,7 @@ public class SchemaIT extends ObjectIT {
 
     SchemaQuery.Data after = (SchemaQuery.Data) client.getData(SchemaQuery.builder().key(input).build());
 
-    assertEquals(after.getSchemaQuery().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getSchema().getByKey().getKey().getName(), input.name());
   }
 
   @Override
@@ -106,7 +106,7 @@ public class SchemaIT extends ObjectIT {
 
     SchemasQuery.Data after = (SchemasQuery.Data) client.getData(SchemasQuery.builder().key(query).build());
 
-    assertEquals(after.getSchemaQuery().getByQuery().size(), before.getSchemaQuery().getByQuery().size() + 1);
+    assertEquals(after.getSchema().getByQuery().size(), before.getSchema().getByQuery().size() + 1);
   }
 
   @Override

@@ -119,7 +119,7 @@ public class ConsumerIT extends ObjectIT {
 
     ConsumerQuery.Data after = (ConsumerQuery.Data) client.getData(ConsumerQuery.builder().key(input).build());
 
-    assertEquals(after.getConsumerQuery().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getConsumer().getByKey().getKey().getName(), input.name());
   }
 
   @Override
@@ -135,7 +135,7 @@ public class ConsumerIT extends ObjectIT {
 
     ConsumersQuery.Data after = (ConsumersQuery.Data) client.getData(ConsumersQuery.builder().key(query).build());
 
-    assertEquals(before.getConsumerQuery().getByQuery().size() + 1, after.getConsumerQuery().getByQuery().size());
+    assertEquals(before.getConsumer().getByQuery().size() + 1, after.getConsumer().getByQuery().size());
   }
 
   @Override

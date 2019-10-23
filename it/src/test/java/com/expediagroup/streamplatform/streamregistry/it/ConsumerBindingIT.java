@@ -112,7 +112,7 @@ public class ConsumerBindingIT extends ObjectIT {
 
     ConsumerBindingQuery.Data after = (ConsumerBindingQuery.Data) client.getData(ConsumerBindingQuery.builder().key(input).build());
 
-    assertEquals(after.getConsumerBindingQuery().getByKey().getKey().getStreamName(), input.streamName());
+    assertEquals(after.getConsumerBinding().getByKey().getKey().getStreamName(), input.streamName());
   }
 
   @Override
@@ -128,8 +128,8 @@ public class ConsumerBindingIT extends ObjectIT {
 
     ConsumerBindingsQuery.Data after = (ConsumerBindingsQuery.Data) client.getData(ConsumerBindingsQuery.builder().key(query).build());
 
-    assertEquals(before.getConsumerBindingQuery().getByQuery().size() + 1,
-        after.getConsumerBindingQuery().getByQuery().size());
+    assertEquals(before.getConsumerBinding().getByQuery().size() + 1,
+        after.getConsumerBinding().getByQuery().size());
   }
 
   @Override

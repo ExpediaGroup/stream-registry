@@ -112,7 +112,7 @@ public class DomainIT extends ObjectIT {
 
     DomainQuery.Data after = (DomainQuery.Data) client.getData(DomainQuery.builder().key(input).build());
 
-    assertEquals(after.getDomainQuery().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getDomain().getByKey().getKey().getName(), input.name());
   }
 
   @Override
@@ -128,11 +128,12 @@ public class DomainIT extends ObjectIT {
 
     DomainsQuery.Data after = (DomainsQuery.Data) client.getData(DomainsQuery.builder().key(query).build());
 
-    assertEquals(before.getDomainQuery().getByQuery().size() + 1, after.getDomainQuery().getByQuery().size());
+    assertEquals(before.getDomain().getByQuery().size() + 1, after.getDomain().getByQuery().size());
   }
 
   @Override
   public void createRequiredDatastoreState() {
 
   }
+
 }

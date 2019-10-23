@@ -106,7 +106,7 @@ public class ProducerBindingIT extends ObjectIT {
 
     ProducerBindingQuery.Data after = (ProducerBindingQuery.Data) client.getData(ProducerBindingQuery.builder().key(input).build());
 
-    assertEquals(after.getProducerBindingQuery().getByKey().getKey().getStreamDomain(), input.streamDomain());
+    assertEquals(after.getProducerBinding().getByKey().getKey().getStreamDomain(), input.streamDomain());
   }
 
   @Override
@@ -122,7 +122,7 @@ public class ProducerBindingIT extends ObjectIT {
 
     ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
 
-    assertEquals(after.getProducerBindingQuery().getByQuery().size(), before.getProducerBindingQuery().getByQuery().size() + 1);
+    assertEquals(after.getProducerBinding().getByQuery().size(), before.getProducerBinding().getByQuery().size() + 1);
   }
 
   @Override

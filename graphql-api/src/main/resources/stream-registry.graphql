@@ -506,16 +506,16 @@ type ConsumerBindingQuery{
 
 type Query {
 
-    domainQuery: DomainQuery!
-    schemaQuery: SchemaQuery!
-    streamQuery: StreamQuery!
-    zoneQuery: ZoneQuery!
-    infrastructureQuery: InfrastructureQuery!
-    producerQuery: ProducerQuery!
-    consumerQuery: ConsumerQuery!
-    streamBindingQuery: StreamBindingQuery!
-    producerBindingQuery: ProducerBindingQuery!
-    consumerBindingQuery: ConsumerBindingQuery !
+    domain: DomainQuery!
+    schema: SchemaQuery!
+    stream: StreamQuery!
+    zone: ZoneQuery!
+    infrastructure: InfrastructureQuery!
+    producer: ProducerQuery!
+    consumer: ConsumerQuery!
+    streamBinding: StreamBindingQuery!
+    producerBinding: ProducerBindingQuery!
+    consumerBinding: ConsumerBindingQuery !
 
     bugfixq(v:TagQuery): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
     bugfixi(v:TagInput): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")

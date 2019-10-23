@@ -89,7 +89,7 @@ public class StreamIT extends ObjectIT {
 
     StreamQuery.Data after = (StreamQuery.Data) client.getData(StreamQuery.builder().key(input).build());
 
-    assertEquals(after.getStreamQuery().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getStream().getByKey().getKey().getName(), input.name());
   }
 
   @Override
@@ -105,7 +105,7 @@ public class StreamIT extends ObjectIT {
 
     StreamsQuery.Data after = (StreamsQuery.Data) client.getData(StreamsQuery.builder().key(query).build());
 
-    assertEquals(after.getStreamQuery().getByQuery().size(), before.getStreamQuery().getByQuery().size() + 1);
+    assertEquals(after.getStream().getByQuery().size(), before.getStream().getByQuery().size() + 1);
   }
 
   @Override
