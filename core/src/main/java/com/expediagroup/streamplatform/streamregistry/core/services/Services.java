@@ -15,10 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import org.springframework.stereotype.Component;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

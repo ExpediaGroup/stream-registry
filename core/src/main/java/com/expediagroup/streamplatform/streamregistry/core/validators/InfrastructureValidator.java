@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
@@ -22,25 +24,21 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
 @Component
+@RequiredArgsConstructor
 public class InfrastructureValidator implements Validator<Infrastructure> {
-
-  private ZoneService zoneService;
-
-  public InfrastructureValidator( ZoneService zoneService) {
-    this.zoneService=zoneService;
-  }
-
+  private final ZoneService zoneService;
+  private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(Infrastructure infrastructure) throws ValidationException {
     validateForCreateAndUpdate(infrastructure);
-    new SpecificationValidator().validateForCreate(infrastructure.getSpecification());
+    specificationValidator.validateForCreate(infrastructure.getSpecification());
   }
 
   @Override
   public void validateForUpdate(Infrastructure infrastructure, Infrastructure existing) throws ValidationException {
     validateForCreateAndUpdate(infrastructure);
-    new SpecificationValidator().validateForUpdate(infrastructure.getSpecification(), existing.getSpecification());
+    specificationValidator.validateForUpdate(infrastructure.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(Infrastructure infrastructure) throws ValidationException {

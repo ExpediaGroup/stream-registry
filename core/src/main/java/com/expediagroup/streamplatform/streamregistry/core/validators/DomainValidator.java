@@ -15,24 +15,28 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
 @Component
+@RequiredArgsConstructor
 public class DomainValidator implements Validator<Domain> {
+  private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(Domain domain) throws ValidationException {
     validateForCreateAndUpdate(domain);
-    new SpecificationValidator().validateForCreate(domain.getSpecification());
+    specificationValidator.validateForCreate(domain.getSpecification());
   }
 
   @Override
   public void validateForUpdate(Domain domain, Domain existing) throws ValidationException {
     validateForCreateAndUpdate(domain);
-    new SpecificationValidator().validateForUpdate(domain.getSpecification(), existing.getSpecification());
+    specificationValidator.validateForUpdate(domain.getSpecification(), existing.getSpecification());
   }
 
   private void validateForCreateAndUpdate(Domain domain) {
