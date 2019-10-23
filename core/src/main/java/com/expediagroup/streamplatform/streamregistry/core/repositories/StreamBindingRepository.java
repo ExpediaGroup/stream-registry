@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
-public interface StreamBindingRepository extends CrudRepository<StreamBinding, StreamBindingKey> {
-
-}
+public interface StreamBindingRepository extends CrudRepository<StreamBinding, StreamBindingKey> {}

@@ -29,21 +29,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBind
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class StreamBindingService {
-
-  StreamBindingRepository streambindingRepository;
-  StreamBindingValidator streambindingValidator;
-  private HandlersForServices handlerService;
-
-  public StreamBindingService(
-      StreamBindingRepository streambindingRepository,
-      StreamBindingValidator streambindingValidator,
-      HandlersForServices handlerService) {
-    this.streambindingRepository = streambindingRepository;
-    this.streambindingValidator = streambindingValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final StreamBindingValidator streambindingValidator;
+  private final StreamBindingRepository streambindingRepository;
 
   public Optional<StreamBinding> create(StreamBinding streambinding) throws ValidationException {
     if (streambindingRepository.findById(streambinding.getKey()).isPresent()) {

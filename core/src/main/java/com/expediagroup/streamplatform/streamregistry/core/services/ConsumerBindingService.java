@@ -29,21 +29,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBi
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class ConsumerBindingService {
-
-  private HandlersForServices handlerService;
-  ConsumerBindingRepository consumerbindingRepository;
-  ConsumerBindingValidator consumerbindingValidator;
-
-  public ConsumerBindingService(
-      ConsumerBindingRepository consumerbindingRepository,
-      ConsumerBindingValidator consumerbindingValidator,
-      HandlersForServices handlerService) {
-    this.handlerService = handlerService;
-    this.consumerbindingRepository = consumerbindingRepository;
-    this.consumerbindingValidator = consumerbindingValidator;
-  }
+  private final HandlersForServices handlerService;
+  private final ConsumerBindingValidator consumerbindingValidator;
+  private final ConsumerBindingRepository consumerbindingRepository;
 
   public Optional<ConsumerBinding> create(ConsumerBinding consumerbinding) throws ValidationException {
     if (consumerbindingRepository.findById(consumerbinding.getKey()).isPresent()) {

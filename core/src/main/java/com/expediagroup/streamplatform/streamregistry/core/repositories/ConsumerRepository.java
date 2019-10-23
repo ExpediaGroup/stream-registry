@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
-public interface ConsumerRepository extends CrudRepository<Consumer, ConsumerKey> {
-
-}
+public interface ConsumerRepository extends CrudRepository<Consumer, ConsumerKey> {}

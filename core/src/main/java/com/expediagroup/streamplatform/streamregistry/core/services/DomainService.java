@@ -45,21 +45,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.DomainVali
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class DomainService {
-
-  DomainRepository domainRepository;
-  DomainValidator domainValidator;
-  private HandlersForServices handlerService;
-
-  public DomainService(
-      DomainRepository domainRepository,
-      DomainValidator domainValidator,
-      HandlersForServices handlerService) {
-    this.domainRepository = domainRepository;
-    this.domainValidator = domainValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final DomainValidator domainValidator;
+  private final DomainRepository domainRepository;
 
   public Optional<Domain> create(Domain domain) throws ValidationException {
     if (domainRepository.findById(domain.getKey()).isPresent()) {

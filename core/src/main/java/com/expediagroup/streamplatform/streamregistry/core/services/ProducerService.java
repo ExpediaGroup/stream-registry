@@ -29,22 +29,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerVa
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class ProducerService {
-
-  ProducerRepository producerRepository;
-  ProducerValidator producerValidator;
-  private HandlersForServices handlerService;
-
-  public ProducerService(
-      ProducerRepository producerRepository,
-      ProducerValidator producerValidator,
-      HandlersForServices handlerService) {
-
-    this.producerRepository = producerRepository;
-    this.producerValidator = producerValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final ProducerValidator producerValidator;
+  private final ProducerRepository producerRepository;
 
   public Optional<Producer> create(Producer producer) throws ValidationException {
     if (producerRepository.findById(producer.getKey()).isPresent()) {

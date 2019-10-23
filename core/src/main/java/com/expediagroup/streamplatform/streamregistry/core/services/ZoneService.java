@@ -45,21 +45,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValida
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class ZoneService {
-
-  ZoneRepository zoneRepository;
-  ZoneValidator zoneValidator;
-  private HandlersForServices handlerService;
-
-  public ZoneService(
-      ZoneRepository zoneRepository,
-      ZoneValidator zoneValidator,
-      HandlersForServices handlerService) {
-    this.zoneRepository = zoneRepository;
-    this.zoneValidator = zoneValidator;
-    this.handlerService = handlerService;
-  }
+  private final  HandlersForServices handlerService;
+  private final ZoneValidator zoneValidator;
+  private final ZoneRepository zoneRepository;
 
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (zoneRepository.findById(zone.getKey()).isPresent()) {

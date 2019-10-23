@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
-public interface ConsumerBindingRepository extends CrudRepository<ConsumerBinding, ConsumerBindingKey> {
-
-}
+public interface ConsumerBindingRepository extends CrudRepository<ConsumerBinding, ConsumerBindingKey> {}

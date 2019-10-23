@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
-public interface DomainRepository extends CrudRepository<Domain, DomainKey> {
-
-}
+public interface DomainRepository extends CrudRepository<Domain, DomainKey> {}

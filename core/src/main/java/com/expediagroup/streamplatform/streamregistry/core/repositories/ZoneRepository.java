@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
-public interface ZoneRepository extends CrudRepository<Zone, ZoneKey> {
-
-}
+public interface ZoneRepository extends CrudRepository<Zone, ZoneKey> {}

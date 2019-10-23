@@ -29,21 +29,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaVali
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class SchemaService {
-
-  SchemaRepository schemaRepository;
-  SchemaValidator schemaValidator;
-  private HandlersForServices handlerService;
-
-  public SchemaService(
-      SchemaRepository schemaRepository,
-      SchemaValidator schemaValidator,
-      HandlersForServices handlerService) {
-    this.schemaRepository = schemaRepository;
-    this.schemaValidator = schemaValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final SchemaValidator schemaValidator;
+  private final SchemaRepository schemaRepository;
 
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (schemaRepository.findById(schema.getKey()).isPresent()) {

@@ -29,22 +29,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Infrastruc
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class InfrastructureService {
-
-  InfrastructureRepository infrastructureRepository;
-  InfrastructureValidator infrastructureValidator;
-  private HandlersForServices handlerService;
-
-  public InfrastructureService(
-      InfrastructureRepository infrastructureRepository,
-      InfrastructureValidator infrastructureValidator,
-      HandlersForServices handlerService) {
-
-    this.infrastructureRepository = infrastructureRepository;
-    this.infrastructureValidator = infrastructureValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final InfrastructureValidator infrastructureValidator;
+  private final InfrastructureRepository infrastructureRepository;
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (infrastructureRepository.findById(infrastructure.getKey()).isPresent()) {

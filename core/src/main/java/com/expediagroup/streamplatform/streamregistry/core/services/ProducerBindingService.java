@@ -29,21 +29,14 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBi
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class ProducerBindingService {
-
-  ProducerBindingRepository producerbindingRepository;
-  ProducerBindingValidator producerbindingValidator;
-  private HandlersForServices handlerService;
-
-  public ProducerBindingService(
-      ProducerBindingRepository producerbindingRepository,
-      ProducerBindingValidator producerbindingValidator,
-      HandlersForServices handlerService) {
-    this.producerbindingRepository = producerbindingRepository;
-    this.producerbindingValidator = producerbindingValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final ProducerBindingValidator producerbindingValidator;
+  private final ProducerBindingRepository producerbindingRepository;
 
   public Optional<ProducerBinding> create(ProducerBinding producerbinding) throws ValidationException {
     if (producerbindingRepository.findById(producerbinding.getKey()).isPresent()) {
