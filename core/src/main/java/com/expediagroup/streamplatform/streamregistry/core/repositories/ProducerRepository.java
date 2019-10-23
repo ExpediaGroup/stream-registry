@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
-public interface ProducerRepository extends CrudRepository<Producer, ProducerKey> {
-
-}
+public interface ProducerRepository extends CrudRepository<Producer, ProducerKey> {}

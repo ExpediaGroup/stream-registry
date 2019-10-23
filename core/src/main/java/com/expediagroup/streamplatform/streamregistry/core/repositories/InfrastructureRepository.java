@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
-public interface InfrastructureRepository extends CrudRepository<Infrastructure, InfrastructureKey> {
-
-}
+public interface InfrastructureRepository extends CrudRepository<Infrastructure, InfrastructureKey> {}

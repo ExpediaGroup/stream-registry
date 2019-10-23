@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
@@ -30,20 +32,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Component
+@RequiredArgsConstructor
 public class ConsumerService {
-
-  ConsumerRepository consumerRepository;
-  ConsumerValidator consumerValidator;
-  private HandlersForServices handlerService;
-
-  public ConsumerService(
-      ConsumerRepository consumerRepository,
-      ConsumerValidator consumerValidator,
-      HandlersForServices handlerService) {
-    this.consumerRepository = consumerRepository;
-    this.consumerValidator = consumerValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final ConsumerValidator consumerValidator;
+  private final ConsumerRepository consumerRepository;
 
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (consumerRepository.findById(consumer.getKey()).isPresent()) {

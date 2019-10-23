@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
+
 @Component
 public class SpecificationValidator implements Validator<Specification> {
 

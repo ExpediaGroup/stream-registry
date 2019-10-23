@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
@@ -23,30 +25,27 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 @Component
+@RequiredArgsConstructor
 public class ConsumerValidator implements Validator<Consumer> {
-
-  private StreamService streamService;
-  private ZoneService zoneService;
-
-  public ConsumerValidator(StreamService streamService, ZoneService zoneService) {
-    this.zoneService = zoneService;
-    this.streamService = streamService;
-  }
+  private final StreamService streamService;
+  private final ZoneService zoneService;
+  private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(Consumer consumer) throws ValidationException {
     validateForCreateAndUpdate(consumer);
-    new SpecificationValidator().validateForCreate(consumer.getSpecification());
+    specificationValidator.validateForCreate(consumer.getSpecification());
   }
 
   @Override
   public void validateForUpdate(Consumer consumer, Consumer existing) throws ValidationException {
     validateForCreateAndUpdate(consumer);
-    new SpecificationValidator().validateForUpdate(consumer.getSpecification(), existing.getSpecification());
+    specificationValidator.validateForUpdate(consumer.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(Consumer consumer) throws ValidationException {
     streamService.validateStreamExists(consumer.getKey().getStreamKey());
     zoneService.validateZoneExists(consumer.getKey().getZoneKey());
   }
+
 }

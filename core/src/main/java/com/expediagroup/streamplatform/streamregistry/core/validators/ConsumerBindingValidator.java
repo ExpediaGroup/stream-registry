@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
@@ -22,24 +24,21 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 @Component
+@RequiredArgsConstructor
 public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
-
-  private ConsumerService consumerService;
-
-  public ConsumerBindingValidator(ConsumerService consumerService) {
-    this.consumerService = consumerService;
-  }
+  private final ConsumerService consumerService;
+  private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(ConsumerBinding consumerbinding) throws ValidationException {
     validateForCreateAndUpdate(consumerbinding);
-    new SpecificationValidator().validateForCreate(consumerbinding.getSpecification());
+    specificationValidator.validateForCreate(consumerbinding.getSpecification());
   }
 
   @Override
   public void validateForUpdate(ConsumerBinding consumerbinding, ConsumerBinding existing) throws ValidationException {
     validateForCreateAndUpdate(consumerbinding);
-    new SpecificationValidator().validateForUpdate(consumerbinding.getSpecification(), existing.getSpecification());
+    specificationValidator.validateForUpdate(consumerbinding.getSpecification(), existing.getSpecification());
   }
 
   private void validateForCreateAndUpdate(ConsumerBinding consumerbinding) {

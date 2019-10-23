@@ -15,13 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-//import org.springframework.data.mongodb.repository.MongoRepository;
-
 import org.springframework.data.repository.CrudRepository;
 
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
-public interface SchemaRepository extends CrudRepository<Schema, SchemaKey> {
-
-}
+public interface SchemaRepository extends CrudRepository<Schema, SchemaKey> {}

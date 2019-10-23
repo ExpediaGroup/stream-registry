@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
@@ -30,20 +32,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Component
+@RequiredArgsConstructor
 public class StreamService {
-
-  StreamRepository streamRepository;
-  StreamValidator streamValidator;
-  private HandlersForServices handlerService;
-
-  public StreamService(
-      StreamRepository streamRepository,
-      StreamValidator streamValidator,
-      HandlersForServices handlerService) {
-    this.streamRepository = streamRepository;
-    this.streamValidator = streamValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final StreamValidator streamValidator;
+  private final StreamRepository streamRepository;
 
   public Optional<Stream> create(Stream stream) throws ValidationException {
     if (stream.getKey() != null && streamRepository.findById(stream.getKey()).isPresent()) {

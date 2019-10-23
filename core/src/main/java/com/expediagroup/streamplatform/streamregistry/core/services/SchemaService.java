@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
@@ -30,20 +32,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
 @Component
+@RequiredArgsConstructor
 public class SchemaService {
-
-  SchemaRepository schemaRepository;
-  SchemaValidator schemaValidator;
-  private HandlersForServices handlerService;
-
-  public SchemaService(
-      SchemaRepository schemaRepository,
-      SchemaValidator schemaValidator,
-      HandlersForServices handlerService) {
-    this.schemaRepository = schemaRepository;
-    this.schemaValidator = schemaValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final SchemaValidator schemaValidator;
+  private final SchemaRepository schemaRepository;
 
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (schemaRepository.findById(schema.getKey()).isPresent()) {

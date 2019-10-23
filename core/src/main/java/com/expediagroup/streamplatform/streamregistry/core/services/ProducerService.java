@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
@@ -30,21 +32,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
 @Component
+@RequiredArgsConstructor
 public class ProducerService {
-
-  ProducerRepository producerRepository;
-  ProducerValidator producerValidator;
-  private HandlersForServices handlerService;
-
-  public ProducerService(
-      ProducerRepository producerRepository,
-      ProducerValidator producerValidator,
-      HandlersForServices handlerService) {
-
-    this.producerRepository = producerRepository;
-    this.producerValidator = producerValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final ProducerValidator producerValidator;
+  private final ProducerRepository producerRepository;
 
   public Optional<Producer> create(Producer producer) throws ValidationException {
     if (producerRepository.findById(producer.getKey()).isPresent()) {

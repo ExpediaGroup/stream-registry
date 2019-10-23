@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
@@ -22,14 +24,10 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 @Component
+@RequiredArgsConstructor
 public class StreamBindingValidator implements Validator<StreamBinding> {
-
-  private StreamService streamService;
-  private SpecificationValidator specificationValidator = new SpecificationValidator();
-
-  public StreamBindingValidator(StreamService streamService) {
-    this.streamService = streamService;
-  }
+  private final StreamService streamService;
+  private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(StreamBinding streambinding) throws ValidationException {

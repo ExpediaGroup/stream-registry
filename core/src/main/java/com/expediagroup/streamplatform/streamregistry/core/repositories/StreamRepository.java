@@ -20,6 +20,4 @@ import org.springframework.data.repository.CrudRepository;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
-public interface StreamRepository extends CrudRepository<Stream, StreamKey> {
-
-}
+public interface StreamRepository extends CrudRepository<Stream, StreamKey> {}

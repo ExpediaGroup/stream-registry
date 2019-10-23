@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
@@ -30,20 +32,11 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
+@RequiredArgsConstructor
 public class StreamBindingService {
-
-  StreamBindingRepository streambindingRepository;
-  StreamBindingValidator streambindingValidator;
-  private HandlersForServices handlerService;
-
-  public StreamBindingService(
-      StreamBindingRepository streambindingRepository,
-      StreamBindingValidator streambindingValidator,
-      HandlersForServices handlerService) {
-    this.streambindingRepository = streambindingRepository;
-    this.streambindingValidator = streambindingValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final StreamBindingValidator streambindingValidator;
+  private final StreamBindingRepository streambindingRepository;
 
   public Optional<StreamBinding> create(StreamBinding streambinding) throws ValidationException {
     if (streambindingRepository.findById(streambinding.getKey()).isPresent()) {

@@ -15,83 +15,23 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
+@Getter
 public class Services {
-
-  private DomainService domainService;
-  private SchemaService schemaService;
-  private StreamService streamService;
-  private ZoneService zoneService;
-  private InfrastructureService infrastructureService;
-  private ProducerService producerService;
-  private ConsumerService consumerService;
-  private StreamBindingService streamBindingService;
-  private ProducerBindingService producerBindingService;
-  private ConsumerBindingService consumerBindingService;
-
-  public Services(
-      DomainService domainService,
-      SchemaService schemaService,
-      StreamService streamService,
-      ZoneService zoneService,
-      InfrastructureService infrastructureService,
-      ProducerService producerService,
-      ConsumerService consumerService,
-      StreamBindingService streamBindingService,
-      ProducerBindingService producerBindingService,
-      ConsumerBindingService consumerBindingService
-  ) {
-    this.domainService = domainService;
-    this.schemaService = schemaService;
-    this.streamService = streamService;
-    this.zoneService = zoneService;
-    this.infrastructureService = infrastructureService;
-    this.producerService = producerService;
-    this.consumerService = consumerService;
-    this.streamBindingService = streamBindingService;
-    this.producerBindingService = producerBindingService;
-    this.consumerBindingService = consumerBindingService;
-  }
-
-  public DomainService getDomainService() {
-    return domainService;
-  }
-
-  public SchemaService getSchemaService() {
-    return schemaService;
-  }
-
-  public StreamService getStreamService() {
-    return streamService;
-  }
-
-  public ZoneService getZoneService() {
-    return zoneService;
-  }
-
-  public InfrastructureService getInfrastructureService() {
-    return infrastructureService;
-  }
-
-  public ProducerService getProducerService() {
-    return producerService;
-  }
-
-  public ConsumerService getConsumerService() {
-    return consumerService;
-  }
-
-  public StreamBindingService getStreamBindingService() {
-    return streamBindingService;
-  }
-
-  public ProducerBindingService getProducerBindingService() {
-    return producerBindingService;
-  }
-
-  public ConsumerBindingService getConsumerBindingService() {
-    return consumerBindingService;
-  }
+  private final DomainService domainService;
+  private final SchemaService schemaService;
+  private final StreamService streamService;
+  private final ZoneService zoneService;
+  private final InfrastructureService infrastructureService;
+  private final ProducerService producerService;
+  private final ConsumerService consumerService;
+  private final StreamBindingService streamBindingService;
+  private final ProducerBindingService producerBindingService;
+  private final ConsumerBindingService consumerBindingService;
 }

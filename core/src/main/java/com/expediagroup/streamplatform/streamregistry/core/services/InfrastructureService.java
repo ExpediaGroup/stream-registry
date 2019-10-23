@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
@@ -30,21 +32,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
 @Component
+@RequiredArgsConstructor
 public class InfrastructureService {
-
-  InfrastructureRepository infrastructureRepository;
-  InfrastructureValidator infrastructureValidator;
-  private HandlersForServices handlerService;
-
-  public InfrastructureService(
-      InfrastructureRepository infrastructureRepository,
-      InfrastructureValidator infrastructureValidator,
-      HandlersForServices handlerService) {
-
-    this.infrastructureRepository = infrastructureRepository;
-    this.infrastructureValidator = infrastructureValidator;
-    this.handlerService = handlerService;
-  }
+  private final HandlersForServices handlerService;
+  private final InfrastructureValidator infrastructureValidator;
+  private final InfrastructureRepository infrastructureRepository;
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (infrastructureRepository.findById(infrastructure.getKey()).isPresent()) {

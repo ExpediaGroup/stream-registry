@@ -32,8 +32,8 @@ class HandlerConfiguration {
   @Bean
   HandlersForServices handlersForServicesProvider(List<Handler> handlers) {
     HandlersForServices handlerRegistry = new HandlersForServices();
-    for (Handler h : handlers) {
-      handlerRegistry.register(h.type(), h.target(), h);
+    for (Handler handler : handlers) {
+      handlerRegistry.register(handler.type(), handler.target(), handler);
     }
     return handlerRegistry;
   }

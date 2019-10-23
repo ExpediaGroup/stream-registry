@@ -51,7 +51,6 @@ public class Query implements GraphQLQueryResolver {
     this.consumerBindingQuery = new ConsumerBindingQuery(services.getConsumerBindingService());
   }
 
-  // TODO to work around a graphql bug, remove when fixed
   public Domain bugfixq(TagQuery v) {
     return null;
   }

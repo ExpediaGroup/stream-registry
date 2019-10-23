@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
@@ -22,24 +24,21 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ValidationEx
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 @Component
+@RequiredArgsConstructor
 public class ProducerBindingValidator implements Validator<ProducerBinding> {
-
-  private ProducerService producerService;
-
-  public ProducerBindingValidator(ProducerService producerService) {
-    this.producerService = producerService;
-  }
+  private final ProducerService producerService;
+  private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(ProducerBinding producerbinding) throws ValidationException {
     validateForCreateAndUpdate(producerbinding);
-    new SpecificationValidator().validateForCreate(producerbinding.getSpecification());
+    specificationValidator.validateForCreate(producerbinding.getSpecification());
   }
 
   @Override
   public void validateForUpdate(ProducerBinding producerbinding, ProducerBinding existing) throws ValidationException {
     validateForCreateAndUpdate(producerbinding);
-    new SpecificationValidator().validateForUpdate(producerbinding.getSpecification(), existing.getSpecification());
+    specificationValidator.validateForUpdate(producerbinding.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {

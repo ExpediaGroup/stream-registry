@@ -15,24 +15,28 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
+@RequiredArgsConstructor
 public class ZoneValidator implements Validator<Zone> {
+  private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(Zone zone) throws ValidationException {
     validateForCreateAndUpdate(zone);
-    new SpecificationValidator().validateForCreate(zone.getSpecification());
+    specificationValidator.validateForCreate(zone.getSpecification());
   }
 
   @Override
   public void validateForUpdate(Zone zone, Zone existing) throws ValidationException {
     validateForCreateAndUpdate(zone);
-    new SpecificationValidator().validateForUpdate(zone.getSpecification(), existing.getSpecification());
+    specificationValidator.validateForUpdate(zone.getSpecification(), existing.getSpecification());
   }
 
   public void validateForCreateAndUpdate(Zone zone) throws ValidationException {
