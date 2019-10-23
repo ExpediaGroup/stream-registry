@@ -3,7 +3,7 @@ language: java
 dist: trusty
 
 jdk:
-  - openjdk11
+- openjdk11
 
 # 'true' means do NOT do `mvn install`
 # See https://docs.travis-ci.com/user/job-lifecycle/#skipping-the-installation-phase
@@ -12,17 +12,17 @@ install: true
 script: ./mvnw clean install -Djib.skip -B
 
 after_failure:
-  - cat infra-provider-kafka/surefire-reports/*.txt
-  - cat core/target/surefire-reports/*.txt
-  - cat core/target/failsafe-reports/*.txt
+- cat infra-provider-kafka/surefire-reports/*.txt
+- cat core/target/surefire-reports/*.txt
+- cat core/target/failsafe-reports/*.txt
 
 notifications:
   email:
     recipients:
-      - stream-registry-committers@expediagroup.com
+    - stream-registry-committers@expediagroup.com
     on_success: change
     on_failure: always
 
 cache:
   directories:
-    - "$HOME/.m2"
+  - "$HOME/.m2"
