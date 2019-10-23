@@ -84,11 +84,13 @@ mutation UpdateConsumerStatus(
 query Consumer(
     $key: ConsumerKeyInput!
 ) {
-    consumer(
-        key: $key
-    ) {
-        __typename
-        ...ConsumerPart
+    consumerQuery{
+        consumer(
+            key: $key
+        ) {
+            __typename
+            ...ConsumerPart
+        }
     }
 }
 
@@ -96,12 +98,14 @@ query Consumers(
     $key: ConsumerKeyQuery
     $specification: SpecificationQuery
 ) {
-    consumers(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...ConsumerPart
+    consumerQuery{
+        consumers(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ConsumerPart
+        }
     }
 }
 
@@ -175,24 +179,29 @@ mutation updateConsumerBindingStatus(
 query ConsumerBinding(
     $key: ConsumerBindingKeyInput!
 ) {
-    consumerBinding(
-        key: $key
-    ) {
-        __typename
-        ...ConsumerBindingPart
+    consumerBindingQuery{
+        consumerBinding(
+            key: $key
+        ) {
+            __typename
+            ...ConsumerBindingPart
+        }
     }
+
 }
 
 query ConsumerBindings(
     $key: ConsumerBindingKeyQuery
     $specification: SpecificationQuery
 ) {
-    consumerBindings(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...ConsumerBindingPart
+    consumerBindingQuery{
+        consumerBindings(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ConsumerBindingPart
+        }
     }
 }
 
@@ -264,11 +273,13 @@ mutation UpdateDomainStatus(
 query Domain(
     $key: DomainKeyInput!
 ) {
-    domain(
-        key: $key
-    ) {
-        __typename
-        ...DomainPart
+    domainQuery{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...DomainPart
+        }
     }
 }
 
@@ -276,13 +287,16 @@ query Domains(
     $key: DomainKeyQuery
     $specification: SpecificationQuery
 ) {
-    domains(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...DomainPart
+    domainQuery{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...DomainPart
+        }
     }
+
 }
 
 ############ Infrastructure ############
@@ -354,11 +368,13 @@ mutation UpdateInfrastructureStatus(
 query Infrastructure(
     $key: InfrastructureKeyInput!
 ) {
-    infrastructure(
-        key: $key
-    ) {
-        __typename
-        ...InfrastructurePart
+    infrastructureQuery{
+        infrastructure(
+            key: $key
+        ) {
+            __typename
+            ...InfrastructurePart
+        }
     }
 }
 
@@ -366,12 +382,14 @@ query Infrastructures(
     $key: InfrastructureKeyQuery
     $specification: SpecificationQuery
 ) {
-    infrastructures(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...InfrastructurePart
+    infrastructureQuery{
+        infrastructures(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...InfrastructurePart
+        }
     }
 }
 
@@ -447,11 +465,13 @@ mutation UpdateProducerStatus(
 query Producer(
     $key: ProducerKeyInput!
 ) {
-    producer(
-        key: $key
-    ) {
-        __typename
-        ...ProducerPart
+    producerQuery{
+        producer(
+            key: $key
+        ) {
+            __typename
+            ...ProducerPart
+        }
     }
 }
 
@@ -459,13 +479,16 @@ query Producers(
     $key: ProducerKeyQuery
     $specification: SpecificationQuery
 ) {
-    producers(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...ProducerPart
+    producerQuery{
+        producers(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ProducerPart
+        }
     }
+
 }
 
 ############ ProducerBinding ############
@@ -538,11 +561,14 @@ mutation UpdateProducerBindingStatus(
 query ProducerBinding(
     $key: ProducerBindingKeyInput!
 ) {
-    producerBinding(
-        key: $key
-    ) {
-        __typename
-        ...ProducerBindingPart
+    producerBindingQuery{
+        producerBinding(
+            key: $key
+        ) {
+            __typename
+            ...ProducerBindingPart
+        }
+
     }
 }
 
@@ -550,12 +576,14 @@ query ProducerBindings(
     $key: ProducerBindingKeyQuery
     $specification: SpecificationQuery
 ) {
-    producerBindings(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...ProducerBindingPart
+    producerBindingQuery{
+        producerBindings(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ProducerBindingPart
+        }
     }
 }
 
@@ -627,11 +655,13 @@ mutation UpdateSchemaStatus(
 query Schema(
     $key: SchemaKeyInput!
 ) {
-    schema(
-        key: $key
-    ) {
-        __typename
-        ...SchemaPart
+    schemaQuery{
+        schema(
+            key: $key
+        ) {
+            __typename
+            ...SchemaPart
+        }
     }
 }
 
@@ -639,12 +669,14 @@ query Schemas(
     $key: SchemaKeyQuery
     $specification: SpecificationQuery
 ) {
-    schemas(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...SchemaPart
+    schemaQuery{
+        schemas(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...SchemaPart
+        }
     }
 }
 
@@ -721,11 +753,13 @@ mutation UpdateStreamStatus(
 query Stream(
     $key: StreamKeyInput!
 ) {
-    stream(
-        key: $key
-    ) {
-        __typename
-        ...StreamPart
+    streamQuery{
+        stream(
+            key: $key
+        ) {
+            __typename
+            ...StreamPart
+        }
     }
 }
 
@@ -733,12 +767,14 @@ query Streams(
     $key: StreamKeyQuery
     $specification: SpecificationQuery
 ) {
-    streams(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...StreamPart
+    streamQuery{
+        streams(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...StreamPart
+        }
     }
 }
 
@@ -812,11 +848,13 @@ mutation UpdateStreamBindingStatus(
 query StreamBinding(
     $key: StreamBindingKeyInput!
 ) {
-    streamBinding(
-        key: $key
-    ) {
-        __typename
-        ...StreamBindingPart
+    streamBindingQuery{
+        streamBinding(
+            key: $key
+        ) {
+            __typename
+            ...StreamBindingPart
+        }
     }
 }
 
@@ -824,12 +862,14 @@ query StreamBindings(
     $key: StreamBindingKeyQuery
     $specification: SpecificationQuery
 ) {
-    streamBindings(
-        key: $key
-        specification: $specification
-    ) {
-        __typename
-        ...StreamBindingPart
+    streamBindingQuery{
+        streamBindings(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...StreamBindingPart
+        }
     }
 }
 
@@ -901,11 +941,13 @@ mutation UpdateZoneStatus(
 query Zone(
     $key: ZoneKeyInput!
 ) {
-    zone(
-        key: $key
-    ) {
-        __typename
-        ...ZonePart
+    zoneQuery{
+        zone(
+            key: $key
+        ) {
+            __typename
+            ...ZonePart
+        }
     }
 }
 
@@ -913,12 +955,14 @@ query Zones(
     $key: ZoneKeyQuery,
     $specification: SpecificationQuery
 ) {
-    zones(
-        key: $key,
-        specification: $specification
-    ) {
-        __typename
-        ...ZonePart
+    zoneQuery{
+        zones(
+            key: $key,
+            specification: $specification
+        ) {
+            __typename
+            ...ZonePart
+        }
     }
 }
 

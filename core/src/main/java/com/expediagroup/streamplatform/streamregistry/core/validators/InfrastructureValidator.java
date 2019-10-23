@@ -17,22 +17,18 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 public class InfrastructureValidator implements Validator<Infrastructure> {
 
   private ZoneService zoneService;
 
-  public InfrastructureValidator( ZoneService zoneService) {
-    this.zoneService=zoneService;
+  public InfrastructureValidator(ZoneService zoneService) {
+    this.zoneService = zoneService;
   }
-
 
   @Override
   public void validateForCreate(Infrastructure infrastructure) throws ValidationException {
@@ -49,5 +45,4 @@ public class InfrastructureValidator implements Validator<Infrastructure> {
   public void validateForCreateAndUpdate(Infrastructure infrastructure) throws ValidationException {
     zoneService.validateZoneExists(infrastructure.getKey().getZoneKey());
   }
-
 }

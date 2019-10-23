@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
@@ -67,7 +69,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Status
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ITestDataFactory {
 
@@ -82,6 +83,7 @@ public class ITestDataFactory {
   public String description;
   private String infrastructureName;
   private String producerName;
+
   public ITestDataFactory(String suffix) {
     zoneName = "zone_name_" + suffix;
     domainName = "domain_name_" + suffix;

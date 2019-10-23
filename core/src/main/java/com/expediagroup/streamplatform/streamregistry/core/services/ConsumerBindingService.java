@@ -28,14 +28,13 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Consumer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Component
 public class ConsumerBindingService {
 
-  private HandlersForServices handlerService;
   ConsumerBindingRepository consumerbindingRepository;
   ConsumerBindingValidator consumerbindingValidator;
+  private HandlersForServices handlerService;
 
   public ConsumerBindingService(
       ConsumerBindingRepository consumerbindingRepository,

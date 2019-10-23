@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducersQuery;
@@ -103,7 +104,7 @@ public class ProducerIT extends ObjectIT {
 
     ProducerQuery.Data after = (ProducerQuery.Data) client.getData(ProducerQuery.builder().key(input).build());
 
-    assertEquals(after.getProducer().getKey().getName(), input.name());
+    assertEquals(after.getProducerQuery().getProducer().getKey().getName(), input.name());
   }
 
   @Override
@@ -119,7 +120,7 @@ public class ProducerIT extends ObjectIT {
 
     ProducersQuery.Data after = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
 
-    assertEquals(after.getProducers().size(), before.getProducers().size() + 1);
+    assertEquals(after.getProducerQuery().getProducers().size(), before.getProducerQuery().getProducers().size() + 1);
   }
 
   @Override

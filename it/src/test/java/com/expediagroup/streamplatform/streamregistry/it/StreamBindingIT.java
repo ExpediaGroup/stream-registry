@@ -89,7 +89,7 @@ public class StreamBindingIT extends ObjectIT {
 
     StreamBindingQuery.Data after = (StreamBindingQuery.Data) client.getData(StreamBindingQuery.builder().key(input).build());
 
-    assertEquals(after.getStreamBinding().getKey().getStreamName(), input.streamName());
+    assertEquals(after.getStreamBindingQuery().getStreamBinding().getKey().getStreamName(), input.streamName());
   }
 
   @Override
@@ -105,7 +105,7 @@ public class StreamBindingIT extends ObjectIT {
 
     StreamBindingsQuery.Data after = (StreamBindingsQuery.Data) client.getData(StreamBindingsQuery.builder().key(query).build());
 
-    assertEquals(after.getStreamBindings().size(), before.getStreamBindings().size() + 1);
+    assertEquals(after.getStreamBindingQuery().getStreamBindings().size(), before.getStreamBindingQuery().getStreamBindings().size() + 1);
   }
 
   @Override

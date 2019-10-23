@@ -18,9 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.model;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
-
 import lombok.Data;
+
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
 @Data
 @Entity

@@ -19,9 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.apollographql.apollo.api.Mutation;
+
 import org.junit.Test;
 
-import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
@@ -111,7 +112,7 @@ public class ConsumerBindingIT extends ObjectIT {
 
     ConsumerBindingQuery.Data after = (ConsumerBindingQuery.Data) client.getData(ConsumerBindingQuery.builder().key(input).build());
 
-    assertEquals(after.getConsumerBinding().getKey().getStreamName(), input.streamName());
+    assertEquals(after.getConsumerBindingQuery().getConsumerBinding().getKey().getStreamName(), input.streamName());
   }
 
   @Override
@@ -127,12 +128,12 @@ public class ConsumerBindingIT extends ObjectIT {
 
     ConsumerBindingsQuery.Data after = (ConsumerBindingsQuery.Data) client.getData(ConsumerBindingsQuery.builder().key(query).build());
 
-    assertEquals(before.getConsumerBindings().size() + 1, after.getConsumerBindings().size());
+    assertEquals(before.getConsumerBindingQuery().getConsumerBindings().size() + 1,
+        after.getConsumerBindingQuery().getConsumerBindings().size());
   }
 
   @Override
   public void createRequiredDatastoreState() {
     client.createConsumer(factory);
-
   }
 }

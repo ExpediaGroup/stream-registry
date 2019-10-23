@@ -452,41 +452,72 @@ type Mutation {
     consumerBinding: ConsumerBindingMutation!
 }
 
+type DomainQuery{
+    byKey(key: DomainKeyInput!): Domain!
+    byQuery(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
+}
+
+type SchemaQuery{
+    schema(key: SchemaKeyInput!): Schema!
+    schemas(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
+}
+
+type StreamQuery{
+    stream(key: StreamKeyInput!): Stream!
+    streams(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
+}
+
+type ZoneQuery{
+    zone(key: ZoneKeyInput!): Zone!
+    zones(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
+}
+
+type InfrastructureQuery{
+    infrastructure(key: InfrastructureKeyInput!): Infrastructure!
+    infrastructures(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
+}
+
+type ProducerQuery{
+    producer(key: ProducerKeyInput!): Producer!
+    producers(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
+}
+
+type ConsumerQuery{
+    consumer(key: ConsumerKeyInput!): Consumer!
+    consumers(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
+}
+
+type StreamBindingQuery{
+    streamBinding(key: StreamBindingKeyInput!): StreamBinding!
+    streamBindings(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
+}
+
+type ProducerBindingQuery{
+    producerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
+    producerBindings(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
+}
+
+type ConsumerBindingQuery{
+    consumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
+    consumerBindings(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
+}
+
 ############ Queries ############
 
 type Query {
 
+    domainQuery: DomainQuery!
+    schemaQuery: SchemaQuery!
+    streamQuery: StreamQuery!
+    zoneQuery: ZoneQuery!
+    infrastructureQuery: InfrastructureQuery!
+    producerQuery: ProducerQuery!
+    consumerQuery: ConsumerQuery!
+    streamBindingQuery: StreamBindingQuery!
+    producerBindingQuery: ProducerBindingQuery!
+    consumerBindingQuery: ConsumerBindingQuery !
+
     bugfixq(v:TagQuery): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
     bugfixi(v:TagInput): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
-
-    domain(key: DomainKeyInput!): Domain!
-    domains(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
-
-    schema(key: SchemaKeyInput!): Schema!
-    schemas(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
-
-    stream(key: StreamKeyInput!): Stream!
-    streams(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
-
-    zone(key: ZoneKeyInput!): Zone!
-    zones(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
-
-    infrastructure(key: InfrastructureKeyInput!): Infrastructure!
-    infrastructures(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
-
-    producer(key: ProducerKeyInput!): Producer!
-    producers(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
-
-    consumer(key: ConsumerKeyInput!): Consumer!
-    consumers(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
-
-    streamBinding(key: StreamBindingKeyInput!): StreamBinding!
-    streamBindings(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
-
-    producerBinding(key: ProducerBindingKeyInput!): ProducerBinding!
-    producerBindings(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
-
-    consumerBinding(key: ConsumerBindingKeyInput!): ConsumerBinding!
-    consumerBindings(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
 
 }

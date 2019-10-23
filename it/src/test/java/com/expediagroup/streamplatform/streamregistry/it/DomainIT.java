@@ -19,9 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.apollographql.apollo.api.Mutation;
+
 import org.junit.Test;
 
-import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
@@ -111,7 +112,7 @@ public class DomainIT extends ObjectIT {
 
     DomainQuery.Data after = (DomainQuery.Data) client.getData(DomainQuery.builder().key(input).build());
 
-    assertEquals(after.getDomain().getKey().getName(), input.name());
+    assertEquals(after.getDomainQuery().getByKey().getKey().getName(), input.name());
   }
 
   @Override
@@ -127,7 +128,7 @@ public class DomainIT extends ObjectIT {
 
     DomainsQuery.Data after = (DomainsQuery.Data) client.getData(DomainsQuery.builder().key(query).build());
 
-    assertEquals(before.getDomains().size() + 1, after.getDomains().size());
+    assertEquals(before.getDomainQuery().getByQuery().size() + 1, after.getDomainQuery().getByQuery().size());
   }
 
   @Override

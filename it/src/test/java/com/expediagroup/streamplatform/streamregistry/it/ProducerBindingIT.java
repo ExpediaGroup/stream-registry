@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingsQuery;
@@ -105,7 +106,7 @@ public class ProducerBindingIT extends ObjectIT {
 
     ProducerBindingQuery.Data after = (ProducerBindingQuery.Data) client.getData(ProducerBindingQuery.builder().key(input).build());
 
-    assertEquals(after.getProducerBinding().getKey().getStreamDomain(), input.streamDomain());
+    assertEquals(after.getProducerBindingQuery().getProducerBinding().getKey().getStreamDomain(), input.streamDomain());
   }
 
   @Override
@@ -121,7 +122,7 @@ public class ProducerBindingIT extends ObjectIT {
 
     ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
 
-    assertEquals(after.getProducerBindings().size(), before.getProducerBindings().size() + 1);
+    assertEquals(after.getProducerBindingQuery().getProducerBindings().size(), before.getProducerBindingQuery().getProducerBindings().size() + 1);
   }
 
   @Override

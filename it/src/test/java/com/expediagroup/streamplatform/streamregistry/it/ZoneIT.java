@@ -88,7 +88,7 @@ public class ZoneIT extends ObjectIT {
 
     ZoneQuery.Data after = (ZoneQuery.Data) client.getData(ZoneQuery.builder().key(input).build());
 
-    assertEquals(after.getZone().getKey().getName(), input.name());
+    assertEquals(after.getZoneQuery().getZone().getKey().getName(), input.name());
   }
 
   @Override
@@ -104,11 +104,10 @@ public class ZoneIT extends ObjectIT {
 
     ZonesQuery.Data after = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
 
-    assertEquals(after.getZones().size(), before.getZones().size() + 1);
+    assertEquals(after.getZoneQuery().getZones().size(), before.getZoneQuery().getZones().size() + 1);
   }
 
   @Override
   public void createRequiredDatastoreState() {
-
   }
 }

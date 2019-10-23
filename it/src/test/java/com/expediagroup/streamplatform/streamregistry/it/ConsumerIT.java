@@ -19,9 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.apollographql.apollo.api.Mutation;
+
 import org.junit.Test;
 
-import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumersQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
@@ -118,7 +119,7 @@ public class ConsumerIT extends ObjectIT {
 
     ConsumerQuery.Data after = (ConsumerQuery.Data) client.getData(ConsumerQuery.builder().key(input).build());
 
-    assertEquals(after.getConsumer().getKey().getName(), input.name());
+    assertEquals(after.getConsumerQuery().getConsumer().getKey().getName(), input.name());
   }
 
   @Override
@@ -134,7 +135,7 @@ public class ConsumerIT extends ObjectIT {
 
     ConsumersQuery.Data after = (ConsumersQuery.Data) client.getData(ConsumersQuery.builder().key(query).build());
 
-    assertEquals(before.getConsumers().size() + 1, after.getConsumers().size());
+    assertEquals(before.getConsumerQuery().getConsumers().size() + 1, after.getConsumerQuery().getConsumers().size());
   }
 
   @Override

@@ -15,21 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+
 import org.springframework.stereotype.Component;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
 import com.expediagroup.streamplatform.streamregistry.core.services.Services;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerBindingFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.DomainFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.InfrastructureFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerBindingFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.SchemaFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamBindingFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.ZoneFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
@@ -67,12 +57,28 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 @Component
 public class Query implements GraphQLQueryResolver {
 
-  private final Services services;
-  private final HandlersForServices handlersForServices;
+  private final DomainQuery domainQuery;
+  private final SchemaQuery schemaQuery;
+  private final StreamQuery streamQuery;
+  private final ZoneQuery zoneQuery;
+  private final InfrastructureQuery infrastructureQuery;
+  private final ProducerQuery producerQuery;
+  private final ConsumerQuery consumerQuery;
+  private final StreamBindingQuery streamBindingQuery;
+  private final ProducerBindingQuery producerBindingQuery;
+  private final ConsumerBindingQuery consumerBindingQuery;
 
-  public Query(Services services, HandlersForServices handlersForServices) {
-    this.services = services;
-    this.handlersForServices = handlersForServices;
+  public Query(Services services) {
+    this.domainQuery = new DomainQuery(services.getDomainService());
+    this.schemaQuery = new SchemaQuery(services.getSchemaService());
+    this.streamQuery = new StreamQuery(services.getStreamService());
+    this.zoneQuery = new ZoneQuery(services.getZoneService());
+    this.infrastructureQuery = new InfrastructureQuery(services.getInfrastructureService());
+    this.producerQuery = new ProducerQuery(services.getProducerService());
+    this.consumerQuery = new ConsumerQuery(services.getConsumerService());
+    this.streamBindingQuery = new StreamBindingQuery(services.getStreamBindingService());
+    this.producerBindingQuery = new ProducerBindingQuery(services.getProducerBindingService());
+    this.consumerBindingQuery = new ConsumerBindingQuery(services.getConsumerBindingService());
   }
 
   // TODO to work around a graphql bug, remove when fixed
@@ -84,83 +90,143 @@ public class Query implements GraphQLQueryResolver {
     return null;
   }
 
+  @Deprecated
   public Domain getDomain(DomainKeyInput key) {
-    return services.getDomainService().read(key.asDomainKey()).get();
+    return domainQuery.byKey(key);
   }
 
+  @Deprecated
   public Iterable<Domain> getDomains(DomainKeyQuery key, SpecificationQuery specification) {
-    return services.getDomainService().findAll(new DomainFilter(key, specification));
+    return domainQuery.byQuery(key, specification);
   }
 
+  @Deprecated
   public Schema getSchema(SchemaKeyInput key) {
-    return services.getSchemaService().read(key.asSchemaKey()).get();
+    return schemaQuery.getSchema(key);
   }
 
+  @Deprecated
   public Iterable<Schema> getSchemas(SchemaKeyQuery key, SpecificationQuery specification) {
-    return services.getSchemaService().findAll(new SchemaFilter(key, specification));
+    return schemaQuery.getSchemas(key, specification);
   }
 
+  @Deprecated
   public Stream getStream(StreamKeyInput key) {
-    return services.getStreamService().read(key.asStreamKey()).get();
+    return streamQuery.getStream(key);
   }
 
+  @Deprecated
   public Iterable<Stream> getStreams(StreamKeyQuery key, SpecificationQuery specification, SchemaKeyQuery schema) {
-    return services.getStreamService().findAll(new StreamFilter(key, specification, schema));
+    return streamQuery.getStreams(key, specification, schema);
   }
 
+  @Deprecated
   public Zone getZone(ZoneKeyInput key) {
-    return services.getZoneService().read(key.asZoneKey()).get();
+    return zoneQuery.getZone(key);
   }
 
+  @Deprecated
   public Iterable<Zone> getZones(ZoneKeyQuery key, SpecificationQuery specification) {
-    return services.getZoneService().findAll(new ZoneFilter(key, specification));
+    return zoneQuery.getZones(key, specification);
   }
 
+  @Deprecated
   public Infrastructure getInfrastructure(InfrastructureKeyInput key) {
-    return services.getInfrastructureService().read(key.asInfrastructureKey()).get();
+    return infrastructureQuery.getInfrastructure(key);
   }
 
+  @Deprecated
   public Iterable<Infrastructure> getInfrastructures(InfrastructureKeyQuery key, SpecificationQuery specification) {
-    return services.getInfrastructureService().findAll(new InfrastructureFilter(key, specification));
+    return infrastructureQuery.getInfrastructures(key, specification);
   }
 
+  @Deprecated
   public Producer getProducer(ProducerKeyInput key) {
-    return services.getProducerService().read(key.asProducerKey()).get();
+    return producerQuery.getProducer(key);
   }
 
+  @Deprecated
   public Iterable<Producer> getProducers(ProducerKeyQuery key, SpecificationQuery specification) {
-    return services.getProducerService().findAll(new ProducerFilter(key, specification));
+    return producerQuery.getProducers(key, specification);
   }
 
+  @Deprecated
   public Consumer getConsumer(ConsumerKeyInput key) {
-    return services.getConsumerService().read(key.asConsumerKey()).get();
+    return consumerQuery.getConsumer(key);
   }
 
+  @Deprecated
   public Iterable<Consumer> getConsumers(ConsumerKeyQuery key, SpecificationQuery specification) {
-    return services.getConsumerService().findAll(new ConsumerFilter(key, specification));
+    return consumerQuery.getConsumers(key, specification);
   }
 
+  @Deprecated
   public StreamBinding getStreamBinding(StreamBindingKeyInput key) {
-    return services.getStreamBindingService().read(key.asStreamBindingKey()).get();
+    return streamBindingQuery.getStreamBinding(key);
   }
 
+  @Deprecated
   public Iterable<StreamBinding> getStreamBindings(StreamBindingKeyQuery key, SpecificationQuery specification) {
-    return services.getStreamBindingService().findAll(new StreamBindingFilter(key, specification));
+    return streamBindingQuery.getStreamBindings(key, specification);
   }
 
+  @Deprecated
   public ProducerBinding getProducerBinding(ProducerBindingKeyInput key) {
-    return services.getProducerBindingService().read(key.asProducerBindingKey()).get();
+    return producerBindingQuery.getProducerBinding(key);
   }
 
+  @Deprecated
   public Iterable<ProducerBinding> getProducerBindings(ProducerBindingKeyQuery key, SpecificationQuery specification) {
-    return services.getProducerBindingService().findAll(new ProducerBindingFilter(key, specification));
+    return producerBindingQuery.getProducerBindings(key, specification);
   }
 
+  @Deprecated
   public ConsumerBinding getConsumerBinding(ConsumerBindingKeyInput key) {
-    return services.getConsumerBindingService().read(key.asConsumerBindingKey()).get();
+    return consumerBindingQuery.getConsumerBinding(key);
   }
 
+  @Deprecated
   public Iterable<ConsumerBinding> getConsumerBindings(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
-    return services.getConsumerBindingService().findAll(new ConsumerBindingFilter(key, specification));
+    return consumerBindingQuery.getConsumerBindings(key, specification);
+  }
+
+  public DomainQuery getDomainQuery() {
+    return domainQuery;
+  }
+
+  public SchemaQuery getSchemaQuery() {
+    return schemaQuery;
+  }
+
+  public StreamQuery getStreamQuery() {
+    return streamQuery;
+  }
+
+  public ZoneQuery getZoneQuery() {
+    return zoneQuery;
+  }
+
+  public InfrastructureQuery getInfrastructureQuery() {
+    return infrastructureQuery;
+  }
+
+  public ProducerQuery getProducerQuery() {
+    return producerQuery;
+  }
+
+  public ConsumerQuery getConsumerQuery() {
+    return consumerQuery;
+  }
+
+  public StreamBindingQuery getStreamBindingQuery() {
+    return streamBindingQuery;
+  }
+
+  public ProducerBindingQuery getProducerBindingQuery() {
+    return producerBindingQuery;
+  }
+
+  public ConsumerBindingQuery getConsumerBindingQuery() {
+    return consumerBindingQuery;
   }
 }

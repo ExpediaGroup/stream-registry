@@ -19,9 +19,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.apollographql.apollo.api.Mutation;
+
 import org.junit.Test;
 
-import com.apollographql.apollo.api.Mutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructureQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructuresQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
@@ -104,7 +105,7 @@ public class InfrastructureIT extends ObjectIT {
 
     InfrastructureQuery.Data after = (InfrastructureQuery.Data) client.getData(InfrastructureQuery.builder().key(input).build());
 
-    assertEquals(after.getInfrastructure().getKey().getName(), input.name());
+    assertEquals(after.getInfrastructureQuery().getInfrastructure().getKey().getName(), input.name());
   }
 
   @Override
@@ -120,7 +121,7 @@ public class InfrastructureIT extends ObjectIT {
 
     InfrastructuresQuery.Data after = (InfrastructuresQuery.Data) client.getData(InfrastructuresQuery.builder().key(query).build());
 
-    assertEquals(before.getInfrastructures().size() + 1, after.getInfrastructures().size());
+    assertEquals(before.getInfrastructureQuery().getInfrastructures().size() + 1, after.getInfrastructureQuery().getInfrastructures().size());
   }
 
   @Override

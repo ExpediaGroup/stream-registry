@@ -21,11 +21,11 @@ import static org.junit.Assert.assertThat;
 
 import java.io.UncheckedIOException;
 
-import org.junit.Test;
-
 import com.apollographql.apollo.response.CustomTypeValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.junit.Test;
 
 public class ObjectNodeTypeAdapterTest {
   private static final ObjectMapper mapper = new ObjectMapper();

@@ -17,10 +17,10 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.NameNormaliser.normalise;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
-
 import lombok.Builder;
 import lombok.Value;
+
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Value
 @Builder

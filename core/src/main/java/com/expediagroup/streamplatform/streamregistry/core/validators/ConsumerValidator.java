@@ -21,7 +21,6 @@ import com.expediagroup.streamplatform.streamregistry.core.services.StreamServic
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @Component
 public class ConsumerValidator implements Validator<Consumer> {
@@ -30,7 +29,7 @@ public class ConsumerValidator implements Validator<Consumer> {
   private ZoneService zoneService;
 
   public ConsumerValidator(StreamService streamService, ZoneService zoneService) {
-    this.zoneService=zoneService;
+    this.zoneService = zoneService;
     this.streamService = streamService;
   }
 
@@ -50,7 +49,4 @@ public class ConsumerValidator implements Validator<Consumer> {
     streamService.validateStreamExists(consumer.getKey().getStreamKey());
     zoneService.validateZoneExists(consumer.getKey().getZoneKey());
   }
-
-
-
 }
