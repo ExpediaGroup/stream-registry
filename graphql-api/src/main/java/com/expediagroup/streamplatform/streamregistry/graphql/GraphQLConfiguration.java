@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model.scalars;
+package com.expediagroup.streamplatform.streamregistry.graphql;
 
-import graphql.schema.Coercing;
-import graphql.schema.CoercingParseLiteralException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-abstract class BaseCoercing implements Coercing<Object, Object> {
+import com.expediagroup.streamplatform.streamregistry.graphql.type.Scalars;
+import graphql.schema.GraphQLScalarType;
 
-  @Override
-  public Object serialize(Object input) {
-    return input;
-  }
-
-  @Override
-  public Object parseLiteral(Object input) throws CoercingParseLiteralException {
-    return parseLiteral(input);
+@Configuration
+public class GraphQLConfiguration {
+  @Bean
+  public GraphQLScalarType objectNodeScalar() {
+    return Scalars.objectNodeScalar();
   }
 }

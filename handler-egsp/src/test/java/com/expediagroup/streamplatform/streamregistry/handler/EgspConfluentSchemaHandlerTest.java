@@ -26,9 +26,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper;
 
 public class EgspConfluentSchemaHandlerTest {
   private static final ObjectMapper mapper = new ObjectMapper();

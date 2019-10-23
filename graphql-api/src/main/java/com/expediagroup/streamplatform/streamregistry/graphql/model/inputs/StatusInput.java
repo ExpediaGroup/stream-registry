@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
-import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
+import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
 
 import lombok.Builder;
 import lombok.Value;

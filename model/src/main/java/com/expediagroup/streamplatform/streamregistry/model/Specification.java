@@ -15,8 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.deserialise;
-import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.serialise;
+import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
 
 import java.util.ArrayList;
 import java.util.Collections;

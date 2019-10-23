@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import static com.expediagroup.streamplatform.streamregistry.model.scalars.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.fasterxml.jackson.databind.node.ObjectNode;

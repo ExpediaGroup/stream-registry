@@ -57,13 +57,11 @@ public abstract class ObjectIT {
   public static void beforeClass() {
     String[] args = new String[] {
         "--server.port=0",
-        "--repository.kafka.bootstrap-servers=x",
-        "--repository.kafka.replicationFactor=1",
         "--schema.registry.url=http://schema-registry",
         "--spring.datasource.url=jdbc:postgresql://localhost:" + POSTGRES_PORT + "/streamregistry",
         "--spring.datasource.username=streamregistry",
-        "--spring.jpa.hibernate.ddl-auto=create",
-        "--spring.datasource.password=streamregistry"
+        "--spring.datasource.password=streamregistry",
+        "--spring.jpa.hibernate.ddl-auto=create"
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
     url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
