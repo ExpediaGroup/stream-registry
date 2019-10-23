@@ -499,6 +499,9 @@ fragment ProducerBindingPart on ProducerBinding{
         streamDomain
         streamName
         streamVersion
+        infrastructureZone
+        infrastructureName
+        producerName
     }
     specification{
         __typename
@@ -786,6 +789,8 @@ fragment StreamBindingPart on StreamBinding{
         streamDomain
         streamName
         streamVersion
+        infrastructureZone
+        infrastructureName
     }
     specification{
         __typename
