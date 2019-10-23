@@ -30,14 +30,6 @@ public class SchemaQuery {
     this.service = service;
   }
 
-  public Schema getSchema(SchemaKeyInput key) {
-    return service.read(key.asSchemaKey()).get();
-  }
-
-  public Iterable<Schema> getSchemas(SchemaKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new SchemaFilter(key, specification));
-  }
-
   public Schema getByKey(SchemaKeyInput key) {
     return service.read(key.asSchemaKey()).get();
   }

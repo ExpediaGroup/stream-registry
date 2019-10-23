@@ -85,7 +85,7 @@ query Consumer(
     $key: ConsumerKeyInput!
 ) {
     consumerQuery{
-        consumer(
+        byKey(
             key: $key
         ) {
             __typename
@@ -99,7 +99,7 @@ query Consumers(
     $specification: SpecificationQuery
 ) {
     consumerQuery{
-        consumers(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -180,7 +180,7 @@ query ConsumerBinding(
     $key: ConsumerBindingKeyInput!
 ) {
     consumerBindingQuery{
-        consumerBinding(
+        byKey(
             key: $key
         ) {
             __typename
@@ -195,7 +195,7 @@ query ConsumerBindings(
     $specification: SpecificationQuery
 ) {
     consumerBindingQuery{
-        consumerBindings(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -369,7 +369,7 @@ query Infrastructure(
     $key: InfrastructureKeyInput!
 ) {
     infrastructureQuery{
-        infrastructure(
+        byKey(
             key: $key
         ) {
             __typename
@@ -383,7 +383,7 @@ query Infrastructures(
     $specification: SpecificationQuery
 ) {
     infrastructureQuery{
-        infrastructures(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -466,7 +466,7 @@ query Producer(
     $key: ProducerKeyInput!
 ) {
     producerQuery{
-        producer(
+        byKey(
             key: $key
         ) {
             __typename
@@ -480,7 +480,7 @@ query Producers(
     $specification: SpecificationQuery
 ) {
     producerQuery{
-        producers(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -562,7 +562,7 @@ query ProducerBinding(
     $key: ProducerBindingKeyInput!
 ) {
     producerBindingQuery{
-        producerBinding(
+        byKey(
             key: $key
         ) {
             __typename
@@ -577,7 +577,7 @@ query ProducerBindings(
     $specification: SpecificationQuery
 ) {
     producerBindingQuery{
-        producerBindings(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -656,7 +656,7 @@ query Schema(
     $key: SchemaKeyInput!
 ) {
     schemaQuery{
-        schema(
+        byKey(
             key: $key
         ) {
             __typename
@@ -670,7 +670,7 @@ query Schemas(
     $specification: SpecificationQuery
 ) {
     schemaQuery{
-        schemas(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -754,7 +754,7 @@ query Stream(
     $key: StreamKeyInput!
 ) {
     streamQuery{
-        stream(
+        byKey(
             key: $key
         ) {
             __typename
@@ -768,7 +768,7 @@ query Streams(
     $specification: SpecificationQuery
 ) {
     streamQuery{
-        streams(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -849,7 +849,7 @@ query StreamBinding(
     $key: StreamBindingKeyInput!
 ) {
     streamBindingQuery{
-        streamBinding(
+        byKey(
             key: $key
         ) {
             __typename
@@ -863,7 +863,7 @@ query StreamBindings(
     $specification: SpecificationQuery
 ) {
     streamBindingQuery{
-        streamBindings(
+        byQuery(
             key: $key
             specification: $specification
         ) {
@@ -942,7 +942,7 @@ query Zone(
     $key: ZoneKeyInput!
 ) {
     zoneQuery{
-        zone(
+        byKey(
             key: $key
         ) {
             __typename
@@ -956,7 +956,7 @@ query Zones(
     $specification: SpecificationQuery
 ) {
     zoneQuery{
-        zones(
+        byQuery(
             key: $key,
             specification: $specification
         ) {

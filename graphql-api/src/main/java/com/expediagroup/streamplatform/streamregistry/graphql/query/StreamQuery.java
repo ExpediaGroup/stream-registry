@@ -31,13 +31,6 @@ public class StreamQuery {
     this.service = service;
   }
 
-  public Stream getStream(StreamKeyInput key) {
-    return service.read(key.asStreamKey()).get();
-  }
-
-  public Iterable<Stream> getStreams(StreamKeyQuery key, SpecificationQuery specification, SchemaKeyQuery schemaKeyQuery) {
-    return service.findAll(new StreamFilter(key, specification, schemaKeyQuery));
-  }
 
   public Stream getByKey(StreamKeyInput key) {
     return service.read(key.asStreamKey()).get();

@@ -30,14 +30,6 @@ public class ProducerBindingQuery {
     this.service = service;
   }
 
-  public ProducerBinding getProducerBinding(ProducerBindingKeyInput key) {
-    return service.read(key.asProducerBindingKey()).get();
-  }
-
-  public Iterable<ProducerBinding> getProducerBindings(ProducerBindingKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new ProducerBindingFilter(key, specification));
-  }
-
   public ProducerBinding getByKey(ProducerBindingKeyInput key) {
     return service.read(key.asProducerBindingKey()).get();
   }

@@ -30,14 +30,6 @@ public class InfrastructureQuery {
     this.service = service;
   }
 
-  public Infrastructure getInfrastructure(InfrastructureKeyInput key) {
-    return service.read(key.asInfrastructureKey()).get();
-  }
-
-  public Iterable<Infrastructure> getInfrastructures(InfrastructureKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new InfrastructureFilter(key, specification));
-  }
-
   public Infrastructure getByKey(InfrastructureKeyInput key) {
     return service.read(key.asInfrastructureKey()).get();
   }

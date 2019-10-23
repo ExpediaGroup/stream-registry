@@ -104,7 +104,7 @@ public class ProducerIT extends ObjectIT {
 
     ProducerQuery.Data after = (ProducerQuery.Data) client.getData(ProducerQuery.builder().key(input).build());
 
-    assertEquals(after.getProducerQuery().getProducer().getKey().getName(), input.name());
+    assertEquals(after.getProducerQuery().getByKey().getKey().getName(), input.name());
   }
 
   @Override
@@ -120,7 +120,7 @@ public class ProducerIT extends ObjectIT {
 
     ProducersQuery.Data after = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
 
-    assertEquals(after.getProducerQuery().getProducers().size(), before.getProducerQuery().getProducers().size() + 1);
+    assertEquals(after.getProducerQuery().getByQuery().size(), before.getProducerQuery().getByQuery().size() + 1);
   }
 
   @Override

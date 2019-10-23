@@ -30,14 +30,6 @@ public class ConsumerQuery {
     this.service = service;
   }
 
-  public Consumer getConsumer(ConsumerKeyInput key) {
-    return service.read(key.asConsumerKey()).get();
-  }
-
-  public Iterable<Consumer> getConsumers(ConsumerKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new ConsumerFilter(key, specification));
-  }
-
   public Consumer getByKey(ConsumerKeyInput key) {
     return service.read(key.asConsumerKey()).get();
   }

@@ -30,14 +30,6 @@ public class StreamBindingQuery {
     this.service = service;
   }
 
-  public StreamBinding getStreamBinding(StreamBindingKeyInput key) {
-    return service.read(key.asStreamBindingKey()).get();
-  }
-
-  public Iterable<StreamBinding> getStreamBindings(StreamBindingKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new StreamBindingFilter(key, specification));
-  }
-
   public StreamBinding getByKey(StreamBindingKeyInput key) {
     return service.read(key.asStreamBindingKey()).get();
   }
