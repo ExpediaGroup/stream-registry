@@ -517,7 +517,4 @@ type Query {
     producerBinding: ProducerBindingQuery!
     consumerBinding: ConsumerBindingQuery !
 
-    bugfixq(v:TagQuery): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
-    bugfixi(v:TagInput): Domain @deprecated(reason: "This is only here to address a bug: https://github.com/graphql-java-kickstart/graphql-java-tools/issues/77")
-
 }
