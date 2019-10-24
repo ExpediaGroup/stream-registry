@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -25,22 +25,22 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
 public class DomainMutation {
 
-  private Services services;
+  private DomainService domainService;
 
-  public DomainMutation(Services services) {
-    this.services = services;
+  public DomainMutation(DomainService domainService) {
+    this.domainService = domainService;
   }
 
   public Domain insert(DomainKeyInput key, SpecificationInput specification) {
-    return services.getDomainService().create(asDomain(key, specification)).get();
+    return domainService.create(asDomain(key, specification)).get();
   }
 
   public Domain update(DomainKeyInput key, SpecificationInput specification) {
-    return services.getDomainService().update(asDomain(key, specification)).get();
+    return domainService.update(asDomain(key, specification)).get();
   }
 
   public Domain upsert(DomainKeyInput key, SpecificationInput specification) {
-    return services.getDomainService().upsert(asDomain(key, specification)).get();
+    return domainService.upsert(asDomain(key, specification)).get();
   }
 
   public Boolean delete(DomainKeyInput key) {
@@ -48,16 +48,16 @@ public class DomainMutation {
   }
 
   public Domain updateStatus(DomainKeyInput key, StatusInput status) {
-    Domain domain = services.getDomainService().read(key.asDomainKey()).get();
+    Domain domain = domainService.read(key.asDomainKey()).get();
     domain.setStatus(status.asStatus());
-    return services.getDomainService().update(domain).get();
+    return domainService.update(domain).get();
   }
 
   private Domain asDomain(DomainKeyInput key, SpecificationInput specification) {
     Domain domain = new Domain();
     domain.setKey(key.asDomainKey());
     domain.setSpecification(specification.asSpecification());
-    maintainState(domain, services.getDomainService().read(domain.getKey()));
+    maintainState(domain, domainService.read(domain.getKey()));
     return domain;
   }
 }

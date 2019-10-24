@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -25,29 +25,29 @@ import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 public class ProducerMutation {
 
-  private Services services;
+  private ProducerService producerService;
 
-  public ProducerMutation(Services services) {
-    this.services = services;
+  public ProducerMutation(ProducerService producerService) {
+    this.producerService = producerService;
   }
 
   public Producer insert(ProducerKeyInput key, SpecificationInput specification) {
-    return services.getProducerService().create(asProducer(key, specification)).get();
+    return producerService.create(asProducer(key, specification)).get();
   }
 
   public Producer update(ProducerKeyInput key, SpecificationInput specification) {
-    return services.getProducerService().update(asProducer(key, specification)).get();
+    return producerService.update(asProducer(key, specification)).get();
   }
 
   public Producer upsert(ProducerKeyInput key, SpecificationInput specification) {
-    return services.getProducerService().upsert(asProducer(key, specification)).get();
+    return producerService.upsert(asProducer(key, specification)).get();
   }
 
   private Producer asProducer(ProducerKeyInput key, SpecificationInput specification) {
     Producer producer = new Producer();
     producer.setKey(key.asProducerKey());
     producer.setSpecification(specification.asSpecification());
-    maintainState(producer, services.getProducerService().read(producer.getKey()));
+    maintainState(producer, producerService.read(producer.getKey()));
     return producer;
   }
 
@@ -56,8 +56,8 @@ public class ProducerMutation {
   }
 
   public Producer updateStatus(ProducerKeyInput key, StatusInput status) {
-    Producer producer = services.getProducerService().read(key.asProducerKey()).get();
+    Producer producer = producerService.read(key.asProducerKey()).get();
     producer.setStatus(status.asStatus());
-    return services.getProducerService().update(producer).get();
+    return producerService.update(producer).get();
   }
 }

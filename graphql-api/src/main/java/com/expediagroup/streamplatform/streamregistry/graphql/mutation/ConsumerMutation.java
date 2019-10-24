@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -25,29 +25,29 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 public class ConsumerMutation {
 
-  private Services services;
+  private ConsumerService consumerService;
 
-  public ConsumerMutation(Services services) {
-    this.services = services;
+  public ConsumerMutation(ConsumerService consumerService) {
+    this.consumerService = consumerService;
   }
 
   public Consumer insert(ConsumerKeyInput key, SpecificationInput specification) {
-    return services.getConsumerService().create(asConsumer(key, specification)).get();
+    return consumerService.create(asConsumer(key, specification)).get();
   }
 
   public Consumer update(ConsumerKeyInput key, SpecificationInput specification) {
-    return services.getConsumerService().update(asConsumer(key, specification)).get();
+    return consumerService.update(asConsumer(key, specification)).get();
   }
 
   public Consumer upsert(ConsumerKeyInput key, SpecificationInput specification) {
-    return services.getConsumerService().upsert(asConsumer(key, specification)).get();
+    return consumerService.upsert(asConsumer(key, specification)).get();
   }
 
   private Consumer asConsumer(ConsumerKeyInput key, SpecificationInput specification) {
     Consumer consumer = new Consumer();
     consumer.setKey(key.asConsumerKey());
     consumer.setSpecification(specification.asSpecification());
-    maintainState(consumer, services.getConsumerService().read(consumer.getKey()));
+    maintainState(consumer, consumerService.read(consumer.getKey()));
     return consumer;
   }
 
@@ -56,8 +56,8 @@ public class ConsumerMutation {
   }
 
   public Consumer updateStatus(ConsumerKeyInput key, StatusInput status) {
-    Consumer consumer = services.getConsumerService().read(key.asConsumerKey()).get();
+    Consumer consumer = consumerService.read(key.asConsumerKey()).get();
     consumer.setStatus(status.asStatus());
-    return services.getConsumerService().update(consumer).get();
+    return consumerService.update(consumer).get();
   }
 }

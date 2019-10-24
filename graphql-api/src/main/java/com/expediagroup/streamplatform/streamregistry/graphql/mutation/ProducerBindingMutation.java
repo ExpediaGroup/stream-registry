@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -25,22 +25,22 @@ import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 public class ProducerBindingMutation {
 
-  private Services services;
+  private ProducerBindingService producerBindingService;
 
-  public ProducerBindingMutation(Services services) {
-    this.services = services;
+  public ProducerBindingMutation(ProducerBindingService producerBindingService) {
+    this.producerBindingService = producerBindingService;
   }
 
   public ProducerBinding insert(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return services.getProducerBindingService().create(asProducerBinding(key, specification)).get();
+    return producerBindingService.create(asProducerBinding(key, specification)).get();
   }
 
   public ProducerBinding update(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return services.getProducerBindingService().update(asProducerBinding(key, specification)).get();
+    return producerBindingService.update(asProducerBinding(key, specification)).get();
   }
 
   public ProducerBinding upsert(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return services.getProducerBindingService().upsert(asProducerBinding(key, specification)).get();
+    return producerBindingService.upsert(asProducerBinding(key, specification)).get();
   }
 
   public Boolean delete(ProducerBindingKeyInput key) {
@@ -48,16 +48,16 @@ public class ProducerBindingMutation {
   }
 
   public ProducerBinding updateStatus(ProducerBindingKeyInput key, StatusInput status) {
-    ProducerBinding producerBinding = services.getProducerBindingService().read(key.asProducerBindingKey()).get();
+    ProducerBinding producerBinding = producerBindingService.read(key.asProducerBindingKey()).get();
     producerBinding.setStatus(status.asStatus());
-    return services.getProducerBindingService().update(producerBinding).get();
+    return producerBindingService.update(producerBinding).get();
   }
 
   private ProducerBinding asProducerBinding(ProducerBindingKeyInput key, SpecificationInput specification) {
     ProducerBinding producerBinding = new ProducerBinding();
     producerBinding.setKey(key.asProducerBindingKey());
     producerBinding.setSpecification(specification.asSpecification());
-    maintainState(producerBinding, services.getProducerBindingService().read(producerBinding.getKey()));
+    maintainState(producerBinding, producerBindingService.read(producerBinding.getKey()));
     return producerBinding;
   }
 }

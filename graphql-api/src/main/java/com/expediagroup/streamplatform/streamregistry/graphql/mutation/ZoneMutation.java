@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
@@ -25,29 +25,29 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 public class ZoneMutation {
 
-  private Services services;
+  private ZoneService zoneService;
 
-  public ZoneMutation(Services services) {
-    this.services = services;
+  public ZoneMutation(ZoneService zoneService) {
+    this.zoneService = zoneService;
   }
 
   public Zone insert(ZoneKeyInput key, SpecificationInput specification) {
-    return services.getZoneService().create(asZone(key, specification)).get();
+    return zoneService.create(asZone(key, specification)).get();
   }
 
   public Zone update(ZoneKeyInput key, SpecificationInput specification) {
-    return services.getZoneService().update(asZone(key, specification)).get();
+    return zoneService.update(asZone(key, specification)).get();
   }
 
   public Zone upsert(ZoneKeyInput key, SpecificationInput specification) {
-    return services.getZoneService().upsert(asZone(key, specification)).get();
+    return zoneService.upsert(asZone(key, specification)).get();
   }
 
   private Zone asZone(ZoneKeyInput key, SpecificationInput specification) {
     Zone zone = new Zone();
     zone.setKey(key.asZoneKey());
     zone.setSpecification(specification.asSpecification());
-    maintainState(zone, services.getZoneService().read(zone.getKey()));
+    maintainState(zone, zoneService.read(zone.getKey()));
     return zone;
   }
 
@@ -56,8 +56,8 @@ public class ZoneMutation {
   }
 
   public Zone updateStatus(ZoneKeyInput key, StatusInput status) {
-    Zone zone = services.getZoneService().read(key.asZoneKey()).get();
+    Zone zone = zoneService.read(key.asZoneKey()).get();
     zone.setStatus(status.asStatus());
-    return services.getZoneService().update(zone).get();
+    return zoneService.update(zone).get();
   }
 }

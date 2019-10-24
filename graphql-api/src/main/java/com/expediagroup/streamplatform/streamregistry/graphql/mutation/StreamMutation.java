@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -26,22 +26,22 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 public class StreamMutation {
 
-  private Services services;
+  private StreamService streamService;
 
-  public StreamMutation(Services services) {
-    this.services = services;
+  public StreamMutation(StreamService streamService) {
+    this.streamService = streamService;
   }
 
   public Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return services.getStreamService().create(asStream(key, specification, schema)).get();
+    return streamService.create(asStream(key, specification, schema)).get();
   }
 
   public Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return services.getStreamService().update(asStream(key, specification, schema)).get();
+    return streamService.update(asStream(key, specification, schema)).get();
   }
 
   public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return services.getStreamService().upsert(asStream(key, specification, schema)).get();
+    return streamService.upsert(asStream(key, specification, schema)).get();
   }
 
   public Boolean delete(StreamKeyInput key) {
@@ -49,9 +49,9 @@ public class StreamMutation {
   }
 
   public Stream updateStatus(StreamKeyInput key, StatusInput status) {
-    Stream stream = services.getStreamService().read(key.asStreamKey()).get();
+    Stream stream = streamService.read(key.asStreamKey()).get();
     stream.setStatus(status.asStatus());
-    return services.getStreamService().update(stream).get();
+    return streamService.update(stream).get();
   }
 
   private Stream asStream(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
@@ -59,7 +59,7 @@ public class StreamMutation {
     stream.setKey(key.asStreamKey());
     stream.setSpecification(specification.asSpecification());
     stream.setSchemaKey(schema.asSchemaKey());
-    maintainState(stream, services.getStreamService().read(stream.getKey()));
+    maintainState(stream, streamService.read(stream.getKey()));
     return stream;
   }
 }

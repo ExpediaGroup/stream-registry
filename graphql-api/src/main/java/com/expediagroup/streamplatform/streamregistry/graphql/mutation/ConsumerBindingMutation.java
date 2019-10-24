@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -25,22 +25,22 @@ import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 public class ConsumerBindingMutation {
 
-  private Services services;
+  private ConsumerBindingService consumerBindingService;
 
-  public ConsumerBindingMutation(Services services) {
-    this.services = services;
+  public ConsumerBindingMutation(ConsumerBindingService consumerBindingService) {
+    this.consumerBindingService = consumerBindingService;
   }
 
   public ConsumerBinding insert(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return services.getConsumerBindingService().create(asConsumerBinding(key, specification)).get();
+    return consumerBindingService.create(asConsumerBinding(key, specification)).get();
   }
 
   public ConsumerBinding update(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return services.getConsumerBindingService().update(asConsumerBinding(key, specification)).get();
+    return consumerBindingService.update(asConsumerBinding(key, specification)).get();
   }
 
   public ConsumerBinding upsert(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return services.getConsumerBindingService().upsert(asConsumerBinding(key, specification)).get();
+    return consumerBindingService.upsert(asConsumerBinding(key, specification)).get();
   }
 
   public Boolean delete(ConsumerBindingKeyInput key) {
@@ -48,16 +48,16 @@ public class ConsumerBindingMutation {
   }
 
   public ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status) {
-    ConsumerBinding consumerBinding = services.getConsumerBindingService().read(key.asConsumerBindingKey()).get();
+    ConsumerBinding consumerBinding = consumerBindingService.read(key.asConsumerBindingKey()).get();
     consumerBinding.setStatus(status.asStatus());
-    return services.getConsumerBindingService().update(consumerBinding).get();
+    return consumerBindingService.update(consumerBinding).get();
   }
 
   private ConsumerBinding asConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {
     ConsumerBinding consumerBinding = new ConsumerBinding();
     consumerBinding.setKey(key.asConsumerBindingKey());
     consumerBinding.setSpecification(specification.asSpecification());
-    maintainState(consumerBinding, services.getConsumerBindingService().read(key.asConsumerBindingKey()));
+    maintainState(consumerBinding, consumerBindingService.read(key.asConsumerBindingKey()));
     return consumerBinding;
   }
 }

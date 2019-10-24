@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -25,30 +25,30 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
 public class InfrastructureMutation {
 
-  private Services services;
+  private InfrastructureService infrastructureService;
 
-  public InfrastructureMutation(Services services) {
-    this.services = services;
+  public InfrastructureMutation(InfrastructureService infrastructureService) {
+    this.infrastructureService = infrastructureService;
   }
 
   public Infrastructure insert(InfrastructureKeyInput key, SpecificationInput specification) {
-    return services.getInfrastructureService().create(asInfrastructure(key, specification)).get();
+    return infrastructureService.create(asInfrastructure(key, specification)).get();
   }
 
   private Infrastructure asInfrastructure(InfrastructureKeyInput key, SpecificationInput specification) {
     Infrastructure out = new Infrastructure();
     out.setKey(key.asInfrastructureKey());
     out.setSpecification(specification.asSpecification());
-    maintainState(out, services.getInfrastructureService().read(out.getKey()));
+    maintainState(out, infrastructureService.read(out.getKey()));
     return out;
   }
 
   public Infrastructure update(InfrastructureKeyInput key, SpecificationInput specification) {
-    return services.getInfrastructureService().update(asInfrastructure(key, specification)).get();
+    return infrastructureService.update(asInfrastructure(key, specification)).get();
   }
 
   public Infrastructure upsert(InfrastructureKeyInput key, SpecificationInput specification) {
-    return services.getInfrastructureService().upsert(asInfrastructure(key, specification)).get();
+    return infrastructureService.upsert(asInfrastructure(key, specification)).get();
   }
 
   public Boolean delete(InfrastructureKeyInput key) {
@@ -56,8 +56,8 @@ public class InfrastructureMutation {
   }
 
   public Infrastructure updateStatus(InfrastructureKeyInput key, StatusInput status) {
-    Infrastructure infrastructure = services.getInfrastructureService().read(key.asInfrastructureKey()).get();
+    Infrastructure infrastructure = infrastructureService.read(key.asInfrastructureKey()).get();
     infrastructure.setStatus(status.asStatus());
-    return services.getInfrastructureService().update(infrastructure).get();
+    return infrastructureService.update(infrastructure).get();
   }
 }

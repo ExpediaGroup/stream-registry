@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
@@ -25,22 +25,22 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 public class StreamBindingMutation {
 
-  private Services services;
+  private StreamBindingService streamBindingService;
 
-  public StreamBindingMutation(Services services) {
-    this.services = services;
+  public StreamBindingMutation(StreamBindingService streamBindingService) {
+    this.streamBindingService = streamBindingService;
   }
 
   public StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return services.getStreamBindingService().create(asStreamBinding(key, specification)).get();
+    return streamBindingService.create(asStreamBinding(key, specification)).get();
   }
 
   public StreamBinding update(StreamBindingKeyInput key, SpecificationInput specification) {
-    return services.getStreamBindingService().update(asStreamBinding(key, specification)).get();
+    return streamBindingService.update(asStreamBinding(key, specification)).get();
   }
 
   public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return services.getStreamBindingService().upsert(asStreamBinding(key, specification)).get();
+    return streamBindingService.upsert(asStreamBinding(key, specification)).get();
   }
 
   public Boolean delete(StreamBindingKeyInput key) {
@@ -51,13 +51,13 @@ public class StreamBindingMutation {
     StreamBinding streamBinding = new StreamBinding();
     streamBinding.setKey(key.asStreamBindingKey());
     streamBinding.setSpecification(specification.asSpecification());
-    maintainState(streamBinding, services.getStreamBindingService().read(streamBinding.getKey()));
+    maintainState(streamBinding, streamBindingService.read(streamBinding.getKey()));
     return streamBinding;
   }
 
   public StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status) {
-    StreamBinding streamBinding = services.getStreamBindingService().read(key.asStreamBindingKey()).get();
+    StreamBinding streamBinding = streamBindingService.read(key.asStreamBindingKey()).get();
     streamBinding.setStatus(status.asStatus());
-    return services.getStreamBindingService().update(streamBinding).get();
+    return streamBindingService.update(streamBinding).get();
   }
 }

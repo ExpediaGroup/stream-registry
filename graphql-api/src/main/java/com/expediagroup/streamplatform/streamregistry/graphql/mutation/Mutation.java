@@ -36,16 +36,16 @@ public class Mutation implements GraphQLMutationResolver {
   private final ConsumerBindingMutation consumerBindingMutation;
 
   public Mutation(Services services) {
-    consumerMutation = new ConsumerMutation(services);
-    producerMutation = new ProducerMutation(services);
-    domainMutation = new DomainMutation(services);
-    schemaMutation = new SchemaMutation(services);
-    streamMutation = new StreamMutation(services);
-    zoneMutation = new ZoneMutation(services);
-    infrastructureMutation = new InfrastructureMutation(services);
-    streamBindingMutation = new StreamBindingMutation(services);
-    producerBindingMutation = new ProducerBindingMutation(services);
-    consumerBindingMutation = new ConsumerBindingMutation(services);
+    consumerMutation = new ConsumerMutation(services.getConsumerService());
+    producerMutation = new ProducerMutation(services.getProducerService());
+    domainMutation = new DomainMutation(services.getDomainService());
+    schemaMutation = new SchemaMutation(services.getSchemaService());
+    streamMutation = new StreamMutation(services.getStreamService());
+    zoneMutation = new ZoneMutation(services.getZoneService());
+    infrastructureMutation = new InfrastructureMutation(services.getInfrastructureService());
+    streamBindingMutation = new StreamBindingMutation(services.getStreamBindingService());
+    producerBindingMutation = new ProducerBindingMutation(services.getProducerBindingService());
+    consumerBindingMutation = new ConsumerBindingMutation(services.getConsumerBindingService());
   }
 
   public ConsumerMutation consumer() {
