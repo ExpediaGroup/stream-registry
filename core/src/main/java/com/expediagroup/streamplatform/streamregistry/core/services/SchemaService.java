@@ -72,6 +72,7 @@ public class SchemaService {
   }
 
   public void delete(Schema schema) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<Schema> findAll(Predicate<Schema> filter) {

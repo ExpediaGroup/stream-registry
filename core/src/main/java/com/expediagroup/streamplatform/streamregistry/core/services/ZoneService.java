@@ -72,6 +72,7 @@ public class ZoneService {
   }
 
   public void delete(Zone zone) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<Zone> findAll(Predicate<Zone> filter) {

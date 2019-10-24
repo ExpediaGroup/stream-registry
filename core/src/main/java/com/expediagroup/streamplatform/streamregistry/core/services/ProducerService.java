@@ -72,6 +72,7 @@ public class ProducerService {
   }
 
   public void delete(Producer producer) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<Producer> findAll(Predicate<Producer> filter) {

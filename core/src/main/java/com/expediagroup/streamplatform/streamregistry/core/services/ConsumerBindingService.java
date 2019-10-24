@@ -35,47 +35,48 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBinding
 @RequiredArgsConstructor
 public class ConsumerBindingService {
   private final HandlersForServices handlerService;
-  private final ConsumerBindingValidator consumerbindingValidator;
-  private final ConsumerBindingRepository consumerbindingRepository;
+  private final ConsumerBindingValidator consumerBindingValidator;
+  private final ConsumerBindingRepository consumerBindingRepository;
 
-  public Optional<ConsumerBinding> create(ConsumerBinding consumerbinding) throws ValidationException {
-    if (consumerbindingRepository.findById(consumerbinding.getKey()).isPresent()) {
+  public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
+    if (consumerBindingRepository.findById(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
-    consumerbindingValidator.validateForCreate(consumerbinding);
-    consumerbinding.setSpecification(handlerService.handleInsert(consumerbinding));
-    return Optional.ofNullable(consumerbindingRepository.save(consumerbinding));
+    consumerBindingValidator.validateForCreate(consumerBinding);
+    consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
+    return Optional.ofNullable(consumerBindingRepository.save(consumerBinding));
   }
 
   public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
-    return consumerbindingRepository.findById(key);
+    return consumerBindingRepository.findById(key);
   }
 
   public Iterable<ConsumerBinding> readAll() {
-    return consumerbindingRepository.findAll();
+    return consumerBindingRepository.findAll();
   }
 
-  public Optional<ConsumerBinding> update(ConsumerBinding consumerbinding) throws ValidationException {
-    Optional<ConsumerBinding> existing = consumerbindingRepository.findById(consumerbinding.getKey());
+  public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
+    Optional<ConsumerBinding> existing = consumerBindingRepository.findById(consumerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    consumerbindingValidator.validateForUpdate(consumerbinding, existing.get());
-    consumerbinding.setSpecification(handlerService.handleInsert(consumerbinding));
-    return Optional.ofNullable(consumerbindingRepository.save(consumerbinding));
+    consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
+    consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
+    return Optional.ofNullable(consumerBindingRepository.save(consumerBinding));
   }
 
-  public Optional<ConsumerBinding> upsert(ConsumerBinding consumerbinding) throws ValidationException {
-    return !consumerbindingRepository.findById(consumerbinding.getKey()).isPresent() ?
-        create(consumerbinding) :
-        update(consumerbinding);
+  public Optional<ConsumerBinding> upsert(ConsumerBinding consumerBinding) throws ValidationException {
+    return !consumerBindingRepository.findById(consumerBinding.getKey()).isPresent() ?
+        create(consumerBinding) :
+        update(consumerBinding);
   }
 
-  public void delete(ConsumerBinding consumerbinding) {
+  public void delete(ConsumerBinding consumerBinding) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
-    return stream(consumerbindingRepository.findAll().spliterator(), false)
+    return stream(consumerBindingRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }

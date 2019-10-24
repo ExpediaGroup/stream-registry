@@ -72,6 +72,7 @@ public class ConsumerService {
   }
 
   public void delete(Consumer consumer) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<Consumer> findAll(Predicate<Consumer> filter) {

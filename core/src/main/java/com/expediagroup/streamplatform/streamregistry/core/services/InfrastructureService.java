@@ -72,6 +72,7 @@ public class InfrastructureService {
   }
 
   public void delete(Infrastructure infrastructure) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<Infrastructure> findAll(Predicate<Infrastructure> filter) {

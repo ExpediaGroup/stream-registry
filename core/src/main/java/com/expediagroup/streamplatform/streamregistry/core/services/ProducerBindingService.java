@@ -35,47 +35,48 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBinding
 @RequiredArgsConstructor
 public class ProducerBindingService {
   private final HandlersForServices handlerService;
-  private final ProducerBindingValidator producerbindingValidator;
-  private final ProducerBindingRepository producerbindingRepository;
+  private final ProducerBindingValidator producerBindingValidator;
+  private final ProducerBindingRepository producerBindingRepository;
 
-  public Optional<ProducerBinding> create(ProducerBinding producerbinding) throws ValidationException {
-    if (producerbindingRepository.findById(producerbinding.getKey()).isPresent()) {
+  public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
+    if (producerBindingRepository.findById(producerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
-    producerbindingValidator.validateForCreate(producerbinding);
-    producerbinding.setSpecification(handlerService.handleInsert(producerbinding));
-    return Optional.ofNullable(producerbindingRepository.save(producerbinding));
+    producerBindingValidator.validateForCreate(producerBinding);
+    producerBinding.setSpecification(handlerService.handleInsert(producerBinding));
+    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
   }
 
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
-    return producerbindingRepository.findById(key);
+    return producerBindingRepository.findById(key);
   }
 
   public Iterable<ProducerBinding> readAll() {
-    return producerbindingRepository.findAll();
+    return producerBindingRepository.findAll();
   }
 
-  public Optional<ProducerBinding> update(ProducerBinding producerbinding) throws ValidationException {
-    Optional<ProducerBinding> existing = producerbindingRepository.findById(producerbinding.getKey());
+  public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
+    Optional<ProducerBinding> existing = producerBindingRepository.findById(producerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    producerbindingValidator.validateForUpdate(producerbinding, existing.get());
-    producerbinding.setSpecification(handlerService.handleUpdate(producerbinding, existing.get()));
-    return Optional.ofNullable(producerbindingRepository.save(producerbinding));
+    producerBindingValidator.validateForUpdate(producerBinding, existing.get());
+    producerBinding.setSpecification(handlerService.handleUpdate(producerBinding, existing.get()));
+    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
   }
 
-  public Optional<ProducerBinding> upsert(ProducerBinding producerbinding) throws ValidationException {
-    return !producerbindingRepository.findById(producerbinding.getKey()).isPresent() ?
-        create(producerbinding) :
-        update(producerbinding);
+  public Optional<ProducerBinding> upsert(ProducerBinding producerBinding) throws ValidationException {
+    return !producerBindingRepository.findById(producerBinding.getKey()).isPresent() ?
+        create(producerBinding) :
+        update(producerBinding);
   }
 
-  public void delete(ProducerBinding producerbinding) {
+  public void delete(ProducerBinding producerBinding) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return stream(producerbindingRepository.findAll().spliterator(), false)
+    return stream(producerBindingRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }

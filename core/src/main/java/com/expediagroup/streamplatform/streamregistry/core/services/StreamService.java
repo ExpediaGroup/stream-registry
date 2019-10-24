@@ -72,6 +72,7 @@ public class StreamService {
   }
 
   public void delete(Stream stream) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<Stream> findAll(Predicate<Stream> filter) {

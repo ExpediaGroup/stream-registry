@@ -72,6 +72,7 @@ public class DomainService {
   }
 
   public void delete(Domain domain) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<Domain> findAll(Predicate<Domain> filter) {

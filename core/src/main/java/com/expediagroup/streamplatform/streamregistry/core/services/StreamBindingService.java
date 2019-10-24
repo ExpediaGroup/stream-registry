@@ -35,47 +35,48 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 @RequiredArgsConstructor
 public class StreamBindingService {
   private final HandlersForServices handlerService;
-  private final StreamBindingValidator streambindingValidator;
-  private final StreamBindingRepository streambindingRepository;
+  private final StreamBindingValidator streamBindingValidator;
+  private final StreamBindingRepository streamBindingRepository;
 
-  public Optional<StreamBinding> create(StreamBinding streambinding) throws ValidationException {
-    if (streambindingRepository.findById(streambinding.getKey()).isPresent()) {
+  public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
+    if (streamBindingRepository.findById(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
-    streambindingValidator.validateForCreate(streambinding);
-    streambinding.setSpecification(handlerService.handleInsert(streambinding));
-    return Optional.ofNullable(streambindingRepository.save(streambinding));
+    streamBindingValidator.validateForCreate(streamBinding);
+    streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
+    return Optional.ofNullable(streamBindingRepository.save(streamBinding));
   }
 
   public Optional<StreamBinding> read(StreamBindingKey key) {
-    return streambindingRepository.findById(key);
+    return streamBindingRepository.findById(key);
   }
 
   public Iterable<StreamBinding> readAll() {
-    return streambindingRepository.findAll();
+    return streamBindingRepository.findAll();
   }
 
-  public Optional<StreamBinding> update(StreamBinding streambinding) throws ValidationException {
-    Optional<StreamBinding> existing = streambindingRepository.findById(streambinding.getKey());
+  public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
+    Optional<StreamBinding> existing = streamBindingRepository.findById(streamBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    streambindingValidator.validateForUpdate(streambinding, existing.get());
-    streambinding.setSpecification(handlerService.handleUpdate(streambinding, existing.get()));
-    return Optional.ofNullable(streambindingRepository.save(streambinding));
+    streamBindingValidator.validateForUpdate(streamBinding, existing.get());
+    streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
+    return Optional.ofNullable(streamBindingRepository.save(streamBinding));
   }
 
-  public Optional<StreamBinding> upsert(StreamBinding streambinding) throws ValidationException {
-    return !streambindingRepository.findById(streambinding.getKey()).isPresent() ?
-        create(streambinding) :
-        update(streambinding);
+  public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
+    return !streamBindingRepository.findById(streamBinding.getKey()).isPresent() ?
+        create(streamBinding) :
+        update(streamBinding);
   }
 
-  public void delete(StreamBinding streambinding) {
+  public void delete(StreamBinding streamBinding) {
+    throw new UnsupportedOperationException();
   }
 
   public Iterable<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return stream(streambindingRepository.findAll().spliterator(), false)
+    return stream(streamBindingRepository.findAll().spliterator(), false)
         .filter(r -> filter.test(r))
         .collect(Collectors.toList());
   }
