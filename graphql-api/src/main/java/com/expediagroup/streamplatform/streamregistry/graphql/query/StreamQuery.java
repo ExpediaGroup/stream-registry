@@ -25,18 +25,17 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 public class StreamQuery {
 
-  private final StreamService service;
+  private final StreamService streamService;
 
-  public StreamQuery(StreamService service) {
-    this.service = service;
+  public StreamQuery(StreamService streamService) {
+    this.streamService = streamService;
   }
 
-
   public Stream getByKey(StreamKeyInput key) {
-    return service.read(key.asStreamKey()).get();
+    return streamService.read(key.asStreamKey()).get();
   }
 
   public Iterable<Stream> getByQuery(StreamKeyQuery key, SpecificationQuery specification, SchemaKeyQuery schemaKeyQuery) {
-    return service.findAll(new StreamFilter(key, specification, schemaKeyQuery));
+    return streamService.findAll(new StreamFilter(key, specification, schemaKeyQuery));
   }
 }

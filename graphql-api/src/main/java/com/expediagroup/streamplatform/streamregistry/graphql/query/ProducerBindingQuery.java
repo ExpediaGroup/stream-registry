@@ -24,17 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 public class ProducerBindingQuery {
 
-  private final ProducerBindingService service;
+  private final ProducerBindingService producerBindingService;
 
-  public ProducerBindingQuery(ProducerBindingService service) {
-    this.service = service;
+  public ProducerBindingQuery(ProducerBindingService producerBindingService) {
+    this.producerBindingService = producerBindingService;
   }
 
   public ProducerBinding getByKey(ProducerBindingKeyInput key) {
-    return service.read(key.asProducerBindingKey()).get();
+    return producerBindingService.read(key.asProducerBindingKey()).get();
   }
 
   public Iterable<ProducerBinding> getByQuery(ProducerBindingKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new ProducerBindingFilter(key, specification));
+    return producerBindingService.findAll(new ProducerBindingFilter(key, specification));
   }
 }

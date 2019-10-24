@@ -24,19 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 public class ConsumerQuery {
 
-  private final ConsumerService service;
+  private final ConsumerService consumerService;
 
-  public ConsumerQuery(ConsumerService service) {
-    this.service = service;
+  public ConsumerQuery(ConsumerService consumerService) {
+    this.consumerService = consumerService;
   }
 
   public Consumer getByKey(ConsumerKeyInput key) {
-    return service.read(key.asConsumerKey()).get();
+    return consumerService.read(key.asConsumerKey()).get();
   }
 
   public Iterable<Consumer> getByQuery(ConsumerKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new ConsumerFilter(key, specification));
+    return consumerService.findAll(new ConsumerFilter(key, specification));
   }
-
-
 }

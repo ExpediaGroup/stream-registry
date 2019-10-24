@@ -24,17 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
 public class InfrastructureQuery {
 
-  private final InfrastructureService service;
+  private final InfrastructureService infrastructureService;
 
-  public InfrastructureQuery(InfrastructureService service) {
-    this.service = service;
+  public InfrastructureQuery(InfrastructureService infrastructureService) {
+    this.infrastructureService = infrastructureService;
   }
 
   public Infrastructure getByKey(InfrastructureKeyInput key) {
-    return service.read(key.asInfrastructureKey()).get();
+    return infrastructureService.read(key.asInfrastructureKey()).get();
   }
 
   public Iterable<Infrastructure> getByQuery(InfrastructureKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new InfrastructureFilter(key, specification));
+    return infrastructureService.findAll(new InfrastructureFilter(key, specification));
   }
 }

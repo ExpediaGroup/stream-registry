@@ -24,17 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
 public class DomainQuery {
 
-  private final DomainService service;
+  private final DomainService domainService;
 
-  public DomainQuery(DomainService service) {
-    this.service = service;
+  public DomainQuery(DomainService domainService) {
+    this.domainService = domainService;
   }
 
   public Domain byKey(DomainKeyInput key) {
-    return service.read(key.asDomainKey()).get();
+    return domainService.read(key.asDomainKey()).get();
   }
 
   public Iterable<Domain> byQuery(DomainKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new DomainFilter(key, specification));
+    return domainService.findAll(new DomainFilter(key, specification));
   }
 }

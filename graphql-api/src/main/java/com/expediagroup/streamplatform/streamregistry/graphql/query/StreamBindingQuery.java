@@ -24,17 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 public class StreamBindingQuery {
 
-  private final StreamBindingService service;
+  private final StreamBindingService streamBindingService;
 
-  public StreamBindingQuery(StreamBindingService service) {
-    this.service = service;
+  public StreamBindingQuery(StreamBindingService streamBindingService) {
+    this.streamBindingService = streamBindingService;
   }
 
   public StreamBinding getByKey(StreamBindingKeyInput key) {
-    return service.read(key.asStreamBindingKey()).get();
+    return streamBindingService.read(key.asStreamBindingKey()).get();
   }
 
   public Iterable<StreamBinding> getByQuery(StreamBindingKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new StreamBindingFilter(key, specification));
+    return streamBindingService.findAll(new StreamBindingFilter(key, specification));
   }
 }

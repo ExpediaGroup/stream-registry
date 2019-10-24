@@ -24,17 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 public class ConsumerBindingQuery {
 
-  private final ConsumerBindingService service;
+  private final ConsumerBindingService consumerBindingService;
 
-  public ConsumerBindingQuery(ConsumerBindingService service) {
-    this.service = service;
+  public ConsumerBindingQuery(ConsumerBindingService consumerBindingService) {
+    this.consumerBindingService = consumerBindingService;
   }
 
   public ConsumerBinding getByKey(ConsumerBindingKeyInput key) {
-    return service.read(key.asConsumerBindingKey()).get();
+    return consumerBindingService.read(key.asConsumerBindingKey()).get();
   }
 
   public Iterable<ConsumerBinding> getByQuery(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new ConsumerBindingFilter(key, specification));
+    return consumerBindingService.findAll(new ConsumerBindingFilter(key, specification));
   }
 }

@@ -24,17 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
 public class SchemaQuery {
 
-  private final SchemaService service;
+  private final SchemaService schemaService;
 
-  public SchemaQuery(SchemaService service) {
-    this.service = service;
+  public SchemaQuery(SchemaService schemaService) {
+    this.schemaService = schemaService;
   }
 
   public Schema getByKey(SchemaKeyInput key) {
-    return service.read(key.asSchemaKey()).get();
+    return schemaService.read(key.asSchemaKey()).get();
   }
 
   public Iterable<Schema> getByQuery(SchemaKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new SchemaFilter(key, specification));
+    return schemaService.findAll(new SchemaFilter(key, specification));
   }
 }

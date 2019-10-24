@@ -24,18 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 public class ProducerQuery {
 
-  private final ProducerService service;
+  private final ProducerService producerService;
 
-  public ProducerQuery(ProducerService service) {
-    this.service = service;
+  public ProducerQuery(ProducerService producerService) {
+    this.producerService = producerService;
   }
 
-
   public Producer getByKey(ProducerKeyInput key) {
-    return service.read(key.asProducerKey()).get();
+    return producerService.read(key.asProducerKey()).get();
   }
 
   public Iterable<Producer> getByQuery(ProducerKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new ProducerFilter(key, specification));
+    return producerService.findAll(new ProducerFilter(key, specification));
   }
 }

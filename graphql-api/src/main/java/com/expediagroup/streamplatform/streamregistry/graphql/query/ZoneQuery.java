@@ -24,18 +24,17 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 public class ZoneQuery {
 
-  private final ZoneService service;
+  private final ZoneService zoneService;
 
-  public ZoneQuery(ZoneService service) {
-    this.service = service;
+  public ZoneQuery(ZoneService zoneService) {
+    this.zoneService = zoneService;
   }
 
   public Zone getByKey(ZoneKeyInput key) {
-    return service.read(key.asZoneKey()).get();
+    return zoneService.read(key.asZoneKey()).get();
   }
 
   public Iterable<Zone> getByQuery(ZoneKeyQuery key, SpecificationQuery specification) {
-    return service.findAll(new ZoneFilter(key, specification));
+    return zoneService.findAll(new ZoneFilter(key, specification));
   }
-
 }
