@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
@@ -34,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 @Component
 @RequiredArgsConstructor
 public class ConsumerService {
-  private final HandlersForServices handlerService;
+  private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
 

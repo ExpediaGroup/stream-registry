@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.DomainFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Doma
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
+@Component
+@RequiredArgsConstructor
 public class DomainQuery {
-
   private final DomainService domainService;
-
-  public DomainQuery(DomainService domainService) {
-    this.domainService = domainService;
-  }
 
   public Domain byKey(DomainKeyInput key) {
     return domainService.read(key.asDomainKey()).get();

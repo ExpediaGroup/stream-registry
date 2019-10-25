@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Cons
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
+@Component
+@RequiredArgsConstructor
 public class ConsumerQuery {
-
   private final ConsumerService consumerService;
-
-  public ConsumerQuery(ConsumerService consumerService) {
-    this.consumerService = consumerService;
-  }
 
   public Consumer getByKey(ConsumerKeyInput key) {
     return consumerService.read(key.asConsumerKey()).get();

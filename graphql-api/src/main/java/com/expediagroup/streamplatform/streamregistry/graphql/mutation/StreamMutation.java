@@ -17,6 +17,10 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
@@ -24,13 +28,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Statu
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
+@Component
+@RequiredArgsConstructor
 public class StreamMutation {
-
-  private StreamService streamService;
-
-  public StreamMutation(StreamService streamService) {
-    this.streamService = streamService;
-  }
+  private final StreamService streamService;
 
   public Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
     return streamService.create(asStream(key, specification, schema)).get();

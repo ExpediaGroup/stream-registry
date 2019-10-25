@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.SchemaFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Sche
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
+@Component
+@RequiredArgsConstructor
 public class SchemaQuery {
-
   private final SchemaService schemaService;
-
-  public SchemaQuery(SchemaService schemaService) {
-    this.schemaService = schemaService;
-  }
 
   public Schema getByKey(SchemaKeyInput key) {
     return schemaService.read(key.asSchemaKey()).get();

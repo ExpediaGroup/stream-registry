@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ZoneFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
+@Component
+@RequiredArgsConstructor
 public class ZoneQuery {
-
   private final ZoneService zoneService;
-
-  public ZoneQuery(ZoneService zoneService) {
-    this.zoneService = zoneService;
-  }
 
   public Zone getByKey(ZoneKeyInput key) {
     return zoneService.read(key.asZoneKey()).get();

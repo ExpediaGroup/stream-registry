@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -34,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 @Component
 @RequiredArgsConstructor
 public class StreamBindingService {
-  private final HandlersForServices handlerService;
+  private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
 

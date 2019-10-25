@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -34,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 @Component
 @RequiredArgsConstructor
 public class DomainService {
-  private final HandlersForServices handlerService;
+  private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
 

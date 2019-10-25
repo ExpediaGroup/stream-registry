@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
@@ -34,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 @Component
 @RequiredArgsConstructor
 public class StreamService {
-  private final HandlersForServices handlerService;
+  private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
 

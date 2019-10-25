@@ -15,28 +15,26 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
+@RequiredArgsConstructor
 public class SchemaResolver implements GraphQLResolver<Schema> {
-
-  private Services services;
-
-  public SchemaResolver(Services services) {
-    this.services = services;
-  }
+  private final DomainService domainService;
 
   public Domain domain(Schema schema) {
     DomainKey domainKey = new DomainKey(
         schema.getKey().getDomain()
     );
-    return services.getDomainService().read(domainKey).orElse(null);
+    return domainService.read(domainKey).orElse(null);
   }
 }

@@ -15,28 +15,26 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
+@RequiredArgsConstructor
 public class InfrastructureResolver implements GraphQLResolver<Infrastructure> {
-
-  private Services services;
-
-  public InfrastructureResolver(Services services) {
-    this.services = services;
-  }
+  private final ZoneService zoneService;
 
   public Zone zone(Infrastructure infrastructure) {
     ZoneKey zoneKey = new ZoneKey(
         infrastructure.getKey().getZone()
     );
-    return services.getZoneService().read(zoneKey).orElse(null);
+    return zoneService.read(zoneKey).orElse(null);
   }
 }

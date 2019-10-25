@@ -15,15 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
-
 @Component
+@RequiredArgsConstructor
 public class Mutation implements GraphQLMutationResolver {
-
   private final ConsumerMutation consumerMutation;
   private final ProducerMutation producerMutation;
   private final DomainMutation domainMutation;
@@ -34,19 +34,6 @@ public class Mutation implements GraphQLMutationResolver {
   private final StreamBindingMutation streamBindingMutation;
   private final ProducerBindingMutation producerBindingMutation;
   private final ConsumerBindingMutation consumerBindingMutation;
-
-  public Mutation(Services services) {
-    consumerMutation = new ConsumerMutation(services.getConsumerService());
-    producerMutation = new ProducerMutation(services.getProducerService());
-    domainMutation = new DomainMutation(services.getDomainService());
-    schemaMutation = new SchemaMutation(services.getSchemaService());
-    streamMutation = new StreamMutation(services.getStreamService());
-    zoneMutation = new ZoneMutation(services.getZoneService());
-    infrastructureMutation = new InfrastructureMutation(services.getInfrastructureService());
-    streamBindingMutation = new StreamBindingMutation(services.getStreamBindingService());
-    producerBindingMutation = new ProducerBindingMutation(services.getProducerBindingService());
-    consumerBindingMutation = new ConsumerBindingMutation(services.getConsumerBindingService());
-  }
 
   public ConsumerMutation consumer() {
     return consumerMutation;

@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ZoneRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
@@ -34,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 @Component
 @RequiredArgsConstructor
 public class ZoneService {
-  private final  HandlersForServices handlerService;
+  private final HandlerService handlerService;
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
 

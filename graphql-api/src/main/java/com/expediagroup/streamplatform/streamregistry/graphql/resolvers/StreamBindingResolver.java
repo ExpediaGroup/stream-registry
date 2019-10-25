@@ -15,11 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -27,13 +30,10 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureK
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Component
+@RequiredArgsConstructor
 public class StreamBindingResolver implements GraphQLResolver<StreamBinding> {
-
-  private Services services;
-
-  public StreamBindingResolver(Services services) {
-    this.services = services;
-  }
+  private final StreamService streamService;
+  private final InfrastructureService infrastructureService;
 
   public Stream stream(StreamBinding streamBinding) {
     StreamKey streamKey = new StreamKey(
@@ -41,7 +41,7 @@ public class StreamBindingResolver implements GraphQLResolver<StreamBinding> {
         streamBinding.getKey().getStreamName(),
         streamBinding.getKey().getStreamVersion()
     );
-    return services.getStreamService().read(streamKey).orElse(null);
+    return streamService.read(streamKey).orElse(null);
   }
 
   public Infrastructure infrastructure(StreamBinding streamBinding) {
@@ -50,6 +50,6 @@ public class StreamBindingResolver implements GraphQLResolver<StreamBinding> {
         streamBinding.getKey().getInfrastructureName()
     );
 
-    return services.getInfrastructureService().read(infrastructureKey).orElse(null);
+    return infrastructureService.read(infrastructureKey).orElse(null);
   }
 }

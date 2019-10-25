@@ -15,18 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.TagInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.TagQuery;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-
 @Component
+@RequiredArgsConstructor
 public class Query implements GraphQLQueryResolver {
-
   private final DomainQuery domainQuery;
   private final SchemaQuery schemaQuery;
   private final StreamQuery streamQuery;
@@ -37,27 +34,6 @@ public class Query implements GraphQLQueryResolver {
   private final StreamBindingQuery streamBindingQuery;
   private final ProducerBindingQuery producerBindingQuery;
   private final ConsumerBindingQuery consumerBindingQuery;
-
-  public Query(Services services) {
-    this.domainQuery = new DomainQuery(services.getDomainService());
-    this.schemaQuery = new SchemaQuery(services.getSchemaService());
-    this.streamQuery = new StreamQuery(services.getStreamService());
-    this.zoneQuery = new ZoneQuery(services.getZoneService());
-    this.infrastructureQuery = new InfrastructureQuery(services.getInfrastructureService());
-    this.producerQuery = new ProducerQuery(services.getProducerService());
-    this.consumerQuery = new ConsumerQuery(services.getConsumerService());
-    this.streamBindingQuery = new StreamBindingQuery(services.getStreamBindingService());
-    this.producerBindingQuery = new ProducerBindingQuery(services.getProducerBindingService());
-    this.consumerBindingQuery = new ConsumerBindingQuery(services.getConsumerBindingService());
-  }
-
-  public Domain bugfixq(TagQuery v) {
-    return null;
-  }
-
-  public Domain bugfixi(TagInput v) {
-    return null;
-  }
 
   public DomainQuery getDomain() {
     return domainQuery;

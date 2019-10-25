@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.InfrastructureFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.InfrastructureKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Infr
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
+@Component
+@RequiredArgsConstructor
 public class InfrastructureQuery {
-
   private final InfrastructureService infrastructureService;
-
-  public InfrastructureQuery(InfrastructureService infrastructureService) {
-    this.infrastructureService = infrastructureService;
-  }
 
   public Infrastructure getByKey(InfrastructureKeyInput key) {
     return infrastructureService.read(key.asInfrastructureKey()).get();

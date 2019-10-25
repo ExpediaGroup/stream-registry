@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -34,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBinding
 @Component
 @RequiredArgsConstructor
 public class ConsumerBindingService {
-  private final HandlersForServices handlerService;
+  private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
 

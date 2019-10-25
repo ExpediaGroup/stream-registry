@@ -17,19 +17,20 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
+@Component
+@RequiredArgsConstructor
 public class StreamBindingMutation {
-
-  private StreamBindingService streamBindingService;
-
-  public StreamBindingMutation(StreamBindingService streamBindingService) {
-    this.streamBindingService = streamBindingService;
-  }
+  private final StreamBindingService streamBindingService;
 
   public StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification) {
     return streamBindingService.create(asStreamBinding(key, specification)).get();

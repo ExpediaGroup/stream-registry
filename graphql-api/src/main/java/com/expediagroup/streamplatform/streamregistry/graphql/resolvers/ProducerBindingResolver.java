@@ -15,11 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -27,13 +30,10 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
+@RequiredArgsConstructor
 public class ProducerBindingResolver implements GraphQLResolver<ProducerBinding> {
-
-  private Services services;
-
-  public ProducerBindingResolver(Services services) {
-    this.services = services;
-  }
+  private final ProducerService producerService;
+  private final StreamBindingService streamBindingService;
 
   public Producer producer(ProducerBinding producerBinding) {
     ProducerKey producerKey = new ProducerKey(
@@ -44,7 +44,7 @@ public class ProducerBindingResolver implements GraphQLResolver<ProducerBinding>
         producerBinding.getKey().getInfrastructureName()
     );
 
-    return services.getProducerService().read(producerKey).orElse(null);
+    return producerService.read(producerKey).orElse(null);
   }
 
   public StreamBinding binding(ProducerBinding producerBinding) {
@@ -55,6 +55,6 @@ public class ProducerBindingResolver implements GraphQLResolver<ProducerBinding>
         producerBinding.getKey().getInfrastructureZone(),
         producerBinding.getKey().getInfrastructureName()
     );
-    return services.getStreamBindingService().read(streamBindingKey).orElse(null);
+    return streamBindingService.read(streamBindingKey).orElse(null);
   }
 }

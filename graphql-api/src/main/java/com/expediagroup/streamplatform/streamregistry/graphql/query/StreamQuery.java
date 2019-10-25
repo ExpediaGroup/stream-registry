@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
@@ -23,13 +27,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
+@Component
+@RequiredArgsConstructor
 public class StreamQuery {
-
   private final StreamService streamService;
-
-  public StreamQuery(StreamService streamService) {
-    this.streamService = streamService;
-  }
 
   public Stream getByKey(StreamKeyInput key) {
     return streamService.read(key.asStreamKey()).get();

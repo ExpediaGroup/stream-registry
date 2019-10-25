@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlersForServices;
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -34,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 @Component
 @RequiredArgsConstructor
 public class SchemaService {
-  private final HandlersForServices handlerService;
+  private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
 

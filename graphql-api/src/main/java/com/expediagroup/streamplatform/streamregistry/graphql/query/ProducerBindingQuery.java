@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerBindingFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Prod
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
+@Component
+@RequiredArgsConstructor
 public class ProducerBindingQuery {
-
   private final ProducerBindingService producerBindingService;
-
-  public ProducerBindingQuery(ProducerBindingService producerBindingService) {
-    this.producerBindingService = producerBindingService;
-  }
 
   public ProducerBinding getByKey(ProducerBindingKeyInput key) {
     return producerBindingService.read(key.asProducerBindingKey()).get();

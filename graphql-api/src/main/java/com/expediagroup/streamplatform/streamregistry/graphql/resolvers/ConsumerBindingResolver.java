@@ -15,11 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -27,13 +30,10 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
+@RequiredArgsConstructor
 public class ConsumerBindingResolver implements GraphQLResolver<ConsumerBinding> {
-
-  private Services services;
-
-  public ConsumerBindingResolver(Services services) {
-    this.services = services;
-  }
+  private final ConsumerService consumerService;
+  private final StreamBindingService streamBindingService;
 
   public Consumer consumer(ConsumerBinding consumerBinding) {
 
@@ -45,7 +45,7 @@ public class ConsumerBindingResolver implements GraphQLResolver<ConsumerBinding>
         consumerBinding.getKey().getInfrastructureName()
     );
 
-    return services.getConsumerService().read(consumerKey).orElse(null);
+    return consumerService.read(consumerKey).orElse(null);
   }
 
   public StreamBinding binding(ConsumerBinding consumerBinding) {
@@ -56,6 +56,6 @@ public class ConsumerBindingResolver implements GraphQLResolver<ConsumerBinding>
         consumerBinding.getKey().getInfrastructureZone(),
         consumerBinding.getKey().getInfrastructureName()
     );
-    return services.getStreamBindingService().read(streamBindingKey).orElse(null);
+    return streamBindingService.read(streamBindingKey).orElse(null);
   }
 }

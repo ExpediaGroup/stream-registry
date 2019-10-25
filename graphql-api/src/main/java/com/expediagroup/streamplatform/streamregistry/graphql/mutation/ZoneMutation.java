@@ -17,19 +17,20 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
+@Component
+@RequiredArgsConstructor
 public class ZoneMutation {
-
-  private ZoneService zoneService;
-
-  public ZoneMutation(ZoneService zoneService) {
-    this.zoneService = zoneService;
-  }
+  private final ZoneService zoneService;
 
   public Zone insert(ZoneKeyInput key, SpecificationInput specification) {
     return zoneService.create(asZone(key, specification)).get();

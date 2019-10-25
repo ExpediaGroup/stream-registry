@@ -15,13 +15,18 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.handlers;
 
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import lombok.Value;
+
+import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
@@ -30,12 +35,17 @@ import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Specified;
 
-public class HandlersForServices {
+@Component
+public class HandlerService {
+  private final Map<Key, Handler<?>> handlers;
 
-  private Map<Key, Handler<?>> handlers = new HashMap<>();
-
-  public void register(String type, Class<? extends Specified> entityClass, Handler<?> handler) {
-    handlers.put(new Key(type, entityClass), handler);
+  public HandlerService(List<Handler> handlers) {
+    this.handlers = handlers
+        .stream()
+        .collect(toMap(
+            handler -> new Key(handler.type(), handler.target()),
+            Function.identity()
+        ));
   }
 
   private <T extends ManagedType> Handler<T> getHandler(T managedType) {

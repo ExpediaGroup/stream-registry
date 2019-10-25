@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Prod
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
+@Component
+@RequiredArgsConstructor
 public class ProducerQuery {
-
   private final ProducerService producerService;
-
-  public ProducerQuery(ProducerService producerService) {
-    this.producerService = producerService;
-  }
 
   public Producer getByKey(ProducerKeyInput key) {
     return producerService.read(key.asProducerKey()).get();

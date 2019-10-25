@@ -15,11 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import lombok.RequiredArgsConstructor;
+
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
+import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
@@ -27,13 +30,10 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
+@RequiredArgsConstructor
 public class ConsumerResolver implements GraphQLResolver<Consumer> {
-
-  private Services services;
-
-  public ConsumerResolver(Services services) {
-    this.services = services;
-  }
+  private final StreamService streamService;
+  private final ZoneService zoneService;
 
   public Stream stream(Consumer consumer) {
 
@@ -43,7 +43,7 @@ public class ConsumerResolver implements GraphQLResolver<Consumer> {
         consumer.getKey().getStreamVersion()
     );
 
-    return services.getStreamService().read(streamKey).orElse(null);
+    return streamService.read(streamKey).orElse(null);
   }
 
   public Zone zone(Consumer consumer) {
@@ -52,6 +52,6 @@ public class ConsumerResolver implements GraphQLResolver<Consumer> {
         consumer.getKey().getZone()
     );
 
-    return services.getZoneService().read(zoneKey).orElse(null);
+    return zoneService.read(zoneKey).orElse(null);
   }
 }

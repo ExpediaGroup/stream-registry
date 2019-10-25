@@ -22,18 +22,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.Services;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 @Component
 public class StatusResolver implements GraphQLResolver<Status> {
-
-  private final Services services;
-
-  public StatusResolver(Services services) {
-    this.services = services;
-  }
-
   public ObjectNode getAgentStatus(Status status) {
     return deserialise(status.getStatusJson());
   }

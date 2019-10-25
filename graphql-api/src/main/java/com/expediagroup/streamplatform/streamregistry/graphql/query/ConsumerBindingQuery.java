@@ -15,6 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerBindingFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
@@ -22,13 +26,10 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Cons
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
+@Component
+@RequiredArgsConstructor
 public class ConsumerBindingQuery {
-
   private final ConsumerBindingService consumerBindingService;
-
-  public ConsumerBindingQuery(ConsumerBindingService consumerBindingService) {
-    this.consumerBindingService = consumerBindingService;
-  }
 
   public ConsumerBinding getByKey(ConsumerBindingKeyInput key) {
     return consumerBindingService.read(key.asConsumerBindingKey()).get();
