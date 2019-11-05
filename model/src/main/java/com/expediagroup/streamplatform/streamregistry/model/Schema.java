@@ -15,40 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static java.util.Collections.emptyMap;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 
-import java.util.Map;
+import lombok.Data;
 
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.experimental.Wither;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+@Data
+@Entity(name = "rword_schema")
+public class Schema implements ManagedType {
 
-@Wither
-@Value
-@Builder
-public class Schema implements Entity<Schema.Key> {
-
-  String name;
-  String owner;
-  String description;
-  @Builder.Default Map<String, String> tags = emptyMap();
-  String type;
-  @Builder.Default ObjectNode configuration = mapper.createObjectNode();
-
-  Domain.Key domainKey;
-
-  @Override
-  public Key key() {
-    return new Key(name, domainKey);
-  }
-
-  @Value
-  @RequiredArgsConstructor
-  public static class Key {
-    String name;
-    Domain.Key domain;
-  }
+  @EmbeddedId
+  private SchemaKey key;
+  private Specification specification;
+  private Status status;
 }

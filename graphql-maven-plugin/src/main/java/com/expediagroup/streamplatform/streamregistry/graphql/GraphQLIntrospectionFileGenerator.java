@@ -15,8 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.type.Scalars.configScalar;
-import static com.expediagroup.streamplatform.streamregistry.graphql.type.Scalars.tagsScalar;
+import static com.expediagroup.streamplatform.streamregistry.graphql.type.Scalars.objectNodeScalar;
 import static com.google.common.base.Charsets.UTF_8;
 
 import java.io.File;
@@ -52,8 +51,7 @@ public class GraphQLIntrospectionFileGenerator {
     TypeDefinitionRegistry registry = new SchemaParser().parse(schema);
     RuntimeWiring wiring = RuntimeWiring
         .newRuntimeWiring()
-        .scalar(tagsScalar())
-        .scalar(configScalar())
+        .scalar(objectNodeScalar())
         .build();
     GraphQLSchema graphQLSchema = new SchemaGenerator().makeExecutableSchema(registry, wiring);
     GraphQL graphql = GraphQL.newGraphQL(graphQLSchema).build();

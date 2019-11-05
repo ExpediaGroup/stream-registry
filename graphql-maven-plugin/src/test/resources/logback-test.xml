@@ -22,10 +22,10 @@
     </encoder>
   </appender>
 
-  <logger name="graphql" level="ERROR" />
+  <logger name="graphql" level="ERROR"/>
 
   <root level="INFO">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDOUT"/>
   </root>
 
 </configuration>

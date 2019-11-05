@@ -22,21 +22,21 @@
   </appender>
 
   <logger name="com.expediagroup" level="DEBUG" additivity="false">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDOUT"/>
   </logger>
 
   <!-- Reduce level of logging so travis-ci doesn't abort build -->
   <logger name="org.apache" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDOUT"/>
   </logger>
 
   <!-- Remove stream registry old jetty errors from log. Please remove after IT tests depend on running stream registry -->
   <logger name="org.eclipse.jetty" level="ERROR" additivity="false">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDOUT"/>
   </logger>
 
   <root level="INFO">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDOUT"/>
   </root>
 
 </configuration>

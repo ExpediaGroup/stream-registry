@@ -15,37 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static java.util.Collections.emptyMap;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 
-import java.util.Map;
+import lombok.Data;
 
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.experimental.Wither;
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+@Data
+@Entity
+public class Domain implements ManagedType {
 
-@Wither
-@Value
-@Builder
-public class Domain implements Entity<Domain.Key> {
-
-  String name;
-  String owner;
-  String description;
-  @Builder.Default Map<String, String> tags = emptyMap();
-  String type;
-  @Builder.Default ObjectNode configuration = mapper.createObjectNode();
-
-  @Override
-  public Key key() {
-    return new Key(name);
-  }
-
-  @Value
-  @RequiredArgsConstructor
-  public static class Key {
-    String name;
-  }
+  @EmbeddedId
+  private DomainKey key;
+  private Specification specification;
+  private Status status;
 }

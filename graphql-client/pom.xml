@@ -34,6 +34,21 @@
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.12.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>1.12.2</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -95,8 +110,7 @@
               <basePackage>${clientPackage}</basePackage>
               <outputPackage>${clientPackage}</outputPackage>
               <customTypeMap>
-                <Tags>java.util.Map</Tags>
-                <Config>com.fasterxml.jackson.databind.node.ObjectNode</Config>
+                <ObjectNode>com.fasterxml.jackson.databind.node.ObjectNode</ObjectNode>
               </customTypeMap>
               <suppressRawTypesWarning>true</suppressRawTypesWarning>
             </configuration>

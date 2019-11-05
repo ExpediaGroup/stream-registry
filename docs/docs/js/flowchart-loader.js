@@ -38,7 +38,7 @@
     var body = document.querySelectorAll("body");
     var blocks = document.querySelectorAll("pre." + className + ",div." + className
 
-      // Is there a settings object?
+        // Is there a settings object?
     );
     var config = settings === void 0 ? {} : settings;
 

@@ -15,21 +15,31 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Component
 public class EgspKafkaStreamHandler<E extends Stream> implements Handler<E> {
+
   @Override
   public String type() {
     return "egsp.kafka";
   }
 
   @Override
-  public E handle(E stream, Optional<? extends E> existing) {
-    return stream;
+  public Class target() {
+    return Stream.class;
+  }
+
+  @Override
+  public Specification handleInsert(E stream) throws HandlerException {
+    return stream.getSpecification();
+  }
+
+  @Override
+  public Specification handleUpdate(E stream, E existing) throws HandlerException {
+    return stream.getSpecification();
   }
 }

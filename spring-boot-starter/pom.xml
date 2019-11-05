@@ -13,17 +13,7 @@
   <dependencies>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.expediagroup.streamplatform</groupId>
       <artifactId>stream-registry-graphql-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-repository-kafka</artifactId>
       <version>${project.version}</version>
     </dependency>
 

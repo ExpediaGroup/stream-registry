@@ -22,13 +22,11 @@
     </encoder>
   </appender>
 
-  <logger name="com.expediagroup" level="DEBUG" />
-  <logger name="org.apache.zookeeper" level="ERROR" />
-  <logger name="org.apache.kafka" level="ERROR" />
-  <logger name="kafka" level="ERROR" />
+  <logger name="com.expediagroup" level="DEBUG"/>
+  <logger name="org.hibernate" level="ERROR"/>
 
   <root level="INFO">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDOUT"/>
   </root>
 
 </configuration>

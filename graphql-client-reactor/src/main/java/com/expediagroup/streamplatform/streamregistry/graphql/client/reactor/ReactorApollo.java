@@ -102,6 +102,4 @@ public final class ReactorApollo {
     @Override
     public void onConnected() {}
   }
-
-
 }
