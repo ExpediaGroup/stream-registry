@@ -12,6 +12,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
       <artifactId>stream-registry-app</artifactId>
       <version>${project.version}</version>

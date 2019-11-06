@@ -31,9 +31,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
-public class ConsumerIT extends ObjectIT {
+public class ConsumerTestStage extends AbstractTestStage {
 
   @Test
   public void upsert() {

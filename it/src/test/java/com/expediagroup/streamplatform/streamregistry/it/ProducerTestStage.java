@@ -29,9 +29,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProdu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
-public class ProducerIT extends ObjectIT {
+public class ProducerTestStage extends AbstractTestStage {
 
   @Override
   public void create() {

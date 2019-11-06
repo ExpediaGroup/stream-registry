@@ -25,9 +25,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
-public class ZoneIT extends ObjectIT {
+public class ZoneTestStage extends AbstractTestStage {
 
   @Override
   public void create() {
@@ -94,7 +94,7 @@ public class ZoneIT extends ObjectIT {
   @Override
   public void queryByRegex() {
 
-    setFactorySuffix("query_by_regex");
+    setFactorySuffix("zone_query_by_regex");
 
     ZoneKeyQuery query = ZoneKeyQuery.builder().nameRegex("zone_name.*").build();
 

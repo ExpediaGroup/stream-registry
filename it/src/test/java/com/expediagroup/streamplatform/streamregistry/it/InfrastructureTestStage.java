@@ -31,9 +31,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfra
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
-public class InfrastructureIT extends ObjectIT {
+public class InfrastructureTestStage extends AbstractTestStage {
 
   @Override
   public void create() {
