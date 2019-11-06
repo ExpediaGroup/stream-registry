@@ -18,72 +18,20 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.ServerSocket;
-
 import junit.framework.TestCase;
 
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Response;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.FixedHostPortGenericContainer;
 
-import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
+import com.expediagroup.streamplatform.streamregistry.it.StreamRegistryIT;
 
-public abstract class ObjectIT {
+public abstract class AbstractTestStage {
+  protected ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName().toLowerCase());
 
-  private static final int POSTGRES_PORT = randomPort();
-  @ClassRule
-  public static FixedHostPortGenericContainer postgreSQLContainer =
-      new FixedHostPortGenericContainer<>("postgres:latest")
-          .withEnv("POSTGRES_USER", "streamregistry")
-          .withEnv("POSTGRES_PASSWORD", "streamregistry")
-          .withEnv("POSTGRES_DB", "streamregistry")
-          .withFixedExposedPort(POSTGRES_PORT, 5432);
-  public static Client client;
-  private static ConfigurableApplicationContext context;
-  private static String url;
-  public ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName().toLowerCase());
-
-  @BeforeClass
-  public static void beforeClass() {
-    String[] args = new String[] {
-        "--server.port=0",
-        "--schema.registry.url=http://schema-registry",
-        "--spring.datasource.url=jdbc:postgresql://localhost:" + POSTGRES_PORT + "/streamregistry",
-        "--spring.datasource.username=streamregistry",
-        "--spring.datasource.password=streamregistry",
-        "--spring.jpa.hibernate.ddl-auto=create"
-    };
-    context = SpringApplication.run(StreamRegistryApp.class, args);
-    url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
-
-    client = new Client(url);
-  }
-
-  @AfterClass
-  public static void afterClass() {
-    if (context != null) {
-      context.close();
-      context = null;
-    }
-  }
-
-  private static int randomPort() {
-    try (ServerSocket socket = new ServerSocket(0)) {
-      return socket.getLocalPort();
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
+  protected Client client = StreamRegistryIT.client;
 
   @Before
   public final void before() {

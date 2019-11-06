@@ -27,9 +27,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStrea
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
-public class StreamBindingIT extends ObjectIT {
+public class StreamBindingTestStage extends AbstractTestStage {
 
   @Override
   public void create() {

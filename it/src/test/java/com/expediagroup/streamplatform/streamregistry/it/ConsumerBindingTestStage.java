@@ -31,9 +31,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsu
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
-public class ConsumerBindingIT extends ObjectIT {
+public class ConsumerBindingTestStage extends AbstractTestStage {
 
   @Override
   public void create() {

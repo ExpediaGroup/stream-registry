@@ -27,9 +27,9 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStrea
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ObjectIT;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
-public class StreamIT extends ObjectIT {
+public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void create() {
