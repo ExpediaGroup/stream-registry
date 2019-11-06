@@ -243,6 +243,10 @@
 
   <repositories>
     <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
       <id>confluent</id>
       <url>http://packages.confluent.io/maven/</url>
     </repository>
