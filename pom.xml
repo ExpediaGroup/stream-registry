@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>0.7.2-SNAPSHOT</version>
+  <version>0.8.0</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
 
@@ -19,7 +19,7 @@
     <url>https://github.com/ExpediaGroup/stream-registry/tree/master</url>
     <connection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</connection>
     <developerConnection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>stream-registry-0.8.0</tag>
   </scm>
 
   <developers>
@@ -138,7 +138,7 @@
         </executions>
         <configuration>
           <java>
-            <removeUnusedImports/>
+            <removeUnusedImports />
             <importOrder>
               <order>java,javax,com,io,org,com.expediagroup,</order>
             </importOrder>
