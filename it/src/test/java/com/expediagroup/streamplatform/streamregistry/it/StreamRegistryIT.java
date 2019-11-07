@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,6 +47,7 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.Client;
     ProducerBindingTestStage.class,
     ConsumerBindingTestStage.class
 })
+@Slf4j
 public class StreamRegistryIT {
   private static final int POSTGRES_PORT = randomPort();
 
@@ -56,7 +58,8 @@ public class StreamRegistryIT {
 
   @ClassRule
   public static FixedHostPortGenericContainer postgreSQLContainer =
-      new FixedHostPortGenericContainer<>("postgres:latest")
+      new FixedHostPortGenericContainer<>("postgres:12.0")
+          .withLogConsumer(o -> log.info("Postgres: {}", o.getUtf8String().trim()))
           .withEnv("POSTGRES_USER", "streamregistry")
           .withEnv("POSTGRES_PASSWORD", "streamregistry")
           .withEnv("POSTGRES_DB", "streamregistry")
