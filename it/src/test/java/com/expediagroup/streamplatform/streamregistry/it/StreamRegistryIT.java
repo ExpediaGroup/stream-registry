@@ -15,10 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.AfterClass;
@@ -29,7 +25,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.FixedHostPortGenericContainer;
+import org.testcontainers.containers.GenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.Client;
@@ -49,28 +45,25 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.Client;
 })
 @Slf4j
 public class StreamRegistryIT {
-  private static final int POSTGRES_PORT = randomPort();
-
   public static Client client;
   public static String url;
 
   private static ConfigurableApplicationContext context;
 
   @ClassRule
-  public static FixedHostPortGenericContainer postgreSQLContainer =
-      new FixedHostPortGenericContainer<>("postgres:12.0")
+  public static GenericContainer postgres =
+      new GenericContainer<>("postgres:12.0")
           .withLogConsumer(o -> log.info("Postgres: {}", o.getUtf8String().trim()))
           .withEnv("POSTGRES_USER", "streamregistry")
           .withEnv("POSTGRES_PASSWORD", "streamregistry")
-          .withEnv("POSTGRES_DB", "streamregistry")
-          .withFixedExposedPort(POSTGRES_PORT, 5432);
+          .withEnv("POSTGRES_DB", "streamregistry");
 
   @BeforeClass
   public static void before() {
     String[] args = new String[]{
         "--server.port=0",
         "--schema.registry.url=http://schema-registry",
-        "--spring.datasource.url=jdbc:postgresql://localhost:" + POSTGRES_PORT + "/streamregistry",
+        "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
         "--spring.datasource.username=streamregistry",
         "--spring.datasource.password=streamregistry",
         "--spring.jpa.hibernate.ddl-auto=create",
@@ -78,7 +71,6 @@ public class StreamRegistryIT {
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
     url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
-
     client = new Client(url);
   }
 
@@ -87,13 +79,6 @@ public class StreamRegistryIT {
     if (context != null) {
       context.close();
       context = null;
-    }
-  }
-
-  @SneakyThrows(IOException.class)
-  private static int randomPort() {
-    try (ServerSocket socket = new ServerSocket(0)) {
-      return socket.getLocalPort();
     }
   }
 }
