@@ -52,7 +52,7 @@ public class StreamRegistryIT {
 
   @ClassRule
   public static GenericContainer postgres =
-      new GenericContainer<>("postgres:12.0")
+      new GenericContainer<>("postgres:12.0-alpine")
           .withLogConsumer(o -> log.info("Postgres: {}", o.getUtf8String().trim()))
           .withEnv("POSTGRES_USER", "streamregistry")
           .withEnv("POSTGRES_PASSWORD", "streamregistry")
