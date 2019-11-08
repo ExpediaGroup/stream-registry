@@ -4,13 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.8.0] - 20191107
 ### Added
-* New GraphQL API.
-* New internal model with service, handler and repository layers.
-* Domain, Schema & Stream entities.
-* Reference GraphQL client.
-* Docker pull and push repo url.
+- Refactor of all entity structures and implementation of CRUD operations.
+
+### Changed
+- Switch to Spring's `CrudRepository` for the backend.
+
+## [0.7.1] - 20190820
+### Added
+- Added Zone, Infrastructure, Producer, Consumer, StreamBinding, ProducerBinding & ConsumerBinding entity types to the API. 
+
+## [0.7.0] - 20190815
+### Added
+- New GraphQL API.
+- New internal model with service, handler and repository layers.
+- Domain, Schema & Stream entities.
+- Reference GraphQL client.
+- Docker pull and push repo url.
 
 ### Changed
 - Converted project into spring boot starter
