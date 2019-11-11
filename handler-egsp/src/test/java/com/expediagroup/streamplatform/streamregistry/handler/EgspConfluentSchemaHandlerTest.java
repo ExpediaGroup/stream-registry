@@ -47,16 +47,16 @@ public class EgspConfluentSchemaHandlerTest {
   }
 
   @Test
-  public void handle() throws HandlerException {
+  public void handle() {
     assertEquals("some_url", createAndHandle(null).getSpecification().getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
   }
 
   @Test
-  public void handleWithExistingURL() throws HandlerException {
+  public void handleWithExistingURL() {
     assertEquals("some_existing_url", createAndHandle("some_existing_url").getSpecification().getConfiguration().get(SCHEMA_REGISTRY_URL).asText());
   }
 
-  private Schema createAndHandle(String existingUrl) throws HandlerException {
+  private Schema createAndHandle(String existingUrl) {
     Schema schema = createSchema(existingUrl);
     schema.setSpecification(underTest.handleInsert(schema));
     return schema;

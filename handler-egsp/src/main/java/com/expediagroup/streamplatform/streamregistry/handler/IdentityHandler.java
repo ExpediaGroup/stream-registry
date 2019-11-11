@@ -31,17 +31,17 @@ public class IdentityHandler<T extends ManagedType> implements Handler<T> {
   }
 
   @Override
-  public Class target() {
+  public Class<T> target() {
     return target;
   }
 
   @Override
-  public Specification handleInsert(T entity) throws HandlerException {
+  public Specification handleInsert(T entity) {
     return entity.getSpecification();
   }
 
   @Override
-  public Specification handleUpdate(T entity, T existing) throws HandlerException {
+  public Specification handleUpdate(T entity, T existing) {
     return entity.getSpecification();
   }
 }

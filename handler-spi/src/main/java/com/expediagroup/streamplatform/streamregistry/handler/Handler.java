@@ -19,12 +19,11 @@ import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 public interface Handler<T extends ManagedType> {
-
   String type();
 
-  Class<?> target();
+  Class<T> target();
 
-  Specification handleInsert(T entity) throws HandlerException;
+  Specification handleInsert(T entity);
 
-  Specification handleUpdate(T entity, T existing) throws HandlerException;
+  Specification handleUpdate(T entity, T existing);
 }

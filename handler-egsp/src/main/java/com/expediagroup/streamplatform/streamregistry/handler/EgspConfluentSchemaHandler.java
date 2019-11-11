@@ -40,21 +40,21 @@ public class EgspConfluentSchemaHandler implements Handler<Schema> {
   }
 
   @Override
-  public Class target() {
+  public Class<Schema> target() {
     return Schema.class;
   }
 
   @Override
-  public Specification handleInsert(Schema schema) throws HandlerException {
+  public Specification handleInsert(Schema schema)  {
     return handle(schema);
   }
 
   @Override
-  public Specification handleUpdate(Schema schema, Schema existing) throws HandlerException {
+  public Specification handleUpdate(Schema schema, Schema existing) {
     return handle(schema);
   }
 
-  public Specification handle(Schema schema) throws HandlerException {
+  public Specification handle(Schema schema) {
     ObjectNode configuration = schema.getSpecification().getConfiguration();
     if (!configuration.has(SCHEMA_REGISTRY_URL)) {
       configuration.put(SCHEMA_REGISTRY_URL, schemaRegistryUrl);

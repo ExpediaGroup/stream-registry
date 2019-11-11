@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.handler.HandlerException;
 import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Specified;
@@ -65,7 +64,7 @@ public class HandlerService {
   public <T extends ManagedType> Specification handleInsert(T managedType) {
     try {
       return getHandler(managedType).handleInsert(managedType);
-    } catch (HandlerException e) {
+    } catch (Exception e) {
       throw new ValidationException(e);
     }
   }
@@ -73,7 +72,7 @@ public class HandlerService {
   public Specification handleUpdate(ManagedType managedType, ManagedType existing) {
     try {
       return getHandler(managedType).handleUpdate(managedType, existing);
-    } catch (HandlerException e) {
+    } catch (Exception e) {
       throw new ValidationException(e);
     }
   }

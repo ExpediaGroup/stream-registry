@@ -15,15 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import com.expediagroup.streamplatform.streamregistry.handler.HandlerException;
-
 public class ValidationException extends RuntimeException {
-
   public ValidationException(String message) {
     super(message);
   }
 
-  public ValidationException(HandlerException e) {
+  public ValidationException(Exception e) {
     super(e);
   }
 }
