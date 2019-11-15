@@ -116,7 +116,7 @@ public class EgspKafkaStreamHandlerTest {
       log.put("partitions", partitions);
     }
     if (replicationFactor != null) {
-      log.put("replicationFactor", replicationFactor);
+      log.put("replication.factor", replicationFactor);
     }
     if (cleanupPolicy != null) {
       log.put("cleanup.policy", cleanupPolicy);

@@ -60,7 +60,7 @@ public class EgspKafkaStreamHandler implements Handler<Stream> {
     checkNotNull(log, "log must not be null");
 
     validateGreaterThanZero(log, "partitions");
-    validateGreaterThanZero(log, "replicationFactor");
+    validateGreaterThanZero(log, "replication.factor");
 
     Predicate<JsonNode> predicate = value -> List.of("delete", "compact").contains(value.asText());
     validate(log, "cleanup.policy", predicate, "%s must be one of delete or compact");

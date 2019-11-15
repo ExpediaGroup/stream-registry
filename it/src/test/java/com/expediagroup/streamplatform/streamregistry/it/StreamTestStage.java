@@ -39,7 +39,6 @@ public class StreamTestStage extends AbstractTestStage {
     InsertStreamMutation.Insert Insert = ((InsertStreamMutation.Data) data).getStream().getInsert();
 
     assertThat(Insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(Insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -49,18 +48,15 @@ public class StreamTestStage extends AbstractTestStage {
     UpdateStreamMutation.Update Update = ((UpdateStreamMutation.Data) data).getStream().getUpdate();
 
     assertThat(Update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(Update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void upsert() {
-
     Object data = client.getData(factory.upsertStreamMutationBuilder().build());
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();
 
     assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override

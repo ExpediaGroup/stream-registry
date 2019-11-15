@@ -22,6 +22,7 @@ import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EG
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
@@ -258,23 +259,33 @@ public class ITestDataFactory {
         .zone(zoneName);
   }
 
+  private ObjectNode streamConfiguration() {
+    ObjectNode objectNode = mapper.createObjectNode();
+    objectNode.putObject("log")
+        .put("partitions", 1)
+        .put("replication.factor", 1)
+        .put("cleanup.policy", "delete")
+        .put("retention.ms", 1);
+    return objectNode;
+  }
+
   public InsertStreamMutation.Builder insertStreamMutationBuilder() {
     return InsertStreamMutation.builder()
-        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).configuration(streamConfiguration()).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
   public UpdateStreamMutation.Builder updateStreamMutationBuilder() {
     return UpdateStreamMutation.builder()
-        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).configuration(streamConfiguration()).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
   public UpsertStreamMutation.Builder upsertStreamMutationBuilder() {
     return UpsertStreamMutation.builder()
-        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).configuration(streamConfiguration()).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
