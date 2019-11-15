@@ -700,6 +700,10 @@ fragment StreamPart on Stream{
         __typename
         ...StatusPart
     }
+    schema{
+        __typename
+        ...SchemaPart
+    }
 }
 
 mutation InsertStream(
