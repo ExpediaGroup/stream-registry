@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.handler;
 
 import static com.expediagroup.streamplatform.streamregistry.handler.EgspConfluentSchemaHandler.SCHEMA_REGISTRY_URL;
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_CONFLUENT;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class EgspConfluentSchemaHandlerTest {
 
   @Test
   public void type() {
-    assertEquals("egsp.confluent", underTest.type());
+    assertEquals(EGSP_CONFLUENT, underTest.type());
   }
 
   @Test

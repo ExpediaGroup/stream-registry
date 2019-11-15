@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_CONFLUENT;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +38,7 @@ public class EgspConfluentSchemaHandler implements Handler<Schema> {
 
   @Override
   public String type() {
-    return "egsp.confluent";
+    return EGSP_CONFLUENT;
   }
 
   @Override
@@ -45,7 +47,7 @@ public class EgspConfluentSchemaHandler implements Handler<Schema> {
   }
 
   @Override
-  public Specification handleInsert(Schema schema)  {
+  public Specification handleInsert(Schema schema) {
     return handle(schema);
   }
 

@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.DEFAULT;
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_KAFKA;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,41 +34,41 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 public class EgspHandlerConfiguration {
   @Bean
   Handler<Domain> domainHandler() {
-    return new IdentityHandler<>("default", Domain.class);
+    return new IdentityHandler<>(DEFAULT, Domain.class);
   }
 
   @Bean
   Handler<Zone> zoneHandler() {
-    return new IdentityHandler<>("egsp.kafka", Zone.class);
+    return new IdentityHandler<>(EGSP_KAFKA, Zone.class);
   }
 
   @Bean
   Handler<Infrastructure> infrastructureHandler() {
-    return new IdentityHandler<>("egsp.kafka", Infrastructure.class);
+    return new IdentityHandler<>(EGSP_KAFKA, Infrastructure.class);
   }
 
   @Bean
   Handler<Producer> producerHandler() {
-    return new IdentityHandler<>("egsp.kafka", Producer.class);
+    return new IdentityHandler<>(EGSP_KAFKA, Producer.class);
   }
 
   @Bean
   Handler<Consumer> consumerHandler() {
-    return new IdentityHandler<>("egsp.kafka", Consumer.class);
+    return new IdentityHandler<>(EGSP_KAFKA, Consumer.class);
   }
 
   @Bean
   Handler<StreamBinding> streamBindingHandler() {
-    return new IdentityHandler<>("egsp.kafka", StreamBinding.class);
+    return new IdentityHandler<>(EGSP_KAFKA, StreamBinding.class);
   }
 
   @Bean
   Handler<ProducerBinding> producerBindingHandler() {
-    return new IdentityHandler<>("egsp.kafka", ProducerBinding.class);
+    return new IdentityHandler<>(EGSP_KAFKA, ProducerBinding.class);
   }
 
   @Bean
   Handler<ConsumerBinding> consumerBindingHandler() {
-    return new IdentityHandler<>("egsp.kafka", ConsumerBinding.class);
+    return new IdentityHandler<>(EGSP_KAFKA, ConsumerBinding.class);
   }
 }

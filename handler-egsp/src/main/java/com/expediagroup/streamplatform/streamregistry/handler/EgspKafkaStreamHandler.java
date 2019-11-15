@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_KAFKA;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -33,7 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 public class EgspKafkaStreamHandler implements Handler<Stream> {
   @Override
   public String type() {
-    return "egsp.kafka";
+    return EGSP_KAFKA;
   }
 
   @Override
