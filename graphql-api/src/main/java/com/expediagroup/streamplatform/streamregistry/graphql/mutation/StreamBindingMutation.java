@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
-@Component
-@RequiredArgsConstructor
-public class StreamBindingMutation {
-  private final StreamBindingService streamBindingService;
+public interface StreamBindingMutation extends GraphQLApiType {
+  StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification);
 
-  public StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.create(asStreamBinding(key, specification)).get();
-  }
+  StreamBinding update(StreamBindingKeyInput key, SpecificationInput specification);
 
-  public StreamBinding update(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.update(asStreamBinding(key, specification)).get();
-  }
+  StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification);
 
-  public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.upsert(asStreamBinding(key, specification)).get();
-  }
+  Boolean delete(StreamBindingKeyInput key);
 
-  public Boolean delete(StreamBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  private StreamBinding asStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {
-    StreamBinding streamBinding = new StreamBinding();
-    streamBinding.setKey(key.asStreamBindingKey());
-    streamBinding.setSpecification(specification.asSpecification());
-    maintainState(streamBinding, streamBindingService.read(streamBinding.getKey()));
-    return streamBinding;
-  }
-
-  public StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status) {
-    StreamBinding streamBinding = streamBindingService.read(key.asStreamBindingKey()).get();
-    streamBinding.setStatus(status.asStatus());
-    return streamBindingService.update(streamBinding).get();
-  }
+  StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status);
 }

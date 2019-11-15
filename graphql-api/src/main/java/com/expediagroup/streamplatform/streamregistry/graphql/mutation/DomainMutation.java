@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
-@Component
-@RequiredArgsConstructor
-public class DomainMutation {
-  private final DomainService domainService;
+public interface DomainMutation extends GraphQLApiType {
+  Domain insert(DomainKeyInput key, SpecificationInput specification);
 
-  public Domain insert(DomainKeyInput key, SpecificationInput specification) {
-    return domainService.create(asDomain(key, specification)).get();
-  }
+  Domain update(DomainKeyInput key, SpecificationInput specification);
 
-  public Domain update(DomainKeyInput key, SpecificationInput specification) {
-    return domainService.update(asDomain(key, specification)).get();
-  }
+  Domain upsert(DomainKeyInput key, SpecificationInput specification);
 
-  public Domain upsert(DomainKeyInput key, SpecificationInput specification) {
-    return domainService.upsert(asDomain(key, specification)).get();
-  }
+  Boolean delete(DomainKeyInput key);
 
-  public Boolean delete(DomainKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  public Domain updateStatus(DomainKeyInput key, StatusInput status) {
-    Domain domain = domainService.read(key.asDomainKey()).get();
-    domain.setStatus(status.asStatus());
-    return domainService.update(domain).get();
-  }
-
-  private Domain asDomain(DomainKeyInput key, SpecificationInput specification) {
-    Domain domain = new Domain();
-    domain.setKey(key.asDomainKey());
-    domain.setSpecification(specification.asSpecification());
-    maintainState(domain, domainService.read(domain.getKey()));
-    return domain;
-  }
+  Domain updateStatus(DomainKeyInput key, StatusInput status);
 }

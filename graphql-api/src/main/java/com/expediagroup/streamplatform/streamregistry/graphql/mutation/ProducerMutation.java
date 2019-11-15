@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
-@Component
-@RequiredArgsConstructor
-public class ProducerMutation {
-  private final ProducerService producerService;
+public interface ProducerMutation extends GraphQLApiType {
+  Producer insert(ProducerKeyInput key, SpecificationInput specification);
 
-  public Producer insert(ProducerKeyInput key, SpecificationInput specification) {
-    return producerService.create(asProducer(key, specification)).get();
-  }
+  Producer update(ProducerKeyInput key, SpecificationInput specification);
 
-  public Producer update(ProducerKeyInput key, SpecificationInput specification) {
-    return producerService.update(asProducer(key, specification)).get();
-  }
+  Producer upsert(ProducerKeyInput key, SpecificationInput specification);
 
-  public Producer upsert(ProducerKeyInput key, SpecificationInput specification) {
-    return producerService.upsert(asProducer(key, specification)).get();
-  }
+  Boolean delete(ProducerKeyInput key);
 
-  private Producer asProducer(ProducerKeyInput key, SpecificationInput specification) {
-    Producer producer = new Producer();
-    producer.setKey(key.asProducerKey());
-    producer.setSpecification(specification.asSpecification());
-    maintainState(producer, producerService.read(producer.getKey()));
-    return producer;
-  }
-
-  public Boolean delete(ProducerKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  public Producer updateStatus(ProducerKeyInput key, StatusInput status) {
-    Producer producer = producerService.read(key.asProducerKey()).get();
-    producer.setStatus(status.asStatus());
-    return producerService.update(producer).get();
-  }
+  Producer updateStatus(ProducerKeyInput key, StatusInput status);
 }

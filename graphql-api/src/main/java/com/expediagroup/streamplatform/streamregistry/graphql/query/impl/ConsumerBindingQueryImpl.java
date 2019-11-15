@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerBindingFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ConsumerBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.ConsumerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
-public interface ConsumerBindingQuery extends GraphQLApiType {
-  ConsumerBinding byKey(ConsumerBindingKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class ConsumerBindingQueryImpl implements ConsumerBindingQuery {
+  private final ConsumerBindingService consumerBindingService;
 
-  Iterable<ConsumerBinding> byQuery(ConsumerBindingKeyQuery key, SpecificationQuery specification);
+  @Override
+  public ConsumerBinding byKey(ConsumerBindingKeyInput key) {
+    return consumerBindingService.read(key.asConsumerBindingKey()).get();
+  }
+
+  public Iterable<ConsumerBinding> byQuery(ConsumerBindingKeyQuery key, SpecificationQuery specification) {
+    return consumerBindingService.findAll(new ConsumerBindingFilter(key, specification));
+  }
 }

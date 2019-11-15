@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
-@Component
-@RequiredArgsConstructor
-public class ConsumerBindingMutation {
-  private final ConsumerBindingService consumerBindingService;
+public interface ConsumerBindingMutation extends GraphQLApiType {
+  ConsumerBinding insert(ConsumerBindingKeyInput key, SpecificationInput specification);
 
-  public ConsumerBinding insert(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return consumerBindingService.create(asConsumerBinding(key, specification)).get();
-  }
+  ConsumerBinding update(ConsumerBindingKeyInput key, SpecificationInput specification);
 
-  public ConsumerBinding update(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return consumerBindingService.update(asConsumerBinding(key, specification)).get();
-  }
+  ConsumerBinding upsert(ConsumerBindingKeyInput key, SpecificationInput specification);
 
-  public ConsumerBinding upsert(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return consumerBindingService.upsert(asConsumerBinding(key, specification)).get();
-  }
+  Boolean delete(ConsumerBindingKeyInput key);
 
-  public Boolean delete(ConsumerBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  public ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status) {
-    ConsumerBinding consumerBinding = consumerBindingService.read(key.asConsumerBindingKey()).get();
-    consumerBinding.setStatus(status.asStatus());
-    return consumerBindingService.update(consumerBinding).get();
-  }
-
-  private ConsumerBinding asConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    ConsumerBinding consumerBinding = new ConsumerBinding();
-    consumerBinding.setKey(key.asConsumerBindingKey());
-    consumerBinding.setSpecification(specification.asSpecification());
-    maintainState(consumerBinding, consumerBindingService.read(key.asConsumerBindingKey()));
-    return consumerBinding;
-  }
+  ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status);
 }

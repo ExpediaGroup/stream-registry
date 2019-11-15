@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
-@Component
-@RequiredArgsConstructor
-public class ZoneMutation {
-  private final ZoneService zoneService;
+public interface ZoneMutation extends GraphQLApiType {
+  Zone insert(ZoneKeyInput key, SpecificationInput specification);
 
-  public Zone insert(ZoneKeyInput key, SpecificationInput specification) {
-    return zoneService.create(asZone(key, specification)).get();
-  }
+  Zone update(ZoneKeyInput key, SpecificationInput specification);
 
-  public Zone update(ZoneKeyInput key, SpecificationInput specification) {
-    return zoneService.update(asZone(key, specification)).get();
-  }
+  Zone upsert(ZoneKeyInput key, SpecificationInput specification);
 
-  public Zone upsert(ZoneKeyInput key, SpecificationInput specification) {
-    return zoneService.upsert(asZone(key, specification)).get();
-  }
+  Boolean delete(ZoneKeyInput key);
 
-  private Zone asZone(ZoneKeyInput key, SpecificationInput specification) {
-    Zone zone = new Zone();
-    zone.setKey(key.asZoneKey());
-    zone.setSpecification(specification.asSpecification());
-    maintainState(zone, zoneService.read(zone.getKey()));
-    return zone;
-  }
-
-  public Boolean delete(ZoneKeyInput key) {
-    throw new UnsupportedOperationException("deleteZone");
-  }
-
-  public Zone updateStatus(ZoneKeyInput key, StatusInput status) {
-    Zone zone = zoneService.read(key.asZoneKey()).get();
-    zone.setStatus(status.asStatus());
-    return zoneService.update(zone).get();
-  }
+  Zone updateStatus(ZoneKeyInput key, StatusInput status);
 }

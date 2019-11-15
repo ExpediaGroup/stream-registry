@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
-@Component
-@RequiredArgsConstructor
-public class SchemaMutation {
-  private final SchemaService schemaService;
+public interface SchemaMutation extends GraphQLApiType {
+  Schema insert(SchemaKeyInput key, SpecificationInput specification);
 
-  public Schema insert(SchemaKeyInput key, SpecificationInput specification) {
-    return schemaService.create(asSchema(key, specification)).get();
-  }
+  Schema update(SchemaKeyInput key, SpecificationInput specification);
 
-  public Schema update(SchemaKeyInput key, SpecificationInput specification) {
-    return schemaService.update(asSchema(key, specification)).get();
-  }
+  Schema upsert(SchemaKeyInput key, SpecificationInput specification);
 
-  public Schema upsert(SchemaKeyInput key, SpecificationInput specification) {
-    return schemaService.upsert(asSchema(key, specification)).get();
-  }
+  Boolean delete(SchemaKeyInput key);
 
-  public Boolean delete(SchemaKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  public Schema updateStatus(SchemaKeyInput key, StatusInput status) {
-    Schema schema = schemaService.read(key.asSchemaKey()).get();
-    schema.setStatus(status.asStatus());
-    return schemaService.update(schema).get();
-  }
-
-  private Schema asSchema(SchemaKeyInput key, SpecificationInput specification) {
-    Schema schema = new Schema();
-    schema.setKey(key.asSchemaKey());
-    schema.setSpecification(specification.asSpecification());
-    maintainState(schema, schemaService.read(schema.getKey()));
-    return schema;
-  }
+  Schema updateStatus(SchemaKeyInput key, StatusInput status);
 }
