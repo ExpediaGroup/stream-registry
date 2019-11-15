@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.ProducerQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
-public interface ProducerQuery extends GraphQLApiType {
-  Producer byKey(ProducerKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class ProducerQueryImpl implements ProducerQuery {
+  private final ProducerService producerService;
 
-  Iterable<Producer> byQuery(ProducerKeyQuery key, SpecificationQuery specification);
+  @Override
+  public Producer byKey(ProducerKeyInput key) {
+    return producerService.read(key.asProducerKey()).get();
+  }
+
+  @Override
+  public Iterable<Producer> byQuery(ProducerKeyQuery key, SpecificationQuery specification) {
+    return producerService.findAll(new ProducerFilter(key, specification));
+  }
 }

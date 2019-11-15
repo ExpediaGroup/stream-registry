@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.ZoneFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ZoneKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.ZoneQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
-public interface ZoneQuery extends GraphQLApiType {
-  Zone byKey(ZoneKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class ZoneQueryImpl implements ZoneQuery {
+  private final ZoneService zoneService;
 
-  Iterable<Zone> byQuery(ZoneKeyQuery key, SpecificationQuery specification);
+  @Override
+  public Zone byKey(ZoneKeyInput key) {
+    return zoneService.read(key.asZoneKey()).get();
+  }
+
+  @Override
+  public Iterable<Zone> byQuery(ZoneKeyQuery key, SpecificationQuery specification) {
+    return zoneService.findAll(new ZoneFilter(key, specification));
+  }
 }

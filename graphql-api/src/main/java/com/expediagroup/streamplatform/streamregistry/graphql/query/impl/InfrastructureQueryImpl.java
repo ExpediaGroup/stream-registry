@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.InfrastructureFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.InfrastructureKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.InfrastructureQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
-public interface InfrastructureQuery extends GraphQLApiType {
-  Infrastructure byKey(InfrastructureKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class InfrastructureQueryImpl implements InfrastructureQuery {
+  private final InfrastructureService infrastructureService;
 
-  Iterable<Infrastructure> byQuery(InfrastructureKeyQuery key, SpecificationQuery specification);
+  @Override
+  public Infrastructure byKey(InfrastructureKeyInput key) {
+    return infrastructureService.read(key.asInfrastructureKey()).get();
+  }
+
+  @Override
+  public Iterable<Infrastructure> byQuery(InfrastructureKeyQuery key, SpecificationQuery specification) {
+    return infrastructureService.findAll(new InfrastructureFilter(key, specification));
+  }
 }

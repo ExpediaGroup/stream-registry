@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.DomainFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.DomainKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
-public interface DomainQuery extends GraphQLApiType {
-  Domain byKey(DomainKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class DomainQueryImpl implements DomainQuery {
+  private final DomainService domainService;
 
-  Iterable<Domain> byQuery(DomainKeyQuery key, SpecificationQuery specification);
+  @Override
+  public Domain byKey(DomainKeyInput key) {
+    return domainService.read(key.asDomainKey()).get();
+  }
+
+  @Override
+  public Iterable<Domain> byQuery(DomainKeyQuery key, SpecificationQuery specification) {
+    return domainService.findAll(new DomainFilter(key, specification));
+  }
 }

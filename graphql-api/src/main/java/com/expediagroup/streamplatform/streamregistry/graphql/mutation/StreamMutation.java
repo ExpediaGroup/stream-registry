@@ -15,52 +15,21 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
-@Component
-@RequiredArgsConstructor
-public class StreamMutation {
-  private final StreamService streamService;
+public interface StreamMutation extends GraphQLApiType {
+  Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
 
-  public Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.create(asStream(key, specification, schema)).get();
-  }
+  Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
 
-  public Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.update(asStream(key, specification, schema)).get();
-  }
+  Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
 
-  public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.upsert(asStream(key, specification, schema)).get();
-  }
+  Boolean delete(StreamKeyInput key);
 
-  public Boolean delete(StreamKeyInput key) {
-    throw new UnsupportedOperationException("deleteStream");
-  }
-
-  public Stream updateStatus(StreamKeyInput key, StatusInput status) {
-    Stream stream = streamService.read(key.asStreamKey()).get();
-    stream.setStatus(status.asStatus());
-    return streamService.update(stream).get();
-  }
-
-  private Stream asStream(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    Stream stream = new Stream();
-    stream.setKey(key.asStreamKey());
-    stream.setSpecification(specification.asSpecification());
-    stream.setSchemaKey(schema.asSchemaKey());
-    maintainState(stream, streamService.read(stream.getKey()));
-    return stream;
-  }
+  Stream updateStatus(StreamKeyInput key, StatusInput status);
 }

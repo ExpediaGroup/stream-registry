@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerBindingFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.ProducerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
-public interface ProducerBindingQuery extends GraphQLApiType {
-  ProducerBinding byKey(ProducerBindingKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class ProducerBindingQueryImpl implements ProducerBindingQuery {
+  private final ProducerBindingService producerBindingService;
 
-  Iterable<ProducerBinding> byQuery(ProducerBindingKeyQuery key, SpecificationQuery specification);
+  @Override
+  public ProducerBinding byKey(ProducerBindingKeyInput key) {
+    return producerBindingService.read(key.asProducerBindingKey()).get();
+  }
+
+  @Override
+  public Iterable<ProducerBinding> byQuery(ProducerBindingKeyQuery key, SpecificationQuery specification) {
+    return producerBindingService.findAll(new ProducerBindingFilter(key, specification));
+  }
 }

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.8.0] - 20191107
 ### Added
 - Refactor of all entity structures and implementation of CRUD operations.
+- Added metrics to all GraphQL api methods.
 
 ### Changed
 - Switch to Spring's `CrudRepository` for the backend.

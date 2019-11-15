@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
-@Component
-@RequiredArgsConstructor
-public class ConsumerMutation {
-  private final ConsumerService consumerService;
+public interface ConsumerMutation extends GraphQLApiType {
+  Consumer insert(ConsumerKeyInput key, SpecificationInput specification);
 
-  public Consumer insert(ConsumerKeyInput key, SpecificationInput specification) {
-    return consumerService.create(asConsumer(key, specification)).get();
-  }
+  Consumer update(ConsumerKeyInput key, SpecificationInput specification);
 
-  public Consumer update(ConsumerKeyInput key, SpecificationInput specification) {
-    return consumerService.update(asConsumer(key, specification)).get();
-  }
+  Consumer upsert(ConsumerKeyInput key, SpecificationInput specification);
 
-  public Consumer upsert(ConsumerKeyInput key, SpecificationInput specification) {
-    return consumerService.upsert(asConsumer(key, specification)).get();
-  }
+  Boolean delete(ConsumerKeyInput key);
 
-  private Consumer asConsumer(ConsumerKeyInput key, SpecificationInput specification) {
-    Consumer consumer = new Consumer();
-    consumer.setKey(key.asConsumerKey());
-    consumer.setSpecification(specification.asSpecification());
-    maintainState(consumer, consumerService.read(consumer.getKey()));
-    return consumer;
-  }
-
-  public Boolean delete(ConsumerKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  public Consumer updateStatus(ConsumerKeyInput key, StatusInput status) {
-    Consumer consumer = consumerService.read(key.asConsumerKey()).get();
-    consumer.setStatus(status.asStatus());
-    return consumerService.update(consumer).get();
-  }
+  Consumer updateStatus(ConsumerKeyInput key, StatusInput status);
 }
