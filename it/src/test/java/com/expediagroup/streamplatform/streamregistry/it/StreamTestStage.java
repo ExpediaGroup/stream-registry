@@ -90,6 +90,9 @@ public class StreamTestStage extends AbstractTestStage {
     StreamQuery.Data after = (StreamQuery.Data) client.getData(StreamQuery.builder().key(input).build());
 
     assertEquals(after.getStream().getByKey().getKey().getName(), input.name());
+
+    assertEquals(after.getStream().getByKey().getSchema().getSpecification().getType(),"egsp.confluent");
+
   }
 
   @Override
