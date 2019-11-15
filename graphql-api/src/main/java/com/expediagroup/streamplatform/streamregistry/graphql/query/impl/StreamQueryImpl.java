@@ -13,17 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
-public interface StreamQuery extends GraphQLApiType {
-  Stream byKey(StreamKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class StreamQueryImpl implements StreamQuery {
+  private final StreamService streamService;
 
-  Iterable<Stream> byQuery(StreamKeyQuery key, SpecificationQuery specification, SchemaKeyQuery schemaKeyQuery);
+  @Override
+  public Stream byKey(StreamKeyInput key) {
+    return streamService.read(key.asStreamKey()).get();
+  }
+
+  @Override
+  public Iterable<Stream> byQuery(StreamKeyQuery key, SpecificationQuery specification, SchemaKeyQuery schemaKeyQuery) {
+    return streamService.findAll(new StreamFilter(key, specification, schemaKeyQuery));
+  }
 }

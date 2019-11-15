@@ -13,18 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerFilter;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ConsumerKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.query.ConsumerQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
-public interface ConsumerQuery extends GraphQLApiType {
-  Consumer byKey(ConsumerKeyInput key);
+@Component
+@RequiredArgsConstructor
+public class ConsumerQueryImpl implements ConsumerQuery {
+  private final ConsumerService consumerService;
 
-  Iterable<Consumer> byQuery(ConsumerKeyQuery key, SpecificationQuery specification);
+  @Override
+  public Consumer byKey(ConsumerKeyInput key) {
+    return consumerService.read(key.asConsumerKey()).get();
+  }
 
-  ;
+  @Override
+  public Iterable<Consumer> byQuery(ConsumerKeyQuery key, SpecificationQuery specification) {
+    return consumerService.findAll(new ConsumerFilter(key, specification));
+  }
 }

@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
@@ -23,55 +24,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Getter
 public class Query implements GraphQLQueryResolver {
-  private final DomainQuery domainQuery;
-  private final SchemaQuery schemaQuery;
-  private final StreamQuery streamQuery;
-  private final ZoneQuery zoneQuery;
-  private final InfrastructureQuery infrastructureQuery;
-  private final ProducerQuery producerQuery;
-  private final ConsumerQuery consumerQuery;
-  private final StreamBindingQuery streamBindingQuery;
-  private final ProducerBindingQuery producerBindingQuery;
-  private final ConsumerBindingQuery consumerBindingQuery;
-
-  public DomainQuery getDomain() {
-    return domainQuery;
-  }
-
-  public SchemaQuery getSchema() {
-    return schemaQuery;
-  }
-
-  public StreamQuery getStream() {
-    return streamQuery;
-  }
-
-  public ZoneQuery getZone() {
-    return zoneQuery;
-  }
-
-  public InfrastructureQuery getInfrastructure() {
-    return infrastructureQuery;
-  }
-
-  public ProducerQuery getProducer() {
-    return producerQuery;
-  }
-
-  public ConsumerQuery getConsumer() {
-    return consumerQuery;
-  }
-
-  public StreamBindingQuery getStreamBinding() {
-    return streamBindingQuery;
-  }
-
-  public ProducerBindingQuery getProducerBinding() {
-    return producerBindingQuery;
-  }
-
-  public ConsumerBindingQuery getConsumerBinding() {
-    return consumerBindingQuery;
-  }
+  private final DomainQuery domain;
+  private final SchemaQuery schema;
+  private final StreamQuery stream;
+  private final ProducerQuery producer;
+  private final ConsumerQuery consumer;
+  private final ZoneQuery zone;
+  private final InfrastructureQuery infrastructure;
+  private final StreamBindingQuery streamBinding;
+  private final ProducerBindingQuery producerBinding;
+  private final ConsumerBindingQuery consumerBinding;
 }

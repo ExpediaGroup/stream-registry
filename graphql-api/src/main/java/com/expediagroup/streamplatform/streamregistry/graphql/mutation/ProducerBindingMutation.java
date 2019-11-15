@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
-@Component
-@RequiredArgsConstructor
-public class ProducerBindingMutation {
-  private final ProducerBindingService producerBindingService;
+public interface ProducerBindingMutation extends GraphQLApiType {
+  ProducerBinding insert(ProducerBindingKeyInput key, SpecificationInput specification);
 
-  public ProducerBinding insert(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return producerBindingService.create(asProducerBinding(key, specification)).get();
-  }
+  ProducerBinding update(ProducerBindingKeyInput key, SpecificationInput specification);
 
-  public ProducerBinding update(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return producerBindingService.update(asProducerBinding(key, specification)).get();
-  }
+  ProducerBinding upsert(ProducerBindingKeyInput key, SpecificationInput specification);
 
-  public ProducerBinding upsert(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return producerBindingService.upsert(asProducerBinding(key, specification)).get();
-  }
+  Boolean delete(ProducerBindingKeyInput key);
 
-  public Boolean delete(ProducerBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  public ProducerBinding updateStatus(ProducerBindingKeyInput key, StatusInput status) {
-    ProducerBinding producerBinding = producerBindingService.read(key.asProducerBindingKey()).get();
-    producerBinding.setStatus(status.asStatus());
-    return producerBindingService.update(producerBinding).get();
-  }
-
-  private ProducerBinding asProducerBinding(ProducerBindingKeyInput key, SpecificationInput specification) {
-    ProducerBinding producerBinding = new ProducerBinding();
-    producerBinding.setKey(key.asProducerBindingKey());
-    producerBinding.setSpecification(specification.asSpecification());
-    maintainState(producerBinding, producerBindingService.read(producerBinding.getKey()));
-    return producerBinding;
-  }
+  ProducerBinding updateStatus(ProducerBindingKeyInput key, StatusInput status);
 }

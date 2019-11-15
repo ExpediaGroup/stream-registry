@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
@@ -23,55 +24,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Getter
 public class Mutation implements GraphQLMutationResolver {
-  private final ConsumerMutation consumerMutation;
-  private final ProducerMutation producerMutation;
-  private final DomainMutation domainMutation;
-  private final SchemaMutation schemaMutation;
-  private final StreamMutation streamMutation;
-  private final ZoneMutation zoneMutation;
-  private final InfrastructureMutation infrastructureMutation;
-  private final StreamBindingMutation streamBindingMutation;
-  private final ProducerBindingMutation producerBindingMutation;
-  private final ConsumerBindingMutation consumerBindingMutation;
-
-  public ConsumerMutation consumer() {
-    return consumerMutation;
-  }
-
-  public DomainMutation domain() {
-    return domainMutation;
-  }
-
-  public SchemaMutation schema() {
-    return schemaMutation;
-  }
-
-  public StreamMutation stream() {
-    return streamMutation;
-  }
-
-  public ZoneMutation zone() {
-    return zoneMutation;
-  }
-
-  public InfrastructureMutation infrastructure() {
-    return infrastructureMutation;
-  }
-
-  public StreamBindingMutation streamBinding() {
-    return streamBindingMutation;
-  }
-
-  public ProducerMutation producer() {
-    return producerMutation;
-  }
-
-  public ProducerBindingMutation producerBinding() {
-    return producerBindingMutation;
-  }
-
-  public ConsumerBindingMutation consumerBinding() {
-    return consumerBindingMutation;
-  }
+  private final DomainMutation domain;
+  private final SchemaMutation schema;
+  private final StreamMutation stream;
+  private final ConsumerMutation consumer;
+  private final ProducerMutation producer;
+  private final ZoneMutation zone;
+  private final InfrastructureMutation infrastructure;
+  private final StreamBindingMutation streamBinding;
+  private final ProducerBindingMutation producerBinding;
+  private final ConsumerBindingMutation consumerBinding;
 }

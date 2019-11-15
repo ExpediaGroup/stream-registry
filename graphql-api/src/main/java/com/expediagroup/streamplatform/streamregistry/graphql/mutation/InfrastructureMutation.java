@@ -15,50 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
+import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
-@Component
-@RequiredArgsConstructor
-public class InfrastructureMutation {
-  private final InfrastructureService infrastructureService;
+public interface InfrastructureMutation extends GraphQLApiType {
+  Infrastructure insert(InfrastructureKeyInput key, SpecificationInput specification);
 
-  public Infrastructure insert(InfrastructureKeyInput key, SpecificationInput specification) {
-    return infrastructureService.create(asInfrastructure(key, specification)).get();
-  }
+  Infrastructure update(InfrastructureKeyInput key, SpecificationInput specification);
 
-  private Infrastructure asInfrastructure(InfrastructureKeyInput key, SpecificationInput specification) {
-    Infrastructure out = new Infrastructure();
-    out.setKey(key.asInfrastructureKey());
-    out.setSpecification(specification.asSpecification());
-    maintainState(out, infrastructureService.read(out.getKey()));
-    return out;
-  }
+  Infrastructure upsert(InfrastructureKeyInput key, SpecificationInput specification);
 
-  public Infrastructure update(InfrastructureKeyInput key, SpecificationInput specification) {
-    return infrastructureService.update(asInfrastructure(key, specification)).get();
-  }
+  Boolean delete(InfrastructureKeyInput key);
 
-  public Infrastructure upsert(InfrastructureKeyInput key, SpecificationInput specification) {
-    return infrastructureService.upsert(asInfrastructure(key, specification)).get();
-  }
-
-  public Boolean delete(InfrastructureKeyInput key) {
-    throw new UnsupportedOperationException("delete");
-  }
-
-  public Infrastructure updateStatus(InfrastructureKeyInput key, StatusInput status) {
-    Infrastructure infrastructure = infrastructureService.read(key.asInfrastructureKey()).get();
-    infrastructure.setStatus(status.asStatus());
-    return infrastructureService.update(infrastructure).get();
-  }
+  Infrastructure updateStatus(InfrastructureKeyInput key, StatusInput status);
 }
