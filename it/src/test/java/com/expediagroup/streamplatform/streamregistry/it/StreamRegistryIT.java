@@ -33,15 +33,15 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.Client;
 @RunWith(Suite.class)
 @SuiteClasses({
     DomainTestStage.class,
-//    SchemaTestStage.class,
-    StreamTestStage.class
-//    ProducerTestStage.class,
-//    ConsumerTestStage.class,
-//    ZoneTestStage.class,
-//    InfrastructureTestStage.class,
-//    StreamBindingTestStage.class,
-//    ProducerBindingTestStage.class,
-//    ConsumerBindingTestStage.class
+    SchemaTestStage.class,
+    StreamTestStage.class,
+    ProducerTestStage.class,
+    ConsumerTestStage.class,
+    ZoneTestStage.class,
+    InfrastructureTestStage.class,
+    StreamBindingTestStage.class,
+    ProducerBindingTestStage.class,
+    ConsumerBindingTestStage.class
 })
 @Slf4j
 public class StreamRegistryIT {
