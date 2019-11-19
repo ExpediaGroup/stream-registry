@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
@@ -57,11 +58,10 @@ public class ConsumerResolver implements GraphQLResolver<Consumer> {
     return zoneService.read(zoneKey).orElse(null);
   }
 
-  public ConsumerBinding binding(Consumer consumer) {
+  public Optional<ConsumerBinding> binding(Consumer consumer) {
     Predicate<ConsumerBinding> predicate = binding -> binding.getKey().getConsumerKey().equals(consumer.getKey());
     return StreamSupport
         .stream(consumerBindingService.findAll(predicate).spliterator(), false)
-        .findFirst()
-        .orElse(null);
+        .findFirst();
   }
 }
