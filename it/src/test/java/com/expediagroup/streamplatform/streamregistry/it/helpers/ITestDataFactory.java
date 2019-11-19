@@ -15,9 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.DEFAULT;
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_CONFLUENT;
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_KAFKA;
+
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
@@ -73,7 +78,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKe
 public class ITestDataFactory {
 
   private static final ObjectMapper mapper = new ObjectMapper();
-  private static final String EGSP_KAFKA = "egsp.kafka";
   public String zoneName;
   public String domainName;
   public String consumerName;
@@ -122,7 +126,7 @@ public class ITestDataFactory {
   public UpsertDomainMutation.Builder upsertDomainMutationBuilder() {
     return UpsertDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
-        .specification(specificationInputBuilder("default").build());
+        .specification(specificationInputBuilder(DEFAULT).build());
   }
 
   public UpsertConsumerMutation.Builder upsertConsumerMutationBuilder() {
@@ -255,23 +259,33 @@ public class ITestDataFactory {
         .zone(zoneName);
   }
 
+  private ObjectNode streamConfiguration() {
+    ObjectNode objectNode = mapper.createObjectNode();
+    objectNode.putObject("log")
+        .put("partitions", 1)
+        .put("replication.factor", 1)
+        .put("cleanup.policy", "delete")
+        .put("retention.ms", 1);
+    return objectNode;
+  }
+
   public InsertStreamMutation.Builder insertStreamMutationBuilder() {
     return InsertStreamMutation.builder()
-        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).configuration(streamConfiguration()).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
   public UpdateStreamMutation.Builder updateStreamMutationBuilder() {
     return UpdateStreamMutation.builder()
-        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).configuration(streamConfiguration()).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
   public UpsertStreamMutation.Builder upsertStreamMutationBuilder() {
     return UpsertStreamMutation.builder()
-        .specification(specificationInputBuilder(EGSP_KAFKA).build())
+        .specification(specificationInputBuilder(EGSP_KAFKA).configuration(streamConfiguration()).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
@@ -285,19 +299,19 @@ public class ITestDataFactory {
 
   public InsertSchemaMutation.Builder insertSchemaMutationBuilder() {
     return InsertSchemaMutation.builder()
-        .specification(specificationInputBuilder("egsp.confluent").build())
+        .specification(specificationInputBuilder(EGSP_CONFLUENT).build())
         .key(schemaKeyInputBuilder().build());
   }
 
   public UpdateSchemaMutation.Builder updateSchemaMutationBuilder() {
     return UpdateSchemaMutation.builder()
-        .specification(specificationInputBuilder("egsp.confluent").build())
+        .specification(specificationInputBuilder(EGSP_CONFLUENT).build())
         .key(schemaKeyInputBuilder().build());
   }
 
   public UpsertSchemaMutation.Builder upsertSchemaMutationBuilder() {
     return UpsertSchemaMutation.builder()
-        .specification(specificationInputBuilder("egsp.confluent").build())
+        .specification(specificationInputBuilder(EGSP_CONFLUENT).build())
         .key(schemaKeyInputBuilder().build());
   }
 
@@ -415,12 +429,12 @@ public class ITestDataFactory {
   public InsertDomainMutation.Builder insertDomainMutationBuilder() {
     return InsertDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
-        .specification(specificationInputBuilder("default").build());
+        .specification(specificationInputBuilder(DEFAULT).build());
   }
 
   public UpdateDomainMutation.Builder updateDomainMutationBuilder() {
     return UpdateDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
-        .specification(specificationInputBuilder("default").build());
+        .specification(specificationInputBuilder(DEFAULT).build());
   }
 }

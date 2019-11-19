@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_CONFLUENT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -38,7 +39,6 @@ public class StreamTestStage extends AbstractTestStage {
     InsertStreamMutation.Insert Insert = ((InsertStreamMutation.Data) data).getStream().getInsert();
 
     assertThat(Insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(Insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -48,18 +48,15 @@ public class StreamTestStage extends AbstractTestStage {
     UpdateStreamMutation.Update Update = ((UpdateStreamMutation.Data) data).getStream().getUpdate();
 
     assertThat(Update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(Update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void upsert() {
-
     Object data = client.getData(factory.upsertStreamMutationBuilder().build());
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();
 
     assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -91,7 +88,7 @@ public class StreamTestStage extends AbstractTestStage {
 
     assertEquals(after.getStream().getByKey().getKey().getName(), input.name());
 
-    assertEquals(after.getStream().getByKey().getSchema().getSpecification().getType(),"egsp.confluent");
+    assertEquals(after.getStream().getByKey().getSchema().getSpecification().getType(), EGSP_CONFLUENT);
 
   }
 

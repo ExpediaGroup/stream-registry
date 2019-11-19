@@ -15,5 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-public class HandlerException extends Exception {
+public final class EgspType {
+  public static final String DEFAULT = "default";
+  public static final String EGSP_KAFKA = "egsp.kafka";
+  public static final String EGSP_CONFLUENT = "egsp.confluent";
+
+  private EgspType() {}
 }
