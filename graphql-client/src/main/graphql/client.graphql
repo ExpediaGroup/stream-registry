@@ -31,6 +31,10 @@ fragment ConsumerPart on Consumer{
         __typename
         ...StatusPart
     }
+    binding{
+        __typename
+        ...ConsumerBindingPart
+    }
 }
 
 mutation InsertConsumer(
@@ -412,6 +416,10 @@ fragment ProducerPart on Producer{
         __typename
         ...StatusPart
     }
+    binding{
+        __typename
+        ...ProducerBindingPart
+    }
 }
 
 mutation InsertProducer(
@@ -488,7 +496,6 @@ query Producers(
             ...ProducerPart
         }
     }
-
 }
 
 ############ ProducerBinding ############

@@ -15,15 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
+
 import lombok.RequiredArgsConstructor;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
@@ -34,24 +39,29 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 public class ConsumerResolver implements GraphQLResolver<Consumer> {
   private final StreamService streamService;
   private final ZoneService zoneService;
+  private final ConsumerBindingService consumerBindingService;
 
   public Stream stream(Consumer consumer) {
-
     StreamKey streamKey = new StreamKey(
         consumer.getKey().getStreamDomain(),
         consumer.getKey().getStreamName(),
         consumer.getKey().getStreamVersion()
     );
-
     return streamService.read(streamKey).orElse(null);
   }
 
   public Zone zone(Consumer consumer) {
-
     ZoneKey zoneKey = new ZoneKey(
         consumer.getKey().getZone()
     );
-
     return zoneService.read(zoneKey).orElse(null);
+  }
+
+  public ConsumerBinding binding(Consumer consumer) {
+    Predicate<ConsumerBinding> predicate = binding -> binding.getKey().getConsumerKey().equals(consumer.getKey());
+    return StreamSupport
+        .stream(consumerBindingService.findAll(predicate).spliterator(), false)
+        .findFirst()
+        .orElse(null);
   }
 }
