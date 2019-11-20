@@ -208,7 +208,7 @@ type Producer {
     status: Status
     stream: Stream!
     zone: Zone!
-    #bindings: [ProducerBinding!]
+    binding: ProducerBinding
 }
 
 ############ Consumer ############
@@ -243,7 +243,7 @@ type Consumer {
     status: Status
     stream: Stream!
     zone: Zone!
-    #bindings: [ConsumerBinding!]
+    binding: ConsumerBinding
 }
 
 ############ StreamBinding ############
