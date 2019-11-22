@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 
@@ -34,12 +35,14 @@ import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Specified;
 
 @Component
+@Slf4j
 public class HandlerService {
   private final Map<Key, Handler<?>> handlers;
 
   public HandlerService(List<Handler> handlers) {
     this.handlers = handlers
         .stream()
+        .peek(h -> log.info("Loaded handler for {} - {}", h.target().getSimpleName(), h.type()))
         .collect(toMap(
             handler -> new Key(handler.type(), handler.target()),
             Function.identity()
@@ -54,7 +57,7 @@ public class HandlerService {
           .map(Key::getType)
           .collect(toSet());
       throw new ValidationException(
-          "There is no handler for " + managedType.getClass().getName()
+          "There is no handler for " + managedType.getClass().getSimpleName()
               + " entities with type " + managedType.getSpecification().getType()
               + ". Expected one of " + supportedTypes);
     }

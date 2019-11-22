@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.handler;
+package com.expediagroup.streamplatform.streamregistry.core.handlers;
 
 import lombok.RequiredArgsConstructor;
 
+import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 @RequiredArgsConstructor
 public class IdentityHandler<T extends ManagedType> implements Handler<T> {
+  public static final String DEFAULT = "default";
   private final String type;
   private final Class<T> target;
 

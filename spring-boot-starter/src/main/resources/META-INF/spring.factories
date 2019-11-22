@@ -1,2 +1,2 @@
 # Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.expediagroup.streamplatform.streamregistry.StreamRegistryConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.expediagroup.streamplatform.streamregistry.StreamRegistryAutoConfiguration

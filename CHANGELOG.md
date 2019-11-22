@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Simple validation rules for `EgspKafkaStreamHandler`.
 - Added schema to client query return of stream.
 - Added optional Binding field to Producer and Consumer entities.
+- Only default handlers present by default.
 
 ## [0.8.0] - 20191107
 ### Added
