@@ -257,33 +257,23 @@ public class ITestDataFactory {
         .zone(zoneName);
   }
 
-  private ObjectNode streamConfiguration() {
-    ObjectNode objectNode = mapper.createObjectNode();
-    objectNode.putObject("log")
-        .put("partitions", 1)
-        .put("replication.factor", 1)
-        .put("cleanup.policy", "delete")
-        .put("retention.ms", 1);
-    return objectNode;
-  }
-
   public InsertStreamMutation.Builder insertStreamMutationBuilder() {
     return InsertStreamMutation.builder()
-        .specification(specificationInputBuilder(DEFAULT).configuration(streamConfiguration()).build())
+        .specification(specificationInputBuilder(DEFAULT).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
   public UpdateStreamMutation.Builder updateStreamMutationBuilder() {
     return UpdateStreamMutation.builder()
-        .specification(specificationInputBuilder(DEFAULT).configuration(streamConfiguration()).build())
+        .specification(specificationInputBuilder(DEFAULT).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
   public UpsertStreamMutation.Builder upsertStreamMutationBuilder() {
     return UpsertStreamMutation.builder()
-        .specification(specificationInputBuilder(DEFAULT).configuration(streamConfiguration()).build())
+        .specification(specificationInputBuilder(DEFAULT).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
