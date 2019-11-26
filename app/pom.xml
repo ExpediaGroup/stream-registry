@@ -11,18 +11,13 @@
   <artifactId>stream-registry-app</artifactId>
 
   <properties>
-    <docker.to.repo />
-    <docker.from.repo />
+    <docker.to.repo/>
+    <docker.from.repo/>
     <docker.image.name>stream-registry</docker.image.name>
     <docker.image.base>openjdk:11-slim</docker.image.base>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-handler-egsp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
       <artifactId>stream-registry-spring-boot-starter</artifactId>
@@ -49,7 +44,6 @@
 
   <build>
     <plugins>
-
       <!--
       Create a docker image of the stream-registry running on
       a slim openJDK image
@@ -87,35 +81,6 @@
               <goal>${jib.goal}</goal>
             </goals>
             <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!--
-          Generate the postgre SQL schema for the model during a build.
-          This schema is not automatically applied to the production Database but must be manually
-          validated and applied.
-
-          See http://jpdigital.github.io/hibernate5-ddl-maven-plugin/usage.html
-      -->
-      <plugin>
-        <groupId>de.jpdigital</groupId>
-        <artifactId>hibernate54-ddl-maven-plugin</artifactId>
-        <version>2.3.0</version>
-        <configuration>
-          <dialects>
-            <param>postgresql9</param>
-          </dialects>
-          <packages>
-            <param>com.expediagroup.streamplatform.streamregistry.model</param>
-          </packages>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>gen-ddl</goal>
-            </goals>
-            <phase>process-classes</phase>
           </execution>
         </executions>
       </plugin>

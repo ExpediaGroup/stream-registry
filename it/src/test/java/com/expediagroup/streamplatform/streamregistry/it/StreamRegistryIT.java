@@ -62,7 +62,6 @@ public class StreamRegistryIT {
   public static void before() {
     String[] args = new String[]{
         "--server.port=0",
-        "--schema.registry.url=http://schema-registry",
         "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
         "--spring.datasource.username=streamregistry",
         "--spring.datasource.password=streamregistry",

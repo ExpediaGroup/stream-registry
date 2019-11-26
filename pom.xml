@@ -48,7 +48,6 @@
     <module>graphql-client-support</module>
     <module>graphql-maven-plugin</module>
     <module>graphql-scalars</module>
-    <module>handler-egsp</module>
     <module>handler-spi</module>
     <module>model</module>
     <module>it</module>
@@ -67,7 +66,7 @@
     <graphql-java.version>13.0</graphql-java.version>
     <kotlin.version>1.3.10</kotlin.version>
     <slf4j.version>1.7.26</slf4j.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+    <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
 
     <!-- Plugins -->
     <spotless-maven-plugin.version>1.24.0</spotless-maven-plugin.version>

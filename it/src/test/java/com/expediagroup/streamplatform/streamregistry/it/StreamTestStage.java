@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import static com.expediagroup.streamplatform.streamregistry.handler.EgspType.EGSP_CONFLUENT;
+import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -88,7 +88,7 @@ public class StreamTestStage extends AbstractTestStage {
 
     assertEquals(after.getStream().getByKey().getKey().getName(), input.name());
 
-    assertEquals(after.getStream().getByKey().getSchema().getSpecification().getType(), EGSP_CONFLUENT);
+    assertEquals(after.getStream().getByKey().getSchema().getSpecification().getType(), DEFAULT);
 
   }
 
