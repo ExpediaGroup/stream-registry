@@ -5,14 +5,14 @@
   <parent>
     <groupId>com.expediagroup.streamplatform</groupId>
     <artifactId>stream-registry</artifactId>
-    <version>0.8.2-SNAPSHOT</version>
+    <version>0.8.2</version>
   </parent>
 
   <artifactId>stream-registry-app</artifactId>
 
   <properties>
-    <docker.to.repo/>
-    <docker.from.repo/>
+    <docker.to.repo />
+    <docker.from.repo />
     <docker.image.name>stream-registry</docker.image.name>
     <docker.image.base>openjdk:11-slim</docker.image.base>
   </properties>
