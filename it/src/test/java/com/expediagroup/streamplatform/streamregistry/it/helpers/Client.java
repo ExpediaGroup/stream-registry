@@ -25,6 +25,7 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.LongTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
@@ -59,6 +60,7 @@ public class Client {
         .serverUrl(url)
         .okHttpClient(new OkHttpClient.Builder().build())
         .addCustomTypeAdapter(CustomType.OBJECTNODE, new ObjectNodeTypeAdapter())
+        .addCustomTypeAdapter(CustomType.LONG, new LongTypeAdapter())
         .build();
   }
 
@@ -157,8 +159,18 @@ public class Client {
     invoke(factory.upsertProducerMutationBuilder().build());
   }
 
+  public void createProducerBinding(ITestDataFactory factory) {
+    createStream(factory);
+    invoke(factory.upsertProducerBindingMutationBuilder().build());
+  }
+
   public void createConsumer(ITestDataFactory factory) {
     createStream(factory);
     invoke(factory.upsertConsumerMutationBuilder().build());
+  }
+
+  public void createConsumerBinding(ITestDataFactory factory) {
+    createStream(factory);
+    invoke((factory.upsertConsumerBindingMutationBuilder().build()));
   }
 }

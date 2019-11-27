@@ -5,3 +5,5 @@ graphql:
   servlet:
     exception-handlers-enabled: true
     actuator-metrics: true
+
+session-expiration-in-ms: 36000000

@@ -41,7 +41,8 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.Client;
     InfrastructureTestStage.class,
     StreamBindingTestStage.class,
     ProducerBindingTestStage.class,
-    ConsumerBindingTestStage.class
+    ConsumerBindingTestStage.class,
+    SessionTestStage.class
 })
 @Slf4j
 public class StreamRegistryIT {

@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
 
 import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,9 +29,11 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfra
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSessionMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.RenewSessionMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
@@ -423,5 +426,17 @@ public class ITestDataFactory {
     return UpdateDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
         .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public InsertSessionMutation.Builder insertSessionMutationBuilder() {
+    return InsertSessionMutation.builder()
+        .producerBindings(List.of(producerKeyInputBuilder().build()))
+        .consumerBindings(List.of(consumerKeyInputBuilder().build()));
+  }
+
+  public RenewSessionMutation.Builder renewSessionMutationBuilder(String id, String secret) {
+    return RenewSessionMutation.builder()
+        .id(id)
+        .secret(secret);
   }
 }

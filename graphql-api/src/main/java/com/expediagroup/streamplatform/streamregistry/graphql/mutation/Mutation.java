@@ -33,6 +33,7 @@ public class Mutation implements GraphQLMutationResolver {
   private final ProducerMutation producer;
   private final ZoneMutation zone;
   private final InfrastructureMutation infrastructure;
+  private final SessionMutation session;
   private final StreamBindingMutation streamBinding;
   private final ProducerBindingMutation producerBinding;
   private final ConsumerBindingMutation consumerBinding;

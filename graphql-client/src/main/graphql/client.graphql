@@ -397,6 +397,47 @@ query Infrastructures(
     }
 }
 
+#ph########### Session ############
+
+fragment SessionPart on Session {
+    id
+    secret
+    producerBindings {
+        ... ProducerBindingPart
+    },
+    consumerBindings {
+        ... ConsumerBindingPart
+    }
+    expiresAt
+}
+
+mutation InsertSession (
+    $producerBindings: [ProducerKeyInput!]!,
+    $consumerBindings: [ConsumerKeyInput!]!
+) {
+    session {
+        create(producers: $producerBindings, consumers: $consumerBindings) {
+            __typename
+            ...SessionPart
+        }
+    }
+}
+
+mutation RenewSession (
+    $id: ID!,
+    $secret: String!
+) {
+    session {
+        renew(
+            id: $id
+            secret: $secret
+        ) {
+            __typename
+            ...SessionPart
+        }
+    }
+}
+
 ############ Producer ############
 
 fragment ProducerPart on Producer{
