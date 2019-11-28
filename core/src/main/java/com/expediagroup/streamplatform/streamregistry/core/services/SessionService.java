@@ -29,6 +29,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Session;
 @Component
 @RequiredArgsConstructor
 public class SessionService {
+
   private final SessionRepository sessionRepository;
 
   @Value("${session-expiration-in-ms}")
@@ -38,24 +39,20 @@ public class SessionService {
     session.setId(UUID.randomUUID().toString());
     session.setSecret(UUID.randomUUID().toString());
     session.setExpiresAt(sessionExpiration());
-    return Optional.ofNullable(sessionRepository.save(session));
+    return Optional.of(sessionRepository.save(session));
   }
 
   public Optional<Session> renew(String id, String secret) throws ValidationException {
     Optional<Session> existing = sessionRepository.findById(id);
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     Session session = existing.get();
-    if (session.getSecret().equals(secret)) {
-      if (session.getExpiresAt() > System.currentTimeMillis()) {
-        session.setExpiresAt(sessionExpiration());
-        return Optional.ofNullable(sessionRepository.save(session));
-      } else {
-        throw new ValidationException("The session is expired.");
-      }
+    if (session.getExpiresAt() > System.currentTimeMillis()) {
+      session.setExpiresAt(sessionExpiration());
+      return Optional.of(sessionRepository.save(session));
     } else {
-      throw new ValidationException("Invalid secret for the session.");
+      throw new ValidationException("The session is expired.");
     }
   }
 
