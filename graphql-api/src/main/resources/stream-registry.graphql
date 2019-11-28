@@ -251,10 +251,10 @@ type Consumer {
 
 type Session {
     id: ID
-    producerBindings: [ProducerBinding!]!
-    consumerBindings: [ConsumerBinding!]!
     secret: String!
     expiresAt: Long!
+    producerBindings: [ProducerBinding!]!
+    consumerBindings: [ConsumerBinding!]!
 }
 
 ############ StreamBinding ############
@@ -463,10 +463,10 @@ type Mutation {
     zone: ZoneMutation!
     infrastructure: InfrastructureMutation!
     producer: ProducerMutation!
-    session: SessionMutation!
     streamBinding: StreamBindingMutation!
     producerBinding: ProducerBindingMutation!
     consumerBinding: ConsumerBindingMutation!
+    session: SessionMutation!
 }
 
 type DomainQuery{
@@ -522,7 +522,6 @@ type ConsumerBindingQuery{
 ############ Queries ############
 
 type Query {
-
     domain: DomainQuery!
     schema: SchemaQuery!
     stream: StreamQuery!
@@ -533,5 +532,4 @@ type Query {
     streamBinding: StreamBindingQuery!
     producerBinding: ProducerBindingQuery!
     consumerBinding: ConsumerBindingQuery !
-
 }

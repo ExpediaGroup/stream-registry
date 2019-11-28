@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSessionMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.CreateSessionMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.RenewSessionMutation;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
@@ -33,7 +33,7 @@ public class SessionTestStage extends AbstractTestStage {
   public void create() {
     setFactorySuffix("create");
 
-    InsertSessionMutation.Create create = createSession();
+    CreateSessionMutation.Create create = createSession();
 
     assertNotNull(create);
   }
@@ -65,12 +65,11 @@ public class SessionTestStage extends AbstractTestStage {
 
   @Test
   public void renew() {
-    InsertSessionMutation.Create session = createSession();
+    CreateSessionMutation.Create session = createSession();
 
     Object result = client.getData(
         factory.renewSessionMutationBuilder(session.getId().get(), session.getSecret()).build());
 
-    RenewSessionMutation.Data data = (RenewSessionMutation.Data) result;
     RenewSessionMutation.Session renewedSession = ((RenewSessionMutation.Data) result).getSession();
 
     assertThat(renewedSession.getRenew().getId(), is(session.getId()));
@@ -80,10 +79,10 @@ public class SessionTestStage extends AbstractTestStage {
   }
 
   @NotNull
-  private InsertSessionMutation.Create createSession() {
+  private CreateSessionMutation.Create createSession() {
     Object data = client.getData(factory.insertSessionMutationBuilder().build());
 
-    return ((InsertSessionMutation.Data) data).getSession().getCreate();
+    return ((CreateSessionMutation.Data) data).getSession().getCreate();
   }
 
   @Override

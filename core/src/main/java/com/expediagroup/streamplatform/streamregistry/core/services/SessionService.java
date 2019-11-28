@@ -15,29 +15,37 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import java.time.Clock;
 import java.util.Optional;
-import java.util.UUID;
 
-import lombok.RequiredArgsConstructor;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SessionRepository;
+import com.expediagroup.streamplatform.streamregistry.core.security.SecretGenerator;
 import com.expediagroup.streamplatform.streamregistry.model.Session;
 
 @Component
-@RequiredArgsConstructor
 public class SessionService {
 
   private final SessionRepository sessionRepository;
+  private final SecretGenerator secretGenerator;
+  private Clock clock;
+  private final long sessionExpirationInMs;
 
-  @Value("${session-expiration-in-ms}")
-  private long sessionExpirationInMs;
+  @Autowired
+  public SessionService(SessionRepository sessionRepository, SecretGenerator secretGenerator, Clock clock,
+      @Value("${session-expiration-in-ms}") long sessionExpirationInMs) {
+    this.sessionRepository = sessionRepository;
+    this.secretGenerator = secretGenerator;
+    this.clock = clock;
+    this.sessionExpirationInMs = sessionExpirationInMs;
+  }
 
   public Optional<Session> create(Session session) throws ValidationException {
-    session.setId(UUID.randomUUID().toString());
-    session.setSecret(UUID.randomUUID().toString());
+    session.setId(secretGenerator.generate());
+    session.setSecret(secretGenerator.generate());
     session.setExpiresAt(sessionExpiration());
     return Optional.of(sessionRepository.save(session));
   }
@@ -45,10 +53,10 @@ public class SessionService {
   public Optional<Session> renew(String id, String secret) throws ValidationException {
     Optional<Session> existing = sessionRepository.findById(id);
     if (existing.isEmpty()) {
-      throw new ValidationException("Can't update because it doesn't exist");
+      throw new ValidationException("Can't update session because it doesn't exist");
     }
     Session session = existing.get();
-    if (session.getExpiresAt() > System.currentTimeMillis()) {
+    if (session.getExpiresAt() > clock.millis()) {
       session.setExpiresAt(sessionExpiration());
       return Optional.of(sessionRepository.save(session));
     } else {
@@ -57,6 +65,6 @@ public class SessionService {
   }
 
   private long sessionExpiration() {
-    return System.currentTimeMillis() + sessionExpirationInMs;
+    return clock.millis() + sessionExpirationInMs;
   }
 }

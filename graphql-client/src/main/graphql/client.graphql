@@ -411,7 +411,7 @@ fragment SessionPart on Session {
     expiresAt
 }
 
-mutation InsertSession (
+mutation CreateSession (
     $producerBindings: [ProducerKeyInput!]!,
     $consumerBindings: [ConsumerKeyInput!]!
 ) {

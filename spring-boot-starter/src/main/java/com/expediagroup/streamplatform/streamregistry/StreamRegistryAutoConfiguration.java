@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry;
 
 import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
 
+import java.time.Clock;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -96,5 +98,10 @@ public class StreamRegistryAutoConfiguration {
   @Bean
   Handler<ConsumerBinding> defaultConsumerBindingHandler() {
     return new IdentityHandler<>(DEFAULT, ConsumerBinding.class);
+  }
+
+  @Bean
+  public Clock clock() {
+    return Clock.systemDefaultZone();
   }
 }

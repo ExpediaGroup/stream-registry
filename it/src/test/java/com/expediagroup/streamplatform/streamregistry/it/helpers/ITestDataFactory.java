@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.CreateSessionMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
@@ -29,7 +30,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfra
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSessionMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertZoneMutation;
@@ -428,8 +428,8 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder(DEFAULT).build());
   }
 
-  public InsertSessionMutation.Builder insertSessionMutationBuilder() {
-    return InsertSessionMutation.builder()
+  public CreateSessionMutation.Builder insertSessionMutationBuilder() {
+    return CreateSessionMutation.builder()
         .producerBindings(List.of(producerKeyInputBuilder().build()))
         .consumerBindings(List.of(consumerKeyInputBuilder().build()));
   }
