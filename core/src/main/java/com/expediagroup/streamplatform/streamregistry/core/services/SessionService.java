@@ -53,14 +53,14 @@ public class SessionService {
   public Optional<Session> renew(String id, String secret) throws ValidationException {
     Optional<Session> existing = sessionRepository.findById(id);
     if (existing.isEmpty()) {
-      throw new ValidationException("Can't update session because it doesn't exist");
+      throw new ValidationException("Can't rename session because it doesn't exist");
     }
     Session session = existing.get();
     if (session.getExpiresAt() > clock.millis()) {
       session.setExpiresAt(sessionExpiration());
       return Optional.of(sessionRepository.save(session));
     } else {
-      throw new ValidationException("The session is expired.");
+      throw new ValidationException("The session is expired. Please create a new one to access the resource.");
     }
   }
 

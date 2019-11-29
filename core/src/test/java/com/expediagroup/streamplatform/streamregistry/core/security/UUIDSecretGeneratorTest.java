@@ -13,31 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.core.security;
 
-import java.util.HashSet;
-import java.util.Set;
+import static junit.framework.TestCase.assertTrue;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import java.util.regex.Pattern;
 
-import lombok.Data;
+import org.junit.Test;
 
-@Data
-@Entity
-public class Session {
-  @Id
-  private String id;
+public class UUIDSecretGeneratorTest {
 
-  private String secret;
+  private final Pattern UUID_REGEX = Pattern.compile("([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}");
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  private Set<ProducerBinding> producerBindings = new HashSet<>();
+  @Test
+  public void shouldGenerateUUIDSecret() {
+    SecretGenerator cut = new UUIDSecretGenerator();
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  private Set<ConsumerBinding> consumerBindings = new HashSet<>();
-
-  private Long expiresAt;
+    assertTrue(UUID_REGEX.matcher(cut.generate()).matches());
+  }
 }
