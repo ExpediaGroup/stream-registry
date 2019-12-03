@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
@@ -22,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Zone
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 public interface ZoneQuery extends GraphQLApiType {
-  Zone byKey(ZoneKeyInput key);
+  Optional<Zone> byKey(ZoneKeyInput key);
 
   Iterable<Zone> byQuery(ZoneKeyQuery key, SpecificationQuery specification);
 }

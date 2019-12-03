@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -33,7 +35,7 @@ public class SchemaTestStage extends AbstractTestStage {
 
   @Override
   public void create() {
-    Object data = client.getData(factory.insertSchemaMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertSchemaMutationBuilder().build()).get();
 
     InsertSchemaMutation.Insert upsert = ((InsertSchemaMutation.Data) data).getSchema().getInsert();
 
@@ -44,7 +46,7 @@ public class SchemaTestStage extends AbstractTestStage {
   @Override
   public void update() {
 
-    Object data = client.getData(factory.updateSchemaMutationBuilder().build());
+    Object data = client.getOptionalData(factory.updateSchemaMutationBuilder().build()).get();
 
     UpdateSchemaMutation.Update upsert = ((UpdateSchemaMutation.Data) data).getSchema().getUpdate();
 
@@ -55,7 +57,7 @@ public class SchemaTestStage extends AbstractTestStage {
   @Override
   public void upsert() {
 
-    Object data = client.getData(factory.upsertSchemaMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertSchemaMutationBuilder().build()).get();
 
     UpsertSchemaMutation.Upsert upsert = ((UpsertSchemaMutation.Data) data).getSchema().getUpsert();
 
@@ -65,8 +67,8 @@ public class SchemaTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertSchemaMutationBuilder().build());
-    Object data = client.getData(factory.updateSchemaStatusBuilder().build());
+    client.getOptionalData(factory.upsertSchemaMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateSchemaStatusBuilder().build()).get();
 
     UpdateSchemaStatusMutation.UpdateStatus update =
         ((UpdateSchemaStatusMutation.Data) data).getSchema().getUpdateStatus();
@@ -81,16 +83,16 @@ public class SchemaTestStage extends AbstractTestStage {
     SchemaKeyInput input = factory.schemaKeyInputBuilder().build();
 
     try {
-      client.getData(SchemaQuery.builder().key(input).build());
+      client.getOptionalData(SchemaQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertSchemaMutationBuilder().build());
+    client.getOptionalData(factory.upsertSchemaMutationBuilder().build()).get();
 
-    SchemaQuery.Data after = (SchemaQuery.Data) client.getData(SchemaQuery.builder().key(input).build());
+    SchemaQuery.Data after = (SchemaQuery.Data) client.getOptionalData(SchemaQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getSchema().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getSchema().getByKey().get().getKey().getName(), input.name());
   }
 
   @Override
@@ -100,11 +102,11 @@ public class SchemaTestStage extends AbstractTestStage {
 
     SchemaKeyQuery query = SchemaKeyQuery.builder().domainRegex("domain_name.*").build();
 
-    SchemasQuery.Data before = (SchemasQuery.Data) client.getData(SchemasQuery.builder().key(query).build());
+    SchemasQuery.Data before = (SchemasQuery.Data) client.getOptionalData(SchemasQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertSchemaMutationBuilder().build());
 
-    SchemasQuery.Data after = (SchemasQuery.Data) client.getData(SchemasQuery.builder().key(query).build());
+    SchemasQuery.Data after = (SchemasQuery.Data) client.getOptionalData(SchemasQuery.builder().key(query).build()).get();
 
     assertEquals(after.getSchema().getByQuery().size(), before.getSchema().getByQuery().size() + 1);
   }
@@ -112,5 +114,11 @@ public class SchemaTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createDomain(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    SchemaKeyInput input = factory.schemaKeyInputBuilder().name("disnae_exist").build();
+    assertTrue(client.getSchema(input).isEmpty());
   }
 }

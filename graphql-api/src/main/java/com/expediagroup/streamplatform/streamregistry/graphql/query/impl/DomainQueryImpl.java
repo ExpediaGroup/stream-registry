@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,8 +35,8 @@ public class DomainQueryImpl implements DomainQuery {
   private final DomainService domainService;
 
   @Override
-  public Domain byKey(DomainKeyInput key) {
-    return domainService.read(key.asDomainKey()).get();
+  public Optional<Domain> byKey(DomainKeyInput key) {
+    return domainService.read(key.asDomainKey());
   }
 
   @Override

@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -42,7 +44,7 @@ public class DomainTestStage extends AbstractTestStage {
 
     assertMutationFails(factory.updateDomainMutationBuilder().build());
 
-    Object data = client.getData(factory.insertDomainMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertDomainMutationBuilder().build()).get();
 
     InsertDomainMutation.Insert insert = ((InsertDomainMutation.Data) data).getDomain().getInsert();
 
@@ -64,7 +66,7 @@ public class DomainTestStage extends AbstractTestStage {
     client.invoke(factory.upsertDomainMutationBuilder().build());
 
     UpdateDomainMutation.Update update =
-        ((UpdateDomainMutation.Data) client.getData(updateMutation)).getDomain().getUpdate();
+        ((UpdateDomainMutation.Data) client.getOptionalData(updateMutation).get()).getDomain().getUpdate();
 
     assertThat(update.getKey().getName(), is(factory.domainName));
 
@@ -77,7 +79,7 @@ public class DomainTestStage extends AbstractTestStage {
 
     setFactorySuffix("upsert");
 
-    Object data = client.getData(factory.upsertDomainMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertDomainMutationBuilder().build()).get();
 
     UpsertDomainMutation.Upsert upsert = ((UpsertDomainMutation.Data) data).getDomain().getUpsert();
 
@@ -88,8 +90,8 @@ public class DomainTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertDomainMutationBuilder().build());
-    Object data = client.getData(factory.updateDomainStatusMutation().build());
+    client.getOptionalData(factory.upsertDomainMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateDomainStatusMutation().build()).get();
 
     UpdateDomainStatusMutation.UpdateStatus update =
         ((UpdateDomainStatusMutation.Data) data).getDomain().getUpdateStatus();
@@ -103,16 +105,16 @@ public class DomainTestStage extends AbstractTestStage {
     DomainKeyInput input = factory.domainKeyInputBuilder().build();
 
     try {
-      client.getData(DomainQuery.builder().key(input).build());
+      client.getOptionalData(DomainQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertDomainMutationBuilder().build());
+    client.getOptionalData(factory.upsertDomainMutationBuilder().build()).get();
 
-    DomainQuery.Data after = (DomainQuery.Data) client.getData(DomainQuery.builder().key(input).build());
+    DomainQuery.Data after = (DomainQuery.Data) client.getOptionalData(DomainQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getDomain().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getDomain().getByKey().get().getKey().getName(), input.name());
   }
 
   @Override
@@ -122,11 +124,11 @@ public class DomainTestStage extends AbstractTestStage {
 
     DomainKeyQuery query = DomainKeyQuery.builder().nameRegex(".*").build();
 
-    DomainsQuery.Data before = (DomainsQuery.Data) client.getData(DomainsQuery.builder().key(query).build());
+    DomainsQuery.Data before = (DomainsQuery.Data) client.getOptionalData(DomainsQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertDomainMutationBuilder().build());
 
-    DomainsQuery.Data after = (DomainsQuery.Data) client.getData(DomainsQuery.builder().key(query).build());
+    DomainsQuery.Data after = (DomainsQuery.Data) client.getOptionalData(DomainsQuery.builder().key(query).build()).get();
 
     assertEquals(before.getDomain().getByQuery().size() + 1, after.getDomain().getByQuery().size());
   }
@@ -136,4 +138,9 @@ public class DomainTestStage extends AbstractTestStage {
 
   }
 
+  @Override
+  public void queryByInvalidKey() {
+    DomainKeyInput input = factory.domainKeyInputBuilder().name("disnae_exist").build();
+    assertTrue(client.getDomain(input).isEmpty());
+  }
 }

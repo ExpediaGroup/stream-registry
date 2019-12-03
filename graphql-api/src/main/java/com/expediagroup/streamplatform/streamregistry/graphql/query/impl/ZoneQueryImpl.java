@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,8 +35,8 @@ public class ZoneQueryImpl implements ZoneQuery {
   private final ZoneService zoneService;
 
   @Override
-  public Zone byKey(ZoneKeyInput key) {
-    return zoneService.read(key.asZoneKey()).get();
+  public Optional<Zone> byKey(ZoneKeyInput key) {
+    return zoneService.read(key.asZoneKey());
   }
 
   @Override

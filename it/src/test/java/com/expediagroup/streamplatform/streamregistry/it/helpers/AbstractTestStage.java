@@ -54,6 +54,9 @@ public abstract class AbstractTestStage {
   public abstract void queryByKey();
 
   @Test
+  public abstract void queryByInvalidKey();
+
+  @Test
   public abstract void queryByRegex();
 
   public abstract void createRequiredDatastoreState();

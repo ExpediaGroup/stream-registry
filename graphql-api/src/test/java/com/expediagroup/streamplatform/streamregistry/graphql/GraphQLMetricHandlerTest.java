@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.Optional;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
@@ -69,10 +70,10 @@ public class GraphQLMetricHandlerTest {
 
   @Test
   public void success() throws Throwable {
-    when(delegate.byKey(key)).thenReturn(domain);
+    when(delegate.byKey(key)).thenReturn(Optional.of(domain));
 
-    Object result = underTest.invoke(null, method, new Object[]{key});
-    assertThat(result, is(domain));
+    Object result = underTest.invoke(null, method, new Object[] { key });
+    assertThat(result, is(Optional.of(domain)));
 
     verify(registry).timer("graphql_api", tags.and("result", "success"));
     verify(timer).record(any(Duration.class));
@@ -84,7 +85,7 @@ public class GraphQLMetricHandlerTest {
     when(delegate.byKey(key)).thenThrow(failed);
 
     try {
-      underTest.invoke(null, method, new Object[]{key});
+      underTest.invoke(null, method, new Object[] { key });
       fail("Expected exception");
     } catch (RuntimeException e) {
       assertThat(e, is(failed));
@@ -93,5 +94,4 @@ public class GraphQLMetricHandlerTest {
     verify(registry).timer("graphql_api", tags.and("result", "failure"));
     verify(timer).record(any(Duration.class));
   }
-
 }

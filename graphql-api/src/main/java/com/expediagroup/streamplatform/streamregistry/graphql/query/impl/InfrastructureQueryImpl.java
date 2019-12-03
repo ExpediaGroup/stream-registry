@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,8 +35,8 @@ public class InfrastructureQueryImpl implements InfrastructureQuery {
   private final InfrastructureService infrastructureService;
 
   @Override
-  public Infrastructure byKey(InfrastructureKeyInput key) {
-    return infrastructureService.read(key.asInfrastructureKey()).get();
+  public Optional<Infrastructure> byKey(InfrastructureKeyInput key) {
+    return infrastructureService.read(key.asInfrastructureKey());
   }
 
   @Override

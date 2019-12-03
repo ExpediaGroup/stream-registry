@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,8 +35,8 @@ public class ConsumerQueryImpl implements ConsumerQuery {
   private final ConsumerService consumerService;
 
   @Override
-  public Consumer byKey(ConsumerKeyInput key) {
-    return consumerService.read(key.asConsumerKey()).get();
+  public Optional<Consumer> byKey(ConsumerKeyInput key) {
+    return consumerService.read(key.asConsumerKey());
   }
 
   @Override

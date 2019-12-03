@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery;
@@ -22,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
 public interface SchemaQuery extends GraphQLApiType {
-  Schema byKey(SchemaKeyInput key);
+  Optional<Schema> byKey(SchemaKeyInput key);
 
   Iterable<Schema> byQuery(SchemaKeyQuery key, SpecificationQuery specification);
 }

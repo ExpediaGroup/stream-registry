@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -42,7 +44,7 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
     assertMutationFails(factory.updateInfrastructureMutationBuilder().build());
 
-    Object data = client.getData(factory.insertInfrastructureMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertInfrastructureMutationBuilder().build()).get();
 
     InsertInfrastructureMutation.Insert insert = ((InsertInfrastructureMutation.Data) data).getInfrastructure().getInsert();
 
@@ -62,7 +64,7 @@ public class InfrastructureTestStage extends AbstractTestStage {
     client.invoke(factory.upsertInfrastructureMutationBuilder().build());
 
     UpdateInfrastructureMutation.Update update =
-        ((UpdateInfrastructureMutation.Data) client.getData(updateMutation)).getInfrastructure().getUpdate();
+        ((UpdateInfrastructureMutation.Data) client.getOptionalData(updateMutation).get()).getInfrastructure().getUpdate();
 
     assertThat(update.getSpecification().getDescription().get(), is(factory.description));
     assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
@@ -70,7 +72,7 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
   @Override
   public void upsert() {
-    Object data = client.getData(factory.upsertInfrastructureMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertInfrastructureMutationBuilder().build()).get();
 
     UpsertInfrastructureMutation.Upsert upsert = ((UpsertInfrastructureMutation.Data) data).getInfrastructure().getUpsert();
 
@@ -80,8 +82,8 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertInfrastructureMutationBuilder().build());
-    Object data = client.getData(factory.updateInfrastructureStatusBuilder().build());
+    client.getOptionalData(factory.upsertInfrastructureMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateInfrastructureStatusBuilder().build()).get();
 
     UpdateInfrastructureStatusMutation.UpdateStatus update =
         ((UpdateInfrastructureStatusMutation.Data) data).getInfrastructure().getUpdateStatus();
@@ -96,16 +98,16 @@ public class InfrastructureTestStage extends AbstractTestStage {
     InfrastructureKeyInput input = factory.infrastructureKeyInputBuilder().build();
 
     try {
-      client.getData(InfrastructureQuery.builder().key(input).build());
+      client.getOptionalData(InfrastructureQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertInfrastructureMutationBuilder().build());
+    client.getOptionalData(factory.upsertInfrastructureMutationBuilder().build()).get();
 
-    InfrastructureQuery.Data after = (InfrastructureQuery.Data) client.getData(InfrastructureQuery.builder().key(input).build());
+    InfrastructureQuery.Data after = (InfrastructureQuery.Data) client.getOptionalData(InfrastructureQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getInfrastructure().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getInfrastructure().getByKey().get().getKey().getName(), input.name());
   }
 
   @Override
@@ -115,11 +117,11 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
     InfrastructureKeyQuery query = InfrastructureKeyQuery.builder().nameRegex(".*").build();
 
-    InfrastructuresQuery.Data before = (InfrastructuresQuery.Data) client.getData(InfrastructuresQuery.builder().key(query).build());
+    InfrastructuresQuery.Data before = (InfrastructuresQuery.Data) client.getOptionalData(InfrastructuresQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertInfrastructureMutationBuilder().build());
 
-    InfrastructuresQuery.Data after = (InfrastructuresQuery.Data) client.getData(InfrastructuresQuery.builder().key(query).build());
+    InfrastructuresQuery.Data after = (InfrastructuresQuery.Data) client.getOptionalData(InfrastructuresQuery.builder().key(query).build()).get();
 
     assertEquals(before.getInfrastructure().getByQuery().size() + 1, after.getInfrastructure().getByQuery().size());
   }
@@ -127,5 +129,11 @@ public class InfrastructureTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createZone(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    InfrastructureKeyInput input = factory.infrastructureKeyInputBuilder().name("disnae_exist").build();
+    assertTrue(client.getInfrastructure(input).isEmpty());
   }
 }

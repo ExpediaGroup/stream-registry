@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -38,7 +40,7 @@ public class ProducerTestStage extends AbstractTestStage {
 
     Mutation createMutation = factory.insertProducerMutationBuilder().build();
 
-    Object data = client.getData(createMutation);
+    Object data = client.getOptionalData(createMutation).get();
 
     InsertProducerMutation.Insert update = ((InsertProducerMutation.Data) data).getProducer().getInsert();
 
@@ -59,7 +61,7 @@ public class ProducerTestStage extends AbstractTestStage {
 
     client.invoke(factory.insertProducerMutationBuilder().build());
 
-    Object data = client.getData(updateMutation);
+    Object data = client.getOptionalData(updateMutation).get();
     UpdateProducerMutation.Update update = ((UpdateProducerMutation.Data) data).getProducer().getUpdate();
 
     assertThat(update.getSpecification().getDescription().get(), is(factory.description));
@@ -69,7 +71,7 @@ public class ProducerTestStage extends AbstractTestStage {
   @Override
   public void upsert() {
 
-    Object data = client.getData(factory.upsertProducerMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertProducerMutationBuilder().build()).get();
 
     UpsertProducerMutation.Upsert upsert = ((UpsertProducerMutation.Data) data).getProducer().getUpsert();
 
@@ -79,8 +81,8 @@ public class ProducerTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertProducerMutationBuilder().build());
-    Object data = client.getData(factory.updateProducerStatusBuilder().build());
+    client.getOptionalData(factory.upsertProducerMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateProducerStatusBuilder().build()).get();
 
     UpdateProducerStatusMutation.UpdateStatus update =
         ((UpdateProducerStatusMutation.Data) data).getProducer().getUpdateStatus();
@@ -95,16 +97,16 @@ public class ProducerTestStage extends AbstractTestStage {
     ProducerKeyInput input = factory.producerKeyInputBuilder().build();
 
     try {
-      client.getData(ProducerQuery.builder().key(input).build());
+      client.getOptionalData(ProducerQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertProducerMutationBuilder().build());
+    client.getOptionalData(factory.upsertProducerMutationBuilder().build()).get();
 
-    ProducerQuery.Data after = (ProducerQuery.Data) client.getData(ProducerQuery.builder().key(input).build());
+    ProducerQuery.Data after = (ProducerQuery.Data) client.getOptionalData(ProducerQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getProducer().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getProducer().getByKey().get().getKey().getName(), input.name());
   }
 
   @Override
@@ -114,11 +116,11 @@ public class ProducerTestStage extends AbstractTestStage {
 
     ProducerKeyQuery query = ProducerKeyQuery.builder().nameRegex("producer_name.*").build();
 
-    ProducersQuery.Data before = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
+    ProducersQuery.Data before = (ProducersQuery.Data) client.getOptionalData(ProducersQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertProducerMutationBuilder().build());
 
-    ProducersQuery.Data after = (ProducersQuery.Data) client.getData(ProducersQuery.builder().key(query).build());
+    ProducersQuery.Data after = (ProducersQuery.Data) client.getOptionalData(ProducersQuery.builder().key(query).build()).get();
 
     assertEquals(after.getProducer().getByQuery().size(), before.getProducer().getByQuery().size() + 1);
   }
@@ -126,5 +128,11 @@ public class ProducerTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createStream(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    ProducerKeyInput input = factory.producerKeyInputBuilder().name("disnae_exist").build();
+    assertTrue(client.getProducer(input).isEmpty());
   }
 }

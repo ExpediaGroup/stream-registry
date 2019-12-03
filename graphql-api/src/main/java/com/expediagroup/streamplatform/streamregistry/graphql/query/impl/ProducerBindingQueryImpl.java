@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,8 +35,8 @@ public class ProducerBindingQueryImpl implements ProducerBindingQuery {
   private final ProducerBindingService producerBindingService;
 
   @Override
-  public ProducerBinding byKey(ProducerBindingKeyInput key) {
-    return producerBindingService.read(key.asProducerBindingKey()).get();
+  public Optional<ProducerBinding> byKey(ProducerBindingKeyInput key) {
+    return producerBindingService.read(key.asProducerBindingKey());
   }
 
   @Override

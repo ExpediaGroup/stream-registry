@@ -16,6 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
+
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -34,7 +37,7 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void create() {
-    Object data = client.getData(factory.insertStreamMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertStreamMutationBuilder().build()).get();
 
     InsertStreamMutation.Insert Insert = ((InsertStreamMutation.Data) data).getStream().getInsert();
 
@@ -43,7 +46,7 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void update() {
-    Object data = client.getData(factory.updateStreamMutationBuilder().build());
+    Object data = client.getOptionalData(factory.updateStreamMutationBuilder().build()).get();
 
     UpdateStreamMutation.Update Update = ((UpdateStreamMutation.Data) data).getStream().getUpdate();
 
@@ -52,7 +55,7 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void upsert() {
-    Object data = client.getData(factory.upsertStreamMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();
 
@@ -61,8 +64,8 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertStreamMutationBuilder().build());
-    Object data = client.getData(factory.updateStreamStatusBuilder().build());
+    client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateStreamStatusBuilder().build()).get();
 
     UpdateStreamStatusMutation.UpdateStatus update =
         ((UpdateStreamStatusMutation.Data) data).getStream().getUpdateStatus();
@@ -77,19 +80,18 @@ public class StreamTestStage extends AbstractTestStage {
     StreamKeyInput input = factory.streamKeyInputBuilder().build();
 
     try {
-      client.getData(StreamQuery.builder().key(input).build());
+      client.getOptionalData(StreamQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertStreamMutationBuilder().build());
+    client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
 
-    StreamQuery.Data after = (StreamQuery.Data) client.getData(StreamQuery.builder().key(input).build());
+    StreamQuery.Data after = (StreamQuery.Data) client.getOptionalData(StreamQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getStream().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getStream().getByKey().get().getKey().getName(), input.name());
 
-    assertEquals(after.getStream().getByKey().getSchema().getSpecification().getType(), DEFAULT);
-
+    assertEquals(after.getStream().getByKey().get().getSchema().getSpecification().getType(), DEFAULT);
   }
 
   @Override
@@ -99,11 +101,11 @@ public class StreamTestStage extends AbstractTestStage {
 
     StreamKeyQuery query = StreamKeyQuery.builder().nameRegex("stream_name.*").build();
 
-    StreamsQuery.Data before = (StreamsQuery.Data) client.getData(StreamsQuery.builder().key(query).build());
+    StreamsQuery.Data before = (StreamsQuery.Data) client.getOptionalData(StreamsQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertStreamMutationBuilder().build());
 
-    StreamsQuery.Data after = (StreamsQuery.Data) client.getData(StreamsQuery.builder().key(query).build());
+    StreamsQuery.Data after = (StreamsQuery.Data) client.getOptionalData(StreamsQuery.builder().key(query).build()).get();
 
     assertEquals(after.getStream().getByQuery().size(), before.getStream().getByQuery().size() + 1);
   }
@@ -111,5 +113,11 @@ public class StreamTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createSchema(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    StreamKeyInput input = factory.streamKeyInputBuilder().name("disnae_exist").build();
+    assertTrue(client.getStream(input).isEmpty());
   }
 }

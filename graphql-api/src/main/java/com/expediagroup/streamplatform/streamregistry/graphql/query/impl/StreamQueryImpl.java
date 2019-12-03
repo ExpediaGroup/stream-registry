@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -34,8 +36,8 @@ public class StreamQueryImpl implements StreamQuery {
   private final StreamService streamService;
 
   @Override
-  public Stream byKey(StreamKeyInput key) {
-    return streamService.read(key.asStreamKey()).get();
+  public Optional<Stream> byKey(StreamKeyInput key) {
+    return streamService.read(key.asStreamKey());
   }
 
   @Override

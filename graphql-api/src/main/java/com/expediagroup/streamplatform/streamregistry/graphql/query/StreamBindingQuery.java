@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
@@ -22,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Stre
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 public interface StreamBindingQuery extends GraphQLApiType {
-  StreamBinding byKey(StreamBindingKeyInput key);
+  Optional<StreamBinding> byKey(StreamBindingKeyInput key);
 
   Iterable<StreamBinding> byQuery(StreamBindingKeyQuery key, SpecificationQuery specification);
 }

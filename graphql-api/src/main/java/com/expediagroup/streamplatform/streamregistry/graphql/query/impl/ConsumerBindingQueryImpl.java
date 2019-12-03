@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,8 +35,8 @@ public class ConsumerBindingQueryImpl implements ConsumerBindingQuery {
   private final ConsumerBindingService consumerBindingService;
 
   @Override
-  public ConsumerBinding byKey(ConsumerBindingKeyInput key) {
-    return consumerBindingService.read(key.asConsumerBindingKey()).get();
+  public Optional<ConsumerBinding> byKey(ConsumerBindingKeyInput key) {
+    return consumerBindingService.read(key.asConsumerBindingKey());
   }
 
   public Iterable<ConsumerBinding> byQuery(ConsumerBindingKeyQuery key, SpecificationQuery specification) {

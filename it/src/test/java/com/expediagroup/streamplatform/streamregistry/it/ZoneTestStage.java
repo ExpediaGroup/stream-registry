@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -31,7 +33,7 @@ public class ZoneTestStage extends AbstractTestStage {
 
   @Override
   public void create() {
-    Object data = client.getData(factory.insertZoneMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertZoneMutationBuilder().build()).get();
 
     InsertZoneMutation.Insert Insert = ((InsertZoneMutation.Data) data).getZone().getInsert();
 
@@ -42,7 +44,7 @@ public class ZoneTestStage extends AbstractTestStage {
 
   @Override
   public void update() {
-    Object data = client.getData(factory.upsertZoneMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 
@@ -53,7 +55,7 @@ public class ZoneTestStage extends AbstractTestStage {
 
   @Override
   public void upsert() {
-    Object data = client.getData(factory.upsertZoneMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 
@@ -64,7 +66,7 @@ public class ZoneTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    Object data = client.getData(factory.upsertZoneMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 
@@ -79,16 +81,16 @@ public class ZoneTestStage extends AbstractTestStage {
     ZoneKeyInput input = factory.zoneKeyInputBuilder().build();
 
     try {
-      client.getData(ZoneQuery.builder().key(input).build());
+      client.getOptionalData(ZoneQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertZoneMutationBuilder().build());
+    client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
 
-    ZoneQuery.Data after = (ZoneQuery.Data) client.getData(ZoneQuery.builder().key(input).build());
+    ZoneQuery.Data after = (ZoneQuery.Data) client.getOptionalData(ZoneQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getZone().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getZone().getByKey().get().getKey().getName(), input.name());
   }
 
   @Override
@@ -98,16 +100,22 @@ public class ZoneTestStage extends AbstractTestStage {
 
     ZoneKeyQuery query = ZoneKeyQuery.builder().nameRegex("zone_name.*").build();
 
-    ZonesQuery.Data before = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
+    ZonesQuery.Data before = (ZonesQuery.Data) client.getOptionalData(ZonesQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertZoneMutationBuilder().build());
 
-    ZonesQuery.Data after = (ZonesQuery.Data) client.getData(ZonesQuery.builder().key(query).build());
+    ZonesQuery.Data after = (ZonesQuery.Data) client.getOptionalData(ZonesQuery.builder().key(query).build()).get();
 
     assertEquals(after.getZone().getByQuery().size(), before.getZone().getByQuery().size() + 1);
   }
 
   @Override
   public void createRequiredDatastoreState() {
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    ZoneKeyInput input = factory.zoneKeyInputBuilder().name("disnae_exist").build();
+    assertTrue(client.getZone(input).isEmpty());
   }
 }
