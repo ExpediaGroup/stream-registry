@@ -102,6 +102,6 @@ public class StreamRegistryAutoConfiguration {
 
   @Bean
   public Clock clock() {
-    return Clock.systemDefaultZone();
+    return Clock.systemUTC();
   }
 }

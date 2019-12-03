@@ -13,31 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.core.security;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-
-import lombok.Data;
-
-@Data
-@Entity
-public class Session {
-  @Id
-  private String id;
-
-  private String secret;
-
-  @ManyToMany(fetch = FetchType.EAGER)
-  private Set<ProducerBinding> producerBindings = new HashSet<>();
-
-  @ManyToMany(fetch = FetchType.EAGER)
-  private Set<ConsumerBinding> consumerBindings = new HashSet<>();
-
-  private Long expiresAt;
+public interface CredentialsGenerator {
+    Credentials generate();
 }

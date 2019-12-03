@@ -46,13 +46,12 @@ public class SessionMutationImpl implements SessionMutation {
 
   @Override
   public Session create(List<ProducerKeyInput> producers, List<ConsumerKeyInput> consumers) {
-    Session session = sessionService.create(asSession(producers, consumers)).get();
-    return session;
+    return sessionService.create(asSession(producers, consumers));
   }
 
   @Override
   public Session renew(String id, final String secret) {
-    return sessionService.renew(id, secret).get();
+    return sessionService.renew(id);
   }
 
   private Session asSession(List<ProducerKeyInput> producerKeyInputs, List<ConsumerKeyInput> consumerKeyInputs) {

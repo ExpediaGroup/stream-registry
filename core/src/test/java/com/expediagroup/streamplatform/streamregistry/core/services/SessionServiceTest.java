@@ -32,7 +32,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SessionRepository;
-import com.expediagroup.streamplatform.streamregistry.core.security.SecretGenerator;
+import com.expediagroup.streamplatform.streamregistry.core.security.Credentials;
+import com.expediagroup.streamplatform.streamregistry.core.security.CredentialsGenerator;
 import com.expediagroup.streamplatform.streamregistry.model.Session;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,10 +41,12 @@ public class SessionServiceTest {
 
   private static final String TEST_SESSION_ID = "test-session-id";
   private static final String TEST_SECRET = "test-secret";
+  private static final Credentials CREDENTIALS = new Credentials(TEST_SESSION_ID, TEST_SECRET);
+
   @Mock
   private SessionRepository sessionRepository;
   @Mock
-  private SecretGenerator secretGenerator;
+  private CredentialsGenerator credentialsGenerator;
   @Mock
   private Clock clock;
 
@@ -51,13 +54,13 @@ public class SessionServiceTest {
 
   @Before
   public void before() {
-    this.sessionService = new SessionService(sessionRepository, secretGenerator, clock, 1);
+    this.sessionService = new SessionService(sessionRepository, credentialsGenerator, clock, 1);
   }
 
   @Test
   public void shouldSuccessfullySaveSession() {
     Session session = new Session();
-    when(secretGenerator.generate()).thenReturn(TEST_SESSION_ID).thenReturn(TEST_SECRET);
+    when(credentialsGenerator.generate()).thenReturn(CREDENTIALS);
     when(sessionRepository.save(any(Session.class))).thenReturn(session);
 
     ArgumentCaptor<Session> sessionArgumentCaptor = ArgumentCaptor.forClass(Session.class);
@@ -82,7 +85,7 @@ public class SessionServiceTest {
     when(sessionRepository.save(session)).thenReturn(session);
     when(clock.millis()).thenReturn(0L).thenReturn(2L);
 
-    Session renewedSession = sessionService.renew(TEST_SESSION_ID, TEST_SECRET).get();
+    Session renewedSession = sessionService.renew(TEST_SESSION_ID);
 
     assertEquals(Long.valueOf(3L), renewedSession.getExpiresAt());
   }
@@ -97,13 +100,13 @@ public class SessionServiceTest {
     when(sessionRepository.findById(anyString())).thenReturn(Optional.of(session));
     when(clock.millis()).thenReturn(1L);
 
-    sessionService.renew(TEST_SESSION_ID, TEST_SECRET);
+    sessionService.renew(TEST_SESSION_ID);
   }
 
   @Test(expected = ValidationException.class)
   public void failRenewForMissingSession() {
     when(sessionRepository.findById(anyString())).thenReturn(Optional.empty());
 
-    sessionService.renew(TEST_SESSION_ID, TEST_SECRET);
+    sessionService.renew(TEST_SESSION_ID);
   }
 }

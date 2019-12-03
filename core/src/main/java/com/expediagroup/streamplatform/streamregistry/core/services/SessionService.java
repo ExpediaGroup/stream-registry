@@ -23,34 +23,36 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SessionRepository;
-import com.expediagroup.streamplatform.streamregistry.core.security.SecretGenerator;
+import com.expediagroup.streamplatform.streamregistry.core.security.Credentials;
+import com.expediagroup.streamplatform.streamregistry.core.security.CredentialsGenerator;
 import com.expediagroup.streamplatform.streamregistry.model.Session;
 
 @Component
 public class SessionService {
 
   private final SessionRepository sessionRepository;
-  private final SecretGenerator secretGenerator;
-  private Clock clock;
+  private final CredentialsGenerator credentialsGenerator;
+  private final Clock clock;
   private final long sessionExpirationInMs;
 
   @Autowired
-  public SessionService(SessionRepository sessionRepository, SecretGenerator secretGenerator, Clock clock,
-      @Value("${session-expiration-in-ms}") long sessionExpirationInMs) {
+  public SessionService(SessionRepository sessionRepository, CredentialsGenerator credentialsGenerator, Clock clock,
+                        @Value("${session-expiration-in-ms}") long sessionExpirationInMs) {
     this.sessionRepository = sessionRepository;
-    this.secretGenerator = secretGenerator;
+    this.credentialsGenerator = credentialsGenerator;
     this.clock = clock;
     this.sessionExpirationInMs = sessionExpirationInMs;
   }
 
-  public Optional<Session> create(Session session) throws ValidationException {
-    session.setId(secretGenerator.generate());
-    session.setSecret(secretGenerator.generate());
+  public Session create(Session session) throws ValidationException {
+    Credentials credentials = credentialsGenerator.generate();
+    session.setId(credentials.getId());
+    session.setSecret(credentials.getSecret());
     session.setExpiresAt(sessionExpiration());
-    return Optional.of(sessionRepository.save(session));
+    return sessionRepository.save(session);
   }
 
-  public Optional<Session> renew(String id, String secret) throws ValidationException {
+  public Session renew(String id) throws ValidationException {
     Optional<Session> existing = sessionRepository.findById(id);
     if (existing.isEmpty()) {
       throw new ValidationException("Can't rename session because it doesn't exist");
@@ -58,7 +60,7 @@ public class SessionService {
     Session session = existing.get();
     if (session.getExpiresAt() > clock.millis()) {
       session.setExpiresAt(sessionExpiration());
-      return Optional.of(sessionRepository.save(session));
+      return sessionRepository.save(session);
     } else {
       throw new ValidationException("The session is expired. Please create a new one to access the resource.");
     }

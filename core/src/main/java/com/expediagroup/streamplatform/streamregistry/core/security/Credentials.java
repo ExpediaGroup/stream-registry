@@ -15,20 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.security;
 
-import static junit.framework.TestCase.assertTrue;
+import lombok.Value;
 
-import java.util.regex.Pattern;
-
-import org.junit.Test;
-
-public class UUIDSecretGeneratorTest {
-
-  private final Pattern UUID_REGEX = Pattern.compile("([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}");
-
-  @Test
-  public void shouldGenerateUUIDSecret() {
-    SecretGenerator cut = new UUIDSecretGenerator();
-
-    assertTrue(UUID_REGEX.matcher(cut.generate()).matches());
-  }
+@Value
+public class Credentials {
+    String id;
+    String secret;
 }

@@ -15,20 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.security;
 
-import static junit.framework.TestCase.assertTrue;
+import java.util.UUID;
 
-import java.util.regex.Pattern;
+import org.springframework.stereotype.Component;
 
-import org.junit.Test;
+@Component
+public class UUIDCredentialsGenerator implements CredentialsGenerator {
 
-public class UUIDSecretGeneratorTest {
-
-  private final Pattern UUID_REGEX = Pattern.compile("([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}");
-
-  @Test
-  public void shouldGenerateUUIDSecret() {
-    SecretGenerator cut = new UUIDSecretGenerator();
-
-    assertTrue(UUID_REGEX.matcher(cut.generate()).matches());
+  @Override
+  public Credentials generate() {
+    return new Credentials(UUID.randomUUID().toString(), UUID.randomUUID().toString());
   }
 }
