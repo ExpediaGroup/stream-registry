@@ -20,7 +20,6 @@ import static com.expediagroup.streamplatform.streamregistry.core.handlers.Ident
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;

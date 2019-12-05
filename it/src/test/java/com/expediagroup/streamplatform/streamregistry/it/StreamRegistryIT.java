@@ -65,7 +65,6 @@ public class StreamRegistryIT {
         "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
         "--spring.datasource.username=streamregistry",
         "--spring.datasource.password=streamregistry",
-        "--spring.jpa.hibernate.ddl-auto=create",
         "--spring.jpa.show-sql=false"
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
