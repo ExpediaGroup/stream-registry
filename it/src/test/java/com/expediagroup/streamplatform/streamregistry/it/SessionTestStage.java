@@ -59,6 +59,11 @@ public class SessionTestStage extends AbstractTestStage {
   }
 
   @Override
+  public void queryByInvalidKey() {
+
+  }
+
+  @Override
   public void queryByRegex() {
 
   }
@@ -67,8 +72,8 @@ public class SessionTestStage extends AbstractTestStage {
   public void renew() {
     CreateSessionMutation.Create session = createSession();
 
-    Object result = client.getData(
-        factory.renewSessionMutationBuilder(session.getId().get(), session.getSecret()).build());
+    Object result = client.getOptionalData(
+        factory.renewSessionMutationBuilder(session.getId().get(), session.getSecret()).build()).get();
 
     RenewSessionMutation.Session renewedSession = ((RenewSessionMutation.Data) result).getSession();
 
@@ -80,7 +85,7 @@ public class SessionTestStage extends AbstractTestStage {
 
   @NotNull
   private CreateSessionMutation.Create createSession() {
-    Object data = client.getData(factory.insertSessionMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertSessionMutationBuilder().build()).get();
 
     return ((CreateSessionMutation.Data) data).getSession().getCreate();
   }

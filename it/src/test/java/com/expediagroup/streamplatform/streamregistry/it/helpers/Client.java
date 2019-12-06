@@ -25,11 +25,11 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.LongTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructureQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.LongTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerQuery;
