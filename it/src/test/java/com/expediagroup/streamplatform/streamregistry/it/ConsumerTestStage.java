@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -40,7 +42,7 @@ public class ConsumerTestStage extends AbstractTestStage {
 
     setFactorySuffix("upsert");
 
-    Object data = client.getData(factory.upsertConsumerMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertConsumerMutationBuilder().build()).get();
 
     UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data) data).getConsumer().getUpsert();
 
@@ -57,7 +59,7 @@ public class ConsumerTestStage extends AbstractTestStage {
 
     assertMutationFails(factory.updateConsumerMutationBuilder().build());
 
-    Object data = client.getData(factory.insertConsumerMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertConsumerMutationBuilder().build()).get();
 
     InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data) data).getConsumer().getInsert();
 
@@ -78,7 +80,7 @@ public class ConsumerTestStage extends AbstractTestStage {
 
     client.invoke(factory.insertConsumerMutationBuilder().build());
 
-    UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data) client.getData(updateMutation))
+    UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data) client.getOptionalData(updateMutation).get())
         .getConsumer().getUpdate();
 
     assertThat(update.getKey().getName(), is(factory.consumerName));
@@ -90,9 +92,9 @@ public class ConsumerTestStage extends AbstractTestStage {
   @Test
   public void updateStatus() {
 
-    client.getData(factory.upsertConsumerMutationBuilder().build());
+    client.getOptionalData(factory.upsertConsumerMutationBuilder().build()).get();
 
-    Object data = client.getData(factory.updateConsumerStatusBuilder().build());
+    Object data = client.getOptionalData(factory.updateConsumerStatusBuilder().build()).get();
 
     UpdateConsumerStatusMutation.UpdateStatus update =
         ((UpdateConsumerStatusMutation.Data) data).getConsumer().getUpdateStatus();
@@ -110,16 +112,16 @@ public class ConsumerTestStage extends AbstractTestStage {
     ConsumerKeyInput input = factory.consumerKeyInputBuilder().build();
 
     try {
-      client.getData(ConsumerQuery.builder().key(input).build());
+      client.getOptionalData(ConsumerQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertConsumerMutationBuilder().build());
+    client.getOptionalData(factory.upsertConsumerMutationBuilder().build()).get();
 
-    ConsumerQuery.Data after = (ConsumerQuery.Data) client.getData(ConsumerQuery.builder().key(input).build());
+    ConsumerQuery.Data after = (ConsumerQuery.Data) client.getOptionalData(ConsumerQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getConsumer().getByKey().getKey().getName(), input.name());
+    assertEquals(after.getConsumer().getByKey().get().getKey().getName(), input.name());
   }
 
   @Override
@@ -129,11 +131,11 @@ public class ConsumerTestStage extends AbstractTestStage {
 
     ConsumerKeyQuery query = ConsumerKeyQuery.builder().nameRegex(".*").build();
 
-    ConsumersQuery.Data before = (ConsumersQuery.Data) client.getData(ConsumersQuery.builder().key(query).build());
+    ConsumersQuery.Data before = (ConsumersQuery.Data) client.getOptionalData(ConsumersQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertConsumerMutationBuilder().build());
 
-    ConsumersQuery.Data after = (ConsumersQuery.Data) client.getData(ConsumersQuery.builder().key(query).build());
+    ConsumersQuery.Data after = (ConsumersQuery.Data) client.getOptionalData(ConsumersQuery.builder().key(query).build()).get();
 
     assertEquals(before.getConsumer().getByQuery().size() + 1, after.getConsumer().getByQuery().size());
   }
@@ -141,5 +143,11 @@ public class ConsumerTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createStream(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    ConsumerKeyInput input = factory.consumerKeyInputBuilder().name("disnae_exist").build();
+    assertTrue(client.getConsumer(input).isEmpty());
   }
 }

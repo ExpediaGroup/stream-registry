@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerBindingKeyQuery;
@@ -22,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 public interface ProducerBindingQuery extends GraphQLApiType {
-  ProducerBinding byKey(ProducerBindingKeyInput key);
+  Optional<ProducerBinding> byKey(ProducerBindingKeyInput key);
 
   Iterable<ProducerBinding> byQuery(ProducerBindingKeyQuery key, SpecificationQuery specification);
 }

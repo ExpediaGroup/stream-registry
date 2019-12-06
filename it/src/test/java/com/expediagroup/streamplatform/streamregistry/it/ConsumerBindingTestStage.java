@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -42,7 +44,7 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     assertMutationFails(factory.updateConsumerBindingMutationBuilder().build());
 
-    Object data = client.getData(factory.insertConsumerBindingMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertConsumerBindingMutationBuilder().build()).get();
 
     InsertConsumerBindingMutation.Insert insert = ((InsertConsumerBindingMutation.Data) data).getConsumerBinding().getInsert();
 
@@ -63,7 +65,7 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     client.invoke(factory.insertConsumerBindingMutationBuilder().build());
 
-    UpdateConsumerBindingMutation.Update update = ((UpdateConsumerBindingMutation.Data) client.getData(updateMutation))
+    UpdateConsumerBindingMutation.Update update = ((UpdateConsumerBindingMutation.Data) client.getOptionalData(updateMutation).get())
         .getConsumerBinding().getUpdate();
 
     assertThat(update.getKey().getStreamName(), is(factory.streamName));
@@ -77,7 +79,7 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     setFactorySuffix("upsert");
 
-    Object data = client.getData(factory.upsertConsumerBindingMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertConsumerBindingMutationBuilder().build()).get();
 
     UpsertConsumerBindingMutation.Upsert upsert = ((UpsertConsumerBindingMutation.Data) data).getConsumerBinding().getUpsert();
 
@@ -87,8 +89,8 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertConsumerBindingMutationBuilder().build());
-    Object data = client.getData(factory.updateConsumerBindingStatusBuilder().build());
+    client.getOptionalData(factory.upsertConsumerBindingMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateConsumerBindingStatusBuilder().build()).get();
 
     UpdateConsumerBindingStatusMutation.UpdateStatus update =
         ((UpdateConsumerBindingStatusMutation.Data) data).getConsumerBinding().getUpdateStatus();
@@ -103,16 +105,16 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
     ConsumerBindingKeyInput input = factory.consumerBindingKeyInputBuilder().build();
 
     try {
-      client.getData(ConsumerBindingQuery.builder().key(input).build());
+      client.getOptionalData(ConsumerBindingQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertConsumerBindingMutationBuilder().build());
+    client.getOptionalData(factory.upsertConsumerBindingMutationBuilder().build()).get();
 
-    ConsumerBindingQuery.Data after = (ConsumerBindingQuery.Data) client.getData(ConsumerBindingQuery.builder().key(input).build());
+    ConsumerBindingQuery.Data after = (ConsumerBindingQuery.Data) client.getOptionalData(ConsumerBindingQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getConsumerBinding().getByKey().getKey().getStreamName(), input.streamName());
+    assertEquals(after.getConsumerBinding().getByKey().get().getKey().getStreamName(), input.streamName());
   }
 
   @Override
@@ -122,11 +124,11 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     ConsumerBindingKeyQuery query = ConsumerBindingKeyQuery.builder().consumerNameRegex(".*").build();
 
-    ConsumerBindingsQuery.Data before = (ConsumerBindingsQuery.Data) client.getData(ConsumerBindingsQuery.builder().key(query).build());
+    ConsumerBindingsQuery.Data before = (ConsumerBindingsQuery.Data) client.getOptionalData(ConsumerBindingsQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertConsumerBindingMutationBuilder().build());
 
-    ConsumerBindingsQuery.Data after = (ConsumerBindingsQuery.Data) client.getData(ConsumerBindingsQuery.builder().key(query).build());
+    ConsumerBindingsQuery.Data after = (ConsumerBindingsQuery.Data) client.getOptionalData(ConsumerBindingsQuery.builder().key(query).build()).get();
 
     assertEquals(before.getConsumerBinding().getByQuery().size() + 1,
         after.getConsumerBinding().getByQuery().size());
@@ -135,5 +137,11 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createConsumer(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    ConsumerBindingKeyInput input = factory.consumerBindingKeyInputBuilder().consumerName("disnae_exist").build();
+    assertTrue(client.getConsumerBinding(input).isEmpty());
   }
 }

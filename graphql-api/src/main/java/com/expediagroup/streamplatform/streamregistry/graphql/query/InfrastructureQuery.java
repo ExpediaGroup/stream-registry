@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.InfrastructureKeyQuery;
@@ -22,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
 public interface InfrastructureQuery extends GraphQLApiType {
-  Infrastructure byKey(InfrastructureKeyInput key);
+  Optional<Infrastructure> byKey(InfrastructureKeyInput key);
 
   Iterable<Infrastructure> byQuery(InfrastructureKeyQuery key, SpecificationQuery specification);
 }

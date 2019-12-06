@@ -453,52 +453,52 @@ type Mutation {
 }
 
 type DomainQuery{
-    byKey(key: DomainKeyInput!): Domain!
+    byKey(key: DomainKeyInput!): Domain
     byQuery(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
 }
 
 type SchemaQuery{
-    byKey(key: SchemaKeyInput!): Schema!
+    byKey(key: SchemaKeyInput!): Schema
     byQuery(key: SchemaKeyQuery, specification: SpecificationQuery): [Schema!]!
 }
 
 type StreamQuery{
-    byKey(key: StreamKeyInput!): Stream!
+    byKey(key: StreamKeyInput!): Stream
     byQuery(key: StreamKeyQuery, specification: SpecificationQuery, schema: SchemaKeyQuery): [Stream!]!
 }
 
 type ZoneQuery{
-    byKey(key: ZoneKeyInput!): Zone!
+    byKey(key: ZoneKeyInput!): Zone
     byQuery(key: ZoneKeyQuery, specification: SpecificationQuery): [Zone!]!
 }
 
 type InfrastructureQuery{
-    byKey(key: InfrastructureKeyInput!): Infrastructure!
+    byKey(key: InfrastructureKeyInput!): Infrastructure
     byQuery(key: InfrastructureKeyQuery, specification: SpecificationQuery): [Infrastructure!]!
 }
 
 type ProducerQuery{
-    byKey(key: ProducerKeyInput!): Producer!
+    byKey(key: ProducerKeyInput!): Producer
     byQuery(key: ProducerKeyQuery, specification: SpecificationQuery): [Producer!]!
 }
 
 type ConsumerQuery{
-    byKey(key: ConsumerKeyInput!): Consumer!
+    byKey(key: ConsumerKeyInput!): Consumer
     byQuery(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
 }
 
 type StreamBindingQuery{
-    byKey(key: StreamBindingKeyInput!): StreamBinding!
+    byKey(key: StreamBindingKeyInput!): StreamBinding
     byQuery(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
 }
 
 type ProducerBindingQuery{
-    byKey(key: ProducerBindingKeyInput!): ProducerBinding!
+    byKey(key: ProducerBindingKeyInput!): ProducerBinding
     byQuery(key: ProducerBindingKeyQuery, specification: SpecificationQuery): [ProducerBinding!]!
 }
 
 type ConsumerBindingQuery{
-    byKey(key: ConsumerBindingKeyInput!): ConsumerBinding!
+    byKey(key: ConsumerBindingKeyInput): ConsumerBinding
     byQuery(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
 }
 

@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,8 +35,8 @@ public class SchemaQueryImpl implements SchemaQuery {
   private final SchemaService schemaService;
 
   @Override
-  public Schema byKey(SchemaKeyInput key) {
-    return schemaService.read(key.asSchemaKey()).get();
+  public Optional<Schema> byKey(SchemaKeyInput key) {
+    return schemaService.read(key.asSchemaKey());
   }
 
   @Override

@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -33,7 +35,7 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
   @Override
   public void create() {
-    Object data = client.getData(factory.insertStreamBindingMutationBuilder().build());
+    Object data = client.getOptionalData(factory.insertStreamBindingMutationBuilder().build()).get();
 
     InsertStreamBindingMutation.Insert insert = ((InsertStreamBindingMutation.Data) data).getStreamBinding().getInsert();
 
@@ -43,7 +45,7 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
   @Override
   public void update() {
-    Object data = client.getData(factory.updateStreamBindingMutationBuilder().build());
+    Object data = client.getOptionalData(factory.updateStreamBindingMutationBuilder().build()).get();
 
     UpdateStreamBindingMutation.Update update = ((UpdateStreamBindingMutation.Data) data).getStreamBinding().getUpdate();
 
@@ -54,7 +56,7 @@ public class StreamBindingTestStage extends AbstractTestStage {
   @Override
   public void upsert() {
 
-    Object data = client.getData(factory.upsertStreamBindingMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertStreamBindingMutationBuilder().build()).get();
 
     UpsertStreamBindingMutation.Upsert upsert = ((UpsertStreamBindingMutation.Data) data).getStreamBinding().getUpsert();
 
@@ -64,8 +66,8 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertStreamBindingMutationBuilder().build());
-    Object data = client.getData(factory.updateStreamBindingStatusBuilder().build());
+    client.getOptionalData(factory.upsertStreamBindingMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateStreamBindingStatusBuilder().build()).get();
 
     UpdateStreamBindingStatusMutation.UpdateStatus update =
         ((UpdateStreamBindingStatusMutation.Data) data).getStreamBinding().getUpdateStatus();
@@ -80,16 +82,16 @@ public class StreamBindingTestStage extends AbstractTestStage {
     StreamBindingKeyInput input = factory.streamBindingKeyInputBuilder().build();
 
     try {
-      client.getData(StreamBindingQuery.builder().key(input).build());
+      client.getOptionalData(StreamBindingQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertStreamBindingMutationBuilder().build());
+    client.getOptionalData(factory.upsertStreamBindingMutationBuilder().build()).get();
 
-    StreamBindingQuery.Data after = (StreamBindingQuery.Data) client.getData(StreamBindingQuery.builder().key(input).build());
+    StreamBindingQuery.Data after = (StreamBindingQuery.Data) client.getOptionalData(StreamBindingQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getStreamBinding().getByKey().getKey().getStreamName(), input.streamName());
+    assertEquals(after.getStreamBinding().getByKey().get().getKey().getStreamName(), input.streamName());
   }
 
   @Override
@@ -99,11 +101,11 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
     StreamBindingKeyQuery query = StreamBindingKeyQuery.builder().streamNameRegex("stream_name.*").build();
 
-    StreamBindingsQuery.Data before = (StreamBindingsQuery.Data) client.getData(StreamBindingsQuery.builder().key(query).build());
+    StreamBindingsQuery.Data before = (StreamBindingsQuery.Data) client.getOptionalData(StreamBindingsQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertStreamBindingMutationBuilder().build());
 
-    StreamBindingsQuery.Data after = (StreamBindingsQuery.Data) client.getData(StreamBindingsQuery.builder().key(query).build());
+    StreamBindingsQuery.Data after = (StreamBindingsQuery.Data) client.getOptionalData(StreamBindingsQuery.builder().key(query).build()).get();
 
     assertEquals(after.getStreamBinding().getByQuery().size(), before.getStreamBinding().getByQuery().size() + 1);
   }
@@ -111,5 +113,11 @@ public class StreamBindingTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createStream(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    StreamBindingKeyInput input = factory.streamBindingKeyInputBuilder().streamName("disnae_exist").build();
+    assertTrue(client.getStreamBinding(input).isEmpty());
   }
 }

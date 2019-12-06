@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.DomainKeyQuery;
@@ -22,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
 public interface DomainQuery extends GraphQLApiType {
-  Domain byKey(DomainKeyInput key);
+  Optional<Domain> byKey(DomainKeyInput key);
 
   Iterable<Domain> byQuery(DomainKeyQuery key, SpecificationQuery specification);
 }

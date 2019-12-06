@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static junit.framework.TestCase.assertTrue;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -41,7 +43,7 @@ public class ProducerBindingTestStage extends AbstractTestStage {
     Mutation insertMutation = factory.insertProducerBindingMutationBuilder().build();
 
     InsertProducerBindingMutation.Insert insert =
-        ((InsertProducerBindingMutation.Data) client.getData(insertMutation))
+        ((InsertProducerBindingMutation.Data) client.getOptionalData(insertMutation).get())
             .getProducerBinding().getInsert();
 
     assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
@@ -61,7 +63,7 @@ public class ProducerBindingTestStage extends AbstractTestStage {
 
     client.invoke(factory.insertProducerBindingMutationBuilder().build());
 
-    Object data = client.getData(updateMutation);
+    Object data = client.getOptionalData(updateMutation).get();
     UpdateProducerBindingMutation.Update update = ((UpdateProducerBindingMutation.Data) data).getProducerBinding().getUpdate();
 
     assertThat(update.getSpecification().getDescription().get(), is(factory.description));
@@ -71,7 +73,7 @@ public class ProducerBindingTestStage extends AbstractTestStage {
   @Override
   public void upsert() {
 
-    Object data = client.getData(factory.upsertProducerBindingMutationBuilder().build());
+    Object data = client.getOptionalData(factory.upsertProducerBindingMutationBuilder().build()).get();
 
     UpsertProducerBindingMutation.Upsert upsert = ((UpsertProducerBindingMutation.Data) data).getProducerBinding().getUpsert();
 
@@ -81,8 +83,8 @@ public class ProducerBindingTestStage extends AbstractTestStage {
 
   @Override
   public void updateStatus() {
-    client.getData(factory.upsertProducerBindingMutationBuilder().build());
-    Object data = client.getData(factory.updateProducerBindingStatusBuilder().build());
+    client.getOptionalData(factory.upsertProducerBindingMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateProducerBindingStatusBuilder().build()).get();
 
     UpdateProducerBindingStatusMutation.UpdateStatus update =
         ((UpdateProducerBindingStatusMutation.Data) data).getProducerBinding().getUpdateStatus();
@@ -97,16 +99,16 @@ public class ProducerBindingTestStage extends AbstractTestStage {
     ProducerBindingKeyInput input = factory.producerBindingKeyInputBuilder().build();
 
     try {
-      client.getData(ProducerBindingQuery.builder().key(input).build());
+      client.getOptionalData(ProducerBindingQuery.builder().key(input).build()).get();
     } catch (RuntimeException e) {
       assertEquals(e.getMessage(), "No value present");
     }
 
-    client.getData(factory.upsertProducerBindingMutationBuilder().build());
+    client.getOptionalData(factory.upsertProducerBindingMutationBuilder().build()).get();
 
-    ProducerBindingQuery.Data after = (ProducerBindingQuery.Data) client.getData(ProducerBindingQuery.builder().key(input).build());
+    ProducerBindingQuery.Data after = (ProducerBindingQuery.Data) client.getOptionalData(ProducerBindingQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getProducerBinding().getByKey().getKey().getStreamDomain(), input.streamDomain());
+    assertEquals(after.getProducerBinding().getByKey().get().getKey().getStreamDomain(), input.streamDomain());
   }
 
   @Override
@@ -116,11 +118,11 @@ public class ProducerBindingTestStage extends AbstractTestStage {
 
     ProducerBindingKeyQuery query = ProducerBindingKeyQuery.builder().producerNameRegex("producerName.*").build();
 
-    ProducerBindingsQuery.Data before = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
+    ProducerBindingsQuery.Data before = (ProducerBindingsQuery.Data) client.getOptionalData(ProducerBindingsQuery.builder().key(query).build()).get();
 
     client.invoke(factory.upsertProducerBindingMutationBuilder().build());
 
-    ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getData(ProducerBindingsQuery.builder().key(query).build());
+    ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getOptionalData(ProducerBindingsQuery.builder().key(query).build()).get();
 
     assertEquals(after.getProducerBinding().getByQuery().size(), before.getProducerBinding().getByQuery().size() + 1);
   }
@@ -128,5 +130,11 @@ public class ProducerBindingTestStage extends AbstractTestStage {
   @Override
   public void createRequiredDatastoreState() {
     client.createProducer(factory);
+  }
+
+  @Override
+  public void queryByInvalidKey() {
+    ProducerBindingKeyInput input = factory.producerBindingKeyInputBuilder().producerName("disnae_exist").build();
+    assertTrue(client.getProducerBinding(input).isEmpty());
   }
 }

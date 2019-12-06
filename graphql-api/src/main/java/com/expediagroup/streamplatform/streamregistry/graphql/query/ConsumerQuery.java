@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.query;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ConsumerKeyQuery;
@@ -22,9 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 public interface ConsumerQuery extends GraphQLApiType {
-  Consumer byKey(ConsumerKeyInput key);
+  Optional<Consumer> byKey(ConsumerKeyInput key);
 
   Iterable<Consumer> byQuery(ConsumerKeyQuery key, SpecificationQuery specification);
-
-  ;
 }
