@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.client.builder;
+package com.expediagroup.streamplatform.streamregistry.graphql.client;
 
 import okhttp3.OkHttpClient;
 

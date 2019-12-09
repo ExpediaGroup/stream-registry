@@ -23,7 +23,6 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.builder.StreamRegistryApolloClient;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
