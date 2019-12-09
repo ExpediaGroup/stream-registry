@@ -31,7 +31,7 @@ import com.expediagroup.streamplatform.streamregistry.it.StreamRegistryIT;
 public abstract class AbstractTestStage {
   protected ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName().toLowerCase());
 
-  protected Client client = StreamRegistryIT.client;
+  protected ITestClient client = StreamRegistryIT.client;
 
   @Before
   public final void before() {
