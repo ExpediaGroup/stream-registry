@@ -25,47 +25,17 @@ import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.CreateSessionMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.RenewSessionMutation;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTest;
 
-public class SessionTestStage extends AbstractTestStage {
+public class SessionTestStage extends AbstractTest {
 
-  @Override
+  @Test
   public void create() {
     setFactorySuffix("create");
 
     CreateSessionMutation.Create create = createSession();
 
     assertNotNull(create);
-  }
-
-  @Override
-  public void update() {
-
-  }
-
-  @Override
-  public void upsert() {
-
-  }
-
-  @Override
-  public void updateStatus() {
-
-  }
-
-  @Override
-  public void queryByKey() {
-
-  }
-
-  @Override
-  public void queryByInvalidKey() {
-
-  }
-
-  @Override
-  public void queryByRegex() {
-
   }
 
   @Test
