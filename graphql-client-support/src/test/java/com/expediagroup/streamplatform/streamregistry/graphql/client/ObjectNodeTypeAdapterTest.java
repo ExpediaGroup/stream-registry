@@ -27,6 +27,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.junit.Test;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.adapters.ObjectNodeTypeAdapter;
+
 public class ObjectNodeTypeAdapterTest {
   private static final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNodeTypeAdapter underTest = new ObjectNodeTypeAdapter();

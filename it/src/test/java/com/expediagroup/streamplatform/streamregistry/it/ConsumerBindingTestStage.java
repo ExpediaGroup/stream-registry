@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static junit.framework.TestCase.assertTrue;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;

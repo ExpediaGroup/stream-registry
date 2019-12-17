@@ -28,7 +28,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.Client;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -45,7 +45,7 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.Client;
 })
 @Slf4j
 public class StreamRegistryIT {
-  public static Client client;
+  public static ITestClient client;
   public static String url;
 
   private static ConfigurableApplicationContext context;
@@ -60,7 +60,7 @@ public class StreamRegistryIT {
 
   @BeforeClass
   public static void before() {
-    String[] args = new String[]{
+    String[] args = new String[] {
         "--server.port=0",
         "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
         "--spring.datasource.username=streamregistry",
@@ -69,7 +69,7 @@ public class StreamRegistryIT {
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
     url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
-    client = new Client(url);
+    client = new ITestClient(url);
   }
 
   @AfterClass

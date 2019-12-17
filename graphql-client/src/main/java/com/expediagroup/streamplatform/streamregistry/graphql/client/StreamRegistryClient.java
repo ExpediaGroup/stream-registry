@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.it.helpers;
+package com.expediagroup.streamplatform.streamregistry.graphql.client;
 
 import java.util.Optional;
-
-import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
@@ -25,21 +23,9 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructureQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ObjectNodeTypeAdapter;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.SchemaQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.reactor.ReactorApollo;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.CustomType;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
@@ -49,17 +35,16 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Stream
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 
-public class Client {
+public class StreamRegistryClient {
 
-  ApolloClient apollo;
+  private final ApolloClient apollo;
 
-  public Client(String url) {
-    apollo = ApolloClient
-        .builder()
-        .serverUrl(url)
-        .okHttpClient(new OkHttpClient.Builder().build())
-        .addCustomTypeAdapter(CustomType.OBJECTNODE, new ObjectNodeTypeAdapter())
-        .build();
+  public StreamRegistryClient(String url) {
+    this(StreamRegistryApolloClient.builder().serverUrl(url).build());
+  }
+
+  public StreamRegistryClient(ApolloClient apolloClient) {
+    this.apollo = apolloClient;
   }
 
   public Response invoke(Operation operation) {
@@ -133,32 +118,27 @@ public class Client {
     return response.getSchema().getByKey();
   }
 
-  public void createZone(ITestDataFactory factory) {
-    invoke(factory.upsertZoneMutationBuilder().build());
+  public Response upsertZone(UpsertZoneMutation upsertZoneMutation) {
+    return invoke(upsertZoneMutation);
   }
 
-  public void createDomain(ITestDataFactory factory) {
-    createZone(factory);
-    invoke(factory.upsertDomainMutationBuilder().build());
+  public Response upsertDomain(UpsertDomainMutation upsertDomainMutation) {
+    return invoke(upsertDomainMutation);
   }
 
-  public void createSchema(ITestDataFactory factory) {
-    createDomain(factory);
-    invoke(factory.upsertSchemaMutationBuilder().build());
+  public Response upsertSchema(UpsertSchemaMutation upsertSchemaMutation) {
+    return invoke(upsertSchemaMutation);
   }
 
-  public void createStream(ITestDataFactory factory) {
-    createSchema(factory);
-    invoke(factory.upsertStreamMutationBuilder().build());
+  public Response upsertStream(UpsertStreamMutation upsertStreamMutation) {
+    return invoke(upsertStreamMutation);
   }
 
-  public void createProducer(ITestDataFactory factory) {
-    createStream(factory);
-    invoke(factory.upsertProducerMutationBuilder().build());
+  public Response upsertProducer(UpsertProducerMutation upsertProducerMutation) {
+    return invoke(upsertProducerMutation);
   }
 
-  public void createConsumer(ITestDataFactory factory) {
-    createStream(factory);
-    invoke(factory.upsertConsumerMutationBuilder().build());
+  public Response upsertConsumer(UpsertConsumerMutation upsertConsumerMutation) {
+    return invoke(upsertConsumerMutation);
   }
 }
