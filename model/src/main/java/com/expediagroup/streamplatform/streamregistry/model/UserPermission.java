@@ -15,25 +15,28 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import java.util.Set;
-
 import javax.persistence.*;
 
 import lombok.Data;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
-
 @Data
 @Entity
-public class Stream implements ManagedType {
-  @EmbeddedId
-  private StreamKey key;
+public class UserPermission {
 
-  private SchemaKey schemaKey;
-  private Specification specification;
-  private Status status;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String principal;
 
-  @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
-  private Set<UserPermission> acl;
+    @Enumerated(EnumType.STRING)
+    private Permission permissions;
+
+    public UserPermission() {
+
+    }
+
+    public UserPermission(String principal, Permission permissions) {
+        this.principal = principal;
+        this.permissions = permissions;
+    }
 }

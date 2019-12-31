@@ -711,15 +711,20 @@ fragment StreamPart on Stream{
         __typename
         ...SchemaPart
     }
+    acl{
+        permissions
+        principal
+    }
 }
 
 mutation InsertStream(
     $key: StreamKeyInput!
     $specification: SpecificationInput!
     $schema: SchemaKeyInput!
+    $permissions: StreamPermissionsInput!
 ) {
     stream{
-        insert(key: $key,specification: $specification, schema: $schema){
+        insert(key: $key,specification: $specification, schema: $schema, permissions: $permissions){
             __typename
             ...StreamPart
         }
@@ -730,9 +735,10 @@ mutation UpdateStream(
     $key: StreamKeyInput!
     $specification: SpecificationInput!
     $schema: SchemaKeyInput!
+    $permissions: StreamPermissionsInput!
 ) {
     stream{
-        update(key: $key,specification: $specification, schema: $schema){
+        update(key: $key,specification: $specification, schema: $schema, permissions: $permissions){
             __typename
             ...StreamPart
         }
@@ -742,10 +748,11 @@ mutation UpdateStream(
 mutation UpsertStream(
     $key: StreamKeyInput!
     $specification: SpecificationInput!
-    $schema: SchemaKeyInput
+    $schema: SchemaKeyInput!
+    $permissions: StreamPermissionsInput!
 ) {
     stream{
-        upsert(key: $key,specification: $specification,schema: $schema){
+        upsert(key: $key,specification: $specification,schema: $schema, permissions: $permissions){
             __typename
             ...StreamPart
         }

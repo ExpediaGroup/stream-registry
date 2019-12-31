@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
 
 import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -63,6 +64,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Consum
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Permission;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
@@ -70,6 +72,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Specif
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamPermissionsInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.UserPermissionInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 
 public class ITestDataFactory {
@@ -257,9 +261,11 @@ public class ITestDataFactory {
   }
 
   public InsertStreamMutation.Builder insertStreamMutationBuilder() {
+
     return InsertStreamMutation.builder()
         .specification(specificationInputBuilder(DEFAULT).build())
         .schema(schemaKeyInputBuilder().build())
+        .permissions(streamPermissionsInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
@@ -267,6 +273,7 @@ public class ITestDataFactory {
     return UpdateStreamMutation.builder()
         .specification(specificationInputBuilder(DEFAULT).build())
         .schema(schemaKeyInputBuilder().build())
+        .permissions(streamPermissionsInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
@@ -274,6 +281,7 @@ public class ITestDataFactory {
     return UpsertStreamMutation.builder()
         .specification(specificationInputBuilder(DEFAULT).build())
         .schema(schemaKeyInputBuilder().build())
+        .permissions(streamPermissionsInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
@@ -423,5 +431,12 @@ public class ITestDataFactory {
     return UpdateDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
         .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public StreamPermissionsInput.Builder streamPermissionsInputBuilder() {
+    return StreamPermissionsInput.builder().acl(List.of(
+            UserPermissionInput.builder().permissions(Permission.READ).principal("eddie").build(),
+            UserPermissionInput.builder().permissions(Permission.WRITE).principal("freddie").build()
+    ));
   }
 }

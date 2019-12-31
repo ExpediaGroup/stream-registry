@@ -16,18 +16,15 @@
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.*;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 public interface StreamMutation extends GraphQLApiType {
-  Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
+  Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema, StreamPermissionsInput permissions);
 
-  Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
+  Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema, StreamPermissionsInput permissions);
 
-  Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
+  Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema, StreamPermissionsInput permissions);
 
   Boolean delete(StreamKeyInput key);
 

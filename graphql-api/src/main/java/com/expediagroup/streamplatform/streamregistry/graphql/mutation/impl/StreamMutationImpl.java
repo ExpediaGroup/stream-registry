@@ -17,6 +17,9 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.HashSet;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -26,6 +29,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Schem
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamPermissionsInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.UserPermissionInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.StreamMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
@@ -35,18 +40,19 @@ public class StreamMutationImpl implements StreamMutation {
   private final StreamService streamService;
 
   @Override
-  public Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.create(asStream(key, specification, schema)).get();
+  public Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema, StreamPermissionsInput permissions) {
+    Stream stream = asStream(key, specification, schema, permissions);
+    return streamService.create(stream).get();
   }
 
   @Override
-  public Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.update(asStream(key, specification, schema)).get();
+  public Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema, StreamPermissionsInput permissions) {
+    return streamService.update(asStream(key, specification, schema, permissions)).get();
   }
 
   @Override
-  public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.upsert(asStream(key, specification, schema)).get();
+  public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema, StreamPermissionsInput permissions) {
+    return streamService.upsert(asStream(key, specification, schema, permissions)).get();
   }
 
   @Override
@@ -61,11 +67,12 @@ public class StreamMutationImpl implements StreamMutation {
     return streamService.update(stream).get();
   }
 
-  private Stream asStream(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
+  private Stream asStream(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema, StreamPermissionsInput permissions) {
     Stream stream = new Stream();
     stream.setKey(key.asStreamKey());
     stream.setSpecification(specification.asSpecification());
     stream.setSchemaKey(schema.asSchemaKey());
+    stream.setAcl(permissions.getAcl().stream().map(UserPermissionInput::asUserPermission).collect(Collectors.toCollection(HashSet::new)));
     maintainState(stream, streamService.read(stream.getKey()));
     return stream;
   }

@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
-import java.util.Set;
 
-import javax.persistence.*;
+import lombok.Builder;
+import lombok.Value;
 
-import lombok.Data;
+import com.expediagroup.streamplatform.streamregistry.model.Permission;
+import com.expediagroup.streamplatform.streamregistry.model.UserPermission;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+@Value
+@Builder
+public class UserPermissionInput {
+    String principal;
+    Permission permissions;
 
-@Data
-@Entity
-public class Stream implements ManagedType {
-  @EmbeddedId
-  private StreamKey key;
-
-  private SchemaKey schemaKey;
-  private Specification specification;
-  private Status status;
-
-  @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
-  private Set<UserPermission> acl;
+    public UserPermission asUserPermission() {
+        return new UserPermission(principal, permissions);
+    }
 }

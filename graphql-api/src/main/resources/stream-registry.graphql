@@ -115,6 +115,15 @@ input StreamKeyInput {
     version: Int!
 }
 
+input UserPermissionInput {
+    principal: String!
+    permissions: Permission!
+}
+
+input StreamPermissionsInput {
+    acl: [UserPermissionInput!]!
+}
+
 input StreamKeyQuery {
     domainRegex: String
     nameRegex: String
@@ -128,6 +137,18 @@ type Stream {
     status: Status
     #producers: [Producer!]
     #consumers: [Consumer!]
+    acl: [UserPermission!]
+}
+
+type UserPermission {
+    principal: String!
+    permissions: Permission!
+}
+
+enum Permission {
+    READ,
+    WRITE,
+    READ_WRITE
 }
 
 ############ Zone ############
@@ -384,9 +405,9 @@ type SchemaMutation{
 }
 
 type StreamMutation{
-    insert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
-    update(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
-    upsert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput): Stream!
+    insert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!, permissions: StreamPermissionsInput!): Stream!
+    update(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!, permissions: StreamPermissionsInput!): Stream!
+    upsert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!, permissions: StreamPermissionsInput!): Stream!
     delete(key: StreamKeyInput!): Boolean!
     updateStatus(key: StreamKeyInput!, status: StatusInput!): Stream!
 }
