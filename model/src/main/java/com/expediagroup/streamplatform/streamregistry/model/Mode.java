@@ -15,23 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
-import lombok.Data;
-
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
-
-@Data
-@Entity
-public class StreamBinding implements ManagedType {
-
-  @EmbeddedId
-  private StreamBindingKey key;
-  private Specification specification;
-  private Status status;
-  @Enumerated(EnumType.STRING)
-  private Mode mode = Mode.READ_WRITE;
+public enum Mode {
+    READ,
+    WRITE,
+    READ_WRITE
 }

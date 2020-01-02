@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,15 @@ import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.model.Mode;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 public interface StreamBindingMutation extends GraphQLApiType {
-  StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification);
+  StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification, Mode mode);
 
-  StreamBinding update(StreamBindingKeyInput key, SpecificationInput specification);
+  StreamBinding update(StreamBindingKeyInput key, SpecificationInput specification, Mode mode);
 
-  StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification);
+  StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification, Mode mode);
 
   Boolean delete(StreamBindingKeyInput key);
 

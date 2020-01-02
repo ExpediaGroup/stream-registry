@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Speci
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.StreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.model.Mode;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 @Component
@@ -34,18 +35,18 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
   private final StreamBindingService streamBindingService;
 
   @Override
-  public StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.create(asStreamBinding(key, specification)).get();
+  public StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification, Mode mode) {
+    return streamBindingService.create(asStreamBinding(key, specification, mode)).get();
   }
 
   @Override
-  public StreamBinding update(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.update(asStreamBinding(key, specification)).get();
+  public StreamBinding update(StreamBindingKeyInput key, SpecificationInput specification, Mode mode) {
+    return streamBindingService.update(asStreamBinding(key, specification, mode)).get();
   }
 
   @Override
-  public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.upsert(asStreamBinding(key, specification)).get();
+  public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification, Mode mode) {
+    return streamBindingService.upsert(asStreamBinding(key, specification, mode)).get();
   }
 
   @Override
@@ -60,10 +61,11 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
     return streamBindingService.update(streamBinding).get();
   }
 
-  private StreamBinding asStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {
+  private StreamBinding asStreamBinding(StreamBindingKeyInput key, SpecificationInput specification, Mode mode) {
     StreamBinding streamBinding = new StreamBinding();
     streamBinding.setKey(key.asStreamBindingKey());
     streamBinding.setSpecification(specification.asSpecification());
+    streamBinding.setMode(mode);
     maintainState(streamBinding, streamBindingService.read(streamBinding.getKey()));
     return streamBinding;
   }

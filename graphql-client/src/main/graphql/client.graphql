@@ -818,6 +818,7 @@ fragment StreamBindingPart on StreamBinding{
         __typename
         ...StatusPart
     }
+    mode
 }
 
 mutation InsertStreamBinding(

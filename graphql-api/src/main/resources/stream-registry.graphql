@@ -301,6 +301,13 @@ type StreamBinding {
     infrastructure: Infrastructure!
     #producerBinding: ProducerBinding!
     #consumerBinding: ConsumerBinding!
+    mode: Mode!
+}
+
+enum Mode {
+    READ
+    WRITE
+    READ_WRITE
 }
 
 ############ ProducerBinding ############
@@ -437,9 +444,9 @@ type ProducerMutation{
 }
 
 type StreamBindingMutation{
-    insert(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
-    update(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
-    upsert(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
+    insert(key: StreamBindingKeyInput!, specification: SpecificationInput!, mode: Mode = READ_WRITE): StreamBinding!
+    update(key: StreamBindingKeyInput!, specification: SpecificationInput!, mode: Mode = READ_WRITE): StreamBinding!
+    upsert(key: StreamBindingKeyInput!, specification: SpecificationInput!, mode: Mode = READ_WRITE): StreamBinding!
     delete(key: StreamBindingKeyInput!): Boolean!
     updateStatus(key: StreamBindingKeyInput!, status: StatusInput!): StreamBinding!
 }
