@@ -117,11 +117,11 @@ input StreamKeyInput {
 
 input UserPermissionInput {
     principal: String!
-    permissions: Permission!
+    permission: Permission!
 }
 
 input StreamPermissionsInput {
-    acl: [UserPermissionInput!]!
+    accessControlList: [UserPermissionInput!]!
 }
 
 input StreamKeyQuery {
@@ -137,12 +137,12 @@ type Stream {
     status: Status
     #producers: [Producer!]
     #consumers: [Consumer!]
-    acl: [UserPermission!]
+    accessControlList: [UserPermission!]
 }
 
 type UserPermission {
     principal: String!
-    permissions: Permission!
+    permission: Permission!
 }
 
 enum Permission {

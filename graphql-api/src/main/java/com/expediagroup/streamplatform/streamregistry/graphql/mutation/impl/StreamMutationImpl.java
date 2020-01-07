@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class StreamMutationImpl implements StreamMutation {
     stream.setKey(key.asStreamKey());
     stream.setSpecification(specification.asSpecification());
     stream.setSchemaKey(schema.asSchemaKey());
-    stream.setAcl(permissions.getAcl().stream().map(UserPermissionInput::asUserPermission).collect(Collectors.toCollection(HashSet::new)));
+    stream.setAccessControlList(permissions.getAccessControlList().stream().map(UserPermissionInput::asUserPermission).collect(Collectors.toCollection(HashSet::new)));
     maintainState(stream, streamService.read(stream.getKey()));
     return stream;
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,21 +60,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchem
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Permission;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamPermissionsInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.UserPermissionInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.*;
 
 public class ITestDataFactory {
 
@@ -434,9 +420,9 @@ public class ITestDataFactory {
   }
 
   public StreamPermissionsInput.Builder streamPermissionsInputBuilder() {
-    return StreamPermissionsInput.builder().acl(List.of(
-            UserPermissionInput.builder().permissions(Permission.READ).principal("eddie").build(),
-            UserPermissionInput.builder().permissions(Permission.WRITE).principal("freddie").build()
+    return StreamPermissionsInput.builder().accessControlList(List.of(
+            UserPermissionInput.builder().permission(Permission.READ).principal("eddie").build(),
+            UserPermissionInput.builder().permission(Permission.WRITE).principal("freddie").build()
     ));
   }
 }

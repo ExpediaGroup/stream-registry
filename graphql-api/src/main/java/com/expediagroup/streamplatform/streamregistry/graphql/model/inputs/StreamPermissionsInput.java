@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,5 +23,5 @@ import lombok.Value;
 @Value
 @Builder
 public class StreamPermissionsInput {
-    Collection<UserPermissionInput> acl;
+    Collection<UserPermissionInput> accessControlList;
 }

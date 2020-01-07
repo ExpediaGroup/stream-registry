@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import com.expediagroup.streamplatform.streamregistry.model.UserPermission;
 @Builder
 public class UserPermissionInput {
     String principal;
-    Permission permissions;
+    Permission permission;
 
     public UserPermission asUserPermission() {
-        return new UserPermission(principal, permissions);
+        return new UserPermission(principal, permission);
     }
 }

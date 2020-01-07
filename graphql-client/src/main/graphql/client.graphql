@@ -711,8 +711,8 @@ fragment StreamPart on Stream{
         __typename
         ...SchemaPart
     }
-    acl{
-        permissions
+    accessControlList{
+        permission
         principal
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,26 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import javax.persistence.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserPermission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
     private String principal;
 
     @Enumerated(EnumType.STRING)
-    private Permission permissions;
+    private Permission permission;
 
-    public UserPermission() {
-
-    }
-
-    public UserPermission(String principal, Permission permissions) {
+    public UserPermission(String principal, Permission permission) {
         this.principal = principal;
-        this.permissions = permissions;
+        this.permission = permission;
     }
 }
