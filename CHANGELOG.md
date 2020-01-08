@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## UNRELEASED
 ### Added 
-Added StreamRegistryApolloClient.builder to create client with required adapters
+- Added StreamRegistryApolloClient.builder to create client with required adapters
+
+### Changed
+- Changed `NameNormaliser` valid pattern.
 
 ## [0.9.0] - 20191206
 ### Added 
