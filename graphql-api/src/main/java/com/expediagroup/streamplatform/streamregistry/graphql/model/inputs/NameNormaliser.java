@@ -21,14 +21,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NameNormaliser {
-
-  private static final Pattern pattern = Pattern
-      .compile("^([a-z][a-z0-9]*(\\_[a-z0-9]*)*)$");
+  private static final Pattern pattern = Pattern.compile("^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$");
 
   public static String normalise(String name) {
-    name = name.trim();
+    name = name.trim().toLowerCase();
     if (!pattern.matcher(name).matches()) {
-      throw new IllegalArgumentException(String.format("Invalid name '%s' must be lowercase alphanumeric with optional dashes, starting with alpha", name));
+      throw new IllegalArgumentException(String.format("Invalid name '%s' must be conform to pattern %s", name, pattern.pattern()));
     }
     return name;
   }
