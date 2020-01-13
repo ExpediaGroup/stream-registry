@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NameNormaliser {
-  private static final Pattern pattern = Pattern.compile("^[a-z][a-z0-9_]*[a-z0-9]$");
+  private static final Pattern pattern = Pattern.compile("^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$");
 
   public static String normalise(String name) {
     name = name.trim().toLowerCase();

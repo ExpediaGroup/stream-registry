@@ -22,18 +22,29 @@ public class NameNormaliserTest {
     assertThat(normalise("ABC_DEF_1"), is("abc_def_1"));
   }
 
+  @Test
+  public void validDelimitedDigit() {
+    assertThat(normalise("abc_1_def"), is("abc_1_def"));
+  }
+
+
   @Test(expected = IllegalArgumentException.class)
-  public void beginsWithDigit() {
+  public void invalidBeginsWithDigit() {
     normalise("1abc_def_1");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void beginsWithUnderscore() {
+  public void invalidBeginsWithUnderscore() {
     normalise("_abc_def_1");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void endsWithUnderscore() {
+  public void invalidEndsWithUnderscore() {
     normalise("abc_def_");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void invalidConsecutiveUnderscores() {
+    normalise("abc__def_1");
   }
 }
