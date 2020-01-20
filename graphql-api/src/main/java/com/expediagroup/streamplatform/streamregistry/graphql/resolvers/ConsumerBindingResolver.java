@@ -42,7 +42,7 @@ public class ConsumerBindingResolver implements GraphQLResolver<ConsumerBinding>
         consumerBinding.getKey().getStreamName(),
         consumerBinding.getKey().getStreamVersion(),
         consumerBinding.getKey().getInfrastructureZone(),
-        consumerBinding.getKey().getInfrastructureName()
+        consumerBinding.getKey().getConsumerName()
     );
 
     return consumerService.read(consumerKey).orElse(null);
