@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
+## [Unreleased]
+### Bugfix
+- Fixed incorrectly wired field in `ProducerBindingResolver`.
+
+## [0.9.1] - 20200113
 ### Added 
-- Added StreamRegistryApolloClient.builder to create client with required adapters
+- Added StreamRegistryApolloClient.builder to create client with required adapters.
 
 ### Changed
 - Changed `NameNormaliser` valid pattern.

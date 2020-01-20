@@ -41,7 +41,7 @@ public class ProducerBindingResolver implements GraphQLResolver<ProducerBinding>
         producerBinding.getKey().getStreamName(),
         producerBinding.getKey().getStreamVersion(),
         producerBinding.getKey().getInfrastructureZone(),
-        producerBinding.getKey().getInfrastructureName()
+        producerBinding.getKey().getProducerName()
     );
 
     return producerService.read(producerKey).orElse(null);
