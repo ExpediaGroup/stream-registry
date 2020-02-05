@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
-
-import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
@@ -53,7 +51,7 @@ public class DomainTestStage extends AbstractTestStage {
     assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
-  @Test
+  @Override
   public void update() {
 
     setFactorySuffix("update");
