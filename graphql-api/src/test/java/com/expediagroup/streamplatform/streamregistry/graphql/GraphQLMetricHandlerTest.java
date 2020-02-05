@@ -85,7 +85,7 @@ public class GraphQLMetricHandlerTest {
     Object result = underTest.invoke(null, method, new Object[] { key });
     assertThat(result, is(Optional.of(domain)));
 
-    verify(registry).timer("graphql_api", tags.and("result", "success").and("authentication_type", ANONYMOUS.name()));
+    verify(registry).timer("graphql_api", tags.and("result", "success").and("authentication_group", ANONYMOUS.name()));
     verify(timer).record(any(Duration.class));
   }
 
@@ -101,7 +101,7 @@ public class GraphQLMetricHandlerTest {
       assertThat(e, is(failed));
     }
 
-    verify(registry).timer("graphql_api", tags.and("result", "failure").and("authentication_type", ANONYMOUS.name()));
+    verify(registry).timer("graphql_api", tags.and("result", "failure").and("authentication_group", ANONYMOUS.name()));
     verify(timer).record(any(Duration.class));
   }
 
@@ -111,7 +111,7 @@ public class GraphQLMetricHandlerTest {
 
     underTest.invoke(null, method, new Object[]{key});
 
-    verify(registry).timer("graphql_api", tags.and("result", "success").and("authentication_type", AUTHENTICATED.name()));
+    verify(registry).timer("graphql_api", tags.and("result", "success").and("authentication_group", AUTHENTICATED.name()));
   }
 
   @Test
@@ -120,6 +120,6 @@ public class GraphQLMetricHandlerTest {
 
     underTest.invoke(null, method, new Object[]{key});
 
-    verify(registry).timer("graphql_api", tags.and("result", "success").and("authentication_type", ANONYMOUS.name()));
+    verify(registry).timer("graphql_api", tags.and("result", "success").and("authentication_group", ANONYMOUS.name()));
   }
 }

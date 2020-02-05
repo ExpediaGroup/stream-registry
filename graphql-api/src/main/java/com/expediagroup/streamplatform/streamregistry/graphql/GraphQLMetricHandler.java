@@ -65,7 +65,7 @@ class GraphQLMetricHandler implements InvocationHandler {
           .of("api", method.getDeclaringClass().getSimpleName())
           .and("method", method.getName())
           .and("result", success ? "success" : "failure")
-          .and("authentication_type", AuthenticationType.of(authenticationSupplier.get()).name());
+          .and("authentication_group", AuthenticationType.of(authenticationSupplier.get()).name());
       registry.timer("graphql_api", tags).record(stopwatch.elapsed());
     }
   }

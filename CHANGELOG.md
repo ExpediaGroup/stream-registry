@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Added an `authentication_type` tag to the `graphql_api` metric.
+- Added an `authentication_group` tag to the `graphql_api` metric.
 
 ## [0.9.3] - 20200120
 ### Bugfix
