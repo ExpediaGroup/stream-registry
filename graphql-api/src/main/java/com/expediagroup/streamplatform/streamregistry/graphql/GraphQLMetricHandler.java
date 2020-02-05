@@ -65,16 +65,16 @@ class GraphQLMetricHandler implements InvocationHandler {
           .of("api", method.getDeclaringClass().getSimpleName())
           .and("method", method.getName())
           .and("result", success ? "success" : "failure")
-          .and("authentication_group", AuthenticationType.of(authenticationSupplier.get()).name());
+          .and("authentication_group", AuthenticationGroup.of(authenticationSupplier.get()).name());
       registry.timer("graphql_api", tags).record(stopwatch.elapsed());
     }
   }
 
-  enum AuthenticationType {
+  enum AuthenticationGroup {
     AUTHENTICATED,
     ANONYMOUS;
 
-    static AuthenticationType of(Authentication authentication) {
+    static AuthenticationGroup of(Authentication authentication) {
       if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
         return ANONYMOUS;
       }
