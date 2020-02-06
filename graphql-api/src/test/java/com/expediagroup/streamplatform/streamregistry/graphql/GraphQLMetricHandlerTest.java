@@ -15,8 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.GraphQLMetricHandler.AuthenticationType.ANONYMOUS;
-import static com.expediagroup.streamplatform.streamregistry.graphql.GraphQLMetricHandler.AuthenticationType.AUTHENTICATED;
+import static com.expediagroup.streamplatform.streamregistry.graphql.GraphQLMetricHandler.AuthenticationGroup.ANONYMOUS;
+import static com.expediagroup.streamplatform.streamregistry.graphql.GraphQLMetricHandler.AuthenticationGroup.AUTHENTICATED;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
