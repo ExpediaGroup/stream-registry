@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import static lombok.AccessLevel.PACKAGE;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +31,21 @@ import com.google.common.base.Stopwatch;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = PACKAGE)
 @Getter(PACKAGE)
 class GraphQLMetricHandler implements InvocationHandler {
   private final Object delegate;
   private final MeterRegistry registry;
+  private final Supplier<Authentication> authenticationSupplier;
+
+  public GraphQLMetricHandler(Object delegate, MeterRegistry registry) {
+    this(delegate, registry, () -> SecurityContextHolder.getContext().getAuthentication());
+  }
 
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -54,8 +64,21 @@ class GraphQLMetricHandler implements InvocationHandler {
       Tags tags = Tags
           .of("api", method.getDeclaringClass().getSimpleName())
           .and("method", method.getName())
-          .and("result", success ? "success" : "failure");
+          .and("result", success ? "success" : "failure")
+          .and("authentication_group", AuthenticationGroup.of(authenticationSupplier.get()).name());
       registry.timer("graphql_api", tags).record(stopwatch.elapsed());
+    }
+  }
+
+  enum AuthenticationGroup {
+    AUTHENTICATED,
+    ANONYMOUS;
+
+    static AuthenticationGroup of(Authentication authentication) {
+      if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+        return ANONYMOUS;
+      }
+      return AUTHENTICATED;
     }
   }
 }
