@@ -1,0 +1,20 @@
+---
+spring.profiles.active: default,graphql
+endpoints.prometheus.enabled: true
+management.endpoints.web.exposure.include: info,health,prometheus
+
+spring:
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+  jpa:
+    hibernate:
+      temp:
+        use_jdbc_metadata_defaults: false
+      jdbc:
+        lob:
+          non_contextual_creation: true
+      ddl-auto: validate
+    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+    show-sql: true

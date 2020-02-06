@@ -1,12 +1,28 @@
 # stream-registry [![Build Status][build-icon]][build-link]
 
-[build-icon]: https://travis-ci.org/homeaway/stream-registry.svg?branch=master
-[build-link]: https://travis-ci.org/homeaway/stream-registry
+[build-icon]: https://travis-ci.org/ExpediaGroup/stream-registry.svg?branch=master
+[build-link]: https://travis-ci.org/ExpediaGroup/stream-registry
 
 <center>
 <img src="docs/docs/architecture/SR-logo.svg" alt="StreamRegistryLogo" style="max-width:50%;"/>
 </center>
 
+# Announcement: 12th April 2019
+We wanted to let you know that there are going to be some exciting developments with the Stream Registry project in the very near future. Stream Registry is being adopted by many brands at Expedia Group as a critical component of its digital nervous system for key streams across Expedia Group. Therefore, Vrbo stream registry is finding a new home.
+
+## What is changing
+* We will be investing in the project by expanding the existing team with full-time resources in several locations across Expedia Group. Expect greatly increased project activity: contributors, commits, issues, features, releases
+* The repository will relocate to the [ExpediaGroup open source GitHub org](https://github.com/ExpediaGroup) in its entirety, preserving the history and community
+
+## What isn't changing
+* The original vision of Stream Registry as a Stream Discovery and Stream Orchestration platform
+* The project will remain open source, and will be joined shortly by other supporting Expedia Group stream platform components
+* Licenses, conduct and contribution guidelines will remain unchanged
+* The value of your contributions - please keep them coming!
+
+We expect the start of this journey to be a little bumpy, but please bear with us as we work towards the first release of the **Expedia Group** Stream Registry!
+
+# About
 A Stream Registry is what its name implies: it is a registry of streams. As enterprises increasingly scale in size,
 the need to organize and develop around streams of data becomes paramount.  Synchronous calls are attracted to the edge,
 and a variety of synchronous and asynchronous calls permeate the enterprise.  The need for a declarative, central
@@ -41,14 +57,25 @@ The stream registry can answer the following question:
 4. Management of stream storage for permanent access
 5. Management of stream triggers for legacy stream sources
 
-## Want more info?
+## Architecture
 
-See the [architecture/northstar documentation](https://homeaway.github.io/stream-registry/).
+<center>
+<img src="docs/docs/architecture/StreamRegistryArchitecture.png" alt="StreamRegistryArchitecture"/>
+</center>
+
+See the [architecture/northstar documentation](https://expediagroup.github.io/stream-registry/) for more details.
 
 ## Building locally
 
+Stream Registry is built using [OpenJDK 11](https://openjdk.java.net/install/) and Maven. 
+
+Stream Registry is currently packaged as a shaded JAR file.
+We leave specific deployment considerations up to each team since this varies from enterprise to enterprise.
+
+To build Stream Registry as a JAR file, please run
+
 ```console
-make build
+./mvnw clean package
 ```
 
 ## Start Stream Registry
@@ -57,22 +84,22 @@ make build
 > The local 'dev' version of Stream Registry requires a locally running version of Apache Kafka
 > and Confluent's Schema Registry on ports 9092 and 8081, respectively.</em>
 
-To quickly get a local dev environment set up, we recommend to use the [Confluent CLI][confluent-cli-doc] with the following command.  
-**Note**: The `confluent` command is only available for macOS and Linux. 
+To quickly get a local dev environment set up, we recommend to use Docker Compose.
+
+Alternatively, one can start Confluent Platform locally after downloading the [Confluent CLI][confluent-cli-doc] and running the following command.
+**Note**: The `confluent` command is currently only available for macOS and Linux. If using Windows, you'll need to use Docker, or run ZooKeeper, Kafka, and the Schema Registry all individually.
 
   [confluent-cli-doc]: https://docs.confluent.io/current/cli/index.html
 
 ```console
-confluent start zookeeper kafka schema-registry
+confluent start zookeeper
+confluent start kafka
+confluent start schema-registry
 ```
 
-Stream Registry can then be started 
+Stream Registry can then be started.
 
-```console
-make run
-```
-
-Check that the application's Swagger API is running at http://localhost:8080/swagger
+Once Stream Registry has started, check that the application's GraphiQL server is running at http://localhost:8080/graphiql
 
 ## Kafka Version Compatibility
 
@@ -83,11 +110,11 @@ As per the [Kafka Compatibility Matrix][kafka-compatibility-doc], we expect Stre
 
 ## Run Unit Tests
 ```console
-make tests
+./mvnw clean test
 ```
 
 ## Contributors
-Special thanks to the following for making stream-registry possible at HomeAway and beyond!
+Special thanks to the following for making stream-registry possible at Vrbo and beyond!
 
 <!-- Contributors START
 Adam_Westerman westeras https://www.linkedin.com/in/adam-westerman/ code
@@ -103,10 +130,15 @@ Miguel_Lucero mlucero10 https://www.linkedin.com/in/miguellucero/ code answers
 René_X_Parra neoword https://www.linkedin.com/in/reneparra/ code doc blogpost talks design prReview
 Contributors END -->
 <!-- Contributors table START -->
-| [<img src="https://avatars.githubusercontent.com/westeras?s=100" width="100" alt="Adam Westerman" /><br /><sub>Adam Westerman</sub>](https://www.linkedin.com/in/adam-westerman/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=westeras) | [<img src="https://avatars.githubusercontent.com/arunvasudevan?s=100" width="100" alt="Arun Vasudevan" /><br /><sub>Arun Vasudevan</sub>](https://www.linkedin.com/in/arun-vasudevan-55117368/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=arunvasudevan) 🎨 | [<img src="https://avatars.githubusercontent.com/nathanwalther?s=100" width="100" alt="Nathan Walther" /><br /><sub>Nathan Walther</sub>](https://www.linkedin.com/in/nwalther/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=nathanwalther) 👀 | [<img src="https://avatars.githubusercontent.com/cricket007?s=100" width="100" alt="Jordan Moore" /><br /><sub>Jordan Moore</sub>](https://www.linkedin.com/in/jordanmoorerhit/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=cricket007) 💁 | [<img src="https://avatars.githubusercontent.com/dccarlos?s=100" width="100" alt="Carlos Cordero" /><br /><sub>Carlos Cordero</sub>](https://www.linkedin.com/in/carlos-d%C3%A1vila-cordero-71128a11b/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=dccarlos) | [<img src="https://avatars.githubusercontent.com/ishandikshit?s=100" width="100" alt="Ishan Dikshit" /><br /><sub>Ishan Dikshit</sub>](https://www.linkedin.com/in/ishan-dikshit-4a1753ba/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=ishandikshit) [📖](git@github.com:homeaway/stream-registry/commits?author=ishandikshit) | [<img src="https://avatars.githubusercontent.com/vinayakponangi?s=100" width="100" alt="Vinayak Ponangi" /><br /><sub>Vinayak Ponangi</sub>](https://www.linkedin.com/in/preethi-vinayak-ponangi-90ba3824/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=vinayakponangi) 📢 🎨 👀 |
+| [<img src="https://avatars.githubusercontent.com/westeras?s=100" width="100" alt="Adam Westerman" /><br /><sub>Adam Westerman</sub>](https://www.linkedin.com/in/adam-westerman/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=westeras) | [<img src="https://avatars.githubusercontent.com/arunvasudevan?s=100" width="100" alt="Arun Vasudevan" /><br /><sub>Arun Vasudevan</sub>](https://www.linkedin.com/in/arun-vasudevan-55117368/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=arunvasudevan) 🎨 | [<img src="https://avatars.githubusercontent.com/nathanwalther?s=100" width="100" alt="Nathan Walther" /><br /><sub>Nathan Walther</sub>](https://www.linkedin.com/in/nwalther/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=nathanwalther) 👀 | [<img src="https://avatars.githubusercontent.com/cricket007?s=100" width="100" alt="Jordan Moore" /><br /><sub>Jordan Moore</sub>](https://www.linkedin.com/in/jordanmoorerhit/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=cricket007) 💁 | [<img src="https://avatars.githubusercontent.com/dccarlos?s=100" width="100" alt="Carlos Cordero" /><br /><sub>Carlos Cordero</sub>](https://www.linkedin.com/in/carlos-d%C3%A1vila-cordero-71128a11b/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=dccarlos) | [<img src="https://avatars.githubusercontent.com/ishandikshit?s=100" width="100" alt="Ishan Dikshit" /><br /><sub>Ishan Dikshit</sub>](https://www.linkedin.com/in/ishan-dikshit-4a1753ba/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=ishandikshit) [📖](git@github.com:expediagroup/stream-registry/commits?author=ishandikshit) | [<img src="https://avatars.githubusercontent.com/vinayakponangi?s=100" width="100" alt="Vinayak Ponangi" /><br /><sub>Vinayak Ponangi</sub>](https://www.linkedin.com/in/preethi-vinayak-ponangi-90ba3824/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=vinayakponangi) 📢 🎨 👀 |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 
-| [<img src="https://avatars.githubusercontent.com/prabhakar1983?s=100" width="100" alt="Prabhakaran Thatchinamoorthy" /><br /><sub>Prabhakaran Thatchinamoorthy</sub>](https://www.linkedin.com/in/prabhakaranthatchinamoorthy/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=prabhakar1983) 🎨 | [<img src="https://avatars.githubusercontent.com/ruizhang0519?s=100" width="100" alt="Rui Zhang" /><br /><sub>Rui Zhang</sub>](https://www.linkedin.com/in/rui-zhang-54667a82/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=ruizhang0519) | [<img src="https://avatars.githubusercontent.com/mlucero10?s=100" width="100" alt="Miguel Lucero" /><br /><sub>Miguel Lucero</sub>](https://www.linkedin.com/in/miguellucero/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=mlucero10) 💁 | [<img src="https://avatars.githubusercontent.com/neoword?s=100" width="100" alt="René X Parra" /><br /><sub>René X Parra</sub>](https://www.linkedin.com/in/reneparra/)<br />[💻](git@github.com:homeaway/stream-registry/commits?author=neoword) [📖](git@github.com:homeaway/stream-registry/commits?author=neoword) 📝 📢 🎨 👀 |
+| [<img src="https://avatars.githubusercontent.com/prabhakar1983?s=100" width="100" alt="Prabhakaran Thatchinamoorthy" /><br /><sub>Prabhakaran Thatchinamoorthy</sub>](https://www.linkedin.com/in/prabhakaranthatchinamoorthy/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=prabhakar1983) 🎨 | [<img src="https://avatars.githubusercontent.com/ruizhang0519?s=100" width="100" alt="Rui Zhang" /><br /><sub>Rui Zhang</sub>](https://www.linkedin.com/in/rui-zhang-54667a82/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=ruizhang0519) | [<img src="https://avatars.githubusercontent.com/mlucero10?s=100" width="100" alt="Miguel Lucero" /><br /><sub>Miguel Lucero</sub>](https://www.linkedin.com/in/miguellucero/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=mlucero10) 💁 | [<img src="https://avatars.githubusercontent.com/neoword?s=100" width="100" alt="René X Parra" /><br /><sub>René X Parra</sub>](https://www.linkedin.com/in/reneparra/)<br />[💻](git@github.com:expediagroup/stream-registry/commits?author=neoword) [📖](git@github.com:expediagroup/stream-registry/commits?author=neoword) 📝 📢 🎨 👀 |
 | :---: | :---: | :---: | :---: |
 <!-- Contributors table END -->
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification.
+
+## Legal
+This project is available under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html).
+
+Copyright 2018-2019 Expedia, Inc.

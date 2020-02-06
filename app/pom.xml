@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.expediagroup.streamplatform</groupId>
+    <artifactId>stream-registry</artifactId>
+    <version>0.9.5-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>stream-registry-app</artifactId>
+
+  <properties>
+    <docker.to.repo />
+    <docker.from.repo />
+    <docker.image.name>stream-registry</docker.image.name>
+    <docker.image.base>openjdk:11-slim</docker.image.base>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-spring-boot-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!--
+      Create a docker image of the stream-registry running on
+      a slim openJDK image
+
+      Jib Maven plugin builds Docker and OCI images from Java applications.
+      https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin
+      -->
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>${jib-maven-plugin.version}</version>
+        <configuration>
+          <to>
+            <image>${docker.to.repo}${docker.image.name}</image>
+            <tags>
+              <tag>${project.version}</tag>
+              <tag>latest</tag>
+            </tags>
+          </to>
+          <from>
+            <image>${docker.from.repo}${docker.image.base}</image>
+          </from>
+          <container>
+            <jvmFlags>
+              <jvmFlag>-Djava.awt.headless=true</jvmFlag>
+              <jvmFlag>-XX:InitialRAMPercentage=50</jvmFlag>
+              <jvmFlag>-XX:MaxRAMPercentage=70</jvmFlag>
+            </jvmFlags>
+          </container>
+        </configuration>
+        <executions>
+          <execution>
+            <id>${jib.goal}</id>
+            <goals>
+              <goal>${jib.goal}</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

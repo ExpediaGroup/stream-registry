@@ -1,0 +1,7 @@
+---
+graphql:
+  tools:
+    schema-location-pattern: "**/*.graphql"
+  servlet:
+    exception-handlers-enabled: true
+    actuator-metrics: true

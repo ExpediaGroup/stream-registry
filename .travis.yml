@@ -3,32 +3,23 @@ language: java
 dist: trusty
 
 jdk:
-  - oraclejdk8
-
-before_install:
-  - ./.travis/setup-deploy.sh
+- openjdk11
 
 # 'true' means do NOT do `mvn install`
 # See https://docs.travis-ci.com/user/job-lifecycle/#skipping-the-installation-phase
 install: true
 
-script: make build
-
-deploy:
-  provider: script
-  # skip_cleanup is to keep the artifacts from the build phase
-  skip_cleanup: true
-  script: make just-deploy
+script: ./mvnw clean install -Djib.skip -B
 
 after_failure:
-  - cat kafka-infra-provider/surefire-reports/*.txt
-  - cat core/target/surefire-reports/*.txt
-  - cat core/target/failsafe-reports/*.txt
+- cat infra-provider-kafka/surefire-reports/*.txt
+- cat core/target/surefire-reports/*.txt
+- cat core/target/failsafe-reports/*.txt
 
 notifications:
   email:
     recipients:
-      - stream-registry-committers@groups.homeawaycorp.com
+    - stream-registry-committers@expediagroup.com
     on_success: change
     on_failure: always
 

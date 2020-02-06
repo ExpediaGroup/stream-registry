@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.expediagroup.streamplatform</groupId>
+    <artifactId>stream-registry</artifactId>
+    <version>0.9.5-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>stream-registry-graphql-client</artifactId>
+
+  <properties>
+    <introspectionFile>${project.build.directory}/graphql-schema/schema.json</introspectionFile>
+    <clientPackage>com.expediagroup.streamplatform.streamregistry.graphql.client</clientPackage>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-graphql-client-reactor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-graphql-client-support</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.apollographql.apollo</groupId>
+      <artifactId>apollo-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>4.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>17.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.12.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>1.12.2</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.expediagroup.streamplatform</groupId>
+        <artifactId>stream-registry-graphql-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceSdlResource>stream-registry.graphql</sourceSdlResource>
+              <targetIntrospectionFile>${introspectionFile}</targetIntrospectionFile>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.expediagroup.streamplatform</groupId>
+            <artifactId>stream-registry-graphql-api</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.8.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <nodeVersion>v11.0.0</nodeVersion>
+              <installDirectory>${project.build.directory}</installDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.sparow199</groupId>
+        <artifactId>apollo-client-maven-plugin</artifactId>
+        <version>1.3.3</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <nodeExecutable>${project.build.directory}/node/node</nodeExecutable>
+              <introspectionFile>${introspectionFile}</introspectionFile>
+              <basePackage>${clientPackage}</basePackage>
+              <outputPackage>${clientPackage}</outputPackage>
+              <customTypeMap>
+                <ObjectNode>com.fasterxml.jackson.databind.node.ObjectNode</ObjectNode>
+              </customTypeMap>
+              <suppressRawTypesWarning>true</suppressRawTypesWarning>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

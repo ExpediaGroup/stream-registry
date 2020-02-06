@@ -1,8 +1,11 @@
 # Stream Registry Architecture
+<center>
+<img src="StreamRegistryArchitecture.png" alt="StreamRegistryArchitecture"/>
+</center>
 
 The stream registry is primarily concerned with the centralized management of
-the lifecycle of streams in the enterprise. Therefore, it serves as a central
-system of record (SOR) and source of truth (SOT) for stream metadata.
+the lifecycle of streams in the enterprise. It serves as a central
+system of record (SOR) declarative source of truth (SOT) for stream metadata.
 
 <center>![Stream Registry Architecture](SR-usecases.png)</center>
 
@@ -19,7 +22,7 @@ For example, the stream-registry will likely be open sourced with a
 `generic-kafka-stream-provider` to work with the Apache Kafka stream platform
 in a generic manner.  Chances are, that Acme Inc, might want to expand on this
 generic functionality and add Acme-specific ConfigMaps and functionality.
-They can do so by extending `generic-kafa-stream-provider` to come up with
+They can do so by extending `generic-kafka-stream-provider` to come up with
 an `acme-kafka-stream-provider`.
 
 These stream providers are typically jar files that have classes that

@@ -1,0 +1,984 @@
+fragment specificationPart on Specification {
+    description
+    tags{
+        name
+        value
+    }
+    type
+    configuration
+}
+
+fragment StatusPart on Status{
+    agentStatus
+}
+
+############ Consumer ############
+
+fragment ConsumerPart on Consumer{
+    __typename
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        zone
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+    binding{
+        __typename
+        ...ConsumerBindingPart
+    }
+}
+
+mutation InsertConsumer(
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumer{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+mutation UpdateConsumer(
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumer{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+mutation UpsertConsumer(
+    $key: ConsumerKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumer{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+mutation UpdateConsumerStatus(
+    $key: ConsumerKeyInput!
+    $status: StatusInput!
+){
+    consumer{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+query Consumer(
+    $key: ConsumerKeyInput!
+) {
+    consumer{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+query Consumers(
+    $key: ConsumerKeyQuery
+    $specification: SpecificationQuery
+) {
+    consumer{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ConsumerPart
+        }
+    }
+}
+
+############ ConsumerBinding ############
+
+fragment ConsumerBindingPart on ConsumerBinding{
+    __typename
+    key{
+        streamDomain
+        streamName
+        streamVersion
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+}
+
+mutation InsertConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumerBinding{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+mutation UpdateConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumerBinding{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+mutation UpsertConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    consumerBinding{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+mutation updateConsumerBindingStatus(
+    $key: ConsumerBindingKeyInput!
+    $status: StatusInput!
+){
+    consumerBinding{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+query ConsumerBinding(
+    $key: ConsumerBindingKeyInput!
+) {
+    consumerBinding{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+
+}
+
+query ConsumerBindings(
+    $key: ConsumerBindingKeyQuery
+    $specification: SpecificationQuery
+) {
+    consumerBinding{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ConsumerBindingPart
+        }
+    }
+}
+
+############ Domain ############
+
+fragment DomainPart on Domain{
+    __typename
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+}
+
+mutation InsertDomain(
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
+) {
+    domain{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...DomainPart
+        }
+    }
+}
+
+mutation UpdateDomain(
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
+) {
+    domain{
+        update(key: $key,specification: $specification){
+            __typename
+            ...DomainPart
+        }
+    }
+}
+
+mutation UpsertDomain(
+    $key: DomainKeyInput!
+    $specification: SpecificationInput!
+) {
+    domain{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...DomainPart
+        }
+    }
+}
+
+mutation UpdateDomainStatus(
+    $key: DomainKeyInput!
+    $status: StatusInput!
+){
+    domain{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...DomainPart
+        }
+    }
+}
+
+query Domain(
+    $key: DomainKeyInput!
+) {
+    domain{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...DomainPart
+        }
+    }
+}
+
+query Domains(
+    $key: DomainKeyQuery
+    $specification: SpecificationQuery
+) {
+    domain{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...DomainPart
+        }
+    }
+
+}
+
+############ Infrastructure ############
+
+fragment InfrastructurePart on Infrastructure{
+    __typename
+    key{
+        zone
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+}
+
+mutation InsertInfrastructure(
+    $key: InfrastructureKeyInput!
+    $specification: SpecificationInput!
+) {
+    infrastructure{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...InfrastructurePart
+        }
+    }
+}
+
+mutation UpdateInfrastructure(
+    $key: InfrastructureKeyInput!
+    $specification: SpecificationInput!
+) {
+    infrastructure{
+        update(key: $key,specification: $specification){
+            __typename
+            ...InfrastructurePart
+        }
+    }
+}
+
+mutation UpsertInfrastructure(
+    $key: InfrastructureKeyInput!
+    $specification: SpecificationInput!
+) {
+    infrastructure{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...InfrastructurePart
+        }
+    }
+}
+
+mutation UpdateInfrastructureStatus(
+    $key: InfrastructureKeyInput!
+    $status: StatusInput!
+){
+    infrastructure{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...InfrastructurePart
+        }
+    }
+}
+
+query Infrastructure(
+    $key: InfrastructureKeyInput!
+) {
+    infrastructure{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...InfrastructurePart
+        }
+    }
+}
+
+query Infrastructures(
+    $key: InfrastructureKeyQuery
+    $specification: SpecificationQuery
+) {
+    infrastructure{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...InfrastructurePart
+        }
+    }
+}
+
+############ Producer ############
+
+fragment ProducerPart on Producer{
+    __typename
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        zone
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+    binding{
+        __typename
+        ...ProducerBindingPart
+    }
+}
+
+mutation InsertProducer(
+    $key: ProducerKeyInput!
+    $specification: SpecificationInput!
+) {
+    producer{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ProducerPart
+        }
+    }
+}
+
+mutation UpdateProducer(
+    $key: ProducerKeyInput!
+    $specification: SpecificationInput!
+) {
+    producer{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ProducerPart
+        }
+    }
+}
+
+mutation UpsertProducer(
+    $key: ProducerKeyInput!
+    $specification: SpecificationInput!
+) {
+    producer{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ProducerPart
+        }
+    }
+}
+
+mutation UpdateProducerStatus(
+    $key: ProducerKeyInput!
+    $status: StatusInput!
+){
+    producer{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ProducerPart
+        }
+    }
+}
+
+query Producer(
+    $key: ProducerKeyInput!
+) {
+    producer{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...ProducerPart
+        }
+    }
+}
+
+query Producers(
+    $key: ProducerKeyQuery
+    $specification: SpecificationQuery
+) {
+    producer{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ProducerPart
+        }
+    }
+}
+
+############ ProducerBinding ############
+
+fragment ProducerBindingPart on ProducerBinding{
+    __typename
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
+        producerName
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+}
+
+mutation InsertProducerBinding(
+    $key: ProducerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    producerBinding{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ProducerBindingPart
+        }
+    }
+}
+
+mutation UpdateProducerBinding(
+    $key: ProducerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    producerBinding{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ProducerBindingPart
+        }
+    }
+}
+
+mutation UpsertProducerBinding(
+    $key: ProducerBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    producerBinding{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ProducerBindingPart
+        }
+    }
+}
+
+mutation UpdateProducerBindingStatus(
+    $key: ProducerBindingKeyInput!
+    $status: StatusInput!
+){
+    producerBinding{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ProducerBindingPart
+        }
+    }
+}
+
+query ProducerBinding(
+    $key: ProducerBindingKeyInput!
+) {
+    producerBinding{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...ProducerBindingPart
+        }
+
+    }
+}
+
+query ProducerBindings(
+    $key: ProducerBindingKeyQuery
+    $specification: SpecificationQuery
+) {
+    producerBinding{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...ProducerBindingPart
+        }
+    }
+}
+
+############ Schema ############
+
+fragment SchemaPart on Schema{
+    __typename
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+}
+
+mutation InsertSchema(
+    $key: SchemaKeyInput!
+    $specification: SpecificationInput!
+) {
+    schema{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...SchemaPart
+        }
+    }
+}
+
+mutation UpdateSchema(
+    $key: SchemaKeyInput!
+    $specification: SpecificationInput!
+) {
+    schema{
+        update(key: $key,specification: $specification){
+            __typename
+            ...SchemaPart
+        }
+    }
+}
+
+mutation UpsertSchema(
+    $key: SchemaKeyInput!
+    $specification: SpecificationInput!
+) {
+    schema{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...SchemaPart
+        }
+    }
+}
+
+mutation UpdateSchemaStatus(
+    $key: SchemaKeyInput!
+    $status: StatusInput!
+){
+    schema{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...SchemaPart
+        }
+    }
+}
+
+query Schema(
+    $key: SchemaKeyInput!
+) {
+    schema{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...SchemaPart
+        }
+    }
+}
+
+query Schemas(
+    $key: SchemaKeyQuery
+    $specification: SpecificationQuery
+) {
+    schema{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...SchemaPart
+        }
+    }
+}
+
+############ Stream ############
+
+fragment StreamPart on Stream{
+    __typename
+    key{
+        name
+        domain
+        version
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+    schema{
+        __typename
+        ...SchemaPart
+    }
+}
+
+mutation InsertStream(
+    $key: StreamKeyInput!
+    $specification: SpecificationInput!
+    $schema: SchemaKeyInput!
+) {
+    stream{
+        insert(key: $key,specification: $specification, schema: $schema){
+            __typename
+            ...StreamPart
+        }
+    }
+}
+
+mutation UpdateStream(
+    $key: StreamKeyInput!
+    $specification: SpecificationInput!
+    $schema: SchemaKeyInput!
+) {
+    stream{
+        update(key: $key,specification: $specification, schema: $schema){
+            __typename
+            ...StreamPart
+        }
+    }
+}
+
+mutation UpsertStream(
+    $key: StreamKeyInput!
+    $specification: SpecificationInput!
+    $schema: SchemaKeyInput
+) {
+    stream{
+        upsert(key: $key,specification: $specification,schema: $schema){
+            __typename
+            ...StreamPart
+        }
+    }
+}
+
+mutation UpdateStreamStatus(
+    $key: StreamKeyInput!
+    $status: StatusInput!
+){
+    stream{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...StreamPart
+        }
+    }
+}
+
+query Stream(
+    $key: StreamKeyInput!
+) {
+    stream{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...StreamPart
+        }
+    }
+}
+
+query Streams(
+    $key: StreamKeyQuery
+    $specification: SpecificationQuery
+) {
+    stream{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...StreamPart
+        }
+    }
+}
+
+############ StreamBinding ############
+
+fragment StreamBindingPart on StreamBinding{
+    __typename
+    key{
+        streamDomain
+        streamName
+        streamVersion
+        infrastructureZone
+        infrastructureName
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+}
+
+mutation InsertStreamBinding(
+    $key: StreamBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    streamBinding{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...StreamBindingPart
+        }
+    }
+}
+
+mutation UpdateStreamBinding(
+    $key: StreamBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    streamBinding{
+        update(key: $key,specification: $specification){
+            __typename
+            ...StreamBindingPart
+        }
+    }
+}
+
+mutation UpsertStreamBinding(
+    $key: StreamBindingKeyInput!
+    $specification: SpecificationInput!
+) {
+    streamBinding{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...StreamBindingPart
+        }
+    }
+}
+
+mutation UpdateStreamBindingStatus(
+    $key: StreamBindingKeyInput!
+    $status: StatusInput!
+){
+    streamBinding{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...StreamBindingPart
+        }
+    }
+}
+
+query StreamBinding(
+    $key: StreamBindingKeyInput!
+) {
+    streamBinding{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...StreamBindingPart
+        }
+    }
+}
+
+query StreamBindings(
+    $key: StreamBindingKeyQuery
+    $specification: SpecificationQuery
+) {
+    streamBinding{
+        byQuery(
+            key: $key
+            specification: $specification
+        ) {
+            __typename
+            ...StreamBindingPart
+        }
+    }
+}
+
+############ Zone ############
+
+fragment ZonePart on Zone{
+    __typename
+    key{
+        name
+    }
+    specification{
+        __typename
+        ...specificationPart
+    }
+    status{
+        __typename
+        ...StatusPart
+    }
+}
+
+mutation InsertZone(
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
+) {
+    zone{
+        insert(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+mutation UpdateZone(
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
+) {
+    zone{
+        update(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+mutation UpsertZone(
+    $key: ZoneKeyInput!
+    $specification: SpecificationInput!
+) {
+    zone{
+        upsert(key: $key,specification: $specification){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+mutation UpdateZoneStatus(
+    $key: ZoneKeyInput!
+    $status: StatusInput!
+){
+    zone{
+        updateStatus(key: $key,status: $status){
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+query Zone(
+    $key: ZoneKeyInput!
+) {
+    zone{
+        byKey(
+            key: $key
+        ) {
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
+query Zones(
+    $key: ZoneKeyQuery,
+    $specification: SpecificationQuery
+) {
+    zone{
+        byQuery(
+            key: $key,
+            specification: $specification
+        ) {
+            __typename
+            ...ZonePart
+        }
+    }
+}
+
