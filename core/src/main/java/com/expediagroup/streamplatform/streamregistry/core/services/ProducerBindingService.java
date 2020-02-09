@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,25 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class ProducerBindingService {
+public class ProducerBindingService implements NotificationEventEmitter<ProducerBinding> {
+  private final ApplicationEventMulticaster applicationEventMulticaster;
   private final HandlerService handlerService;
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
@@ -44,7 +51,7 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForCreate(producerBinding);
     producerBinding.setSpecification(handlerService.handleInsert(producerBinding));
-    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
+    return emitEventOnProcessedEntity(EventType.CREATE, producerBindingRepository.save(producerBinding));
   }
 
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
@@ -62,7 +69,7 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForUpdate(producerBinding, existing.get());
     producerBinding.setSpecification(handlerService.handleUpdate(producerBinding, existing.get()));
-    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
+    return emitEventOnProcessedEntity(EventType.UPDATE, producerBindingRepository.save(producerBinding));
   }
 
   public Optional<ProducerBinding> upsert(ProducerBinding producerBinding) throws ValidationException {
@@ -85,5 +92,16 @@ public class ProducerBindingService {
     if (read(key).isEmpty()) {
       throw new ValidationException("ProducerBinding does not exist");
     }
+  }
+
+  @Override
+  public Optional<ProducerBinding> emitEventOnProcessedEntity(EventType type, ProducerBinding entity) {
+    log.info("Emitting {} type event for entity {}", type, entity);
+    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
+  }
+
+  @Override
+  public void onFailedEmitting(Throwable ex, NotificationEvent<ProducerBinding> event) {
+    log.info("There was an error emitting event {}", event, ex);
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,25 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class DomainService {
+public class DomainService implements NotificationEventEmitter<Domain> {
+  private final ApplicationEventMulticaster applicationEventMulticaster;
   private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
@@ -44,7 +51,7 @@ public class DomainService {
     }
     domainValidator.validateForCreate(domain);
     domain.setSpecification(handlerService.handleInsert(domain));
-    return Optional.ofNullable(domainRepository.save(domain));
+    return emitEventOnProcessedEntity(EventType.CREATE, domainRepository.save(domain));
   }
 
   public Optional<Domain> read(DomainKey key) {
@@ -62,7 +69,7 @@ public class DomainService {
     }
     domainValidator.validateForUpdate(domain, existing.get());
     domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
-    return Optional.ofNullable(domainRepository.save(domain));
+    return emitEventOnProcessedEntity(EventType.UPDATE, domainRepository.save(domain));
   }
 
   public Optional<Domain> upsert(Domain domain) throws ValidationException {
@@ -85,5 +92,16 @@ public class DomainService {
     if (read(key).isEmpty()) {
       throw new ValidationException("Domain does not exist");
     }
+  }
+
+  @Override
+  public Optional<Domain> emitEventOnProcessedEntity(EventType type, Domain entity) {
+    log.info("Emitting {} type event for entity {}", type, entity);
+    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
+  }
+
+  @Override
+  public void onFailedEmitting(Throwable ex, NotificationEvent<Domain> event) {
+    log.info("There was an error emitting event {}", event, ex);
   }
 }

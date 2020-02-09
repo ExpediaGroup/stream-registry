@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,25 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class ConsumerService {
+public class ConsumerService implements NotificationEventEmitter<Consumer> {
+  private final ApplicationEventMulticaster applicationEventMulticaster;
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
@@ -44,7 +51,7 @@ public class ConsumerService {
     }
     consumerValidator.validateForCreate(consumer);
     consumer.setSpecification(handlerService.handleInsert(consumer));
-    return Optional.ofNullable(consumerRepository.save(consumer));
+    return emitEventOnProcessedEntity(EventType.CREATE, consumerRepository.save(consumer));
   }
 
   public Optional<Consumer> read(ConsumerKey key) {
@@ -62,7 +69,7 @@ public class ConsumerService {
     }
     consumerValidator.validateForUpdate(consumer, existing.get());
     consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
-    return Optional.ofNullable(consumerRepository.save(consumer));
+    return emitEventOnProcessedEntity(EventType.UPDATE, consumerRepository.save(consumer));
   }
 
   public Optional<Consumer> upsert(Consumer consumer) throws ValidationException {
@@ -85,5 +92,16 @@ public class ConsumerService {
     if (read(key).isEmpty()) {
       throw new ValidationException("Consumer does not exist");
     }
+  }
+
+  @Override
+  public Optional<Consumer> emitEventOnProcessedEntity(EventType type, Consumer entity) {
+    log.info("Emitting {} type event for entity {}", type, entity);
+    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
+  }
+
+  @Override
+  public void onFailedEmitting(Throwable ex, NotificationEvent<Consumer> event) {
+    log.info("There was an error emitting event {}", event, ex);
   }
 }
