@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added a spring application event multicaster
 - Added an interface for services to multicast CUD events
+- Unit tests
+
 ### Changed
 - Changed all core service to support `NotificationEventEmitter`
 - Changed all core service CUD methods to emit notification events
