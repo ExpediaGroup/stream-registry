@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.9.5] - 20200209
+### Added
+- Added a spring application event multicaster
+- Added an interface for services to multicast CUD events
+### Changed
+- Changed all core service to support `NotificationEventEmitter`
+- Changed all core service CUD methods to emit notification events
+
 ## [0.9.4] - 20200206
 ### Added
 - Added an `authentication_group` tag to the `graphql_api` metric.
