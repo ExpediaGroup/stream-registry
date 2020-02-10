@@ -129,7 +129,7 @@ public class NotificationEventEmitterTest {
         Mockito.lenient().when(myService.create(entity)).thenCallRealMethod();
         Mockito.verify(myService, Mockito.times(1)).create(entity);
         Mockito.verify(myService, Mockito.times(1)).emitEventOnProcessedEntity(type, entity);
-        Mockito.verify(myService, Mockito.times(1)).onFailedEmitting(Mockito.any(), Mockito.eq(event));
+        Mockito.verify(myService, Mockito.timeout(5000).times(1)).onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Thread.sleep(1000);
 
