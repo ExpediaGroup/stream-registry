@@ -19,7 +19,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamRegis
 
 public class ITestClient extends StreamRegistryClient {
 
-  public ITestClient(String url) {
+  public ITestClient(final String url) {
     super(url);
   }
 
