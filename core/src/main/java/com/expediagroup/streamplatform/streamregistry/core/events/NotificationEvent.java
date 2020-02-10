@@ -16,18 +16,14 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NonNull;
-import lombok.ToString;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
 
-@Getter
-@ToString
-@EqualsAndHashCode
+@Data
 public class NotificationEvent<T> extends ApplicationEvent implements ResolvableTypeProvider {
     private final EventType eventType;
     private final T entity;
