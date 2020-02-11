@@ -52,6 +52,7 @@
     <module>model</module>
     <module>it</module>
     <module>spring-boot-starter</module>
+    <module>notification-support</module>
   </modules>
 
   <properties>
