@@ -32,7 +32,8 @@ import org.springframework.test.context.junit4.SpringRunner;
                 KAFKA_NOTIFICATIONS_ENABLED_PROPERTY + "=true",
                 KAFKA_TOPIC_NAME_PROPERTY + "=my-topic",
                 KAFKA_TOPIC_SETUP_PROPERTY + "=false", // We don't test setup topic here but in  the integration test
-                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=localhost:9092"})
+                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=localhost:9092",
+                KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + "=foo:8081"})
 public class KafkaNotificationEventListenerSuccessfulLoadingTest {
 
     @Autowired(required = false)

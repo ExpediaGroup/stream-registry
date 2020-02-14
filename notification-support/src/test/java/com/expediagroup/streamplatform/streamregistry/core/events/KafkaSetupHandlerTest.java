@@ -38,7 +38,8 @@ import org.springframework.test.context.junit4.SpringRunner;
                 KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=" + KafkaSetupHandlerTest.TEST_BOOTSTRAP_SERVERS,
                 KAFKA_TOPIC_NAME_PROPERTY + "=" + KafkaSetupHandlerTest.TEST_TOPIC,
                 KAFKA_TOPIC_SETUP_PROPERTY + ".numPartitions=" + KafkaSetupHandlerTest.TEST_PARTITIONS,
-                KAFKA_TOPIC_SETUP_PROPERTY + ".replicationFactor=" + KafkaSetupHandlerTest.TEST_REPLICATION_FACTOR
+                KAFKA_TOPIC_SETUP_PROPERTY + ".replicationFactor=" + KafkaSetupHandlerTest.TEST_REPLICATION_FACTOR,
+                KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + "=foo:8081"
         }
 )
 public class KafkaSetupHandlerTest {

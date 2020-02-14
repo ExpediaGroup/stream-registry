@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.expediagroup.streamplatform.streamregistry.core.events.KafkaNotificationListenerConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.KafkaNotificationListenerConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.KafkaNotificationListenerConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.KafkaNotificationListenerConfig.KAFKA_TOPIC_NAME_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.KafkaNotificationListenerConfig.KAFKA_TOPIC_SETUP_PROPERTY;
 
@@ -46,7 +47,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
                 KAFKA_NOTIFICATIONS_ENABLED_PROPERTY + "=true",
                 KAFKA_TOPIC_NAME_PROPERTY + "=my-topic",
                 KAFKA_TOPIC_SETUP_PROPERTY + "=false", // We don't test setup topic here but in  the integration test
-                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=localhost:9092"})
+                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=localhost:9092",
+                KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + "=foo:8081"})
 public class KafkaNotificationEventListenerTest {
     public static final int TEST_CREATE_EVENTS = 5;
     public static final int TEST_UPDATE_EVENTS = 3;

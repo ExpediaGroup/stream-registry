@@ -22,11 +22,27 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.mockito.Mockito;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 
 @Slf4j
 @Configuration
 public class MockListenerConfiguration extends KafkaNotificationListenerConfig {
+
+    @Bean(name = "producerFactory")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public ProducerFactory<?, ?> producerFactory() {
+        return Mockito.mock(ProducerFactory.class);
+    }
+
+    @Bean(name = "kafkaTemplate")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public KafkaTemplate<?, ?> kafkaTemplate() {
+        return Mockito.mock(KafkaTemplate.class);
+    }
 
     protected KafkaNotificationEventListener createKafkaNotificationEventListener(final NewTopicProperties newTopicProperties) {
         return Mockito.spy(super.createKafkaNotificationEventListener(newTopicProperties));

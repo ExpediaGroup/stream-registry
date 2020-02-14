@@ -18,23 +18,32 @@ package com.expediagroup.streamplatform.streamregistry.core.events;
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import lombok.Data;
 
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
+
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
 @EnableConfigurationProperties({KafkaNotificationListenerConfig.NewTopicProperties.class})
 public class KafkaNotificationListenerConfig {
-    public static final String KAFKA_BOOTSTRAP_SERVERS_PROPERTY = "spring.kafka.bootstrap-servers";
+    public static final String KAFKA_SCHEMA_REGISTRY_URL_PROPERTY = "notification.events.kafka.schema.registry.url";
+    public static final String KAFKA_BOOTSTRAP_SERVERS_PROPERTY = "notification.events.kafka.bootstrap-servers";
     public static final String KAFKA_NOTIFICATIONS_ENABLED_PROPERTY = "notification.events.kafka.enabled";
     public static final String KAFKA_TOPIC_NAME_PROPERTY = "notification.events.kafka.topic";
     public static final String KAFKA_TOPIC_SETUP_PROPERTY = "notification.events.kafka.topic.setup";
@@ -48,6 +57,9 @@ public class KafkaNotificationListenerConfig {
     @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
     private String bootstrapServers;
 
+    @Value("${" + KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + ":#{null}}")
+    private String schemaRegistryUrl;
+
     @Bean(name = "kafkaNotificationEventListener")
     @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
     public KafkaNotificationEventListener kafkaNotificationEventListener(final NewTopicProperties newTopicProperties) {
@@ -57,8 +69,30 @@ public class KafkaNotificationListenerConfig {
         return createKafkaNotificationEventListener(newTopicProperties);
     }
 
+    @Bean(name = "producerFactory")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public ProducerFactory<?, ?> producerFactory() {
+        checkNotNull(bootstrapServers, getWarningMessageOnNotDefinedTopicProps("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
+        checkNotNull(schemaRegistryUrl, getWarningMessageOnNotDefinedTopicProps("enabled notification events", KAFKA_SCHEMA_REGISTRY_URL_PROPERTY));
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(props);
+    }
+
+    @Bean(name = "kafkaTemplate")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public KafkaTemplate<?, ?>  kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    }
+
     protected KafkaNotificationEventListener createKafkaNotificationEventListener(final NewTopicProperties newTopicProperties) {
         return KafkaNotificationEventListener.builder()
+                .kafkaTemplate(kafkaTemplate())
                 .kafkaSetupHandler(createKafkaSetupHandlerIfEnabled(newTopicProperties))
                 .build();
     }

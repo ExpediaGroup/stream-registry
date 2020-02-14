@@ -51,7 +51,8 @@ import org.springframework.test.context.junit4.SpringRunner;
                 KAFKA_TOPIC_SETUP_PROPERTY + "=true",
                 KAFKA_TOPIC_SETUP_PROPERTY + ".numPartitions=" + KafkaNotificationEventListenerIntegrationTest.TEST_PARTITIONS,
                 KAFKA_TOPIC_SETUP_PROPERTY + ".replicationFactor=" + KafkaNotificationEventListenerIntegrationTest.TEST_REPLICATION_FACTOR,
-                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=${spring.embedded.kafka.brokers}"
+                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=${spring.embedded.kafka.brokers}",
+                KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + "=foo:8081"
         })
 public class KafkaNotificationEventListenerIntegrationTest {
     public static final String TEST_NOTIFICATION_TOPIC = "test-notification-topic";

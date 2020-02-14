@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.event.EventListener;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
@@ -37,6 +38,9 @@ public class KafkaNotificationEventListener {
     private static final String IS_UPDATING_SCHEMA = "" +
             "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.Schema)" +
             "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).UPDATE";
+
+    @Getter
+    private final KafkaTemplate<?, ?> kafkaTemplate;
 
     @Getter // Getter is only for testing purposes...
     private final Optional<KafkaSetupHandler> kafkaSetupHandler;
