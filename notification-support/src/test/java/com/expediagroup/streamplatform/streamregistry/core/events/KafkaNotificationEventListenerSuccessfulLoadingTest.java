@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2020 Expedia, Inc.
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
+
+import static com.expediagroup.streamplatform.streamregistry.core.events.KafkaNotificationListenerConfig.*;
 
 import java.util.Optional;
 
@@ -25,7 +27,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)// Explicitly defined prop with true as value
-@SpringBootTest(classes = KafkaNotificationListenerConfig.class, properties = {"notification.events.kafka.enabled=true", "notification.events.kafka.setup=false"})
+@SpringBootTest(classes = MockListenerConfiguration.class,
+        properties = {
+                KAFKA_NOTIFICATIONS_ENABLED_PROPERTY + "=true",
+                KAFKA_TOPIC_NAME_PROPERTY + "=my-topic",
+                KAFKA_TOPIC_SETUP_PROPERTY + "=false", // We don't test setup topic here but in  the integration test
+                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=localhost:9092"})
 public class KafkaNotificationEventListenerSuccessfulLoadingTest {
 
     @Autowired(required = false)
@@ -33,14 +40,13 @@ public class KafkaNotificationEventListenerSuccessfulLoadingTest {
 
     @Test
     public void having_notifications_enabled_verify_that_KafkaNotificationEventListener_is_being_loaded() {
-        Assert.assertTrue("Optional container of kafkaNotificationEventListener shouldn't be null!", kafkaNotificationEventListener != null);
-        Assert.assertTrue("Kafka notification should be loaded since notification.events.kafka.enabled == true", kafkaNotificationEventListener.isPresent());
-
+        Assert.assertNotNull("Optional container of kafkaNotificationEventListener shouldn't be null!", kafkaNotificationEventListener);
+        Assert.assertTrue(String.format("Kafka notification should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), kafkaNotificationEventListener.isPresent());
     }
 
     @Test
     public void having_setup_disabled_verify_that_KafkaSetupHandler_is_not_being_loaded() {
-        Assert.assertTrue("Optional container of kafkaNotificationEventListener shouldn't be null!", kafkaNotificationEventListener != null);
-        Assert.assertFalse("Since notification.events.kafka.setup == false, KafkaSetupHandler shouldn't be set", kafkaNotificationEventListener.get().getKafkaSetupHandler().isPresent());
+        Assert.assertNotNull("Optional container of kafkaNotificationEventListener shouldn't be null!", kafkaNotificationEventListener);
+        Assert.assertFalse(String.format("Since %s == false, KafkaSetupHandler shouldn't be set", KAFKA_TOPIC_SETUP_PROPERTY), kafkaNotificationEventListener.flatMap(KafkaNotificationEventListener::getKafkaSetupHandler).isPresent());
     }
 }

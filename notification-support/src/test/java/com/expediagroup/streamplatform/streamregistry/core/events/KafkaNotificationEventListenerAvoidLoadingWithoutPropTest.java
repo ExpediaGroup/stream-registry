@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2020 Expedia, Inc.
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)// Not defined prop!
-@SpringBootTest(classes = KafkaNotificationListenerConfig.class)
+@SpringBootTest(classes = MockListenerConfiguration.class)
 public class KafkaNotificationEventListenerAvoidLoadingWithoutPropTest {
 
     @Autowired(required = false)
@@ -33,7 +33,7 @@ public class KafkaNotificationEventListenerAvoidLoadingWithoutPropTest {
 
     @Test
     public void having_notifications_disabled_verify_that_KafkaNotificationEventListener_is_not_being_loaded() {
-        Assert.assertTrue("Optional container of kafkaNotificationEventListener shouldn't be null!", kafkaNotificationEventListener != null);
+        Assert.assertNotNull("Optional container of kafkaNotificationEventListener shouldn't be null!", kafkaNotificationEventListener);
         Assert.assertFalse("Kafka notification should NOT be loaded since notification.events.kafka.enabled == false", kafkaNotificationEventListener.isPresent());
     }
 }

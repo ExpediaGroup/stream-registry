@@ -60,6 +60,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>11</jdk.version>
 
+    <avro.version>1.8.2</avro.version>
     <apollographql.version>1.0.0</apollographql.version>
     <bull.version>1.4.7.3</bull.version>
     <guava.version>28.0-jre</guava.version>
@@ -89,6 +90,11 @@
         <scope>import</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro</artifactId>
+        <version>${avro.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.apollographql.apollo</groupId>
         <artifactId>apollo-runtime</artifactId>
