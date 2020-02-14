@@ -23,12 +23,33 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.context.event.EventListener;
+
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+
 @Slf4j
 @Builder
 public class KafkaNotificationEventListener {
+    private static final String IS_CREATING_SCHEMA = "" +
+            "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.Schema)" +
+            "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).CREATE";
+
+    private static final String IS_UPDATING_SCHEMA = "" +
+            "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.Schema)" +
+            "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).UPDATE";
 
     @Getter // Getter is only for testing purposes...
     private final Optional<KafkaSetupHandler> kafkaSetupHandler;
+
+    @EventListener(condition = IS_CREATING_SCHEMA)
+    public void onCreateSchema(NotificationEvent<Schema> event) {
+        log.info("Update schema event: {}", event);
+    }
+
+    @EventListener(condition = IS_UPDATING_SCHEMA)
+    public void onUpdateSchema(NotificationEvent<Schema> event) {
+        log.info("Update schema event: {}", event);
+    }
 
     @PostConstruct
     public void init() {
