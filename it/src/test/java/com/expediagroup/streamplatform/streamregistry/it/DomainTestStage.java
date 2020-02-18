@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
@@ -128,6 +129,7 @@ public class DomainTestStage extends AbstractTestStage {
     DomainsQuery.Data after = (DomainsQuery.Data) client.getOptionalData(DomainsQuery.builder().key(query).build()).get();
 
     assertEquals(before.getDomain().getByQuery().size() + 1, after.getDomain().getByQuery().size());
+    assertNotNull(after.getDomain().getByQuery().get(0).getStatus().get().getAgentStatus());
   }
 
   @Override

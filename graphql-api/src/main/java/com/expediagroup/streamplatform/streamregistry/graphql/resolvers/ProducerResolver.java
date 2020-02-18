@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.services.StreamServic
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
@@ -63,5 +64,9 @@ public class ProducerResolver implements GraphQLResolver<Producer> {
     return StreamSupport
         .stream(producerBindingService.findAll(predicate).spliterator(), false)
         .findFirst();
+  }
+
+  public Status status(Producer producer) {
+    return producer.getStatus() == null ? new Status() : producer.getStatus();
   }
 }

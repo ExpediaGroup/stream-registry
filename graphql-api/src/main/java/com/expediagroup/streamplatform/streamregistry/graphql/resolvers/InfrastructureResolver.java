@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
@@ -36,5 +37,9 @@ public class InfrastructureResolver implements GraphQLResolver<Infrastructure> {
         infrastructure.getKey().getZone()
     );
     return zoneService.read(zoneKey).orElse(null);
+  }
+
+  public Status status(Infrastructure infrastructure) {
+    return infrastructure.getStatus() == null ? new Status() : infrastructure.getStatus();
   }
 }

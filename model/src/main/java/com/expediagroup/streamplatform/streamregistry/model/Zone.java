@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,4 +30,9 @@ public class Zone implements ManagedType {
   private ZoneKey key;
   private Specification specification;
   private Status status;
+
+  @Override
+  public Status getStatus() {
+    return status == null ? new Status() : status;
+  }
 }

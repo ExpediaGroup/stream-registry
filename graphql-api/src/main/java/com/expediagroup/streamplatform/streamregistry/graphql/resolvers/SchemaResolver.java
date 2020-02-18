@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Component
@@ -36,5 +37,9 @@ public class SchemaResolver implements GraphQLResolver<Schema> {
         schema.getKey().getDomain()
     );
     return domainService.read(domainKey).orElse(null);
+  }
+
+  public Status status(Schema schema) {
+    return schema.getStatus() == null ? new Status() : schema.getStatus();
   }
 }
