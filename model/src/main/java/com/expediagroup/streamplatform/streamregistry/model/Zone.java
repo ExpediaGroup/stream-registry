@@ -30,9 +30,4 @@ public class Zone implements ManagedType {
   private ZoneKey key;
   private Specification specification;
   private Status status;
-
-  @Override
-  public Status getStatus() {
-    return status == null ? new Status() : status;
-  }
 }

@@ -15,27 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
 @RequiredArgsConstructor
-public class StreamResolver implements GraphQLResolver<Stream> {
-  private final SchemaService schemaService;
+public class ZoneResolver implements GraphQLResolver<Zone> {
 
-  public Schema schema(Stream stream) {
-    return schemaService.read(stream.getSchemaKey()).orElse(null);
-  }
-
-  public Status status(Stream stream) {
-    return stream.getStatus() == null ? new Status() : stream.getStatus();
+  public Status status(Zone zone) {
+    return zone.getStatus() == null ? new Status() : zone.getStatus();
   }
 }
