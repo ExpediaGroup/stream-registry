@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertZoneMutation;
@@ -106,6 +107,7 @@ public class ZoneTestStage extends AbstractTestStage {
     ZonesQuery.Data after = (ZonesQuery.Data) client.getOptionalData(ZonesQuery.builder().key(query).build()).get();
 
     assertEquals(after.getZone().getByQuery().size(), before.getZone().getByQuery().size() + 1);
+    assertNotNull(after.getZone().getByQuery().get(0).getStatus().get().getAgentStatus());
   }
 
   @Override
