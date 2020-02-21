@@ -281,10 +281,10 @@ public class ITestDataFactory {
   public UpsertStreamMutation.Builder upsertStreamMutationInsertWithoutSchemaBuilder() {
     return UpsertStreamMutation.builder()
         .specification(specificationInputBuilder(DEFAULT).build())
-        .key(streamKeyUnknownNameInputBuilder().build());
+        .key(streamKeyNonExistingStreamInputBuilder().build());
   }
 
-  public StreamKeyInput.Builder streamKeyUnknownNameInputBuilder() {
+  public StreamKeyInput.Builder streamKeyNonExistingStreamInputBuilder() {
     return StreamKeyInput.builder()
         .domain(domainName)
         .name(nonExistingStreamName)
