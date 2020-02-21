@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
+
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,17 +38,17 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.create(asStream(key, specification, schema)).get();
+    return streamService.create(asStream(key, specification, Optional.of(schema))).get();
   }
 
   @Override
-  public Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.update(asStream(key, specification, schema)).get();
+  public Stream update(StreamKeyInput key, SpecificationInput specification) {
+    return streamService.update(asStream(key, specification, Optional.empty())).get();
   }
 
   @Override
   public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.upsert(asStream(key, specification, schema)).get();
+    return streamService.upsert(asStream(key, specification, Optional.ofNullable(schema))).get();
   }
 
   @Override
@@ -61,11 +63,13 @@ public class StreamMutationImpl implements StreamMutation {
     return streamService.update(stream).get();
   }
 
-  private Stream asStream(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
+  private Stream asStream(StreamKeyInput key, SpecificationInput specification, Optional<SchemaKeyInput> schema) {
     Stream stream = new Stream();
     stream.setKey(key.asStreamKey());
     stream.setSpecification(specification.asSpecification());
-    stream.setSchemaKey(schema.asSchemaKey());
+    if(schema.isPresent()) {
+      stream.setSchemaKey(schema.get().asSchemaKey());
+    }
     maintainState(stream, streamService.read(stream.getKey()));
     return stream;
   }
