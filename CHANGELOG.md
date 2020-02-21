@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Bugfix
 - Status field will return blank object when it is null for all the entities.
-- updateStream contract change(SchemaKeyInput not required in input) and upsertStream fixes for no schema in create
+- updateStream contract change(SchemaKeyInput not required in input) and upsertStream fixes for no schema during create
 
 ## [0.9.4] - 20200206
 ### Added
