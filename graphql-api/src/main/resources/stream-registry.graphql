@@ -385,7 +385,7 @@ type SchemaMutation{
 
 type StreamMutation{
     insert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
-    update(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput!): Stream!
+    update(key: StreamKeyInput!, specification: SpecificationInput!): Stream!
     upsert(key: StreamKeyInput!, specification: SpecificationInput!, schema: SchemaKeyInput): Stream!
     delete(key: StreamKeyInput!): Boolean!
     updateStatus(key: StreamKeyInput!, status: StatusInput!): Stream!
