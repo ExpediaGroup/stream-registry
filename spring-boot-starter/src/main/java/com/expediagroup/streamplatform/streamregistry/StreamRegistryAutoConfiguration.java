@@ -36,7 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Configuration
-@ComponentScan
+@ComponentScan({"com.expediagroup.streamplatform.streamregistry.core.events"})
 public class StreamRegistryAutoConfiguration {
   @ConditionalOnMissingBean(value = Domain.class, parameterizedContainer = Handler.class)
   @Bean

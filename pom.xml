@@ -149,6 +149,31 @@
   </dependencyManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!-- mvn generate-sources -->
+          <groupId>org.apache.avro</groupId>
+          <artifactId>avro-maven-plugin</artifactId>
+          <version>${avro.version}</version>
+          <executions>
+            <execution>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>idl-protocol</goal>
+              </goals>
+              <configuration>
+                <sourceDirectory>${project.build.resources[0].directory}/avro</sourceDirectory>
+                <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+                <fieldVisibility>PRIVATE</fieldVisibility>
+                <createSetters>false</createSetters>
+                <stringType>String</stringType>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>

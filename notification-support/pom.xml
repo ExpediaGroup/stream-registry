@@ -82,4 +82,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <!-- mvn generate-sources (default config in parent POM) -->
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>${avro.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -20,6 +20,7 @@ import java.util.Optional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -34,18 +35,18 @@ public class MockListenerConfiguration extends KafkaNotificationListenerConfig {
 
     @Bean(name = "producerFactory")
     @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
-    public ProducerFactory<?, ?> producerFactory() {
+    public ProducerFactory<SpecificRecord, SpecificRecord> producerFactory() {
         return Mockito.mock(ProducerFactory.class);
     }
 
     @Bean(name = "kafkaTemplate")
     @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
-    public KafkaTemplate<?, ?> kafkaTemplate() {
+    public KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate() {
         return Mockito.mock(KafkaTemplate.class);
     }
 
-    protected KafkaNotificationEventListener createKafkaNotificationEventListener(final NewTopicProperties newTopicProperties) {
-        return Mockito.spy(super.createKafkaNotificationEventListener(newTopicProperties));
+    protected KafkaNotificationEventListener createKafkaNotificationEventListener(NewTopicProperties newTopicProperties, SchemaParserProperties parserProperties) {
+        return Mockito.spy(super.createKafkaNotificationEventListener(newTopicProperties, parserProperties));
     }
 
     protected Optional<KafkaSetupHandler> createKafkaSetupHandlerIfEnabled(final NewTopicProperties newTopicProperties) {
