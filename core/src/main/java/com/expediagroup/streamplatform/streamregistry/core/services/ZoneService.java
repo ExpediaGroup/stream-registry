@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ZoneRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
@@ -37,6 +39,7 @@ public class ZoneService {
   private final HandlerService handlerService;
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
+  private final NotificationEventEmitter<Zone> zoneServiceEventEmitter;
 
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (zoneRepository.findById(zone.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class ZoneService {
     }
     zoneValidator.validateForCreate(zone);
     zone.setSpecification(handlerService.handleInsert(zone));
-    return Optional.ofNullable(zoneRepository.save(zone));
+    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, zoneRepository.save(zone));
   }
 
   public Optional<Zone> read(ZoneKey key) {
@@ -62,7 +65,7 @@ public class ZoneService {
     }
     zoneValidator.validateForUpdate(zone, existing.get());
     zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
-    return Optional.ofNullable(zoneRepository.save(zone));
+    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, zoneRepository.save(zone));
   }
 
   public Optional<Zone> upsert(Zone zone) throws ValidationException {

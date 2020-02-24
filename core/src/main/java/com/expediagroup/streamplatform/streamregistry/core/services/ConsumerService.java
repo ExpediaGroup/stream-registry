@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
@@ -37,6 +39,7 @@ public class ConsumerService {
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
+  private final NotificationEventEmitter<Consumer> consumerServiceEventEmitter;
 
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (consumerRepository.findById(consumer.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class ConsumerService {
     }
     consumerValidator.validateForCreate(consumer);
     consumer.setSpecification(handlerService.handleInsert(consumer));
-    return Optional.ofNullable(consumerRepository.save(consumer));
+    return consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, consumerRepository.save(consumer));
   }
 
   public Optional<Consumer> read(ConsumerKey key) {
@@ -62,7 +65,7 @@ public class ConsumerService {
     }
     consumerValidator.validateForUpdate(consumer, existing.get());
     consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
-    return Optional.ofNullable(consumerRepository.save(consumer));
+    return consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, consumerRepository.save(consumer));
   }
 
   public Optional<Consumer> upsert(Consumer consumer) throws ValidationException {

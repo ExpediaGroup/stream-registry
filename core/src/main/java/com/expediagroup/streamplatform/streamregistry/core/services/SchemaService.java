@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
@@ -37,6 +39,7 @@ public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
+  private final NotificationEventEmitter<Schema> schemaServiceEventEmitter;
 
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (schemaRepository.findById(schema.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class SchemaService {
     }
     schemaValidator.validateForCreate(schema);
     schema.setSpecification(handlerService.handleInsert(schema));
-    return Optional.ofNullable(schemaRepository.save(schema));
+    return schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, schemaRepository.save(schema));
   }
 
   public Optional<Schema> read(SchemaKey key) {
@@ -62,7 +65,7 @@ public class SchemaService {
     }
     schemaValidator.validateForUpdate(schema, existing.get());
     schema.setSpecification(handlerService.handleUpdate(schema, existing.get()));
-    return Optional.ofNullable(schemaRepository.save(schema));
+    return schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, schemaRepository.save(schema));
   }
 
   public Optional<Schema> upsert(Schema schema) throws ValidationException {

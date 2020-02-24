@@ -39,7 +39,7 @@ public class StreamRegistryClient {
 
   private final ApolloClient apollo;
 
-  public StreamRegistryClient(String url) {
+  public StreamRegistryClient(final String url) {
     this(StreamRegistryApolloClient.builder().serverUrl(url).build());
   }
 

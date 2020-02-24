@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.InfrastructureRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
@@ -37,6 +39,7 @@ public class InfrastructureService {
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
+  private final NotificationEventEmitter<Infrastructure> infrastructureServiceEventEmitter;
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (infrastructureRepository.findById(infrastructure.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForCreate(infrastructure);
     infrastructure.setSpecification(handlerService.handleInsert(infrastructure));
-    return Optional.ofNullable(infrastructureRepository.save(infrastructure));
+    return infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, infrastructureRepository.save(infrastructure));
   }
 
   public Optional<Infrastructure> read(InfrastructureKey key) {
@@ -62,7 +65,7 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForUpdate(infrastructure, existing.get());
     infrastructure.setSpecification(handlerService.handleUpdate(infrastructure, existing.get()));
-    return Optional.ofNullable(infrastructureRepository.save(infrastructure));
+    return infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, infrastructureRepository.save(infrastructure));
   }
 
   public Optional<Infrastructure> upsert(Infrastructure infrastructure) throws ValidationException {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
@@ -37,6 +39,7 @@ public class ConsumerBindingService {
   private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
+  private final NotificationEventEmitter<ConsumerBinding> consumerBindingServiceEventEmitter;
 
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
     if (consumerBindingRepository.findById(consumerBinding.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class ConsumerBindingService {
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
     consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
-    return Optional.ofNullable(consumerBindingRepository.save(consumerBinding));
+    return consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, consumerBindingRepository.save(consumerBinding));
   }
 
   public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
@@ -62,7 +65,7 @@ public class ConsumerBindingService {
     }
     consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
     consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
-    return Optional.ofNullable(consumerBindingRepository.save(consumerBinding));
+    return consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, consumerBindingRepository.save(consumerBinding));
   }
 
   public Optional<ConsumerBinding> upsert(ConsumerBinding consumerBinding) throws ValidationException {
