@@ -53,7 +53,6 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     private NotificationEventEmitter<ConsumerBinding> consumerBindingServiceEventEmitter;
     private ConsumerBindingService consumerBindingService;
 
-
     @Before
     public void before() {
         consumerBindingServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<ConsumerBinding>builder()
