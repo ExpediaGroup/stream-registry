@@ -50,18 +50,24 @@ public class NotificationEventEmitterInfrastructureServiceTest {
     @MockBean
     private InfrastructureRepository infrastructureRepository;
 
+    private NotificationEventEmitter<Infrastructure> infrastructureServiceEventEmitter;
     private InfrastructureService infrastructureService;
 
     @Before
     public void before() {
-        infrastructureService = Mockito.spy(new InfrastructureService(applicationEventMulticaster, handlerService, infrastructureValidator, infrastructureRepository));
+        infrastructureServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Infrastructure>builder()
+                        .classType(Infrastructure.class)
+                        .applicationEventMulticaster(applicationEventMulticaster)
+                        .build());
+
+        infrastructureService = Mockito.spy(new InfrastructureService(handlerService, infrastructureValidator, infrastructureRepository, infrastructureServiceEventEmitter));
     }
 
     @Test
     public void givenAInfrastructureForCreate_validateThatNotificationEventIsEmitted() {
         final Infrastructure entity = getDummyInfrastructure();
         final EventType type = EventType.CREATE;
-        final String source = infrastructureService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Infrastructure> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(infrastructureRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -75,7 +81,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(infrastructureService, Mockito.timeout(1000).times(0))
+        Mockito.verify(infrastructureServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -83,7 +89,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
     public void givenAInfrastructureForUpdate_validateThatNotificationEventIsEmitted() {
         final Infrastructure entity = getDummyInfrastructure();
         final EventType type = EventType.UPDATE;
-        final String source = infrastructureService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Infrastructure> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(infrastructureRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -98,7 +104,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(infrastructureService, Mockito.timeout(1000).times(0))
+        Mockito.verify(infrastructureServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -118,7 +124,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(infrastructureService, Mockito.timeout(1000).times(0))
+        Mockito.verify(infrastructureServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -138,7 +144,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(infrastructureService, Mockito.timeout(1000).times(0))
+        Mockito.verify(infrastructureServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -146,7 +152,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
     public void givenAInfrastructureForUpsert_validateThatNotificationEventIsEmitted() {
         final Infrastructure entity = getDummyInfrastructure();
         final EventType type = EventType.UPDATE;
-        final String source = infrastructureService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Infrastructure> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(infrastructureRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -161,7 +167,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(infrastructureService, Mockito.timeout(1000).times(0))
+        Mockito.verify(infrastructureServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -169,7 +175,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
     public void givenAInfrastructureForCreate_handleAMulticasterException() {
         final Infrastructure entity = getDummyInfrastructure();
         final EventType type = EventType.CREATE;
-        final String source = infrastructureService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Infrastructure> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(infrastructureRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -184,7 +190,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(infrastructureService, Mockito.timeout(1000).times(1))
+        Mockito.verify(infrastructureServiceEventEmitter, Mockito.timeout(1000).times(1))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Assert.assertTrue(response.isPresent());

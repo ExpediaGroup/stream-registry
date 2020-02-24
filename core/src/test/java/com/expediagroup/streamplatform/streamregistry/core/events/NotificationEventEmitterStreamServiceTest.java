@@ -50,18 +50,24 @@ public class NotificationEventEmitterStreamServiceTest {
     @MockBean
     private StreamRepository streamRepository;
 
+    private NotificationEventEmitter<Stream> streamServiceEventEmitter;
     private StreamService streamService;
 
     @Before
     public void before() {
-        streamService = Mockito.spy(new StreamService(applicationEventMulticaster, handlerService, streamValidator, streamRepository));
+        streamServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Stream>builder()
+                .classType(Stream.class)
+                .applicationEventMulticaster(applicationEventMulticaster)
+                .build());
+
+        streamService = Mockito.spy(new StreamService(handlerService, streamValidator, streamRepository, streamServiceEventEmitter));
     }
 
     @Test
     public void givenAStreamForCreate_validateThatNotificationEventIsEmitted() {
         final Stream entity = getDummyStream();
         final EventType type = EventType.CREATE;
-        final String source = streamService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = streamServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Stream> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(streamRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -75,7 +81,7 @@ public class NotificationEventEmitterStreamServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(streamService, Mockito.timeout(1000).times(0))
+        Mockito.verify(streamServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -83,7 +89,7 @@ public class NotificationEventEmitterStreamServiceTest {
     public void givenAStreamForUpdate_validateThatNotificationEventIsEmitted() {
         final Stream entity = getDummyStream();
         final EventType type = EventType.UPDATE;
-        final String source = streamService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = streamServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Stream> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(streamRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -98,7 +104,7 @@ public class NotificationEventEmitterStreamServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(streamService, Mockito.timeout(1000).times(0))
+        Mockito.verify(streamServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -118,7 +124,7 @@ public class NotificationEventEmitterStreamServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(streamService, Mockito.timeout(1000).times(0))
+        Mockito.verify(streamServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -138,7 +144,7 @@ public class NotificationEventEmitterStreamServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(streamService, Mockito.timeout(1000).times(0))
+        Mockito.verify(streamServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -146,7 +152,7 @@ public class NotificationEventEmitterStreamServiceTest {
     public void givenAStreamForUpsert_validateThatNotificationEventIsEmitted() {
         final Stream entity = getDummyStream();
         final EventType type = EventType.UPDATE;
-        final String source = streamService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = streamServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Stream> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(streamRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -161,7 +167,7 @@ public class NotificationEventEmitterStreamServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(streamService, Mockito.timeout(1000).times(0))
+        Mockito.verify(streamServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -169,7 +175,7 @@ public class NotificationEventEmitterStreamServiceTest {
     public void givenAStreamForCreate_handleAMulticasterException() {
         final Stream entity = getDummyStream();
         final EventType type = EventType.CREATE;
-        final String source = streamService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = streamServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Stream> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(streamRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -184,7 +190,7 @@ public class NotificationEventEmitterStreamServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(streamService, Mockito.timeout(1000).times(1))
+        Mockito.verify(streamServiceEventEmitter, Mockito.timeout(1000).times(1))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Assert.assertTrue(response.isPresent());

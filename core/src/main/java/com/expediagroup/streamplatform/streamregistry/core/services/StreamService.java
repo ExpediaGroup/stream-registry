@@ -22,13 +22,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamRepository;
@@ -36,14 +33,13 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamVali
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class StreamService implements NotificationEventEmitter<Stream> {
-  private final ApplicationEventMulticaster applicationEventMulticaster;
+public class StreamService {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
+  private final NotificationEventEmitter<Stream> streamServiceEventEmitter;
 
   public Optional<Stream> create(Stream stream) throws ValidationException {
     if (stream.getKey() != null && streamRepository.findById(stream.getKey()).isPresent()) {
@@ -51,7 +47,7 @@ public class StreamService implements NotificationEventEmitter<Stream> {
     }
     streamValidator.validateForCreate(stream);
     stream.setSpecification(handlerService.handleInsert(stream));
-    return emitEventOnProcessedEntity(EventType.CREATE, streamRepository.save(stream));
+    return streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, streamRepository.save(stream));
   }
 
   public Optional<Stream> read(StreamKey key) {
@@ -69,7 +65,7 @@ public class StreamService implements NotificationEventEmitter<Stream> {
     }
     streamValidator.validateForUpdate(stream, existing.get());
     stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
-    return emitEventOnProcessedEntity(EventType.UPDATE, streamRepository.save(stream));
+    return streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, streamRepository.save(stream));
   }
 
   public Optional<Stream> upsert(Stream stream) throws ValidationException {
@@ -92,16 +88,5 @@ public class StreamService implements NotificationEventEmitter<Stream> {
     if (read(key).isEmpty()) {
       throw new ValidationException("Stream does not exist");
     }
-  }
-
-  @Override
-  public Optional<Stream> emitEventOnProcessedEntity(EventType type, Stream entity) {
-    log.info("Emitting {} type event for entity {}", type, entity);
-    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
-  }
-
-  @Override
-  public void onFailedEmitting(Throwable ex, NotificationEvent<Stream> event) {
-    log.info("There was an error emitting event {}", event, ex);
   }
 }

@@ -22,13 +22,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamBindingRepository;
@@ -36,14 +33,13 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBind
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class StreamBindingService implements NotificationEventEmitter<StreamBinding> {
-  private final ApplicationEventMulticaster applicationEventMulticaster;
+public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
+  private final NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
 
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
     if (streamBindingRepository.findById(streamBinding.getKey()).isPresent()) {
@@ -51,7 +47,7 @@ public class StreamBindingService implements NotificationEventEmitter<StreamBind
     }
     streamBindingValidator.validateForCreate(streamBinding);
     streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
-    return emitEventOnProcessedEntity(EventType.CREATE, streamBindingRepository.save(streamBinding));
+    return streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, streamBindingRepository.save(streamBinding));
   }
 
   public Optional<StreamBinding> read(StreamBindingKey key) {
@@ -69,7 +65,7 @@ public class StreamBindingService implements NotificationEventEmitter<StreamBind
     }
     streamBindingValidator.validateForUpdate(streamBinding, existing.get());
     streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
-    return emitEventOnProcessedEntity(EventType.UPDATE, streamBindingRepository.save(streamBinding));
+    return streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, streamBindingRepository.save(streamBinding));
   }
 
   public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
@@ -92,16 +88,5 @@ public class StreamBindingService implements NotificationEventEmitter<StreamBind
     if (read(key).isEmpty()) {
       throw new ValidationException("StreamBinding does not exist");
     }
-  }
-
-  @Override
-  public Optional<StreamBinding> emitEventOnProcessedEntity(EventType type, StreamBinding entity) {
-    log.info("Emitting {} type event for entity {}", type, entity);
-    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
-  }
-
-  @Override
-  public void onFailedEmitting(Throwable ex, NotificationEvent<StreamBinding> event) {
-    log.info("There was an error emitting event {}", event, ex);
   }
 }

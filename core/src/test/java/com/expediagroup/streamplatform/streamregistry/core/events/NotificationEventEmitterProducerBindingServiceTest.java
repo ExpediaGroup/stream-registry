@@ -50,18 +50,24 @@ public class NotificationEventEmitterProducerBindingServiceTest {
     @MockBean
     private ProducerBindingRepository producerBindingRepository;
 
+    private NotificationEventEmitter<ProducerBinding> producerBindingServiceEventEmitter;
     private ProducerBindingService producerBindingService;
 
     @Before
     public void before() {
-        producerBindingService = Mockito.spy(new ProducerBindingService(applicationEventMulticaster, handlerService, producerBindingValidator, producerBindingRepository));
+        producerBindingServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<ProducerBinding>builder()
+                .classType(ProducerBinding.class)
+                .applicationEventMulticaster(applicationEventMulticaster)
+                .build());
+
+        producerBindingService = Mockito.spy(new ProducerBindingService(handlerService, producerBindingValidator, producerBindingRepository, producerBindingServiceEventEmitter));
     }
 
     @Test
     public void givenAProducerBindingForCreate_validateThatNotificationEventIsEmitted() {
         final ProducerBinding entity = getDummyProducerBinding();
         final EventType type = EventType.CREATE;
-        final String source = producerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ProducerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -75,7 +81,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -83,7 +89,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
     public void givenAProducerBindingForUpdate_validateThatNotificationEventIsEmitted() {
         final ProducerBinding entity = getDummyProducerBinding();
         final EventType type = EventType.UPDATE;
-        final String source = producerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ProducerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -98,7 +104,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -118,7 +124,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(producerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -138,7 +144,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(producerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -146,7 +152,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
     public void givenAProducerBindingForUpsert_validateThatNotificationEventIsEmitted() {
         final ProducerBinding entity = getDummyProducerBinding();
         final EventType type = EventType.UPDATE;
-        final String source = producerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ProducerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -161,7 +167,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -169,7 +175,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
     public void givenAProducerBindingForCreate_handleAMulticasterException() {
         final ProducerBinding entity = getDummyProducerBinding();
         final EventType type = EventType.CREATE;
-        final String source = producerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ProducerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -184,7 +190,7 @@ public class NotificationEventEmitterProducerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerBindingService, Mockito.timeout(1000).times(1))
+        Mockito.verify(producerBindingServiceEventEmitter, Mockito.timeout(1000).times(1))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Assert.assertTrue(response.isPresent());

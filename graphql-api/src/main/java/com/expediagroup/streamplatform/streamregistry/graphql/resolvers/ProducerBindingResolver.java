@@ -25,6 +25,7 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ProducerServ
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
@@ -56,5 +57,9 @@ public class ProducerBindingResolver implements GraphQLResolver<ProducerBinding>
         producerBinding.getKey().getInfrastructureName()
     );
     return streamBindingService.read(streamBindingKey).orElse(null);
+  }
+
+  public Status status(ProducerBinding producerBinding) {
+    return producerBinding.getStatus() == null ? new Status() : producerBinding.getStatus();
   }
 }

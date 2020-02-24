@@ -21,25 +21,14 @@ import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
-import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 @RequiredArgsConstructor
-public class InfrastructureResolver implements GraphQLResolver<Infrastructure> {
-  private final ZoneService zoneService;
+public class ZoneResolver implements GraphQLResolver<Zone> {
 
-  public Zone zone(Infrastructure infrastructure) {
-    ZoneKey zoneKey = new ZoneKey(
-        infrastructure.getKey().getZone()
-    );
-    return zoneService.read(zoneKey).orElse(null);
-  }
-
-  public Status status(Infrastructure infrastructure) {
-    return infrastructure.getStatus() == null ? new Status() : infrastructure.getStatus();
+  public Status status(Zone zone) {
+    return zone.getStatus() == null ? new Status() : zone.getStatus();
   }
 }

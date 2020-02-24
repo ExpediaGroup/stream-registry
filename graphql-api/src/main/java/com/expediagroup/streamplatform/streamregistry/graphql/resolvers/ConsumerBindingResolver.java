@@ -25,6 +25,7 @@ import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerServ
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
@@ -57,5 +58,9 @@ public class ConsumerBindingResolver implements GraphQLResolver<ConsumerBinding>
         consumerBinding.getKey().getInfrastructureName()
     );
     return streamBindingService.read(streamBindingKey).orElse(null);
+  }
+
+  public Status status(ConsumerBinding consumerBinding) {
+    return consumerBinding.getStatus() == null ? new Status() : consumerBinding.getStatus();
   }
 }
