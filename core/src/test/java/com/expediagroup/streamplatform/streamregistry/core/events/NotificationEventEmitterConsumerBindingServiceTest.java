@@ -50,18 +50,25 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     @MockBean
     private ConsumerBindingRepository consumerBindingRepository;
 
+    private NotificationEventEmitter<ConsumerBinding> consumerBindingServiceEventEmitter;
     private ConsumerBindingService consumerBindingService;
+
 
     @Before
     public void before() {
-        consumerBindingService = Mockito.spy(new ConsumerBindingService(applicationEventMulticaster, handlerService, consumerBindingValidator, consumerBindingRepository));
+        consumerBindingServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<ConsumerBinding>builder()
+                .classType(ConsumerBinding.class)
+                .applicationEventMulticaster(applicationEventMulticaster)
+                .build());
+
+        consumerBindingService = Mockito.spy(new ConsumerBindingService(handlerService, consumerBindingValidator, consumerBindingRepository, consumerBindingServiceEventEmitter));
     }
 
     @Test
     public void givenAConsumerBindingForCreate_validateThatNotificationEventIsEmitted() {
         final ConsumerBinding entity = getDummyConsumerBinding();
         final EventType type = EventType.CREATE;
-        final String source = consumerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ConsumerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(consumerBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -76,7 +83,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(consumerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(consumerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -84,7 +91,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     public void givenAConsumerBindingForUpdate_validateThatNotificationEventIsEmitted() {
         final ConsumerBinding entity = getDummyConsumerBinding();
         final EventType type = EventType.UPDATE;
-        final String source = consumerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ConsumerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(consumerBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -99,7 +106,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(consumerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(consumerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -119,7 +126,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(consumerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(consumerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -139,7 +146,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(consumerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(consumerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -147,7 +154,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     public void givenAConsumerBindingForUpsert_validateThatNotificationEventIsEmitted() {
         final ConsumerBinding entity = getDummyConsumerBinding();
         final EventType type = EventType.UPDATE;
-        final String source = consumerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ConsumerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(consumerBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -162,7 +169,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(consumerBindingService, Mockito.timeout(1000).times(0))
+        Mockito.verify(consumerBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -170,7 +177,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     public void givenAConsumerBindingForCreate_handleAMulticasterException() {
         final ConsumerBinding entity = getDummyConsumerBinding();
         final EventType type = EventType.CREATE;
-        final String source = consumerBindingService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<ConsumerBinding> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(consumerBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -185,7 +192,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(consumerBindingService, Mockito.timeout(1000).times(1))
+        Mockito.verify(consumerBindingServiceEventEmitter, Mockito.timeout(1000).times(1))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Assert.assertTrue(response.isPresent());

@@ -50,18 +50,24 @@ public class NotificationEventEmitterDomainServiceTest {
     @MockBean
     private DomainRepository domainRepository;
 
+    private NotificationEventEmitter<Domain> domainServiceEventEmitter;
     private DomainService domainService;
 
     @Before
     public void before() {
-        domainService = Mockito.spy(new DomainService(applicationEventMulticaster, handlerService, domainValidator, domainRepository));
+        domainServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Domain>builder()
+                        .classType(Domain.class)
+                        .applicationEventMulticaster(applicationEventMulticaster)
+                        .build());
+
+        domainService = Mockito.spy(new DomainService(handlerService, domainValidator, domainRepository, domainServiceEventEmitter));
     }
 
     @Test
     public void givenADomainForCreate_validateThatNotificationEventIsEmitted() {
         final Domain entity = getDummyDomain();
         final EventType type = EventType.CREATE;
-        final String source = domainService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -76,7 +82,7 @@ public class NotificationEventEmitterDomainServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(domainService, Mockito.timeout(1000).times(0))
+        Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -84,7 +90,7 @@ public class NotificationEventEmitterDomainServiceTest {
     public void givenADomainForUpdate_validateThatNotificationEventIsEmitted() {
         final Domain entity = getDummyDomain();
         final EventType type = EventType.UPDATE;
-        final String source = domainService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -99,7 +105,7 @@ public class NotificationEventEmitterDomainServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(domainService, Mockito.timeout(1000).times(0))
+        Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -119,7 +125,7 @@ public class NotificationEventEmitterDomainServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(domainService, Mockito.timeout(1000).times(0))
+        Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -139,7 +145,7 @@ public class NotificationEventEmitterDomainServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(domainService, Mockito.timeout(1000).times(0))
+        Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -147,7 +153,7 @@ public class NotificationEventEmitterDomainServiceTest {
     public void givenADomainForUpsert_validateThatNotificationEventIsEmitted() {
         final Domain entity = getDummyDomain();
         final EventType type = EventType.UPDATE;
-        final String source = domainService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -162,7 +168,7 @@ public class NotificationEventEmitterDomainServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(domainService, Mockito.timeout(1000).times(0))
+        Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -170,7 +176,7 @@ public class NotificationEventEmitterDomainServiceTest {
     public void givenADomainForCreate_handleAMulticasterException() {
         final Domain entity = getDummyDomain();
         final EventType type = EventType.CREATE;
-        final String source = domainService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -185,7 +191,7 @@ public class NotificationEventEmitterDomainServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(domainService, Mockito.timeout(1000).times(1))
+        Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(1))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Assert.assertTrue(response.isPresent());

@@ -22,13 +22,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRepository;
@@ -36,14 +33,13 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaVali
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class SchemaService implements NotificationEventEmitter<Schema> {
-  private final ApplicationEventMulticaster applicationEventMulticaster;
+public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
+  private final NotificationEventEmitter<Schema> schemaServiceEventEmitter;
 
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (schemaRepository.findById(schema.getKey()).isPresent()) {
@@ -51,7 +47,7 @@ public class SchemaService implements NotificationEventEmitter<Schema> {
     }
     schemaValidator.validateForCreate(schema);
     schema.setSpecification(handlerService.handleInsert(schema));
-    return emitEventOnProcessedEntity(EventType.CREATE, schemaRepository.save(schema));
+    return schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, schemaRepository.save(schema));
   }
 
   public Optional<Schema> read(SchemaKey key) {
@@ -69,7 +65,7 @@ public class SchemaService implements NotificationEventEmitter<Schema> {
     }
     schemaValidator.validateForUpdate(schema, existing.get());
     schema.setSpecification(handlerService.handleUpdate(schema, existing.get()));
-    return emitEventOnProcessedEntity(EventType.UPDATE, schemaRepository.save(schema));
+    return schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, schemaRepository.save(schema));
   }
 
   public Optional<Schema> upsert(Schema schema) throws ValidationException {
@@ -92,16 +88,5 @@ public class SchemaService implements NotificationEventEmitter<Schema> {
     if (read(key).isEmpty()) {
       throw new ValidationException("Schema does not exist");
     }
-  }
-
-  @Override
-  public Optional<Schema> emitEventOnProcessedEntity(EventType type, Schema entity) {
-    log.info("Emitting {} type event for entity {}", type, entity);
-    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
-  }
-
-  @Override
-  public void onFailedEmitting(Throwable ex, NotificationEvent<Schema> event) {
-    log.info("There was an error emitting event {}", event, ex);
   }
 }

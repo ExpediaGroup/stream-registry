@@ -22,13 +22,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerBindingRepository;
@@ -36,14 +33,13 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBi
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class ConsumerBindingService implements NotificationEventEmitter<ConsumerBinding> {
-  private final ApplicationEventMulticaster applicationEventMulticaster;
+public class ConsumerBindingService {
   private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
+  private final NotificationEventEmitter<ConsumerBinding> consumerBindingServiceEventEmitter;
 
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
     if (consumerBindingRepository.findById(consumerBinding.getKey()).isPresent()) {
@@ -51,7 +47,7 @@ public class ConsumerBindingService implements NotificationEventEmitter<Consumer
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
     consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
-    return emitEventOnProcessedEntity(EventType.CREATE, consumerBindingRepository.save(consumerBinding));
+    return consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, consumerBindingRepository.save(consumerBinding));
   }
 
   public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
@@ -69,7 +65,7 @@ public class ConsumerBindingService implements NotificationEventEmitter<Consumer
     }
     consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
     consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
-    return emitEventOnProcessedEntity(EventType.UPDATE, consumerBindingRepository.save(consumerBinding));
+    return consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, consumerBindingRepository.save(consumerBinding));
   }
 
   public Optional<ConsumerBinding> upsert(ConsumerBinding consumerBinding) throws ValidationException {
@@ -92,16 +88,5 @@ public class ConsumerBindingService implements NotificationEventEmitter<Consumer
     if (read(key).isEmpty()) {
       throw new ValidationException("ConsumerBinding does not exist");
     }
-  }
-
-  @Override
-  public Optional<ConsumerBinding> emitEventOnProcessedEntity(EventType type, ConsumerBinding entity) {
-    log.info("Emitting {} type event for entity {}", type, entity);
-    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
-  }
-
-  @Override
-  public void onFailedEmitting(Throwable ex, NotificationEvent<ConsumerBinding> event) {
-    log.info("There was an error emitting event {}", event, ex);
   }
 }

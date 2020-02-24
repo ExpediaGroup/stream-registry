@@ -22,13 +22,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ZoneRepository;
@@ -36,14 +33,13 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValida
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class ZoneService implements NotificationEventEmitter<Zone> {
-  private final ApplicationEventMulticaster applicationEventMulticaster;
+public class ZoneService {
   private final HandlerService handlerService;
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
+  private final NotificationEventEmitter<Zone> zoneServiceEventEmitter;
 
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (zoneRepository.findById(zone.getKey()).isPresent()) {
@@ -51,7 +47,7 @@ public class ZoneService implements NotificationEventEmitter<Zone> {
     }
     zoneValidator.validateForCreate(zone);
     zone.setSpecification(handlerService.handleInsert(zone));
-    return emitEventOnProcessedEntity(EventType.CREATE, zoneRepository.save(zone));
+    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, zoneRepository.save(zone));
   }
 
   public Optional<Zone> read(ZoneKey key) {
@@ -69,7 +65,7 @@ public class ZoneService implements NotificationEventEmitter<Zone> {
     }
     zoneValidator.validateForUpdate(zone, existing.get());
     zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
-    return emitEventOnProcessedEntity(EventType.UPDATE, zoneRepository.save(zone));
+    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, zoneRepository.save(zone));
   }
 
   public Optional<Zone> upsert(Zone zone) throws ValidationException {
@@ -92,16 +88,5 @@ public class ZoneService implements NotificationEventEmitter<Zone> {
     if (read(key).isEmpty()) {
       throw new ValidationException("Zone does not exist");
     }
-  }
-
-  @Override
-  public Optional<Zone> emitEventOnProcessedEntity(EventType type, Zone entity) {
-    log.info("Emitting {} type event for entity {}", type, entity);
-    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
-  }
-
-  @Override
-  public void onFailedEmitting(Throwable ex, NotificationEvent<Zone> event) {
-    log.info("There was an error emitting event {}", event, ex);
   }
 }

@@ -50,18 +50,24 @@ public class NotificationEventEmitterSchemaServiceTest {
     @MockBean
     private SchemaRepository schemaRepository;
 
+    private NotificationEventEmitter<Schema> schemaServiceEventEmitter;
     private SchemaService schemaService;
 
     @Before
     public void before() {
-        schemaService = Mockito.spy(new SchemaService(applicationEventMulticaster, handlerService, schemaValidator, schemaRepository));
+        schemaServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Schema>builder()
+                .classType(Schema.class)
+                .applicationEventMulticaster(applicationEventMulticaster)
+                .build());
+
+        schemaService = Mockito.spy(new SchemaService(handlerService, schemaValidator, schemaRepository, schemaServiceEventEmitter));
     }
 
     @Test
     public void givenASchemaForCreate_validateThatNotificationEventIsEmitted() {
         final Schema entity = getDummySchema();
         final EventType type = EventType.CREATE;
-        final String source = schemaService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = schemaServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Schema> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(schemaRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -75,7 +81,7 @@ public class NotificationEventEmitterSchemaServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(schemaService, Mockito.timeout(1000).times(0))
+        Mockito.verify(schemaServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -83,7 +89,7 @@ public class NotificationEventEmitterSchemaServiceTest {
     public void givenASchemaForUpdate_validateThatNotificationEventIsEmitted() {
         final Schema entity = getDummySchema();
         final EventType type = EventType.UPDATE;
-        final String source = schemaService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = schemaServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Schema> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(schemaRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -98,7 +104,7 @@ public class NotificationEventEmitterSchemaServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(schemaService, Mockito.timeout(1000).times(0))
+        Mockito.verify(schemaServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -118,7 +124,7 @@ public class NotificationEventEmitterSchemaServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(schemaService, Mockito.timeout(1000).times(0))
+        Mockito.verify(schemaServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -138,7 +144,7 @@ public class NotificationEventEmitterSchemaServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(schemaService, Mockito.timeout(1000).times(0))
+        Mockito.verify(schemaServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -146,7 +152,7 @@ public class NotificationEventEmitterSchemaServiceTest {
     public void givenASchemaForUpsert_validateThatNotificationEventIsEmitted() {
         final Schema entity = getDummySchema();
         final EventType type = EventType.UPDATE;
-        final String source = schemaService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = schemaServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Schema> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(schemaRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -161,7 +167,7 @@ public class NotificationEventEmitterSchemaServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(schemaService, Mockito.timeout(1000).times(0))
+        Mockito.verify(schemaServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -169,7 +175,7 @@ public class NotificationEventEmitterSchemaServiceTest {
     public void givenASchemaForCreate_handleAMulticasterException() {
         final Schema entity = getDummySchema();
         final EventType type = EventType.CREATE;
-        final String source = schemaService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = schemaServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Schema> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(schemaRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -184,7 +190,7 @@ public class NotificationEventEmitterSchemaServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(schemaService, Mockito.timeout(1000).times(1))
+        Mockito.verify(schemaServiceEventEmitter, Mockito.timeout(1000).times(1))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Assert.assertTrue(response.isPresent());

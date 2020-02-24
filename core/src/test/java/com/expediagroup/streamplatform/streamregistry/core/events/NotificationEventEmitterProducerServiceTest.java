@@ -50,18 +50,24 @@ public class NotificationEventEmitterProducerServiceTest {
     @MockBean
     private ProducerRepository producerRepository;
 
+    private NotificationEventEmitter<Producer> producerServiceEventEmitter;
     private ProducerService producerService;
 
     @Before
     public void before() {
-        producerService = Mockito.spy(new ProducerService(applicationEventMulticaster, handlerService, producerValidator, producerRepository));
+        producerServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Producer>builder()
+                .classType(Producer.class)
+                .applicationEventMulticaster(applicationEventMulticaster)
+                .build());
+
+        producerService = Mockito.spy(new ProducerService(handlerService, producerValidator, producerRepository, producerServiceEventEmitter));
     }
 
     @Test
     public void givenAProducerForCreate_validateThatNotificationEventIsEmitted() {
         final Producer entity = getDummyProducer();
         final EventType type = EventType.CREATE;
-        final String source = producerService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -75,7 +81,7 @@ public class NotificationEventEmitterProducerServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -83,7 +89,7 @@ public class NotificationEventEmitterProducerServiceTest {
     public void givenAProducerForUpdate_validateThatNotificationEventIsEmitted() {
         final Producer entity = getDummyProducer();
         final EventType type = EventType.UPDATE;
-        final String source = producerService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -98,7 +104,7 @@ public class NotificationEventEmitterProducerServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -118,7 +124,7 @@ public class NotificationEventEmitterProducerServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(producerService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -138,7 +144,7 @@ public class NotificationEventEmitterProducerServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
                 .multicastEvent(Mockito.any());
 
-        Mockito.verify(producerService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.any());
     }
 
@@ -146,7 +152,7 @@ public class NotificationEventEmitterProducerServiceTest {
     public void givenAProducerForUpsert_validateThatNotificationEventIsEmitted() {
         final Producer entity = getDummyProducer();
         final EventType type = EventType.UPDATE;
-        final String source = producerService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
@@ -161,7 +167,7 @@ public class NotificationEventEmitterProducerServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerService, Mockito.timeout(1000).times(0))
+        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
     }
 
@@ -169,7 +175,7 @@ public class NotificationEventEmitterProducerServiceTest {
     public void givenAProducerForCreate_handleAMulticasterException() {
         final Producer entity = getDummyProducer();
         final EventType type = EventType.CREATE;
-        final String source = producerService.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
         final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
         Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -184,7 +190,7 @@ public class NotificationEventEmitterProducerServiceTest {
         Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
                 .multicastEvent(event);
 
-        Mockito.verify(producerService, Mockito.timeout(1000).times(1))
+        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(1))
                 .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
         Assert.assertTrue(response.isPresent());

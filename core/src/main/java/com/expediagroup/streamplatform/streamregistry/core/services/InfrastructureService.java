@@ -22,13 +22,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.InfrastructureRepository;
@@ -36,14 +33,13 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Infrastruc
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class InfrastructureService implements NotificationEventEmitter<Infrastructure> {
-  private final ApplicationEventMulticaster applicationEventMulticaster;
+public class InfrastructureService {
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
+  private final NotificationEventEmitter<Infrastructure> infrastructureServiceEventEmitter;
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (infrastructureRepository.findById(infrastructure.getKey()).isPresent()) {
@@ -51,7 +47,7 @@ public class InfrastructureService implements NotificationEventEmitter<Infrastru
     }
     infrastructureValidator.validateForCreate(infrastructure);
     infrastructure.setSpecification(handlerService.handleInsert(infrastructure));
-    return emitEventOnProcessedEntity(EventType.CREATE, infrastructureRepository.save(infrastructure));
+    return infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, infrastructureRepository.save(infrastructure));
   }
 
   public Optional<Infrastructure> read(InfrastructureKey key) {
@@ -69,7 +65,7 @@ public class InfrastructureService implements NotificationEventEmitter<Infrastru
     }
     infrastructureValidator.validateForUpdate(infrastructure, existing.get());
     infrastructure.setSpecification(handlerService.handleUpdate(infrastructure, existing.get()));
-    return emitEventOnProcessedEntity(EventType.UPDATE, infrastructureRepository.save(infrastructure));
+    return infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, infrastructureRepository.save(infrastructure));
   }
 
   public Optional<Infrastructure> upsert(Infrastructure infrastructure) throws ValidationException {
@@ -92,16 +88,5 @@ public class InfrastructureService implements NotificationEventEmitter<Infrastru
     if (read(key).isEmpty()) {
       throw new ValidationException("Infrastructure does not exist");
     }
-  }
-
-  @Override
-  public Optional<Infrastructure> emitEventOnProcessedEntity(EventType type, Infrastructure entity) {
-    log.info("Emitting {} type event for entity {}", type, entity);
-    return emitEvent(applicationEventMulticaster::multicastEvent, type, entity);
-  }
-
-  @Override
-  public void onFailedEmitting(Throwable ex, NotificationEvent<Infrastructure> event) {
-    log.info("There was an error emitting event {}", event, ex);
   }
 }
