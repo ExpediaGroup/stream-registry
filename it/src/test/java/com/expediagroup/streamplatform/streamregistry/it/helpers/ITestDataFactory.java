@@ -80,6 +80,7 @@ public class ITestDataFactory {
   public String consumerName;
   public String streamName;
   public String nonExistingStreamName;
+  public String alternativeStreamName;
   public String key;
   public String value;
   public String description;
@@ -92,7 +93,7 @@ public class ITestDataFactory {
     consumerName = "consumer_name_" + suffix;
     streamName = "stream_name_" + suffix;
     nonExistingStreamName = "non_existing_stream_name_" + suffix;
-
+    alternativeStreamName = "alternative_stream_name_" + suffix;
     infrastructureName = "infrastructure_name_" + suffix;
     producerName = "producer_name_" + suffix;
 
@@ -284,6 +285,13 @@ public class ITestDataFactory {
         .key(streamKeyNonExistingStreamInputBuilder().build());
   }
 
+  public UpsertStreamMutation.Builder upsertStreamMutationUpsertWithDifferentSchemaKeySchemaBuilder() {
+    return UpsertStreamMutation.builder()
+        .specification(specificationInputBuilder(DEFAULT).build())
+        .schema(schemaKeyChangedSchemaInputBuilder().build())
+        .key(streamKeyInputBuilder().build());
+  }
+
   public StreamKeyInput.Builder streamKeyNonExistingStreamInputBuilder() {
     return StreamKeyInput.builder()
         .domain(domainName)
@@ -320,6 +328,12 @@ public class ITestDataFactory {
     return SchemaKeyInput.builder()
         .domain(domainName)
         .name(streamName);
+  }
+
+  public SchemaKeyInput.Builder schemaKeyChangedSchemaInputBuilder() {
+    return SchemaKeyInput.builder()
+        .domain(domainName)
+        .name(alternativeStreamName);
   }
 
   public InsertStreamBindingMutation.Builder insertStreamBindingMutationBuilder() {
