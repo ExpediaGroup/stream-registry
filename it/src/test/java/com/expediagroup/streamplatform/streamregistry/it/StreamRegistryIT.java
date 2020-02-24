@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,6 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
 @Slf4j
 public class StreamRegistryIT {
   public static ITestClient client;
-  public static String url;
-
   private static ConfigurableApplicationContext context;
 
   @ClassRule
@@ -68,7 +66,7 @@ public class StreamRegistryIT {
         "--spring.jpa.show-sql=false"
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
-    url = "http://localhost:" + context.getEnvironment().getProperty("local.server.port") + "/graphql";
+    final String url = String.format("http://localhost:%s%s", context.getEnvironment().getProperty("local.server.port"), "/graphql");
     client = new ITestClient(url);
   }
 

@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added a spring application event multicaster
+- Added an interface for services to multicast CUD events
+- Unit tests
+
+### Changed
+- Changed all core service to support `NotificationEventEmitter`
+- Changed all core service CUD methods to emit notification events
+
 ### Bugfix
 - Status field will return blank object when it is null for all the entities.
 - updateStream contract change(SchemaKeyInput not required in input) and upsertStream fixes for no schema during create

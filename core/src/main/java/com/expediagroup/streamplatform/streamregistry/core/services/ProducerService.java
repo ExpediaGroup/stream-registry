@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
@@ -37,6 +39,7 @@ public class ProducerService {
   private final HandlerService handlerService;
   private final ProducerValidator producerValidator;
   private final ProducerRepository producerRepository;
+  private final NotificationEventEmitter<Producer> producerServiceEventEmitter;
 
   public Optional<Producer> create(Producer producer) throws ValidationException {
     if (producerRepository.findById(producer.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class ProducerService {
     }
     producerValidator.validateForCreate(producer);
     producer.setSpecification(handlerService.handleInsert(producer));
-    return Optional.ofNullable(producerRepository.save(producer));
+    return producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, producerRepository.save(producer));
   }
 
   public Optional<Producer> read(ProducerKey key) {
@@ -62,7 +65,7 @@ public class ProducerService {
     }
     producerValidator.validateForUpdate(producer, existing.get());
     producer.setSpecification(handlerService.handleUpdate(producer, existing.get()));
-    return Optional.ofNullable(producerRepository.save(producer));
+    return producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, producerRepository.save(producer));
   }
 
   public Optional<Producer> upsert(Producer producer) throws ValidationException {

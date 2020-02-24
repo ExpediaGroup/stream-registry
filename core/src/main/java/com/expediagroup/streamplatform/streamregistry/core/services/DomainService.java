@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
@@ -37,6 +39,7 @@ public class DomainService {
   private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
+  private final NotificationEventEmitter<Domain> domainServiceEventEmitter;
 
   public Optional<Domain> create(Domain domain) throws ValidationException {
     if (domainRepository.findById(domain.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class DomainService {
     }
     domainValidator.validateForCreate(domain);
     domain.setSpecification(handlerService.handleInsert(domain));
-    return Optional.ofNullable(domainRepository.save(domain));
+    return domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, domainRepository.save(domain));
   }
 
   public Optional<Domain> read(DomainKey key) {
@@ -62,7 +65,7 @@ public class DomainService {
     }
     domainValidator.validateForUpdate(domain, existing.get());
     domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
-    return Optional.ofNullable(domainRepository.save(domain));
+    return domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, domainRepository.save(domain));
   }
 
   public Optional<Domain> upsert(Domain domain) throws ValidationException {

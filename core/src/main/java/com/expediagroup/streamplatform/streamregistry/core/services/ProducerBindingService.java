@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
@@ -37,6 +39,7 @@ public class ProducerBindingService {
   private final HandlerService handlerService;
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
+  private final NotificationEventEmitter<ProducerBinding> producerBindingServiceEventEmitter;
 
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
     if (producerBindingRepository.findById(producerBinding.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForCreate(producerBinding);
     producerBinding.setSpecification(handlerService.handleInsert(producerBinding));
-    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
+    return producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, producerBindingRepository.save(producerBinding));
   }
 
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
@@ -62,7 +65,7 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForUpdate(producerBinding, existing.get());
     producerBinding.setSpecification(handlerService.handleUpdate(producerBinding, existing.get()));
-    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
+    return producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, producerBindingRepository.save(producerBinding));
   }
 
   public Optional<ProducerBinding> upsert(ProducerBinding producerBinding) throws ValidationException {
