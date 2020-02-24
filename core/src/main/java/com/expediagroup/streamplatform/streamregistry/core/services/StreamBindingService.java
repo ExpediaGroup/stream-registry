@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
+import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
@@ -37,6 +39,7 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
+  private final NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
 
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
     if (streamBindingRepository.findById(streamBinding.getKey()).isPresent()) {
@@ -44,7 +47,7 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForCreate(streamBinding);
     streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
-    return Optional.ofNullable(streamBindingRepository.save(streamBinding));
+    return streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, streamBindingRepository.save(streamBinding));
   }
 
   public Optional<StreamBinding> read(StreamBindingKey key) {
@@ -62,7 +65,7 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForUpdate(streamBinding, existing.get());
     streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
-    return Optional.ofNullable(streamBindingRepository.save(streamBinding));
+    return streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, streamBindingRepository.save(streamBinding));
   }
 
   public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {

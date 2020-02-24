@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSchemaMutation;
@@ -108,6 +109,8 @@ public class SchemaTestStage extends AbstractTestStage {
     SchemasQuery.Data after = (SchemasQuery.Data) client.getOptionalData(SchemasQuery.builder().key(query).build()).get();
 
     assertEquals(after.getSchema().getByQuery().size(), before.getSchema().getByQuery().size() + 1);
+
+    assertNotNull(after.getSchema().getByQuery().get(1).getStatus().get().getAgentStatus());
   }
 
   @Override

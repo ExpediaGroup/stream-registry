@@ -13,21 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import org.springframework.context.annotation.Configuration;
 
-import lombok.Data;
-
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
-
-@Data
-@Entity
-public class Zone implements ManagedType {
-
-  @EmbeddedId
-  private ZoneKey key;
-  private Specification specification;
-  private Status status;
+@Configuration
+public class TestConfig {
 }
