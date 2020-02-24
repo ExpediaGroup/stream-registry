@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
@@ -122,6 +123,7 @@ public class ProducerTestStage extends AbstractTestStage {
     ProducersQuery.Data after = (ProducersQuery.Data) client.getOptionalData(ProducersQuery.builder().key(query).build()).get();
 
     assertEquals(after.getProducer().getByQuery().size(), before.getProducer().getByQuery().size() + 1);
+    assertNotNull(after.getProducer().getByQuery().get(0).getStatus().get().getAgentStatus());
   }
 
   @Override

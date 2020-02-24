@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Changed all core service to support `NotificationEventEmitter`
 - Changed all core service CUD methods to emit notification events
 
+### Bugfix
+- Status field will return blank object when it is null for all the entities.
+
 ## [0.9.4] - 20200206
 ### Added
 - Added an `authentication_group` tag to the `graphql_api` metric.
