@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Added a `notification-support` with a generic model for event listeners and handlers, including
+    - A listener for schema events
+    - A listener for stream events
+    - A Kafka handler for schema events
+    - An Automatic Kafka setup
+    - A default avro protocol (a new one can be configured and dynamically loaded)
+    - Integration tests 
 - Added a spring application event multicaster
 - Added an interface for services to multicast CUD events
 - Unit tests
@@ -13,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Changed all core service to support `NotificationEventEmitter`
 - Changed all core service CUD methods to emit notification events
+- Configuration in `spring-boot-starter` module to include `notification-support` config
 
 ### Bugfix
 - Status field will return blank object when it is null for all the entities.
