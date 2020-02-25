@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,8 @@ public class ITestDataFactory {
   public String domainName;
   public String consumerName;
   public String streamName;
+  public String nonExistingStreamName;
+  public String alternativeStreamName;
   public String key;
   public String value;
   public String description;
@@ -90,7 +92,8 @@ public class ITestDataFactory {
     domainName = "domain_name_" + suffix;
     consumerName = "consumer_name_" + suffix;
     streamName = "stream_name_" + suffix;
-
+    nonExistingStreamName = "non_existing_stream_name_" + suffix;
+    alternativeStreamName = "alternative_stream_name_" + suffix;
     infrastructureName = "infrastructure_name_" + suffix;
     producerName = "producer_name_" + suffix;
 
@@ -266,7 +269,6 @@ public class ITestDataFactory {
   public UpdateStreamMutation.Builder updateStreamMutationBuilder() {
     return UpdateStreamMutation.builder()
         .specification(specificationInputBuilder(DEFAULT).build())
-        .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
   }
 
@@ -275,6 +277,26 @@ public class ITestDataFactory {
         .specification(specificationInputBuilder(DEFAULT).build())
         .schema(schemaKeyInputBuilder().build())
         .key(streamKeyInputBuilder().build());
+  }
+
+  public UpsertStreamMutation.Builder upsertStreamMutationInsertWithoutSchemaBuilder() {
+    return UpsertStreamMutation.builder()
+        .specification(specificationInputBuilder(DEFAULT).build())
+        .key(streamKeyNonExistingStreamInputBuilder().build());
+  }
+
+  public UpsertStreamMutation.Builder upsertStreamMutationUpsertWithDifferentSchemaKeySchemaBuilder() {
+    return UpsertStreamMutation.builder()
+        .specification(specificationInputBuilder(DEFAULT).build())
+        .schema(schemaKeyChangedSchemaInputBuilder().build())
+        .key(streamKeyInputBuilder().build());
+  }
+
+  public StreamKeyInput.Builder streamKeyNonExistingStreamInputBuilder() {
+    return StreamKeyInput.builder()
+        .domain(domainName)
+        .name(nonExistingStreamName)
+        .version(1);
   }
 
   public StreamKeyInput.Builder streamKeyInputBuilder() {
@@ -306,6 +328,12 @@ public class ITestDataFactory {
     return SchemaKeyInput.builder()
         .domain(domainName)
         .name(streamName);
+  }
+
+  public SchemaKeyInput.Builder schemaKeyChangedSchemaInputBuilder() {
+    return SchemaKeyInput.builder()
+        .domain(domainName)
+        .name(alternativeStreamName);
   }
 
   public InsertStreamBindingMutation.Builder insertStreamBindingMutationBuilder() {

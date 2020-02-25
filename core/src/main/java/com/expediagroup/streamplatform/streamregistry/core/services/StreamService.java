@@ -63,6 +63,11 @@ public class StreamService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
+    if(stream.getSchemaKey() != null && !stream.getSchemaKey().equals(existing.get().getSchemaKey())) {
+      //there is a schema change
+      throw new ValidationException("Can't update because schema change is not allowed");
+    }
+    stream.setSchemaKey(existing.get().getSchemaKey());
     streamValidator.validateForUpdate(stream, existing.get());
     stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
     return streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, streamRepository.save(stream));
