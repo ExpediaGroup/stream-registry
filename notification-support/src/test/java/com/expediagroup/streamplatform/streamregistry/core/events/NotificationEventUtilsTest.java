@@ -1,33 +1,18 @@
 /**
  * Copyright (C) 2018-2020 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///**
-// * Copyright (C) 2018-2020 Expedia, Inc.
-// *
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// * http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import java.util.Collections;
@@ -49,29 +34,29 @@ import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
 @Slf4j
-public class KafkaNotificationEventUtilsTest {
+public class NotificationEventUtilsTest {
 
     @Test
     public void having_a_static_method_in_classpath_verify_that_is_loaded_properly() throws NoSuchMethodException, ClassNotFoundException {
-        Function<Stream, AvroEvent> func = KafkaNotificationEventUtils.loadToAvroStaticMethod(KafkaNotificationEventUtilsTest.class.getName(), "myCustomStreamToAvroEntity", Stream.class);
+        Function<Stream, AvroEvent> func = NotificationEventUtils.loadToAvroStaticMethod(NotificationEventUtilsTest.class.getName(), "myCustomStreamToAvroEntity", Stream.class);
         Assert.assertNotNull("retrieved conversion method can not be null", func);
     }
 
     @Test(expected = NoSuchMethodException.class)
     public void having_an_undefined_method_in_classpath_verify_that_exception_is_thrown() throws NoSuchMethodException, ClassNotFoundException {
-        KafkaNotificationEventUtils.loadToAvroStaticMethod(KafkaNotificationEventUtilsTest.class.getName(), "myCustomStreamToAvroEntityNonExistingMethod", Stream.class);
+        NotificationEventUtils.loadToAvroStaticMethod(NotificationEventUtilsTest.class.getName(), "myCustomStreamToAvroEntityNonExistingMethod", Stream.class);
     }
 
     @Test(expected = ClassNotFoundException.class)
     public void having_an_undefined_class_verify_that_exception_is_thrown() throws NoSuchMethodException, ClassNotFoundException {
-        KafkaNotificationEventUtils.loadToAvroStaticMethod("NonExistentClass", "myCustomStreamToAvroEntityNonExistingMethod", Stream.class);
+        NotificationEventUtils.loadToAvroStaticMethod("NonExistentClass", "myCustomStreamToAvroEntityNonExistingMethod", Stream.class);
     }
 
     @Test
     public void having_loaded_a_method_verify_it_executes() throws NoSuchMethodException, ClassNotFoundException {
         Stream myArg = new Stream();
 
-        Function<Stream, AvroEvent> func = KafkaNotificationEventUtils.loadToAvroStaticMethod(KafkaNotificationEventUtilsTest.class.getName(), "myCustomStreamToAvroEntity", Stream.class);
+        Function<Stream, AvroEvent> func = NotificationEventUtils.loadToAvroStaticMethod(NotificationEventUtilsTest.class.getName(), "myCustomStreamToAvroEntity", Stream.class);
 
         Assert.assertNotNull("retrieved conversion method can not be null", func);
 
@@ -82,9 +67,9 @@ public class KafkaNotificationEventUtilsTest {
 
     @Test
     public void having_a_complete_schema_verify_that_is_correctly_built() {
-        Function<Schema, AvroKey> toKeyRecord = KafkaNotificationEventUtils::toAvroKeyRecord;
+        Function<Schema, AvroKey> toKeyRecord = NotificationEventUtils::toAvroKeyRecord;
 
-        Function<Schema, AvroEvent> toValueRecord = KafkaNotificationEventUtils::toAvroValueRecord;
+        Function<Schema, AvroEvent> toValueRecord = NotificationEventUtils::toAvroValueRecord;
 
         val name = "name";
         val domain = "domain";
@@ -136,6 +121,7 @@ public class KafkaNotificationEventUtilsTest {
         Assert.assertEquals(statusJson, avroEvent.getSchemaEntity().getStatusString());
     }
 
+    // Don't remove, is loaded by reflection for this test...
     public static AvroEvent myCustomStreamToAvroEntity(Stream egStream) {
         log.info("My custom event is being called ☺ {}", egStream);
 

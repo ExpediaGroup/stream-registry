@@ -15,29 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-
-@Component
-public class MyListener {
-
-    // @Async
-    @EventListener
-    public void listen(NotificationEvent<Domain> event) {
-        System.out.println("THREAD " + Thread.currentThread()
-                .getId() + " -> " + event);
-
-        System.out.println(event.getSource());
-
-    }
-
-    @EventListener
-    public void listenStr(NotificationEvent<String> event) {
-        System.out.println("THREAD " + Thread.currentThread()
-                .getId() + " -> " + event);
-    }
-
-
+public interface NotificationEventHandler<T> {
+    void onCreate(NotificationEvent<T> event);
+    void onUpdate(NotificationEvent<T> event);
+    void onDelete(NotificationEvent<T> event);
 }

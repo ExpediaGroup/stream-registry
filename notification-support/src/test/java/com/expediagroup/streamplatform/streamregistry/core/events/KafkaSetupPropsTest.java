@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2020 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,42 +15,43 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.KafkaNotificationListenerConfig.*;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.*;
 import static org.junit.Assert.*;
+
+import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = MockListenerConfiguration.class,
+        classes = KafkaSetupPropsTest.MockListenerConfiguration.class,
         properties = {
                 KAFKA_NOTIFICATIONS_ENABLED_PROPERTY + "=true",
-                KAFKA_TOPIC_SETUP_PROPERTY + "=" + KafkaSetupHandlerTest.TEST_TOPIC_SETUP_ENABLED,
-                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=" + KafkaSetupHandlerTest.TEST_BOOTSTRAP_SERVERS,
-                KAFKA_TOPIC_NAME_PROPERTY + "=" + KafkaSetupHandlerTest.TEST_TOPIC,
-                KAFKA_TOPIC_SETUP_PROPERTY + ".numPartitions=" + KafkaSetupHandlerTest.TEST_PARTITIONS,
-                KAFKA_TOPIC_SETUP_PROPERTY + ".replicationFactor=" + KafkaSetupHandlerTest.TEST_REPLICATION_FACTOR,
+                KAFKA_TOPIC_SETUP_PROPERTY + "=" + KafkaSetupPropsTest.TEST_TOPIC_SETUP_ENABLED,
+                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=" + KafkaSetupPropsTest.TEST_BOOTSTRAP_SERVERS,
+                KAFKA_TOPIC_NAME_PROPERTY + "=" + KafkaSetupPropsTest.TEST_TOPIC,
+                KAFKA_TOPIC_SETUP_PROPERTY + ".numPartitions=" + KafkaSetupPropsTest.TEST_PARTITIONS,
+                KAFKA_TOPIC_SETUP_PROPERTY + ".replicationFactor=" + KafkaSetupPropsTest.TEST_REPLICATION_FACTOR,
                 KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + "=foo:8081"
         }
 )
-public class KafkaSetupHandlerTest {
+public class KafkaSetupPropsTest {
     public static final String TEST_TOPIC_SETUP_ENABLED = "true";
     public static final String TEST_BOOTSTRAP_SERVERS = "a:9092,b:9092";
     public static final String TEST_TOPIC = "my-topic";
     public static final String TEST_PARTITIONS = "2";
     public static final String TEST_REPLICATION_FACTOR = "1";
-
-    @Autowired
-    private KafkaNotificationEventListener kafkaNotificationEventListener;
 
     @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "}")
     private String bootstrapServers;
@@ -76,14 +77,21 @@ public class KafkaSetupHandlerTest {
         assertEquals("Kafka setup flag doesn't match", isKafkaSetupEnabled, Boolean.parseBoolean(TEST_TOPIC_SETUP_ENABLED));
     }
 
-    @Test
-    public void having_topic_setup_enabled_verify_that_KafkaSetupHandler_setup_method_is_being_called_in_postconstruct() {
-        assertTrue("KafkaSetupHandler should be present", kafkaNotificationEventListener.getKafkaSetupHandler().isPresent());
+    @Configuration
+    public static class MockListenerConfiguration extends NotificationEventConfig {
+        @Value("${" + KAFKA_TOPIC_NAME_PROPERTY + ":#{null}}")
+        private String notificationEventsTopic;
 
-        // This is our spy from MockListenerConfiguration!
-        KafkaSetupHandler handler = kafkaNotificationEventListener.getKafkaSetupHandler().get();
+        @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
+        private String bootstrapServers;
 
-        // setup() is being called from kafkaNotificationEventListener.init() method which is annotated with @PostConstruct
-        Mockito.verify(handler, Mockito.timeout(5000).times(1)).setup();
+        @Bean(initMethod = "setup")
+        @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+        public KafkaSetupHandler kafkaSetupHandler(NewTopicProperties newTopicProperties) {
+            Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
+            Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
+
+            return Mockito.mock(KafkaSetupHandler.class);
+        }
     }
 }

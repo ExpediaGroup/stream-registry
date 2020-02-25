@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2020 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,23 +45,53 @@ public class KafkaSetupHandler {
 
     @NonNull
     @Getter
-    private final NewTopic newTopic;
+    private final Optional<NewTopic> newTopic;
 
-    public void setup() {
+    @NonNull
+    @Getter
+    private String notificationEventsTopic;
+
+    @Getter
+    private final boolean isKafkaSetupEnabled;
+
+    public void setup() throws ExecutionException, InterruptedException {
+        log.info("Starting Kafka setup...");
+        Optional.of(isKafkaSetupEnabled)
+                .filter(Boolean.TRUE::equals)
+                .ifPresent(enabled -> this.executeTopicSetup());
+
+        checkTopicExistence();
+    }
+
+    private void executeTopicSetup() {
         try (AdminClient client = createAdminClient()) {
-            Optional<TopicDescription> description = obtainTopicDescription(client, newTopic.name());
+            NewTopic topic = newTopic.get();
+            Optional<TopicDescription> description = obtainTopicDescription(client, topic.name());
 
             if (description.isEmpty()) {
-                log.info("Trying to create topic {} on cluster {}", newTopic, bootstrapServers);
+                log.info("Trying to create topic {} on cluster {}", topic, bootstrapServers);
 
-                Optional<TopicDescription> created = createTopic(client, newTopic);
+                Optional<TopicDescription> created = createTopic(client, topic);
 
                 log.info("Created topic {} on cluster {}", created, bootstrapServers);
             } else {
-                log.warn("Topic {} of cluster {} already exists: {}", newTopic.name(), bootstrapServers, description.get());
+                log.warn("Topic {} of cluster {} already exists: {}", topic.name(), bootstrapServers, description.get());
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void checkTopicExistence() throws ExecutionException, InterruptedException {
+        try (AdminClient client = createAdminClient()) {
+            Optional<TopicDescription> topic = obtainTopicDescription(client, notificationEventsTopic);
+
+            log.info("Notification topic {} in cluster {}: {}", notificationEventsTopic, bootstrapServers, topic);
+
+            topic.orElseThrow(() -> new IllegalStateException(String.format("Topic %s wasn't found in cluster", notificationEventsTopic)));
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("There was an error verifying topic {} existence", notificationEventsTopic);
+            throw e;
         }
     }
 

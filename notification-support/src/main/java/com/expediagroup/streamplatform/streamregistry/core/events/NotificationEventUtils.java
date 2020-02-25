@@ -23,8 +23,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import lombok.extern.slf4j.Slf4j;
+
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 
 import org.apache.avro.specific.SpecificRecord;
 
@@ -37,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 @Slf4j
-public class KafkaNotificationEventUtils {
+public class NotificationEventUtils {
     public static AvroKey toAvroKeyRecord(Schema schema) {
         validateSchemaKey(schema);
         KafkaAvroSerializer a = null;
@@ -63,7 +64,7 @@ public class KafkaNotificationEventUtils {
         final List<com.expediagroup.streamplatform.streamregistry.avro.Tag> tags = schema.getSpecification()
                 .getTags()
                 .stream()
-                .map(KafkaNotificationEventUtils::toAvroTag)
+                .map(NotificationEventUtils::toAvroTag)
                 .collect(Collectors.toList());
 
         final String type = schema.getSpecification().getType();
@@ -119,10 +120,10 @@ public class KafkaNotificationEventUtils {
         Method method = Class.forName(clazz)
                 .getDeclaredMethod(methodName, argType);
 
-        Function<W, R> toAvroFn = schema -> {
+        Function<W, R> toAvroFn = obj -> {
             try {
                 // We set null as first argument, since we're expecting an static method
-                return (R) method.invoke(null, schema);
+                return (R) method.invoke(null, obj);
             } catch (Exception e) {
                 log.error("There was an error in {}.{} (toAvro) method: {}", clazz, methodName, e.getMessage(), e);
                 throw new RuntimeException(e);
