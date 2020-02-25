@@ -30,6 +30,8 @@ import org.testcontainers.containers.GenericContainer;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
 
+import java.util.concurrent.TimeUnit;
+
 @RunWith(Suite.class)
 @SuiteClasses({
     DomainTestStage.class,
@@ -57,7 +59,7 @@ public class StreamRegistryIT {
           .withEnv("POSTGRES_DB", "streamregistry");
 
   @BeforeClass
-  public static void before() {
+  public static void before() throws InterruptedException {
     String[] args = new String[] {
         "--server.port=0",
         "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
@@ -66,8 +68,13 @@ public class StreamRegistryIT {
         "--spring.jpa.show-sql=false"
     };
     context = SpringApplication.run(StreamRegistryApp.class, args);
-    final String url = String.format("http://localhost:%s%s", context.getEnvironment().getProperty("local.server.port"), "/graphql");
+
+    final String port = context.getEnvironment().getProperty("local.server.port");
+    final String endpoint = "/graphql";
+    final String url = String.format("http://localhost:%s%s", port, endpoint);
+
     client = new ITestClient(url);
+    TimeUnit.SECONDS.sleep(2);
   }
 
   @AfterClass
