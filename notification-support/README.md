@@ -20,7 +20,7 @@ topic. It will be explained on following section.
 ### _Kafka_ automatic configuration
 Since this is an optionally loadable functionality, it will be ignored if properties aren't set.
 
-#### `notification.events.kafka.enabled = [true | false] (default: not set)`
+#### `notification.events.kafka.enabled = [true | false] (default: false)`
 This is the butter and bread of the _Kafka_ interaction, once set it will try to build the Kafka related components 
 verifying the following properties:
 
