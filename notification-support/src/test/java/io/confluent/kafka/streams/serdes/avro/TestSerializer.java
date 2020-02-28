@@ -28,27 +28,27 @@ import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 
 @Slf4j
 public class TestSerializer extends KafkaAvroSerializer {
-    public static final MockSchemaRegistryClient schemaRegistryClient = new MockSchemaRegistryClient();
-    public static final String schemaRegistryUrl = "http://foo:8081";
+  public static final MockSchemaRegistryClient schemaRegistryClient = new MockSchemaRegistryClient();
+  public static final String schemaRegistryUrl = "http://foo:8081";
 
-    public static final Map<String, Object> configProps = ImmutableMap.<String, Object>builder()
-            .put(KafkaAvroSerializerConfig.AUTO_REGISTER_SCHEMAS, true)
-            .put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)
-            .build();
+  public static final Map<String, Object> configProps = ImmutableMap.<String, Object>builder()
+      .put(KafkaAvroSerializerConfig.AUTO_REGISTER_SCHEMAS, true)
+      .put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)
+      .build();
 
-    public TestSerializer() {
-        this(schemaRegistryClient);
-    }
+  public TestSerializer() {
+    this(schemaRegistryClient);
+  }
 
-    public TestSerializer(SchemaRegistryClient client) {
-        super(client);
+  public TestSerializer(SchemaRegistryClient client) {
+    super(client);
 
-        configure(configProps, false);
-    }
+    configure(configProps, false);
+  }
 
-    @Override
-    public byte[] serialize(String topic, Object record) {
-        log.info("Serializing {} for topic {}", record, topic);
-        return super.serialize(topic, record);
-    }
+  @Override
+  public byte[] serialize(String topic, Object record) {
+    log.info("Serializing {} for topic {}", record, topic);
+    return super.serialize(topic, record);
+  }
 }

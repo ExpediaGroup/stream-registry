@@ -35,29 +35,29 @@ import com.expediagroup.streamplatform.streamregistry.core.events.handlers.Schem
 @SpringBootTest(classes = EventHandlerAvoidLoadingWithoutPropTest.MockListenerConfiguration.class)
 public class EventHandlerAvoidLoadingWithoutPropTest {
 
-    @Autowired(required = false)
-    private Optional<SchemaEventHandlerForKafka> schemaEventHandlerForKafka;
+  @Autowired(required = false)
+  private Optional<SchemaEventHandlerForKafka> schemaEventHandlerForKafka;
 
-    @Test
-    public void having_notifications_disabled_verify_that_KafkaNotificationEventListener_is_not_being_loaded() {
-        Assert.assertNotNull("Optional container of SchemaEventHandlerForKafka shouldn't be null!", schemaEventHandlerForKafka);
-        Assert.assertFalse("Kafka notification should NOT be loaded since notification.events.kafka.enabled == false", schemaEventHandlerForKafka.isPresent());
+  @Test
+  public void having_notifications_disabled_verify_that_KafkaNotificationEventListener_is_not_being_loaded() {
+    Assert.assertNotNull("Optional container of SchemaEventHandlerForKafka shouldn't be null!", schemaEventHandlerForKafka);
+    Assert.assertFalse("Kafka notification should NOT be loaded since notification.events.kafka.enabled == false", schemaEventHandlerForKafka.isPresent());
+  }
+
+  public static class MockListenerConfiguration extends NotificationEventConfig {
+    @Value("${" + KAFKA_TOPIC_NAME_PROPERTY + ":#{null}}")
+    private String notificationEventsTopic;
+
+    @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
+    private String bootstrapServers;
+
+    @Bean(initMethod = "setup")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public KafkaSetupHandler kafkaSetupHandler(NewTopicProperties newTopicProperties) {
+      Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
+      Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
+
+      return Mockito.mock(KafkaSetupHandler.class);
     }
-
-    public static class MockListenerConfiguration extends NotificationEventConfig {
-        @Value("${" + KAFKA_TOPIC_NAME_PROPERTY + ":#{null}}")
-        private String notificationEventsTopic;
-
-        @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
-        private String bootstrapServers;
-
-        @Bean(initMethod = "setup")
-        @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
-        public KafkaSetupHandler kafkaSetupHandler(NewTopicProperties newTopicProperties) {
-            Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
-            Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
-
-            return Mockito.mock(KafkaSetupHandler.class);
-        }
-    }
+  }
 }

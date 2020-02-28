@@ -16,7 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 public interface NotificationEventListener<T> {
-    void onCreate(NotificationEvent<T> event);
-    void onUpdate(NotificationEvent<T> event);
-    void onDelete(NotificationEvent<T> event);
+  void onCreate(NotificationEvent<T> event);
+
+  void onUpdate(NotificationEvent<T> event);
+
+  void onDelete(NotificationEvent<T> event);
 }

@@ -15,7 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.*;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -79,176 +83,176 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 @RunWith(SpringRunner.class)
 @EmbeddedKafka
 @SpringBootTest(
-        classes = NotificationEventListenerKafkaIntegrationTest.SpyListenerConfiguration.class,
-        properties = {
-                KAFKA_NOTIFICATIONS_ENABLED_PROPERTY + "=true",
-                KAFKA_TOPIC_NAME_PROPERTY + "=" + NotificationEventListenerKafkaIntegrationTest.TEST_NOTIFICATION_TOPIC,
-                KAFKA_TOPIC_SETUP_PROPERTY + "=true",
-                KAFKA_TOPIC_SETUP_PROPERTY + ".numPartitions=" + NotificationEventListenerKafkaIntegrationTest.TEST_PARTITIONS,
-                KAFKA_TOPIC_SETUP_PROPERTY + ".replicationFactor=" + NotificationEventListenerKafkaIntegrationTest.TEST_REPLICATION_FACTOR,
-                KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=${spring.embedded.kafka.brokers}",
-                KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + "=" + NotificationEventListenerKafkaIntegrationTest.TEST_SCHEMA_REGISTRY
-        })
+    classes = NotificationEventListenerKafkaIntegrationTest.SpyListenerConfiguration.class,
+    properties = {
+        KAFKA_NOTIFICATIONS_ENABLED_PROPERTY + "=true",
+        KAFKA_TOPIC_NAME_PROPERTY + "=" + NotificationEventListenerKafkaIntegrationTest.TEST_NOTIFICATION_TOPIC,
+        KAFKA_TOPIC_SETUP_PROPERTY + "=true",
+        KAFKA_TOPIC_SETUP_PROPERTY + ".numPartitions=" + NotificationEventListenerKafkaIntegrationTest.TEST_PARTITIONS,
+        KAFKA_TOPIC_SETUP_PROPERTY + ".replicationFactor=" + NotificationEventListenerKafkaIntegrationTest.TEST_REPLICATION_FACTOR,
+        KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "=${spring.embedded.kafka.brokers}",
+        KAFKA_SCHEMA_REGISTRY_URL_PROPERTY + "=" + NotificationEventListenerKafkaIntegrationTest.TEST_SCHEMA_REGISTRY
+    })
 public class NotificationEventListenerKafkaIntegrationTest {
-    public static final String TEST_NOTIFICATION_TOPIC = "test-notification-topic";
-    public static final String TEST_PARTITIONS = "2";
-    public static final String TEST_REPLICATION_FACTOR = "1";
-    public static final String TEST_SCHEMA_REGISTRY = "http://foo:8082";
+  public static final String TEST_NOTIFICATION_TOPIC = "test-notification-topic";
+  public static final String TEST_PARTITIONS = "2";
+  public static final String TEST_REPLICATION_FACTOR = "1";
+  public static final String TEST_SCHEMA_REGISTRY = "http://foo:8082";
 
-    public static final int TEST_CREATE_SCHEMA_EVENTS = 5;
-    public static final int TEST_UPDATE_SCHEMA_EVENTS = 3;
+  public static final int TEST_CREATE_SCHEMA_EVENTS = 5;
+  public static final int TEST_UPDATE_SCHEMA_EVENTS = 3;
 
-    public static final Map<AvroKey, AvroEvent> producedEvents = new ConcurrentHashMap<>();
+  public static final Map<AvroKey, AvroEvent> producedEvents = new ConcurrentHashMap<>();
 
-    @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "}")
+  @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "}")
+  private String bootstrapServers;
+
+  @Autowired
+  private ApplicationEventMulticaster applicationEventMulticaster;
+
+  @Autowired
+  private KafkaSetupHandler kafkaSetupHandler;
+
+  @BeforeClass
+  public static void beforeClass() throws IOException, RestClientException {
+    MockSchemaRegistryClient srClient = TestSerializer.schemaRegistryClient;
+
+    srClient.register(getSubjectName(TEST_NOTIFICATION_TOPIC, true), AvroKey.getClassSchema());
+    srClient.register(getSubjectName(TEST_NOTIFICATION_TOPIC, false), AvroEvent.getClassSchema());
+  }
+
+  @Test
+  public void having_emitted_events_verify_that_Kafka_handler_is_producing_them() throws InterruptedException {
+    IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
+    IntStream.rangeClosed(1, TEST_UPDATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.UPDATE, "schema-update")));
+
+    TimeUnit.SECONDS.sleep(5);
+
+    Assert.assertFalse("Produced events shouldn't be empty", producedEvents.isEmpty());
+    Assert.assertEquals("Number of messages should be same as events", producedEvents.size(), (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
+  }
+
+  @Test
+  public void having_topic_setup_enabled_verify_that_notification_topic_is_being_created() throws ExecutionException, InterruptedException {
+    Mockito.verify(kafkaSetupHandler, Mockito.timeout(5000).times(1)).setup();
+
+    try (AdminClient client = createAdminClient()) {
+      Optional<TopicDescription> desc = obtainTopicDescription(client, TEST_NOTIFICATION_TOPIC);
+      Assert.assertTrue(String.format("Topic %s should be present", TEST_NOTIFICATION_TOPIC), desc.isPresent());
+    }
+  }
+
+  @Slf4j
+  @Configuration
+  @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class})
+  public static class SpyListenerConfiguration extends NotificationEventConfig {
+    @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
     private String bootstrapServers;
 
-    @Autowired
-    private ApplicationEventMulticaster applicationEventMulticaster;
+    @Bean
+    public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
+      SimpleApplicationEventMulticaster eventMulticaster = new SimpleApplicationEventMulticaster();
+      eventMulticaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
 
-    @Autowired
-    private KafkaSetupHandler kafkaSetupHandler;
-
-    @BeforeClass
-    public static void beforeClass() throws IOException, RestClientException {
-        MockSchemaRegistryClient srClient = TestSerializer.schemaRegistryClient;
-
-        srClient.register(getSubjectName(TEST_NOTIFICATION_TOPIC, true), AvroKey.getClassSchema());
-        srClient.register(getSubjectName(TEST_NOTIFICATION_TOPIC, false), AvroEvent.getClassSchema());
+      return eventMulticaster;
     }
 
-    @Test
-    public void having_emitted_events_verify_that_Kafka_handler_is_producing_them() throws InterruptedException {
-        IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
-        IntStream.rangeClosed(1, TEST_UPDATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.UPDATE, "schema-update")));
+    public ProducerFactory<SpecificRecord, SpecificRecord> producerFactory() {
+      Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
 
-        TimeUnit.SECONDS.sleep(5);
+      Map<String, Object> props = new HashMap<>();
+      props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+      props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, TEST_SCHEMA_REGISTRY);
+      props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, TestSerializer.class);
+      props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TestSerializer.class);
 
-        Assert.assertFalse("Produced events shouldn't be empty", producedEvents.isEmpty());
-        Assert.assertEquals("Number of messages should be same as events", producedEvents.size(), (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
+      return new DefaultKafkaProducerFactory<>(props);
     }
 
-    @Test
-    public void having_topic_setup_enabled_verify_that_notification_topic_is_being_created() throws ExecutionException, InterruptedException {
-        Mockito.verify(kafkaSetupHandler, Mockito.timeout(5000).times(1)).setup();
+    public KafkaSetupHandler kafkaSetupHandler(NewTopicProperties newTopicProperties) {
+      return Mockito.spy(super.kafkaSetupHandler(newTopicProperties));
+    }
 
-        try (AdminClient client = createAdminClient()) {
-            Optional<TopicDescription> desc = obtainTopicDescription(client, TEST_NOTIFICATION_TOPIC);
-            Assert.assertTrue(String.format("Topic %s should be present", TEST_NOTIFICATION_TOPIC), desc.isPresent());
+    public KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate() {
+      KafkaTemplate<SpecificRecord, SpecificRecord> template = new KafkaTemplate<>(producerFactory());
+
+      template.setProducerListener(new ProducerListener<>() {
+        @Override
+        public void onSuccess(ProducerRecord<SpecificRecord, SpecificRecord> producerRecord, RecordMetadata recordMetadata) {
+          log.info("Produced record {}", producerRecord);
+          producedEvents.put((AvroKey) producerRecord.key(), (AvroEvent) producerRecord.value());
         }
+      });
+
+      return template;
     }
+  }
 
-    @Slf4j
-    @Configuration
-    @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class})
-    public static class SpyListenerConfiguration extends NotificationEventConfig {
-        @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
-        private String bootstrapServers;
+  private Optional<TopicDescription> obtainTopicDescription(AdminClient client, String topic) throws ExecutionException, InterruptedException {
+    try {
+      log.info("Verifying existence of topic {}", topic);
 
-        @Bean
-        public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
-            SimpleApplicationEventMulticaster eventMulticaster = new SimpleApplicationEventMulticaster();
-            eventMulticaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
-
-            return eventMulticaster;
-        }
-
-        public ProducerFactory<SpecificRecord, SpecificRecord> producerFactory() {
-            Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
-
-            Map<String, Object> props = new HashMap<>();
-            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, TEST_SCHEMA_REGISTRY);
-            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, TestSerializer.class);
-            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TestSerializer.class);
-
-            return new DefaultKafkaProducerFactory<>(props);
-        }
-
-        public KafkaSetupHandler kafkaSetupHandler(NewTopicProperties newTopicProperties) {
-            return Mockito.spy(super.kafkaSetupHandler(newTopicProperties));
-        }
-
-        public KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate() {
-            KafkaTemplate<SpecificRecord, SpecificRecord> template = new KafkaTemplate<>(producerFactory());
-
-            template.setProducerListener(new ProducerListener<>() {
-                @Override
-                public void onSuccess(ProducerRecord<SpecificRecord, SpecificRecord> producerRecord, RecordMetadata recordMetadata) {
-                    log.info("Produced record {}", producerRecord);
-                    producedEvents.put((AvroKey) producerRecord.key(), (AvroEvent) producerRecord.value());
-                }
-            });
-
-            return template;
-        }
+      return Optional.ofNullable(client.describeTopics(Collections.singleton(topic)).all().get().get(topic));
+    } catch (ExecutionException exception) {
+      if (exception.getCause() != null && exception.getCause() instanceof UnknownTopicOrPartitionException) {
+        return Optional.empty();
+      } else throw exception;
     }
+  }
 
-    private Optional<TopicDescription> obtainTopicDescription(AdminClient client, String topic) throws ExecutionException, InterruptedException {
-        try {
-            log.info("Verifying existence of topic {}", topic);
+  private AdminClient createAdminClient() {
+    Map<String, Object> configs = new HashMap<>();
+    configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
-            return Optional.ofNullable(client.describeTopics(Collections.singleton(topic)).all().get().get(topic));
-        } catch (ExecutionException exception) {
-            if (exception.getCause() != null && exception.getCause() instanceof UnknownTopicOrPartitionException) {
-                return Optional.empty();
-            } else throw exception;
-        }
-    }
+    log.info("Creating a Kafka Admin client with configuration {}", configs);
 
-    private AdminClient createAdminClient() {
-        Map<String, Object> configs = new HashMap<>();
-        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    return AdminClient.create(configs);
+  }
 
-        log.info("Creating a Kafka Admin client with configuration {}", configs);
+  public static String getSubjectName(String topic, boolean isKey) {
+    return isKey ? topic + "-key" : topic + "-value";
+  }
 
-        return AdminClient.create(configs);
-    }
+  public NotificationEvent<Schema> getDummySchemaEvent(int event, EventType eventType, String source) {
+    log.info("Emitting event {}", event);
+    Schema schema = getDummySchema();
+    return NotificationEvent.<Schema>builder()
+        .entity(schema)
+        .source(source)
+        .eventType(eventType)
+        .build();
+  }
 
-    public static String getSubjectName(String topic, boolean isKey) {
-        return isKey ? topic + "-key" : topic + "-value";
-    }
+  public static Schema getDummySchema() {
+    val name = Instant.now().toString();
+    val domain = "domain";
+    val description = "description";
+    val type = "type";
+    val configJson = "{}";
+    val statusJson = "{foo:bar}";
+    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
 
-    public NotificationEvent<Schema> getDummySchemaEvent(int event, EventType eventType, String source) {
-        log.info("Emitting event {}", event);
-        Schema schema = getDummySchema();
-        return NotificationEvent.<Schema>builder()
-                .entity(schema)
-                .source(source)
-                .eventType(eventType)
-                .build();
-    }
+    // Key
+    val key = new SchemaKey();
+    key.setName(name);
+    key.setDomain(domain);
 
-    public static Schema getDummySchema() {
-        val name = Instant.now().toString();
-        val domain = "domain";
-        val description = "description";
-        val type = "type";
-        val configJson = "{}";
-        val statusJson = "{foo:bar}";
-        val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    // Spec
+    val spec = new Specification();
+    spec.setDescription(description);
+    spec.setType(type);
+    spec.setConfigJson(configJson);
+    spec.setTags(tags);
 
-        // Key
-        val key = new SchemaKey();
-        key.setName(name);
-        key.setDomain(domain);
+    // Status
+    val status = new Status();
+    status.setStatusJson(statusJson);
 
-        // Spec
-        val spec = new Specification();
-        spec.setDescription(description);
-        spec.setType(type);
-        spec.setConfigJson(configJson);
-        spec.setTags(tags);
+    val schema = new Schema();
+    schema.setKey(key);
+    schema.setSpecification(spec);
+    schema.setStatus(status);
 
-        // Status
-        val status = new Status();
-        status.setStatusJson(statusJson);
-
-        val schema = new Schema();
-        schema.setKey(key);
-        schema.setSpecification(spec);
-        schema.setStatus(status);
-
-        return schema;
-    }
+    return schema;
+  }
 }
