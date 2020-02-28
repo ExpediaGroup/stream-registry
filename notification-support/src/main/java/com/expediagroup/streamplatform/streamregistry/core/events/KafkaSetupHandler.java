@@ -119,8 +119,10 @@ public class KafkaSetupHandler {
     }
 
     private Optional<TopicDescription> createTopic(AdminClient client, NewTopic newTopic) throws ExecutionException, InterruptedException {
-        CreateTopicsResult result = client.createTopics(Collections.singleton(newTopic), new CreateTopicsOptions().timeoutMs(DEFAULT_CREATE_TOPIC_TIMEOUT_MS));
-        result.all().get(); // Force transactional
+        client.createTopics(
+             Collections.singleton(newTopic), 
+             new CreateTopicsOptions().timeoutMs(DEFAULT_CREATE_TOPIC_TIMEOUT_MS)
+       ).all().get(); 
 
         return obtainTopicDescription(client, newTopic.name());
     }
