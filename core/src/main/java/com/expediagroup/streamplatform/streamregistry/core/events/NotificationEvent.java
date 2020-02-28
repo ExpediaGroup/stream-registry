@@ -25,18 +25,18 @@ import org.springframework.core.ResolvableTypeProvider;
 
 @Data
 public class NotificationEvent<T> extends ApplicationEvent implements ResolvableTypeProvider {
-    private final EventType eventType;
-    private final T entity;
+  private final EventType eventType;
+  private final T entity;
 
-    @Builder
-    public NotificationEvent(@NonNull Object source, EventType eventType, T entity) {
-        super(source);
-        this.eventType = eventType;
-        this.entity = entity;
-    }
+  @Builder
+  public NotificationEvent(@NonNull Object source, EventType eventType, T entity) {
+    super(source);
+    this.eventType = eventType;
+    this.entity = entity;
+  }
 
-    @Override
-    public ResolvableType getResolvableType() {
-        return ResolvableType.forClassWithGenerics(getClass(), entity.getClass());
-    }
+  @Override
+  public ResolvableType getResolvableType() {
+    return ResolvableType.forClassWithGenerics(getClass(), entity.getClass());
+  }
 }

@@ -38,184 +38,184 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 @SpringBootTest(classes = TestConfig.class)
 public class NotificationEventEmitterZoneServiceTest {
 
-    @MockBean
-    private ApplicationEventMulticaster applicationEventMulticaster;
+  @MockBean
+  private ApplicationEventMulticaster applicationEventMulticaster;
 
-    @MockBean
-    private HandlerService handlerService;
+  @MockBean
+  private HandlerService handlerService;
 
-    @MockBean
-    private ZoneValidator zoneValidator;
+  @MockBean
+  private ZoneValidator zoneValidator;
 
-    @MockBean
-    private ZoneRepository zoneRepository;
+  @MockBean
+  private ZoneRepository zoneRepository;
 
-    private NotificationEventEmitter<Zone> zoneServiceEventEmitter;
-    private ZoneService zoneService;
+  private NotificationEventEmitter<Zone> zoneServiceEventEmitter;
+  private ZoneService zoneService;
 
-    @Before
-    public void before() {
-        zoneServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Zone>builder()
-                .classType(Zone.class)
-                .applicationEventMulticaster(applicationEventMulticaster)
-                .build());
+  @Before
+  public void before() {
+    zoneServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Zone>builder()
+        .classType(Zone.class)
+        .applicationEventMulticaster(applicationEventMulticaster)
+        .build());
 
-        zoneService = Mockito.spy(new ZoneService(handlerService, zoneValidator, zoneRepository, zoneServiceEventEmitter));
-    }
+    zoneService = Mockito.spy(new ZoneService(handlerService, zoneValidator, zoneRepository, zoneServiceEventEmitter));
+  }
 
-    @Test
-    public void givenAZoneForCreate_validateThatNotificationEventIsEmitted() {
-        final Zone entity = getDummyZone();
-        final EventType type = EventType.CREATE;
-        final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAZoneForCreate_validateThatNotificationEventIsEmitted() {
+    final Zone entity = getDummyZone();
+    final EventType type = EventType.CREATE;
+    final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(zoneValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
-        Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(zoneValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        zoneService.create(entity);
+    zoneService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenAZoneForUpdate_validateThatNotificationEventIsEmitted() {
-        final Zone entity = getDummyZone();
-        final EventType type = EventType.UPDATE;
-        final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAZoneForUpdate_validateThatNotificationEventIsEmitted() {
+    final Zone entity = getDummyZone();
+    final EventType type = EventType.UPDATE;
+    final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(zoneValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(zoneValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        zoneService.update(entity);
+    zoneService.update(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenANullZoneRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
-        final Zone entity = getDummyZone();
+  @Test
+  public void givenANullZoneRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
+    final Zone entity = getDummyZone();
 
-        Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(zoneValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(zoneValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-        Mockito.when(zoneRepository.save(entity)).thenReturn(null);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(zoneRepository.save(entity)).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
 
-        zoneService.create(entity);
+    zoneService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-                .multicastEvent(Mockito.any());
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
+        .multicastEvent(Mockito.any());
 
-        Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.any());
-    }
+    Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.any());
+  }
 
-    @Test
-    public void givenANullZoneRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
-        final Zone entity = getDummyZone();
+  @Test
+  public void givenANullZoneRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
+    final Zone entity = getDummyZone();
 
-        Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(zoneValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(zoneValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(zoneRepository.save(entity)).thenReturn(null);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(zoneRepository.save(entity)).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
 
-        zoneService.update(entity);
+    zoneService.update(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-                .multicastEvent(Mockito.any());
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
+        .multicastEvent(Mockito.any());
 
-        Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.any());
-    }
+    Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.any());
+  }
 
-    @Test
-    public void givenAZoneForUpsert_validateThatNotificationEventIsEmitted() {
-        final Zone entity = getDummyZone();
-        final EventType type = EventType.UPDATE;
-        final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAZoneForUpsert_validateThatNotificationEventIsEmitted() {
+    final Zone entity = getDummyZone();
+    final EventType type = EventType.UPDATE;
+    final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(zoneValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(zoneValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        zoneService.upsert(entity);
+    zoneService.upsert(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenAZoneForCreate_handleAMulticasterException() {
-        final Zone entity = getDummyZone();
-        final EventType type = EventType.CREATE;
-        final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAZoneForCreate_handleAMulticasterException() {
+    final Zone entity = getDummyZone();
+    final EventType type = EventType.CREATE;
+    final String source = zoneServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Zone> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(zoneValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(zoneRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(zoneValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-        Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
-        Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(zoneRepository.save(entity)).thenReturn(entity);
+    Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
 
-        Optional<Zone> response = zoneService.create(entity);
+    Optional<Zone> response = zoneService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(1))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+    Mockito.verify(zoneServiceEventEmitter, Mockito.timeout(1000).times(1))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
-        Assert.assertTrue(response.isPresent());
-        Assert.assertEquals(response.get(), entity);
-    }
+    Assert.assertTrue(response.isPresent());
+    Assert.assertEquals(response.get(), entity);
+  }
 
-    public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
-        return NotificationEvent.<T>builder()
-                .source(source)
-                .eventType(type)
-                .entity(entity)
-                .build();
-    }
+  public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
+    return NotificationEvent.<T>builder()
+        .source(source)
+        .eventType(type)
+        .entity(entity)
+        .build();
+  }
 
-    public Zone getDummyZone() {
-        final Zone entity = new Zone();
+  public Zone getDummyZone() {
+    final Zone entity = new Zone();
 
-        return entity;
-    }
+    return entity;
+  }
 
-    public Specification getDummySpecification() {
-        Specification spec = new Specification();
-        spec.setConfigJson("{}");
-        spec.setDescription("dummy spec");
+  public Specification getDummySpecification() {
+    Specification spec = new Specification();
+    spec.setConfigJson("{}");
+    spec.setDescription("dummy spec");
 
-        return spec;
-    }
+    return spec;
+  }
 }
