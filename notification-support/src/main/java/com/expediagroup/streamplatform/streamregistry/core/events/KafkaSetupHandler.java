@@ -112,7 +112,9 @@ public class KafkaSetupHandler {
         } catch (ExecutionException exception) {
             if (exception.getCause() != null && exception.getCause() instanceof UnknownTopicOrPartitionException) {
                 return Optional.empty();
-            } else throw exception;
+            } else {
+              throw exception;
+            }
         }
     }
 
