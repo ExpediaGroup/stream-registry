@@ -36,43 +36,43 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 @Builder
 public class SchemaEventHandlerForKafka implements NotificationEventHandler<Schema> {
 
-    @Getter
-    @NonNull
-    private final String notificationEventsTopic;
+  @Getter
+  @NonNull
+  private final String notificationEventsTopic;
 
-    @Getter
-    @NonNull
-    private final Function<Schema, ?> schemaToKeyRecord;
+  @Getter
+  @NonNull
+  private final Function<Schema, ?> schemaToKeyRecord;
 
-    @Getter
-    @NonNull
-    private final Function<Schema, ?> schemaToValueRecord;
+  @Getter
+  @NonNull
+  private final Function<Schema, ?> schemaToValueRecord;
 
-    @Getter
-    @NonNull
-    private final KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate;
+  @Getter
+  @NonNull
+  private final KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate;
 
-    @Override
-    public void onCreate(NotificationEvent<Schema> event) {
-        log.info("Pushing create-schema event {} to Kafka", event);
-        sendSchemaNotificationEvent(event);
-    }
+  @Override
+  public void onCreate(NotificationEvent<Schema> event) {
+    log.info("Pushing create-schema event {} to Kafka", event);
+    sendSchemaNotificationEvent(event);
+  }
 
-    @Override
-    public void onUpdate(NotificationEvent<Schema> event) {
-        log.info("Pushing update-schema event {} to Kafka", event);
-        sendSchemaNotificationEvent(event);
-    }
+  @Override
+  public void onUpdate(NotificationEvent<Schema> event) {
+    log.info("Pushing update-schema event {} to Kafka", event);
+    sendSchemaNotificationEvent(event);
+  }
 
-    @Override
-    public void onDelete(NotificationEvent<Schema> event) {
-        log.warn("On delete-schema is not implemented in SchemaEventHandlerForKafka. Event {} is going to be ignored", event);
-    }
+  @Override
+  public void onDelete(NotificationEvent<Schema> event) {
+    log.warn("On delete-schema is not implemented in SchemaEventHandlerForKafka. Event {} is going to be ignored", event);
+  }
 
-    private Future<SendResult<SpecificRecord, SpecificRecord>> sendSchemaNotificationEvent(NotificationEvent<Schema> event) {
-        val key = schemaToKeyRecord.apply(event.getEntity());
-        val value = schemaToValueRecord.apply(event.getEntity());
+  private Future<SendResult<SpecificRecord, SpecificRecord>> sendSchemaNotificationEvent(NotificationEvent<Schema> event) {
+    val key = schemaToKeyRecord.apply(event.getEntity());
+    val value = schemaToValueRecord.apply(event.getEntity());
 
-        return kafkaTemplate.send(notificationEventsTopic, (SpecificRecord) key, (SpecificRecord) value);
-    }
+    return kafkaTemplate.send(notificationEventsTopic, (SpecificRecord) key, (SpecificRecord) value);
+  }
 }
