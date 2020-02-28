@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import java.util.concurrent.TimeUnit;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.AfterClass;
@@ -29,8 +31,6 @@ import org.testcontainers.containers.GenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
-
-import java.util.concurrent.TimeUnit;
 
 @RunWith(Suite.class)
 @SuiteClasses({
