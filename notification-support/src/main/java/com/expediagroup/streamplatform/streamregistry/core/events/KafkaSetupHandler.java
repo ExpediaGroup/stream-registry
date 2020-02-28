@@ -56,9 +56,9 @@ public class KafkaSetupHandler {
 
     public void setup() throws ExecutionException, InterruptedException {
         log.info("Starting Kafka setup...");
-        Optional.of(isKafkaSetupEnabled)
-                .filter(Boolean.TRUE::equals)
-                .ifPresent(enabled -> this.executeTopicSetup());
+        if(isKafkaSetupEnabled) {
+          executeTopicSetup();
+        }
 
         checkTopicExistence();
     }
