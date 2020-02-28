@@ -70,8 +70,7 @@ public class StreamRegistryIT {
     context = SpringApplication.run(StreamRegistryApp.class, args);
 
     final String port = context.getEnvironment().getProperty("local.server.port");
-    final String endpoint = "/graphql";
-    final String url = String.format("http://localhost:%s%s", port, endpoint);
+    final String url = String.format("http://localhost:%s/graphql", port);
 
     client = new ITestClient(url);
     TimeUnit.SECONDS.sleep(2);
