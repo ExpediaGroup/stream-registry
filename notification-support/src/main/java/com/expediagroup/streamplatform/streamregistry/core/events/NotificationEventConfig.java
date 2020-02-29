@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import com.google.common.base.Preconditions;
 
@@ -81,7 +82,7 @@ public class NotificationEventConfig {
     Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
     Objects.requireNonNull(schemaRegistryUrl, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_SCHEMA_REGISTRY_URL_PROPERTY));
 
-    Map<String, Object> props = new HashMap<>();
+    val props = new HashMap<String, Object>();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
@@ -115,11 +116,13 @@ public class NotificationEventConfig {
     Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
     Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
 
+    val newTopic = isKafkaSetupEnabled ? newTopicProperties.buildNewTopic(notificationEventsTopic) : null;
+
     return KafkaSetupHandler.builder()
-        .newTopic(Optional.of(isKafkaSetupEnabled).filter(Boolean.TRUE::equals).map(enabled -> newTopicProperties.buildNewTopic(notificationEventsTopic)))
+        .newTopic(newTopic)
         .notificationEventsTopic(notificationEventsTopic)
         .bootstrapServers(bootstrapServers)
-        .isKafkaSetupEnabled(isKafkaSetupEnabled)
+        .kafkaSetupEnabled(isKafkaSetupEnabled)
         .build();
   }
 
@@ -134,7 +137,7 @@ public class NotificationEventConfig {
       // We execute this method and its validations only when 'notification.events.kafka.topic.setup' is true
       // during KafkaSetupHandler building. If we use @Validated and its constraints, bean loading will fail even
       // when topic setup is disabled.
-      final String component = "enabled Kafka topic setup";
+      val component = "enabled Kafka topic setup";
 
       Objects.requireNonNull(topicName, getWarningMessageOnNotDefinedProp(component, KAFKA_TOPIC_NAME_PROPERTY));
       Objects.requireNonNull(numPartitions, getWarningMessageOnNotDefinedProp(component,
@@ -142,7 +145,7 @@ public class NotificationEventConfig {
       Objects.requireNonNull(replicationFactor, getWarningMessageOnNotDefinedProp(component,
           KAFKA_TOPIC_SETUP_PROPERTY.concat(".replicationFactor")));
 
-      final String gtZeroWarning = " must be greater than zero";
+      val gtZeroWarning = " must be greater than zero";
 
       Preconditions.checkArgument(numPartitions.compareTo(0) > 0,
           KAFKA_TOPIC_SETUP_PROPERTY.concat(".numPartitions").concat(gtZeroWarning));
@@ -164,19 +167,19 @@ public class NotificationEventConfig {
 
     public Function<Schema, ?> buildSchemaToKeyRecord() {
       return Optional.ofNullable(customEnabled)
-          .filter(Boolean.TRUE::equals)
-          .map(this::loadKeyParser)
+          .filter(Boolean::booleanValue)
+          .map(e -> this.loadKeyParser())
           .orElse(NotificationEventUtils::toAvroKeyRecord);
     }
 
     public Function<Schema, ?> buildSchemaToValueRecord() {
       return Optional.ofNullable(customEnabled)
-          .filter(Boolean.TRUE::equals)
-          .map(this::loadValueParser)
+          .filter(Boolean::booleanValue)
+          .map(e -> this.loadValueParser())
           .orElse(NotificationEventUtils::toAvroValueRecord);
     }
 
-    private <R extends SpecificRecord> Function<Schema, R> loadKeyParser(Boolean enabled) {
+    private <R extends SpecificRecord> Function<Schema, R> loadKeyParser() {
       Objects.requireNonNull(keyParserClass, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_KEY_PARSER_CLASS_PROPERTY));
       Objects.requireNonNull(keyParserMethod, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_KEY_PARSER_METHOD_PROPERTY));
 
@@ -187,7 +190,7 @@ public class NotificationEventConfig {
       }
     }
 
-    private <R extends SpecificRecord> Function<Schema, R> loadValueParser(Boolean enabled) {
+    private <R extends SpecificRecord> Function<Schema, R> loadValueParser() {
       Objects.requireNonNull(valueParserClass, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_VALUE_PARSER_CLASS_PROPERTY));
       Objects.requireNonNull(valueParserMethod, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_VALUE_PARSER_METHOD_PROPERTY));
 

@@ -106,7 +106,6 @@ public class NotificationEventUtilsTest {
     Assert.assertNotNull("Avro key shouldn't be null", avroKey);
     Assert.assertNotNull("Key id shouldn't be null", avroKey.getId());
     Assert.assertEquals("Name should be the same as the id", name, avroKey.getId());
-    Assert.assertEquals(domain, avroKey.getDomain());
 
     AvroEvent avroEvent = toValueRecord.apply(schema);
     log.info("Obtained avro event {}", avroEvent);

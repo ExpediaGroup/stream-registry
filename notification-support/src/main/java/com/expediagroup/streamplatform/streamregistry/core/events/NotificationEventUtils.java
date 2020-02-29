@@ -17,15 +17,12 @@ package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
-
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import lombok.val;
 
 import org.apache.avro.specific.SpecificRecord;
 
@@ -41,13 +38,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Tag;
 public class NotificationEventUtils {
   public static AvroKey toAvroKeyRecord(Schema schema) {
     validateSchemaKey(schema);
-    KafkaAvroSerializer a = null;
-    final String name = schema.getKey().getName();
-    final String domain = schema.getKey().getDomain();
+
+    val name = schema.getKey().getName();
 
     return AvroKey.newBuilder()
         .setId(name)
-        .setDomain(domain)
         .setVersion(null)
         .setParent(null)
         .setType(AvroKeyType.SCHEMA)
@@ -57,24 +52,24 @@ public class NotificationEventUtils {
   public static AvroEvent toAvroValueRecord(Schema schema) {
     validateSchemaValue(schema);
 
-    final String name = schema.getKey().getName();
-    final String domain = schema.getKey().getDomain();
-    final String description = schema.getSpecification().getDescription();
+    val name = schema.getKey().getName();
+    val domain = schema.getKey().getDomain();
+    val description = schema.getSpecification().getDescription();
 
-    final List<com.expediagroup.streamplatform.streamregistry.avro.Tag> tags = schema.getSpecification()
+    val tags = schema.getSpecification()
         .getTags()
         .stream()
         .map(NotificationEventUtils::toAvroTag)
         .collect(Collectors.toList());
 
-    final String type = schema.getSpecification().getType();
-    final String configJson = schema.getSpecification().getConfigJson();
+    val type = schema.getSpecification().getType();
+    val configJson = schema.getSpecification().getConfigJson();
 
-    final String statusJson = Optional.ofNullable(schema.getStatus())
+    val statusJson = Optional.ofNullable(schema.getStatus())
         .map(Status::getStatusJson)
         .orElse(null);
 
-    AvroSchema avroSchema = AvroSchema.newBuilder()
+    val avroSchema = AvroSchema.newBuilder()
         .setDomain(domain)
         .setName(name)
         .setDescription(description)
@@ -117,7 +112,7 @@ public class NotificationEventUtils {
   }
 
   public static <W, R extends SpecificRecord> Function<W, R> loadToAvroStaticMethod(String clazz, String methodName, Class<W> argType) throws ClassNotFoundException, NoSuchMethodException {
-    Method method = Class.forName(clazz)
+    val method = Class.forName(clazz)
         .getDeclaredMethod(methodName, argType);
 
     Function<W, R> toAvroFn = obj -> {

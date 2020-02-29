@@ -17,14 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -38,24 +37,19 @@ import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 public class KafkaSetupHandler {
   public static final int DEFAULT_CREATE_TOPIC_TIMEOUT_MS = 10000;
 
+  private final NewTopic newTopic; // It must not be null if kafkaSetupEnabled = true
+
+  private final boolean kafkaSetupEnabled;
+
   @NonNull
-  @Getter
   private final String bootstrapServers;
 
   @NonNull
-  @Getter
-  private final Optional<NewTopic> newTopic;
-
-  @NonNull
-  @Getter
-  private String notificationEventsTopic;
-
-  @Getter
-  private final boolean isKafkaSetupEnabled;
+  private final String notificationEventsTopic;
 
   public void setup() throws ExecutionException, InterruptedException {
     log.info("Starting Kafka setup...");
-    if (isKafkaSetupEnabled) {
+    if (kafkaSetupEnabled) {
       executeTopicSetup();
     }
 
@@ -63,18 +57,17 @@ public class KafkaSetupHandler {
   }
 
   private void executeTopicSetup() {
-    try (AdminClient client = createAdminClient()) {
-      NewTopic topic = newTopic.get();
-      Optional<TopicDescription> description = obtainTopicDescription(client, topic.name());
+    try (val client = createAdminClient()) {
+      val description = obtainTopicDescription(client, newTopic.name());
 
       if (description.isEmpty()) {
-        log.info("Trying to create topic {} on cluster {}", topic, bootstrapServers);
+        log.info("Trying to create topic {} on cluster {}", newTopic, bootstrapServers);
 
-        Optional<TopicDescription> created = createTopic(client, topic);
+        val created = createTopic(client, newTopic);
 
         log.info("Created topic {} on cluster {}", created, bootstrapServers);
       } else {
-        log.warn("Topic {} of cluster {} already exists: {}", topic.name(), bootstrapServers, description.get());
+        log.warn("Topic {} of cluster {} already exists: {}", newTopic.name(), bootstrapServers, description.get());
       }
     } catch (InterruptedException | ExecutionException e) {
       e.printStackTrace();
@@ -82,8 +75,8 @@ public class KafkaSetupHandler {
   }
 
   private void checkTopicExistence() throws ExecutionException, InterruptedException {
-    try (AdminClient client = createAdminClient()) {
-      Optional<TopicDescription> topic = obtainTopicDescription(client, notificationEventsTopic);
+    try (val client = createAdminClient()) {
+      val topic = obtainTopicDescription(client, notificationEventsTopic);
 
       log.info("Notification topic {} in cluster {}: {}", notificationEventsTopic, bootstrapServers, topic);
 
@@ -95,7 +88,7 @@ public class KafkaSetupHandler {
   }
 
   private AdminClient createAdminClient() {
-    Map<String, Object> configs = new HashMap<>();
+    val configs = new HashMap<String, Object>();
     configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
     log.info("Creating a Kafka Admin client with configuration {}", configs);
