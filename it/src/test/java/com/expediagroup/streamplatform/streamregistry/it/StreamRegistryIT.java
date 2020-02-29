@@ -73,7 +73,7 @@ public class StreamRegistryIT {
     final String url = String.format("http://localhost:%s/graphql", port);
 
     client = new ITestClient(url);
-    TimeUnit.SECONDS.sleep(2);
+    TimeUnit.SECONDS.sleep(5);
   }
 
   @AfterClass
