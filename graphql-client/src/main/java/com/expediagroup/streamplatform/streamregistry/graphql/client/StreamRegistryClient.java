@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.client;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import com.apollographql.apollo.ApolloClient;
@@ -35,12 +36,22 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Stream
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
 
+import okhttp3.HttpUrl;
+
 public class StreamRegistryClient {
 
   private final ApolloClient apollo;
 
   public StreamRegistryClient(final String url) {
-    this(StreamRegistryApolloClient.builder().serverUrl(url).build());
+    /*
+      Due a strange an temperamental reason, ApolloClient.Builder throws a NPE during CI/CD with a non-null url, that's
+      why a HttpUrl is passed instead of a String url (with a meaningful error message).
+    */
+    this(StreamRegistryApolloClient.builder().serverUrl(
+        Objects.requireNonNull(
+            HttpUrl.parse(url),
+            String.format("HttpUrl.parse(%s) returned null", url)))
+        .build());
   }
 
   public StreamRegistryClient(ApolloClient apolloClient) {

@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import java.util.concurrent.TimeUnit;
-
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.AfterClass;
@@ -73,7 +71,6 @@ public class StreamRegistryIT {
     final String url = String.format("http://localhost:%s/graphql", port);
 
     client = new ITestClient(url);
-    TimeUnit.SECONDS.sleep(5);
   }
 
   @AfterClass
