@@ -15,17 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
 
 import java.util.Objects;
 import java.util.stream.IntStream;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,9 +43,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.SchemaParserProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.StreamParserProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.StreamNotificationEventListener;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -79,6 +88,9 @@ public class NotificationEventListenerTest {
   @Autowired
   private SchemaEventHandlerForKafka schemaEventHandlerForKafka;
 
+  @Autowired
+  private StreamEventHandlerForKafka streamEventHandlerForKafka;
+
   @Before
   public void before() {
     IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
@@ -98,6 +110,10 @@ public class NotificationEventListenerTest {
     Mockito.verify(schemaEventHandlerForKafka, Mockito.timeout(5000).times(TEST_CREATE_SCHEMA_EVENTS)).onCreate(Mockito.notNull());
     Mockito.verify(schemaEventHandlerForKafka, Mockito.timeout(5000).times(TEST_UPDATE_SCHEMA_EVENTS)).onUpdate(Mockito.notNull());
     Mockito.verify(schemaEventHandlerForKafka, Mockito.timeout(5000).times(TEST_DELETE_SCHEMA_EVENTS)).onDelete(Mockito.notNull());
+
+    Mockito.verify(streamEventHandlerForKafka, Mockito.timeout(5000).times(TEST_CREATE_STREAM_EVENTS)).onCreate(Mockito.notNull());
+    Mockito.verify(streamEventHandlerForKafka, Mockito.timeout(5000).times(TEST_UPDATE_STREAM_EVENTS)).onUpdate(Mockito.notNull());
+    Mockito.verify(streamEventHandlerForKafka, Mockito.timeout(5000).times(TEST_DELETE_STREAM_EVENTS)).onDelete(Mockito.notNull());
 
     // Here we check that the listener gets called
     Mockito.verify(streamNotificationEventListener, Mockito.timeout(5000).times(TEST_CREATE_STREAM_EVENTS)).onCreate(Mockito.notNull());
@@ -137,6 +153,26 @@ public class NotificationEventListenerTest {
       Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
 
       return Mockito.mock(SchemaEventHandlerForKafka.class);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public StreamEventHandlerForKafka streamEventHandlerForKafka(StreamParserProperties parserProperties) {
+      Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
+
+      return Mockito.mock(StreamEventHandlerForKafka.class);
+    }
+
+    @Bean(name = "producerFactory")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public ProducerFactory<SpecificRecord, SpecificRecord> producerFactory() {
+      return Mockito.mock(ProducerFactory.class);
+    }
+
+    @Bean(name = "kafkaTemplate")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate() {
+      return Mockito.mock(KafkaTemplate.class);
     }
   }
 

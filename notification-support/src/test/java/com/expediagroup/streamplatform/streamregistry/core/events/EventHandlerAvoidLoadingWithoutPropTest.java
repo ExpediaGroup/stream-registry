@@ -15,9 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +30,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
 
 @RunWith(SpringRunner.class)// Not defined prop!
 @SpringBootTest(classes = EventHandlerAvoidLoadingWithoutPropTest.MockListenerConfiguration.class)
@@ -38,10 +46,15 @@ public class EventHandlerAvoidLoadingWithoutPropTest {
   @Autowired(required = false)
   private Optional<SchemaEventHandlerForKafka> schemaEventHandlerForKafka;
 
+  @Autowired(required = false)
+  private Optional<StreamEventHandlerForKafka> streamEventHandlerForKafka;
+
   @Test
   public void having_notifications_disabled_verify_that_KafkaNotificationEventListener_is_not_being_loaded() {
     Assert.assertNotNull("Optional container of SchemaEventHandlerForKafka shouldn't be null!", schemaEventHandlerForKafka);
-    Assert.assertFalse("Kafka notification should NOT be loaded since notification.events.kafka.enabled == false", schemaEventHandlerForKafka.isPresent());
+    Assert.assertFalse("Kafka schema event handler should NOT be loaded since notification.events.kafka.enabled == false", schemaEventHandlerForKafka.isPresent());
+    Assert.assertNotNull("Optional container of StreamEventHandlerForKafka shouldn't be null!", streamEventHandlerForKafka);
+    Assert.assertFalse("Kafka stream event handler should NOT be loaded since notification.events.kafka.enabled == false", streamEventHandlerForKafka.isPresent());
   }
 
   public static class MockListenerConfiguration extends NotificationEventConfig {
@@ -58,6 +71,18 @@ public class EventHandlerAvoidLoadingWithoutPropTest {
       Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
 
       return Mockito.mock(KafkaSetupHandler.class);
+    }
+
+    @Bean(name = "producerFactory")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public ProducerFactory<SpecificRecord, SpecificRecord> producerFactory() {
+      return Mockito.mock(ProducerFactory.class);
+    }
+
+    @Bean(name = "kafkaTemplate")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate() {
+      return Mockito.mock(KafkaTemplate.class);
     }
   }
 }

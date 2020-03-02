@@ -15,11 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -72,12 +73,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
+import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -101,6 +107,9 @@ public class NotificationEventListenerKafkaIntegrationTest {
 
   public static final int TEST_CREATE_SCHEMA_EVENTS = 5;
   public static final int TEST_UPDATE_SCHEMA_EVENTS = 3;
+
+  public static final int TEST_CREATE_STREAM_EVENTS = 2;
+  public static final int TEST_UPDATE_STREAM_EVENTS = 4;
 
   public static final Map<AvroKey, AvroEvent> producedEvents = new ConcurrentHashMap<>();
 
@@ -126,10 +135,18 @@ public class NotificationEventListenerKafkaIntegrationTest {
     IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
     IntStream.rangeClosed(1, TEST_UPDATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.UPDATE, "schema-update")));
 
+    IntStream.rangeClosed(1, TEST_CREATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.CREATE, "stream-create")));
+    IntStream.rangeClosed(1, TEST_UPDATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.UPDATE, "stream-update")));
+
     TimeUnit.SECONDS.sleep(5);
 
     Assert.assertFalse("Produced events shouldn't be empty", producedEvents.isEmpty());
-    Assert.assertEquals("Number of messages should be same as events", producedEvents.size(), (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
+
+    val schemaEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.SCHEMA)).count();
+    val streamEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.STREAM)).count();
+
+    Assert.assertEquals("Number of messages should be same as schema events", schemaEvents, (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
+    Assert.assertEquals("Number of messages should be same as stream events", streamEvents, (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
   }
 
   @Test
@@ -249,6 +266,51 @@ public class NotificationEventListenerKafkaIntegrationTest {
     status.setStatusJson(statusJson);
 
     val schema = new Schema();
+    schema.setKey(key);
+    schema.setSpecification(spec);
+    schema.setStatus(status);
+
+    return schema;
+  }
+
+  public NotificationEvent<Stream> getDummyStreamEvent(int event, EventType eventType, String source) {
+    log.info("Emitting event {}", event);
+    Stream stream = getDummyStream();
+    return NotificationEvent.<Stream>builder()
+        .entity(stream)
+        .source(source)
+        .eventType(eventType)
+        .build();
+  }
+
+  public static Stream getDummyStream() {
+    val name = Instant.now().toString();
+    val domain = "domain";
+    val description = "description";
+    val type = "type";
+    val configJson = "{}";
+    val statusJson = "{foo:bar}";
+    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    val version = 1;
+
+    // Key
+    val key = new StreamKey();
+    key.setName(name);
+    key.setDomain(domain);
+    key.setVersion(version);
+
+    // Spec
+    val spec = new Specification();
+    spec.setDescription(description);
+    spec.setType(type);
+    spec.setConfigJson(configJson);
+    spec.setTags(tags);
+
+    // Status
+    val status = new Status();
+    status.setStatusJson(statusJson);
+
+    val schema = new Stream();
     schema.setKey(key);
     schema.setSpecification(spec);
     schema.setStatus(status);

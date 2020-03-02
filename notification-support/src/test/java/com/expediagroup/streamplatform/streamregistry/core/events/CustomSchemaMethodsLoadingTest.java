@@ -15,16 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.CUSTOM_SCHEMA_KEY_PARSER_CLASS_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.CUSTOM_SCHEMA_KEY_PARSER_METHOD_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.CUSTOM_SCHEMA_PARSER_ENABLED_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.CUSTOM_SCHEMA_VALUE_PARSER_CLASS_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.CUSTOM_SCHEMA_VALUE_PARSER_METHOD_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_SCHEMA_KEY_PARSER_CLASS_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_SCHEMA_KEY_PARSER_METHOD_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_SCHEMA_PARSER_ENABLED_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_SCHEMA_VALUE_PARSER_CLASS_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_SCHEMA_VALUE_PARSER_METHOD_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.val;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,12 +46,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroSchema;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
@@ -172,6 +178,18 @@ public class CustomSchemaMethodsLoadingTest {
       Objects.requireNonNull(bootstrapServers, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_BOOTSTRAP_SERVERS_PROPERTY));
 
       return Mockito.mock(KafkaSetupHandler.class);
+    }
+
+    @Bean(name = "producerFactory")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public ProducerFactory<SpecificRecord, SpecificRecord> producerFactory() {
+      return Mockito.mock(ProducerFactory.class);
+    }
+
+    @Bean(name = "kafkaTemplate")
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate() {
+      return Mockito.mock(KafkaTemplate.class);
     }
   }
 }

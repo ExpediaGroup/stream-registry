@@ -15,11 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -39,7 +40,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
 
 @RunWith(SpringRunner.class)// Explicitly defined prop with true as value
 @SpringBootTest(classes = NotificationEventListenerSuccessfulLoadingTest.MockListenerConfiguration.class,
@@ -54,10 +58,16 @@ public class NotificationEventListenerSuccessfulLoadingTest {
   @Autowired(required = false)
   private Optional<SchemaEventHandlerForKafka> schemaEventHandlerForKafka;
 
+  @Autowired(required = false)
+  private Optional<StreamEventHandlerForKafka> streamEventHandlerForKafka;
+
   @Test
   public void having_notifications_enabled_verify_that_KafkaNotificationEventListener_is_being_loaded() {
-    Assert.assertNotNull("Optional container of kafkaNotificationEventListener shouldn't be null!", schemaEventHandlerForKafka);
-    Assert.assertTrue(String.format("Kafka notification should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), schemaEventHandlerForKafka.isPresent());
+    Assert.assertNotNull("Optional container of SchemaEventHandlerForKafka shouldn't be null!", schemaEventHandlerForKafka);
+    Assert.assertTrue(String.format("Kafka schema event handler should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), schemaEventHandlerForKafka.isPresent());
+
+    Assert.assertNotNull("Optional container of StreamEventHandlerForKafka shouldn't be null!", streamEventHandlerForKafka);
+    Assert.assertTrue(String.format("Kafka stream event handler should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), streamEventHandlerForKafka.isPresent());
   }
 
   @Configuration
