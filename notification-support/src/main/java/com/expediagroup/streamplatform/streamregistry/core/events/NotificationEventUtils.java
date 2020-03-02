@@ -30,8 +30,10 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroSchema;
+import com.expediagroup.streamplatform.streamregistry.avro.AvroStream;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 @Slf4j
@@ -84,6 +86,57 @@ public class NotificationEventUtils {
         .build();
   }
 
+  public static AvroKey toAvroKeyRecord(Stream stream) {
+    validateStreamKey(stream);
+
+    val name = stream.getKey().getName();
+    val version = stream.getKey().getVersion();
+
+    return AvroKey.newBuilder()
+        .setId(name)
+        .setVersion(version)
+        .setParent(null)
+        .setType(AvroKeyType.STREAM)
+        .build();
+  }
+
+  public static AvroEvent toAvroValueRecord(Stream stream) {
+    validateStreamValue(stream);
+
+    val name = stream.getKey().getName();
+    val domain = stream.getKey().getDomain();
+    val version = stream.getKey().getVersion();
+    val description = stream.getSpecification().getDescription();
+
+    val tags = stream.getSpecification()
+        .getTags()
+        .stream()
+        .map(NotificationEventUtils::toAvroTag)
+        .collect(Collectors.toList());
+
+    val type = stream.getSpecification().getType();
+    val configJson = stream.getSpecification().getConfigJson();
+
+    val statusJson = Optional.ofNullable(stream.getStatus())
+        .map(Status::getStatusJson)
+        .orElse(null);
+
+    val avroStream = AvroStream.newBuilder()
+        .setVersion(version)
+        .setDomain(domain)
+        .setName(name)
+        .setDescription(description)
+        .setTags(tags)
+        .setType(type)
+        .setConfigurationString(configJson)
+        .setStatusString(statusJson)
+        .build();
+
+    return AvroEvent.newBuilder()
+        .setStreamEntity(avroStream)
+        .build();
+  }
+
   public static com.expediagroup.streamplatform.streamregistry.avro.Tag toAvroTag(Tag tag) {
     return com.expediagroup.streamplatform.streamregistry.avro.Tag.newBuilder()
         .setName(tag.getName())
@@ -107,6 +160,24 @@ public class NotificationEventUtils {
     checkNotNull(schema.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
   }
 
+  private static void validateStreamKey(Stream stream) {
+    checkNotNull(stream, canNotBeNull("stream"));
+    checkNotNull(stream.getKey(), canNotBeNull("stream key"));
+    checkNotNull(stream.getKey().getName(), canNotBeNull("key's name"));
+    checkNotNull(stream.getKey().getDomain(), canNotBeNull("key's domain"));
+    checkNotNull(stream.getKey().getVersion(), canNotBeNull("key's version"));
+  }
+
+  private static void validateStreamValue(Stream stream) {
+    validateStreamKey(stream);
+
+    checkNotNull(stream.getSpecification(), canNotBeNull("stream spec"));
+    checkNotNull(stream.getSpecification().getDescription(), canNotBeNull("spec's description"));
+    checkNotNull(stream.getSpecification().getTags(), canNotBeNull("spec's tags"));
+    checkNotNull(stream.getSpecification().getType(), canNotBeNull("spec's type"));
+    checkNotNull(stream.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
+  }
+
   private static String canNotBeNull(String target) {
     return String.format("%s can not be null", target);
   }
@@ -126,5 +197,9 @@ public class NotificationEventUtils {
     };
 
     return toAvroFn;
+  }
+
+  public static String getWarningMessageOnNotDefinedProp(String component, String property) {
+    return String.format("%s prop must be configured on %s", property, component);
   }
 }

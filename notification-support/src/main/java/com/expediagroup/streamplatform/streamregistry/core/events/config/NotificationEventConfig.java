@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.events;
+package com.expediagroup.streamplatform.streamregistry.core.events.config;
+
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import com.google.common.base.Preconditions;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 
 import org.apache.avro.specific.SpecificRecord;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,12 +37,13 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
+import com.expediagroup.streamplatform.streamregistry.core.events.KafkaSetupHandler;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
 
 @Slf4j
 @Configuration
-@EnableConfigurationProperties({NotificationEventConfig.NewTopicProperties.class, NotificationEventConfig.SchemaParserProperties.class})
+@EnableConfigurationProperties({NewTopicProperties.class, SchemaParserProperties.class, StreamParserProperties.class})
 public class NotificationEventConfig {
   public static final String KAFKA_SCHEMA_REGISTRY_URL_PROPERTY = "notification.events.kafka.schema.registry.url";
   public static final String KAFKA_BOOTSTRAP_SERVERS_PROPERTY = "notification.events.kafka.bootstrap-servers";
@@ -62,6 +57,13 @@ public class NotificationEventConfig {
   public static final String CUSTOM_SCHEMA_KEY_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.schema.key-parser-method";
   public static final String CUSTOM_SCHEMA_VALUE_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.schema.value-parser-class";
   public static final String CUSTOM_SCHEMA_VALUE_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.schema.value-parser-method";
+
+  public static final String CUSTOM_STREAM_TYPE_PREFIX = "notification.events.kafka.custom.stream";
+  public static final String CUSTOM_STREAM_PARSER_ENABLED_PROPERTY = "notification.events.kafka.custom.stream.custom-enabled";
+  public static final String CUSTOM_STREAM_KEY_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.stream.key-parser-class";
+  public static final String CUSTOM_STREAM_KEY_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.stream.key-parser-method";
+  public static final String CUSTOM_STREAM_VALUE_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.stream.value-parser-class";
+  public static final String CUSTOM_STREAM_VALUE_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.stream.value-parser-method";
 
   @Value("${" + KAFKA_TOPIC_SETUP_PROPERTY + ":false}")
   private Boolean isKafkaSetupEnabled;
@@ -110,6 +112,19 @@ public class NotificationEventConfig {
         .build();
   }
 
+  @Bean
+  @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+  public StreamEventHandlerForKafka streamEventHandlerForKafka(StreamParserProperties parserProperties) {
+    Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
+
+    return StreamEventHandlerForKafka.builder()
+        .notificationEventsTopic(notificationEventsTopic)
+        .streamToKeyRecord(parserProperties.buildStreamToKeyRecord())
+        .streamToValueRecord(parserProperties.buildStreamToValueRecord())
+        .kafkaTemplate(kafkaTemplate())
+        .build();
+  }
+
   @Bean(initMethod = "setup")
   @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
   public KafkaSetupHandler kafkaSetupHandler(NewTopicProperties newTopicProperties) {
@@ -124,85 +139,5 @@ public class NotificationEventConfig {
         .bootstrapServers(bootstrapServers)
         .kafkaSetupEnabled(isKafkaSetupEnabled)
         .build();
-  }
-
-  @Data
-  @ConfigurationProperties(prefix = KAFKA_TOPIC_SETUP_PROPERTY)
-  public static class NewTopicProperties {
-    private Integer numPartitions;
-    private Short replicationFactor;
-    private Map<String, String> configs = null;
-
-    public NewTopic buildNewTopic(final String topicName) {
-      // We execute this method and its validations only when 'notification.events.kafka.topic.setup' is true
-      // during KafkaSetupHandler building. If we use @Validated and its constraints, bean loading will fail even
-      // when topic setup is disabled.
-      val component = "enabled Kafka topic setup";
-
-      Objects.requireNonNull(topicName, getWarningMessageOnNotDefinedProp(component, KAFKA_TOPIC_NAME_PROPERTY));
-      Objects.requireNonNull(numPartitions, getWarningMessageOnNotDefinedProp(component,
-          KAFKA_TOPIC_SETUP_PROPERTY.concat(".numPartitions")));
-      Objects.requireNonNull(replicationFactor, getWarningMessageOnNotDefinedProp(component,
-          KAFKA_TOPIC_SETUP_PROPERTY.concat(".replicationFactor")));
-
-      val gtZeroWarning = " must be greater than zero";
-
-      Preconditions.checkArgument(numPartitions.compareTo(0) > 0,
-          KAFKA_TOPIC_SETUP_PROPERTY.concat(".numPartitions").concat(gtZeroWarning));
-      Preconditions.checkArgument(replicationFactor.intValue() > 0,
-          KAFKA_TOPIC_SETUP_PROPERTY.concat(".replicationFactor").concat(gtZeroWarning));
-
-      return new NewTopic(topicName, numPartitions, replicationFactor).configs(configs);
-    }
-  }
-
-  @Data
-  @ConfigurationProperties(prefix = CUSTOM_SCHEMA_TYPE_PREFIX)
-  public static class SchemaParserProperties {
-    private Boolean customEnabled;
-    private String keyParserClass;
-    private String keyParserMethod;
-    private String valueParserClass;
-    private String valueParserMethod;
-
-    public Function<Schema, ?> buildSchemaToKeyRecord() {
-      return Optional.ofNullable(customEnabled)
-          .filter(Boolean::booleanValue)
-          .map(e -> this.loadKeyParser())
-          .orElse(NotificationEventUtils::toAvroKeyRecord);
-    }
-
-    public Function<Schema, ?> buildSchemaToValueRecord() {
-      return Optional.ofNullable(customEnabled)
-          .filter(Boolean::booleanValue)
-          .map(e -> this.loadValueParser())
-          .orElse(NotificationEventUtils::toAvroValueRecord);
-    }
-
-    private <R extends SpecificRecord> Function<Schema, R> loadKeyParser() {
-      Objects.requireNonNull(keyParserClass, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_KEY_PARSER_CLASS_PROPERTY));
-      Objects.requireNonNull(keyParserMethod, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_KEY_PARSER_METHOD_PROPERTY));
-
-      try {
-        return NotificationEventUtils.loadToAvroStaticMethod(keyParserClass, keyParserMethod, Schema.class);
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
-    }
-
-    private <R extends SpecificRecord> Function<Schema, R> loadValueParser() {
-      Objects.requireNonNull(valueParserClass, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_VALUE_PARSER_CLASS_PROPERTY));
-      Objects.requireNonNull(valueParserMethod, getWarningMessageOnNotDefinedProp("enabled schema type parser", CUSTOM_SCHEMA_VALUE_PARSER_METHOD_PROPERTY));
-
-      try {
-        return NotificationEventUtils.loadToAvroStaticMethod(valueParserClass, valueParserMethod, Schema.class);
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
-    }
-  }
-
-  public static String getWarningMessageOnNotDefinedProp(String component, String property) {
-    return String.format("%s prop must be configured on %s", property, component);
   }
 }
