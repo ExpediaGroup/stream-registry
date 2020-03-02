@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- A stream event handler for Kafka
+- Unit and integration tests for stream event handler
+- New config classes due a refactoring of `NotificationEventConfig`
+- New config properties for stream custom parser methods
+
+### Changed
+- `NotificationEventConfig` was refactored
+
 ## [0.10.0] 2020-03-02
 ### Added
 - Added a `notification-support` with a generic model for event listeners and handlers, including
