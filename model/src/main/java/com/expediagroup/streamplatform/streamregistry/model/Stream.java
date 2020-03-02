@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
@@ -30,6 +31,7 @@ public class Stream implements ManagedType {
   @EmbeddedId
   private StreamKey key;
 
+  @Column(updatable = false)
   private SchemaKey schemaKey;
   private Specification specification;
   private Status status;

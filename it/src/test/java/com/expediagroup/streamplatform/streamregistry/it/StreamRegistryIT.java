@@ -25,6 +25,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.GenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
@@ -57,16 +58,28 @@ public class StreamRegistryIT {
           .withEnv("POSTGRES_DB", "streamregistry");
 
   @BeforeClass
-  public static void before() {
+  public static void before() throws InterruptedException {
+    int port = SocketUtils.findAvailableTcpPort();
+
+    log.info("Starting to run embedded spring app in port {}", port);
+
+    /*
+      When server.port=0, spring randomizes the port and it is not available until the context is fully initialized,
+      then it can be retrieved with something like context.getEnvironment().getProperty("local.server.port")—that's
+      the ideal case!—but in a slow resources environment (like a CI/CD docker) it may retrieve null, since environment
+      is not ready yet.
+    */
     String[] args = new String[] {
-        "--server.port=0",
+        String.format("--server.port=%d", port),
         "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
         "--spring.datasource.username=streamregistry",
         "--spring.datasource.password=streamregistry",
         "--spring.jpa.show-sql=false"
     };
+
     context = SpringApplication.run(StreamRegistryApp.class, args);
-    final String url = String.format("http://localhost:%s%s", context.getEnvironment().getProperty("local.server.port"), "/graphql");
+
+    final String url = String.format("http://localhost:%d/graphql", port);
     client = new ITestClient(url);
   }
 

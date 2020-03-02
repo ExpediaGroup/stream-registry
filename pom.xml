@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>0.9.5-SNAPSHOT</version>
+  <version>0.10.1-SNAPSHOT</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
 
@@ -52,6 +52,7 @@
     <module>model</module>
     <module>it</module>
     <module>spring-boot-starter</module>
+    <module>notification-support</module>
   </modules>
 
   <properties>
@@ -59,6 +60,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>11</jdk.version>
 
+    <confluent.version>5.3.1</confluent.version>
+    <avro.version>1.8.2</avro.version>
     <apollographql.version>1.0.0</apollographql.version>
     <bull.version>1.4.7.3</bull.version>
     <guava.version>28.0-jre</guava.version>
@@ -88,6 +91,30 @@
         <scope>import</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro</artifactId>
+        <version>${avro.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.confluent</groupId>
+        <artifactId>kafka-streams-avro-serde</artifactId>
+        <version>${confluent.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
       <dependency>
         <groupId>com.apollographql.apollo</groupId>
         <artifactId>apollo-runtime</artifactId>
@@ -122,6 +149,31 @@
   </dependencyManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!-- mvn generate-sources -->
+          <groupId>org.apache.avro</groupId>
+          <artifactId>avro-maven-plugin</artifactId>
+          <version>${avro.version}</version>
+          <executions>
+            <execution>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>idl-protocol</goal>
+              </goals>
+              <configuration>
+                <sourceDirectory>${project.build.resources[0].directory}/avro</sourceDirectory>
+                <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+                <fieldVisibility>PRIVATE</fieldVisibility>
+                <createSetters>false</createSetters>
+                <stringType>String</stringType>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>

@@ -23,37 +23,37 @@ import java.util.function.Function;
 import lombok.NonNull;
 
 public interface NotificationEventEmitter<T> {
-    Optional<T> emitEventOnProcessedEntity(EventType type, T entity);
+  Optional<T> emitEventOnProcessedEntity(EventType type, T entity);
 
-    void onFailedEmitting(Throwable ex, NotificationEvent<T> event);
+  void onFailedEmitting(Throwable ex, NotificationEvent<T> event);
 
-    default Optional<T> emitEvent(@NonNull Consumer<NotificationEvent<T>> emitter, @NonNull EventType type, T entity) {
-        return emitEvent(emitter, null, type, entity);
+  default Optional<T> emitEvent(@NonNull Consumer<NotificationEvent<T>> emitter, @NonNull EventType type, T entity) {
+    return emitEvent(emitter, null, type, entity);
+  }
+
+  default Optional<T> emitEvent(@NonNull Consumer<NotificationEvent<T>> emitter, String sourceEventPrefix, @NonNull EventType type, T entity) {
+    if (entity != null) {
+      String prefix = sourceEventPrefix != null ? sourceEventPrefix : getSourceEventPrefix(entity);
+      String source = prefix.concat(type.toString().toLowerCase());
+      final NotificationEvent<T> event = NotificationEvent.<T>builder()
+          .source(source)
+          .eventType(type)
+          .entity(entity)
+          .build();
+
+      Function<Throwable, Void> onException = ex -> {
+        onFailedEmitting(ex, event);
+        return null;
+      };
+
+      CompletableFuture.runAsync(() -> emitter.accept(event))
+          .exceptionally(onException);
     }
 
-    default Optional<T> emitEvent(@NonNull Consumer<NotificationEvent<T>> emitter, String sourceEventPrefix, @NonNull EventType type, T entity) {
-        if (entity != null) {
-            String prefix = sourceEventPrefix != null ? sourceEventPrefix : getSourceEventPrefix(entity);
-            String source = prefix.concat(type.toString().toLowerCase());
-            final NotificationEvent<T> event = NotificationEvent.<T>builder()
-                    .source(source)
-                    .eventType(type)
-                    .entity(entity)
-                    .build();
+    return Optional.ofNullable(entity);
+  }
 
-            Function<Throwable, Void> onException = ex -> {
-                onFailedEmitting(ex, event);
-                return null;
-            };
-
-            CompletableFuture.runAsync(() -> emitter.accept(event))
-                    .exceptionally(onException);
-        }
-
-        return Optional.ofNullable(entity);
-    }
-
-    default String getSourceEventPrefix(T entity) {
-        return entity.getClass().getSimpleName().toLowerCase() + "-";
-    }
+  default String getSourceEventPrefix(T entity) {
+    return entity.getClass().getSimpleName().toLowerCase() + "-";
+  }
 }
