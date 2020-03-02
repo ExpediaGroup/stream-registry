@@ -38,184 +38,184 @@ import com.expediagroup.streamplatform.streamregistry.model.Specification;
 @SpringBootTest(classes = TestConfig.class)
 public class NotificationEventEmitterProducerServiceTest {
 
-    @MockBean
-    private ApplicationEventMulticaster applicationEventMulticaster;
+  @MockBean
+  private ApplicationEventMulticaster applicationEventMulticaster;
 
-    @MockBean
-    private HandlerService handlerService;
+  @MockBean
+  private HandlerService handlerService;
 
-    @MockBean
-    private ProducerValidator producerValidator;
+  @MockBean
+  private ProducerValidator producerValidator;
 
-    @MockBean
-    private ProducerRepository producerRepository;
+  @MockBean
+  private ProducerRepository producerRepository;
 
-    private NotificationEventEmitter<Producer> producerServiceEventEmitter;
-    private ProducerService producerService;
+  private NotificationEventEmitter<Producer> producerServiceEventEmitter;
+  private ProducerService producerService;
 
-    @Before
-    public void before() {
-        producerServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Producer>builder()
-                .classType(Producer.class)
-                .applicationEventMulticaster(applicationEventMulticaster)
-                .build());
+  @Before
+  public void before() {
+    producerServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Producer>builder()
+        .classType(Producer.class)
+        .applicationEventMulticaster(applicationEventMulticaster)
+        .build());
 
-        producerService = Mockito.spy(new ProducerService(handlerService, producerValidator, producerRepository, producerServiceEventEmitter));
-    }
+    producerService = Mockito.spy(new ProducerService(handlerService, producerValidator, producerRepository, producerServiceEventEmitter));
+  }
 
-    @Test
-    public void givenAProducerForCreate_validateThatNotificationEventIsEmitted() {
-        final Producer entity = getDummyProducer();
-        final EventType type = EventType.CREATE;
-        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAProducerForCreate_validateThatNotificationEventIsEmitted() {
+    final Producer entity = getDummyProducer();
+    final EventType type = EventType.CREATE;
+    final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(producerValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
-        Mockito.when(producerRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(producerValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(producerRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        producerService.create(entity);
+    producerService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenAProducerForUpdate_validateThatNotificationEventIsEmitted() {
-        final Producer entity = getDummyProducer();
-        final EventType type = EventType.UPDATE;
-        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAProducerForUpdate_validateThatNotificationEventIsEmitted() {
+    final Producer entity = getDummyProducer();
+    final EventType type = EventType.UPDATE;
+    final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(producerValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(producerValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(producerRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(producerRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        producerService.update(entity);
+    producerService.update(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenANullProducerRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
-        final Producer entity = getDummyProducer();
+  @Test
+  public void givenANullProducerRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
+    final Producer entity = getDummyProducer();
 
-        Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(producerValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(producerValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-        Mockito.when(producerRepository.save(entity)).thenReturn(null);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(producerRepository.save(entity)).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
 
-        producerService.create(entity);
+    producerService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-                .multicastEvent(Mockito.any());
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
+        .multicastEvent(Mockito.any());
 
-        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.any());
-    }
+    Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.any());
+  }
 
-    @Test
-    public void givenANullProducerRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
-        final Producer entity = getDummyProducer();
+  @Test
+  public void givenANullProducerRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
+    final Producer entity = getDummyProducer();
 
-        Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(producerValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(producerValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(producerRepository.save(entity)).thenReturn(null);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(producerRepository.save(entity)).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
 
-        producerService.update(entity);
+    producerService.update(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-                .multicastEvent(Mockito.any());
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
+        .multicastEvent(Mockito.any());
 
-        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.any());
-    }
+    Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.any());
+  }
 
-    @Test
-    public void givenAProducerForUpsert_validateThatNotificationEventIsEmitted() {
-        final Producer entity = getDummyProducer();
-        final EventType type = EventType.UPDATE;
-        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAProducerForUpsert_validateThatNotificationEventIsEmitted() {
+    final Producer entity = getDummyProducer();
+    final EventType type = EventType.UPDATE;
+    final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(producerValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(producerValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(producerRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(producerRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        producerService.upsert(entity);
+    producerService.upsert(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenAProducerForCreate_handleAMulticasterException() {
-        final Producer entity = getDummyProducer();
-        final EventType type = EventType.CREATE;
-        final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAProducerForCreate_handleAMulticasterException() {
+    final Producer entity = getDummyProducer();
+    final EventType type = EventType.CREATE;
+    final String source = producerServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<Producer> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(producerValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(producerRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(producerValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-        Mockito.when(producerRepository.save(entity)).thenReturn(entity);
-        Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(producerRepository.save(entity)).thenReturn(entity);
+    Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
 
-        Optional<Producer> response = producerService.create(entity);
+    Optional<Producer> response = producerService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(1))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+    Mockito.verify(producerServiceEventEmitter, Mockito.timeout(1000).times(1))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
-        Assert.assertTrue(response.isPresent());
-        Assert.assertEquals(response.get(), entity);
-    }
+    Assert.assertTrue(response.isPresent());
+    Assert.assertEquals(response.get(), entity);
+  }
 
-    public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
-        return NotificationEvent.<T>builder()
-                .source(source)
-                .eventType(type)
-                .entity(entity)
-                .build();
-    }
+  public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
+    return NotificationEvent.<T>builder()
+        .source(source)
+        .eventType(type)
+        .entity(entity)
+        .build();
+  }
 
-    public Producer getDummyProducer() {
-        final Producer entity = new Producer();
+  public Producer getDummyProducer() {
+    final Producer entity = new Producer();
 
-        return entity;
-    }
+    return entity;
+  }
 
-    public Specification getDummySpecification() {
-        Specification spec = new Specification();
-        spec.setConfigJson("{}");
-        spec.setDescription("dummy spec");
+  public Specification getDummySpecification() {
+    Specification spec = new Specification();
+    spec.setConfigJson("{}");
+    spec.setDescription("dummy spec");
 
-        return spec;
-    }
+    return spec;
+  }
 }

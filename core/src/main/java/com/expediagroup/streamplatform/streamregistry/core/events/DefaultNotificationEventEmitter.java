@@ -24,52 +24,61 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.event.ApplicationEventMulticaster;
 
-import com.expediagroup.streamplatform.streamregistry.model.*;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Slf4j
 public class DefaultNotificationEventEmitter<T> implements NotificationEventEmitter<T> {
-    private static Set<Class<?>> SUPPORTED_ENTITY_CLASSES = Set.of(
-            ConsumerBinding.class,
-            Consumer.class,
-            Domain.class,
-            Infrastructure.class,
-            ProducerBinding.class,
-            Producer.class,
-            Schema.class,
-            StreamBinding.class,
-            Stream.class,
-            Zone.class
-    );
+  private static Set<Class<?>> SUPPORTED_ENTITY_CLASSES = Set.of(
+      ConsumerBinding.class,
+      Consumer.class,
+      Domain.class,
+      Infrastructure.class,
+      ProducerBinding.class,
+      Producer.class,
+      Schema.class,
+      StreamBinding.class,
+      Stream.class,
+      Zone.class
+  );
 
-    private final Class<T> classType;
-    private final ApplicationEventMulticaster applicationEventMulticaster;
+  private final Class<T> classType;
+  private final ApplicationEventMulticaster applicationEventMulticaster;
 
-    @Builder
-    private DefaultNotificationEventEmitter(Class<T> classType, ApplicationEventMulticaster applicationEventMulticaster) {
-        Objects.requireNonNull(applicationEventMulticaster, "ApplicationEventMulticaster can not be null");
+  @Builder
+  private DefaultNotificationEventEmitter(Class<T> classType, ApplicationEventMulticaster applicationEventMulticaster) {
+    Objects.requireNonNull(applicationEventMulticaster, "ApplicationEventMulticaster can not be null");
 
-        this.classType = Optional.ofNullable(classType)
-                .filter(SUPPORTED_ENTITY_CLASSES::contains)
-                .orElseThrow(() -> typeException(classType));
+    this.classType = Optional.ofNullable(classType)
+        .filter(SUPPORTED_ENTITY_CLASSES::contains)
+        .orElseThrow(() -> typeException(classType));
 
-        this.applicationEventMulticaster = applicationEventMulticaster;
-    }
+    this.applicationEventMulticaster = applicationEventMulticaster;
+  }
 
-    private static RuntimeException typeException(Class<?> type) {
-        if (type != null)
-            return new IllegalArgumentException(String.format("Unsupported %s entity type for notification event emitter", type));
-        else
-            return new NullPointerException("Entity type definition for notification event emitter can not be null");
-    }
+  private static RuntimeException typeException(Class<?> type) {
+    if (type != null)
+      return new IllegalArgumentException(String.format("Unsupported %s entity type for notification event emitter", type));
+    else
+      return new NullPointerException("Entity type definition for notification event emitter can not be null");
+  }
 
-    @Override
-    public Optional<T> emitEventOnProcessedEntity(EventType eventType, T entity) {
-        log.info("Emitting {} type event for {} entity {}", eventType, classType, entity);
-        return emitEvent(applicationEventMulticaster::multicastEvent, eventType, entity);
-    }
+  @Override
+  public Optional<T> emitEventOnProcessedEntity(EventType eventType, T entity) {
+    log.info("Emitting {} type event for {} entity {}", eventType, classType, entity);
+    return emitEvent(applicationEventMulticaster::multicastEvent, eventType, entity);
+  }
 
-    @Override
-    public void onFailedEmitting(Throwable ex, NotificationEvent<T> event) {
-        log.info("There was an error emitting an event {}", event, ex);
-    }
+  @Override
+  public void onFailedEmitting(Throwable ex, NotificationEvent<T> event) {
+    log.info("There was an error emitting an event {}", event, ex);
+  }
 }

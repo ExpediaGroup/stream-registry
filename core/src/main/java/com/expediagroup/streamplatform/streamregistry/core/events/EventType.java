@@ -16,7 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 public enum EventType {
-    CREATE,
-    UPDATE,
-    DELETE
+  CREATE,
+  UPDATE,
+  DELETE
 }

@@ -38,184 +38,184 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 @SpringBootTest(classes = TestConfig.class)
 public class NotificationEventEmitterStreamBindingServiceTest {
 
-    @MockBean
-    private ApplicationEventMulticaster applicationEventMulticaster;
+  @MockBean
+  private ApplicationEventMulticaster applicationEventMulticaster;
 
-    @MockBean
-    private HandlerService handlerService;
+  @MockBean
+  private HandlerService handlerService;
 
-    @MockBean
-    private StreamBindingValidator streamBindingValidator;
+  @MockBean
+  private StreamBindingValidator streamBindingValidator;
 
-    @MockBean
-    private StreamBindingRepository streamBindingRepository;
+  @MockBean
+  private StreamBindingRepository streamBindingRepository;
 
-    private NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
-    private StreamBindingService streamBindingService;
+  private NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
+  private StreamBindingService streamBindingService;
 
-    @Before
-    public void before() {
-        streamBindingServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<StreamBinding>builder()
-                .classType(StreamBinding.class)
-                .applicationEventMulticaster(applicationEventMulticaster)
-                .build());
+  @Before
+  public void before() {
+    streamBindingServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<StreamBinding>builder()
+        .classType(StreamBinding.class)
+        .applicationEventMulticaster(applicationEventMulticaster)
+        .build());
 
-        streamBindingService = Mockito.spy(new StreamBindingService(handlerService, streamBindingValidator, streamBindingRepository, streamBindingServiceEventEmitter));
-    }
+    streamBindingService = Mockito.spy(new StreamBindingService(handlerService, streamBindingValidator, streamBindingRepository, streamBindingServiceEventEmitter));
+  }
 
-    @Test
-    public void givenAStreamBindingForCreate_validateThatNotificationEventIsEmitted() {
-        final StreamBinding entity = getDummyStreamBinding();
-        final EventType type = EventType.CREATE;
-        final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAStreamBindingForCreate_validateThatNotificationEventIsEmitted() {
+    final StreamBinding entity = getDummyStreamBinding();
+    final EventType type = EventType.CREATE;
+    final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(streamBindingValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
-        Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(streamBindingValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        streamBindingService.create(entity);
+    streamBindingService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenAStreamBindingForUpdate_validateThatNotificationEventIsEmitted() {
-        final StreamBinding entity = getDummyStreamBinding();
-        final EventType type = EventType.UPDATE;
-        final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAStreamBindingForUpdate_validateThatNotificationEventIsEmitted() {
+    final StreamBinding entity = getDummyStreamBinding();
+    final EventType type = EventType.UPDATE;
+    final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(streamBindingValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(streamBindingValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        streamBindingService.update(entity);
+    streamBindingService.update(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenANullStreamBindingRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
-        final StreamBinding entity = getDummyStreamBinding();
+  @Test
+  public void givenANullStreamBindingRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
+    final StreamBinding entity = getDummyStreamBinding();
 
-        Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(streamBindingValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(streamBindingValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-        Mockito.when(streamBindingRepository.save(entity)).thenReturn(null);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(streamBindingRepository.save(entity)).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
 
-        streamBindingService.create(entity);
+    streamBindingService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-                .multicastEvent(Mockito.any());
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
+        .multicastEvent(Mockito.any());
 
-        Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.any());
-    }
+    Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.any());
+  }
 
-    @Test
-    public void givenANullStreamBindingRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
-        final StreamBinding entity = getDummyStreamBinding();
+  @Test
+  public void givenANullStreamBindingRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
+    final StreamBinding entity = getDummyStreamBinding();
 
-        Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(streamBindingValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(streamBindingValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(streamBindingRepository.save(entity)).thenReturn(null);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(streamBindingRepository.save(entity)).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
 
-        streamBindingService.update(entity);
+    streamBindingService.update(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-                .multicastEvent(Mockito.any());
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
+        .multicastEvent(Mockito.any());
 
-        Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.any());
-    }
+    Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.any());
+  }
 
-    @Test
-    public void givenAStreamBindingForUpsert_validateThatNotificationEventIsEmitted() {
-        final StreamBinding entity = getDummyStreamBinding();
-        final EventType type = EventType.UPDATE;
-        final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAStreamBindingForUpsert_validateThatNotificationEventIsEmitted() {
+    final StreamBinding entity = getDummyStreamBinding();
+    final EventType type = EventType.UPDATE;
+    final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-        Mockito.doNothing().when(streamBindingValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-        Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
+    Mockito.doNothing().when(streamBindingValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
 
-        Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
-        Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
-        streamBindingService.upsert(entity);
+    streamBindingService.upsert(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
-    }
+    Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(0))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+  }
 
-    @Test
-    public void givenAStreamBindingForCreate_handleAMulticasterException() {
-        final StreamBinding entity = getDummyStreamBinding();
-        final EventType type = EventType.CREATE;
-        final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
-        final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
+  @Test
+  public void givenAStreamBindingForCreate_handleAMulticasterException() {
+    final StreamBinding entity = getDummyStreamBinding();
+    final EventType type = EventType.CREATE;
+    final String source = streamBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
+    final NotificationEvent<StreamBinding> event = getDummyNotificationEvent(source, type, entity);
 
-        Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(streamBindingValidator).validateForCreate(entity);
-        Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
+    Mockito.when(streamBindingRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.doNothing().when(streamBindingValidator).validateForCreate(entity);
+    Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-        Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
-        Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
+    Mockito.when(streamBindingRepository.save(entity)).thenReturn(entity);
+    Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
 
-        Optional<StreamBinding> response = streamBindingService.create(entity);
+    Optional<StreamBinding> response = streamBindingService.create(entity);
 
-        Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
-                .multicastEvent(event);
+    Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(1))
+        .multicastEvent(event);
 
-        Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(1))
-                .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+    Mockito.verify(streamBindingServiceEventEmitter, Mockito.timeout(1000).times(1))
+        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
 
-        Assert.assertTrue(response.isPresent());
-        Assert.assertEquals(response.get(), entity);
-    }
+    Assert.assertTrue(response.isPresent());
+    Assert.assertEquals(response.get(), entity);
+  }
 
-    public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
-        return NotificationEvent.<T>builder()
-                .source(source)
-                .eventType(type)
-                .entity(entity)
-                .build();
-    }
+  public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
+    return NotificationEvent.<T>builder()
+        .source(source)
+        .eventType(type)
+        .entity(entity)
+        .build();
+  }
 
-    public StreamBinding getDummyStreamBinding() {
-        final StreamBinding entity = new StreamBinding();
+  public StreamBinding getDummyStreamBinding() {
+    final StreamBinding entity = new StreamBinding();
 
-        return entity;
-    }
+    return entity;
+  }
 
-    public Specification getDummySpecification() {
-        Specification spec = new Specification();
-        spec.setConfigJson("{}");
-        spec.setDescription("dummy spec");
+  public Specification getDummySpecification() {
+    Specification spec = new Specification();
+    spec.setConfigJson("{}");
+    spec.setDescription("dummy spec");
 
-        return spec;
-    }
+    return spec;
+  }
 }
