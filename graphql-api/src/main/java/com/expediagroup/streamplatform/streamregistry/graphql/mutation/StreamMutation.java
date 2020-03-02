@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 public interface StreamMutation extends GraphQLApiType {
   Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
 
-  Stream update(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
+  Stream update(StreamKeyInput key, SpecificationInput specification);
 
   Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
 

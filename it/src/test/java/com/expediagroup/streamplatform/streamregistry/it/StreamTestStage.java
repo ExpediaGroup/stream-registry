@@ -54,6 +54,23 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void upsert() {
+    //insert scenario without schema
+    try {
+      client.getOptionalData(factory.upsertStreamMutationInsertWithoutSchemaBuilder().build()).get();
+    }
+    catch(RuntimeException ex) {
+        assertEquals("Can't create because Schema is required", ex.getMessage());
+    }
+
+    //upsert scenario with a different schema
+    try {
+      client.getOptionalData(factory.upsertStreamMutationUpsertWithDifferentSchemaKeySchemaBuilder().build()).get();
+    }
+    catch(RuntimeException ex) {
+      assertEquals("Can't update because schema change is not allowed", ex.getMessage());
+    }
+
+    //update scenario
     Object data = client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();
