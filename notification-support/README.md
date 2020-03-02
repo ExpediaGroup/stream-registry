@@ -1,6 +1,6 @@
 ## stream-registry's notification-support module
 ### What is it?
-It set of components which provides an easy way to **listen** events carried out in the `stream-registry` core, 
+It's a set of components which provides an easy way to **listen** to events carried out in the `stream-registry` core, 
 specifically _CREATE_, _UPDATE_ and _DELETE_ model entities (like streams, schemas or domains) in order to communicate
 them to available handlers.
 
