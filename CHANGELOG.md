@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.10.0] 2020-03-02
 ### Added
 - Added a `notification-support` with a generic model for event listeners and handlers, including
     - A listener for schema events
@@ -26,43 +26,43 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Status field will return blank object when it is null for all the entities.
 - updateStream contract change(SchemaKeyInput not required in input) and upsertStream fixes for no schema during create
 
-## [0.9.4] - 20200206
+## [0.9.4] - 2020-02-06
 ### Added
 - Added an `authentication_group` tag to the `graphql_api` metric.
 
-## [0.9.3] - 20200120
+## [0.9.3] - 2020-01-20
 ### Bugfix
 - Also fixed incorrectly wired field in `ConsumerBindingResolver`.
 
-## [0.9.2] - 20200120
+## [0.9.2] - 2020-01-20
 ### Bugfix
 - Fixed incorrectly wired field in `ProducerBindingResolver`.
 
-## [0.9.1] - 20200113
+## [0.9.1] - 2020-01-13
 ### Added 
 - Added StreamRegistryApolloClient.builder to create client with required adapters.
 
 ### Changed
 - Changed `NameNormaliser` valid pattern.
 
-## [0.9.0] - 20191206
+## [0.9.0] - 2019-12-06
 ### Added 
 - Setup for flyway db migration tool and initial db script.
 ### Changed
 - Turning off auto-generation of db in integration.
 - `byKey` query result are now optional.
 
-## [0.8.2] - 20191126
+## [0.8.2] - 2019-11-26
 ### Changed
 - Only default handlers present by default.
 
-## [0.8.1] - 20191122
+## [0.8.1] - 2019-11-22
 ### Added
 - Simple validation rules for `EgspKafkaStreamHandler`.
 - Added schema to client query return of stream.
 - Added optional Binding field to Producer and Consumer entities.
 
-## [0.8.0] - 20191107
+## [0.8.0] - 2019-11-07
 ### Added
 - Refactor of all entity structures and implementation of CRUD operations.
 - Added metrics to all GraphQL api methods.
@@ -70,11 +70,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Switch to Spring's `CrudRepository` for the backend.
 
-## [0.7.1] - 20190820
+## [0.7.1] - 2019-08-20
 ### Added
 - Added Zone, Infrastructure, Producer, Consumer, StreamBinding, ProducerBinding & ConsumerBinding entity types to the API. 
 
-## [0.7.0] - 20190815
+## [0.7.0] - 2019-08-15
 ### Added
 - New GraphQL API.
 - New internal model with service, handler and repository layers.
@@ -110,7 +110,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Updated mkdocs.yml to `expediagroup` (#168)
 
-## [0.5.0] - 20190412
+## [0.5.0] - 2019-04-12
 ### Added
 - Add health check to verify whether the underlying topic (used as Datastore)
   is compaction enabled to make sure Stream Metadata is not lost. (#144)
@@ -118,7 +118,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Migrated version of jib to 1.0.2 (#151)
 
-## [0.4.10] - 20190403
+## [0.4.10] - 2019-04-03
 ### Changed
 - Fixed Stream Validation signature and updated implementation (#117)
 - Fixed a NPE in get clusters(#145)
@@ -127,7 +127,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Deleted KafkaManager and corresponding test (#149)
 
-## [0.4.9] - 20190321
+## [0.4.9] - 2019-03-21
 ### Changed
 - Updated swagger example values (#139)
 - Extract out service logic from StreamDao to a new Service Layer (#140)
@@ -136,14 +136,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Upgrade confluent version from 3.3.1 to 4.1.3 (#142)
 - Fixing StreamRegistryHealthCheck for release/cut (#143)
 
-## [0.4.8] - 20190308
+## [0.4.8] - 2019-03-08
 ### Added
 - Added clusters Api (#131, #36)
 
 ### Changed
 - Updated license info to extend until Present (#138)
 
-## [0.4.7] - 20190305
+## [0.4.7] - 2019-03-05
 ### Added
 - Created `StreamRegistryManagedContainer` which will be responsible for ordering lifecycle for infra components (#124)
 - Added support for registering Jersey Filters via config.yaml (#136)
@@ -153,27 +153,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Re-ordered bean instantiation in `StreamRegistryApplication.run()` to guarantee order of start/stop (#124)
 - Refactored the Exception chaining and removed business object from the custom Exception classes (#129)
 
-## [0.4.6] - 20190209
+## [0.4.6] - 2019-02-09
 ### Changed
 - Fixed healthcheck order of operations (#120)
 
-## [0.4.5] - 20190208
+## [0.4.5] - 2019-02-08
 ### Changed
 - Populated the HealthCheck stream region from config file. Removed the dependency of MPAAS_REGION variable. (#103)
 - Refactored the Exception handling workflow in order to better communicate the actual error to customers. (#111)
 - Hardening check for ensuring KStream store is available during Integration Tests. (#102)
 
-## [0.4.4] - 20190204
+## [0.4.4] - 2019-02-04
 ### Changed
 - Jib now publishes docker image to dockerhub
 - Fixed the failing HeathCheck (#101). Workaround for https://github.com/confluentinc/schema-registry/issues/894
 
-## [0.4.3] - 20190131
+## [0.4.3] - 2019-01-31
 ### Changed
 - Updated [Building locally](https://github.com/ExpediaGroup/stream-registry#building-locally) section in README with OpenJDK 11 reference
 - Fixed the failing HealthCheck. Passed a valid schema while creating HealthCheckStream (#94)
 
-## [0.4.2] - 20190118
+## [0.4.2] - 2019-01-18
 ### Added
 - Architecture diagram (#4)
 - Standalone `infra-provider` module (#78)
@@ -186,7 +186,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `maven-enforcer-plugin` to enforce SLF4J logging (#82)
 - Java packages moved from `com.homeaway.streamingplatform` to `com.homeaway.streamplatform.streamregistry`.
 
-## [0.4.1] - 20190102
+## [0.4.1] - 2019-01-02
 ### Added
 - Docker build commands and documentation (#74)
 
@@ -198,24 +198,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Deleted TODO/Documentation that referenced incorrect `http://localhost:8081/healthcheck` (#64)
 
-## [0.4.0] - 20181218
+## [0.4.0] - 2018-12-18
 ### Added
 - Schema validation support via `SchemaManager` interface with default Confluent implementation provided (#41)
 
-## [0.3.2] - 20181216
+## [0.3.2] - 2018-12-16
 ### Changed
 - Updated README to something that outlines this a bit better. (#54)
 - Changed .travis.yml and added a setup script to securely send credentials for sigining and deploying master builds. (#57)
 - Added appropriate variables so that all encrypted keys work. (#57)
 
-## [0.3.1] - 20181212
+## [0.3.1] - 2018-12-12
 ### Changed
 - Specified `deploy` goal in maven-release-plugin
 - Fixed "site breaking release process" (#47)
 - Fixed ossrh release requirements  (#50)
 - DummyForJavaDoc.java in assembly module to generate javadoc (#51)
 
-## [0.3.0] - 20181211
+## [0.3.0] - 2018-12-11
 ### Added
 - Integration with travis-ci (#39)
 - Makefile for build commands (#39, #43)
