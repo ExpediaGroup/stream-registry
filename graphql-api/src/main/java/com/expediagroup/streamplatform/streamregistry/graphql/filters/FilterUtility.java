@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.TagMatchUtility.matchesAllTagQueries;
+
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+
 public class FilterUtility {
 
   public static boolean matches(String nullableValue, String nullableRegex) {
@@ -22,5 +29,28 @@ public class FilterUtility {
       return nullableRegex == null;
     }
     return nullableRegex == null || nullableValue.matches(nullableRegex);
+  }
+
+  public static boolean matchesSpecification(Specification specification, SpecificationQuery specQuery) {
+    if (specQuery == null) {
+      return true;
+    }
+    if (!matches(specification.getDescription(), specQuery.getDescriptionRegex())) {
+      return false;
+    }
+    if (!matches(specification.getType(), specQuery.getTypeRegex())) {
+      return false;
+    }
+    return matchesAllTagQueries(specification, specQuery.getTags());
+  }
+
+  public static boolean matchesSchemaKey(SchemaKey key, SchemaKeyQuery schemaKeyQuery) {
+    if (schemaKeyQuery != null) {
+      if (!matches(key.getDomain(), schemaKeyQuery.getDomainRegex())) {
+        return false;
+      }
+      return matches(key.getName(), schemaKeyQuery.getNameRegex());
+    }
+    return true;
   }
 }

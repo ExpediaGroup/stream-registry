@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
-import static com.expediagroup.streamplatform.streamregistry.graphql.filters.SpecificationMatchUtility.matchesSpecification;
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesSchemaKey;
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesSpecification;
 
 import java.util.function.Predicate;
 
@@ -29,21 +29,14 @@ public class SchemaFilter implements Predicate<Schema> {
   private final SchemaKeyQuery keyQuery;
   private final SpecificationQuery specQuery;
 
-  public SchemaFilter(SchemaKeyQuery keyQuery, SpecificationQuery specQuery) {
-    this.keyQuery = keyQuery;
-    this.specQuery = specQuery;
+  public SchemaFilter(SchemaKeyQuery schemaKeyQuery, SpecificationQuery specificationQuery) {
+    this.keyQuery = schemaKeyQuery;
+    this.specQuery = specificationQuery;
   }
 
   @Override
-  public boolean test(Schema d) {
-    if (keyQuery != null) {
-      if (!matches(d.getKey().getName(), keyQuery.getNameRegex())) {
-        return false;
-      }
-      if (!matches(d.getKey().getDomain(), keyQuery.getDomainRegex())) {
-        return false;
-      }
-    }
-    return matchesSpecification(d.getSpecification(), specQuery);
+  public boolean test(Schema schema) {
+    return matchesSchemaKey(schema.getKey(), keyQuery)
+        && matchesSpecification(schema.getSpecification(), specQuery);
   }
 }
