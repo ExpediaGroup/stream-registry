@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] 
 
-###Changed
+### Changed
 - Bugfix - Can now Query Streams by their schema
 
 ## [0.10.1] 2020-03-02
