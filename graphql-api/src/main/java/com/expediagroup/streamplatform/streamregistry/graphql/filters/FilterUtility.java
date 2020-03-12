@@ -31,9 +31,16 @@ public class FilterUtility {
     return nullableRegex == null || nullableValue.matches(nullableRegex);
   }
 
+  public static boolean matchesInt(Integer value, Integer required) {
+    return required == null || required.equals(value);
+  }
+
   public static boolean matchesSpecification(Specification specification, SpecificationQuery specQuery) {
     if (specQuery == null) {
       return true;
+    }
+    if (specification == null) {
+      return false;
     }
     if (!matches(specification.getDescription(), specQuery.getDescriptionRegex())) {
       return false;
@@ -45,12 +52,12 @@ public class FilterUtility {
   }
 
   public static boolean matchesSchemaKey(SchemaKey key, SchemaKeyQuery schemaKeyQuery) {
-    if (schemaKeyQuery != null) {
-      if (!matches(key.getDomain(), schemaKeyQuery.getDomainRegex())) {
-        return false;
-      }
-      return matches(key.getName(), schemaKeyQuery.getNameRegex());
+    if (schemaKeyQuery == null) {
+      return true;
     }
-    return true;
+    if (!matches(key.getDomain(), schemaKeyQuery.getDomainRegex())) {
+      return false;
+    }
+    return matches(key.getName(), schemaKeyQuery.getNameRegex());
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
+
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 
 import java.util.List;
 
@@ -43,8 +45,11 @@ public class TagMatchUtility {
   }
 
   private static boolean matchesAnyTag(List<Tag> tags, TagQuery tagQuery) {
+    if (tagQuery == null) {
+      return true;
+    }
     for (Tag tag : tags) {
-      if (matchesTag(tag, tagQuery)) {
+      if (tag != null && matchesTag(tag, tagQuery)) {
         return true;
       }
     }
@@ -52,9 +57,7 @@ public class TagMatchUtility {
   }
 
   private static boolean matchesTag(Tag tag, TagQuery tagQuery) {
-    if (tagQuery.getNameRegex() != null && !tag.getName().matches(tagQuery.getNameRegex())) {
-      return false;
-    }
-    return tagQuery.getValueRegex() == null || tag.getValue().matches(tagQuery.getValueRegex());
+    return matches(tag.getName(), tagQuery.getNameRegex())
+        && matches(tag.getValue(), tagQuery.getNameRegex());
   }
 }
