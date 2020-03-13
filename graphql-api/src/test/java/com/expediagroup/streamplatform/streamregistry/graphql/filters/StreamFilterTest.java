@@ -74,11 +74,6 @@ public class StreamFilterTest {
     stream.getSpecification().getTags().get(0).setValue(FAIL);
     assertFalse(streamFilter.test(stream));
 
-    //nulls
-
-    stream.setSpecification(matchingSpecification());
-    assertTrue(streamFilter.test(stream));
-
     stream.setSpecification(matchingSpecification());
     stream.getSpecification().setType(null);
     assertFalse(streamFilter.test(stream));
