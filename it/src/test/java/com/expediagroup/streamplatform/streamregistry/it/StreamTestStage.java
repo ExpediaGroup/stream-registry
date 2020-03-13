@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import com.apollographql.apollo.api.Response;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamsQuery;
@@ -57,16 +59,14 @@ public class StreamTestStage extends AbstractTestStage {
     //insert scenario without schema
     try {
       client.getOptionalData(factory.upsertStreamMutationInsertWithoutSchemaBuilder().build()).get();
-    }
-    catch(RuntimeException ex) {
-        assertEquals("Can't create because Schema is required", ex.getMessage());
+    } catch (RuntimeException ex) {
+      assertEquals("Can't create because Schema is required", ex.getMessage());
     }
 
     //upsert scenario with a different schema
     try {
       client.getOptionalData(factory.upsertStreamMutationUpsertWithDifferentSchemaKeySchemaBuilder().build()).get();
-    }
-    catch(RuntimeException ex) {
+    } catch (RuntimeException ex) {
       assertEquals("Can't update because schema change is not allowed", ex.getMessage());
     }
 
@@ -115,15 +115,15 @@ public class StreamTestStage extends AbstractTestStage {
 
     setFactorySuffix("query_by_regex");
 
-    StreamKeyQuery query = StreamKeyQuery.builder().nameRegex("stream_name.*").build();
+    StreamKeyQuery query = StreamKeyQuery.builder().nameRegex(".*query_by_regex.*").build();
 
     StreamsQuery.Data before = (StreamsQuery.Data) client.getOptionalData(StreamsQuery.builder().key(query).build()).get();
 
-    client.invoke(factory.upsertStreamMutationBuilder().build());
+    Response r = client.invoke(factory.upsertStreamMutationBuilder().build());
 
     StreamsQuery.Data after = (StreamsQuery.Data) client.getOptionalData(StreamsQuery.builder().key(query).build()).get();
 
-    assertEquals(after.getStream().getByQuery().size(), before.getStream().getByQuery().size() + 1);
+    assertEquals(before.getStream().getByQuery().size() + 1, after.getStream().getByQuery().size());
     assertNotNull(after.getStream().getByQuery().get(0).getStatus().get().getAgentStatus());
   }
 
