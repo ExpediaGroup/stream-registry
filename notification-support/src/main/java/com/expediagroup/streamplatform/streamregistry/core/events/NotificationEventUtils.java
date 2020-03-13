@@ -35,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
 @Slf4j
 public class NotificationEventUtils {
@@ -49,6 +50,18 @@ public class NotificationEventUtils {
         .setParent(null)
         .setType(AvroKeyType.SCHEMA)
         .build();
+  }
+
+  public static AvroKey toAvroKeyRecord(SchemaKey schemaKey) {
+    return Optional.ofNullable(schemaKey)
+        .filter(sk -> sk.getName() != null)
+        .map(sk -> AvroKey.newBuilder()
+            .setId(sk.getName())
+            .setVersion(null)
+            .setParent(null)
+            .setType(AvroKeyType.SCHEMA)
+            .build())
+        .orElse(null);
   }
 
   public static AvroEvent toAvroValueRecord(Schema schema) {
@@ -107,6 +120,7 @@ public class NotificationEventUtils {
     val domain = stream.getKey().getDomain();
     val version = stream.getKey().getVersion();
     val description = stream.getSpecification().getDescription();
+    val avroSchema = toAvroKeyRecord(stream.getSchemaKey());
 
     val tags = stream.getSpecification()
         .getTags()
@@ -130,6 +144,7 @@ public class NotificationEventUtils {
         .setType(type)
         .setConfigurationString(configJson)
         .setStatusString(statusJson)
+        .setSchemaKey(avroSchema)
         .build();
 
     return AvroEvent.newBuilder()

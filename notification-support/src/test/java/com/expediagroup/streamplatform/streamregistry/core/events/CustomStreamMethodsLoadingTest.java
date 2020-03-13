@@ -61,6 +61,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @RunWith(SpringRunner.class)// Explicitly defined prop with true as value
@@ -95,6 +96,11 @@ public class CustomStreamMethodsLoadingTest {
     val avrokey = (AvroKey) streamEventHandlerForKafka.getStreamToKeyRecord().apply(getDummyStream());
     val avroEvent = (AvroEvent) streamEventHandlerForKafka.getStreamToValueRecord().apply(getDummyStream());
 
+    Assert.assertNotNull("Avro key shouldn't be null", avrokey);
+    Assert.assertNotNull("Avro event shouldn't be null", avroEvent);
+    Assert.assertNotNull("Stream entity shouldn't be null", avroEvent.getStreamEntity());
+    Assert.assertNotNull("Stream' schema-key shouldn't be null", avroEvent.getStreamEntity().getSchemaKey());
+
     Assert.assertEquals(avrokey, testAvroKeyResult.get());
     Assert.assertEquals(avroEvent, testAvroEventResult.get());
   }
@@ -113,6 +119,13 @@ public class CustomStreamMethodsLoadingTest {
   }
 
   public static AvroEvent myCustomEvent(Stream stream) {
+    val schemaKey = AvroKey.newBuilder()
+        .setId(stream.getSchemaKey().getName())
+        .setVersion(null)
+        .setParent(null)
+        .setType(AvroKeyType.SCHEMA)
+        .build();
+
     val avroEvent = AvroStream.newBuilder()
         .setDomain(stream.getKey().getDomain())
         .setVersion(stream.getKey().getVersion())
@@ -122,6 +135,7 @@ public class CustomStreamMethodsLoadingTest {
         .setType(stream.getSpecification().getType())
         .setConfigurationString(stream.getSpecification().getConfigJson())
         .setStatusString(stream.getStatus().getStatusJson())
+        .setSchemaKey(schemaKey)
         .build();
 
     val event = AvroEvent.newBuilder().setStreamEntity(avroEvent).build();
@@ -162,6 +176,10 @@ public class CustomStreamMethodsLoadingTest {
     stream.setKey(key);
     stream.setSpecification(spec);
     stream.setStatus(status);
+
+    val schemaKey = new SchemaKey();
+    schemaKey.setName(stream.getKey().getName().concat("_v1"));
+    stream.setSchemaKey(schemaKey);
 
     return stream;
   }

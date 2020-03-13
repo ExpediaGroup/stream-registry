@@ -36,6 +36,7 @@ protocol StreamRegistry {
     string type;
     string configurationString;
     union {null, string} statusString = null;
+    union {null, AvroKey} schemaKey = null;
   }
 
   record AvroEvent {

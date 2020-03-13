@@ -32,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Slf4j
 public class NotificationEventUtilsTest {
@@ -118,6 +119,75 @@ public class NotificationEventUtilsTest {
     Assert.assertEquals(type, avroEvent.getSchemaEntity().getType());
     Assert.assertEquals(configJson, avroEvent.getSchemaEntity().getConfigurationString());
     Assert.assertEquals(statusJson, avroEvent.getSchemaEntity().getStatusString());
+  }
+
+  @Test
+  public void having_a_complete_stream_verify_that_is_correctly_built() {
+    Function<Stream, AvroKey> toKeyRecord = NotificationEventUtils::toAvroKeyRecord;
+
+    Function<Stream, AvroEvent> toValueRecord = NotificationEventUtils::toAvroValueRecord;
+
+    val name = "name";
+    val schemaKeyName = name.concat("_v1");
+    val domain = "domain";
+    val description = "description";
+    val type = "type";
+    val configJson = "{}";
+    val statusJson = "{foo:bar}";
+    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    int version = 2;
+
+    // Key
+    var key = new StreamKey();
+    key.setName(name);
+    key.setVersion(version);
+    key.setDomain(domain);
+
+    // Spec
+    Specification spec = new Specification();
+    spec.setDescription(description);
+    spec.setType(type);
+    spec.setConfigJson(configJson);
+    spec.setTags(tags);
+
+    // Status
+    Status status = new Status();
+    status.setStatusJson(statusJson);
+
+    // Stream
+    val stream = new Stream();
+    stream.setKey(key);
+    stream.setSpecification(spec);
+    stream.setStatus(status);
+
+    // Schema key
+    val schemaKey = new SchemaKey();
+    schemaKey.setName(stream.getKey().getName().concat("_v1"));
+    stream.setSchemaKey(schemaKey);
+
+    AvroKey avroKey = toKeyRecord.apply(stream);
+    log.info("Obtained avro key {}", avroKey);
+
+    Assert.assertNotNull("Avro key shouldn't be null", avroKey);
+    Assert.assertNotNull("Key id shouldn't be null", avroKey.getId());
+    Assert.assertNotNull("Version shouldn't be null", avroKey.getVersion());
+    Assert.assertEquals("Name should be the same as the id", name, avroKey.getId());
+    Assert.assertEquals("Versions should be the same", version, avroKey.getVersion().intValue());
+
+    AvroEvent avroEvent = toValueRecord.apply(stream);
+    log.info("Obtained avro event {}", avroEvent);
+
+    Assert.assertNotNull("Avro event shouldn't be null", avroEvent);
+    Assert.assertNotNull("Stream entity shouldn't be null", avroEvent.getStreamEntity());
+    Assert.assertNotNull("Schema key of stream entity shouldn't be null", avroEvent.getStreamEntity().getSchemaKey());
+    Assert.assertEquals(schemaKeyName, avroEvent.getStreamEntity().getSchemaKey().getId());
+    Assert.assertEquals(name, avroEvent.getStreamEntity().getName());
+    Assert.assertEquals(domain, avroEvent.getStreamEntity().getDomain());
+    Assert.assertEquals(description, avroEvent.getStreamEntity().getDescription());
+    Assert.assertEquals(type, avroEvent.getStreamEntity().getType());
+    Assert.assertEquals(configJson, avroEvent.getStreamEntity().getConfigurationString());
+    Assert.assertEquals(statusJson, avroEvent.getStreamEntity().getStatusString());
+    Assert.assertEquals(version, avroEvent.getStreamEntity().getVersion().intValue());
   }
 
   // Don't remove, is loaded by reflection for this test...
