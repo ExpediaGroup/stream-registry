@@ -115,7 +115,7 @@ public class StreamTestStage extends AbstractTestStage {
 
     setFactorySuffix("query_by_regex");
 
-    StreamKeyQuery query = StreamKeyQuery.builder().build();//.nameRegex(".*query_by_regex.*").build();
+    StreamKeyQuery query = StreamKeyQuery.builder().nameRegex(".*query_by_regex.*").build();
 
     StreamsQuery.Data before = (StreamsQuery.Data) client.getOptionalData(StreamsQuery.builder().key(query).build()).get();
 
