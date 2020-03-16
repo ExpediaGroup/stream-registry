@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.AfterClass;
@@ -30,6 +33,9 @@ import org.testcontainers.containers.GenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+
+import net.sf.ehcache.CacheManager;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -58,7 +64,7 @@ public class StreamRegistryIT {
           .withEnv("POSTGRES_DB", "streamregistry");
 
   @BeforeClass
-  public static void before() throws InterruptedException {
+  public static void before() {
     int port = SocketUtils.findAvailableTcpPort();
 
     log.info("Starting to run embedded spring app in port {}", port);
@@ -71,6 +77,7 @@ public class StreamRegistryIT {
     */
     String[] args = new String[] {
         String.format("--server.port=%d", port),
+        "--spring.profiles.active=default,graphql,hibernate",
         "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
         "--spring.datasource.username=streamregistry",
         "--spring.datasource.password=streamregistry",
@@ -85,6 +92,10 @@ public class StreamRegistryIT {
 
   @AfterClass
   public static void after() {
+    int domainCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
+        .getCache(Domain.class.getName()).getSize();
+    assertThat(domainCacheSize, greaterThan(0));
+
     if (context != null) {
       context.close();
       context = null;
