@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sf.ehcache.CacheManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -34,8 +35,6 @@ import org.testcontainers.containers.GenericContainer;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
-
-import net.sf.ehcache.CacheManager;
 
 @RunWith(Suite.class)
 @SuiteClasses({
