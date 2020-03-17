@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,10 +27,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import org.hibernate.annotations.Cache;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Cacheable
+@Cache(usage = READ_WRITE)
 public class Tag {
 
   @Id
