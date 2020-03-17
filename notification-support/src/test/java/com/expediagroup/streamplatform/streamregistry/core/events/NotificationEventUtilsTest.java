@@ -69,7 +69,6 @@ public class NotificationEventUtilsTest {
   @Test
   public void having_a_complete_schema_verify_that_is_correctly_built() {
     Function<Schema, AvroKey> toKeyRecord = NotificationEventUtils::toAvroKeyRecord;
-
     Function<Schema, AvroEvent> toValueRecord = NotificationEventUtils::toAvroValueRecord;
 
     val name = "name";
@@ -163,6 +162,7 @@ public class NotificationEventUtilsTest {
     // Schema key
     val schemaKey = new SchemaKey();
     schemaKey.setName(stream.getKey().getName().concat("_v1"));
+    schemaKey.setDomain(domain);
     stream.setSchemaKey(schemaKey);
 
     AvroKey avroKey = toKeyRecord.apply(stream);
@@ -170,9 +170,7 @@ public class NotificationEventUtilsTest {
 
     Assert.assertNotNull("Avro key shouldn't be null", avroKey);
     Assert.assertNotNull("Key id shouldn't be null", avroKey.getId());
-    Assert.assertNotNull("Version shouldn't be null", avroKey.getVersion());
-    Assert.assertEquals("Name should be the same as the id", name, avroKey.getId());
-    Assert.assertEquals("Versions should be the same", version, avroKey.getVersion().intValue());
+    Assert.assertEquals("Name should be the same as the id", name, avroKey.getParent().getId());
 
     AvroEvent avroEvent = toValueRecord.apply(stream);
     log.info("Obtained avro event {}", avroEvent);

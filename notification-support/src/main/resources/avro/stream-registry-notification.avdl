@@ -12,7 +12,6 @@ protocol StreamRegistry {
 
   record AvroKey {
     string id;
-    union {null, int} version = null;
     AvroKeyType type;
     union {null, AvroKey} parent;
   }

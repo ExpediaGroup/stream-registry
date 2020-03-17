@@ -43,25 +43,35 @@ public class NotificationEventUtils {
     validateSchemaKey(schema);
 
     val name = schema.getKey().getName();
+    val domainName = schema.getKey().getDomain();
+
+    var domain = AvroKey.newBuilder()
+        .setId(domainName)
+        .setType(AvroKeyType.DOMAIN)
+        .setParent(null)
+        .build();
 
     return AvroKey.newBuilder()
         .setId(name)
-        .setVersion(null)
-        .setParent(null)
+        .setParent(domain)
         .setType(AvroKeyType.SCHEMA)
         .build();
   }
 
   public static AvroKey toAvroKeyRecord(SchemaKey schemaKey) {
-    return Optional.ofNullable(schemaKey)
-        .filter(sk -> sk.getName() != null)
-        .map(sk -> AvroKey.newBuilder()
-            .setId(sk.getName())
-            .setVersion(null)
-            .setParent(null)
-            .setType(AvroKeyType.SCHEMA)
-            .build())
-        .orElse(null);
+    validateSchemaKey(schemaKey);
+
+    var domain = AvroKey.newBuilder()
+        .setId(schemaKey.getDomain())
+        .setType(AvroKeyType.DOMAIN)
+        .setParent(null)
+        .build();
+
+    return AvroKey.newBuilder()
+        .setId(schemaKey.getName())
+        .setParent(domain)
+        .setType(AvroKeyType.SCHEMA)
+        .build();
   }
 
   public static AvroEvent toAvroValueRecord(Schema schema) {
@@ -104,12 +114,24 @@ public class NotificationEventUtils {
 
     val name = stream.getKey().getName();
     val version = stream.getKey().getVersion();
+    val domainName = stream.getKey().getDomain();
+
+    var domainKey = AvroKey.newBuilder()
+        .setId(domainName)
+        .setType(AvroKeyType.DOMAIN)
+        .setParent(null)
+        .build();
+
+    var streamKey = AvroKey.newBuilder()
+        .setId(name)
+        .setParent(domainKey)
+        .setType(AvroKeyType.STREAM)
+        .build();
 
     return AvroKey.newBuilder()
-        .setId(name)
-        .setVersion(version)
-        .setParent(null)
-        .setType(AvroKeyType.STREAM)
+        .setId(version.toString())
+        .setParent(streamKey)
+        .setType(AvroKeyType.STREAM_VERSION)
         .build();
   }
 
@@ -164,6 +186,12 @@ public class NotificationEventUtils {
     checkNotNull(schema.getKey(), canNotBeNull("schema key"));
     checkNotNull(schema.getKey().getName(), canNotBeNull("key's name"));
     checkNotNull(schema.getKey().getDomain(), canNotBeNull("key's domain"));
+  }
+
+  private static void validateSchemaKey(SchemaKey schemaKey) {
+    checkNotNull(schemaKey, canNotBeNull("schema key"));
+    checkNotNull(schemaKey.getName(), canNotBeNull("schema key name"));
+    checkNotNull(schemaKey.getDomain(), canNotBeNull("schema key domain"));
   }
 
   private static void validateSchemaValue(Schema schema) {

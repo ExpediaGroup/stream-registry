@@ -106,11 +106,26 @@ public class CustomStreamMethodsLoadingTest {
   }
 
   public static AvroKey myCustomKey(Stream stream) {
-    val key = AvroKey.newBuilder()
-        .setId(stream.getKey().getName())
-        .setVersion(null)
+    val name = stream.getKey().getName();
+    val version = stream.getKey().getVersion();
+    val domainName = stream.getKey().getDomain();
+
+    var domainKey = AvroKey.newBuilder()
+        .setId(domainName)
+        .setType(AvroKeyType.DOMAIN)
         .setParent(null)
-        .setType(AvroKeyType.SCHEMA)
+        .build();
+
+    var streamKey = AvroKey.newBuilder()
+        .setId(name)
+        .setParent(domainKey)
+        .setType(AvroKeyType.STREAM)
+        .build();
+
+    val key = AvroKey.newBuilder()
+        .setId(version.toString())
+        .setParent(streamKey)
+        .setType(AvroKeyType.STREAM_VERSION)
         .build();
 
     testAvroKeyResult.set(key);
@@ -119,12 +134,7 @@ public class CustomStreamMethodsLoadingTest {
   }
 
   public static AvroEvent myCustomEvent(Stream stream) {
-    val schemaKey = AvroKey.newBuilder()
-        .setId(stream.getSchemaKey().getName())
-        .setVersion(null)
-        .setParent(null)
-        .setType(AvroKeyType.SCHEMA)
-        .build();
+    val schemaKey = toAvroKeyRecord(stream.getSchemaKey());
 
     val avroEvent = AvroStream.newBuilder()
         .setDomain(stream.getKey().getDomain())
@@ -143,6 +153,20 @@ public class CustomStreamMethodsLoadingTest {
     testAvroEventResult.set(event);
 
     return event;
+  }
+
+  public static AvroKey toAvroKeyRecord(SchemaKey schemaKey) {
+    var domain = AvroKey.newBuilder()
+        .setId(schemaKey.getDomain())
+        .setType(AvroKeyType.DOMAIN)
+        .setParent(null)
+        .build();
+
+    return AvroKey.newBuilder()
+        .setId(schemaKey.getName())
+        .setParent(domain)
+        .setType(AvroKeyType.SCHEMA)
+        .build();
   }
 
   public static Stream getDummyStream() {
@@ -179,6 +203,7 @@ public class CustomStreamMethodsLoadingTest {
 
     val schemaKey = new SchemaKey();
     schemaKey.setName(stream.getKey().getName().concat("_v1"));
+    schemaKey.setDomain(domain);
     stream.setSchemaKey(schemaKey);
 
     return stream;
