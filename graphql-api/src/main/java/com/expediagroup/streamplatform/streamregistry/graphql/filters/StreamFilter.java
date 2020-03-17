@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
-import static com.expediagroup.streamplatform.streamregistry.graphql.filters.SpecificationMatchUtility.matchesSpecification;
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesInt;
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesSchemaKey;
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesSpecification;
 
 import java.util.function.Predicate;
 
@@ -24,34 +26,33 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Sche
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 public class StreamFilter implements Predicate<Stream> {
 
   private final StreamKeyQuery keyQuery;
   private final SpecificationQuery specQuery;
-  private final SchemaKeyQuery schemaQuery;
+  private final SchemaKeyQuery schemaKeyQuery;
 
-  public StreamFilter(StreamKeyQuery keyQuery, SpecificationQuery specQuery, SchemaKeyQuery schemaQuery) {
+  public StreamFilter(StreamKeyQuery keyQuery, SpecificationQuery specQuery, SchemaKeyQuery schemaKeyQuery) {
     this.keyQuery = keyQuery;
     this.specQuery = specQuery;
-    this.schemaQuery = schemaQuery;
+    this.schemaKeyQuery = schemaKeyQuery;
   }
 
   @Override
   public boolean test(Stream stream) {
+    return matchesStreamKey(stream.getKey(), keyQuery)
+        && matchesSchemaKey(stream.getSchemaKey(), schemaKeyQuery)
+        && matchesSpecification(stream.getSpecification(), specQuery);
+  }
 
-    if (keyQuery != null) {
-      if (!matches(stream.getKey().getName(), keyQuery.getNameRegex())) {
-        return false;
-      }
-      if (!matches(stream.getKey().getDomain(), keyQuery.getDomainRegex())) {
-        return false;
-      }
-      if (keyQuery.getVersion() != null && stream.getKey().getVersion() != keyQuery.getVersion()) {
-        return false;
-      }
+  public static boolean matchesStreamKey(StreamKey key, StreamKeyQuery streamKeyQuery) {
+    if (streamKeyQuery == null) {
+      return true;
     }
-
-    return matchesSpecification(stream.getSpecification(), specQuery);
+    return matches(key.getDomain(), streamKeyQuery.getDomainRegex())
+        && matches(key.getName(), streamKeyQuery.getNameRegex())
+        && matchesInt(key.getVersion(), streamKeyQuery.getVersion());
   }
 }

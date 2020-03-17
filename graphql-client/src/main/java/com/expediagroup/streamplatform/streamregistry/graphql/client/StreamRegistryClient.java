@@ -18,6 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.client;
 import java.util.Objects;
 import java.util.Optional;
 
+import okhttp3.HttpUrl;
+
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation;
@@ -35,8 +37,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.type.Schema
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
-
-import okhttp3.HttpUrl;
 
 public class StreamRegistryClient {
 
