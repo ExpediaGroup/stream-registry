@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A new field was added for `AvroStream record` in stream-registry-notification schema
 - Unit tests were modified to verify and test the new field
 
+## [0.10.3] 2020-03-17
+### Added
+- Cache hints
+
 ## [0.10.2] 2020-03-16
 ### Added
 - Hibernate caching
