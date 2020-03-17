@@ -113,7 +113,6 @@ public class CustomStreamMethodsLoadingTest {
     var domainKey = AvroKey.newBuilder()
         .setId(domainName)
         .setType(AvroKeyType.DOMAIN)
-        .setParent(null)
         .build();
 
     var streamKey = AvroKey.newBuilder()
@@ -159,7 +158,6 @@ public class CustomStreamMethodsLoadingTest {
     var domain = AvroKey.newBuilder()
         .setId(schemaKey.getDomain())
         .setType(AvroKeyType.DOMAIN)
-        .setParent(null)
         .build();
 
     return AvroKey.newBuilder()

@@ -106,7 +106,6 @@ public class CustomSchemaMethodsLoadingTest {
     var domain = AvroKey.newBuilder()
         .setId(domainName)
         .setType(AvroKeyType.DOMAIN)
-        .setParent(null)
         .build();
 
     var key = AvroKey.newBuilder()

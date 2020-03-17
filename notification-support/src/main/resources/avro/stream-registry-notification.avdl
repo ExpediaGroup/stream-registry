@@ -13,7 +13,7 @@ protocol StreamRegistry {
   record AvroKey {
     string id;
     AvroKeyType type;
-    union {null, AvroKey} parent;
+    union {null, AvroKey} parent = null;
   }
 
   record AvroSchema {
@@ -23,7 +23,7 @@ protocol StreamRegistry {
     array<Tag> tags;
     string type;
     string configurationString;
-    union {null, string} statusString;
+    union {null, string} statusString = null;
   }
 
   record AvroStream {
