@@ -100,7 +100,14 @@ public class CustomSchemaMethodsLoadingTest {
   }
 
   public static AvroKey myCustomKey(Schema schema) {
-    val name = schema.getKey().getName();
+    var key = AvroKey.newBuilder()
+        .setId(schema.getKey().getName())
+        .setParent(AvroKey.newBuilder()
+              .setId(schema.getKey().getDomain())
+              .setType(AvroKeyType.DOMAIN)
+              .build())
+        .setType(AvroKeyType.SCHEMA)
+        .build();
     val domainName = schema.getKey().getDomain();
 
     var domain = AvroKey.newBuilder()
