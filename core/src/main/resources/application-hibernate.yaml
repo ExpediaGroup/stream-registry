@@ -12,3 +12,4 @@ spring:
             factory_class: "org.hibernate.cache.ehcache.EhCacheRegionFactory"
           use_second_level_cache: true
           use_query_cache: true
+        generate_statistics: true
