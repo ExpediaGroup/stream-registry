@@ -17,49 +17,25 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
 import lombok.RequiredArgsConstructor;
 
-import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
 @RequiredArgsConstructor
-public class ProducerBindingResolver implements GraphQLResolver<ProducerBinding> {
+public class ProducerBindingResolver implements Resolvers.ProducerBindingResolver {
   private final ProducerService producerService;
   private final StreamBindingService streamBindingService;
 
   public Producer producer(ProducerBinding producerBinding) {
-    ProducerKey producerKey = new ProducerKey(
-        producerBinding.getKey().getStreamDomain(),
-        producerBinding.getKey().getStreamName(),
-        producerBinding.getKey().getStreamVersion(),
-        producerBinding.getKey().getInfrastructureZone(),
-        producerBinding.getKey().getProducerName()
-    );
-
-    return producerService.read(producerKey).orElse(null);
+    return producerService.read(producerBinding.getKey().getProducerKey()).orElse(null);
   }
 
   public StreamBinding binding(ProducerBinding producerBinding) {
-    StreamBindingKey streamBindingKey = new StreamBindingKey(
-        producerBinding.getKey().getStreamDomain(),
-        producerBinding.getKey().getStreamName(),
-        producerBinding.getKey().getStreamVersion(),
-        producerBinding.getKey().getInfrastructureZone(),
-        producerBinding.getKey().getInfrastructureName()
-    );
-    return streamBindingService.read(streamBindingKey).orElse(null);
-  }
-
-  public Status status(ProducerBinding producerBinding) {
-    return producerBinding.getStatus() == null ? new Status() : producerBinding.getStatus();
+    return streamBindingService.read(producerBinding.getKey().getStreamBindingKey()).orElse(null);
   }
 }

@@ -20,18 +20,15 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
-import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 @Component
 @RequiredArgsConstructor
-public class DomainResolver implements GraphQLResolver<Domain> {
+public class DomainResolver implements Resolvers.DomainResolver {
   private final SchemaService schemaService;
 
   public List<Schema> schemas(Domain domain) {
@@ -42,9 +39,5 @@ public class DomainResolver implements GraphQLResolver<Domain> {
       }
     }
     return out;
-  }
-
-  public Status status(Domain domain) {
-    return domain.getStatus() == null ? new Status() : domain.getStatus();
   }
 }
