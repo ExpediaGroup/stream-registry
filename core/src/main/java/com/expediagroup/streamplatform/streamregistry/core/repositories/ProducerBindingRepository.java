@@ -18,4 +18,4 @@ package com.expediagroup.streamplatform.streamregistry.core.repositories;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
-public interface ProducerBindingRepository extends CachedCrudRepository<ProducerBinding, ProducerBindingKey> {}
+public interface ProducerBindingRepository extends CachingJpaRepository<ProducerBinding, ProducerBindingKey> {}

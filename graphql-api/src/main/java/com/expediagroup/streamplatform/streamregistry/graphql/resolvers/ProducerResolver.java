@@ -15,9 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -46,9 +43,6 @@ public class ProducerResolver implements Resolvers.ProducerResolver {
   }
 
   public ProducerBinding binding(Producer producer) {
-    Predicate<ProducerBinding> predicate = binding -> binding.getKey().getProducerKey().equals(producer.getKey());
-    return StreamSupport
-        .stream(producerBindingService.findAll(predicate).spliterator(), false)
-        .findFirst().orElse(null);
+    return producerBindingService.find(producer.getKey()).orElse(null);
   }
 }

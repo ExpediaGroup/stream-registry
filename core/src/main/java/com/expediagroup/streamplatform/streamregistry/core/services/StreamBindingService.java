@@ -15,11 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.StreamSupport.stream;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
@@ -79,9 +78,7 @@ public class StreamBindingService {
   }
 
   public Iterable<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return stream(streamBindingRepository.findAll().spliterator(), false)
-        .filter(r -> filter.test(r))
-        .collect(Collectors.toList());
+    return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
   public void validateStreamBindingExists(StreamBindingKey key) {

@@ -15,14 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.StreamSupport.stream;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
@@ -32,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Producer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
 @Component
 @RequiredArgsConstructor
@@ -79,9 +80,20 @@ public class ProducerBindingService {
   }
 
   public Iterable<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return stream(producerBindingRepository.findAll().spliterator(), false)
-        .filter(r -> filter.test(r))
-        .collect(Collectors.toList());
+    return producerBindingRepository.findAll().stream().filter(filter).collect(toList());
+  }
+
+  public Optional<ProducerBinding> find(ProducerKey key) {
+    ProducerBinding example = new ProducerBinding(
+        new ProducerBindingKey(
+            key.getStreamDomain(),
+            key.getStreamName(),
+            key.getStreamVersion(),
+            key.getZone(),
+            null,
+            key.getName()
+        ), null, null);
+    return producerBindingRepository.findAll(Example.of(example)).stream().findFirst();
   }
 
   public void validateProducerBindingExists(ProducerBindingKey key) {

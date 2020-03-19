@@ -21,12 +21,16 @@ import javax.persistence.Cacheable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Cacheable

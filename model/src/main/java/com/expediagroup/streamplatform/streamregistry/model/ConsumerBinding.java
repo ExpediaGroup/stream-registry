@@ -21,12 +21,16 @@ import javax.persistence.Cacheable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Cacheable
@@ -36,7 +40,5 @@ public class ConsumerBinding implements ManagedType {
   @EmbeddedId
   private ConsumerBindingKey key;
   private Specification specification;
-  private String consumerId; //Resolves to Consumer
-  private String bindingId; //Resolves to StreamBinding
   private Status status;
 }
