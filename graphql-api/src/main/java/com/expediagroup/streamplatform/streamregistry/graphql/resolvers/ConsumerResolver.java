@@ -15,13 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import lombok.RequiredArgsConstructor;
-
-import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
@@ -30,43 +27,28 @@ import com.expediagroup.streamplatform.streamregistry.core.services.StreamServic
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 @RequiredArgsConstructor
-public class ConsumerResolver implements GraphQLResolver<Consumer> {
+public class ConsumerResolver implements Resolvers.ConsumerResolver {
   private final StreamService streamService;
   private final ZoneService zoneService;
   private final ConsumerBindingService consumerBindingService;
 
   public Stream stream(Consumer consumer) {
-    StreamKey streamKey = new StreamKey(
-        consumer.getKey().getStreamDomain(),
-        consumer.getKey().getStreamName(),
-        consumer.getKey().getStreamVersion()
-    );
-    return streamService.read(streamKey).orElse(null);
+    return streamService.read(consumer.getKey().getStreamKey()).orElse(null);
   }
 
   public Zone zone(Consumer consumer) {
-    ZoneKey zoneKey = new ZoneKey(
-        consumer.getKey().getZone()
-    );
-    return zoneService.read(zoneKey).orElse(null);
+    return zoneService.read(consumer.getKey().getZoneKey()).orElse(null);
   }
 
-  public Optional<ConsumerBinding> binding(Consumer consumer) {
+  public ConsumerBinding binding(Consumer consumer) {
     Predicate<ConsumerBinding> predicate = binding -> binding.getKey().getConsumerKey().equals(consumer.getKey());
     return StreamSupport
         .stream(consumerBindingService.findAll(predicate).spliterator(), false)
-        .findFirst();
-  }
-
-  public Status status(Consumer consumer) {
-    return consumer.getStatus() == null ? new Status() : consumer.getStatus();
+        .findFirst().orElse(null);
   }
 }

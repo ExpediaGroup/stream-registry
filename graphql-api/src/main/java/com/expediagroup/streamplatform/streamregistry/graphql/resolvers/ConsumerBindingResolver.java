@@ -17,50 +17,25 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
 import lombok.RequiredArgsConstructor;
 
-import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Component
 @RequiredArgsConstructor
-public class ConsumerBindingResolver implements GraphQLResolver<ConsumerBinding> {
+public class ConsumerBindingResolver implements Resolvers.ConsumerBindingResolver {
   private final ConsumerService consumerService;
   private final StreamBindingService streamBindingService;
 
   public Consumer consumer(ConsumerBinding consumerBinding) {
-
-    ConsumerKey consumerKey = new ConsumerKey(
-        consumerBinding.getKey().getStreamDomain(),
-        consumerBinding.getKey().getStreamName(),
-        consumerBinding.getKey().getStreamVersion(),
-        consumerBinding.getKey().getInfrastructureZone(),
-        consumerBinding.getKey().getConsumerName()
-    );
-
-    return consumerService.read(consumerKey).orElse(null);
+    return consumerService.read(consumerBinding.getKey().getConsumerKey()).orElse(null);
   }
 
   public StreamBinding binding(ConsumerBinding consumerBinding) {
-    StreamBindingKey streamBindingKey = new StreamBindingKey(
-        consumerBinding.getKey().getStreamDomain(),
-        consumerBinding.getKey().getStreamName(),
-        consumerBinding.getKey().getStreamVersion(),
-        consumerBinding.getKey().getInfrastructureZone(),
-        consumerBinding.getKey().getInfrastructureName()
-    );
-    return streamBindingService.read(streamBindingKey).orElse(null);
-  }
-
-  public Status status(ConsumerBinding consumerBinding) {
-    return consumerBinding.getStatus() == null ? new Status() : consumerBinding.getStatus();
+    return streamBindingService.read(consumerBinding.getKey().getStreamBindingKey()).orElse(null);
   }
 }

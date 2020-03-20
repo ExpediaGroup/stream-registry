@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## Added
+- Instrumented Resolvers with timers in line with queries and mutations
+- Enabled hibernate metrics by default
+
 ### Changed
 - A new field was added for `AvroStream record` in stream-registry-notification schema
 - Unit tests were modified to verify and test the new field
