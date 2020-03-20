@@ -188,9 +188,9 @@ public class NotificationEventListenerTest {
 
   public NotificationEvent<Stream> getDummyStreamEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
-    Stream schema = new Stream();
+    Stream stream = new Stream();
     return NotificationEvent.<Stream>builder()
-        .entity(schema)
+        .entity(stream)
         .source(source)
         .eventType(eventType)
         .build();
