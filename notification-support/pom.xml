@@ -25,10 +25,6 @@
       <artifactId>avro</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
       <groupId>io.confluent</groupId>
       <artifactId>kafka-streams-avro-serde</artifactId>
       <version>${confluent.version}</version>

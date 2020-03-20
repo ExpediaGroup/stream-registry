@@ -143,10 +143,20 @@ public class NotificationEventListenerKafkaIntegrationTest {
     Assert.assertFalse("Produced events shouldn't be empty", producedEvents.isEmpty());
 
     val schemaEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.SCHEMA)).count();
-    val streamEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.STREAM)).count();
+    val streamEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.STREAM_VERSION)).count();
 
     Assert.assertEquals("Number of messages should be same as schema events", schemaEvents, (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
     Assert.assertEquals("Number of messages should be same as stream events", streamEvents, (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
+
+    val streamsWithSchemaKey = producedEvents.values()
+        .stream()
+        .map(AvroEvent::getStreamEntity)
+        .filter(Objects::nonNull)
+        .filter(st -> st.getSchemaKey() != null)
+        .filter(st -> st.getSchemaKey().getId().startsWith(st.getName()))
+        .count();
+
+    Assert.assertEquals("Stream messages should contain a schema key with stream name as id prefix", streamsWithSchemaKey, (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
   }
 
   @Test
@@ -310,11 +320,16 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val status = new Status();
     status.setStatusJson(statusJson);
 
-    val schema = new Stream();
-    schema.setKey(key);
-    schema.setSpecification(spec);
-    schema.setStatus(status);
+    val stream = new Stream();
+    stream.setKey(key);
+    stream.setSpecification(spec);
+    stream.setStatus(status);
 
-    return schema;
+    val schemaKey = new SchemaKey();
+    schemaKey.setName(stream.getKey().getName().concat("_v2"));
+    schemaKey.setDomain(domain);
+    stream.setSchemaKey(schemaKey);
+
+    return stream;
   }
 }
