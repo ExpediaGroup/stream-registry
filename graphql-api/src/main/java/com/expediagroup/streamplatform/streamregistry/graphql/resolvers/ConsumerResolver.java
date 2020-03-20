@@ -15,9 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -46,9 +43,6 @@ public class ConsumerResolver implements Resolvers.ConsumerResolver {
   }
 
   public ConsumerBinding binding(Consumer consumer) {
-    Predicate<ConsumerBinding> predicate = binding -> binding.getKey().getConsumerKey().equals(consumer.getKey());
-    return StreamSupport
-        .stream(consumerBindingService.findAll(predicate).spliterator(), false)
-        .findFirst().orElse(null);
+    return consumerBindingService.find(consumer.getKey()).orElse(null);
   }
 }

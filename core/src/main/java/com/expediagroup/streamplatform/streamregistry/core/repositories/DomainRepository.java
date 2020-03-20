@@ -18,4 +18,4 @@ package com.expediagroup.streamplatform.streamregistry.core.repositories;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
-public interface DomainRepository extends CachedCrudRepository<Domain, DomainKey> {}
+public interface DomainRepository extends CachingJpaRepository<Domain, DomainKey> {}

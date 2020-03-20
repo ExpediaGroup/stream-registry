@@ -15,14 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.StreamSupport.stream;
+import static java.util.stream.Collectors.toList;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
@@ -31,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
 @Component
@@ -79,9 +81,16 @@ public class SchemaService {
   }
 
   public Iterable<Schema> findAll(Predicate<Schema> filter) {
-    return stream(schemaRepository.findAll().spliterator(), false)
-        .filter(r -> filter.test(r))
-        .collect(Collectors.toList());
+    return schemaRepository.findAll().stream().filter(filter).collect(toList());
+  }
+
+  public List<Schema> find(DomainKey key) {
+    Schema example = new Schema(
+        new SchemaKey(
+            key.getName(),
+            null
+        ), null, null);
+    return schemaRepository.findAll(Example.of(example));
   }
 
   public void validateSchemaBindingExists(SchemaKey key) {

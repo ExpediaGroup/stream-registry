@@ -15,26 +15,31 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-import java.util.Optional;
+import static org.hibernate.annotations.QueryHints.CACHEABLE;
 
+import java.util.List;
+import java.util.Optional;
 import javax.persistence.QueryHint;
 
+import org.springframework.data.domain.Example;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
-public interface CachedCrudRepository<T, ID> extends CrudRepository<T, ID> {
+public interface CachingJpaRepository<T, ID> extends JpaRepository<T, ID> {
+  @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+  Optional<T> findById(ID id);
 
-  @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-  Optional<T> findById(ID var1);
+  @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+  boolean existsById(ID id);
 
-  @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-  boolean existsById(ID var1);
+  @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+  List<T> findAll();
 
-  @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-  Iterable<T> findAll();
+  @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+  List<T> findAllById(Iterable<ID> ids);
 
-  @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-  Iterable<T> findAllById(Iterable<ID> var1);
+  @QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
+  <S extends T> List<S> findAll(Example<S> example);
 }

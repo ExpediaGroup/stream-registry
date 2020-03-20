@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -32,12 +31,6 @@ public class DomainResolver implements Resolvers.DomainResolver {
   private final SchemaService schemaService;
 
   public List<Schema> schemas(Domain domain) {
-    List<Schema> out = new ArrayList<>();
-    for (Schema v : schemaService.readAll()) {
-      if (v.getKey().getDomain().equals(domain.getKey().getName())) {
-        out.add(v);
-      }
-    }
-    return out;
+    return schemaService.find(domain.getKey());
   }
 }

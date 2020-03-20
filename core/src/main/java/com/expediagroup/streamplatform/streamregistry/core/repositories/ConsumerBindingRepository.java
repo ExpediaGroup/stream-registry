@@ -18,4 +18,4 @@ package com.expediagroup.streamplatform.streamregistry.core.repositories;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
-public interface ConsumerBindingRepository extends CachedCrudRepository<ConsumerBinding, ConsumerBindingKey> {}
+public interface ConsumerBindingRepository extends CachingJpaRepository<ConsumerBinding, ConsumerBindingKey> {}

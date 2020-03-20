@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.StreamSupport.stream;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Consumer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Component
 @RequiredArgsConstructor
@@ -79,9 +81,20 @@ public class ConsumerBindingService {
   }
 
   public Iterable<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
-    return stream(consumerBindingRepository.findAll().spliterator(), false)
-        .filter(r -> filter.test(r))
-        .collect(Collectors.toList());
+    return consumerBindingRepository.findAll().stream().filter(filter).collect(toList());
+  }
+
+  public Optional<ConsumerBinding> find(ConsumerKey key) {
+    ConsumerBinding example = new ConsumerBinding(
+        new ConsumerBindingKey(
+            key.getStreamDomain(),
+            key.getStreamName(),
+            key.getStreamVersion(),
+            key.getZone(),
+            null,
+            key.getName()
+        ), null, null);
+    return consumerBindingRepository.findAll(Example.of(example)).stream().findFirst();
   }
 
   public void validateConsumerBindingExists(ConsumerBindingKey key) {

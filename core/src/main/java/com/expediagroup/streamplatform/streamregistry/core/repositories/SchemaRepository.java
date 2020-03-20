@@ -18,4 +18,4 @@ package com.expediagroup.streamplatform.streamregistry.core.repositories;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
-public interface SchemaRepository extends CachedCrudRepository<Schema, SchemaKey> {}
+public interface SchemaRepository extends CachingJpaRepository<Schema, SchemaKey> {}
