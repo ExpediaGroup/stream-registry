@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.handlers;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
@@ -30,9 +31,19 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Specified;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
 @Slf4j
@@ -40,6 +51,7 @@ public class HandlerService {
   private final Map<Key, Handler<?>> handlers;
 
   public HandlerService(List<Handler> handlers) {
+    validateHandlers(handlers);
     this.handlers = handlers
         .stream()
         .peek(h -> log.info("Loaded handler for {} - {}", h.target().getSimpleName(), h.type()))
@@ -47,6 +59,24 @@ public class HandlerService {
             handler -> new Key(handler.type(), handler.target()),
             Function.identity()
         ));
+  }
+
+  private static void validateHandlers(List<Handler> handlers) {
+    Set<Class> handlerTargets = handlers.stream().map(Handler::target).collect(toSet());
+    check(handlerTargets, Domain.class);
+    check(handlerTargets, Schema.class);
+    check(handlerTargets, Stream.class);
+    check(handlerTargets, Producer.class);
+    check(handlerTargets, Consumer.class);
+    check(handlerTargets, Zone.class);
+    check(handlerTargets, Infrastructure.class);
+    check(handlerTargets, StreamBinding.class);
+    check(handlerTargets, ProducerBinding.class);
+    check(handlerTargets, ConsumerBinding.class);
+  }
+
+  private static void check(Set<Class> handlerTargets, Class target) {
+    checkArgument(handlerTargets.contains(target), "No Handlers for " + target.getSimpleName() + " defined");
   }
 
   private <T extends ManagedType> Handler<T> getHandler(T managedType) {
