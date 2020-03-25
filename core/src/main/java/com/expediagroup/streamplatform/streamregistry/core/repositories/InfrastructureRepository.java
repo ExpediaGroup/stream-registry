@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.data.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey;
 
 public interface InfrastructureRepository extends CachingJpaRepository<Infrastructure, InfrastructureKey> {}

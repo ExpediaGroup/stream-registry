@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.data.Domain;
+import com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey;
 
 public interface DomainRepository extends CachingJpaRepository<Domain, DomainKey> {}
