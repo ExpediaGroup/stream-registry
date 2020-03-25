@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model.keys;
+package com.expediagroup.streamplatform.streamregistry.data.keys;
 
 import java.io.Serializable;
 
@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class ConsumerBindingKey implements Serializable {
+public class ProducerBindingKey implements Serializable {
 
   @Column(length = 100)
   private String streamDomain;
@@ -41,10 +41,14 @@ public class ConsumerBindingKey implements Serializable {
   @Column(length = 100)
   private String infrastructureName;
   @Column(length = 100)
-  private String consumerName;
+  private String producerName;
 
-  public ConsumerKey getConsumerKey() {
-    return new ConsumerKey(streamDomain, streamName, streamVersion, infrastructureZone, consumerName);
+  public StreamKey getStreamKey() {
+    return new StreamKey(streamDomain, streamName, streamVersion);
+  }
+
+  public ProducerKey getProducerKey() {
+    return new ProducerKey(streamDomain, streamName, streamVersion, infrastructureZone, producerName);
   }
 
   public StreamBindingKey getStreamBindingKey() {

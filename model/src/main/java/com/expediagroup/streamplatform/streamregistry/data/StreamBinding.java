@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
+package com.expediagroup.streamplatform.streamregistry.data;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import javax.persistence.Cacheable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 
-import org.springframework.stereotype.Component;
+import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey;
 
-@Component
-public class StatusResolver implements Resolvers.StatusResolver {
-  public ObjectNode getAgentStatus(Status status) {
-    return deserialise(status.getStatusJson());
-  }
+import lombok.Data;
+
+@Data
+@Entity
+@Cacheable
+@Cache(usage = READ_WRITE)
+public class StreamBinding implements ManagedType {
+
+  @EmbeddedId
+  private StreamBindingKey key;
+  private Specification specification;
+  private Status status;
 }

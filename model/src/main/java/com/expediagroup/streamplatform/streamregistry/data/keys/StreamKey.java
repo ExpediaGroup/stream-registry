@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2019 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model.keys;
+package com.expediagroup.streamplatform.streamregistry.data.keys;
 
 import java.io.Serializable;
 
@@ -28,26 +28,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class ConsumerBindingKey implements Serializable {
+public class StreamKey implements Serializable {
 
   @Column(length = 100)
-  private String streamDomain;
+  private String domain;
   @Column(length = 100)
-  private String streamName;
+  private String name;
   @Column(length = 100)
-  private Integer streamVersion;
-  @Column(length = 100)
-  private String infrastructureZone;
-  @Column(length = 100)
-  private String infrastructureName;
-  @Column(length = 100)
-  private String consumerName;
+  private Integer version;
 
-  public ConsumerKey getConsumerKey() {
-    return new ConsumerKey(streamDomain, streamName, streamVersion, infrastructureZone, consumerName);
-  }
-
-  public StreamBindingKey getStreamBindingKey() {
-    return new StreamBindingKey(streamDomain, streamName, streamVersion, infrastructureZone, infrastructureName);
+  public DomainKey getDomainKey() {
+    return new DomainKey(domain);
   }
 }

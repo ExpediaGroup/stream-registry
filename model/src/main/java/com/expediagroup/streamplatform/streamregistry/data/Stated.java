@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2019 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
+package com.expediagroup.streamplatform.streamregistry.data;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
+public interface Stated {
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+  Status getStatus();
 
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-
-@Component
-public class StatusResolver implements Resolvers.StatusResolver {
-  public ObjectNode getAgentStatus(Status status) {
-    return deserialise(status.getStatusJson());
-  }
+  @Deprecated
+    // we should be using immutable 'Stated' objects.
+  void setStatus(Status status);
 }
