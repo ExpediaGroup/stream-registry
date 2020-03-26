@@ -15,25 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
-
-import javax.persistence.Cacheable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-
 import lombok.Data;
-
-import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Data
-@Entity
-@Cacheable
-@Cache(usage = READ_WRITE)
-public class Consumer implements ManagedType {
+public class Consumer {
 
-  @EmbeddedId
   private ConsumerKey key;
   private Specification specification;
   private Status status;

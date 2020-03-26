@@ -30,20 +30,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.data.Consumer;
+import com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.data.Domain;
+import com.expediagroup.streamplatform.streamregistry.data.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.data.ManagedType;
+import com.expediagroup.streamplatform.streamregistry.data.Producer;
+import com.expediagroup.streamplatform.streamregistry.data.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.data.Schema;
+import com.expediagroup.streamplatform.streamregistry.data.Specification;
+import com.expediagroup.streamplatform.streamregistry.data.Specified;
+import com.expediagroup.streamplatform.streamregistry.data.Stream;
+import com.expediagroup.streamplatform.streamregistry.data.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.data.Zone;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Specified;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
 @Slf4j

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.Data;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Data
 @Embeddable

@@ -15,23 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
-
-import javax.persistence.Cacheable;
 import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
 
 import lombok.Data;
-
-import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Data
-@Entity
-@Cacheable
-@Cache(usage = READ_WRITE)
-public class Zone implements ManagedType {
+public class Zone {
 
   @EmbeddedId
   private ZoneKey key;

@@ -21,11 +21,11 @@ import javax.persistence.Cacheable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import lombok.Data;
+
 import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey;
-
-import lombok.Data;
 
 @Data
 @Entity

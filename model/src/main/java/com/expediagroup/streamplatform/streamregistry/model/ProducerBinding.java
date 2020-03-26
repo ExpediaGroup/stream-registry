@@ -15,29 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
-
-import javax.persistence.Cacheable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import org.hibernate.annotations.Cache;
-
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Entity
-@Cacheable
-@Cache(usage = READ_WRITE)
-public class ProducerBinding implements ManagedType {
+public class ProducerBinding {
 
-  @EmbeddedId
   private ProducerBindingKey key;
   private Specification specification;
   private Status status;

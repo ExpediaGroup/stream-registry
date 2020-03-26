@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016-2020 Expedia Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.expediagroup.streamplatform.streamregistry;
 
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
@@ -26,6 +25,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+
 
 public class ModelToData {
 
@@ -69,5 +70,7 @@ public class ModelToData {
     throw new UnsupportedOperationException();
   }
 
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey convertConsumerBindingKey(ConsumerBindingKey key) {
+    throw new UnsupportedOperationException();
+  }
 }
-

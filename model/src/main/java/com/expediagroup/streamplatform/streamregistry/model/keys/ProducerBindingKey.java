@@ -17,9 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,20 +24,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
+
 public class ProducerBindingKey implements Serializable {
 
-  @Column(length = 100)
   private String streamDomain;
-  @Column(length = 100)
   private String streamName;
-  @Column(length = 100)
   private Integer streamVersion;
-  @Column(length = 100)
   private String infrastructureZone;
-  @Column(length = 100)
   private String infrastructureName;
-  @Column(length = 100)
   private String producerName;
 
   public StreamKey getStreamKey() {

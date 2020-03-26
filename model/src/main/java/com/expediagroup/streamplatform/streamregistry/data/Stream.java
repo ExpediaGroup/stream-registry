@@ -22,12 +22,12 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import lombok.Data;
+
 import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey;
-
-import lombok.Data;
 
 @Data
 @Entity

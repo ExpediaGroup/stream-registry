@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -45,7 +46,7 @@ public class ConsumerService {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerValidator.validateForCreate(consumer);
-    consumer.setSpecification(handlerService.handleInsert(consumer));
+    consumer.setSpecification(handlerService.handleInsert(ModelToData.convertConsumer(consumer)));
     return consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, consumerRepository.save(consumer));
   }
 

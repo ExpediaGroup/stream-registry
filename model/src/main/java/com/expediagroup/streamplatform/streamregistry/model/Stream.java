@@ -15,27 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
-
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
 
 import lombok.Data;
-
-import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Data
-@Entity
-@Cacheable
-@Cache(usage = READ_WRITE)
-public class Stream implements ManagedType {
+public class Stream {
 
-  @EmbeddedId
   private StreamKey key;
 
   @Column(updatable = false)
