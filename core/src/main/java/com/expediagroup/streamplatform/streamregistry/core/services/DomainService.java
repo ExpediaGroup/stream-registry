@@ -17,13 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -31,6 +32,8 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRe
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -41,34 +44,56 @@ public class DomainService {
   private final NotificationEventEmitter<Domain> domainServiceEventEmitter;
 
   public Optional<Domain> create(Domain domain) throws ValidationException {
-    if (domainRepository.findById(domain.getKey()).isPresent()) {
+    com.expediagroup.streamplatform.streamregistry.data.Domain data =
+        ModelToData.convertDomain(domain);
+
+    if (domainRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     domainValidator.validateForCreate(domain);
-    domain.setSpecification(handlerService.handleInsert(domain));
-    return domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, domainRepository.save(domain));
+    data.setSpecification(handlerService.handleInsert(ModelToData.convertDomain(domain)));
+    Domain out = DataToModel.convertDomain(domainRepository.save(data));
+    domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Domain> read(DomainKey key) {
-    return domainRepository.findById(key);
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Domain> data =
+        domainRepository.findById(ModelToData.convertDomainKey(key));
+    return data.isPresent() ? Optional.of(DataToModel.convertDomain(data.get())) : Optional.empty();
   }
 
   public Iterable<Domain> readAll() {
-    return domainRepository.findAll();
+    ArrayList out = new ArrayList();
+    for (com.expediagroup.streamplatform.streamregistry.data.Domain domain : domainRepository.findAll()) {
+      out.add(DataToModel.convertDomain(domain));
+    }
+    return out;
   }
 
   public Optional<Domain> update(Domain domain) throws ValidationException {
-    Optional<Domain> existing = domainRepository.findById(domain.getKey());
+    com.expediagroup.streamplatform.streamregistry.data.Domain domainData =
+        ModelToData.convertDomain(domain);
+
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Domain> existing =
+        domainRepository.findById(domainData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey() + " because it doesn't exist");
     }
-    domainValidator.validateForUpdate(domain, existing.get());
-    domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
-    return domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, domainRepository.save(domain));
+    domainValidator.validateForUpdate(domain, DataToModel.convertDomain(existing.get()));
+    domainData.setSpecification(handlerService.handleInsert(domainData));
+
+    Domain out = DataToModel.convertDomain(domainRepository.save(domainData));
+    domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Domain> upsert(Domain domain) throws ValidationException {
-    return !domainRepository.findById(domain.getKey()).isPresent() ?
+
+    com.expediagroup.streamplatform.streamregistry.data.Domain DomainData =
+        ModelToData.convertDomain(domain);
+
+    return !domainRepository.findById(DomainData.getKey()).isPresent() ?
         create(domain) :
         update(domain);
   }
@@ -78,11 +103,16 @@ public class DomainService {
   }
 
   public Iterable<Domain> findAll(Predicate<Domain> filter) {
-    return domainRepository.findAll().stream().filter(filter).collect(toList());
+    return domainRepository.findAll().stream().map(d -> DataToModel.convertDomain(d)).filter(filter).collect(toList());
   }
 
+  public boolean exists(DomainKey key) {
+    return read(key).isEmpty();
+  }
+
+  @Deprecated
   public void validateDomainExists(DomainKey key) {
-    if (read(key).isEmpty()) {
+    if (!exists(key)) {
       throw new ValidationException("Domain does not exist");
     }
   }

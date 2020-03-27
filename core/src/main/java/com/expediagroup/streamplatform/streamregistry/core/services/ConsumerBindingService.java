@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBi
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -125,8 +125,13 @@ public class ConsumerBindingService {
         .map(d -> DataToModel.convertConsumerBinding(d));
   }
 
+  public boolean exists(ConsumerBindingKey key) {
+    return read(key).isEmpty();
+  }
+
+  @Deprecated
   public void validateConsumerBindingExists(ConsumerBindingKey key) {
-    if (read(key).isEmpty()) {
+    if (!exists(key)) {
       throw new ValidationException("ConsumerBinding does not exist");
     }
   }

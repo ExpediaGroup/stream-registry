@@ -17,13 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -31,6 +32,8 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.ZoneRepo
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -41,34 +44,55 @@ public class ZoneService {
   private final NotificationEventEmitter<Zone> zoneServiceEventEmitter;
 
   public Optional<Zone> create(Zone zone) throws ValidationException {
-    if (zoneRepository.findById(zone.getKey()).isPresent()) {
+    com.expediagroup.streamplatform.streamregistry.data.Zone data =
+        ModelToData.convertZone(zone);
+
+    if (zoneRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     zoneValidator.validateForCreate(zone);
-    zone.setSpecification(handlerService.handleInsert(zone));
-    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, zoneRepository.save(zone));
+    data.setSpecification(handlerService.handleInsert(ModelToData.convertZone(zone)));
+    Zone out = DataToModel.convertZone(zoneRepository.save(data));
+    zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Zone> read(ZoneKey key) {
-    return zoneRepository.findById(key);
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Zone> data =
+        zoneRepository.findById(ModelToData.convertZoneKey(key));
+    return data.isPresent() ? Optional.of(DataToModel.convertZone(data.get())) : Optional.empty();
   }
 
   public Iterable<Zone> readAll() {
-    return zoneRepository.findAll();
+    ArrayList out = new ArrayList();
+    for (com.expediagroup.streamplatform.streamregistry.data.Zone zone : zoneRepository.findAll()) {
+      out.add(DataToModel.convertZone(zone));
+    }
+    return out;
   }
 
   public Optional<Zone> update(Zone zone) throws ValidationException {
-    Optional<Zone> existing = zoneRepository.findById(zone.getKey());
+    com.expediagroup.streamplatform.streamregistry.data.Zone zoneData =
+        ModelToData.convertZone(zone);
+
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Zone> existing =
+        zoneRepository.findById(zoneData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    zoneValidator.validateForUpdate(zone, existing.get());
-    zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
-    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, zoneRepository.save(zone));
+    zoneValidator.validateForUpdate(zone, DataToModel.convertZone(existing.get()));
+    zoneData.setSpecification(handlerService.handleInsert(zoneData));
+    Zone out = DataToModel.convertZone(zoneRepository.save(zoneData));
+    zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Zone> upsert(Zone zone) throws ValidationException {
-    return !zoneRepository.findById(zone.getKey()).isPresent() ?
+
+    com.expediagroup.streamplatform.streamregistry.data.Zone zoneData =
+        ModelToData.convertZone(zone);
+
+    return !zoneRepository.findById(zoneData.getKey()).isPresent() ?
         create(zone) :
         update(zone);
   }
@@ -78,11 +102,16 @@ public class ZoneService {
   }
 
   public Iterable<Zone> findAll(Predicate<Zone> filter) {
-    return zoneRepository.findAll().stream().filter(filter).collect(toList());
+    return zoneRepository.findAll().stream().map(d -> DataToModel.convertZone(d)).filter(filter).collect(toList());
   }
 
+  public boolean exists(ZoneKey key) {
+    return read(key).isEmpty();
+  }
+
+  @Deprecated
   public void validateZoneExists(ZoneKey key) {
-    if (read(key).isEmpty()) {
+    if (!exists(key)) {
       throw new ValidationException("Zone does not exist");
     }
   }

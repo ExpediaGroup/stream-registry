@@ -17,13 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -31,6 +32,8 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Producer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -41,34 +44,55 @@ public class ProducerService {
   private final NotificationEventEmitter<Producer> producerServiceEventEmitter;
 
   public Optional<Producer> create(Producer producer) throws ValidationException {
-    if (producerRepository.findById(producer.getKey()).isPresent()) {
+    com.expediagroup.streamplatform.streamregistry.data.Producer data =
+        ModelToData.convertProducer(producer);
+
+    if (producerRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     producerValidator.validateForCreate(producer);
-    producer.setSpecification(handlerService.handleInsert(producer));
-    return producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, producerRepository.save(producer));
+    data.setSpecification(handlerService.handleInsert(ModelToData.convertProducer(producer)));
+    Producer out = DataToModel.convertProducer(producerRepository.save(data));
+    producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Producer> read(ProducerKey key) {
-    return producerRepository.findById(key);
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Producer> data =
+        producerRepository.findById(ModelToData.convertProducerKey(key));
+    return data.isPresent() ? Optional.of(DataToModel.convertProducer(data.get())) : Optional.empty();
   }
 
   public Iterable<Producer> readAll() {
-    return producerRepository.findAll();
+    ArrayList out = new ArrayList();
+    for (com.expediagroup.streamplatform.streamregistry.data.Producer producer : producerRepository.findAll()) {
+      out.add(DataToModel.convertProducer(producer));
+    }
+    return out;
   }
 
   public Optional<Producer> update(Producer producer) throws ValidationException {
-    Optional<Producer> existing = producerRepository.findById(producer.getKey());
+    com.expediagroup.streamplatform.streamregistry.data.Producer producerData =
+        ModelToData.convertProducer(producer);
+
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Producer> existing =
+        producerRepository.findById(producerData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    producerValidator.validateForUpdate(producer, existing.get());
-    producer.setSpecification(handlerService.handleUpdate(producer, existing.get()));
-    return producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, producerRepository.save(producer));
+    producerValidator.validateForUpdate(producer, DataToModel.convertProducer(existing.get()));
+    producerData.setSpecification(handlerService.handleInsert(producerData));
+    Producer out = DataToModel.convertProducer(producerRepository.save(producerData));
+    producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Producer> upsert(Producer producer) throws ValidationException {
-    return !producerRepository.findById(producer.getKey()).isPresent() ?
+
+    com.expediagroup.streamplatform.streamregistry.data.Producer producerData =
+        ModelToData.convertProducer(producer);
+
+    return !producerRepository.findById(producerData.getKey()).isPresent() ?
         create(producer) :
         update(producer);
   }
@@ -78,11 +102,16 @@ public class ProducerService {
   }
 
   public Iterable<Producer> findAll(Predicate<Producer> filter) {
-    return producerRepository.findAll().stream().filter(filter).collect(toList());
+    return producerRepository.findAll().stream().map(d -> DataToModel.convertProducer(d)).filter(filter).collect(toList());
   }
 
-  public void validateProducerBindingExists(ProducerKey key) {
-    if (read(key).isEmpty()) {
+  public boolean exists(ProducerKey key) {
+    return read(key).isEmpty();
+  }
+
+  @Deprecated
+  public void validateProducerExists(ProducerKey key) {
+    if (!exists(key)) {
       throw new ValidationException("Producer does not exist");
     }
   }

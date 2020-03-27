@@ -17,23 +17,23 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -44,34 +44,55 @@ public class SchemaService {
   private final NotificationEventEmitter<Schema> schemaServiceEventEmitter;
 
   public Optional<Schema> create(Schema schema) throws ValidationException {
-    if (schemaRepository.findById(schema.getKey()).isPresent()) {
+    com.expediagroup.streamplatform.streamregistry.data.Schema data =
+        ModelToData.convertSchema(schema);
+
+    if (schemaRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     schemaValidator.validateForCreate(schema);
-    schema.setSpecification(handlerService.handleInsert(schema));
-    return schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, schemaRepository.save(schema));
+    data.setSpecification(handlerService.handleInsert(ModelToData.convertSchema(schema)));
+    Schema out = DataToModel.convertSchema(schemaRepository.save(data));
+    schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Schema> read(SchemaKey key) {
-    return schemaRepository.findById(key);
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Schema> data =
+        schemaRepository.findById(ModelToData.convertSchemaKey(key));
+    return data.isPresent() ? Optional.of(DataToModel.convertSchema(data.get())) : Optional.empty();
   }
 
   public Iterable<Schema> readAll() {
-    return schemaRepository.findAll();
+    ArrayList out = new ArrayList();
+    for (com.expediagroup.streamplatform.streamregistry.data.Schema schema : schemaRepository.findAll()) {
+      out.add(DataToModel.convertSchema(schema));
+    }
+    return out;
   }
 
   public Optional<Schema> update(Schema schema) throws ValidationException {
-    Optional<Schema> existing = schemaRepository.findById(schema.getKey());
+    com.expediagroup.streamplatform.streamregistry.data.Schema schemaData =
+        ModelToData.convertSchema(schema);
+
+    Optional<com.expediagroup.streamplatform.streamregistry.data.Schema> existing =
+        schemaRepository.findById(schemaData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    schemaValidator.validateForUpdate(schema, existing.get());
-    schema.setSpecification(handlerService.handleUpdate(schema, existing.get()));
-    return schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, schemaRepository.save(schema));
+    schemaValidator.validateForUpdate(schema, DataToModel.convertSchema(existing.get()));
+    schemaData.setSpecification(handlerService.handleInsert(schemaData));
+    Schema out = DataToModel.convertSchema(schemaRepository.save(schemaData));
+    schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
+    return Optional.ofNullable(out);
   }
 
   public Optional<Schema> upsert(Schema schema) throws ValidationException {
-    return !schemaRepository.findById(schema.getKey()).isPresent() ?
+
+    com.expediagroup.streamplatform.streamregistry.data.Schema schemaData =
+        ModelToData.convertSchema(schema);
+
+    return !schemaRepository.findById(schemaData.getKey()).isPresent() ?
         create(schema) :
         update(schema);
   }
@@ -81,20 +102,16 @@ public class SchemaService {
   }
 
   public Iterable<Schema> findAll(Predicate<Schema> filter) {
-    return schemaRepository.findAll().stream().filter(filter).collect(toList());
+    return schemaRepository.findAll().stream().map(d -> DataToModel.convertSchema(d)).filter(filter).collect(toList());
   }
 
-  public List<Schema> find(DomainKey key) {
-    Schema example = new Schema(
-        new SchemaKey(
-            key.getName(),
-            null
-        ), null, null);
-    return schemaRepository.findAll(Example.of(example));
+  public boolean exists(SchemaKey key) {
+    return read(key).isEmpty();
   }
 
-  public void validateSchemaBindingExists(SchemaKey key) {
-    if (read(key).isEmpty()) {
+  @Deprecated
+  public void validateSchemaExists(SchemaKey key) {
+    if (!exists(key)) {
       throw new ValidationException("Schema does not exist");
     }
   }

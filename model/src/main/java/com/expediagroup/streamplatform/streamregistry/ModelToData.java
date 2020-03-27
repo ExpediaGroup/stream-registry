@@ -26,7 +26,15 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
-
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 public class ModelToData {
 
@@ -71,6 +79,42 @@ public class ModelToData {
   }
 
   public static com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey convertConsumerBindingKey(ConsumerBindingKey key) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey convertConsumerKey(ConsumerKey key) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey convertDomainKey(DomainKey consumer) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey convertInfrastructureKey(InfrastructureKey infrastructure) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey convertProducerKey(ProducerKey producer) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey convertProducerBindingKey(ProducerBindingKey producerBinding) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey convertSchemaKey(SchemaKey schemaKey) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey convertStreamKey(StreamKey streamKey) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey convertStreamBindingKey(StreamBindingKey streamBindingKey) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey convertZoneKey(ZoneKey zone) {
     throw new UnsupportedOperationException();
   }
 }
