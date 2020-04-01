@@ -17,14 +17,15 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
+import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -44,55 +45,45 @@ public class StreamBindingService {
   private final NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
 
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    com.expediagroup.streamplatform.streamregistry.data.StreamBinding data =
-        ModelToData.convertStreamBinding(streamBinding);
-
+    var data = convertToData(streamBinding);
     if (streamBindingRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
-    data.setSpecification(handlerService.handleInsert(ModelToData.convertStreamBinding(streamBinding)));
-    StreamBinding out = DataToModel.convert(streamBindingRepository.save(data));
+    data.setSpecification(handlerService.handleInsert(convertToData(streamBinding)));
+    StreamBinding out = convertToModel(streamBindingRepository.save(data));
     streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<StreamBinding> read(StreamBindingKey key) {
-    Optional<com.expediagroup.streamplatform.streamregistry.data.StreamBinding> data =
-        streamBindingRepository.findById(ModelToData.convertStreamBindingKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
+    var data = streamBindingRepository.findById(convertToData(key));
+    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
   }
 
   public Iterable<StreamBinding> readAll() {
     ArrayList out = new ArrayList();
-    for (com.expediagroup.streamplatform.streamregistry.data.StreamBinding streamBinding : streamBindingRepository.findAll()) {
-      out.add(DataToModel.convert(streamBinding));
+    for (var streamBinding : streamBindingRepository.findAll()) {
+      out.add(convertToModel(streamBinding));
     }
     return out;
   }
 
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    com.expediagroup.streamplatform.streamregistry.data.StreamBinding streamBindingData =
-        ModelToData.convertStreamBinding(streamBinding);
-
-    Optional<com.expediagroup.streamplatform.streamregistry.data.StreamBinding> existing =
-        streamBindingRepository.findById(streamBindingData.getKey());
+    var streamBindingData = convertToData(streamBinding);
+    var existing = streamBindingRepository.findById(streamBindingData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    streamBindingValidator.validateForUpdate(streamBinding, DataToModel.convert(existing.get()));
+    streamBindingValidator.validateForUpdate(streamBinding, convertToModel(existing.get()));
     streamBindingData.setSpecification(handlerService.handleInsert(streamBindingData));
-    StreamBinding out = DataToModel.convert(streamBindingRepository.save(streamBindingData));
+    StreamBinding out = convertToModel(streamBindingRepository.save(streamBindingData));
     streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
-
-    com.expediagroup.streamplatform.streamregistry.data.StreamBinding streamBindingData =
-        ModelToData.convertStreamBinding(streamBinding);
-
-    return !streamBindingRepository.findById(streamBindingData.getKey()).isPresent() ?
+    return !streamBindingRepository.findById(convertToData(streamBinding).getKey()).isPresent() ?
         create(streamBinding) :
         update(streamBinding);
   }
@@ -102,7 +93,7 @@ public class StreamBindingService {
   }
 
   public Iterable<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return streamBindingRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
+    return streamBindingRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(StreamBindingKey key) {

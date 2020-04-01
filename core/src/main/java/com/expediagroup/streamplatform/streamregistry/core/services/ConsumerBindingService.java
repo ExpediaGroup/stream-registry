@@ -17,6 +17,9 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
+import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -24,8 +27,6 @@ import java.util.function.Predicate;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -47,27 +48,25 @@ public class ConsumerBindingService {
 
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBindingModel) throws ValidationException {
     consumerBindingValidator.validateForCreate(consumerBindingModel);
-    com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding consumerBindingData =
-        ModelToData.convertConsumerBinding(consumerBindingModel);
+    var consumerBindingData = convertToData(consumerBindingModel);
     if (consumerBindingRepository.findById(consumerBindingData.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerBindingData.setSpecification(handlerService.handleInsert(consumerBindingData));
-    ConsumerBinding out = DataToModel.convert(consumerBindingRepository.save(consumerBindingData));
+    ConsumerBinding out = convertToModel(consumerBindingRepository.save(consumerBindingData));
     consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
-    Optional<com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding> data =
-        consumerBindingRepository.findById(ModelToData.convertConsumerBindingKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
+    var data = consumerBindingRepository.findById(convertToData(key));
+    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
   }
 
   public Iterable<ConsumerBinding> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding cb : consumerBindingRepository.findAll()) {
-      out.add(DataToModel.convert(cb));
+      out.add(convertToModel(cb));
     }
     return out;
   }
@@ -75,28 +74,24 @@ public class ConsumerBindingService {
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
 
     com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding consumerBindingData =
-        ModelToData.convertConsumerBinding(consumerBinding);
+        convertToData(consumerBinding);
 
-    Optional<com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding> existing = consumerBindingRepository.findById(consumerBindingData.getKey());
+    var existing = consumerBindingRepository.findById(consumerBindingData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
 
-    consumerBindingValidator.validateForUpdate(consumerBinding, DataToModel.convert(existing.get()));
+    consumerBindingValidator.validateForUpdate(consumerBinding, convertToModel(existing.get()));
 
     consumerBindingData.setSpecification(handlerService.handleInsert(consumerBindingData));
 
-    ConsumerBinding out = DataToModel.convert(consumerBindingRepository.save(consumerBindingData));
+    ConsumerBinding out = convertToModel(consumerBindingRepository.save(consumerBindingData));
     consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<ConsumerBinding> upsert(ConsumerBinding consumerBinding) throws ValidationException {
-
-    com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding consumerBindingData =
-        ModelToData.convertConsumerBinding(consumerBinding);
-
-    return !consumerBindingRepository.findById(consumerBindingData.getKey()).isPresent() ?
+    return !consumerBindingRepository.findById(convertToData(consumerBinding).getKey()).isPresent() ?
         create(consumerBinding) :
         update(consumerBinding);
   }
@@ -106,7 +101,7 @@ public class ConsumerBindingService {
   }
 
   public Iterable<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
-    return consumerBindingRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
+    return consumerBindingRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
   }
 
   public Optional<ConsumerBinding> find(ConsumerKey key) {
@@ -122,7 +117,7 @@ public class ConsumerBindingService {
         ), null, null);
 
     return consumerBindingRepository.findAll(Example.of(example)).stream().findFirst()
-        .map(d -> DataToModel.convert(d));
+        .map(d -> convertToModel(d));
   }
 
   public boolean exists(ConsumerBindingKey key) {

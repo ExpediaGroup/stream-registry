@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2020 Expedia, Inc.
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,98 +42,99 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
-
 public class DataToModel {
 
-  public static ConsumerKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey in) {
+  public static ConsumerKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey in) {
     return new ConsumerKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getZone(), in.getName());
   }
 
-  public static Consumer convert(com.expediagroup.streamplatform.streamregistry.data.Consumer in) {
-    return new Consumer(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static Consumer convertToModel(com.expediagroup.streamplatform.streamregistry.data.Consumer in) {
+    return new Consumer(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static ConsumerBindingKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey in) {
-    return new ConsumerBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName(), in.getConsumerName());
+  public static ConsumerBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey in) {
+    return new ConsumerBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName(),
+        in.getConsumerName());
   }
 
-  public static ConsumerBinding convert(com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding in) {
-    return new ConsumerBinding(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static ConsumerBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding in) {
+    return new ConsumerBinding(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static DomainKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey in) {
+  public static DomainKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey in) {
     return new DomainKey(in.getName());
   }
 
-  public static Domain convert(com.expediagroup.streamplatform.streamregistry.data.Domain in) {
-    return new Domain(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static Domain convertToModel(com.expediagroup.streamplatform.streamregistry.data.Domain in) {
+    return new Domain(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static InfrastructureKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey in) {
+  public static InfrastructureKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey in) {
     return new InfrastructureKey(in.getZone(), in.getName());
   }
 
-  public static Infrastructure convert(com.expediagroup.streamplatform.streamregistry.data.Infrastructure in) {
-    return new Infrastructure(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static Infrastructure convertToModel(com.expediagroup.streamplatform.streamregistry.data.Infrastructure in) {
+    return new Infrastructure(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static ProducerKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey in) {
+  public static ProducerKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey in) {
     return new ProducerKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getZone(), in.getName());
   }
 
-  public static Producer convert(com.expediagroup.streamplatform.streamregistry.data.Producer in) {
-    return new Producer(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static Producer convertToModel(com.expediagroup.streamplatform.streamregistry.data.Producer in) {
+    return new Producer(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static ProducerBindingKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey in) {
-    return new ProducerBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName(), in.getProducerName());
+  public static ProducerBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey in) {
+    return new ProducerBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName(),
+        in.getProducerName());
   }
 
-  public static ProducerBinding convert(com.expediagroup.streamplatform.streamregistry.data.ProducerBinding in) {
-    return new ProducerBinding(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static ProducerBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.ProducerBinding in) {
+    return new ProducerBinding(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static SchemaKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey in) {
+  public static SchemaKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey in) {
     return new SchemaKey(in.getDomain(), in.getName());
   }
 
-  public static Schema convert(com.expediagroup.streamplatform.streamregistry.data.Schema in) {
-    return new Schema(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static Schema convertToModel(com.expediagroup.streamplatform.streamregistry.data.Schema in) {
+    return new Schema(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static StreamKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey in) {
+  public static StreamKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey in) {
     return new StreamKey(in.getDomain(), in.getName(), in.getVersion());
   }
 
-  public static Stream convert(com.expediagroup.streamplatform.streamregistry.data.Stream in) {
-    return new Stream(convert(in.getKey()), convert(in.getSchemaKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static Stream convertToModel(com.expediagroup.streamplatform.streamregistry.data.Stream in) {
+    return new Stream(convertToModel(in.getKey()), convertToModel(in.getSchemaKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static StreamBindingKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey in) {
+  public static StreamBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey in) {
     return new StreamBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName());
   }
 
-  public static StreamBinding convert(com.expediagroup.streamplatform.streamregistry.data.StreamBinding in) {
-    return new StreamBinding(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static StreamBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.StreamBinding in) {
+    return new StreamBinding(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  public static ZoneKey convert(com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey in) {
+  public static ZoneKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey in) {
     return new ZoneKey(in.getName());
   }
 
-  public static Zone convert(com.expediagroup.streamplatform.streamregistry.data.Zone in) {
-    return new Zone(convert(in.getKey()), convert(in.getSpecification()), convert(in.getStatus()));
+  public static Zone convertToModel(com.expediagroup.streamplatform.streamregistry.data.Zone in) {
+    return new Zone(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
   }
 
-  private static Specification convert(com.expediagroup.streamplatform.streamregistry.data.Specification in) {
-    return new Specification(in.getDescription(), convert(in.getTags()), in.getType(), in.getConfiguration());
+  private static Specification convertToModel(com.expediagroup.streamplatform.streamregistry.data.Specification in) {
+    return new Specification(in.getDescription(), convertToModel(in.getTags()), in.getType(), in.getConfiguration());
   }
 
-  private static List<Tag> convert(List<com.expediagroup.streamplatform.streamregistry.data.Tag> in) {
+  private static List<Tag> convertToModel(List<com.expediagroup.streamplatform.streamregistry.data.Tag> in) {
     return in.stream().map(t -> new Tag(t.getId(), t.getName(), t.getValue())).collect(Collectors.toList());
   }
 
-  private static Status convert(com.expediagroup.streamplatform.streamregistry.data.Status in) {
+  private static Status convertToModel(com.expediagroup.streamplatform.streamregistry.data.Status in) {
     return new Status();
   }
 }

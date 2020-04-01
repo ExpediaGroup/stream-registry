@@ -17,14 +17,15 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
+import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -44,54 +45,46 @@ public class InfrastructureService {
   private final NotificationEventEmitter<Infrastructure> infrastructureServiceEventEmitter;
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
-    com.expediagroup.streamplatform.streamregistry.data.Infrastructure data =
-        ModelToData.convertInfrastructure(infrastructure);
+    var data = convertToData(infrastructure);
 
     if (infrastructureRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
-    data.setSpecification(handlerService.handleInsert(ModelToData.convertInfrastructure(infrastructure)));
-    Infrastructure out = DataToModel.convert(infrastructureRepository.save(data));
+    data.setSpecification(handlerService.handleInsert(convertToData(infrastructure)));
+    Infrastructure out = convertToModel(infrastructureRepository.save(data));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Infrastructure> read(InfrastructureKey key) {
-    Optional<com.expediagroup.streamplatform.streamregistry.data.Infrastructure> data =
-        infrastructureRepository.findById(ModelToData.convertInfrastructureKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
+    var data = infrastructureRepository.findById(convertToData(key));
+    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
   }
 
   public Iterable<Infrastructure> readAll() {
     ArrayList out = new ArrayList();
-    for (com.expediagroup.streamplatform.streamregistry.data.Infrastructure infrastructure : infrastructureRepository.findAll()) {
-      out.add(DataToModel.convert(infrastructure));
+    for (var infrastructure : infrastructureRepository.findAll()) {
+      out.add(convertToModel(infrastructure));
     }
     return out;
   }
 
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
-    com.expediagroup.streamplatform.streamregistry.data.Infrastructure infrastructureData =
-        ModelToData.convertInfrastructure(infrastructure);
-
-    Optional<com.expediagroup.streamplatform.streamregistry.data.Infrastructure> existing =
-        infrastructureRepository.findById(infrastructureData.getKey());
+    var infrastructureData = convertToData(infrastructure);
+    var existing = infrastructureRepository.findById(infrastructureData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    infrastructureValidator.validateForUpdate(infrastructure, DataToModel.convert(existing.get()));
+    infrastructureValidator.validateForUpdate(infrastructure, convertToModel(existing.get()));
     infrastructureData.setSpecification(handlerService.handleInsert(infrastructureData));
-    Infrastructure out = DataToModel.convert(infrastructureRepository.save(infrastructureData));
+    Infrastructure out = convertToModel(infrastructureRepository.save(infrastructureData));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Infrastructure> upsert(Infrastructure infrastructure) throws ValidationException {
-
-    com.expediagroup.streamplatform.streamregistry.data.Infrastructure infrastructureData =
-        ModelToData.convertInfrastructure(infrastructure);
-
+    var infrastructureData = convertToData(infrastructure);
     return !infrastructureRepository.findById(infrastructureData.getKey()).isPresent() ?
         create(infrastructure) :
         update(infrastructure);
@@ -102,7 +95,7 @@ public class InfrastructureService {
   }
 
   public Iterable<Infrastructure> findAll(Predicate<Infrastructure> filter) {
-    return infrastructureRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
+    return infrastructureRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(InfrastructureKey key) {

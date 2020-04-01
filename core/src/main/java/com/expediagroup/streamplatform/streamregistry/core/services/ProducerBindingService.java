@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -25,7 +27,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -46,55 +47,45 @@ public class ProducerBindingService {
   private final NotificationEventEmitter<ProducerBinding> producerBindingServiceEventEmitter;
 
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
-    com.expediagroup.streamplatform.streamregistry.data.ProducerBinding data =
-        ModelToData.convertProducerBinding(producerBinding);
-
+    var data = convertToData(producerBinding);
     if (producerBindingRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     producerBindingValidator.validateForCreate(producerBinding);
-    data.setSpecification(handlerService.handleInsert(ModelToData.convertProducerBinding(producerBinding)));
-    ProducerBinding out = DataToModel.convert(producerBindingRepository.save(data));
+    data.setSpecification(handlerService.handleInsert(convertToData(producerBinding)));
+    ProducerBinding out = DataToModel.convertToModel(producerBindingRepository.save(data));
     producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
-    Optional<com.expediagroup.streamplatform.streamregistry.data.ProducerBinding> data =
-        producerBindingRepository.findById(ModelToData.convertProducerBindingKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
+    var data = producerBindingRepository.findById(convertToData(key));
+    return data.isPresent() ? Optional.of(DataToModel.convertToModel(data.get())) : Optional.empty();
   }
 
   public Iterable<ProducerBinding> readAll() {
     ArrayList out = new ArrayList();
-    for (com.expediagroup.streamplatform.streamregistry.data.ProducerBinding producerBinding : producerBindingRepository.findAll()) {
-      out.add(DataToModel.convert(producerBinding));
+    for (var producerBinding : producerBindingRepository.findAll()) {
+      out.add(DataToModel.convertToModel(producerBinding));
     }
     return out;
   }
 
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
-    com.expediagroup.streamplatform.streamregistry.data.ProducerBinding producerBindingData =
-        ModelToData.convertProducerBinding(producerBinding);
-
-    Optional<com.expediagroup.streamplatform.streamregistry.data.ProducerBinding> existing =
-        producerBindingRepository.findById(producerBindingData.getKey());
+    var producerBindingData = convertToData(producerBinding);
+    var existing = producerBindingRepository.findById(producerBindingData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    producerBindingValidator.validateForUpdate(producerBinding, DataToModel.convert(existing.get()));
+    producerBindingValidator.validateForUpdate(producerBinding, DataToModel.convertToModel(existing.get()));
     producerBindingData.setSpecification(handlerService.handleInsert(producerBindingData));
-    ProducerBinding out = DataToModel.convert(producerBindingRepository.save(producerBindingData));
+    ProducerBinding out = DataToModel.convertToModel(producerBindingRepository.save(producerBindingData));
     producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<ProducerBinding> upsert(ProducerBinding producerBinding) throws ValidationException {
-
-    com.expediagroup.streamplatform.streamregistry.data.ProducerBinding producerBindingData =
-        ModelToData.convertProducerBinding(producerBinding);
-
-    return !producerBindingRepository.findById(producerBindingData.getKey()).isPresent() ?
+    return !producerBindingRepository.findById(convertToData(producerBinding).getKey()).isPresent() ?
         create(producerBinding) :
         update(producerBinding);
   }
@@ -104,27 +95,26 @@ public class ProducerBindingService {
   }
 
   public Iterable<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return producerBindingRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
+    return producerBindingRepository.findAll().stream().map(d -> DataToModel.convertToModel(d)).filter(filter).collect(toList());
   }
 
   public Optional<ProducerBinding> find(ProducerKey key) {
-    com.expediagroup.streamplatform.streamregistry.data.ProducerBinding example =
+    var example =
         new com.expediagroup.streamplatform.streamregistry.data.ProducerBinding(
-        new com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey(
-            key.getStreamDomain(),
-            key.getStreamName(),
-            key.getStreamVersion(),
-            key.getZone(),
-            null,
-            key.getName()
-        ), null, null);
+            new com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey(
+                key.getStreamDomain(),
+                key.getStreamName(),
+                key.getStreamVersion(),
+                key.getZone(),
+                null,
+                key.getName()
+            ), null, null);
 
     return producerBindingRepository
         .findAll(Example.of(example)).stream()
         .findFirst()
-        .map(d -> DataToModel.convert(d));
+        .map(d -> DataToModel.convertToModel(d));
   }
-
 
   public boolean exists(ProducerBindingKey key) {
     return read(key).isEmpty();
