@@ -32,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEv
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ProducerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
@@ -96,13 +97,7 @@ public class ProducerService {
   }
 
   public boolean exists(ProducerKey key) {
-    return read(key).isEmpty();
+    return read(key).isPresent();
   }
 
-  @Deprecated
-  public void validateProducerExists(ProducerKey key) {
-    if (!exists(key)) {
-      throw new ValidationException("Producer does not exist");
-    }
-  }
 }

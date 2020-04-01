@@ -32,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEv
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
@@ -97,13 +98,7 @@ public class ConsumerService {
   }
 
   public boolean exists(ConsumerKey key) {
-    return read(key).isEmpty();
+    return read(key).isPresent();
   }
 
-  @Deprecated
-  public void validateConsumerExists(ConsumerKey key) {
-    if (!exists(key)) {
-      throw new ValidationException("Consumer does not exist");
-    }
-  }
 }

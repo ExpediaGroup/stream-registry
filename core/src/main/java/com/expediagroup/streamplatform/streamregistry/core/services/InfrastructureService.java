@@ -32,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEv
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.InfrastructureRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
@@ -98,13 +99,7 @@ public class InfrastructureService {
   }
 
   public boolean exists(InfrastructureKey key) {
-    return read(key).isEmpty();
+    return read(key).isPresent();
   }
 
-  @Deprecated
-  public void validateInfrastructureExists(InfrastructureKey key) {
-    if (!exists(key)) {
-      throw new ValidationException("Infrastructure does not exist");
-    }
-  }
 }

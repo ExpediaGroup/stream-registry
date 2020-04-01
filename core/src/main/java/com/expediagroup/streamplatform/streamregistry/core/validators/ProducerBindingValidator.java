@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 @Component
@@ -42,6 +41,8 @@ public class ProducerBindingValidator implements Validator<ProducerBinding> {
   }
 
   public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
-    producerService.validateProducerBindingExists(producerbinding.getKey().getProducerKey());
+    if (!producerService.exists(producerbinding.getKey().getProducerKey())) {
+      throw new ValidationException("Producer does not exist");
+    }
   }
 }

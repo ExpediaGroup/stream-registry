@@ -32,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEv
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
@@ -99,13 +100,7 @@ public class DomainService {
   }
 
   public boolean exists(DomainKey key) {
-    return read(key).isEmpty();
+    return read(key).isPresent();
   }
 
-  @Deprecated
-  public void validateDomainExists(DomainKey key) {
-    if (!exists(key)) {
-      throw new ValidationException("Domain does not exist");
-    }
-  }
 }

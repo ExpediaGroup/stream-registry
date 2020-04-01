@@ -32,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEv
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
@@ -96,13 +97,7 @@ public class SchemaService {
   }
 
   public boolean exists(SchemaKey key) {
-    return read(key).isEmpty();
+    return read(key).isPresent();
   }
 
-  @Deprecated
-  public void validateSchemaExists(SchemaKey key) {
-    if (!exists(key)) {
-      throw new ValidationException("Schema does not exist");
-    }
-  }
 }

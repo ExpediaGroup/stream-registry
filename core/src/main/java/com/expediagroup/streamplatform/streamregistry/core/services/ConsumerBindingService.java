@@ -33,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEv
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
@@ -113,13 +114,8 @@ public class ConsumerBindingService {
   }
 
   public boolean exists(ConsumerBindingKey key) {
-    return read(key).isEmpty();
+    return read(key).isPresent();
   }
 
-  @Deprecated
-  public void validateConsumerBindingExists(ConsumerBindingKey key) {
-    if (!exists(key)) {
-      throw new ValidationException("ConsumerBinding does not exist");
-    }
-  }
+
 }

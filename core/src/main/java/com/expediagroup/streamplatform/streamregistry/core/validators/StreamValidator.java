@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Component
@@ -48,8 +47,12 @@ public class StreamValidator implements Validator<Stream> {
   }
 
   public void validateForCreateAndUpdate(Stream stream) throws ValidationException {
-    schemaService.validateSchemaBindingExists(stream.getSchemaKey());
-    domainService.validateDomainExists(stream.getKey().getDomainKey());
+    if (!schemaService.exists(stream.getSchemaKey())) {
+      throw new ValidationException("Schema does not exist");
+    }
+    if (!domainService.exists(stream.getKey().getDomainKey())) {
+      throw new ValidationException("Domain does not exist");
+    }
   }
 
 }
