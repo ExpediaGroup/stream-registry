@@ -15,17 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import lombok.Data;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@Deprecated
-@Data
-public class Status  {
+@Deprecated // do we need this since it holds one field?
+public class Status {
 
   private ObjectNode objectNode;
 
-  public Status() {}
+  public Status(ObjectNode objectNode) {
+    this.objectNode = objectNode;
+  }
 
   public ObjectNode getObjectNode() {
     return objectNode;

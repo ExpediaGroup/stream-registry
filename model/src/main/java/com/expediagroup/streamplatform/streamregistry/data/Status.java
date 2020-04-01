@@ -15,17 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.data;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
 import lombok.Data;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
+@Deprecated // do we need this since it holds one field?
 @Data
 @Embeddable
 public class Status {
@@ -40,11 +36,8 @@ public class Status {
     this.statusJson = statusJson;
   }
 
-  public ObjectNode getAgentStatus() {
-    return deserialise(getStatusJson());
+  public String getStatusJson() {
+    return statusJson;
   }
 
-  public void setAgentStatus(ObjectNode configuration) {
-    statusJson = serialise(configuration);
-  }
 }

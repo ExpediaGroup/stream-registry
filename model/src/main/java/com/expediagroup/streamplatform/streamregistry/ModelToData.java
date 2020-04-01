@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry;
 
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.serialise;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,7 +129,7 @@ public class ModelToData {
   }
 
   private static Specification convertToData(com.expediagroup.streamplatform.streamregistry.model.Specification in) {
-    return new Specification(in.getDescription(), convertToData(in.getTags()), in.getType(), in.getConfiguration().toString());
+    return new Specification(in.getDescription(), convertToData(in.getTags()), in.getType(), serialise(in.getConfiguration()));
   }
 
   private static List<com.expediagroup.streamplatform.streamregistry.data.Tag> convertToData(
@@ -136,6 +138,6 @@ public class ModelToData {
   }
 
   private static Status convertToData(com.expediagroup.streamplatform.streamregistry.model.Status in) {
-    return new Status();
+    return new Status(serialise(in.getObjectNode()));
   }
 }

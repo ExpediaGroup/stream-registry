@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.data;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +29,6 @@ import javax.persistence.OneToMany;
 
 import lombok.Data;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Data
 @Embeddable
@@ -62,11 +59,4 @@ public class Specification {
     return tags == null ? Collections.emptyList() : tags;
   }
 
-  public ObjectNode getConfiguration() {
-    return deserialise(getConfigJson());
-  }
-
-  public void setConfiguration(ObjectNode configuration) {
-    configJson = serialise(configuration);
-  }
 }

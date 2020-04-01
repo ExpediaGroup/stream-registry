@@ -26,19 +26,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Data
 public class Specification {
 
-  ObjectNode configuration;
   private String description;
   private List<Tag> tags = new ArrayList<>();
-
   private String type;
+  private ObjectNode configuration;
 
   public Specification(String description, List<Tag> tags, String type, ObjectNode configuration) {
     this.description = description;
     this.tags = tags;
     this.type = type;
+    this.configuration = configuration;
   }
-
-  public Specification() {}
 
   public List<Tag> getTags() {
     return tags == null ? Collections.emptyList() : tags;
