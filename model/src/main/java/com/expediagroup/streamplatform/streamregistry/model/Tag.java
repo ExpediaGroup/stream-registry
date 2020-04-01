@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag implements Modeled {
+public class Tag  {
 
   private int id;
   private String name;
