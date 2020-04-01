@@ -52,7 +52,7 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForCreate(streamBinding);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertStreamBinding(streamBinding)));
-    StreamBinding out = DataToModel.convertStreamBinding(streamBindingRepository.save(data));
+    StreamBinding out = DataToModel.convert(streamBindingRepository.save(data));
     streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -60,13 +60,13 @@ public class StreamBindingService {
   public Optional<StreamBinding> read(StreamBindingKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.StreamBinding> data =
         streamBindingRepository.findById(ModelToData.convertStreamBindingKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertStreamBinding(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<StreamBinding> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.StreamBinding streamBinding : streamBindingRepository.findAll()) {
-      out.add(DataToModel.convertStreamBinding(streamBinding));
+      out.add(DataToModel.convert(streamBinding));
     }
     return out;
   }
@@ -80,9 +80,9 @@ public class StreamBindingService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    streamBindingValidator.validateForUpdate(streamBinding, DataToModel.convertStreamBinding(existing.get()));
+    streamBindingValidator.validateForUpdate(streamBinding, DataToModel.convert(existing.get()));
     streamBindingData.setSpecification(handlerService.handleInsert(streamBindingData));
-    StreamBinding out = DataToModel.convertStreamBinding(streamBindingRepository.save(streamBindingData));
+    StreamBinding out = DataToModel.convert(streamBindingRepository.save(streamBindingData));
     streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -102,7 +102,7 @@ public class StreamBindingService {
   }
 
   public Iterable<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return streamBindingRepository.findAll().stream().map(d -> DataToModel.convertStreamBinding(d)).filter(filter).collect(toList());
+    return streamBindingRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(StreamBindingKey key) {

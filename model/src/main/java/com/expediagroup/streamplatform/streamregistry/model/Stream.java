@@ -17,12 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import javax.persistence.Column;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Data
+@AllArgsConstructor
 public class Stream {
 
   private StreamKey key;

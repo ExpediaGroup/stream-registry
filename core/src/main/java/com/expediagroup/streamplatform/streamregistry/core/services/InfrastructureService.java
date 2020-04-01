@@ -52,7 +52,7 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForCreate(infrastructure);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertInfrastructure(infrastructure)));
-    Infrastructure out = DataToModel.convertInfrastructure(infrastructureRepository.save(data));
+    Infrastructure out = DataToModel.convert(infrastructureRepository.save(data));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -60,13 +60,13 @@ public class InfrastructureService {
   public Optional<Infrastructure> read(InfrastructureKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.Infrastructure> data =
         infrastructureRepository.findById(ModelToData.convertInfrastructureKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertInfrastructure(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<Infrastructure> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.Infrastructure infrastructure : infrastructureRepository.findAll()) {
-      out.add(DataToModel.convertInfrastructure(infrastructure));
+      out.add(DataToModel.convert(infrastructure));
     }
     return out;
   }
@@ -80,9 +80,9 @@ public class InfrastructureService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    infrastructureValidator.validateForUpdate(infrastructure, DataToModel.convertInfrastructure(existing.get()));
+    infrastructureValidator.validateForUpdate(infrastructure, DataToModel.convert(existing.get()));
     infrastructureData.setSpecification(handlerService.handleInsert(infrastructureData));
-    Infrastructure out = DataToModel.convertInfrastructure(infrastructureRepository.save(infrastructureData));
+    Infrastructure out = DataToModel.convert(infrastructureRepository.save(infrastructureData));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -102,7 +102,7 @@ public class InfrastructureService {
   }
 
   public Iterable<Infrastructure> findAll(Predicate<Infrastructure> filter) {
-    return infrastructureRepository.findAll().stream().map(d -> DataToModel.convertInfrastructure(d)).filter(filter).collect(toList());
+    return infrastructureRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(InfrastructureKey key) {

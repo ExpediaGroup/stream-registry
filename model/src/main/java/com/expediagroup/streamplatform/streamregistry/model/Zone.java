@@ -17,11 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import javax.persistence.EmbeddedId;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Data
+@AllArgsConstructor
 public class Zone {
 
   @EmbeddedId

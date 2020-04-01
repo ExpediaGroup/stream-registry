@@ -52,7 +52,7 @@ public class ConsumerService {
     }
     consumerValidator.validateForCreate(consumer);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertConsumer(consumer)));
-    Consumer out = DataToModel.convertConsumer(consumerRepository.save(data));
+    Consumer out = DataToModel.convert(consumerRepository.save(data));
     consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -60,13 +60,13 @@ public class ConsumerService {
   public Optional<Consumer> read(ConsumerKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.Consumer> data =
         consumerRepository.findById(ModelToData.convertConsumerKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertConsumer(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<Consumer> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.Consumer consumer : consumerRepository.findAll()) {
-      out.add(DataToModel.convertConsumer(consumer));
+      out.add(DataToModel.convert(consumer));
     }
     return out;
   }
@@ -80,9 +80,9 @@ public class ConsumerService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    consumerValidator.validateForUpdate(consumer, DataToModel.convertConsumer(existing.get()));
+    consumerValidator.validateForUpdate(consumer, DataToModel.convert(existing.get()));
     consumerData.setSpecification(handlerService.handleInsert(consumerData));
-    Consumer out = DataToModel.convertConsumer(consumerRepository.save(consumerData));
+    Consumer out = DataToModel.convert(consumerRepository.save(consumerData));
     consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -102,7 +102,7 @@ public class ConsumerService {
   }
 
   public Iterable<Consumer> findAll(Predicate<Consumer> filter) {
-    return consumerRepository.findAll().stream().map(d -> DataToModel.convertConsumer(d)).filter(filter).collect(toList());
+    return consumerRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(ConsumerKey key) {

@@ -52,7 +52,7 @@ public class ZoneService {
     }
     zoneValidator.validateForCreate(zone);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertZone(zone)));
-    Zone out = DataToModel.convertZone(zoneRepository.save(data));
+    Zone out = DataToModel.convert(zoneRepository.save(data));
     zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -60,13 +60,13 @@ public class ZoneService {
   public Optional<Zone> read(ZoneKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.Zone> data =
         zoneRepository.findById(ModelToData.convertZoneKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertZone(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<Zone> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.Zone zone : zoneRepository.findAll()) {
-      out.add(DataToModel.convertZone(zone));
+      out.add(DataToModel.convert(zone));
     }
     return out;
   }
@@ -80,9 +80,9 @@ public class ZoneService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    zoneValidator.validateForUpdate(zone, DataToModel.convertZone(existing.get()));
+    zoneValidator.validateForUpdate(zone, DataToModel.convert(existing.get()));
     zoneData.setSpecification(handlerService.handleInsert(zoneData));
-    Zone out = DataToModel.convertZone(zoneRepository.save(zoneData));
+    Zone out = DataToModel.convert(zoneRepository.save(zoneData));
     zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -102,7 +102,7 @@ public class ZoneService {
   }
 
   public Iterable<Zone> findAll(Predicate<Zone> filter) {
-    return zoneRepository.findAll().stream().map(d -> DataToModel.convertZone(d)).filter(filter).collect(toList());
+    return zoneRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(ZoneKey key) {

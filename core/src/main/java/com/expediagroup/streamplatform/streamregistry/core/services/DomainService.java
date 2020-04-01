@@ -52,7 +52,7 @@ public class DomainService {
     }
     domainValidator.validateForCreate(domain);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertDomain(domain)));
-    Domain out = DataToModel.convertDomain(domainRepository.save(data));
+    Domain out = DataToModel.convert(domainRepository.save(data));
     domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -60,13 +60,13 @@ public class DomainService {
   public Optional<Domain> read(DomainKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.Domain> data =
         domainRepository.findById(ModelToData.convertDomainKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertDomain(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<Domain> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.Domain domain : domainRepository.findAll()) {
-      out.add(DataToModel.convertDomain(domain));
+      out.add(DataToModel.convert(domain));
     }
     return out;
   }
@@ -80,10 +80,10 @@ public class DomainService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey() + " because it doesn't exist");
     }
-    domainValidator.validateForUpdate(domain, DataToModel.convertDomain(existing.get()));
+    domainValidator.validateForUpdate(domain, DataToModel.convert(existing.get()));
     domainData.setSpecification(handlerService.handleInsert(domainData));
 
-    Domain out = DataToModel.convertDomain(domainRepository.save(domainData));
+    Domain out = DataToModel.convert(domainRepository.save(domainData));
     domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -103,7 +103,7 @@ public class DomainService {
   }
 
   public Iterable<Domain> findAll(Predicate<Domain> filter) {
-    return domainRepository.findAll().stream().map(d -> DataToModel.convertDomain(d)).filter(filter).collect(toList());
+    return domainRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(DomainKey key) {

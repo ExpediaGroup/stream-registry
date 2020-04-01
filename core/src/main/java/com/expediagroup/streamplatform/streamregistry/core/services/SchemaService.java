@@ -52,7 +52,7 @@ public class SchemaService {
     }
     schemaValidator.validateForCreate(schema);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertSchema(schema)));
-    Schema out = DataToModel.convertSchema(schemaRepository.save(data));
+    Schema out = DataToModel.convert(schemaRepository.save(data));
     schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -60,13 +60,13 @@ public class SchemaService {
   public Optional<Schema> read(SchemaKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.Schema> data =
         schemaRepository.findById(ModelToData.convertSchemaKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertSchema(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<Schema> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.Schema schema : schemaRepository.findAll()) {
-      out.add(DataToModel.convertSchema(schema));
+      out.add(DataToModel.convert(schema));
     }
     return out;
   }
@@ -80,9 +80,9 @@ public class SchemaService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    schemaValidator.validateForUpdate(schema, DataToModel.convertSchema(existing.get()));
+    schemaValidator.validateForUpdate(schema, DataToModel.convert(existing.get()));
     schemaData.setSpecification(handlerService.handleInsert(schemaData));
-    Schema out = DataToModel.convertSchema(schemaRepository.save(schemaData));
+    Schema out = DataToModel.convert(schemaRepository.save(schemaData));
     schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -102,7 +102,7 @@ public class SchemaService {
   }
 
   public Iterable<Schema> findAll(Predicate<Schema> filter) {
-    return schemaRepository.findAll().stream().map(d -> DataToModel.convertSchema(d)).filter(filter).collect(toList());
+    return schemaRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(SchemaKey key) {

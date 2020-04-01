@@ -52,7 +52,7 @@ public class StreamService {
     }
     streamValidator.validateForCreate(stream);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertStream(stream)));
-    Stream out = DataToModel.convertStream(streamRepository.save(data));
+    Stream out = DataToModel.convert(streamRepository.save(data));
     streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -60,13 +60,13 @@ public class StreamService {
   public Optional<Stream> read(StreamKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.Stream> data =
         streamRepository.findById(ModelToData.convertStreamKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertStream(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<Stream> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.Stream stream : streamRepository.findAll()) {
-      out.add(DataToModel.convertStream(stream));
+      out.add(DataToModel.convert(stream));
     }
     return out;
   }
@@ -80,9 +80,9 @@ public class StreamService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    streamValidator.validateForUpdate(stream, DataToModel.convertStream(existing.get()));
+    streamValidator.validateForUpdate(stream, DataToModel.convert(existing.get()));
     streamData.setSpecification(handlerService.handleInsert(streamData));
-    Stream out = DataToModel.convertStream(streamRepository.save(streamData));
+    Stream out = DataToModel.convert(streamRepository.save(streamData));
     streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -102,7 +102,7 @@ public class StreamService {
   }
 
   public Iterable<Stream> findAll(Predicate<Stream> filter) {
-    return streamRepository.findAll().stream().map(d -> DataToModel.convertStream(d)).filter(filter).collect(toList());
+    return streamRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(StreamKey key) {

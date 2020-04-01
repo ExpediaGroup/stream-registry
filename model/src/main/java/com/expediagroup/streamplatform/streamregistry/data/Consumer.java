@@ -25,9 +25,11 @@ import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)

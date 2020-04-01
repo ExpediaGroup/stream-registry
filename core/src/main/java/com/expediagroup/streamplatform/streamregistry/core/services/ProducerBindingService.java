@@ -54,7 +54,7 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForCreate(producerBinding);
     data.setSpecification(handlerService.handleInsert(ModelToData.convertProducerBinding(producerBinding)));
-    ProducerBinding out = DataToModel.convertProducerBinding(producerBindingRepository.save(data));
+    ProducerBinding out = DataToModel.convert(producerBindingRepository.save(data));
     producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
@@ -62,13 +62,13 @@ public class ProducerBindingService {
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
     Optional<com.expediagroup.streamplatform.streamregistry.data.ProducerBinding> data =
         producerBindingRepository.findById(ModelToData.convertProducerBindingKey(key));
-    return data.isPresent() ? Optional.of(DataToModel.convertProducerBinding(data.get())) : Optional.empty();
+    return data.isPresent() ? Optional.of(DataToModel.convert(data.get())) : Optional.empty();
   }
 
   public Iterable<ProducerBinding> readAll() {
     ArrayList out = new ArrayList();
     for (com.expediagroup.streamplatform.streamregistry.data.ProducerBinding producerBinding : producerBindingRepository.findAll()) {
-      out.add(DataToModel.convertProducerBinding(producerBinding));
+      out.add(DataToModel.convert(producerBinding));
     }
     return out;
   }
@@ -82,9 +82,9 @@ public class ProducerBindingService {
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    producerBindingValidator.validateForUpdate(producerBinding, DataToModel.convertProducerBinding(existing.get()));
+    producerBindingValidator.validateForUpdate(producerBinding, DataToModel.convert(existing.get()));
     producerBindingData.setSpecification(handlerService.handleInsert(producerBindingData));
-    ProducerBinding out = DataToModel.convertProducerBinding(producerBindingRepository.save(producerBindingData));
+    ProducerBinding out = DataToModel.convert(producerBindingRepository.save(producerBindingData));
     producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
@@ -104,7 +104,7 @@ public class ProducerBindingService {
   }
 
   public Iterable<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return producerBindingRepository.findAll().stream().map(d -> DataToModel.convertProducerBinding(d)).filter(filter).collect(toList());
+    return producerBindingRepository.findAll().stream().map(d -> DataToModel.convert(d)).filter(filter).collect(toList());
   }
 
   public Optional<ProducerBinding> find(ProducerKey key) {
@@ -122,7 +122,7 @@ public class ProducerBindingService {
     return producerBindingRepository
         .findAll(Example.of(example)).stream()
         .findFirst()
-        .map(d -> DataToModel.convertProducerBinding(d));
+        .map(d -> DataToModel.convert(d));
   }
 
 

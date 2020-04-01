@@ -15,11 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
 @Data
+@AllArgsConstructor
 public class Producer {
 
   private ProducerKey key;
