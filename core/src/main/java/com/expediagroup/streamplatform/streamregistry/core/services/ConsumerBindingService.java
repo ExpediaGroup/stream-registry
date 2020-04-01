@@ -64,26 +64,21 @@ public class ConsumerBindingService {
 
   public Iterable<ConsumerBinding> readAll() {
     ArrayList out = new ArrayList();
-    for (com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding cb : consumerBindingRepository.findAll()) {
+    for (var cb : consumerBindingRepository.findAll()) {
       out.add(convertToModel(cb));
     }
     return out;
   }
 
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
-
-    com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding consumerBindingData =
-        convertToData(consumerBinding);
-
+    var consumerBindingData = convertToData(consumerBinding);
     var existing = consumerBindingRepository.findById(consumerBindingData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
 
     consumerBindingValidator.validateForUpdate(consumerBinding, convertToModel(existing.get()));
-
     consumerBindingData.setSpecification(handlerService.handleInsert(consumerBindingData));
-
     ConsumerBinding out = convertToModel(consumerBindingRepository.save(consumerBindingData));
     consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
@@ -104,7 +99,7 @@ public class ConsumerBindingService {
   }
 
   public Optional<ConsumerBinding> find(ConsumerKey key) {
-    com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding example = new
+    var example = new
         com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding(
         new com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey(
             key.getStreamDomain(),
@@ -114,9 +109,7 @@ public class ConsumerBindingService {
             null,
             key.getName()
         ), null, null);
-
-    return consumerBindingRepository.findAll(Example.of(example)).stream().findFirst()
-        .map(d -> convertToModel(d));
+    return consumerBindingRepository.findAll(Example.of(example)).stream().findFirst().map(d -> convertToModel(d));
   }
 
   public boolean exists(ConsumerBindingKey key) {
