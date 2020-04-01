@@ -22,7 +22,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 
 @Data
 @AllArgsConstructor
-public class StreamBinding {
+public class StreamBinding implements Modeled {
 
   private StreamBindingKey key;
   private Specification specification;

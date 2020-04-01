@@ -22,7 +22,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
 @Data
 @AllArgsConstructor
-public class Producer {
+public class Producer implements Modeled {
 
   private ProducerKey key;
   private Specification specification;

@@ -30,19 +30,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
-import com.expediagroup.streamplatform.streamregistry.data.Consumer;
-import com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.data.Domain;
-import com.expediagroup.streamplatform.streamregistry.data.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.data.ManagedType;
-import com.expediagroup.streamplatform.streamregistry.data.Producer;
-import com.expediagroup.streamplatform.streamregistry.data.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.data.Schema;
-import com.expediagroup.streamplatform.streamregistry.data.Specification;
-import com.expediagroup.streamplatform.streamregistry.data.Specified;
-import com.expediagroup.streamplatform.streamregistry.data.Stream;
-import com.expediagroup.streamplatform.streamregistry.data.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.data.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Modeled;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Specified;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 
 @Component
@@ -79,7 +79,7 @@ public class HandlerService {
     checkArgument(handlerTargets.contains(target), "No Handlers for " + target.getSimpleName() + " defined");
   }
 
-  private <T extends ManagedType> Handler<T> getHandler(T managedType) {
+  private <T extends Modeled> Handler<T> getHandler(T managedType) {
     Handler<?> handler = handlers.get(new Key(managedType.getSpecification().getType(), managedType.getClass()));
     if (handler == null) {
       Set<String> supportedTypes = handlers.keySet().stream()
@@ -94,7 +94,7 @@ public class HandlerService {
     return (Handler<T>) handler;
   }
 
-  public <T extends ManagedType> Specification handleInsert(T managedType) {
+  public <T extends Modeled> Specification handleInsert(T managedType) {
     try {
       return getHandler(managedType).handleInsert(managedType);
     } catch (Exception e) {
@@ -102,7 +102,7 @@ public class HandlerService {
     }
   }
 
-  public Specification handleUpdate(ManagedType managedType, ManagedType existing) {
+  public Specification handleUpdate(Modeled managedType, Modeled existing) {
     try {
       return getHandler(managedType).handleUpdate(managedType, existing);
     } catch (Exception e) {

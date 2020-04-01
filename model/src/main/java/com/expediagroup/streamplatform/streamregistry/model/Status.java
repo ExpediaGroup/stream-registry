@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Deprecated
 @Data
-public class Status {
+public class Status implements Modeled {
 
   private ObjectNode objectNode;
 

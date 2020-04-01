@@ -24,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Data
 @AllArgsConstructor
-public class Zone {
+public class Zone implements Modeled {
 
   @EmbeddedId
   private ZoneKey key;

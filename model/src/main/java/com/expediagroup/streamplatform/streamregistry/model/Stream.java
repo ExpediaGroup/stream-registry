@@ -25,7 +25,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Data
 @AllArgsConstructor
-public class Stream {
+public class Stream implements Modeled {
 
   private StreamKey key;
 

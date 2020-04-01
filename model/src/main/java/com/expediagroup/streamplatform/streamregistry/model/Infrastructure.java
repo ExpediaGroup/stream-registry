@@ -15,14 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+
 @Data
 @AllArgsConstructor
-public class Infrastructure {
+public class Infrastructure implements Modeled {
 
   private InfrastructureKey key;
   private Specification specification;

@@ -15,14 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.handlers;
 
-import lombok.RequiredArgsConstructor;
-
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
+import com.expediagroup.streamplatform.streamregistry.model.Modeled;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
+import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
-public class IdentityHandler<T extends ManagedType> implements Handler<T> {
+public class IdentityHandler<T extends Modeled> implements Handler<T> {
   public static final String DEFAULT = "default";
   private final String type;
   private final Class<T> target;
@@ -39,11 +39,11 @@ public class IdentityHandler<T extends ManagedType> implements Handler<T> {
 
   @Override
   public Specification handleInsert(T entity) {
-    return DataToModel.convertData(entity.getSpecification());
+    return entity.getSpecification();
   }
 
   @Override
   public Specification handleUpdate(T entity, T existing) {
-    return DataToModel.convertData(entity.getSpecification());
+    return entity.getSpecification();
   }
 }

@@ -15,8 +15,4 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import com.expediagroup.streamplatform.streamregistry.data.Specified;
-import com.expediagroup.streamplatform.streamregistry.data.Stated;
-
-@Deprecated // potentially
-public interface ManagedType<K> extends Stated, Specified {}
+public interface Modeled<K> extends Stated, Specified {}
