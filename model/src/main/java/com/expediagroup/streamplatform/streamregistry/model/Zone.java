@@ -19,11 +19,13 @@ import javax.persistence.EmbeddedId;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Zone implements Modeled {
 
   @EmbeddedId
