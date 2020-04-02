@@ -15,11 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.handlers;
 
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import lombok.RequiredArgsConstructor;
+
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.Modeled;
-
-import lombok.RequiredArgsConstructor;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 @RequiredArgsConstructor
 public class IdentityHandler<T extends Modeled> implements Handler<T> {

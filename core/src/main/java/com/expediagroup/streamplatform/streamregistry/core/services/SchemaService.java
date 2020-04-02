@@ -15,14 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.Collectors.toList;
-
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,8 +36,6 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
