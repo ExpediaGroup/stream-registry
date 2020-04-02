@@ -19,17 +19,18 @@ import javax.persistence.Column;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Stream implements Modeled {
 
   private StreamKey key;
 
-  @Column(updatable = false)
   private SchemaKey schemaKey;
   private Specification specification;
   private Status status;
