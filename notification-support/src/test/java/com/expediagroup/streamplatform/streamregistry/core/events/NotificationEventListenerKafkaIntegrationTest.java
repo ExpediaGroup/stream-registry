@@ -21,11 +21,13 @@ import static com.expediagroup.streamplatform.streamregistry.core.events.config.
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -77,6 +79,7 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
+import com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -251,31 +254,27 @@ public class NotificationEventListenerKafkaIntegrationTest {
   }
 
   public static Schema getDummySchema() {
-    val name = Instant.now().toString();
-    val domain = "domain";
-    val description = "description";
-    val type = "type";
-    val configJson = "{}";
-    val statusJson = "{foo:bar}";
-    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    String name = Instant.now().toString();
+    String domain = "domain";
+    String description = "description";
+    String type = "type";
+    String configJson = "{}";
+    String statusJson = "{foo:bar}";
+    List<Tag> tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
 
-    // Key
-    val key = new SchemaKey();
+    SchemaKey key = new SchemaKey();
     key.setName(name);
     key.setDomain(domain);
 
-    // Spec
-    val spec = new Specification();
+    Specification spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
-    // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
-    val schema = new Schema();
+    Schema schema = new Schema();
     schema.setKey(key);
     schema.setSpecification(spec);
     schema.setStatus(status);
@@ -294,38 +293,34 @@ public class NotificationEventListenerKafkaIntegrationTest {
   }
 
   public static Stream getDummyStream() {
-    val name = Instant.now().toString();
-    val domain = "domain";
-    val description = "description";
-    val type = "type";
-    val configJson = "{}";
-    val statusJson = "{foo:bar}";
-    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
-    val version = 1;
+    String name = Instant.now().toString();
+    String domain = "domain";
+    String description = "description";
+    String type = "type";
+    String configJson = "{}";
+    String statusJson = "{foo:bar}";
+    List<Tag> tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    int version = 1;
 
-    // Key
-    val key = new StreamKey();
+    StreamKey key = new StreamKey();
     key.setName(name);
     key.setDomain(domain);
     key.setVersion(version);
 
-    // Spec
-    val spec = new Specification();
+    Specification spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
-    // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
-    val stream = new Stream();
+    Stream stream = new Stream();
     stream.setKey(key);
     stream.setSpecification(spec);
     stream.setStatus(status);
 
-    val schemaKey = new SchemaKey();
+    SchemaKey schemaKey = new SchemaKey();
     schemaKey.setName(stream.getKey().getName().concat("_v2"));
     schemaKey.setDomain(domain);
     stream.setSchemaKey(schemaKey);

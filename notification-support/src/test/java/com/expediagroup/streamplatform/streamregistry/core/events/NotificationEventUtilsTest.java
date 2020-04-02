@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
+
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -26,6 +28,7 @@ import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
+import com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -88,12 +91,11 @@ public class NotificationEventUtilsTest {
     Specification spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    Status status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
     Schema schema = new Schema();
     schema.setKey(key);
@@ -146,21 +148,20 @@ public class NotificationEventUtilsTest {
     Specification spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    Status status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
     // Stream
-    val stream = new Stream();
+    Stream stream = new Stream();
     stream.setKey(key);
     stream.setSpecification(spec);
     stream.setStatus(status);
 
     // Schema key
-    val schemaKey = new SchemaKey();
+    SchemaKey schemaKey = new SchemaKey();
     schemaKey.setName(stream.getKey().getName().concat("_v1"));
     schemaKey.setDomain(domain);
     stream.setSchemaKey(schemaKey);
