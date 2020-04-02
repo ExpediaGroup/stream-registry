@@ -266,11 +266,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     key.setName(name);
     key.setDomain(domain);
 
-    Specification spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfiguration(deserialise(configJson));
-    spec.setTags(tags);
+    Specification spec = new Specification(description,tags,type,deserialise(configJson));
 
     Status status = new Status(deserialise(statusJson));
 
@@ -307,11 +303,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     key.setDomain(domain);
     key.setVersion(version);
 
-    Specification spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfiguration(deserialise(configJson));
-    spec.setTags(tags);
+    Specification spec = new Specification(description,tags,type,deserialise(configJson));
 
     Status status = new Status(deserialise(statusJson));
 

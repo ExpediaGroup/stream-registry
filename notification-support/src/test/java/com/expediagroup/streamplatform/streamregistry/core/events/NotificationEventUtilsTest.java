@@ -79,22 +79,15 @@ public class NotificationEventUtilsTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
 
-    // Key
     SchemaKey key = new SchemaKey();
     key.setName(name);
     key.setDomain(domain);
 
-    // Spec
-    Specification spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfiguration(deserialise(configJson));
-    spec.setTags(tags);
+    Specification spec = new Specification(description,tags,type,deserialise(configJson));
 
-    // Status
     Status status = new Status(deserialise(statusJson));
 
     Schema schema = new Schema();
@@ -134,33 +127,24 @@ public class NotificationEventUtilsTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     int version = 2;
 
-    // Key
-    var key = new StreamKey();
+    StreamKey key = new StreamKey();
     key.setName(name);
     key.setVersion(version);
     key.setDomain(domain);
 
-    // Spec
-    Specification spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfiguration(deserialise(configJson));
-    spec.setTags(tags);
+    Specification spec = new Specification(description,tags,type,deserialise(configJson));
 
-    // Status
     Status status = new Status(deserialise(statusJson));
 
-    // Stream
     Stream stream = new Stream();
     stream.setKey(key);
     stream.setSpecification(spec);
     stream.setStatus(status);
 
-    // Schema key
     SchemaKey schemaKey = new SchemaKey();
     schemaKey.setName(stream.getKey().getName().concat("_v1"));
     schemaKey.setDomain(domain);
