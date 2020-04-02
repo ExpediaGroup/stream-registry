@@ -73,7 +73,7 @@ public class DomainService {
     var domainData = convertToData(domain);
     var existing = domainRepository.findById(domainData.getKey());
     if (!existing.isPresent()) {
-      throw new ValidationException("Can't update " + domain.getKey() + " because it doesn't exist");
+      throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
     domainValidator.validateForUpdate(domain, convertToModel(existing.get()));
     domainData.setSpecification(convertToData(handlerService.handleUpdate(domain, convertToModel(existing.get()))));

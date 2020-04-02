@@ -20,10 +20,12 @@ import java.util.Collections;
 import java.util.List;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Data
+@NoArgsConstructor
 public class Specification {
 
   private String description;

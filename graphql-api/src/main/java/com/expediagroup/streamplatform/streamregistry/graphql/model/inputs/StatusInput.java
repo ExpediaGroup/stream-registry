@@ -15,14 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Builder;
 import lombok.Value;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 @Value
 @Builder
@@ -30,8 +27,6 @@ public class StatusInput {
   ObjectNode agentStatus;
 
   public Status asStatus() {
-    return new Status(
-        serialise(agentStatus)
-    );
+    return new Status(agentStatus);
   }
 }

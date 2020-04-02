@@ -138,6 +138,9 @@ public class ModelToData {
   }
 
   private static Status convertToData(com.expediagroup.streamplatform.streamregistry.model.Status in) {
-    return new Status(serialise(in.getObjectNode()));
+    if(in==null){
+      return null;
+    }
+    return new Status(in.getObjectNode() == null ? null : serialise(in.getObjectNode()));
   }
 }

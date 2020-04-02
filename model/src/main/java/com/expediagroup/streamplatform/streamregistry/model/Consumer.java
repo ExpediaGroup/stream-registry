@@ -17,11 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Consumer implements Modeled {
 
   private ConsumerKey key;

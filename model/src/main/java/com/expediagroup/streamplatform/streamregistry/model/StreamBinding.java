@@ -17,11 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class StreamBinding implements Modeled {
 
   private StreamBindingKey key;

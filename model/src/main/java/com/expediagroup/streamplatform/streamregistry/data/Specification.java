@@ -29,7 +29,6 @@ import javax.persistence.OneToMany;
 
 import lombok.Data;
 
-
 @Data
 @Embeddable
 public class Specification {

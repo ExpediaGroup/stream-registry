@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
@@ -30,6 +31,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)

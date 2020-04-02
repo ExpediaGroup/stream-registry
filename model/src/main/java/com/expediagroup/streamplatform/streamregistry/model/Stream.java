@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import javax.persistence.Column;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

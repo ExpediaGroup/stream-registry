@@ -15,18 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Builder;
-import lombok.Value;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.Builder;
+import lombok.Value;
 
 @Value
 @Builder
@@ -51,7 +48,7 @@ public class SpecificationInput {
         description,
         getTags(tags),
         type,
-        serialise(configuration)
+        configuration
     );
   }
 }

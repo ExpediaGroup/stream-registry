@@ -43,6 +43,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class DataToModel {
 
@@ -137,6 +138,9 @@ public class DataToModel {
   }
 
   private static Status convertToModel(com.expediagroup.streamplatform.streamregistry.data.Status in) {
+    if (in == null || in.getStatusJson() == null) {
+      return new Status(deserialise("{}"));
+    }
     return new Status(deserialise(in.getStatusJson()));
   }
 }
