@@ -15,15 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.DomainVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class DomainService {
       throw new ValidationException("Can't create because it already exists");
     }
     domainValidator.validateForCreate(domain);
-    data.setSpecification(handlerService.handleInsert(convertToData(domain)));
+    data.setSpecification(convertToData(handlerService.handleInsert(domain)));
     Domain out = convertToModel(domainRepository.save(data));
     domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -71,13 +72,12 @@ public class DomainService {
 
   public Optional<Domain> update(Domain domain) throws ValidationException {
     var domainData = convertToData(domain);
-    Optional<com.expediagroup.streamplatform.streamregistry.data.Domain> existing =
-        domainRepository.findById(domainData.getKey());
+    var existing = domainRepository.findById(domainData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey() + " because it doesn't exist");
     }
     domainValidator.validateForUpdate(domain, convertToModel(existing.get()));
-    domainData.setSpecification(handlerService.handleInsert(domainData));
+    domainData.setSpecification(convertToData(handlerService.handleInsert(domain)));
 
     Domain out = convertToModel(domainRepository.save(domainData));
     domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
@@ -102,5 +102,4 @@ public class DomainService {
   public boolean exists(DomainKey key) {
     return read(key).isPresent();
   }
-
 }

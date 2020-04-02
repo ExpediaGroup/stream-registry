@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.data;
 
+@Deprecated // model only
 public interface Stated {
 
   Status getStatus();

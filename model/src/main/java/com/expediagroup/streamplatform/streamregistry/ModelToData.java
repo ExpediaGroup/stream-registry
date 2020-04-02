@@ -128,7 +128,7 @@ public class ModelToData {
     return new Zone(convertToData(in.getKey()), convertToData(in.getSpecification()), convertToData(in.getStatus()));
   }
 
-  private static Specification convertToData(com.expediagroup.streamplatform.streamregistry.model.Specification in) {
+  public static Specification convertToData(com.expediagroup.streamplatform.streamregistry.model.Specification in) {
     return new Specification(in.getDescription(), convertToData(in.getTags()), in.getType(), serialise(in.getConfiguration()));
   }
 

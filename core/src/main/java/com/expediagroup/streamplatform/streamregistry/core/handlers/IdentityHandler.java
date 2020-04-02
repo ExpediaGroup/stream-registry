@@ -15,9 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.handlers;
 
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.Modeled;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,4 +46,5 @@ public class IdentityHandler<T extends Modeled> implements Handler<T> {
   public Specification handleUpdate(T entity, T existing) {
     return entity.getSpecification();
   }
+
 }

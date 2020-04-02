@@ -50,7 +50,7 @@ public class ConsumerService {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerValidator.validateForCreate(consumer);
-    data.setSpecification(handlerService.handleInsert(convertToData(consumer)));
+    data.setSpecification(convertToData(handlerService.handleInsert(consumer)));
     Consumer out = convertToModel(consumerRepository.save(data));
     consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -76,7 +76,7 @@ public class ConsumerService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     consumerValidator.validateForUpdate(consumer, convertToModel(existing.get()));
-    consumerData.setSpecification(handlerService.handleInsert(consumerData));
+    consumerData.setSpecification(convertToData(handlerService.handleUpdate(existing.get(),consumer)));
     Consumer out = convertToModel(consumerRepository.save(consumerData));
     consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);

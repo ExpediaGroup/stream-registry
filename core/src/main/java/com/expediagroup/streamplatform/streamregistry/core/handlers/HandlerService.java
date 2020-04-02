@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
