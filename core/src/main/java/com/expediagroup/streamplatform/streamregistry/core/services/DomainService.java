@@ -77,7 +77,7 @@ public class DomainService {
       throw new ValidationException("Can't update " + domain.getKey() + " because it doesn't exist");
     }
     domainValidator.validateForUpdate(domain, convertToModel(existing.get()));
-    domainData.setSpecification(convertToData(handlerService.handleUpdate(domain,convertToModel(existing.get()))));
+    domainData.setSpecification(convertToData(handlerService.handleUpdate(domain, convertToModel(existing.get()))));
     Domain out = convertToModel(domainRepository.save(domainData));
     domainServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);

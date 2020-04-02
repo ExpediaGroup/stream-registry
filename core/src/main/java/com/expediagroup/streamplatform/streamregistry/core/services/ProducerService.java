@@ -15,15 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerVa
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class ProducerService {
       throw new ValidationException("Can't create because it already exists");
     }
     producerValidator.validateForCreate(producer);
-    data.setSpecification(handlerService.handleInsert(convertToData(producer)));
+    data.setSpecification(convertToData(handlerService.handleInsert(producer)));
     Producer out = convertToModel(producerRepository.save(data));
     producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -76,7 +77,7 @@ public class ProducerService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     producerValidator.validateForUpdate(producer, convertToModel(existing.get()));
-    producerData.setSpecification(handlerService.handleInsert(producerData));
+    producerData.setSpecification(convertToData(handlerService.handleUpdate(producer, convertToModel(existing.get()))));
     Producer out = convertToModel(producerRepository.save(producerData));
     producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
@@ -99,5 +100,4 @@ public class ProducerService {
   public boolean exists(ProducerKey key) {
     return read(key).isPresent();
   }
-
 }

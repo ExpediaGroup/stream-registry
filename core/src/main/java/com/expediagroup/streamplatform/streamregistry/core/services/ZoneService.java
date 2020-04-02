@@ -15,15 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Validation
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class ZoneService {
       throw new ValidationException("Can't create because it already exists");
     }
     zoneValidator.validateForCreate(zone);
-    data.setSpecification(handlerService.handleInsert(convertToData(zone)));
+    data.setSpecification(convertToData(handlerService.handleInsert(zone)));
     Zone out = convertToModel(zoneRepository.save(data));
     zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -76,7 +77,7 @@ public class ZoneService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     zoneValidator.validateForUpdate(zone, convertToModel(existing.get()));
-    zoneData.setSpecification(handlerService.handleInsert(zoneData));
+    zoneData.setSpecification(convertToData(handlerService.handleUpdate(zone, convertToModel(existing.get()))));
     Zone out = convertToModel(zoneRepository.save(zoneData));
     zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
@@ -99,5 +100,4 @@ public class ZoneService {
   public boolean exists(ZoneKey key) {
     return read(key).isPresent();
   }
-
 }

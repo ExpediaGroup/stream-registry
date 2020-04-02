@@ -15,15 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerVa
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -76,7 +77,7 @@ public class ConsumerService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     consumerValidator.validateForUpdate(consumer, convertToModel(existing.get()));
-    consumerData.setSpecification(convertToData(handlerService.handleUpdate(consumer,convertToModel(existing.get()))));
+    consumerData.setSpecification(convertToData(handlerService.handleUpdate(consumer, convertToModel(existing.get()))));
     Consumer out = convertToModel(consumerRepository.save(consumerData));
     consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
@@ -100,5 +101,4 @@ public class ConsumerService {
   public boolean exists(ConsumerKey key) {
     return read(key).isPresent();
   }
-
 }

@@ -15,14 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
+
+import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
+import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +35,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class SchemaService {
       throw new ValidationException("Can't create because it already exists");
     }
     schemaValidator.validateForCreate(schema);
-    data.setSpecification(handlerService.handleInsert(convertToData(schema)));
+    data.setSpecification(convertToData(handlerService.handleInsert(schema)));
     Schema out = DataToModel.convertToModel(schemaRepository.save(data));
     schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -76,7 +78,7 @@ public class SchemaService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     schemaValidator.validateForUpdate(schema, DataToModel.convertToModel(existing.get()));
-    schemaData.setSpecification(handlerService.handleInsert(schemaData));
+    schemaData.setSpecification(convertToData(handlerService.handleUpdate(schema, convertToModel(existing.get()))));
     Schema out = DataToModel.convertToModel(schemaRepository.save(schemaData));
     schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
@@ -99,5 +101,4 @@ public class SchemaService {
   public boolean exists(SchemaKey key) {
     return read(key).isPresent();
   }
-
 }

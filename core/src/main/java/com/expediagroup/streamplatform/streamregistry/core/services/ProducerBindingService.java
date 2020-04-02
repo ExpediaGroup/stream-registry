@@ -15,15 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
@@ -38,6 +37,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Validation
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -79,7 +80,7 @@ public class ProducerBindingService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     producerBindingValidator.validateForUpdate(producerBinding, DataToModel.convertToModel(existing.get()));
-    producerBindingData.setSpecification(convertToData(handlerService.handleUpdate(producerBinding,convertToModel(existing.get()))));
+    producerBindingData.setSpecification(convertToData(handlerService.handleUpdate(producerBinding, convertToModel(existing.get()))));
     ProducerBinding out = DataToModel.convertToModel(producerBindingRepository.save(producerBindingData));
     producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
@@ -120,5 +121,4 @@ public class ProducerBindingService {
   public boolean exists(ProducerBindingKey key) {
     return read(key).isPresent();
   }
-
 }

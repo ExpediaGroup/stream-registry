@@ -15,15 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class StreamService {
       throw new ValidationException("Can't create because it already exists");
     }
     streamValidator.validateForCreate(stream);
-    data.setSpecification(handlerService.handleInsert(convertToData(stream)));
+    data.setSpecification(convertToData(handlerService.handleInsert(stream)));
     Stream out = convertToModel(streamRepository.save(data));
     streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -76,7 +77,7 @@ public class StreamService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     streamValidator.validateForUpdate(stream, convertToModel(existing.get()));
-    streamData.setSpecification(handlerService.handleInsert(streamData));
+    streamData.setSpecification(convertToData(handlerService.handleUpdate(stream, convertToModel(existing.get()))));
     Stream out = convertToModel(streamRepository.save(streamData));
     streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
@@ -99,5 +100,4 @@ public class StreamService {
   public boolean exists(StreamKey key) {
     return read(key).isPresent();
   }
-
 }
