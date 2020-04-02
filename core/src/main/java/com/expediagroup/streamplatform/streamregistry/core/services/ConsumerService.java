@@ -76,7 +76,7 @@ public class ConsumerService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     consumerValidator.validateForUpdate(consumer, convertToModel(existing.get()));
-    consumerData.setSpecification(convertToData(handlerService.handleUpdate(existing.get(),consumer)));
+    consumerData.setSpecification(convertToData(handlerService.handleUpdate(consumer,convertToModel(existing.get()))));
     Consumer out = convertToModel(consumerRepository.save(consumerData));
     consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);

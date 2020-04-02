@@ -46,12 +46,11 @@ public class InfrastructureService {
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     var data = convertToData(infrastructure);
-
     if (infrastructureRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
-    data.setSpecification(handlerService.handleInsert(convertToData(infrastructure)));
+    data.setSpecification(convertToData(handlerService.handleInsert(infrastructure)));
     Infrastructure out = convertToModel(infrastructureRepository.save(data));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -77,7 +76,7 @@ public class InfrastructureService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     infrastructureValidator.validateForUpdate(infrastructure, convertToModel(existing.get()));
-    infrastructureData.setSpecification(handlerService.handleInsert(infrastructureData));
+    infrastructureData.setSpecification(convertToData(handlerService.handleUpdate(infrastructure,convertToModel(existing.get()))));
     Infrastructure out = convertToModel(infrastructureRepository.save(infrastructureData));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);

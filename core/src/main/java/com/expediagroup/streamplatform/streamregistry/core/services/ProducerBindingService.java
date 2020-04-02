@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
@@ -52,7 +53,7 @@ public class ProducerBindingService {
       throw new ValidationException("Can't create because it already exists");
     }
     producerBindingValidator.validateForCreate(producerBinding);
-    data.setSpecification(handlerService.handleInsert(convertToData(producerBinding)));
+    data.setSpecification(convertToData(handlerService.handleInsert(producerBinding)));
     ProducerBinding out = DataToModel.convertToModel(producerBindingRepository.save(data));
     producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
@@ -78,7 +79,7 @@ public class ProducerBindingService {
       throw new ValidationException("Can't update because it doesn't exist");
     }
     producerBindingValidator.validateForUpdate(producerBinding, DataToModel.convertToModel(existing.get()));
-    producerBindingData.setSpecification(handlerService.handleInsert(producerBindingData));
+    producerBindingData.setSpecification(convertToData(handlerService.handleUpdate(producerBinding,convertToModel(existing.get()))));
     ProducerBinding out = DataToModel.convertToModel(producerBindingRepository.save(producerBindingData));
     producerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
