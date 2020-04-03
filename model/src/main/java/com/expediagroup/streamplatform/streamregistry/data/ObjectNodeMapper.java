@@ -32,7 +32,7 @@ public class ObjectNodeMapper {
     try {
       return (ObjectNode) mapper.readTree(data);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException(data,e);
     }
   }
 
@@ -43,7 +43,7 @@ public class ObjectNodeMapper {
     try {
       return mapper.writeValueAsString(objectNode);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException(objectNode.toString(),e);
     }
   }
 }
