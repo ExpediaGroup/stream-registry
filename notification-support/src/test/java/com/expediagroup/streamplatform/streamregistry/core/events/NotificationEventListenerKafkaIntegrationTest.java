@@ -36,14 +36,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
-import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
-import io.confluent.kafka.streams.serdes.avro.TestSerializer;
-
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -79,7 +71,6 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
-import com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -87,6 +78,13 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+
+import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
+import io.confluent.kafka.streams.serdes.avro.TestSerializer;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -135,11 +133,15 @@ public class NotificationEventListenerKafkaIntegrationTest {
 
   @Test
   public void having_emitted_events_verify_that_Kafka_handler_is_producing_them() throws InterruptedException {
-    IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
-    IntStream.rangeClosed(1, TEST_UPDATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.UPDATE, "schema-update")));
+    IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS)
+        .forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
+    IntStream.rangeClosed(1, TEST_UPDATE_SCHEMA_EVENTS)
+        .forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.UPDATE, "schema-update")));
 
-    IntStream.rangeClosed(1, TEST_CREATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.CREATE, "stream-create")));
-    IntStream.rangeClosed(1, TEST_UPDATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.UPDATE, "stream-update")));
+    IntStream.rangeClosed(1, TEST_CREATE_STREAM_EVENTS)
+        .forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.CREATE, "stream-create")));
+    IntStream.rangeClosed(1, TEST_UPDATE_STREAM_EVENTS)
+        .forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.UPDATE, "stream-update")));
 
     TimeUnit.SECONDS.sleep(5);
 
@@ -159,7 +161,8 @@ public class NotificationEventListenerKafkaIntegrationTest {
         .filter(st -> st.getSchemaKey().getId().startsWith(st.getName()))
         .count();
 
-    Assert.assertEquals("Stream messages should contain a schema key with stream name as id prefix", streamsWithSchemaKey, (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
+    Assert.assertEquals("Stream messages should contain a schema key with stream name as id prefix", streamsWithSchemaKey,
+        (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
   }
 
   @Test
@@ -174,7 +177,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
 
   @Slf4j
   @Configuration
-  @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class})
+  @ComponentScan(basePackageClasses = { SchemaNotificationEventListener.class })
   public static class SpyListenerConfiguration extends NotificationEventConfig {
     @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
     private String bootstrapServers;
@@ -226,7 +229,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     } catch (ExecutionException exception) {
       if (exception.getCause() != null && exception.getCause() instanceof UnknownTopicOrPartitionException) {
         return Optional.empty();
-      } else throw exception;
+      } else { throw exception; }
     }
   }
 
@@ -246,7 +249,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Schema> getDummySchemaEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Schema schema = getDummySchema();
-    return NotificationEvent.<Schema>builder()
+    return NotificationEvent.<Schema> builder()
         .entity(schema)
         .source(source)
         .eventType(eventType)
@@ -259,14 +262,14 @@ public class NotificationEventListenerKafkaIntegrationTest {
     String description = "description";
     String type = "type";
     String configJson = "{}";
-    String statusJson = "{foo:bar}";
+    String statusJson = "{\"foo\":\"bar\"}";
     List<Tag> tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
 
     SchemaKey key = new SchemaKey();
     key.setName(name);
     key.setDomain(domain);
 
-    Specification spec = new Specification(description,tags,type,deserialise(configJson));
+    Specification spec = new Specification(description, tags, type, deserialise(configJson));
 
     Status status = new Status(deserialise(statusJson));
 
@@ -281,7 +284,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Stream> getDummyStreamEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Stream stream = getDummyStream();
-    return NotificationEvent.<Stream>builder()
+    return NotificationEvent.<Stream> builder()
         .entity(stream)
         .source(source)
         .eventType(eventType)
@@ -294,7 +297,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     String description = "description";
     String type = "type";
     String configJson = "{}";
-    String statusJson = "{foo:bar}";
+    String statusJson = "{\"foo\":\"bar\"}";
     List<Tag> tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     int version = 1;
 
@@ -303,7 +306,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     key.setDomain(domain);
     key.setVersion(version);
 
-    Specification spec = new Specification(description,tags,type,deserialise(configJson));
+    Specification spec = new Specification(description, tags, type, deserialise(configJson));
 
     Status status = new Status(deserialise(statusJson));
 
