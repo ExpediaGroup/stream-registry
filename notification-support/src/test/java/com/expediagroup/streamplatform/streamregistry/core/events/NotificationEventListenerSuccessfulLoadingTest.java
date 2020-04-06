@@ -73,7 +73,7 @@ public class NotificationEventListenerSuccessfulLoadingTest {
     Assert.assertNotNull("Optional container of StreamEventHandlerForKafka shouldn't be null!", streamEventHandlerForKafka);
     Assert.assertTrue(String.format("Kafka stream event handler should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), streamEventHandlerForKafka.isPresent());
 
-    Assert.assertNotNull("Optional container of StreamBindingEventHandlerForKafka shouldn't be null!", streamEventHandlerForKafka);
+    Assert.assertNotNull("Optional container of StreamBindingEventHandlerForKafka shouldn't be null!", streamBindingEventHandlerForKafka);
     Assert.assertTrue(String.format("Kafka streamBinding event handler should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), streamBindingEventHandlerForKafka.isPresent());
   }
 

@@ -149,7 +149,7 @@ public class NotificationEventListenerTest {
   }
 
   @Configuration
-  @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class, StreamNotificationEventListener.class})
+  @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class, StreamNotificationEventListener.class, StreamBindingNotificationEventListener.class})
   public static class MockListenerConfiguration extends NotificationEventConfig {
     @Value("${" + KAFKA_TOPIC_NAME_PROPERTY + ":#{null}}")
     private String notificationEventsTopic;
