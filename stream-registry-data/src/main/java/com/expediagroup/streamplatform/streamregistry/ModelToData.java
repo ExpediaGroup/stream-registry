@@ -97,7 +97,7 @@ public class ModelToData {
   }
 
   public static SchemaKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey in) {
-    return new SchemaKey(in.getDomain(), in.getName());
+    return in == null ? new SchemaKey(null, null) : new SchemaKey(in.getDomain(), in.getName());
   }
 
   public static Schema convertToData(com.expediagroup.streamplatform.streamregistry.model.Schema in) {
@@ -138,7 +138,7 @@ public class ModelToData {
   }
 
   private static Status convertToData(com.expediagroup.streamplatform.streamregistry.model.Status in) {
-    if(in==null){
+    if (in == null) {
       return null;
     }
     return new Status(in.getObjectNode() == null ? null : serialise(in.getObjectNode()));

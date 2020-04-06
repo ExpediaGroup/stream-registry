@@ -50,6 +50,7 @@
     <module>graphql-scalars</module>
     <module>handler-spi</module>
     <module>model</module>
+    <module>stream-registry-data</module>
     <module>it</module>
     <module>spring-boot-starter</module>
     <module>notification-support</module>
