@@ -18,15 +18,15 @@ package com.expediagroup.streamplatform.streamregistry.core.events.handlers;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-import org.apache.avro.specific.SpecificRecord;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
+import org.apache.avro.specific.SpecificRecord;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventHandler;

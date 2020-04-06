@@ -18,11 +18,11 @@ package com.expediagroup.streamplatform.streamregistry.core.events.listeners;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventHandler;
@@ -42,7 +42,7 @@ public class StreamBindingNotificationEventListener implements NotificationEvent
       "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).UPDATE";
 
   private static final String IS_DELETING_A_STREAM_BINDING = "" +
-      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.Stream)" +
+      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.StreamBinding)" +
       "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).DELETE";
 
   private final List<NotificationEventHandler<StreamBinding>> notificationEventHandlers;

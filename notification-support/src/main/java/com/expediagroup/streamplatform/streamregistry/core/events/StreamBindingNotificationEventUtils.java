@@ -18,10 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.core.events;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.apache.avro.specific.SpecificRecord;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,33 +26,103 @@ import lombok.val;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
-import com.expediagroup.streamplatform.streamregistry.avro.AvroSchema;
-import com.expediagroup.streamplatform.streamregistry.avro.AvroStream;
+import com.expediagroup.streamplatform.streamregistry.avro.AvroStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 @Slf4j
 public class StreamBindingNotificationEventUtils {
 
   public static AvroKey toAvroKeyRecord(StreamBinding streamBinding) {
-    return null;
+    validateStreamBindingKey(streamBinding);
+
+    val key = streamBinding.getKey();
+    val streamName = key.getStreamName();
+    val streamVersion = key.getStreamVersion();
+    val streamDomain = key.getStreamDomain();
+    val infrastructureName = key.getInfrastructureName();
+    val infrastructureZone = key.getInfrastructureZone();
+
+    var zoneKey = AvroKey.newBuilder()
+        .setId(infrastructureZone)
+        .setType(AvroKeyType.ZONE)
+        .build();
+
+    var infrastructureKey = AvroKey.newBuilder()
+        .setId(infrastructureName)
+        .setParent(zoneKey)
+        .setType(AvroKeyType.INFRASTRUCTURE)
+        .build();
+
+    var domainKey = AvroKey.newBuilder()
+        .setId(streamDomain)
+        .setParent(infrastructureKey)
+        .setType(AvroKeyType.DOMAIN)
+        .build();
+
+    var streamKey = AvroKey.newBuilder()
+        .setId(streamName)
+        .setParent(domainKey)
+        .setType(AvroKeyType.STREAM)
+        .build();
+
+    return AvroKey.newBuilder()
+        .setId(streamVersion.toString())
+        .setParent(streamKey)
+        .setType(AvroKeyType.STREAM_BINDING_STREAM_VERSION)
+        .build();
   }
 
   public static AvroEvent toAvroValueRecord(StreamBinding streamBinding) {
-    return null;
+    validateStreamBindingValue(streamBinding);
 
-  }
+    val key = streamBinding.getKey();
+    val specification = streamBinding.getSpecification();
+    val streamName = key.getStreamName();
+    val streamVersion = key.getStreamVersion();
+    val streamDomain = key.getStreamDomain();
+    val infrastructureName = key.getInfrastructureName();
+    val infrastructureZone = key.getInfrastructureZone();
+    val description = specification.getDescription();
 
-  public static com.expediagroup.streamplatform.streamregistry.avro.Tag toAvroTag(Tag tag) {
-    return com.expediagroup.streamplatform.streamregistry.avro.Tag.newBuilder()
-        .setName(tag.getName())
-        .setValue(tag.getValue())
+    val tags = specification.getTags()
+        .stream()
+        .map(NotificationEventUtils::toAvroTag)
+        .collect(Collectors.toList());
+
+    val type = specification.getType();
+    val configJson = specification.getConfigJson();
+
+    val statusJson = Optional.ofNullable(streamBinding.getStatus())
+        .map(Status::getStatusJson)
+        .orElse(null);
+
+    val avroStreamBinding = AvroStreamBinding.newBuilder()
+        .setStreamVersion(streamVersion)
+        .setStreamDomain(streamDomain)
+        .setStreamName(streamName)
+        .setInfrastructureName(infrastructureName)
+        .setInfrastructureZone(infrastructureZone)
+        .setDescription(description)
+        .setTags(tags)
+        .setType(type)
+        .setConfigurationString(configJson)
+        .setStatusString(statusJson)
+        .build();
+
+    return AvroEvent.newBuilder()
+        .setStreamBindingEntity(avroStreamBinding)
         .build();
   }
 
   private static void validateStreamBindingKey(StreamBinding streamBinding) {
-
+    requireNonNull(streamBinding, canNotBeNull("streamBinding"));
+    requireNonNull(streamBinding.getKey(), canNotBeNull("streamBinding's key"));
+    requireNonNull(streamBinding.getKey().getStreamName(), canNotBeNull("key's streamName"));
+    requireNonNull(streamBinding.getKey().getStreamDomain(), canNotBeNull("key's streamDomain"));
+    requireNonNull(streamBinding.getKey().getStreamVersion(), canNotBeNull("key's streamVersion"));
+    requireNonNull(streamBinding.getKey().getInfrastructureName(), canNotBeNull("key's infrastructureName"));
+    requireNonNull(streamBinding.getKey().getInfrastructureZone(), canNotBeNull("key's infrastructureZone"));
   }
 
   private static void validateStreamBindingValue(StreamBinding streamBinding) {
@@ -70,26 +137,5 @@ public class StreamBindingNotificationEventUtils {
 
   private static String canNotBeNull(String target) {
     return String.format("%s can not be null", target);
-  }
-
-  public static <W, R extends SpecificRecord> Function<W, R> loadToAvroStaticMethod(String clazz, String methodName, Class<W> argType) throws ClassNotFoundException, NoSuchMethodException {
-    val method = Class.forName(clazz)
-        .getDeclaredMethod(methodName, argType);
-
-    Function<W, R> toAvroFn = obj -> {
-      try {
-        // We set null as first argument, since we're expecting an static method
-        return (R) method.invoke(null, obj);
-      } catch (Exception e) {
-        log.error("There was an error in {}.{} (toAvro) method: {}", clazz, methodName, e.getMessage(), e);
-        throw new RuntimeException(e);
-      }
-    };
-
-    return toAvroFn;
-  }
-
-  public static String getWarningMessageOnNotDefinedProp(String component, String property) {
-    return String.format("%s prop must be configured on %s", property, component);
   }
 }

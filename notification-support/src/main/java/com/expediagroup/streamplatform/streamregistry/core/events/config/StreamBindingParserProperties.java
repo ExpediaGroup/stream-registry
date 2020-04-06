@@ -26,10 +26,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import lombok.Data;
+
 import org.apache.avro.specific.SpecificRecord;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import lombok.Data;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils;
 import com.expediagroup.streamplatform.streamregistry.core.events.StreamBindingNotificationEventUtils;
