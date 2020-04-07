@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
+- Split internal representation into Model and Data
+- Fixed issues with Stream updates
+- Addressed possible issue with notifications
+
+## [Unreleased]
+### Changed
 - Removed auto configuration of default handlers.
 
 ## [0.10.4] 2020-03-20
