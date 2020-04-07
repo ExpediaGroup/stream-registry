@@ -67,7 +67,7 @@ public class NotificationEventConfig {
   public static final String CUSTOM_STREAM_VALUE_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.stream.value-parser-method";
 
   public static final String CUSTOM_STREAM_BINDING_TYPE_PREFIX = "notification.events.kafka.custom.stream-binding";
-  public static final String CUSTOM_STREAM_BINDING_PARSER_ENABLED_PROPERTY = "notification.events.kafka.custom.stream-binding.custom-enabled"; //TODO
+  public static final String CUSTOM_STREAM_BINDING_PARSER_ENABLED_PROPERTY = "notification.events.kafka.custom.stream-binding.custom-enabled";
   public static final String CUSTOM_STREAM_BINDING_KEY_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.stream-binding.key-parser-class";
   public static final String CUSTOM_STREAM_BINDING_KEY_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.stream-binding.key-parser-method";
   public static final String CUSTOM_STREAM_BINDING_VALUE_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.stream-binding.value-parser-class";

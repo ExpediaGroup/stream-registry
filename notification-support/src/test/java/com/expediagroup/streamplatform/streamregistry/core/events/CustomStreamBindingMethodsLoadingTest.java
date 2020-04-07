@@ -151,7 +151,7 @@ public class CustomStreamBindingMethodsLoadingTest {
         .setStreamVersion(streamBinding.getKey().getStreamVersion())
         .setStreamName(streamBinding.getKey().getStreamName())
         .setInfrastructureZone(streamBinding.getKey().getInfrastructureZone())
-        .setInfrastructureName(streamBinding.getKey().getInfrastructureZone())
+        .setInfrastructureName(streamBinding.getKey().getInfrastructureName())
         .setDescription(streamBinding.getSpecification().getDescription())
         .setTags(Collections.emptyList())
         .setType(streamBinding.getSpecification().getType())
