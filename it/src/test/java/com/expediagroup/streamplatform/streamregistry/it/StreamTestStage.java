@@ -15,21 +15,23 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import com.apollographql.apollo.api.Response;
+import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
 
+import static junit.framework.TestCase.assertTrue;
+
+import com.apollographql.apollo.api.Response;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
@@ -56,21 +58,27 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void upsert() {
-    //insert scenario without schema
+
     try {
-      client.getOptionalData(factory.upsertStreamMutationInsertWithoutSchemaBuilder().build()).get();
+      client.getOptionalData(factory.upsertStreamMutationBuilder()
+          .schema(null)
+          .build()).get();
     } catch (RuntimeException ex) {
-      assertEquals("Can't create because Schema is required", ex.getMessage());
+      assertEquals("Schema does not exist", ex.getMessage());
     }
 
-    //upsert scenario with a different schema
     try {
-      client.getOptionalData(factory.upsertStreamMutationUpsertWithDifferentSchemaKeySchemaBuilder().build()).get();
+      SchemaKeyInput nonExisting = SchemaKeyInput.builder()
+          .domain(factory.domainName)
+          .name("nonExisting")
+          .build();
+      client.getOptionalData(factory.upsertStreamMutationBuilder()
+          .schema(nonExisting)
+          .build()).get();
     } catch (RuntimeException ex) {
-      assertEquals("Can't update because schema change is not allowed", ex.getMessage());
+      assertEquals("Schema does not exist", ex.getMessage());
     }
 
-    //update scenario
     Object data = client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();

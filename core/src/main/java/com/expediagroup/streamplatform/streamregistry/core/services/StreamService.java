@@ -15,15 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -70,11 +71,14 @@ public class StreamService {
   }
 
   public Optional<Stream> update(Stream stream) throws ValidationException {
-    var streamData = convertToData(stream);
-    var existing = streamRepository.findById(streamData.getKey());
+    var existing = streamRepository.findById(convertToData(stream).getKey());
     if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
+      throw new ValidationException("Stream doesn't exist");
     }
+    if (stream.getSchemaKey() == null) {
+      stream.setSchemaKey(convertToModel(existing.get()).getSchemaKey());
+    }
+    var streamData = convertToData(stream);
     streamValidator.validateForUpdate(stream, convertToModel(existing.get()));
     streamData.setSpecification(convertToData(handlerService.handleUpdate(stream, convertToModel(existing.get()))));
     Stream out = convertToModel(streamRepository.save(streamData));

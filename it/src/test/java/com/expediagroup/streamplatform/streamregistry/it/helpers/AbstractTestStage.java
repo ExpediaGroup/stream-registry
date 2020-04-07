@@ -61,15 +61,6 @@ public abstract class AbstractTestStage {
 
   public abstract void createRequiredDatastoreState();
 
-  public Response assertMutationSucceeds(Mutation mutation) {
-    try {
-      return client.invoke(mutation);
-    } catch (RuntimeException e) {
-      TestCase.fail("Mutation failed");
-    }
-    return null;
-  }
-
   public Mutation assertMutationFails(Mutation mutation) {
     if (mutation.getClass().getSimpleName().toLowerCase().contains("insert")) {
       assertRequiresObjectIsAbsent(mutation);

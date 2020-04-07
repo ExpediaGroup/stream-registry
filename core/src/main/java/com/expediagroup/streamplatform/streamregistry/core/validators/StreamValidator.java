@@ -15,13 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -32,10 +32,6 @@ public class StreamValidator implements Validator<Stream> {
 
   @Override
   public void validateForCreate(Stream stream) throws ValidationException {
-    if(stream.getSchemaKey() == null) {
-      //this can happen when doing create using upsert
-      throw new ValidationException("Can't create because Schema is required");
-    }
     validateForCreateAndUpdate(stream);
     specificationValidator.validateForCreate(stream.getSpecification());
   }
@@ -47,12 +43,22 @@ public class StreamValidator implements Validator<Stream> {
   }
 
   public void validateForCreateAndUpdate(Stream stream) throws ValidationException {
-    if (!schemaService.exists(stream.getSchemaKey())) {
-      throw new ValidationException("Schema does not exist");
-    }
+    requireExistingDomain(stream);
+    requireExistingSchema(stream);
+  }
+
+  private void requireExistingDomain(Stream stream) {
     if (!domainService.exists(stream.getKey().getDomainKey())) {
       throw new ValidationException("Domain does not exist");
     }
   }
 
+  private void requireExistingSchema(Stream stream) {
+    if (stream.getSchemaKey() == null) {
+      throw new ValidationException("Schema must be specified");
+    }
+    if (!schemaService.exists(stream.getSchemaKey())) {
+      throw new ValidationException("Schema does not exist");
+    }
+  }
 }
