@@ -2,7 +2,7 @@
 protocol StreamRegistry {
 
   enum AvroKeyType {
-    DOMAIN, SCHEMA, STREAM, STREAM_BINDING_STREAM_VERSION, STREAM_VERSION, INFRASTRUCTURE, ZONE
+    DOMAIN, SCHEMA, STREAM, PRODUCER, STREAM_BINDING_STREAM_VERSION, STREAM_VERSION, INFRASTRUCTURE, ZONE
   }
 
   record Tag {
@@ -51,9 +51,23 @@ protocol StreamRegistry {
     union {null, string} statusString = null;
   }
 
+  record AvroProducer {
+    string streamDomain;
+    string streamName;
+    int streamVersion;
+    string zone;
+    string name;
+    string description;
+    array<Tag> tags;
+    string type;
+    string configurationString;
+    union {null, string} statusString = null;
+  }
+
   record AvroEvent {
     union {null, AvroSchema} schemaEntity = null;
     union {null, AvroStream} streamEntity = null;
     union {null, AvroStreamBinding} streamBindingEntity = null;
+    union {null, AvroProducer} producerEntity = null;
   }
 }

@@ -42,6 +42,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.ProducerEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamBindingEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
@@ -65,6 +66,9 @@ public class NotificationEventListenerSuccessfulLoadingTest {
   @Autowired(required = false)
   private Optional<StreamBindingEventHandlerForKafka> streamBindingEventHandlerForKafka;
 
+  @Autowired(required = false)
+  private Optional<ProducerEventHandlerForKafka> producerEventHandlerForKafka;
+
   @Test
   public void having_notifications_enabled_verify_that_KafkaNotificationEventListener_is_being_loaded() {
     Assert.assertNotNull("Optional container of SchemaEventHandlerForKafka shouldn't be null!", schemaEventHandlerForKafka);
@@ -75,6 +79,9 @@ public class NotificationEventListenerSuccessfulLoadingTest {
 
     Assert.assertNotNull("Optional container of StreamBindingEventHandlerForKafka shouldn't be null!", streamBindingEventHandlerForKafka);
     Assert.assertTrue(String.format("Kafka streamBinding event handler should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), streamBindingEventHandlerForKafka.isPresent());
+
+    Assert.assertNotNull("Optional container of ProducerEventHandlerForKafka shouldn't be null!", producerEventHandlerForKafka);
+    Assert.assertTrue(String.format("Kafka producer event handler should be loaded since %s == true", KAFKA_NOTIFICATIONS_ENABLED_PROPERTY), producerEventHandlerForKafka.isPresent());
   }
 
   @Configuration
