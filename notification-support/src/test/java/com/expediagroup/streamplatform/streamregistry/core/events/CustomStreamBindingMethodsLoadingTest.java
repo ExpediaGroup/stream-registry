@@ -110,8 +110,14 @@ public class CustomStreamBindingMethodsLoadingTest {
     val infrastructureName = streamBinding.getKey().getInfrastructureName();
     val infrastructureZone = streamBinding.getKey().getInfrastructureZone();
 
+    var domainKey = AvroKey.newBuilder()
+        .setId(domainName)
+        .setType(AvroKeyType.DOMAIN)
+        .build();
+
     var zoneKey = AvroKey.newBuilder()
         .setId(infrastructureZone)
+        .setParent(domainKey)
         .setType(AvroKeyType.ZONE)
         .build();
 
@@ -119,12 +125,6 @@ public class CustomStreamBindingMethodsLoadingTest {
         .setId(infrastructureName)
         .setParent(zoneKey)
         .setType(AvroKeyType.INFRASTRUCTURE)
-        .build();
-
-    var domainKey = AvroKey.newBuilder()
-        .setId(domainName)
-        .setParent(infrastructureKey)
-        .setType(AvroKeyType.DOMAIN)
         .build();
 
     var streamKey = AvroKey.newBuilder()
@@ -136,6 +136,7 @@ public class CustomStreamBindingMethodsLoadingTest {
     AvroKey avroKey = AvroKey.newBuilder()
         .setId(version.toString())
         .setParent(streamKey)
+        .setPhysical(infrastructureKey)
         .setType(AvroKeyType.STREAM_VERSION)
         .build();
 

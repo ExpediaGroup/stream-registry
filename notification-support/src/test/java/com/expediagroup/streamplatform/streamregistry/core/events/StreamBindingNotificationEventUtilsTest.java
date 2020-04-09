@@ -82,6 +82,11 @@ public class StreamBindingNotificationEventUtilsTest {
     Assert.assertNotNull("Avro key shouldn't be null", avroKey);
     Assert.assertNotNull("Key id shouldn't be null", avroKey.getId());
     Assert.assertEquals("Name should be the same as the id", name, avroKey.getParent().getId());
+    Assert.assertEquals("streamKey parent id should be same as domain", domain, avroKey.getParent().getParent().getId());
+
+    Assert.assertEquals("Physical parent id should be same as infrastructureName", infrastructureName, avroKey.getPhysical().getId());
+    Assert.assertEquals("infrastructure's parent id should be same as zone", zone, avroKey.getPhysical().getParent().getId());
+    Assert.assertEquals("zone's parent id should be same as domain", domain, avroKey.getParent().getParent().getId());
 
     AvroEvent avroEvent = toValueRecord.apply(streamBinding);
     log.info("Obtained avro event {}", avroEvent);
