@@ -43,20 +43,8 @@ public class StreamBindingNotificationEventUtils {
     val infrastructureName = key.getInfrastructureName();
     val infrastructureZone = key.getInfrastructureZone();
 
-    var zoneKey = AvroKey.newBuilder()
-        .setId(infrastructureZone)
-        .setType(AvroKeyType.ZONE)
-        .build();
-
-    var infrastructureKey = AvroKey.newBuilder()
-        .setId(infrastructureName)
-        .setParent(zoneKey)
-        .setType(AvroKeyType.INFRASTRUCTURE)
-        .build();
-
     var domainKey = AvroKey.newBuilder()
         .setId(streamDomain)
-        .setParent(infrastructureKey)
         .setType(AvroKeyType.DOMAIN)
         .build();
 
@@ -66,9 +54,22 @@ public class StreamBindingNotificationEventUtils {
         .setType(AvroKeyType.STREAM)
         .build();
 
+    var zoneKey = AvroKey.newBuilder()
+        .setId(infrastructureZone)
+        .setParent(domainKey)
+        .setType(AvroKeyType.ZONE)
+        .build();
+
+    var infrastructureKey = AvroKey.newBuilder()
+        .setId(infrastructureName)
+        .setParent(zoneKey)
+        .setType(AvroKeyType.INFRASTRUCTURE)
+        .build();
+
     return AvroKey.newBuilder()
         .setId(streamVersion.toString())
         .setParent(streamKey)
+        .setPhysical(infrastructureKey)
         .setType(AvroKeyType.STREAM_BINDING_STREAM_VERSION)
         .build();
   }
