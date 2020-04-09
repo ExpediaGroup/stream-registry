@@ -412,6 +412,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
 
   public static Producer getDummyProducer() {
     val streamName = Instant.now().toString();
+    val producerName = "producer1";
     val domain = "domain";
     val description = "description";
     val type = "type";
@@ -420,14 +421,13 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
-    val producerName = "producer1";
 
     // Key
     val key = new ProducerKey();
+    key.setName(producerName);
     key.setStreamName(streamName);
     key.setStreamDomain(domain);
     key.setStreamVersion(version);
-    key.setName(producerName);
     key.setZone(zone);
 
     // Spec

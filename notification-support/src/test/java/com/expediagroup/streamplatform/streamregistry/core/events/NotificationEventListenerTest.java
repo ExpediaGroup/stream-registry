@@ -114,6 +114,9 @@ public class NotificationEventListenerTest {
   @Autowired
   private StreamBindingEventHandlerForKafka streamBindingEventHandlerForKafka;
 
+  @Autowired
+  private ProducerEventHandlerForKafka producerEventHandlerForKafka;
+
   @Before
   public void before() {
     IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
@@ -156,6 +159,8 @@ public class NotificationEventListenerTest {
     Mockito.verify(streamBindingNotificationEventListener, Mockito.timeout(5000).times(TEST_CREATE_STREAM_BINDING_EVENTS)).onCreate(Mockito.notNull());
     Mockito.verify(streamBindingNotificationEventListener, Mockito.timeout(5000).times(TEST_UPDATE_STREAM_BINDING_EVENTS)).onUpdate(Mockito.notNull());
     Mockito.verify(streamBindingNotificationEventListener, Mockito.timeout(5000).times(TEST_DELETE_STREAM_BINDING_EVENTS)).onDelete(Mockito.notNull());
+
+    Mockito.verify(producerEventHandlerForKafka, Mockito.timeout(5000).times(TEST_UPDATE_PRODUCER_EVENTS)).onUpdate(Mockito.notNull());
 
     Mockito.verify(producerNotificationEventListener, Mockito.timeout(5000).times(TEST_UPDATE_PRODUCER_EVENTS)).onUpdate(Mockito.notNull());
   }

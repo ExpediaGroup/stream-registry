@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - A listener for streamBinding events
 - A Kafka handler for streamBinding events
-
+- A listener for producer events
+- A Kafka handler for producer events
 
 ## [0.10.4] 2020-03-20
 ### Added

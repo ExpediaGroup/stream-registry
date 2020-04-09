@@ -147,11 +147,11 @@ public class CustomProducerMethodsLoadingTest {
   public static AvroEvent myCustomEvent(Producer producer) {
 
     val avroEvent = AvroProducer.newBuilder()
+        .setName(producer.getKey().getName())
         .setStreamDomain(producer.getKey().getStreamDomain())
         .setStreamVersion(producer.getKey().getStreamVersion())
         .setStreamName(producer.getKey().getStreamName())
         .setZone(producer.getKey().getZone())
-        .setName(producer.getKey().getName())
         .setDescription(producer.getSpecification().getDescription())
         .setTags(Collections.emptyList())
         .setType(producer.getSpecification().getType())
@@ -180,10 +180,10 @@ public class CustomProducerMethodsLoadingTest {
 
     // Key
     val key = new ProducerKey();
+    key.setName(name);
     key.setStreamName(streamName);
     key.setStreamDomain(domain);
     key.setStreamVersion(version);
-    key.setName(name);
     key.setZone(zone);
 
     // Spec

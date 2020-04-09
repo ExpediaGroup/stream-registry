@@ -52,11 +52,11 @@ protocol StreamRegistry {
   }
 
   record AvroProducer {
+    string name;
     string streamDomain;
     string streamName;
     int streamVersion;
     string zone;
-    string name;
     string description;
     array<Tag> tags;
     string type;

@@ -36,10 +36,10 @@ public class ProducerNotificationEventUtils {
   public static AvroKey toAvroKeyRecord(Producer producer) {
     validateProducerKey(producer);
     val key = producer.getKey();
+    val producerName = key.getName();
     val streamName = key.getStreamName();
     val streamVersion = key.getStreamVersion();
     val streamDomain = key.getStreamDomain();
-    val producerName = key.getName();
     val zone = key.getZone();
 
     var zoneKey = AvroKey.newBuilder()
@@ -75,11 +75,11 @@ public class ProducerNotificationEventUtils {
   public static AvroEvent toAvroValueRecord(Producer producer) {
     validateProducerValue(producer);
     val key = producer.getKey();
+    val producerName = key.getName();
     val specification = producer.getSpecification();
     val streamName = key.getStreamName();
     val streamVersion = key.getStreamVersion();
     val streamDomain = key.getStreamDomain();
-    val producerName = key.getName();
     val zone = key.getZone();
     val description = specification.getDescription();
 
@@ -96,10 +96,10 @@ public class ProducerNotificationEventUtils {
         .orElse(null);
 
     val avroProducer = AvroProducer.newBuilder()
+        .setName(producerName)
         .setStreamVersion(streamVersion)
         .setStreamDomain(streamDomain)
         .setStreamName(streamName)
-        .setName(producerName)
         .setZone(zone)
         .setDescription(description)
         .setTags(tags)
@@ -116,17 +116,17 @@ public class ProducerNotificationEventUtils {
   private static void validateProducerKey(Producer producer) {
     requireNonNull(producer, canNotBeNull("producer"));
     requireNonNull(producer.getKey(), canNotBeNull("producer's key"));
+    requireNonNull(producer.getKey().getName(), canNotBeNull("key's name"));
     requireNonNull(producer.getKey().getStreamName(), canNotBeNull("key's streamName"));
     requireNonNull(producer.getKey().getStreamDomain(), canNotBeNull("key's streamDomain"));
     requireNonNull(producer.getKey().getStreamVersion(), canNotBeNull("key's streamVersion"));
-    requireNonNull(producer.getKey().getName(), canNotBeNull("key's name"));
     requireNonNull(producer.getKey().getZone(), canNotBeNull("key's zone"));
   }
 
   private static void validateProducerValue(Producer producer) {
     validateProducerKey(producer);
 
-    requireNonNull(producer.getSpecification(), canNotBeNull("stream spec"));
+    requireNonNull(producer.getSpecification(), canNotBeNull("producer spec"));
     requireNonNull(producer.getSpecification().getDescription(), canNotBeNull("spec's description"));
     requireNonNull(producer.getSpecification().getTags(), canNotBeNull("spec's tags"));
     requireNonNull(producer.getSpecification().getType(), canNotBeNull("spec's type"));
