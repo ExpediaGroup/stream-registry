@@ -42,20 +42,20 @@ public class ProducerNotificationEventUtils {
     val streamDomain = key.getStreamDomain();
     val zone = key.getZone();
 
-    var zoneKey = AvroKey.newBuilder()
-        .setId(zone)
-        .setType(AvroKeyType.ZONE)
-        .build();
-
     var domainKey = AvroKey.newBuilder()
         .setId(streamDomain)
-        .setParent(zoneKey)
         .setType(AvroKeyType.DOMAIN)
+        .build();
+
+    var zoneKey = AvroKey.newBuilder()
+        .setId(zone)
+        .setParent(domainKey)
+        .setType(AvroKeyType.ZONE)
         .build();
 
     var streamKey = AvroKey.newBuilder()
         .setId(streamName)
-        .setParent(domainKey)
+        .setParent(zoneKey)
         .setType(AvroKeyType.STREAM)
         .build();
 

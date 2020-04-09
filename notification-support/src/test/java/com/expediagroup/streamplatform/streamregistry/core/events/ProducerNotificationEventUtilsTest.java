@@ -83,7 +83,9 @@ public class ProducerNotificationEventUtilsTest {
 
     Assert.assertNotNull("Avro key shouldn't be null", avroKey);
     Assert.assertNotNull("Key id shouldn't be null", avroKey.getId());
-    Assert.assertEquals("Version should be the same as the id", valueOf(version), avroKey.getParent().getId());
+    Assert.assertEquals("key's is should be the same as producerName", producerName, avroKey.getId());
+    Assert.assertEquals("key's parent should be the same as version", valueOf(version), avroKey.getParent().getId());
+    Assert.assertEquals("versionKey's parent should be the same as streamName", streamName, avroKey.getParent().getParent().getId());
 
     AvroEvent avroEvent = toValueRecord.apply(producer);
     log.info("Obtained avro event {}", avroEvent);

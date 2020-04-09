@@ -110,20 +110,20 @@ public class CustomProducerMethodsLoadingTest {
     val domainName = producer.getKey().getStreamDomain();
     val zone = producer.getKey().getZone();
 
-    var zoneKey = AvroKey.newBuilder()
-        .setId(zone)
-        .setType(AvroKeyType.ZONE)
-        .build();
-
     var domainKey = AvroKey.newBuilder()
         .setId(domainName)
-        .setParent(zoneKey)
         .setType(AvroKeyType.DOMAIN)
+        .build();
+
+    var zoneKey = AvroKey.newBuilder()
+        .setId(zone)
+        .setParent(domainKey)
+        .setType(AvroKeyType.ZONE)
         .build();
 
     var streamKey = AvroKey.newBuilder()
         .setId(streamName)
-        .setParent(domainKey)
+        .setParent(zoneKey)
         .setType(AvroKeyType.STREAM)
         .build();
 
