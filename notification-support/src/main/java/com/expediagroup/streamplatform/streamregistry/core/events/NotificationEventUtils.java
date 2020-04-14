@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -35,18 +35,40 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
 @Slf4j
 public class NotificationEventUtils {
   public static AvroKey toAvroKeyRecord(Schema schema) {
     validateSchemaKey(schema);
 
-    val name = schema.getKey().getName();
+    val key = schema.getKey();
+    val name = key.getName();
+    val domainName = key.getDomain();
+
+    var domain = AvroKey.newBuilder()
+        .setId(domainName)
+        .setType(AvroKeyType.DOMAIN)
+        .build();
 
     return AvroKey.newBuilder()
         .setId(name)
-        .setVersion(null)
-        .setParent(null)
+        .setParent(domain)
+        .setType(AvroKeyType.SCHEMA)
+        .build();
+  }
+
+  public static AvroKey toAvroKeyRecord(SchemaKey schemaKey) {
+    validateSchemaKey(schemaKey);
+
+    var domain = AvroKey.newBuilder()
+        .setId(schemaKey.getDomain())
+        .setType(AvroKeyType.DOMAIN)
+        .build();
+
+    return AvroKey.newBuilder()
+        .setId(schemaKey.getName())
+        .setParent(domain)
         .setType(AvroKeyType.SCHEMA)
         .build();
   }
@@ -54,18 +76,20 @@ public class NotificationEventUtils {
   public static AvroEvent toAvroValueRecord(Schema schema) {
     validateSchemaValue(schema);
 
-    val name = schema.getKey().getName();
-    val domain = schema.getKey().getDomain();
-    val description = schema.getSpecification().getDescription();
+    val key = schema.getKey();
+    val specification = schema.getSpecification();
 
-    val tags = schema.getSpecification()
-        .getTags()
+    val name = key.getName();
+    val domain = key.getDomain();
+    val description = specification.getDescription();
+
+    val tags = specification.getTags()
         .stream()
         .map(NotificationEventUtils::toAvroTag)
         .collect(Collectors.toList());
 
-    val type = schema.getSpecification().getType();
-    val configJson = schema.getSpecification().getConfigJson();
+    val type = specification.getType();
+    val configJson = specification.getConfigJson();
 
     val statusJson = Optional.ofNullable(schema.getStatus())
         .map(Status::getStatusJson)
@@ -89,33 +113,47 @@ public class NotificationEventUtils {
   public static AvroKey toAvroKeyRecord(Stream stream) {
     validateStreamKey(stream);
 
-    val name = stream.getKey().getName();
-    val version = stream.getKey().getVersion();
+    val key = stream.getKey();
+    val name = key.getName();
+    val version = key.getVersion();
+    val domainName = key.getDomain();
+
+    var domainKey = AvroKey.newBuilder()
+        .setId(domainName)
+        .setType(AvroKeyType.DOMAIN)
+        .build();
+
+    var streamKey = AvroKey.newBuilder()
+        .setId(name)
+        .setParent(domainKey)
+        .setType(AvroKeyType.STREAM)
+        .build();
 
     return AvroKey.newBuilder()
-        .setId(name)
-        .setVersion(version)
-        .setParent(null)
-        .setType(AvroKeyType.STREAM)
+        .setId(version.toString())
+        .setParent(streamKey)
+        .setType(AvroKeyType.STREAM_VERSION)
         .build();
   }
 
   public static AvroEvent toAvroValueRecord(Stream stream) {
     validateStreamValue(stream);
 
-    val name = stream.getKey().getName();
-    val domain = stream.getKey().getDomain();
-    val version = stream.getKey().getVersion();
-    val description = stream.getSpecification().getDescription();
+    val key = stream.getKey();
+    val specification = stream.getSpecification();
+    val name = key.getName();
+    val domain = key.getDomain();
+    val version = key.getVersion();
+    val description = specification.getDescription();
+    val avroSchema = toAvroKeyRecord(stream.getSchemaKey());
 
-    val tags = stream.getSpecification()
-        .getTags()
+    val tags = specification.getTags()
         .stream()
         .map(NotificationEventUtils::toAvroTag)
         .collect(Collectors.toList());
 
-    val type = stream.getSpecification().getType();
-    val configJson = stream.getSpecification().getConfigJson();
+    val type = specification.getType();
+    val configJson = specification.getConfigJson();
 
     val statusJson = Optional.ofNullable(stream.getStatus())
         .map(Status::getStatusJson)
@@ -130,6 +168,7 @@ public class NotificationEventUtils {
         .setType(type)
         .setConfigurationString(configJson)
         .setStatusString(statusJson)
+        .setSchemaKey(avroSchema)
         .build();
 
     return AvroEvent.newBuilder()
@@ -145,37 +184,43 @@ public class NotificationEventUtils {
   }
 
   private static void validateSchemaKey(Schema schema) {
-    checkNotNull(schema, canNotBeNull("schema"));
-    checkNotNull(schema.getKey(), canNotBeNull("schema key"));
-    checkNotNull(schema.getKey().getName(), canNotBeNull("key's name"));
-    checkNotNull(schema.getKey().getDomain(), canNotBeNull("key's domain"));
+    requireNonNull(schema, canNotBeNull("schema"));
+    requireNonNull(schema.getKey(), canNotBeNull("schema key"));
+    requireNonNull(schema.getKey().getName(), canNotBeNull("key's name"));
+    requireNonNull(schema.getKey().getDomain(), canNotBeNull("key's domain"));
+  }
+
+  private static void validateSchemaKey(SchemaKey schemaKey) {
+    requireNonNull(schemaKey, canNotBeNull("schema key"));
+    requireNonNull(schemaKey.getName(), canNotBeNull("schema key name"));
+    requireNonNull(schemaKey.getDomain(), canNotBeNull("schema key domain"));
   }
 
   private static void validateSchemaValue(Schema schema) {
     validateSchemaKey(schema);
-    checkNotNull(schema.getSpecification(), canNotBeNull("schema spec"));
-    checkNotNull(schema.getSpecification().getDescription(), canNotBeNull("spec's description"));
-    checkNotNull(schema.getSpecification().getTags(), canNotBeNull("spec's tags"));
-    checkNotNull(schema.getSpecification().getType(), canNotBeNull("spec's type"));
-    checkNotNull(schema.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
+    requireNonNull(schema.getSpecification(), canNotBeNull("schema spec"));
+    requireNonNull(schema.getSpecification().getDescription(), canNotBeNull("spec's description"));
+    requireNonNull(schema.getSpecification().getTags(), canNotBeNull("spec's tags"));
+    requireNonNull(schema.getSpecification().getType(), canNotBeNull("spec's type"));
+    requireNonNull(schema.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
   }
 
   private static void validateStreamKey(Stream stream) {
-    checkNotNull(stream, canNotBeNull("stream"));
-    checkNotNull(stream.getKey(), canNotBeNull("stream key"));
-    checkNotNull(stream.getKey().getName(), canNotBeNull("key's name"));
-    checkNotNull(stream.getKey().getDomain(), canNotBeNull("key's domain"));
-    checkNotNull(stream.getKey().getVersion(), canNotBeNull("key's version"));
+    requireNonNull(stream, canNotBeNull("stream"));
+    requireNonNull(stream.getKey(), canNotBeNull("stream key"));
+    requireNonNull(stream.getKey().getName(), canNotBeNull("key's name"));
+    requireNonNull(stream.getKey().getDomain(), canNotBeNull("key's domain"));
+    requireNonNull(stream.getKey().getVersion(), canNotBeNull("key's version"));
   }
 
   private static void validateStreamValue(Stream stream) {
     validateStreamKey(stream);
 
-    checkNotNull(stream.getSpecification(), canNotBeNull("stream spec"));
-    checkNotNull(stream.getSpecification().getDescription(), canNotBeNull("spec's description"));
-    checkNotNull(stream.getSpecification().getTags(), canNotBeNull("spec's tags"));
-    checkNotNull(stream.getSpecification().getType(), canNotBeNull("spec's type"));
-    checkNotNull(stream.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
+    requireNonNull(stream.getSpecification(), canNotBeNull("stream spec"));
+    requireNonNull(stream.getSpecification().getDescription(), canNotBeNull("spec's description"));
+    requireNonNull(stream.getSpecification().getTags(), canNotBeNull("spec's tags"));
+    requireNonNull(stream.getSpecification().getType(), canNotBeNull("spec's type"));
+    requireNonNull(stream.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
   }
 
   private static String canNotBeNull(String target) {

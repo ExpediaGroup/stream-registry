@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-import org.springframework.data.repository.CrudRepository;
-
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
-public interface ProducerBindingRepository extends CrudRepository<ProducerBinding, ProducerBindingKey> {}
+public interface ProducerBindingRepository extends CachingJpaRepository<ProducerBinding, ProducerBindingKey> {}

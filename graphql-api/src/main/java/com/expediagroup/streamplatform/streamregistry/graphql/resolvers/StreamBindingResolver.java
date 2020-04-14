@@ -17,44 +17,25 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
 import lombok.RequiredArgsConstructor;
 
-import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Component
 @RequiredArgsConstructor
-public class StreamBindingResolver implements GraphQLResolver<StreamBinding> {
+public class StreamBindingResolver implements Resolvers.StreamBindingResolver {
   private final StreamService streamService;
   private final InfrastructureService infrastructureService;
 
   public Stream stream(StreamBinding streamBinding) {
-    StreamKey streamKey = new StreamKey(
-        streamBinding.getKey().getStreamDomain(),
-        streamBinding.getKey().getStreamName(),
-        streamBinding.getKey().getStreamVersion()
-    );
-    return streamService.read(streamKey).orElse(null);
+    return streamService.read(streamBinding.getKey().getStreamKey()).orElse(null);
   }
 
   public Infrastructure infrastructure(StreamBinding streamBinding) {
-    InfrastructureKey infrastructureKey = new InfrastructureKey(
-        streamBinding.getKey().getInfrastructureZone(),
-        streamBinding.getKey().getInfrastructureName()
-    );
-
-    return infrastructureService.read(infrastructureKey).orElse(null);
-  }
-
-  public Status status(StreamBinding streamBinding) {
-    return streamBinding.getStatus() == null ? new Status() : streamBinding.getStatus();
+    return infrastructureService.read(streamBinding.getKey().getInfrastructureKey()).orElse(null);
   }
 }

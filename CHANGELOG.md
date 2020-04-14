@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- Removed auto configuration of default handlers.
+
+## [0.10.4] 2020-03-20
+### Added
+- Instrumented Resolvers with timers in line with queries and mutations
+- Enabled hibernate metrics by default
+
+### Changed
+- A new field was added for `AvroStream record` in stream-registry-notification schema
+- Unit tests were modified to verify and test the new field
+- Utilise JPA `Example` to improve the performance of search operations in GraphQL Resolvers.
+
+## [0.10.3] 2020-03-17
+### Added
+- Cache hints
+
 ## [0.10.2] 2020-03-16
 ### Added
 - Hibernate caching

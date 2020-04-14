@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.expediagroup.streamplatform</groupId>
     <artifactId>stream-registry</artifactId>
-    <version>0.10.3-SNAPSHOT</version>
+    <version>0.10.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>stream-registry-graphql-client-support</artifactId>

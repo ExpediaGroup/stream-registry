@@ -15,10 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery.builder;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import static com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery.builder;
 
 import java.util.Collections;
 

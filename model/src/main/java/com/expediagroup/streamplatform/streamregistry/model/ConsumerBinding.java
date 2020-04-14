@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,16 @@ import javax.persistence.Cacheable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Cacheable
@@ -36,7 +40,5 @@ public class ConsumerBinding implements ManagedType {
   @EmbeddedId
   private ConsumerBindingKey key;
   private Specification specification;
-  private String consumerId; //Resolves to Consumer
-  private String bindingId; //Resolves to StreamBinding
   private Status status;
 }

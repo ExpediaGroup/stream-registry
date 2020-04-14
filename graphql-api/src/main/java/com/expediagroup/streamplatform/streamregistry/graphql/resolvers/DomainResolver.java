@@ -15,36 +15,22 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-
-import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 @Component
 @RequiredArgsConstructor
-public class DomainResolver implements GraphQLResolver<Domain> {
+public class DomainResolver implements Resolvers.DomainResolver {
   private final SchemaService schemaService;
 
   public List<Schema> schemas(Domain domain) {
-    List<Schema> out = new ArrayList<>();
-    for (Schema v : schemaService.readAll()) {
-      if (v.getKey().getDomain().equals(domain.getKey().getName())) {
-        out.add(v);
-      }
-    }
-    return out;
-  }
-
-  public Status status(Domain domain) {
-    return domain.getStatus() == null ? new Status() : domain.getStatus();
+    return schemaService.find(domain.getKey());
   }
 }

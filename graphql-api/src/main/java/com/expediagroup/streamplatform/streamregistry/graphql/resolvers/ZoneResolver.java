@@ -17,18 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
 import lombok.RequiredArgsConstructor;
 
-import com.coxautodev.graphql.tools.GraphQLResolver;
-
 import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
 @Component
 @RequiredArgsConstructor
-public class ZoneResolver implements GraphQLResolver<Zone> {
-
-  public Status status(Zone zone) {
-    return zone.getStatus() == null ? new Status() : zone.getStatus();
-  }
-}
+public class ZoneResolver implements Resolvers.ZoneResolver {}
