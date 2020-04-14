@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
+import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -87,6 +88,8 @@ public class StreamBindingNotificationEventUtilsTest {
 
     Assert.assertEquals("Physical parent id should be same as infrastructureName", infrastructureName, avroKey.getPhysical().getId());
     Assert.assertEquals("infrastructure's parent id should be same as zone", zone, avroKey.getPhysical().getParent().getId());
+
+    Assert.assertEquals("Avro key type should be STREAM_BINDING", AvroKeyType.STREAM_BINDING, avroKey.getType());
 
     AvroEvent avroEvent = toValueRecord.apply(streamBinding);
     log.info("Obtained avro event {}", avroEvent);
