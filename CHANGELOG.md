@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A listener for streamBinding events
 - A Kafka handler for streamBinding events
 
-
 ## [0.10.4] 2020-03-20
 ### Added
 - Instrumented Resolvers with timers in line with queries and mutations
