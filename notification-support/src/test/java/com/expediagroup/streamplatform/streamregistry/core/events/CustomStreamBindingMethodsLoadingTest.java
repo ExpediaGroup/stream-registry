@@ -61,9 +61,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @RunWith(SpringRunner.class)// Explicitly defined prop with true as value
 @SpringBootTest(classes = CustomStreamBindingMethodsLoadingTest.MockListenerConfiguration.class,
@@ -148,13 +146,12 @@ public class CustomStreamBindingMethodsLoadingTest {
 
   public static AvroEvent myCustomEvent(StreamBinding streamBinding) {
 
-    StreamBindingKey key = streamBinding.getKey();
-    val avroStreamKey = NotificationEventUtils.toAvroKeyRecord(new StreamKey(key.getStreamDomain(), key.getStreamName(), key.getStreamVersion()));
-    val avroInfrastructureKey = NotificationEventUtils.toAvroKeyRecord(new InfrastructureKey(key.getInfrastructureZone(), key.getInfrastructureName()));
-
     val avroEvent = AvroStreamBinding.newBuilder()
-        .setStreamKey(avroStreamKey)
-        .setInfrastructureKey(avroInfrastructureKey)
+        .setStreamDomain(streamBinding.getKey().getStreamDomain())
+        .setStreamVersion(streamBinding.getKey().getStreamVersion())
+        .setStreamName(streamBinding.getKey().getStreamName())
+        .setInfrastructureZone(streamBinding.getKey().getInfrastructureZone())
+        .setInfrastructureName(streamBinding.getKey().getInfrastructureName())
         .setDescription(streamBinding.getSpecification().getDescription())
         .setTags(Collections.emptyList())
         .setType(streamBinding.getSpecification().getType())
