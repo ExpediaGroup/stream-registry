@@ -138,7 +138,13 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
   @Override
   public void createRequiredDatastoreState() {
+    client.createDomain(factory);
+    client.createSchema(factory);
+    client.createStream(factory);
+    client.createZone(factory);
+    client.createInfrastructure(factory);
     client.createConsumer(factory);
+    client.createStreamBinding(factory);
   }
 
   @Override
