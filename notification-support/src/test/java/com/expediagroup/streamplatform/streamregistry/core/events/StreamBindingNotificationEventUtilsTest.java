@@ -82,12 +82,14 @@ public class StreamBindingNotificationEventUtilsTest {
 
     Assert.assertNotNull("Avro key shouldn't be null", avroKey);
     Assert.assertNotNull("Key id shouldn't be null", avroKey.getId());
-    Assert.assertEquals("Version should be the same as the id", String.valueOf(version), avroKey.getParent().getId());
-    Assert.assertEquals("streamKey parent id should be same as name", name, avroKey.getParent().getParent().getId());
-    Assert.assertEquals("streamKey parents's parent id should be same as domain", domain, avroKey.getParent().getParent().getParent().getId());
+    Assert.assertEquals("Version should be the same as the id", String.valueOf(version), avroKey.getId());
+    Assert.assertEquals("Name should be the same as the id", name, avroKey.getParent().getId());
+    Assert.assertEquals("streamKey parent id should be same as domain", domain, avroKey.getParent().getParent().getId());
 
     Assert.assertEquals("Physical parent id should be same as infrastructureName", infrastructureName, avroKey.getPhysical().getId());
     Assert.assertEquals("infrastructure's parent id should be same as zone", zone, avroKey.getPhysical().getParent().getId());
+
+    Assert.assertEquals("zone's parent id should be same as domain", domain, avroKey.getParent().getParent().getId());
 
     Assert.assertEquals("Avro key type should be STREAM_BINDING", AvroKeyType.STREAM_BINDING, avroKey.getType());
 
@@ -96,11 +98,12 @@ public class StreamBindingNotificationEventUtilsTest {
 
     Assert.assertNotNull("Avro event shouldn't be null", avroEvent);
     Assert.assertNotNull("StreamBinding entity shouldn't be null", avroEvent.getStreamBindingEntity());
-    Assert.assertEquals(String.valueOf(version), avroEvent.getStreamBindingEntity().getStreamKey().getId());
-    Assert.assertEquals(name, avroEvent.getStreamBindingEntity().getStreamKey().getParent().getId());
-    Assert.assertEquals(domain, avroEvent.getStreamBindingEntity().getStreamKey().getParent().getParent().getId());
-    Assert.assertEquals(zone, avroEvent.getStreamBindingEntity().getInfrastructureKey().getParent().getId());
-    Assert.assertEquals(infrastructureName, avroEvent.getStreamBindingEntity().getInfrastructureKey().getId());
+    Assert.assertEquals(name, avroEvent.getStreamBindingEntity().getStreamName());
+    Assert.assertEquals(domain, avroEvent.getStreamBindingEntity().getStreamDomain());
+    Assert.assertEquals(zone, avroEvent.getStreamBindingEntity().getInfrastructureZone());
+    Assert.assertEquals(infrastructureName, avroEvent.getStreamBindingEntity().getInfrastructureName());
+    Assert.assertEquals(version, avroEvent.getStreamBindingEntity().getStreamVersion().intValue());
+
     Assert.assertEquals(description, avroEvent.getStreamBindingEntity().getDescription());
     Assert.assertEquals(type, avroEvent.getStreamBindingEntity().getType());
     Assert.assertEquals(configJson, avroEvent.getStreamBindingEntity().getConfigurationString());

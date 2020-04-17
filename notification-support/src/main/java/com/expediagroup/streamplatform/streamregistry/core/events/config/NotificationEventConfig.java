@@ -38,13 +38,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.KafkaSetupHandler;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.ProducerEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamBindingEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
 
 @Slf4j
 @Configuration
-@EnableConfigurationProperties({NewTopicProperties.class, SchemaParserProperties.class, StreamParserProperties.class, StreamBindingParserProperties.class})
+@EnableConfigurationProperties({NewTopicProperties.class, SchemaParserProperties.class, StreamParserProperties.class, StreamBindingParserProperties.class, ProducerParserProperties.class})
 public class NotificationEventConfig {
   public static final String KAFKA_SCHEMA_REGISTRY_URL_PROPERTY = "notification.events.kafka.schema.registry.url";
   public static final String KAFKA_BOOTSTRAP_SERVERS_PROPERTY = "notification.events.kafka.bootstrap-servers";
@@ -73,6 +74,12 @@ public class NotificationEventConfig {
   public static final String CUSTOM_STREAM_BINDING_VALUE_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.stream-binding.value-parser-class";
   public static final String CUSTOM_STREAM_BINDING_VALUE_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.stream-binding.value-parser-method";
 
+  public static final String CUSTOM_PRODUCER_TYPE_PREFIX = "notification.events.kafka.custom.producer";
+  public static final String CUSTOM_PRODUCER_PARSER_ENABLED_PROPERTY = "notification.events.kafka.custom.producer.custom-enabled";
+  public static final String CUSTOM_PRODUCER_KEY_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.producer.key-parser-class";
+  public static final String CUSTOM_PRODUCER_KEY_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.producer.key-parser-method";
+  public static final String CUSTOM_PRODUCER_VALUE_PARSER_CLASS_PROPERTY = "notification.events.kafka.custom.producer.value-parser-class";
+  public static final String CUSTOM_PRODUCER_VALUE_PARSER_METHOD_PROPERTY = "notification.events.kafka.custom.producer.value-parser-method";
 
   @Value("${" + KAFKA_TOPIC_SETUP_PROPERTY + ":false}")
   private Boolean isKafkaSetupEnabled;
@@ -143,6 +150,19 @@ public class NotificationEventConfig {
         .notificationEventsTopic(notificationEventsTopic)
         .streamBindingToKeyRecord(parserProperties.buildStreamBindingToKeyRecord())
         .streamBindingToValueRecord(parserProperties.buildStreamBindingToValueRecord())
+        .kafkaTemplate(kafkaTemplate())
+        .build();
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+  public ProducerEventHandlerForKafka producerEventHandlerForKafka(ProducerParserProperties parserProperties) {
+    Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
+
+    return ProducerEventHandlerForKafka.builder()
+        .notificationEventsTopic(notificationEventsTopic)
+        .producerToKeyRecord(parserProperties.buildProducerToKeyRecord())
+        .producerToValueRecord(parserProperties.buildProducerToValueRecord())
         .kafkaTemplate(kafkaTemplate())
         .build();
   }

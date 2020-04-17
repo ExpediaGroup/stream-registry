@@ -35,9 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Slf4j
 public class NotificationEventUtils {
@@ -113,22 +111,19 @@ public class NotificationEventUtils {
   }
 
   public static AvroKey toAvroKeyRecord(Stream stream) {
-    return toAvroKeyRecord(stream.getKey());
-  }
+    validateStreamKey(stream);
 
-  public static AvroKey toAvroKeyRecord(StreamKey streamKey) {
-    validateStreamKey(streamKey);
-
-    val name = streamKey.getName();
-    val version = streamKey.getVersion();
-    val domainName = streamKey.getDomain();
+    val key = stream.getKey();
+    val name = key.getName();
+    val version = key.getVersion();
+    val domainName = key.getDomain();
 
     var domainKey = AvroKey.newBuilder()
         .setId(domainName)
         .setType(AvroKeyType.DOMAIN)
         .build();
 
-    var avroStreamKey = AvroKey.newBuilder()
+    var streamKey = AvroKey.newBuilder()
         .setId(name)
         .setParent(domainKey)
         .setType(AvroKeyType.STREAM)
@@ -136,7 +131,7 @@ public class NotificationEventUtils {
 
     return AvroKey.newBuilder()
         .setId(version.toString())
-        .setParent(avroStreamKey)
+        .setParent(streamKey)
         .setType(AvroKeyType.STREAM_VERSION)
         .build();
   }
@@ -181,24 +176,6 @@ public class NotificationEventUtils {
         .build();
   }
 
-  public static AvroKey toAvroKeyRecord(InfrastructureKey infrastructureKey) {
-    validateInfrastructureKey(infrastructureKey);
-
-    val name = infrastructureKey.getName();
-    val zone = infrastructureKey.getZone();
-
-    var zoneKey = AvroKey.newBuilder()
-        .setId(zone)
-        .setType(AvroKeyType.ZONE)
-        .build();
-
-    return AvroKey.newBuilder()
-        .setId(name)
-        .setParent(zoneKey)
-        .setType(AvroKeyType.INFRASTRUCTURE)
-        .build();
-  }
-
   public static com.expediagroup.streamplatform.streamregistry.avro.Tag toAvroTag(Tag tag) {
     return com.expediagroup.streamplatform.streamregistry.avro.Tag.newBuilder()
         .setName(tag.getName())
@@ -228,21 +205,16 @@ public class NotificationEventUtils {
     requireNonNull(schema.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
   }
 
-  private static void validateStreamKey(StreamKey streamKey) {
-    requireNonNull(streamKey, canNotBeNull("stream key"));
-    requireNonNull(streamKey.getName(), canNotBeNull("key's name"));
-    requireNonNull(streamKey.getDomain(), canNotBeNull("key's domain"));
-    requireNonNull(streamKey.getVersion(), canNotBeNull("key's version"));
-  }
-
-  private static void validateInfrastructureKey(InfrastructureKey infrastructureKey) {
-    requireNonNull(infrastructureKey, canNotBeNull("infrastructure key"));
-    requireNonNull(infrastructureKey.getName(), canNotBeNull("key's name"));
-    requireNonNull(infrastructureKey.getZone(), canNotBeNull("key's zone"));
+  private static void validateStreamKey(Stream stream) {
+    requireNonNull(stream, canNotBeNull("stream"));
+    requireNonNull(stream.getKey(), canNotBeNull("stream key"));
+    requireNonNull(stream.getKey().getName(), canNotBeNull("key's name"));
+    requireNonNull(stream.getKey().getDomain(), canNotBeNull("key's domain"));
+    requireNonNull(stream.getKey().getVersion(), canNotBeNull("key's version"));
   }
 
   private static void validateStreamValue(Stream stream) {
-    validateStreamKey(stream.getKey());
+    validateStreamKey(stream);
 
     requireNonNull(stream.getSpecification(), canNotBeNull("stream spec"));
     requireNonNull(stream.getSpecification().getDescription(), canNotBeNull("spec's description"));

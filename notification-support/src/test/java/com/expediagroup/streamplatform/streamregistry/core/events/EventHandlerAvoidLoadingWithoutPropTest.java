@@ -36,6 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.ProducerEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamBindingEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
@@ -53,6 +54,9 @@ public class EventHandlerAvoidLoadingWithoutPropTest {
   @Autowired(required = false)
   private Optional<StreamBindingEventHandlerForKafka> streamBindingEventHandlerForKafka;
 
+  @Autowired(required = false)
+  private Optional<ProducerEventHandlerForKafka> producerEventHandlerForKafka;
+
   @Test
   public void having_notifications_disabled_verify_that_KafkaNotificationEventListener_is_not_being_loaded() {
     Assert.assertNotNull("Optional container of SchemaEventHandlerForKafka shouldn't be null!", schemaEventHandlerForKafka);
@@ -61,6 +65,8 @@ public class EventHandlerAvoidLoadingWithoutPropTest {
     Assert.assertFalse("Kafka stream event handler should NOT be loaded since notification.events.kafka.enabled == false", streamEventHandlerForKafka.isPresent());
     Assert.assertNotNull("Optional container of StreamBindingEventHandlerForKafka shouldn't be null!", streamBindingEventHandlerForKafka);
     Assert.assertFalse("Kafka streamBinding event handler should NOT be loaded since notification.events.kafka.enabled == false", streamBindingEventHandlerForKafka.isPresent());
+    Assert.assertNotNull("Optional container of ProducerEventHandlerForKafka shouldn't be null!", producerEventHandlerForKafka);
+    Assert.assertFalse("Kafka producer event handler should NOT be loaded since notification.events.kafka.enabled == false", producerEventHandlerForKafka.isPresent());
   }
 
   public static class MockListenerConfiguration extends NotificationEventConfig {

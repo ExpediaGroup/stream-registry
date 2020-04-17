@@ -29,8 +29,6 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Slf4j
 public class StreamBindingNotificationEventUtils {
@@ -39,14 +37,39 @@ public class StreamBindingNotificationEventUtils {
     validateStreamBindingKey(streamBinding);
 
     val key = streamBinding.getKey();
+    val streamName = key.getStreamName();
+    val streamVersion = key.getStreamVersion();
+    val streamDomain = key.getStreamDomain();
+    val infrastructureName = key.getInfrastructureName();
+    val infrastructureZone = key.getInfrastructureZone();
 
-    val avroStreamKey = NotificationEventUtils.toAvroKeyRecord(new StreamKey(key.getStreamDomain(), key.getStreamName(), key.getStreamVersion()));
-    val avroInfrastructureKey = NotificationEventUtils.toAvroKeyRecord(new InfrastructureKey(key.getInfrastructureZone(), key.getInfrastructureName()));
+    var domainKey = AvroKey.newBuilder()
+        .setId(streamDomain)
+        .setType(AvroKeyType.DOMAIN)
+        .build();
+
+    var streamKey = AvroKey.newBuilder()
+        .setId(streamName)
+        .setParent(domainKey)
+        .setType(AvroKeyType.STREAM)
+        .build();
+
+    var zoneKey = AvroKey.newBuilder()
+        .setId(infrastructureZone)
+        .setParent(domainKey)
+        .setType(AvroKeyType.ZONE)
+        .build();
+
+    var infrastructureKey = AvroKey.newBuilder()
+        .setId(infrastructureName)
+        .setParent(zoneKey)
+        .setType(AvroKeyType.INFRASTRUCTURE)
+        .build();
 
     return AvroKey.newBuilder()
-        .setId(key.getStreamVersion().toString())
-        .setParent(avroStreamKey)
-        .setPhysical(avroInfrastructureKey)
+        .setId(streamVersion.toString())
+        .setParent(streamKey)
+        .setPhysical(infrastructureKey)
         .setType(AvroKeyType.STREAM_BINDING)
         .build();
   }
@@ -56,10 +79,11 @@ public class StreamBindingNotificationEventUtils {
 
     val key = streamBinding.getKey();
     val specification = streamBinding.getSpecification();
-
-    val avroStreamKey = NotificationEventUtils.toAvroKeyRecord(new StreamKey(key.getStreamDomain(), key.getStreamName(), key.getStreamVersion()));
-    val avroInfrastructureKey = NotificationEventUtils.toAvroKeyRecord(new InfrastructureKey(key.getInfrastructureZone(), key.getInfrastructureName()));
-
+    val streamName = key.getStreamName();
+    val streamVersion = key.getStreamVersion();
+    val streamDomain = key.getStreamDomain();
+    val infrastructureName = key.getInfrastructureName();
+    val infrastructureZone = key.getInfrastructureZone();
     val description = specification.getDescription();
 
     val tags = specification.getTags()
@@ -75,8 +99,11 @@ public class StreamBindingNotificationEventUtils {
         .orElse(null);
 
     val avroStreamBinding = AvroStreamBinding.newBuilder()
-        .setStreamKey(avroStreamKey)
-        .setInfrastructureKey(avroInfrastructureKey)
+        .setStreamVersion(streamVersion)
+        .setStreamDomain(streamDomain)
+        .setStreamName(streamName)
+        .setInfrastructureName(infrastructureName)
+        .setInfrastructureZone(infrastructureZone)
         .setDescription(description)
         .setTags(tags)
         .setType(type)
