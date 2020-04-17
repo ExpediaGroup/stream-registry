@@ -48,7 +48,7 @@ public class StreamValidator implements Validator<Stream> {
   }
 
   public void validateForCreateAndUpdate(Stream stream) throws ValidationException {
-    schemaService.validateSchemaBindingExists(stream.getSchemaKey());
+    schemaService.validateSchemaExists(stream.getSchemaKey());
     domainService.validateDomainExists(stream.getKey().getDomainKey());
   }
 

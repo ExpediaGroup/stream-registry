@@ -81,7 +81,7 @@ public class ProducerService {
     return producerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  public void validateProducerBindingExists(ProducerKey key) {
+  public void validateProducerExists(ProducerKey key) {
     if (read(key).isEmpty()) {
       throw new ValidationException("Producer does not exist");
     }

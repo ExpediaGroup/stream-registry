@@ -23,33 +23,36 @@ public class ITestClient extends StreamRegistryClient {
     super(url);
   }
 
-  public void createZone(ITestDataFactory factory) {
-    invoke(factory.upsertZoneMutationBuilder().build());
-  }
-
   public void createDomain(ITestDataFactory factory) {
-    createZone(factory);
-    upsertDomain(factory.upsertDomainMutationBuilder().build());
+    invoke(factory.upsertDomainMutationBuilder().build());
   }
 
   public void createSchema(ITestDataFactory factory) {
-    createDomain(factory);
     upsertSchema(factory.upsertSchemaMutationBuilder().build());
   }
 
   public void createStream(ITestDataFactory factory) {
-    createSchema(factory);
-    upsertStream(factory.upsertStreamMutationBuilder().build());
+    invoke(factory.upsertStreamMutationBuilder().build());
   }
 
   public void createProducer(ITestDataFactory factory) {
-    createStream(factory);
-    upsertProducer(factory.upsertProducerMutationBuilder().build());
+    invoke(factory.upsertProducerMutationBuilder().build());
   }
 
   public void createConsumer(ITestDataFactory factory) {
-    createStream(factory);
-    upsertConsumer(factory.upsertConsumerMutationBuilder().build());
+    invoke(factory.upsertConsumerMutationBuilder().build());
+  }
+
+  public void createZone(ITestDataFactory factory) {
+    invoke(factory.upsertZoneMutationBuilder().build());
+  }
+
+  public void createInfrastructure(ITestDataFactory factory) {
+    invoke(factory.upsertInfrastructureMutationBuilder().build());
+  }
+
+  public void createStreamBinding(ITestDataFactory factory) {
+    invoke(factory.upsertStreamBindingMutationBuilder().build());
   }
 
 }

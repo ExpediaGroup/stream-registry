@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -27,6 +28,7 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 @RequiredArgsConstructor
 public class StreamBindingValidator implements Validator<StreamBinding> {
   private final StreamService streamService;
+  private final InfrastructureService infrastructureService;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -43,6 +45,7 @@ public class StreamBindingValidator implements Validator<StreamBinding> {
 
   private void validateForCreateAndUpdate(StreamBinding streambinding) throws ValidationException {
     streamService.validateStreamExists(streambinding.getKey().getStreamKey());
+    infrastructureService.validateInfrastructureExists(streambinding.getKey().getInfrastructureKey());
   }
 
 }
