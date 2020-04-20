@@ -93,7 +93,7 @@ public class SchemaService {
     return schemaRepository.findAll(Example.of(example));
   }
 
-  public void validateSchemaBindingExists(SchemaKey key) {
+  public void validateSchemaExists(SchemaKey key) {
     if (read(key).isEmpty()) {
       throw new ValidationException("Schema does not exist");
     }

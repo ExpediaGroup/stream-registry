@@ -77,12 +77,16 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Slf4j
@@ -111,6 +115,11 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public static final int TEST_CREATE_STREAM_EVENTS = 2;
   public static final int TEST_UPDATE_STREAM_EVENTS = 4;
 
+  public static final int TEST_CREATE_STREAM_BINDING_EVENTS = 2;
+  public static final int TEST_UPDATE_STREAM_BINDING_EVENTS = 3;
+
+  public static final int TEST_UPDATE_PRODUCER_EVENTS = 4;
+
   public static final Map<AvroKey, AvroEvent> producedEvents = new ConcurrentHashMap<>();
 
   @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + "}")
@@ -138,15 +147,24 @@ public class NotificationEventListenerKafkaIntegrationTest {
     IntStream.rangeClosed(1, TEST_CREATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.CREATE, "stream-create")));
     IntStream.rangeClosed(1, TEST_UPDATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.UPDATE, "stream-update")));
 
+    IntStream.rangeClosed(1, TEST_CREATE_STREAM_BINDING_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamBindingEvent(i, EventType.CREATE, "streamBinding-create")));
+    IntStream.rangeClosed(1, TEST_UPDATE_STREAM_BINDING_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamBindingEvent(i, EventType.UPDATE, "streamBinding-update")));
+
+    IntStream.rangeClosed(1, TEST_UPDATE_PRODUCER_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyProducerEvent(i, EventType.UPDATE, "producer-update")));
+
     TimeUnit.SECONDS.sleep(5);
 
     Assert.assertFalse("Produced events shouldn't be empty", producedEvents.isEmpty());
 
     val schemaEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.SCHEMA)).count();
     val streamEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.STREAM_VERSION)).count();
+    val producerEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.PRODUCER)).count();
+    val streamBindingEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.STREAM_BINDING)).count();
 
     Assert.assertEquals("Number of messages should be same as schema events", schemaEvents, (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
     Assert.assertEquals("Number of messages should be same as stream events", streamEvents, (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
+    Assert.assertEquals("Number of messages should be same as streamBinding events", streamBindingEvents, (TEST_CREATE_STREAM_BINDING_EVENTS + TEST_UPDATE_STREAM_BINDING_EVENTS));
+    Assert.assertEquals("Number of messages should be same as producer events", producerEvents, (TEST_UPDATE_PRODUCER_EVENTS));
 
     val streamsWithSchemaKey = producedEvents.values()
         .stream()
@@ -331,5 +349,103 @@ public class NotificationEventListenerKafkaIntegrationTest {
     stream.setSchemaKey(schemaKey);
 
     return stream;
+  }
+
+  public NotificationEvent<StreamBinding> getDummyStreamBindingEvent(int event, EventType eventType, String source) {
+    log.info("Emitting event {}", event);
+    StreamBinding streamBinding = getDummyStreamBinding();
+    return NotificationEvent.<StreamBinding>builder()
+        .entity(streamBinding)
+        .source(source)
+        .eventType(eventType)
+        .build();
+  }
+
+  public static StreamBinding getDummyStreamBinding() {
+    val name = Instant.now().toString();
+    val domain = "domain";
+    val description = "description";
+    val type = "type";
+    val configJson = "{}";
+    val statusJson = "{foo:bar}";
+    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    val version = 1;
+    val zone = "aws_us_east_1";
+    val infrastructureName = "kafka_1a";
+
+    // Key
+    val key = new StreamBindingKey();
+    key.setStreamName(name);
+    key.setStreamDomain(domain);
+    key.setStreamVersion(version);
+    key.setInfrastructureName(infrastructureName);
+    key.setInfrastructureZone(zone);
+
+    // Spec
+    val spec = new Specification();
+    spec.setDescription(description);
+    spec.setType(type);
+    spec.setConfigJson(configJson);
+    spec.setTags(tags);
+
+    // Status
+    val status = new Status();
+    status.setStatusJson(statusJson);
+
+    val streamBinding = new StreamBinding();
+    streamBinding.setKey(key);
+    streamBinding.setSpecification(spec);
+    streamBinding.setStatus(status);
+
+    return streamBinding;
+  }
+
+  public NotificationEvent<Producer> getDummyProducerEvent(int event, EventType eventType, String source) {
+    log.info("Emitting event {}", event);
+    Producer producer = getDummyProducer();
+    return NotificationEvent.<Producer>builder()
+        .entity(producer)
+        .source(source)
+        .eventType(eventType)
+        .build();
+  }
+
+  public static Producer getDummyProducer() {
+    val streamName = Instant.now().toString();
+    val producerName = "producer1";
+    val domain = "domain";
+    val description = "description";
+    val type = "type";
+    val configJson = "{}";
+    val statusJson = "{foo:bar}";
+    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    val version = 1;
+    val zone = "aws_us_east_1";
+
+    // Key
+    val key = new ProducerKey();
+    key.setName(producerName);
+    key.setStreamName(streamName);
+    key.setStreamDomain(domain);
+    key.setStreamVersion(version);
+    key.setZone(zone);
+
+    // Spec
+    val spec = new Specification();
+    spec.setDescription(description);
+    spec.setType(type);
+    spec.setConfigJson(configJson);
+    spec.setTags(tags);
+
+    // Status
+    val status = new Status();
+    status.setStatusJson(statusJson);
+
+    val producer = new Producer();
+    producer.setKey(key);
+    producer.setSpecification(spec);
+    producer.setStatus(status);
+
+    return producer;
   }
 }
