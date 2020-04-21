@@ -28,7 +28,6 @@ import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
-import com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;

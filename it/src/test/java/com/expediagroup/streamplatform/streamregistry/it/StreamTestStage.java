@@ -15,16 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
-
-import static junit.framework.TestCase.assertTrue;
-
 import com.apollographql.apollo.api.Response;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamsQuery;

@@ -33,8 +33,8 @@ import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.GenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
-import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
 import com.expediagroup.streamplatform.streamregistry.data.Domain;
+import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
 
 @RunWith(Suite.class)
 @SuiteClasses({

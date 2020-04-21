@@ -15,6 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry;
 
+import com.hotels.beans.BeanUtils;
+import com.hotels.beans.model.FieldMapping;
+import com.hotels.beans.model.FieldTransformer;
+import com.hotels.beans.transformer.Transformer;
+
 import com.expediagroup.streamplatform.streamregistry.data.Consumer;
 import com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.data.Domain;
@@ -24,7 +29,6 @@ import com.expediagroup.streamplatform.streamregistry.data.Producer;
 import com.expediagroup.streamplatform.streamregistry.data.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.data.Schema;
 import com.expediagroup.streamplatform.streamregistry.data.Specification;
-import com.expediagroup.streamplatform.streamregistry.data.Status;
 import com.expediagroup.streamplatform.streamregistry.data.Stream;
 import com.expediagroup.streamplatform.streamregistry.data.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.data.Zone;
@@ -38,13 +42,6 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey;
-import com.expediagroup.streamplatform.streamregistry.model.Modeled;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import com.hotels.beans.BeanUtils;
-import com.hotels.beans.model.FieldMapping;
-import com.hotels.beans.model.FieldTransformer;
-import com.hotels.beans.transformer.Transformer;
 
 public class ModelToData {
 

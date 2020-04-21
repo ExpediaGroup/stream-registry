@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.model;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Deprecated // do we need this since it holds one field?
@@ -32,6 +33,6 @@ public class Status {
   }
 
   public ObjectNode getObjectNode() {
-    return objectNode;
+    return objectNode == null ? new ObjectMapper().createObjectNode() : objectNode;
   }
 }

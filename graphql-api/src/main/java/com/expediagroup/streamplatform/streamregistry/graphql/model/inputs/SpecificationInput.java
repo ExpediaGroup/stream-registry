@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.Builder;
 import lombok.Value;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
 
 @Value
 @Builder

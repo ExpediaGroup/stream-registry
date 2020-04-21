@@ -15,9 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static java.util.Objects.requireNonNull;
-
 import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.serialise;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -33,9 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroSchema;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroStream;
-import com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;

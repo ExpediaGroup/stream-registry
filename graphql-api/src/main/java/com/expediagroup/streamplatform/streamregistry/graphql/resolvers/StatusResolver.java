@@ -15,10 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component
 public class StatusResolver implements Resolvers.StatusResolver {

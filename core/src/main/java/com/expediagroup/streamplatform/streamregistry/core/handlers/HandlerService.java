@@ -48,7 +48,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 @Component
 @Slf4j
 public class HandlerService {
-  private final Map<Key, Handler<?>> handlers;
+  private final Map<Key, Handler> handlers;
 
   public HandlerService(List<Handler> handlers) {
     validateHandlers(handlers);
