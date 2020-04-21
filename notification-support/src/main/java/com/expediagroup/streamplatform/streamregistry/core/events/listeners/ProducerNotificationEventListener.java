@@ -52,21 +52,21 @@ public class ProducerNotificationEventListener implements NotificationEventListe
   @EventListener(condition = IS_CREATING_A_PRODUCER)
   public void onCreate(NotificationEvent<Producer> event) {
     log.debug("On update producer event {}", event);
-    notificationEventHandlers.parallelStream().forEach(h -> this.handle(h::onCreate, event));
+    notificationEventHandlers.stream().forEach(h -> this.handle(h::onCreate, event));
   }
 
   @Override
   @EventListener(condition = IS_UPDATING_A_PRODUCER)
   public void onUpdate(NotificationEvent<Producer> event) {
     log.debug("On update producer event {}", event);
-    notificationEventHandlers.parallelStream().forEach(h -> this.handle(h::onUpdate, event));
+    notificationEventHandlers.stream().forEach(h -> this.handle(h::onUpdate, event));
   }
 
   @Override
   @EventListener(condition = IS_DELETING_A_PRODUCER)
   public void onDelete(NotificationEvent<Producer> event) {
     log.debug("On delete producer event {}", event);
-    notificationEventHandlers.parallelStream().forEach(h -> this.handle(h::onDelete, event));
+    notificationEventHandlers.stream().forEach(h -> this.handle(h::onDelete, event));
   }
 
   private void handle(Consumer<NotificationEvent<Producer>> handle, NotificationEvent<Producer> event) {

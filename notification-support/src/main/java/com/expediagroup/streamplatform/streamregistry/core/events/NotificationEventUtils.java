@@ -39,6 +39,11 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 
 @Slf4j
 public class NotificationEventUtils {
+  public static final String NOTIFICATION_TYPE_HEADER_NAME = "X-Stream-Registry-Notification-Type-Header";
+  public static final String NOTIFICATION_ENTITY_HEADER_NAME = "X-Stream-Registry-Entity-Type-Header";
+  public static final String NOTIFICATION_TYPE_DEFAULT_VALUE = "UNKNOWN";
+  public static final String NOTIFICATION_ENTITY_DEFAULT_VALUE = "UNKNOWN";
+
   public static AvroKey toAvroKeyRecord(Schema schema) {
     validateSchemaKey(schema);
 

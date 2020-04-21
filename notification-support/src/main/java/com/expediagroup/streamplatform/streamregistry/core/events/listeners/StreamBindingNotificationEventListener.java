@@ -51,21 +51,21 @@ public class StreamBindingNotificationEventListener implements NotificationEvent
   @EventListener(condition = IS_CREATING_A_STREAM_BINDING)
   public void onCreate(NotificationEvent<StreamBinding> event) {
     log.debug("On update streamBinding event {}", event);
-    notificationEventHandlers.parallelStream().forEach(h -> this.handle(h::onCreate, event));
+    notificationEventHandlers.stream().forEach(h -> this.handle(h::onCreate, event));
   }
 
   @Override
   @EventListener(condition = IS_UPDATING_A_STREAM_BINDING)
   public void onUpdate(NotificationEvent<StreamBinding> event) {
     log.debug("On update streamBinding event {}", event);
-    notificationEventHandlers.parallelStream().forEach(h -> this.handle(h::onUpdate, event));
+    notificationEventHandlers.stream().forEach(h -> this.handle(h::onUpdate, event));
   }
 
   @Override
   @EventListener(condition = IS_DELETING_A_STREAM_BINDING)
   public void onDelete(NotificationEvent<StreamBinding> event) {
     log.debug("On delete streamBinding event {}", event);
-    notificationEventHandlers.parallelStream().forEach(h -> this.handle(h::onDelete, event));
+    notificationEventHandlers.stream().forEach(h -> this.handle(h::onDelete, event));
   }
 
   private void handle(Consumer<NotificationEvent<StreamBinding>> handle, NotificationEvent<StreamBinding> event) {
