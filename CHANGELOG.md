@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Emit event on producer mutation.
+- Emit event on producer mutation (create and update).
 - Emit event on streambinding mutation.
+- Notification type and entity headers in Kafka messages
 
 ### Bugfix
 - Fixed issues with referential integrity on binding entities.
