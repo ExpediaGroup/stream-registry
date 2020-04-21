@@ -136,6 +136,7 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void createRequiredDatastoreState() {
+    client.createDomain(factory);
     client.createSchema(factory);
   }
 

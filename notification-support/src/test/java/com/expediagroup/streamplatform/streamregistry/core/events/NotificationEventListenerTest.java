@@ -49,14 +49,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.ProducerParserProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.SchemaParserProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.StreamBindingParserProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.StreamParserProperties;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.ProducerEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.SchemaEventHandlerForKafka;
+import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamBindingEventHandlerForKafka;
 import com.expediagroup.streamplatform.streamregistry.core.events.handlers.StreamEventHandlerForKafka;
+import com.expediagroup.streamplatform.streamregistry.core.events.listeners.ProducerNotificationEventListener;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
+import com.expediagroup.streamplatform.streamregistry.core.events.listeners.StreamBindingNotificationEventListener;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.StreamNotificationEventListener;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 @Slf4j
 @RunWith(SpringRunner.class)// Explicitly defined prop with true as value
@@ -76,11 +84,23 @@ public class NotificationEventListenerTest {
   public static final int TEST_UPDATE_STREAM_EVENTS = 4;
   public static final int TEST_DELETE_STREAM_EVENTS = 6;
 
+  public static final int TEST_CREATE_STREAM_BINDING_EVENTS = 7;
+  public static final int TEST_UPDATE_STREAM_BINDING_EVENTS = 8;
+  public static final int TEST_DELETE_STREAM_BINDING_EVENTS = 9;
+
+  public static final int TEST_UPDATE_PRODUCER_EVENTS = 10;
+
   @Autowired
   private ApplicationEventMulticaster applicationEventMulticaster;
 
   @SpyBean
   private StreamNotificationEventListener streamNotificationEventListener;
+
+  @SpyBean
+  private StreamBindingNotificationEventListener streamBindingNotificationEventListener;
+
+  @SpyBean
+  private ProducerNotificationEventListener producerNotificationEventListener;
 
   @Autowired
   private SchemaNotificationEventListener schemaNotificationEventListener;
@@ -91,6 +111,12 @@ public class NotificationEventListenerTest {
   @Autowired
   private StreamEventHandlerForKafka streamEventHandlerForKafka;
 
+  @Autowired
+  private StreamBindingEventHandlerForKafka streamBindingEventHandlerForKafka;
+
+  @Autowired
+  private ProducerEventHandlerForKafka producerEventHandlerForKafka;
+
   @Before
   public void before() {
     IntStream.rangeClosed(1, TEST_CREATE_SCHEMA_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummySchemaEvent(i, EventType.CREATE, "schema-create")));
@@ -100,6 +126,12 @@ public class NotificationEventListenerTest {
     IntStream.rangeClosed(1, TEST_CREATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.CREATE, "stream-create")));
     IntStream.rangeClosed(1, TEST_UPDATE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.UPDATE, "stream-update")));
     IntStream.rangeClosed(1, TEST_DELETE_STREAM_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamEvent(i, EventType.DELETE, "stream-delete")));
+
+    IntStream.rangeClosed(1, TEST_CREATE_STREAM_BINDING_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamBindingEvent(i, EventType.CREATE, "streamBinding-create")));
+    IntStream.rangeClosed(1, TEST_UPDATE_STREAM_BINDING_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamBindingEvent(i, EventType.UPDATE, "streamBinding-update")));
+    IntStream.rangeClosed(1, TEST_DELETE_STREAM_BINDING_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyStreamBindingEvent(i, EventType.DELETE, "streamBinding-delete")));
+
+    IntStream.rangeClosed(1, TEST_UPDATE_PRODUCER_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyProducerEvent(i, EventType.UPDATE, "producer-update")));
   }
 
   @Test
@@ -119,10 +151,22 @@ public class NotificationEventListenerTest {
     Mockito.verify(streamNotificationEventListener, Mockito.timeout(5000).times(TEST_CREATE_STREAM_EVENTS)).onCreate(Mockito.notNull());
     Mockito.verify(streamNotificationEventListener, Mockito.timeout(5000).times(TEST_UPDATE_STREAM_EVENTS)).onUpdate(Mockito.notNull());
     Mockito.verify(streamNotificationEventListener, Mockito.timeout(5000).times(TEST_DELETE_STREAM_EVENTS)).onDelete(Mockito.notNull());
+
+    Mockito.verify(streamBindingEventHandlerForKafka, Mockito.timeout(5000).times(TEST_CREATE_STREAM_BINDING_EVENTS)).onCreate(Mockito.notNull());
+    Mockito.verify(streamBindingEventHandlerForKafka, Mockito.timeout(5000).times(TEST_UPDATE_STREAM_BINDING_EVENTS)).onUpdate(Mockito.notNull());
+    Mockito.verify(streamBindingEventHandlerForKafka, Mockito.timeout(5000).times(TEST_DELETE_STREAM_BINDING_EVENTS)).onDelete(Mockito.notNull());
+
+    Mockito.verify(streamBindingNotificationEventListener, Mockito.timeout(5000).times(TEST_CREATE_STREAM_BINDING_EVENTS)).onCreate(Mockito.notNull());
+    Mockito.verify(streamBindingNotificationEventListener, Mockito.timeout(5000).times(TEST_UPDATE_STREAM_BINDING_EVENTS)).onUpdate(Mockito.notNull());
+    Mockito.verify(streamBindingNotificationEventListener, Mockito.timeout(5000).times(TEST_DELETE_STREAM_BINDING_EVENTS)).onDelete(Mockito.notNull());
+
+    Mockito.verify(producerEventHandlerForKafka, Mockito.timeout(5000).times(TEST_UPDATE_PRODUCER_EVENTS)).onUpdate(Mockito.notNull());
+
+    Mockito.verify(producerNotificationEventListener, Mockito.timeout(5000).times(TEST_UPDATE_PRODUCER_EVENTS)).onUpdate(Mockito.notNull());
   }
 
   @Configuration
-  @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class, StreamNotificationEventListener.class})
+  @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class, StreamNotificationEventListener.class, StreamBindingNotificationEventListener.class, ProducerNotificationEventListener.class})
   public static class MockListenerConfiguration extends NotificationEventConfig {
     @Value("${" + KAFKA_TOPIC_NAME_PROPERTY + ":#{null}}")
     private String notificationEventsTopic;
@@ -163,6 +207,23 @@ public class NotificationEventListenerTest {
       return Mockito.mock(StreamEventHandlerForKafka.class);
     }
 
+    @Bean
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public StreamBindingEventHandlerForKafka streamBindingEventHandlerForKafka(
+        StreamBindingParserProperties parserProperties) {
+      Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
+
+      return Mockito.mock(StreamBindingEventHandlerForKafka.class);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
+    public ProducerEventHandlerForKafka producerEventHandlerForKafka(ProducerParserProperties parserProperties) {
+      Objects.requireNonNull(notificationEventsTopic, getWarningMessageOnNotDefinedProp("enabled notification events", KAFKA_TOPIC_NAME_PROPERTY));
+
+      return Mockito.mock(ProducerEventHandlerForKafka.class);
+    }
+
     @Bean(name = "producerFactory")
     @ConditionalOnProperty(name = KAFKA_NOTIFICATIONS_ENABLED_PROPERTY)
     public ProducerFactory<SpecificRecord, SpecificRecord> producerFactory() {
@@ -191,6 +252,26 @@ public class NotificationEventListenerTest {
     Stream stream = new Stream();
     return NotificationEvent.<Stream>builder()
         .entity(stream)
+        .source(source)
+        .eventType(eventType)
+        .build();
+  }
+
+  public NotificationEvent<StreamBinding> getDummyStreamBindingEvent(int event, EventType eventType, String source) {
+    log.info("Emitting event {}", event);
+    StreamBinding streamBinding = new StreamBinding();
+    return NotificationEvent.<StreamBinding>builder()
+        .entity(streamBinding)
+        .source(source)
+        .eventType(eventType)
+        .build();
+  }
+
+  public NotificationEvent<Producer> getDummyProducerEvent(int event, EventType eventType, String source) {
+    log.info("Emitting event {}", event);
+    Producer producer = new Producer();
+    return NotificationEvent.<Producer>builder()
+        .entity(producer)
         .source(source)
         .eventType(eventType)
         .build();

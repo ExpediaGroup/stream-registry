@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
@@ -26,6 +27,7 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 @RequiredArgsConstructor
 public class StreamBindingValidator implements Validator<StreamBinding> {
   private final StreamService streamService;
+  private final InfrastructureService infrastructureService;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -43,6 +45,9 @@ public class StreamBindingValidator implements Validator<StreamBinding> {
   private void validateForCreateAndUpdate(StreamBinding streambinding) throws ValidationException {
     if (!streamService.exists(streambinding.getKey().getStreamKey())) {
       throw new ValidationException("Stream does not exist");
+    }
+    if (!infrastructureService.exists(streambinding.getKey().getInfrastructureKey())) {
+      throw new ValidationException("Infrastructure does not exist");
     }
   }
 
