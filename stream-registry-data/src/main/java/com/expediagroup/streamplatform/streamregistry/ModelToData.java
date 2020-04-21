@@ -48,7 +48,7 @@ import com.hotels.beans.transformer.Transformer;
 
 public class ModelToData {
 
-  static Transformer transformer = new BeanUtils()
+  private static Transformer transformer = new BeanUtils()
       .getTransformer()
       .setFlatFieldNameTransformation(true)
       .withFieldMapping(new FieldMapping("configuration", "configJson"))

@@ -15,11 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry;
 
-import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
+import com.hotels.beans.BeanUtils;
+import com.hotels.beans.model.FieldMapping;
+import com.hotels.beans.model.FieldTransformer;
+import com.hotels.beans.transformer.Transformer;
+
+import com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -27,11 +30,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
@@ -46,100 +46,101 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 public class DataToModel {
 
+  private static Transformer transformer = new BeanUtils()
+      .getTransformer()
+      .setFlatFieldNameTransformation(true)
+      .withFieldMapping(new FieldMapping("configJson", "configuration"))
+      .withFieldTransformer(new FieldTransformer<>("configuration", ObjectNodeMapper::deserialise))
+      .withFieldMapping(new FieldMapping("statusJson", "objectNode"))
+      .withFieldTransformer(new FieldTransformer<>("objectNode", ObjectNodeMapper::deserialise))
+      ;
+
+  public static Object convert(Object in,Class clazz) {
+    if (in == null) {
+      return null;
+    }
+    return transformer.transform(in, clazz);
+  }
+
   public static ConsumerKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey in) {
-    return new ConsumerKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getZone(), in.getName());
+    return (ConsumerKey) convert(in,ConsumerKey.class);
   }
 
   public static Consumer convertToModel(com.expediagroup.streamplatform.streamregistry.data.Consumer in) {
-    return new Consumer(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (Consumer) convert(in,Consumer.class);
   }
 
   public static ConsumerBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey in) {
-    return new ConsumerBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName(),
-        in.getConsumerName());
+    return (ConsumerBindingKey) convert(in,ConsumerBindingKey.class);
   }
 
   public static ConsumerBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding in) {
-    return new ConsumerBinding(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (ConsumerBinding) convert(in,ConsumerBinding.class);
   }
 
   public static DomainKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey in) {
-    return new DomainKey(in.getName());
+    return (DomainKey) convert(in,DomainKey.class);
   }
 
   public static Domain convertToModel(com.expediagroup.streamplatform.streamregistry.data.Domain in) {
-    return new Domain(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (Domain) convert(in,Domain.class);
   }
 
   public static InfrastructureKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey in) {
-    return new InfrastructureKey(in.getZone(), in.getName());
+    return (InfrastructureKey) convert(in,InfrastructureKey.class);
   }
 
   public static Infrastructure convertToModel(com.expediagroup.streamplatform.streamregistry.data.Infrastructure in) {
-    return new Infrastructure(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (Infrastructure) convert(in,Infrastructure.class);
   }
 
   public static ProducerKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey in) {
-    return new ProducerKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getZone(), in.getName());
+    return (ProducerKey) convert(in,ProducerKey.class);
   }
 
   public static Producer convertToModel(com.expediagroup.streamplatform.streamregistry.data.Producer in) {
-    return new Producer(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (Producer) convert(in,Producer.class);
   }
 
   public static ProducerBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey in) {
-    return new ProducerBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName(),
-        in.getProducerName());
+    return (ProducerBindingKey) convert(in,ProducerBindingKey.class);
+
   }
 
   public static ProducerBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.ProducerBinding in) {
-    return new ProducerBinding(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (ProducerBinding) convert(in,ProducerBinding.class);
   }
 
   public static SchemaKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey in) {
-    return new SchemaKey(in.getDomain(), in.getName());
+    return (SchemaKey) convert(in,SchemaKey.class);
   }
 
   public static Schema convertToModel(com.expediagroup.streamplatform.streamregistry.data.Schema in) {
-    return new Schema(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (Schema) convert(in,Schema.class);
   }
 
   public static StreamKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey in) {
-    return new StreamKey(in.getDomain(), in.getName(), in.getVersion());
+    return (StreamKey) convert(in,StreamKey.class);
   }
 
   public static Stream convertToModel(com.expediagroup.streamplatform.streamregistry.data.Stream in) {
-    return new Stream(convertToModel(in.getKey()), convertToModel(in.getSchemaKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (Stream) convert(in,Stream.class);
   }
 
   public static StreamBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey in) {
-    return new StreamBindingKey(in.getStreamDomain(), in.getStreamName(), in.getStreamVersion(), in.getInfrastructureZone(), in.getInfrastructureName());
+    return (StreamBindingKey) convert(in,StreamBindingKey.class);
   }
 
   public static StreamBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.StreamBinding in) {
-    return new StreamBinding(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (StreamBinding) convert(in,StreamBinding.class);
   }
 
   public static ZoneKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey in) {
-    return new ZoneKey(in.getName());
+    return (ZoneKey) convert(in,ZoneKey.class);
   }
 
   public static Zone convertToModel(com.expediagroup.streamplatform.streamregistry.data.Zone in) {
-    return new Zone(convertToModel(in.getKey()), convertToModel(in.getSpecification()), convertToModel(in.getStatus()));
+    return (Zone) convert(in,Zone.class);
   }
 
-  private static Specification convertToModel(com.expediagroup.streamplatform.streamregistry.data.Specification in) {
-    return new Specification(in.getDescription(), convertToModel(in.getTags()), in.getType(), deserialise(in.getConfigJson()));
-  }
-
-  private static List<Tag> convertToModel(List<com.expediagroup.streamplatform.streamregistry.data.Tag> in) {
-    return in.stream().map(t -> new Tag(t.getId(), t.getName(), t.getValue())).collect(Collectors.toList());
-  }
-
-  private static Status convertToModel(com.expediagroup.streamplatform.streamregistry.data.Status in) {
-    if (in == null || in.getStatusJson() == null) {
-      return new Status(deserialise("{}"));
-    }
-    return new Status(deserialise(in.getStatusJson()));
-  }
 }
