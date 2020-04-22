@@ -60,7 +60,7 @@ public class ConsumerBindingService {
 
   public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
     var data = consumerBindingRepository.findById(convertToData(key));
-    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
+    return data.map(DataToModel::convertToModel);
   }
 
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
