@@ -24,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StreamBinding implements Modeled {
+public class StreamBinding implements Entity {
 
   private StreamBindingKey key;
   private Specification specification;

@@ -35,7 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
 @Entity(name = "rword_schema")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Schema implements ManagedType {
+public class Schema implements DataEntity {
 
   @EmbeddedId
   private SchemaKey key;

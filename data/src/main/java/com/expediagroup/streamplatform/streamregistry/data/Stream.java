@@ -37,7 +37,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey;
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Stream implements ManagedType {
+public class Stream implements DataEntity {
 
   @EmbeddedId
   private StreamKey key;

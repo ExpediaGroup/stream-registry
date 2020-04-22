@@ -15,10 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import com.expediagroup.streamplatform.streamregistry.model.Modeled;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
-public interface Handler<T extends Modeled> {
+public interface Handler<T extends Entity> {
   String type();
 
   Class<T> target();

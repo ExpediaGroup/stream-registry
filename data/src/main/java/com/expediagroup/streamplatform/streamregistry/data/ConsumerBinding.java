@@ -35,7 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingK
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class ConsumerBinding implements ManagedType {
+public class ConsumerBinding implements DataEntity {
 
   @EmbeddedId
   private ConsumerBindingKey key;

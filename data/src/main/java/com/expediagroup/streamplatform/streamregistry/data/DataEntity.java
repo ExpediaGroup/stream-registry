@@ -15,4 +15,4 @@
  */
 package com.expediagroup.streamplatform.streamregistry.data;
 
-public interface ManagedType<K> {} //extends Stated, Specified {}
+public interface DataEntity<K> {}

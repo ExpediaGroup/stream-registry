@@ -35,7 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingK
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class ProducerBinding implements ManagedType {
+public class ProducerBinding implements DataEntity {
 
   @EmbeddedId
   private ProducerBindingKey key;

@@ -24,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Schema implements Modeled {
+public class Schema implements Entity {
   private SchemaKey key;
   private Specification specification;
   private Status status;

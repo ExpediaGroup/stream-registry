@@ -35,7 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey;
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Domain implements ManagedType {
+public class Domain implements DataEntity {
 
   @EmbeddedId
   private DomainKey key;

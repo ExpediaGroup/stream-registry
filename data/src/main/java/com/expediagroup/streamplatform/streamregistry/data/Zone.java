@@ -35,7 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey;
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Zone implements ManagedType {
+public class Zone implements DataEntity {
 
   @EmbeddedId
   private ZoneKey key;

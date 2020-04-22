@@ -24,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureK
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Infrastructure implements Modeled {
+public class Infrastructure implements Entity {
 
   private InfrastructureKey key;
   private Specification specification;

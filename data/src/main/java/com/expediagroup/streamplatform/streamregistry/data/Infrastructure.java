@@ -35,7 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKe
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Infrastructure implements ManagedType {
+public class Infrastructure implements DataEntity {
 
   @EmbeddedId
   private InfrastructureKey key;

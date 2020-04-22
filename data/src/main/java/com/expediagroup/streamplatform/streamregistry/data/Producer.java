@@ -35,7 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey;
 @Entity
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Producer implements ManagedType {
+public class Producer implements DataEntity {
 
   @EmbeddedId
   private ProducerKey key;

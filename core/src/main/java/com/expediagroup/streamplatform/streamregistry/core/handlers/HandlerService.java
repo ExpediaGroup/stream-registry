@@ -34,8 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.Modeled;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -79,32 +79,32 @@ public class HandlerService {
     checkArgument(handlerTargets.contains(target), "No Handlers for " + target.getSimpleName() + " defined");
   }
 
-  private <T extends Modeled> Handler<T> getHandler(T managedType) {
-    Handler<?> handler = handlers.get(new Key(managedType.getSpecification().getType(), managedType.getClass()));
+  private <T extends Entity> Handler<T> getHandler(T dataEntity) {
+    Handler<?> handler = handlers.get(new Key(dataEntity.getSpecification().getType(), dataEntity.getClass()));
     if (handler == null) {
       Set<String> supportedTypes = handlers.keySet().stream()
-          .filter(k -> k.entityClass.equals(managedType.getClass()))
+          .filter(k -> k.entityClass.equals(dataEntity.getClass()))
           .map(Key::getType)
           .collect(toSet());
       throw new ValidationException(
-          "There is no handler for " + managedType.getClass().getSimpleName()
-              + " entities with type " + managedType.getSpecification().getType()
+          "There is no handler for " + dataEntity.getClass().getSimpleName()
+              + " entities with type " + dataEntity.getSpecification().getType()
               + ". Expected one of " + supportedTypes);
     }
     return (Handler<T>) handler;
   }
 
-  public <T extends Modeled> Specification handleInsert(T managedType) {
+  public <T extends Entity> Specification handleInsert(T dataEntity) {
     try {
-      return getHandler(managedType).handleInsert(managedType);
+      return getHandler(dataEntity).handleInsert(dataEntity);
     } catch (Exception e) {
       throw new ValidationException(e);
     }
   }
 
-  public Specification handleUpdate(Modeled modeled, Modeled existing) {
+  public Specification handleUpdate(Entity entity, Entity existing) {
     try {
-      return getHandler(modeled).handleUpdate(modeled, existing);
+      return getHandler(entity).handleUpdate(entity, existing);
     } catch (Exception e) {
       throw new ValidationException(e);
     }
