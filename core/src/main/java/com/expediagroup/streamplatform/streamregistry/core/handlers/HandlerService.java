@@ -102,9 +102,9 @@ public class HandlerService {
     }
   }
 
-  public Specification handleUpdate(Modeled managedType, Modeled existing) {
+  public Specification handleUpdate(Modeled modeled, Modeled existing) {
     try {
-      return getHandler(managedType).handleUpdate(managedType, existing);
+      return getHandler(modeled).handleUpdate(modeled, existing);
     } catch (Exception e) {
       throw new ValidationException(e);
     }
