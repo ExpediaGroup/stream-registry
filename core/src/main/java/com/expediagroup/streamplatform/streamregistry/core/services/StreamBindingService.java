@@ -19,7 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.DataToModel.convert
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -61,14 +61,6 @@ public class StreamBindingService {
     return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
   }
 
-  public Iterable<StreamBinding> readAll() {
-    ArrayList out = new ArrayList();
-    for (var streamBinding : streamBindingRepository.findAll()) {
-      out.add(convertToModel(streamBinding));
-    }
-    return out;
-  }
-
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
     var streamBindingData = convertToData(streamBinding);
     var existing = streamBindingRepository.findById(streamBindingData.getKey());
@@ -92,7 +84,7 @@ public class StreamBindingService {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<StreamBinding> findAll(Predicate<StreamBinding> filter) {
+  public List<StreamBinding> findAll(Predicate<StreamBinding> filter) {
     return streamBindingRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
   }
 

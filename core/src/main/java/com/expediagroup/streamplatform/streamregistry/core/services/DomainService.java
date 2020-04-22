@@ -19,7 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.DataToModel.convert
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -61,14 +61,6 @@ public class DomainService {
     return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
   }
 
-  public Iterable<Domain> readAll() {
-    ArrayList out = new ArrayList();
-    for (com.expediagroup.streamplatform.streamregistry.data.Domain domain : domainRepository.findAll()) {
-      out.add(convertToModel(domain));
-    }
-    return out;
-  }
-
   public Optional<Domain> update(Domain domain) throws ValidationException {
     var domainData = convertToData(domain);
     var existing = domainRepository.findById(domainData.getKey());
@@ -93,7 +85,7 @@ public class DomainService {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<Domain> findAll(Predicate<Domain> filter) {
+  public List<Domain> findAll(Predicate<Domain> filter) {
     return domainRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
   }
 

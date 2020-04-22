@@ -19,7 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.DataToModel.convert
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -64,14 +64,6 @@ public class ProducerBindingService {
     return data.isPresent() ? Optional.of(DataToModel.convertToModel(data.get())) : Optional.empty();
   }
 
-  public Iterable<ProducerBinding> readAll() {
-    ArrayList out = new ArrayList();
-    for (var producerBinding : producerBindingRepository.findAll()) {
-      out.add(DataToModel.convertToModel(producerBinding));
-    }
-    return out;
-  }
-
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
     var producerBindingData = convertToData(producerBinding);
     var existing = producerBindingRepository.findById(producerBindingData.getKey());
@@ -95,7 +87,7 @@ public class ProducerBindingService {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
+  public List<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
     return producerBindingRepository.findAll().stream().map(d -> DataToModel.convertToModel(d)).filter(filter).collect(toList());
   }
 

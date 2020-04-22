@@ -19,7 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.DataToModel.convert
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -61,14 +61,6 @@ public class ZoneService {
     return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
   }
 
-  public Iterable<Zone> readAll() {
-    ArrayList out = new ArrayList();
-    for (var zone : zoneRepository.findAll()) {
-      out.add(convertToModel(zone));
-    }
-    return out;
-  }
-
   public Optional<Zone> update(Zone zone) throws ValidationException {
     var zoneData = convertToData(zone);
     var existing = zoneRepository.findById(zoneData.getKey());
@@ -92,7 +84,7 @@ public class ZoneService {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<Zone> findAll(Predicate<Zone> filter) {
+  public List<Zone> findAll(Predicate<Zone> filter) {
     return zoneRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
   }
 

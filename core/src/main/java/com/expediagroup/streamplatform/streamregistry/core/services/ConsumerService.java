@@ -19,7 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.DataToModel.convert
 import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -61,14 +61,6 @@ public class ConsumerService {
     return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
   }
 
-  public Iterable<Consumer> readAll() {
-    ArrayList out = new ArrayList();
-    for (var consumer : consumerRepository.findAll()) {
-      out.add(convertToModel(consumer));
-    }
-    return out;
-  }
-
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
     var consumerData = convertToData(consumer);
     var existing = consumerRepository.findById(consumerData.getKey());
@@ -93,7 +85,7 @@ public class ConsumerService {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<Consumer> findAll(Predicate<Consumer> filter) {
+  public List<Consumer> findAll(Predicate<Consumer> filter) {
     return consumerRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
   }
 
