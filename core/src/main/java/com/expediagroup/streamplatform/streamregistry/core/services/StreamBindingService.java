@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
-import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,43 +39,45 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 @Component
 @RequiredArgsConstructor
 public class StreamBindingService {
+  private final DataToModel dataToModel;
+  private final ModelToData modelToData;
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
   private final NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
 
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    var data = convertToData(streamBinding);
+    var data = modelToData.convertToData(streamBinding);
     if (streamBindingRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
-    data.setSpecification(convertToData(handlerService.handleInsert(streamBinding)));
-    StreamBinding out = convertToModel(streamBindingRepository.save(data));
+    data.setSpecification(modelToData.convertToData(handlerService.handleInsert(streamBinding)));
+    StreamBinding out = dataToModel.convertToModel(streamBindingRepository.save(data));
     streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<StreamBinding> read(StreamBindingKey key) {
-    var data = streamBindingRepository.findById(convertToData(key));
-    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
+    var data = streamBindingRepository.findById(modelToData.convertToData(key));
+    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
   }
 
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    var streamBindingData = convertToData(streamBinding);
+    var streamBindingData = modelToData.convertToData(streamBinding);
     var existing = streamBindingRepository.findById(streamBindingData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    streamBindingValidator.validateForUpdate(streamBinding, convertToModel(existing.get()));
-    streamBindingData.setSpecification(convertToData(handlerService.handleUpdate(streamBinding, convertToModel(existing.get()))));
-    StreamBinding out = convertToModel(streamBindingRepository.save(streamBindingData));
+    streamBindingValidator.validateForUpdate(streamBinding, dataToModel.convertToModel(existing.get()));
+    streamBindingData.setSpecification(modelToData.convertToData(handlerService.handleUpdate(streamBinding, dataToModel.convertToModel(existing.get()))));
+    StreamBinding out = dataToModel.convertToModel(streamBindingRepository.save(streamBindingData));
     streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
-    return !streamBindingRepository.findById(convertToData(streamBinding).getKey()).isPresent() ?
+    return !streamBindingRepository.findById(modelToData.convertToData(streamBinding).getKey()).isPresent() ?
         create(streamBinding) :
         update(streamBinding);
   }
@@ -85,7 +87,7 @@ public class StreamBindingService {
   }
 
   public List<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return streamBindingRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
+    return streamBindingRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(StreamBindingKey key) {

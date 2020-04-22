@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
-import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,43 +39,45 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureK
 @Component
 @RequiredArgsConstructor
 public class InfrastructureService {
+  private final DataToModel dataToModel;
+  private final ModelToData modelToData;
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
   private final NotificationEventEmitter<Infrastructure> infrastructureServiceEventEmitter;
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
-    var data = convertToData(infrastructure);
+    var data = modelToData.convertToData(infrastructure);
     if (infrastructureRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
-    data.setSpecification(convertToData(handlerService.handleInsert(infrastructure)));
-    Infrastructure out = convertToModel(infrastructureRepository.save(data));
+    data.setSpecification(modelToData.convertToData(handlerService.handleInsert(infrastructure)));
+    Infrastructure out = dataToModel.convertToModel(infrastructureRepository.save(data));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Infrastructure> read(InfrastructureKey key) {
-    var data = infrastructureRepository.findById(convertToData(key));
-    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
+    var data = infrastructureRepository.findById(modelToData.convertToData(key));
+    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
   }
 
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
-    var infrastructureData = convertToData(infrastructure);
+    var infrastructureData = modelToData.convertToData(infrastructure);
     var existing = infrastructureRepository.findById(infrastructureData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    infrastructureValidator.validateForUpdate(infrastructure, convertToModel(existing.get()));
-    infrastructureData.setSpecification(convertToData(handlerService.handleUpdate(infrastructure, convertToModel(existing.get()))));
-    Infrastructure out = convertToModel(infrastructureRepository.save(infrastructureData));
+    infrastructureValidator.validateForUpdate(infrastructure, dataToModel.convertToModel(existing.get()));
+    infrastructureData.setSpecification(modelToData.convertToData(handlerService.handleUpdate(infrastructure, dataToModel.convertToModel(existing.get()))));
+    Infrastructure out = dataToModel.convertToModel(infrastructureRepository.save(infrastructureData));
     infrastructureServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Infrastructure> upsert(Infrastructure infrastructure) throws ValidationException {
-    var infrastructureData = convertToData(infrastructure);
+    var infrastructureData = modelToData.convertToData(infrastructure);
     return !infrastructureRepository.findById(infrastructureData.getKey()).isPresent() ?
         create(infrastructure) :
         update(infrastructure);
@@ -86,7 +88,7 @@ public class InfrastructureService {
   }
 
   public List<Infrastructure> findAll(Predicate<Infrastructure> filter) {
-    return infrastructureRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
+    return infrastructureRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(InfrastructureKey key) {

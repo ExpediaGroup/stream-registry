@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
-import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,43 +39,45 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 @Component
 @RequiredArgsConstructor
 public class ProducerService {
+  private final DataToModel dataToModel;
+  private final ModelToData modelToData;
   private final HandlerService handlerService;
   private final ProducerValidator producerValidator;
   private final ProducerRepository producerRepository;
   private final NotificationEventEmitter<Producer> producerServiceEventEmitter;
 
   public Optional<Producer> create(Producer producer) throws ValidationException {
-    var data = convertToData(producer);
+    var data = modelToData.convertToData(producer);
     if (producerRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     producerValidator.validateForCreate(producer);
-    data.setSpecification(convertToData(handlerService.handleInsert(producer)));
-    Producer out = convertToModel(producerRepository.save(data));
+    data.setSpecification(modelToData.convertToData(handlerService.handleInsert(producer)));
+    Producer out = dataToModel.convertToModel(producerRepository.save(data));
     producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Producer> read(ProducerKey key) {
-    var data = producerRepository.findById(convertToData(key));
-    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
+    var data = producerRepository.findById(modelToData.convertToData(key));
+    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
   }
 
   public Optional<Producer> update(Producer producer) throws ValidationException {
-    var producerData = convertToData(producer);
+    var producerData = modelToData.convertToData(producer);
     var existing = producerRepository.findById(producerData.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update because it doesn't exist");
     }
-    producerValidator.validateForUpdate(producer, convertToModel(existing.get()));
-    producerData.setSpecification(convertToData(handlerService.handleUpdate(producer, convertToModel(existing.get()))));
-    Producer out = convertToModel(producerRepository.save(producerData));
+    producerValidator.validateForUpdate(producer, dataToModel.convertToModel(existing.get()));
+    producerData.setSpecification(modelToData.convertToData(handlerService.handleUpdate(producer, dataToModel.convertToModel(existing.get()))));
+    Producer out = dataToModel.convertToModel(producerRepository.save(producerData));
     producerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Producer> upsert(Producer producer) throws ValidationException {
-    return !producerRepository.findById(convertToData(producer).getKey()).isPresent() ?
+    return !producerRepository.findById(modelToData.convertToData(producer).getKey()).isPresent() ?
         create(producer) :
         update(producer);
   }
@@ -85,7 +87,7 @@ public class ProducerService {
   }
 
   public List<Producer> findAll(Predicate<Producer> filter) {
-    return producerRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
+    return producerRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(ProducerKey key) {

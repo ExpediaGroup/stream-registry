@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
-import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,46 +39,48 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 @Component
 @RequiredArgsConstructor
 public class StreamService {
+  private final DataToModel dataToModel;
+  private final ModelToData modelToData;
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
   private final NotificationEventEmitter<Stream> streamServiceEventEmitter;
 
   public Optional<Stream> create(Stream stream) throws ValidationException {
-    var data = convertToData(stream);
+    var data = modelToData.convertToData(stream);
     if (streamRepository.findById(data.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamValidator.validateForCreate(stream);
-    data.setSpecification(convertToData(handlerService.handleInsert(stream)));
-    Stream out = convertToModel(streamRepository.save(data));
+    data.setSpecification(modelToData.convertToData(handlerService.handleInsert(stream)));
+    Stream out = dataToModel.convertToModel(streamRepository.save(data));
     streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Stream> read(StreamKey key) {
-    var data = streamRepository.findById(convertToData(key));
-    return data.isPresent() ? Optional.of(convertToModel(data.get())) : Optional.empty();
+    var data = streamRepository.findById(modelToData.convertToData(key));
+    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
   }
 
   public Optional<Stream> update(Stream stream) throws ValidationException {
-    var existing = streamRepository.findById(convertToData(stream).getKey());
+    var existing = streamRepository.findById(modelToData.convertToData(stream).getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Stream doesn't exist");
     }
     if (stream.getSchemaKey() == null) {
-      stream.setSchemaKey(convertToModel(existing.get()).getSchemaKey());
+      stream.setSchemaKey(dataToModel.convertToModel(existing.get()).getSchemaKey());
     }
-    var streamData = convertToData(stream);
-    streamValidator.validateForUpdate(stream, convertToModel(existing.get()));
-    streamData.setSpecification(convertToData(handlerService.handleUpdate(stream, convertToModel(existing.get()))));
-    Stream out = convertToModel(streamRepository.save(streamData));
+    var streamData = modelToData.convertToData(stream);
+    streamValidator.validateForUpdate(stream, dataToModel.convertToModel(existing.get()));
+    streamData.setSpecification(modelToData.convertToData(handlerService.handleUpdate(stream, dataToModel.convertToModel(existing.get()))));
+    Stream out = dataToModel.convertToModel(streamRepository.save(streamData));
     streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
     return Optional.ofNullable(out);
   }
 
   public Optional<Stream> upsert(Stream stream) throws ValidationException {
-    return !streamRepository.findById(convertToData(stream).getKey()).isPresent() ?
+    return !streamRepository.findById(modelToData.convertToData(stream).getKey()).isPresent() ?
         create(stream) :
         update(stream);
   }
@@ -88,7 +90,7 @@ public class StreamService {
   }
 
   public List<Stream> findAll(Predicate<Stream> filter) {
-    return streamRepository.findAll().stream().map(d -> convertToModel(d)).filter(filter).collect(toList());
+    return streamRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
   }
 
   public boolean exists(StreamKey key) {

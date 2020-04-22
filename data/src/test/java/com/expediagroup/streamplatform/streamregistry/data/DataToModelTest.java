@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.data;
 
-import static com.expediagroup.streamplatform.streamregistry.DataToModel.convertToModel;
-import static com.expediagroup.streamplatform.streamregistry.ModelToData.convertToData;
 import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
 
 import java.security.SecureRandom;
@@ -29,6 +27,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
@@ -52,7 +52,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -63,7 +63,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -74,7 +74,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -85,7 +85,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -96,7 +96,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -107,7 +107,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -118,7 +118,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -130,7 +130,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -141,7 +141,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
@@ -152,7 +152,7 @@ public class DataToModelTest {
         specification(),
         status()
     );
-    var out = convertToModel(convertToData(in));
+    var out = new DataToModel().convertToModel(new ModelToData().convertToData(in));
     Assert.assertEquals(in, out);
   }
 
