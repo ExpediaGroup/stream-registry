@@ -27,18 +27,18 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Entity
+@Entity(name = "infrastructure")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class ProducerBinding implements DataEntity {
+public class InfrastructureData implements EntityData {
 
   @EmbeddedId
-  private ProducerBindingKey key;
-  private Specification specification;
+  private InfrastructureKey key;
+  private SpecificationData specification;
   private Status status;
 }

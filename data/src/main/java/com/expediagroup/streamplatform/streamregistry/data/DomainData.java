@@ -27,18 +27,18 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Entity(name = "domain")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Infrastructure implements DataEntity {
+public class DomainData implements EntityData {
 
   @EmbeddedId
-  private InfrastructureKey key;
-  private Specification specification;
+  private DomainKey key;
+  private SpecificationData specification;
   private Status status;
 }

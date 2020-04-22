@@ -18,10 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.data;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 import javax.persistence.Cacheable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,23 +27,18 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
+import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey;
+
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@NoArgsConstructor
+@Entity(name = "zone")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Tag {
+public class ZoneData implements EntityData {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private int id;
-
-  public Tag(String name, String value) {
-    this.name = name;
-    this.value = value;
-  }
-
-  private String name;
-  private String value;
+  @EmbeddedId
+  private ZoneKey key;
+  private SpecificationData specification;
+  private Status status;
 }

@@ -31,12 +31,12 @@ import lombok.Data;
 
 @Data
 @Embeddable
-public class Specification {
+public class SpecificationData {
 
   private String description;
 
   @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
-  private List<Tag> tags = new ArrayList<>();
+  private List<TagData> tags = new ArrayList<>();
 
   @Column(name = "rword_type")
   private String type;
@@ -45,16 +45,16 @@ public class Specification {
   @Column(name = "config_json", length = 20000)
   private String configJson;
 
-  public Specification(String description, List<Tag> tags, String type, String configJson) {
+  public SpecificationData(String description, List<TagData> tags, String type, String configJson) {
     this.description = description;
     this.tags = tags;
     this.type = type;
     this.configJson = configJson;
   }
 
-  public Specification() {}
+  public SpecificationData() {}
 
-  public List<Tag> getTags() {
+  public List<TagData> getTags() {
     return tags == null ? Collections.emptyList() : tags;
   }
 

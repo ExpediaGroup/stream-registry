@@ -27,18 +27,18 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Data
+@Entity(name = "producer_binding")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Domain implements DataEntity {
+public class ProducerBindingData implements EntityData {
 
   @EmbeddedId
-  private DomainKey key;
-  private Specification specification;
+  private ProducerBindingKey key;
+  private SpecificationData specification;
   private Status status;
 }

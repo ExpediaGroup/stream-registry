@@ -27,18 +27,18 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Entity(name = "consumer_binding")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class StreamBinding implements DataEntity {
+public class ConsumerBindingData implements EntityData {
 
   @EmbeddedId
-  private StreamBindingKey key;
-  private Specification specification;
+  private ConsumerBindingKey key;
+  private SpecificationData specification;
   private Status status;
 }

@@ -32,13 +32,13 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Entity(name = "producer")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Producer implements DataEntity {
+public class ProducerData implements EntityData {
 
   @EmbeddedId
   private ProducerKey key;
-  private Specification specification;
+  private SpecificationData specification;
   private Status status;
 }

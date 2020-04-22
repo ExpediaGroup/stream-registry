@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-import com.expediagroup.streamplatform.streamregistry.data.Schema;
+import com.expediagroup.streamplatform.streamregistry.data.SchemaData;
 import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
 
-public interface SchemaRepository extends CachingJpaRepository<Schema, SchemaKey> {}
+public interface SchemaRepository extends CachingJpaRepository<SchemaData, SchemaKey> {}

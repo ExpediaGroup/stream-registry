@@ -27,18 +27,18 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Entity(name = "rword_schema")
+@Entity(name = "stream_binding")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Schema implements DataEntity {
+public class StreamBindingData implements EntityData {
 
   @EmbeddedId
-  private SchemaKey key;
-  private Specification specification;
+  private StreamBindingKey key;
+  private SpecificationData specification;
   private Status status;
 }

@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.data;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 import javax.persistence.Cacheable;
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
@@ -29,21 +28,17 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 
 import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Data
+@Entity(name = "rword_schema")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class Stream implements DataEntity {
+public class SchemaData implements EntityData {
 
   @EmbeddedId
-  private StreamKey key;
-
-  @Column(updatable = false)
-  private SchemaKey schemaKey;
-  private Specification specification;
+  private SchemaKey key;
+  private SpecificationData specification;
   private Status status;
 }

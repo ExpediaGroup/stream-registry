@@ -18,8 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.data;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 import javax.persistence.Cacheable;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,18 +29,23 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey;
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity(name="tag")
 @Cacheable
 @Cache(usage = READ_WRITE)
-public class ConsumerBinding implements DataEntity {
+public class TagData {
 
-  @EmbeddedId
-  private ConsumerBindingKey key;
-  private Specification specification;
-  private Status status;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private int id;
+
+  public TagData(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
+
+  private String name;
+  private String value;
 }

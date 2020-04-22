@@ -15,4 +15,30 @@
  */
 package com.expediagroup.streamplatform.streamregistry.data;
 
-public interface DataEntity<K> {}
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
+import javax.persistence.Cacheable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import org.hibernate.annotations.Cache;
+
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity(name = "consumer")
+@Cacheable
+@Cache(usage = READ_WRITE)
+public class ConsumerData implements EntityData {
+
+  @EmbeddedId
+  private ConsumerKey key;
+  private SpecificationData specification;
+  private Status status;
+}

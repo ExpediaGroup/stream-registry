@@ -18,5 +18,5 @@ package com.expediagroup.streamplatform.streamregistry.data;
 @Deprecated // model only
 public interface Specified {
 
-  Specification getSpecification();
+  SpecificationData getSpecification();
 }

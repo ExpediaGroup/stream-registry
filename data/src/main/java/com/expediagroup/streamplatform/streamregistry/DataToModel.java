@@ -24,7 +24,17 @@ import com.hotels.beans.transformer.Transformer;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.data.ConsumerBindingData;
+import com.expediagroup.streamplatform.streamregistry.data.ConsumerData;
+import com.expediagroup.streamplatform.streamregistry.data.DomainData;
+import com.expediagroup.streamplatform.streamregistry.data.InfrastructureData;
 import com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper;
+import com.expediagroup.streamplatform.streamregistry.data.ProducerBindingData;
+import com.expediagroup.streamplatform.streamregistry.data.ProducerData;
+import com.expediagroup.streamplatform.streamregistry.data.SchemaData;
+import com.expediagroup.streamplatform.streamregistry.data.StreamBindingData;
+import com.expediagroup.streamplatform.streamregistry.data.StreamData;
+import com.expediagroup.streamplatform.streamregistry.data.ZoneData;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -69,7 +79,7 @@ public class DataToModel {
     return (ConsumerKey) convert(in,ConsumerKey.class);
   }
 
-  public Consumer convertToModel(com.expediagroup.streamplatform.streamregistry.data.Consumer in) {
+  public Consumer convertToModel(ConsumerData in) {
     return (Consumer) convert(in,Consumer.class);
   }
 
@@ -77,7 +87,7 @@ public class DataToModel {
     return (ConsumerBindingKey) convert(in,ConsumerBindingKey.class);
   }
 
-  public ConsumerBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.ConsumerBinding in) {
+  public ConsumerBinding convertToModel(ConsumerBindingData in) {
     return (ConsumerBinding) convert(in,ConsumerBinding.class);
   }
 
@@ -85,7 +95,7 @@ public class DataToModel {
     return (DomainKey) convert(in,DomainKey.class);
   }
 
-  public Domain convertToModel(com.expediagroup.streamplatform.streamregistry.data.Domain in) {
+  public Domain convertToModel(DomainData in) {
     return (Domain) convert(in,Domain.class);
   }
 
@@ -93,7 +103,7 @@ public class DataToModel {
     return (InfrastructureKey) convert(in,InfrastructureKey.class);
   }
 
-  public Infrastructure convertToModel(com.expediagroup.streamplatform.streamregistry.data.Infrastructure in) {
+  public Infrastructure convertToModel(InfrastructureData in) {
     return (Infrastructure) convert(in,Infrastructure.class);
   }
 
@@ -101,7 +111,7 @@ public class DataToModel {
     return (ProducerKey) convert(in,ProducerKey.class);
   }
 
-  public Producer convertToModel(com.expediagroup.streamplatform.streamregistry.data.Producer in) {
+  public Producer convertToModel(ProducerData in) {
     return (Producer) convert(in,Producer.class);
   }
 
@@ -110,7 +120,7 @@ public class DataToModel {
 
   }
 
-  public ProducerBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.ProducerBinding in) {
+  public ProducerBinding convertToModel(ProducerBindingData in) {
     return (ProducerBinding) convert(in,ProducerBinding.class);
   }
 
@@ -118,7 +128,7 @@ public class DataToModel {
     return (SchemaKey) convert(in,SchemaKey.class);
   }
 
-  public Schema convertToModel(com.expediagroup.streamplatform.streamregistry.data.Schema in) {
+  public Schema convertToModel(SchemaData in) {
     return (Schema) convert(in,Schema.class);
   }
 
@@ -126,7 +136,7 @@ public class DataToModel {
     return (StreamKey) convert(in,StreamKey.class);
   }
 
-  public Stream convertToModel(com.expediagroup.streamplatform.streamregistry.data.Stream in) {
+  public Stream convertToModel(StreamData in) {
     return (Stream) convert(in,Stream.class);
   }
 
@@ -134,7 +144,7 @@ public class DataToModel {
     return (StreamBindingKey) convert(in,StreamBindingKey.class);
   }
 
-  public StreamBinding convertToModel(com.expediagroup.streamplatform.streamregistry.data.StreamBinding in) {
+  public StreamBinding convertToModel(StreamBindingData in) {
     return (StreamBinding) convert(in,StreamBinding.class);
   }
 
@@ -142,7 +152,7 @@ public class DataToModel {
     return (ZoneKey) convert(in,ZoneKey.class);
   }
 
-  public Zone convertToModel(com.expediagroup.streamplatform.streamregistry.data.Zone in) {
+  public Zone convertToModel(ZoneData in) {
     return (Zone) convert(in,Zone.class);
   }
 
