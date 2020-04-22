@@ -50,13 +50,13 @@ public class ConsumerBindingService {
   private final ConsumerBindingRepository consumerBindingRepository;
   private final NotificationEventEmitter<ConsumerBinding> consumerBindingServiceEventEmitter;
 
-  public Optional<ConsumerBinding> create(ConsumerBinding consumerBindingModel) throws ValidationException {
-    consumerBindingValidator.validateForCreate(consumerBindingModel);
-    var consumerBindingData = modelToData.convertToData(consumerBindingModel);
+  public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
+    consumerBindingValidator.validateForCreate(consumerBinding);
+    ConsumerBindingData consumerBindingData = modelToData.convertToData(consumerBinding);
     if (consumerBindingRepository.findById(consumerBindingData.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
-    consumerBindingData.setSpecification(modelToData.convertToData(handlerService.handleInsert(consumerBindingModel)));
+    consumerBindingData.setSpecification(modelToData.convertToData(handlerService.handleInsert(consumerBinding)));
     ConsumerBinding out = dataToModel.convertToModel(consumerBindingRepository.save(consumerBindingData));
     consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
     return Optional.ofNullable(out);
