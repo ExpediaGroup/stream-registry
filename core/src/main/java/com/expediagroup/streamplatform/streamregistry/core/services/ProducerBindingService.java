@@ -62,7 +62,7 @@ public class ProducerBindingService {
 
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
     var data = producerBindingRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {

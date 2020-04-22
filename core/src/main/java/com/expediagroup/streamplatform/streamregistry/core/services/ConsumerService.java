@@ -60,7 +60,7 @@ public class ConsumerService {
 
   public Optional<Consumer> read(ConsumerKey key) {
     var data = consumerRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {

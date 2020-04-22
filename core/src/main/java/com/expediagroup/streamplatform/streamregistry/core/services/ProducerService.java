@@ -60,7 +60,7 @@ public class ProducerService {
 
   public Optional<Producer> read(ProducerKey key) {
     var data = producerRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<Producer> update(Producer producer) throws ValidationException {

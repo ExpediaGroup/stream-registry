@@ -60,7 +60,7 @@ public class DomainService {
 
   public Optional<Domain> read(DomainKey key) {
     var data = domainRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<Domain> update(Domain domain) throws ValidationException {

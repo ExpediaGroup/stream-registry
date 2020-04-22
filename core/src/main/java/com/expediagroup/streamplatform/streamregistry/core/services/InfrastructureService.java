@@ -60,7 +60,7 @@ public class InfrastructureService {
 
   public Optional<Infrastructure> read(InfrastructureKey key) {
     var data = infrastructureRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {

@@ -60,7 +60,7 @@ public class ZoneService {
 
   public Optional<Zone> read(ZoneKey key) {
     var data = zoneRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<Zone> update(Zone zone) throws ValidationException {

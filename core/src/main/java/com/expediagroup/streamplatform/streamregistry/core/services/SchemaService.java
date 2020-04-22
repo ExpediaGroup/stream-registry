@@ -60,7 +60,7 @@ public class SchemaService {
 
   public Optional<Schema> read(SchemaKey key) {
     var data = schemaRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<Schema> update(Schema schema) throws ValidationException {

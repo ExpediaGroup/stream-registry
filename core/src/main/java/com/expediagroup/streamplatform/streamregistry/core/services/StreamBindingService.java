@@ -60,7 +60,7 @@ public class StreamBindingService {
 
   public Optional<StreamBinding> read(StreamBindingKey key) {
     var data = streamBindingRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {

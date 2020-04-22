@@ -60,7 +60,7 @@ public class StreamService {
 
   public Optional<Stream> read(StreamKey key) {
     var data = streamRepository.findById(modelToData.convertToData(key));
-    return data.isPresent() ? Optional.of(dataToModel.convertToModel(data.get())) : Optional.empty();
+    return data.map(dataToModel::convertToModel);
   }
 
   public Optional<Stream> update(Stream stream) throws ValidationException {
