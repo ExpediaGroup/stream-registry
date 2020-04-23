@@ -78,6 +78,7 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopicProperties;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
+import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConstants;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -196,8 +197,8 @@ public class NotificationEventListenerKafkaIntegrationTest {
     return producedHeaders.entrySet()
         .stream()
         .filter(e -> e.getKey().getType().equals(key))
-        .filter(e -> e.getValue().lastHeader(NotificationEventUtils.NOTIFICATION_ENTITY_HEADER_NAME) != null)
-        .map(e -> e.getValue().lastHeader(NotificationEventUtils.NOTIFICATION_ENTITY_HEADER_NAME))
+        .filter(e -> e.getValue().lastHeader(NotificationEventConstants.ENTITY_TYPE_HEADER.name) != null)
+        .map(e -> e.getValue().lastHeader(NotificationEventConstants.ENTITY_TYPE_HEADER.name))
         .map(Header::value)
         .map(String::new)
         .filter(entity::equals)
