@@ -35,6 +35,16 @@ import com.expediagroup.streamplatform.streamregistry.data.SchemaData;
 import com.expediagroup.streamplatform.streamregistry.data.StreamBindingData;
 import com.expediagroup.streamplatform.streamregistry.data.StreamData;
 import com.expediagroup.streamplatform.streamregistry.data.ZoneData;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.DomainDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneDataKey;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
@@ -75,7 +85,7 @@ public class DataToModel {
     return transformer.transform(in, clazz);
   }
 
-  public ConsumerKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey in) {
+  public ConsumerKey convertToModel(ConsumerDataKey in) {
     return (ConsumerKey) convert(in,ConsumerKey.class);
   }
 
@@ -83,7 +93,7 @@ public class DataToModel {
     return (Consumer) convert(in,Consumer.class);
   }
 
-  public ConsumerBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey in) {
+  public ConsumerBindingKey convertToModel(ConsumerBindingDataKey in) {
     return (ConsumerBindingKey) convert(in,ConsumerBindingKey.class);
   }
 
@@ -91,7 +101,7 @@ public class DataToModel {
     return (ConsumerBinding) convert(in,ConsumerBinding.class);
   }
 
-  public DomainKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey in) {
+  public DomainKey convertToModel(DomainDataKey in) {
     return (DomainKey) convert(in,DomainKey.class);
   }
 
@@ -99,7 +109,7 @@ public class DataToModel {
     return (Domain) convert(in,Domain.class);
   }
 
-  public InfrastructureKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey in) {
+  public InfrastructureKey convertToModel(InfrastructureDataKey in) {
     return (InfrastructureKey) convert(in,InfrastructureKey.class);
   }
 
@@ -107,7 +117,7 @@ public class DataToModel {
     return (Infrastructure) convert(in,Infrastructure.class);
   }
 
-  public ProducerKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey in) {
+  public ProducerKey convertToModel(ProducerDataKey in) {
     return (ProducerKey) convert(in,ProducerKey.class);
   }
 
@@ -115,7 +125,7 @@ public class DataToModel {
     return (Producer) convert(in,Producer.class);
   }
 
-  public ProducerBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey in) {
+  public ProducerBindingKey convertToModel(ProducerBindingDataKey in) {
     return (ProducerBindingKey) convert(in,ProducerBindingKey.class);
 
   }
@@ -124,7 +134,7 @@ public class DataToModel {
     return (ProducerBinding) convert(in,ProducerBinding.class);
   }
 
-  public SchemaKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey in) {
+  public SchemaKey convertToModel(SchemaDataKey in) {
     return (SchemaKey) convert(in,SchemaKey.class);
   }
 
@@ -132,7 +142,7 @@ public class DataToModel {
     return (Schema) convert(in,Schema.class);
   }
 
-  public StreamKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey in) {
+  public StreamKey convertToModel(StreamDataKey in) {
     return (StreamKey) convert(in,StreamKey.class);
   }
 
@@ -140,7 +150,7 @@ public class DataToModel {
     return (Stream) convert(in,Stream.class);
   }
 
-  public StreamBindingKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey in) {
+  public StreamBindingKey convertToModel(StreamBindingDataKey in) {
     return (StreamBindingKey) convert(in,StreamBindingKey.class);
   }
 
@@ -148,7 +158,7 @@ public class DataToModel {
     return (StreamBinding) convert(in,StreamBinding.class);
   }
 
-  public ZoneKey convertToModel(com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey in) {
+  public ZoneKey convertToModel(ZoneDataKey in) {
     return (ZoneKey) convert(in,ZoneKey.class);
   }
 

@@ -28,8 +28,8 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamDataKey;
 
 @Data
 @AllArgsConstructor
@@ -40,10 +40,10 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey;
 public class StreamData implements EntityData {
 
   @EmbeddedId
-  private StreamKey key;
+  private StreamDataKey key;
 
   @Column(updatable = false)
-  private SchemaKey schemaKey;
+  private SchemaDataKey schemaKey;
   private SpecificationData specification;
   private Status status;
 }

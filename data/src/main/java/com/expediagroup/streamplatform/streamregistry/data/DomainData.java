@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.DomainDataKey;
 
 @Data
 @AllArgsConstructor
@@ -38,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey;
 public class DomainData implements EntityData {
 
   @EmbeddedId
-  private DomainKey key;
+  private DomainDataKey key;
   private SpecificationData specification;
   private Status status;
 }

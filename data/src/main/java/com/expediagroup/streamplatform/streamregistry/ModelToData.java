@@ -34,16 +34,16 @@ import com.expediagroup.streamplatform.streamregistry.data.SpecificationData;
 import com.expediagroup.streamplatform.streamregistry.data.StreamBindingData;
 import com.expediagroup.streamplatform.streamregistry.data.StreamData;
 import com.expediagroup.streamplatform.streamregistry.data.ZoneData;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.DomainKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.StreamKey;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.DomainDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamDataKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneDataKey;
 
 @Component
 public class ModelToData {
@@ -65,80 +65,80 @@ public class ModelToData {
     return transformer.transform(in, clazz);
   }
 
-  public ConsumerKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey in) {
-    return (ConsumerKey) convert(in,ConsumerKey.class);
+  public ConsumerDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey in) {
+    return (ConsumerDataKey) convert(in, ConsumerDataKey.class);
   }
 
   public ConsumerData convertToData(com.expediagroup.streamplatform.streamregistry.model.Consumer in) {
     return (ConsumerData) convert(in, ConsumerData.class);
   }
 
-  public ConsumerBindingKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey in) {
-    return (ConsumerBindingKey) convert(in, ConsumerBindingKey.class);
+  public ConsumerBindingDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey in) {
+    return (ConsumerBindingDataKey) convert(in, ConsumerBindingDataKey.class);
   }
 
   public ConsumerBindingData convertToData(com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding in) {
     return (ConsumerBindingData) convert(in, ConsumerBindingData.class);
   }
 
-  public DomainKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey in) {
-    return (DomainKey) convert(in, DomainKey.class);
+  public DomainDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey in) {
+    return (DomainDataKey) convert(in, DomainDataKey.class);
   }
 
   public DomainData convertToData(com.expediagroup.streamplatform.streamregistry.model.Domain in) {
     return (DomainData) convert(in, DomainData.class);
   }
 
-  public InfrastructureKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey in) {
-    return (InfrastructureKey) convert(in, InfrastructureKey.class);
+  public InfrastructureDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey in) {
+    return (InfrastructureDataKey) convert(in, InfrastructureDataKey.class);
   }
 
   public InfrastructureData convertToData(com.expediagroup.streamplatform.streamregistry.model.Infrastructure in) {
     return (InfrastructureData) convert(in, InfrastructureData.class);
   }
 
-  public ProducerKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey in) {
-    return (ProducerKey) convert(in, ProducerKey.class);
+  public ProducerDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey in) {
+    return (ProducerDataKey) convert(in, ProducerDataKey.class);
   }
 
   public ProducerData convertToData(com.expediagroup.streamplatform.streamregistry.model.Producer in) {
     return (ProducerData) convert(in, ProducerData.class);
   }
 
-  public ProducerBindingKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey in) {
-    return (ProducerBindingKey) convert(in, ProducerBindingKey.class);
+  public ProducerBindingDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey in) {
+    return (ProducerBindingDataKey) convert(in, ProducerBindingDataKey.class);
   }
 
   public ProducerBindingData convertToData(com.expediagroup.streamplatform.streamregistry.model.ProducerBinding in) {
     return (ProducerBindingData) convert(in, ProducerBindingData.class);
   }
 
-  public SchemaKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey in) {
-    return (SchemaKey) convert(in, SchemaKey.class);
+  public SchemaDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey in) {
+    return (SchemaDataKey) convert(in, SchemaDataKey.class);
   }
 
   public SchemaData convertToData(com.expediagroup.streamplatform.streamregistry.model.Schema in) {
     return (SchemaData) convert(in, SchemaData.class);
   }
 
-  public StreamKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey in) {
-    return (StreamKey) convert(in, StreamKey.class);
+  public StreamDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey in) {
+    return (StreamDataKey) convert(in, StreamDataKey.class);
   }
 
   public StreamData convertToData(com.expediagroup.streamplatform.streamregistry.model.Stream in) {
     return (StreamData) convert(in, StreamData.class);
   }
 
-  public StreamBindingKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey in) {
-    return (StreamBindingKey) convert(in, StreamBindingKey.class);
+  public StreamBindingDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey in) {
+    return (StreamBindingDataKey) convert(in, StreamBindingDataKey.class);
   }
 
   public StreamBindingData convertToData(com.expediagroup.streamplatform.streamregistry.model.StreamBinding in) {
     return (StreamBindingData) convert(in, StreamBindingData.class);
   }
 
-  public ZoneKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey in) {
-    return (ZoneKey) convert(in, ZoneKey.class);
+  public ZoneDataKey convertToData(com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey in) {
+    return (ZoneDataKey) convert(in, ZoneDataKey.class);
   }
 
   public ZoneData convertToData(com.expediagroup.streamplatform.streamregistry.model.Zone in) {

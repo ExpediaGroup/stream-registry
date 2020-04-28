@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingDataKey;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingK
 public class ProducerBindingData implements EntityData {
 
   @EmbeddedId
-  private ProducerBindingKey key;
+  private ProducerBindingDataKey key;
   private SpecificationData specification;
   private Status status;
 }

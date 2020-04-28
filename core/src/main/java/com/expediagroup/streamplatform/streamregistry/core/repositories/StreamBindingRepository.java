@@ -16,6 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
 import com.expediagroup.streamplatform.streamregistry.data.StreamBindingData;
-import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingDataKey;
 
-public interface StreamBindingRepository extends CachingJpaRepository<StreamBindingData, StreamBindingKey> {}
+public interface StreamBindingRepository extends CachingJpaRepository<StreamBindingData, StreamBindingDataKey> {}

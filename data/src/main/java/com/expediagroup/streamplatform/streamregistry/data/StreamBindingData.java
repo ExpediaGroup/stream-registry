@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingDataKey;
 
 @Data
 @AllArgsConstructor
@@ -38,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.StreamBindingKey
 public class StreamBindingData implements EntityData {
 
   @EmbeddedId
-  private StreamBindingKey key;
+  private StreamBindingDataKey key;
   private SpecificationData specification;
   private Status status;
 }

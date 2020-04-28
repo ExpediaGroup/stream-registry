@@ -22,22 +22,14 @@ import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-@EqualsAndHashCode
-public class SchemaKey implements Serializable {
+public class DomainDataKey implements Serializable {
 
-  @Column(name = "SKdomain", length = 100)
-  private String domain;
-  @Column(name = "SKname", length = 100)
+  @Column(length = 100)
   private String name;
-
-  public DomainKey getDomainKey() {
-    return new DomainKey(domain);
-  }
 }

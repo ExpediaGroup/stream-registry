@@ -35,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Consumer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.data.ConsumerBindingData;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingDataKey;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
@@ -98,7 +99,7 @@ public class ConsumerBindingService {
   public Optional<ConsumerBinding> find(ConsumerKey key) {
     var example = new
         ConsumerBindingData(
-        new com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingKey(
+        new ConsumerBindingDataKey(
             key.getStreamDomain(),
             key.getStreamName(),
             key.getStreamVersion(),

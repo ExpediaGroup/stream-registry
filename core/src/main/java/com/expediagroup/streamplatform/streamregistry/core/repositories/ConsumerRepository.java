@@ -16,6 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
 import com.expediagroup.streamplatform.streamregistry.data.ConsumerData;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerDataKey;
 
-public interface ConsumerRepository extends CachingJpaRepository<ConsumerData, ConsumerKey> {}
+public interface ConsumerRepository extends CachingJpaRepository<ConsumerData, ConsumerDataKey> {}

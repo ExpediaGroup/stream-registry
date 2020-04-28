@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class ProducerBindingKey implements Serializable {
+public class StreamBindingDataKey implements Serializable {
 
   @Column(length = 100)
   private String streamDomain;
@@ -40,18 +40,12 @@ public class ProducerBindingKey implements Serializable {
   private String infrastructureZone;
   @Column(length = 100)
   private String infrastructureName;
-  @Column(length = 100)
-  private String producerName;
 
-  public StreamKey getStreamKey() {
-    return new StreamKey(streamDomain, streamName, streamVersion);
+  public StreamDataKey getStreamDataKey() {
+    return new StreamDataKey(streamDomain, streamName, streamVersion);
   }
 
-  public ProducerKey getProducerKey() {
-    return new ProducerKey(streamDomain, streamName, streamVersion, infrastructureZone, producerName);
-  }
-
-  public StreamBindingKey getStreamBindingKey() {
-    return new StreamBindingKey(streamDomain, streamName, streamVersion, infrastructureZone, infrastructureName);
+  public InfrastructureDataKey getInfrastructureDataKey() {
+    return new InfrastructureDataKey(infrastructureZone, infrastructureName);
   }
 }

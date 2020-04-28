@@ -16,6 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
 import com.expediagroup.streamplatform.streamregistry.data.ZoneData;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneDataKey;
 
-public interface ZoneRepository extends CachingJpaRepository<ZoneData, ZoneKey> {}
+public interface ZoneRepository extends CachingJpaRepository<ZoneData, ZoneDataKey> {}

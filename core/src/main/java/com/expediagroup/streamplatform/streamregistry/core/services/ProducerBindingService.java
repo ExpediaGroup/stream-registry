@@ -35,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.core.repositories.Producer
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.data.ProducerBindingData;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingDataKey;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
@@ -96,7 +97,7 @@ public class ProducerBindingService {
   public Optional<ProducerBinding> find(ProducerKey key) {
     var example =
         new ProducerBindingData(
-            new com.expediagroup.streamplatform.streamregistry.data.keys.ProducerBindingKey(
+            new ProducerBindingDataKey(
                 key.getStreamDomain(),
                 key.getStreamName(),
                 key.getStreamVersion(),

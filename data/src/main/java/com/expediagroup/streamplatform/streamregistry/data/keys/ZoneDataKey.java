@@ -28,28 +28,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class ConsumerKey implements Serializable {
+public class ZoneDataKey implements Serializable {
 
-  @Column(length = 100)
-  private String streamDomain;
-  @Column(length = 100)
-  private String streamName;
-  @Column(length = 100)
-  private Integer streamVersion;
-  @Column(length = 100)
-  private String zone;
   @Column(length = 100)
   private String name;
-
-  public StreamKey getStreamKey() {
-    return new StreamKey(streamDomain, streamName, streamVersion);
-  }
-
-  public InfrastructureKey getInfrastructureKey() {
-    return new InfrastructureKey(zone, name);
-  }
-
-  public ZoneKey getZoneKey() {
-    return new ZoneKey(zone);
-  }
 }

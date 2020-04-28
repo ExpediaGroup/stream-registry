@@ -28,8 +28,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class DomainKey implements Serializable {
+public class InfrastructureDataKey implements Serializable {
 
   @Column(length = 100)
+  private String zone;
+  @Column(length = 100)
   private String name;
+
+  public ZoneDataKey getZoneDataKey() {
+    return new ZoneDataKey(zone);
+  }
 }

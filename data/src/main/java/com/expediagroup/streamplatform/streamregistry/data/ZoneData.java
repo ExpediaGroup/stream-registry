@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneDataKey;
 
 @Data
 @AllArgsConstructor
@@ -38,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.ZoneKey;
 public class ZoneData implements EntityData {
 
   @EmbeddedId
-  private ZoneKey key;
+  private ZoneDataKey key;
   private SpecificationData specification;
   private Status status;
 }

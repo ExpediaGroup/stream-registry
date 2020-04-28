@@ -28,24 +28,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class StreamBindingKey implements Serializable {
+public class StreamDataKey implements Serializable {
 
   @Column(length = 100)
-  private String streamDomain;
+  private String domain;
   @Column(length = 100)
-  private String streamName;
+  private String name;
   @Column(length = 100)
-  private Integer streamVersion;
-  @Column(length = 100)
-  private String infrastructureZone;
-  @Column(length = 100)
-  private String infrastructureName;
+  private Integer version;
 
-  public StreamKey getStreamKey() {
-    return new StreamKey(streamDomain, streamName, streamVersion);
-  }
-
-  public InfrastructureKey getInfrastructureKey() {
-    return new InfrastructureKey(infrastructureZone, infrastructureName);
+  public DomainDataKey getDomainDataKey() {
+    return new DomainDataKey(domain);
   }
 }

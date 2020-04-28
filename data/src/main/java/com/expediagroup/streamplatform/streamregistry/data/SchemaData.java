@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaDataKey;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.SchemaKey;
 public class SchemaData implements EntityData {
 
   @EmbeddedId
-  private SchemaKey key;
+  private SchemaDataKey key;
   private SpecificationData specification;
   private Status status;
 }

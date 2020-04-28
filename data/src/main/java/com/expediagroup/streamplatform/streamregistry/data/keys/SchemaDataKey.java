@@ -22,20 +22,22 @@ import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class InfrastructureKey implements Serializable {
+@EqualsAndHashCode
+public class SchemaDataKey implements Serializable {
 
-  @Column(length = 100)
-  private String zone;
-  @Column(length = 100)
+  @Column(name = "SKdomain", length = 100)
+  private String domain;
+  @Column(name = "SKname", length = 100)
   private String name;
 
-  public ZoneKey getZoneKey() {
-    return new ZoneKey(zone);
+  public DomainDataKey getDomainDataKey() {
+    return new DomainDataKey(domain);
   }
 }

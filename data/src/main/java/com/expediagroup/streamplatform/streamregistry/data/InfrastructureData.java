@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.Cache;
 
-import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureDataKey;
 
 @Data
 @AllArgsConstructor
@@ -38,7 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.data.keys.InfrastructureKe
 public class InfrastructureData implements EntityData {
 
   @EmbeddedId
-  private InfrastructureKey key;
+  private InfrastructureDataKey key;
   private SpecificationData specification;
   private Status status;
 }
