@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import javax.persistence.EmbeddedId;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +27,6 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 @NoArgsConstructor
 public class Zone implements Entity {
 
-  @EmbeddedId
   private ZoneKey key;
   private Specification specification;
   private Status status;
