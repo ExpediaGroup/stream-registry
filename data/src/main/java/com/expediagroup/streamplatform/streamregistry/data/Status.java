@@ -21,7 +21,6 @@ import javax.persistence.Lob;
 
 import lombok.Data;
 
-@Deprecated // do we need this since it holds one field?
 @Data
 @Embeddable
 public class Status {
