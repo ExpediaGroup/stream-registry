@@ -103,7 +103,7 @@
             <param>postgresql9</param>
           </dialects>
           <packages>
-            <param>com.expediagroup.streamplatform.streamregistry.model</param>
+            <param>com.expediagroup.streamplatform.streamregistry.data</param>
           </packages>
         </configuration>
         <executions>
