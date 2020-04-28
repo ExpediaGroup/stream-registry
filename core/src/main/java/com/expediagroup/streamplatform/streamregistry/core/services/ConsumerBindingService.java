@@ -93,7 +93,7 @@ public class ConsumerBindingService {
   }
 
   public List<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
-    return consumerBindingRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return consumerBindingRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public Optional<ConsumerBinding> find(ConsumerKey key) {

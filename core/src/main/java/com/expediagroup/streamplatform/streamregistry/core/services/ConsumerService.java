@@ -88,7 +88,7 @@ public class ConsumerService {
   }
 
   public List<Consumer> findAll(Predicate<Consumer> filter) {
-    return consumerRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return consumerRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(ConsumerKey key) {

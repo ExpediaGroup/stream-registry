@@ -88,7 +88,7 @@ public class InfrastructureService {
   }
 
   public List<Infrastructure> findAll(Predicate<Infrastructure> filter) {
-    return infrastructureRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return infrastructureRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(InfrastructureKey key) {

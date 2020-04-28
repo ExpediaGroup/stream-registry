@@ -87,7 +87,7 @@ public class SchemaService {
   }
 
   public List<Schema> findAll(Predicate<Schema> filter) {
-    return schemaRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return schemaRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(SchemaKey key) {

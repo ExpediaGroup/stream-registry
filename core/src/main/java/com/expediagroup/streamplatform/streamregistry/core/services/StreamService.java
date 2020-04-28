@@ -90,7 +90,7 @@ public class StreamService {
   }
 
   public List<Stream> findAll(Predicate<Stream> filter) {
-    return streamRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return streamRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(StreamKey key) {

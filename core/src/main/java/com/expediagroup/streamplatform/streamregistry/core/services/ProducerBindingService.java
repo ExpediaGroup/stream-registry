@@ -91,7 +91,7 @@ public class ProducerBindingService {
   }
 
   public List<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return producerBindingRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return producerBindingRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public Optional<ProducerBinding> find(ProducerKey key) {
