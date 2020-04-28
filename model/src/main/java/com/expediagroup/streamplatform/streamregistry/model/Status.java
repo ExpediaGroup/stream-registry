@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@Deprecated // do we need this since it holds one field?
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Status {
