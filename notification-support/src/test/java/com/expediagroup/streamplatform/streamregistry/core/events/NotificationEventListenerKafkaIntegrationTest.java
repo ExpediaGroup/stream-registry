@@ -80,6 +80,7 @@ import com.expediagroup.streamplatform.streamregistry.core.events.config.NewTopi
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig;
 import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConstants;
 import com.expediagroup.streamplatform.streamregistry.core.events.listeners.SchemaNotificationEventListener;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
@@ -87,6 +88,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
@@ -124,6 +126,9 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public static final int TEST_UPDATE_PRODUCER_EVENTS = 4;
   public static final int TEST_CREATE_PRODUCER_EVENTS = 3;
 
+  public static final int TEST_UPDATE_CONSUMER_EVENTS = 2;
+  public static final int TEST_CREATE_CONSUMER_EVENTS = 5;
+
   public static final Map<AvroKey, AvroEvent> producedEvents = new ConcurrentHashMap<>();
   public static final Map<AvroKey, Headers> producedHeaders = new ConcurrentHashMap<>();
 
@@ -158,6 +163,9 @@ public class NotificationEventListenerKafkaIntegrationTest {
     IntStream.rangeClosed(1, TEST_UPDATE_PRODUCER_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyProducerEvent(i, EventType.UPDATE, "producer-update")));
     IntStream.rangeClosed(1, TEST_CREATE_PRODUCER_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyProducerEvent(i, EventType.CREATE, "producer-create")));
 
+    IntStream.rangeClosed(1, TEST_UPDATE_CONSUMER_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyConsumerEvent(i, EventType.UPDATE, "consumer-update")));
+    IntStream.rangeClosed(1, TEST_CREATE_CONSUMER_EVENTS).forEachOrdered(i -> applicationEventMulticaster.multicastEvent(getDummyConsumerEvent(i, EventType.CREATE, "consumer-create")));
+
     TimeUnit.SECONDS.sleep(5);
 
     Assert.assertFalse("Produced events shouldn't be empty", producedEvents.isEmpty());
@@ -166,11 +174,13 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val streamEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.STREAM_VERSION)).count();
     val streamBindingEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.STREAM_BINDING)).count();
     val producerEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.PRODUCER)).count();
+    val consumerEvents = producedEvents.keySet().stream().filter(key -> key.getType().equals(AvroKeyType.CONSUMER)).count();
 
     Assert.assertEquals("Number of messages should be same as schema events", schemaEvents, (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
     Assert.assertEquals("Number of messages should be same as stream events", streamEvents, (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
     Assert.assertEquals("Number of messages should be same as streamBinding events", streamBindingEvents, (TEST_CREATE_STREAM_BINDING_EVENTS + TEST_UPDATE_STREAM_BINDING_EVENTS));
     Assert.assertEquals("Number of messages should be same as producer events", producerEvents, (TEST_UPDATE_PRODUCER_EVENTS + TEST_CREATE_PRODUCER_EVENTS));
+    Assert.assertEquals("Number of messages should be same as consumer events", consumerEvents, (TEST_UPDATE_CONSUMER_EVENTS + TEST_CREATE_CONSUMER_EVENTS));
 
     val streamsWithSchemaKey = producedEvents.values()
         .stream()
@@ -185,12 +195,14 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val schemaHeaders = getHeaderCount(producedHeaders, AvroKeyType.SCHEMA, "SCHEMA");
     val streamHeaders = getHeaderCount(producedHeaders, AvroKeyType.STREAM_VERSION, "STREAM");;
     val streamBindingHeaders = getHeaderCount(producedHeaders, AvroKeyType.STREAM_BINDING, "STREAMBINDING");;
-    val producerHeaders = getHeaderCount(producedHeaders, AvroKeyType.PRODUCER, "PRODUCER");;
+    val producerHeaders = getHeaderCount(producedHeaders, AvroKeyType.PRODUCER, "PRODUCER");
+    val consumerHeaders = getHeaderCount(producedHeaders, AvroKeyType.CONSUMER, "CONSUMER");;
 
     Assert.assertEquals("Number of headers should be same as schema events", schemaHeaders, (TEST_CREATE_SCHEMA_EVENTS + TEST_UPDATE_SCHEMA_EVENTS));
     Assert.assertEquals("Number of headers should be same as stream events", streamHeaders, (TEST_CREATE_STREAM_EVENTS + TEST_UPDATE_STREAM_EVENTS));
     Assert.assertEquals("Number of headers should be same as streamBinding events", streamBindingHeaders, (TEST_CREATE_STREAM_BINDING_EVENTS + TEST_UPDATE_STREAM_BINDING_EVENTS));
     Assert.assertEquals("Number of headers should be same as producer events", producerHeaders, (TEST_UPDATE_PRODUCER_EVENTS + TEST_CREATE_PRODUCER_EVENTS));
+    Assert.assertEquals("Number of headers should be same as consumer events", consumerHeaders, (TEST_UPDATE_CONSUMER_EVENTS + TEST_CREATE_CONSUMER_EVENTS));
   }
 
   private static long getHeaderCount(Map<AvroKey, Headers> producedHeaders, AvroKeyType key, String entity) {
@@ -439,6 +451,16 @@ public class NotificationEventListenerKafkaIntegrationTest {
         .build();
   }
 
+  public NotificationEvent<Consumer> getDummyConsumerEvent(int event, EventType eventType, String source) {
+    log.info("Emitting event {}", event);
+    Consumer consumer = getDummyConsumer();
+    return NotificationEvent.<Consumer>builder()
+        .entity(consumer)
+        .source(source)
+        .eventType(eventType)
+        .build();
+  }
+
   public static Producer getDummyProducer() {
     val streamName = Instant.now().toString();
     val producerName = "producer1";
@@ -476,5 +498,44 @@ public class NotificationEventListenerKafkaIntegrationTest {
     producer.setStatus(status);
 
     return producer;
+  }
+
+  public static Consumer getDummyConsumer() {
+    val streamName = Instant.now().toString();
+    val consumerName = "consumer1";
+    val domain = "domain";
+    val description = "description";
+    val type = "type";
+    val configJson = "{}";
+    val statusJson = "{foo:bar}";
+    val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
+    val version = 1;
+    val zone = "aws_us_east_1";
+
+    // Key
+    val key = new ConsumerKey();
+    key.setName(consumerName);
+    key.setStreamName(streamName);
+    key.setStreamDomain(domain);
+    key.setStreamVersion(version);
+    key.setZone(zone);
+
+    // Spec
+    val spec = new Specification();
+    spec.setDescription(description);
+    spec.setType(type);
+    spec.setConfigJson(configJson);
+    spec.setTags(tags);
+
+    // Status
+    val status = new Status();
+    status.setStatusJson(statusJson);
+
+    val consumer = new Consumer();
+    consumer.setKey(key);
+    consumer.setSpecification(spec);
+    consumer.setStatus(status);
+
+    return consumer;
   }
 }

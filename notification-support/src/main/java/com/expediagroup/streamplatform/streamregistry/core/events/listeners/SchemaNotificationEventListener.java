@@ -52,21 +52,21 @@ public class SchemaNotificationEventListener implements NotificationEventListene
   @EventListener(condition = IS_CREATING_A_SCHEMA)
   public void onCreate(NotificationEvent<Schema> event) {
     log.debug("On update schema event {}", event);
-    notificationEventHandlers.stream().forEach(h -> this.handle(h::onCreate, event));
+    notificationEventHandlers.forEach(h -> this.handle(h::onCreate, event));
   }
 
   @Override
   @EventListener(condition = IS_UPDATING_A_SCHEMA)
   public void onUpdate(NotificationEvent<Schema> event) {
     log.debug("On update schema event {}", event);
-    notificationEventHandlers.stream().forEach(h -> this.handle(h::onUpdate, event));
+    notificationEventHandlers.forEach(h -> this.handle(h::onUpdate, event));
   }
 
   @Override
   @EventListener(condition = IS_DELETING_A_SCHEMA)
   public void onDelete(NotificationEvent<Schema> event) {
     log.debug("On delete schema event {}", event);
-    notificationEventHandlers.stream().forEach(h -> this.handle(h::onDelete, event));
+    notificationEventHandlers.forEach(h -> this.handle(h::onDelete, event));
   }
 
   private void handle(Consumer<NotificationEvent<Schema>> handle, NotificationEvent<Schema> event) {

@@ -52,21 +52,21 @@ public class StreamNotificationEventListener implements NotificationEventListene
   @EventListener(condition = IS_CREATING_A_STREAM)
   public void onCreate(NotificationEvent<Stream> event) {
     log.debug("On update stream event {}", event);
-    notificationEventHandlers.stream().forEach(h -> this.handle(h::onCreate, event));
+    notificationEventHandlers.forEach(h -> this.handle(h::onCreate, event));
   }
 
   @Override
   @EventListener(condition = IS_UPDATING_A_STREAM)
   public void onUpdate(NotificationEvent<Stream> event) {
     log.debug("On update stream event {}", event);
-    notificationEventHandlers.stream().forEach(h -> this.handle(h::onUpdate, event));
+    notificationEventHandlers.forEach(h -> this.handle(h::onUpdate, event));
   }
 
   @Override
   @EventListener(condition = IS_DELETING_A_STREAM)
   public void onDelete(NotificationEvent<Stream> event) {
     log.debug("On delete stream event {}", event);
-    notificationEventHandlers.stream().forEach(h -> this.handle(h::onDelete, event));
+    notificationEventHandlers.forEach(h -> this.handle(h::onDelete, event));
   }
 
   private void handle(Consumer<NotificationEvent<Stream>> handle, NotificationEvent<Stream> event) {

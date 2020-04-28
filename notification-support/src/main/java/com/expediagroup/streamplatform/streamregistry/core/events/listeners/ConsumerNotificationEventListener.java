@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.core.events.listeners;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,48 +26,49 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventHandler;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventListener;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class StreamBindingNotificationEventListener implements NotificationEventListener<StreamBinding> {
-  private static final String IS_CREATING_A_STREAM_BINDING = "" +
-      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.StreamBinding)" +
+public class ConsumerNotificationEventListener implements NotificationEventListener<Consumer> {
+  private static final String IS_CREATING_A_CONSUMER = "" +
+      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.Consumer)" +
       "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).CREATE";
 
-  private static final String IS_UPDATING_A_STREAM_BINDING = "" +
-      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.StreamBinding)" +
+  private static final String IS_UPDATING_A_CONSUMER = "" +
+      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.Consumer)" +
       "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).UPDATE";
 
-  private static final String IS_DELETING_A_STREAM_BINDING = "" +
-      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.StreamBinding)" +
+
+  private static final String IS_DELETING_A_CONSUMER = "" +
+      "event.entity instanceof T(com.expediagroup.streamplatform.streamregistry.model.Consumer)" +
       "and event.eventType == T(com.expediagroup.streamplatform.streamregistry.core.events.EventType).DELETE";
 
-  private final List<NotificationEventHandler<StreamBinding>> notificationEventHandlers;
+  private final List<NotificationEventHandler<Consumer>> notificationEventHandlers;
 
   @Override
-  @EventListener(condition = IS_CREATING_A_STREAM_BINDING)
-  public void onCreate(NotificationEvent<StreamBinding> event) {
-    log.debug("On update streamBinding event {}", event);
+  @EventListener(condition = IS_CREATING_A_CONSUMER)
+  public void onCreate(NotificationEvent<Consumer> event) {
+    log.debug("On update consumer event {}", event);
     notificationEventHandlers.forEach(h -> this.handle(h::onCreate, event));
   }
 
   @Override
-  @EventListener(condition = IS_UPDATING_A_STREAM_BINDING)
-  public void onUpdate(NotificationEvent<StreamBinding> event) {
-    log.debug("On update streamBinding event {}", event);
+  @EventListener(condition = IS_UPDATING_A_CONSUMER)
+  public void onUpdate(NotificationEvent<Consumer> event) {
+    log.debug("On update consumer event {}", event);
     notificationEventHandlers.forEach(h -> this.handle(h::onUpdate, event));
   }
 
   @Override
-  @EventListener(condition = IS_DELETING_A_STREAM_BINDING)
-  public void onDelete(NotificationEvent<StreamBinding> event) {
-    log.debug("On delete streamBinding event {}", event);
+  @EventListener(condition = IS_DELETING_A_CONSUMER)
+  public void onDelete(NotificationEvent<Consumer> event) {
+    log.debug("On delete consumer event {}", event);
     notificationEventHandlers.forEach(h -> this.handle(h::onDelete, event));
   }
 
-  private void handle(Consumer<NotificationEvent<StreamBinding>> handle, NotificationEvent<StreamBinding> event) {
+  private void handle(java.util.function.Consumer<NotificationEvent<Consumer>> handle, NotificationEvent<Consumer> event) {
     try {
       handle.accept(event);
     } catch (Error e) {
