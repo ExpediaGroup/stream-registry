@@ -40,5 +40,5 @@ public class ProducerBindingData implements EntityData {
   @EmbeddedId
   private ProducerBindingDataKey key;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }

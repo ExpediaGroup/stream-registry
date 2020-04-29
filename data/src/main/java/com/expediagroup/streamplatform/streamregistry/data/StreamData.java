@@ -45,5 +45,5 @@ public class StreamData implements EntityData {
   @Column(updatable = false)
   private SchemaDataKey schemaKey;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }

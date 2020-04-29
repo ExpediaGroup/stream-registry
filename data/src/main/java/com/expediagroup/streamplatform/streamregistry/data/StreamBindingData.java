@@ -40,5 +40,5 @@ public class StreamBindingData implements EntityData {
   @EmbeddedId
   private StreamBindingDataKey key;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }

@@ -40,5 +40,5 @@ public class ZoneData implements EntityData {
   @EmbeddedId
   private ZoneDataKey key;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }

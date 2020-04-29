@@ -40,5 +40,5 @@ public class InfrastructureData implements EntityData {
   @EmbeddedId
   private InfrastructureDataKey key;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }

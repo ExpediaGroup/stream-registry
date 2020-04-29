@@ -40,5 +40,5 @@ public class SchemaData implements EntityData {
   @EmbeddedId
   private SchemaDataKey key;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }

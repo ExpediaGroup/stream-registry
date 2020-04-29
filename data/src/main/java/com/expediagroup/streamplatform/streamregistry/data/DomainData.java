@@ -40,5 +40,5 @@ public class DomainData implements EntityData {
   @EmbeddedId
   private DomainDataKey key;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }

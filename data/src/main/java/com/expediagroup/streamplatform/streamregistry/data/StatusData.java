@@ -23,15 +23,15 @@ import lombok.Data;
 
 @Data
 @Embeddable
-public class Status {
+public class StatusData {
 
   @Lob
   @Column(name = "statusJson", length = 20000)
   private String statusJson;
 
-  public Status() {}
+  public StatusData() {}
 
-  public Status(String statusJson) {
+  public StatusData(String statusJson) {
     this.statusJson = statusJson;
   }
 

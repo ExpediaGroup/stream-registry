@@ -40,5 +40,5 @@ public class ConsumerBindingData implements EntityData {
   @EmbeddedId
   private ConsumerBindingDataKey key;
   private SpecificationData specification;
-  private Status status;
+  private StatusData status;
 }
