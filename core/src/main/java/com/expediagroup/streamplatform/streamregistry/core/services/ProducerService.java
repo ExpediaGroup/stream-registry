@@ -87,7 +87,7 @@ public class ProducerService {
   }
 
   public List<Producer> findAll(Predicate<Producer> filter) {
-    return producerRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return producerRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(ProducerKey key) {

@@ -9,16 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Emit event on producer mutation.
 - Emit event on streambinding mutation.
 
-### Bugfix
-- Fixed issues with referential integrity on binding entities.
-
-## [0.10.5] 2020-03-24
 ### Changed
 - Split internal representation into Model and Data
 - Fixed issues with Stream updates
 - Addressed possible issue with notifications
 
-## [Unreleased]
+### Bugfix
+- Fixed issues with referential integrity on binding entities.
+
+## [0.10.5] 2020-03-24
 ### Changed
 - Removed auto configuration of default handlers.
 

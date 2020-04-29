@@ -79,24 +79,24 @@ public class HandlerService {
     checkArgument(handlerTargets.contains(target), "No Handlers for " + target.getSimpleName() + " defined");
   }
 
-  private <T extends Entity> Handler<T> getHandler(T dataEntity) {
-    Handler<?> handler = handlers.get(new Key(dataEntity.getSpecification().getType(), dataEntity.getClass()));
+  private <T extends Entity> Handler<T> getHandler(T entity) {
+    Handler<?> handler = handlers.get(new Key(entity.getSpecification().getType(), entity.getClass()));
     if (handler == null) {
       Set<String> supportedTypes = handlers.keySet().stream()
-          .filter(k -> k.entityClass.equals(dataEntity.getClass()))
+          .filter(k -> k.entityClass.equals(entity.getClass()))
           .map(Key::getType)
           .collect(toSet());
       throw new ValidationException(
-          "There is no handler for " + dataEntity.getClass().getSimpleName()
-              + " entities with type " + dataEntity.getSpecification().getType()
+          "There is no handler for " + entity.getClass().getSimpleName()
+              + " entities with type " + entity.getSpecification().getType()
               + ". Expected one of " + supportedTypes);
     }
     return (Handler<T>) handler;
   }
 
-  public <T extends Entity> Specification handleInsert(T dataEntity) {
+  public <T extends Entity> Specification handleInsert(T entity) {
     try {
-      return getHandler(dataEntity).handleInsert(dataEntity);
+      return getHandler(entity).handleInsert(entity);
     } catch (Exception e) {
       throw new ValidationException(e);
     }

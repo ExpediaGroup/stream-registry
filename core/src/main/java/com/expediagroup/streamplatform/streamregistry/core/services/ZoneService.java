@@ -87,7 +87,7 @@ public class ZoneService {
   }
 
   public List<Zone> findAll(Predicate<Zone> filter) {
-    return zoneRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return zoneRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(ZoneKey key) {

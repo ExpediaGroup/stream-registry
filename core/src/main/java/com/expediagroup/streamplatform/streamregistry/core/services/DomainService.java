@@ -88,7 +88,7 @@ public class DomainService {
   }
 
   public List<Domain> findAll(Predicate<Domain> filter) {
-    return domainRepository.findAll().stream().map(d -> dataToModel.convertToModel(d)).filter(filter).collect(toList());
+    return domainRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(DomainKey key) {
