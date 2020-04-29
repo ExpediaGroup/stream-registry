@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
 
 import java.util.Collections;
 import java.util.function.Function;
@@ -85,7 +85,7 @@ public class NotificationEventUtilsTest {
     key.setName(name);
     key.setDomain(domain);
 
-    Specification spec = new Specification(description,tags,type,deserialise(configJson));
+    Specification spec = new Specification(description, tags, type, deserialise(configJson));
 
     Status status = new Status(deserialise(statusJson));
 
@@ -135,7 +135,7 @@ public class NotificationEventUtilsTest {
     key.setVersion(version);
     key.setDomain(domain);
 
-    Specification spec = new Specification(description,tags,type,deserialise(configJson));
+    Specification spec = new Specification(description, tags, type, deserialise(configJson));
 
     Status status = new Status(deserialise(statusJson));
 

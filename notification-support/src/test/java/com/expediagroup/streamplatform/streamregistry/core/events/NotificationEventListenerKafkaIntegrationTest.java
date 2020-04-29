@@ -16,12 +16,12 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -196,7 +196,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
 
   @Slf4j
   @Configuration
-  @ComponentScan(basePackageClasses = { SchemaNotificationEventListener.class })
+  @ComponentScan(basePackageClasses = {SchemaNotificationEventListener.class})
   public static class SpyListenerConfiguration extends NotificationEventConfig {
     @Value("${" + KAFKA_BOOTSTRAP_SERVERS_PROPERTY + ":#{null}}")
     private String bootstrapServers;
@@ -268,7 +268,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Schema> getDummySchemaEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Schema schema = getDummySchema();
-    return NotificationEvent.<Schema> builder()
+    return NotificationEvent.<Schema>builder()
         .entity(schema)
         .source(source)
         .eventType(eventType)
@@ -303,7 +303,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Stream> getDummyStreamEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Stream stream = getDummyStream();
-    return NotificationEvent.<Stream> builder()
+    return NotificationEvent.<Stream>builder()
         .entity(stream)
         .source(source)
         .eventType(eventType)

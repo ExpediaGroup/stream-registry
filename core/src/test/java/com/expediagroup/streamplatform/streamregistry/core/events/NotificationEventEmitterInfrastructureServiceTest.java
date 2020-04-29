@@ -15,10 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,22 +31,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.InfrastructureRepository;
 import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
-import com.expediagroup.streamplatform.streamregistry.data.InfrastructureData;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfig.class)
 public class NotificationEventEmitterInfrastructureServiceTest {
-
-  private DataToModel dataToModel = new DataToModel();
-  private ModelToData modelToData = new ModelToData();
 
   @MockBean
   private ApplicationEventMulticaster applicationEventMulticaster;
@@ -64,19 +59,18 @@ public class NotificationEventEmitterInfrastructureServiceTest {
 
   @Before
   public void before() {
-    infrastructureServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Infrastructure> builder()
+    infrastructureServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<Infrastructure>builder()
         .classType(Infrastructure.class)
         .applicationEventMulticaster(applicationEventMulticaster)
         .build());
 
-    infrastructureService = Mockito.spy(new InfrastructureService(dataToModel, modelToData, handlerService, infrastructureValidator, infrastructureRepository,
+    infrastructureService = Mockito.spy(new InfrastructureService(handlerService, infrastructureValidator, infrastructureRepository,
         infrastructureServiceEventEmitter));
   }
 
   @Test
   public void givenAInfrastructureForCreate_validateThatNotificationEventIsEmitted() {
     final Infrastructure entity = new Infrastructure();
-    final InfrastructureData data = modelToData.convertToData(entity);
 
     final EventType type = EventType.CREATE;
     final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
@@ -85,7 +79,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
     Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.empty());
     Mockito.doNothing().when(infrastructureValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
-    Mockito.when(infrastructureRepository.save(any())).thenReturn(data);
+    Mockito.when(infrastructureRepository.save(any())).thenReturn(entity);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     infrastructureService.create(entity);
@@ -100,17 +94,16 @@ public class NotificationEventEmitterInfrastructureServiceTest {
   @Test
   public void givenAInfrastructureForUpdate_validateThatNotificationEventIsEmitted() {
     final Infrastructure entity = new Infrastructure();
-    final InfrastructureData data = modelToData.convertToData(entity);
 
     final EventType type = EventType.UPDATE;
     final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<Infrastructure> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.of(data));
+    Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.of(entity));
     Mockito.doNothing().when(infrastructureValidator).validateForUpdate(Mockito.eq(entity), any());
     Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
-    Mockito.when(infrastructureRepository.save(any())).thenReturn(data);
+    Mockito.when(infrastructureRepository.save(any())).thenReturn(entity);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     infrastructureService.update(entity);
@@ -125,7 +118,6 @@ public class NotificationEventEmitterInfrastructureServiceTest {
   @Test
   public void givenANullInfrastructureRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
     final Infrastructure entity = new Infrastructure();
-    final InfrastructureData data = modelToData.convertToData(entity);
 
     Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.empty());
     Mockito.doNothing().when(infrastructureValidator).validateForCreate(entity);
@@ -146,9 +138,8 @@ public class NotificationEventEmitterInfrastructureServiceTest {
   @Test
   public void givenANullInfrastructureRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
     final Infrastructure entity = new Infrastructure();
-    final InfrastructureData data = modelToData.convertToData(entity);
 
-    Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.of(data));
+    Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.of(entity));
     Mockito.doNothing().when(infrastructureValidator).validateForUpdate(Mockito.eq(entity), any());
     Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
@@ -167,17 +158,16 @@ public class NotificationEventEmitterInfrastructureServiceTest {
   @Test
   public void givenAInfrastructureForUpsert_validateThatNotificationEventIsEmitted() {
     final Infrastructure entity = new Infrastructure();
-    final InfrastructureData data = modelToData.convertToData(entity);
 
     final EventType type = EventType.UPDATE;
     final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<Infrastructure> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.of(data));
+    Mockito.when(infrastructureRepository.findById(any())).thenReturn(Optional.of(entity));
     Mockito.doNothing().when(infrastructureValidator).validateForUpdate(Mockito.eq(entity), any());
     Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
-    Mockito.when(infrastructureRepository.save(any())).thenReturn(data);
+    Mockito.when(infrastructureRepository.save(any())).thenReturn(entity);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     infrastructureService.upsert(entity);
@@ -192,7 +182,6 @@ public class NotificationEventEmitterInfrastructureServiceTest {
   @Test
   public void givenAInfrastructureForCreate_handleAMulticasterException() {
     final Infrastructure entity = new Infrastructure();
-    final InfrastructureData data = modelToData.convertToData(entity);
 
     final EventType type = EventType.CREATE;
     final String source = infrastructureServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
@@ -202,7 +191,7 @@ public class NotificationEventEmitterInfrastructureServiceTest {
     Mockito.doNothing().when(infrastructureValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-    Mockito.when(infrastructureRepository.save(any())).thenReturn(data);
+    Mockito.when(infrastructureRepository.save(any())).thenReturn(entity);
     Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
 
     Optional<Infrastructure> response = infrastructureService.create(entity);
@@ -218,16 +207,18 @@ public class NotificationEventEmitterInfrastructureServiceTest {
   }
 
   public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
-    return NotificationEvent.<T> builder()
+    return NotificationEvent.<T>builder()
         .source(source)
         .eventType(type)
         .entity(entity)
         .build();
   }
 
+  private final ObjectMapper mapper = new ObjectMapper();
+
   public Specification getDummySpecification() {
     Specification spec = new Specification();
-    spec.setConfiguration(deserialise("{}"));
+    spec.setConfiguration(mapper.createObjectNode());
     spec.setDescription("dummy spec");
     return spec;
   }
