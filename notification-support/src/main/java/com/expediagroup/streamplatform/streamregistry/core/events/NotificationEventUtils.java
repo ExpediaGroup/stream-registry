@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.serialise;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -32,7 +33,6 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroSchema;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroStream;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
@@ -89,11 +89,9 @@ public class NotificationEventUtils {
         .collect(Collectors.toList());
 
     val type = specification.getType();
-    val configJson = specification.getConfigJson();
+    val config = specification.getConfiguration();
 
-    val statusJson = Optional.ofNullable(schema.getStatus())
-        .map(Status::getStatusJson)
-        .orElse(null);
+    val status = Optional.ofNullable(schema.getStatus()).orElse(null);
 
     val avroSchema = AvroSchema.newBuilder()
         .setDomain(domain)
@@ -101,8 +99,8 @@ public class NotificationEventUtils {
         .setDescription(description)
         .setTags(tags)
         .setType(type)
-        .setConfigurationString(configJson)
-        .setStatusString(statusJson)
+        .setConfigurationString(serialise(config))
+        .setStatusString(serialise(status.getObjectNode()))
         .build();
 
     return AvroEvent.newBuilder()
@@ -153,11 +151,9 @@ public class NotificationEventUtils {
         .collect(Collectors.toList());
 
     val type = specification.getType();
-    val configJson = specification.getConfigJson();
+    val config = specification.getConfiguration();
 
-    val statusJson = Optional.ofNullable(stream.getStatus())
-        .map(Status::getStatusJson)
-        .orElse(null);
+    val status = Optional.ofNullable(stream.getStatus()).orElse(null);
 
     val avroStream = AvroStream.newBuilder()
         .setVersion(version)
@@ -166,8 +162,8 @@ public class NotificationEventUtils {
         .setDescription(description)
         .setTags(tags)
         .setType(type)
-        .setConfigurationString(configJson)
-        .setStatusString(statusJson)
+        .setConfigurationString(serialise(config))
+        .setStatusString(serialise(status.getObjectNode()))
         .setSchemaKey(avroSchema)
         .build();
 
@@ -202,7 +198,7 @@ public class NotificationEventUtils {
     requireNonNull(schema.getSpecification().getDescription(), canNotBeNull("spec's description"));
     requireNonNull(schema.getSpecification().getTags(), canNotBeNull("spec's tags"));
     requireNonNull(schema.getSpecification().getType(), canNotBeNull("spec's type"));
-    requireNonNull(schema.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
+    requireNonNull(schema.getSpecification().getConfiguration(), canNotBeNull("spec's config json"));
   }
 
   private static void validateStreamKey(Stream stream) {
@@ -220,7 +216,7 @@ public class NotificationEventUtils {
     requireNonNull(stream.getSpecification().getDescription(), canNotBeNull("spec's description"));
     requireNonNull(stream.getSpecification().getTags(), canNotBeNull("spec's tags"));
     requireNonNull(stream.getSpecification().getType(), canNotBeNull("spec's type"));
-    requireNonNull(stream.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
+    requireNonNull(stream.getSpecification().getConfiguration(), canNotBeNull("spec's config json"));
   }
 
   private static String canNotBeNull(String target) {

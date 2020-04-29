@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,36 +15,23 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Lob;
-
-import lombok.Data;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@Data
-@Embeddable
+@NoArgsConstructor
+@EqualsAndHashCode
 public class Status {
 
-  @Lob
-  @Column(name = "statusJson", length = 20000)
-  private String statusJson;
+  private ObjectNode objectNode;
 
-  public Status() {}
-
-  public Status(String statusJson) {
-    this.statusJson = statusJson;
+  public Status(ObjectNode objectNode) {
+    this.objectNode = objectNode;
   }
 
-  public ObjectNode getAgentStatus() {
-    return deserialise(getStatusJson());
-  }
-
-  public void setAgentStatus(ObjectNode configuration) {
-    statusJson = serialise(configuration);
+  public ObjectNode getObjectNode() {
+    return objectNode == null ? new ObjectMapper().createObjectNode() : objectNode;
   }
 }

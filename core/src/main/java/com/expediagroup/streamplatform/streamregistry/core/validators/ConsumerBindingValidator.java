@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 @Component
@@ -44,7 +43,11 @@ public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
   }
 
   private void validateForCreateAndUpdate(ConsumerBinding consumerbinding) {
-    consumerService.validateConsumerExists(consumerbinding.getKey().getConsumerKey());
-    streamBindingService.validateStreamBindingExists(consumerbinding.getKey().getStreamBindingKey());
+    if (!consumerService.exists(consumerbinding.getKey().getConsumerKey())) {
+      throw new ValidationException("Consumer does not exist");
+    }
+    if (!streamBindingService.exists(consumerbinding.getKey().getStreamBindingKey())) {
+      throw new ValidationException("StreamBinding does not exist");
+    }
   }
 }

@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
 import static java.lang.String.valueOf;
 
 import java.util.Collections;
@@ -49,7 +50,7 @@ public class ProducerNotificationEventUtilsTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
@@ -66,12 +67,11 @@ public class ProducerNotificationEventUtilsTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
     val producer = new Producer();
     producer.setKey(key);

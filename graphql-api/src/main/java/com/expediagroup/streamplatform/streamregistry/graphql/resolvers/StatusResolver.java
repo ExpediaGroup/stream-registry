@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Component;
@@ -26,6 +24,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Status;
 @Component
 public class StatusResolver implements Resolvers.StatusResolver {
   public ObjectNode getAgentStatus(Status status) {
-    return deserialise(status.getStatusJson());
+    return status.getObjectNode();
   }
 }

@@ -20,15 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 @Component
 @RequiredArgsConstructor
 public class ProducerBindingValidator implements Validator<ProducerBinding> {
   private final ProducerService producerService;
-  private final StreamBindingService streamBindingService;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -44,7 +41,8 @@ public class ProducerBindingValidator implements Validator<ProducerBinding> {
   }
 
   public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
-    producerService.validateProducerExists(producerbinding.getKey().getProducerKey());
-    streamBindingService.validateStreamBindingExists(producerbinding.getKey().getStreamBindingKey());
+    if (!producerService.exists(producerbinding.getKey().getProducerKey())) {
+      throw new ValidationException("Producer does not exist");
+    }
   }
 }

@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.data.ConsumerBindingData;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingDataKey;
 
-public interface ConsumerBindingRepository extends CachingJpaRepository<ConsumerBinding, ConsumerBindingKey> {}
+public interface ConsumerBindingRepository extends CachingJpaRepository<ConsumerBindingData, ConsumerBindingDataKey> {}

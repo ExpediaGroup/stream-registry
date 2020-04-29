@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.handler;
 
-import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
-public interface Handler<T extends ManagedType> {
+public interface Handler<T extends Entity> {
   String type();
 
   Class<T> target();

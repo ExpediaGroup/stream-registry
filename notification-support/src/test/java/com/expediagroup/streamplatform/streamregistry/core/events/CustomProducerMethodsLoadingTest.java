@@ -26,6 +26,8 @@ import static com.expediagroup.streamplatform.streamregistry.core.events.config.
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.serialise;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -155,8 +157,8 @@ public class CustomProducerMethodsLoadingTest {
         .setDescription(producer.getSpecification().getDescription())
         .setTags(Collections.emptyList())
         .setType(producer.getSpecification().getType())
-        .setConfigurationString(producer.getSpecification().getConfigJson())
-        .setStatusString(producer.getStatus().getStatusJson())
+        .setConfigurationString(serialise(producer.getSpecification().getConfiguration()))
+        .setStatusString(serialise(producer.getStatus().getObjectNode()))
         .build();
 
     val event = AvroEvent.newBuilder().setProducerEntity(avroEvent).build();
@@ -167,16 +169,16 @@ public class CustomProducerMethodsLoadingTest {
   }
 
   public static Producer getDummyProducer() {
-    val name = Instant.now().toString();
-    val domain = "domain";
-    val description = "description";
-    val type = "type";
-    val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    String name = Instant.now().toString();
+    String domain = "domain";
+    String description = "description";
+    String type = "type";
+    String configJson = "{}";
+    String statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
-    val zone = "aws_us_east_1";
-    val streamName = "stream01";
+    String zone = "aws_us_east_1";
+    String streamName = "stream01";
 
     // Key
     val key = new ProducerKey();
@@ -190,12 +192,11 @@ public class CustomProducerMethodsLoadingTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
     val producer = new Producer();
     producer.setKey(key);

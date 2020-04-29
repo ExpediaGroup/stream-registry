@@ -33,8 +33,8 @@ import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.GenericContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
+import com.expediagroup.streamplatform.streamregistry.data.DomainData;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -91,8 +91,7 @@ public class StreamRegistryIT {
 
   @AfterClass
   public static void after() {
-    int domainCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
-        .getCache(Domain.class.getName()).getSize();
+    int domainCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0).getCache(DomainData.class.getName()).getSize();
     assertThat(domainCacheSize, greaterThan(0));
 
     if (context != null) {

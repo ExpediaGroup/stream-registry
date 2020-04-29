@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
+
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -76,24 +78,16 @@ public class NotificationEventUtilsTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
 
-    // Key
     SchemaKey key = new SchemaKey();
     key.setName(name);
     key.setDomain(domain);
 
-    // Spec
-    Specification spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfigJson(configJson);
-    spec.setTags(tags);
+    Specification spec = new Specification(description,tags,type,deserialise(configJson));
 
-    // Status
-    Status status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
     Schema schema = new Schema();
     schema.setKey(key);
@@ -132,35 +126,25 @@ public class NotificationEventUtilsTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     int version = 2;
 
-    // Key
-    var key = new StreamKey();
+    StreamKey key = new StreamKey();
     key.setName(name);
     key.setVersion(version);
     key.setDomain(domain);
 
-    // Spec
-    Specification spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfigJson(configJson);
-    spec.setTags(tags);
+    Specification spec = new Specification(description,tags,type,deserialise(configJson));
 
-    // Status
-    Status status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
-    // Stream
-    val stream = new Stream();
+    Stream stream = new Stream();
     stream.setKey(key);
     stream.setSpecification(spec);
     stream.setStatus(status);
 
-    // Schema key
-    val schemaKey = new SchemaKey();
+    SchemaKey schemaKey = new SchemaKey();
     schemaKey.setName(stream.getKey().getName().concat("_v1"));
     schemaKey.setDomain(domain);
     stream.setSchemaKey(schemaKey);

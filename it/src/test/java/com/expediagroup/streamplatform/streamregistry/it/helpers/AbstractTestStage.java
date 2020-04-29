@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import junit.framework.TestCase;
 
 import com.apollographql.apollo.api.Mutation;
-import com.apollographql.apollo.api.Response;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,15 +59,6 @@ public abstract class AbstractTestStage {
   public abstract void queryByRegex();
 
   public abstract void createRequiredDatastoreState();
-
-  public Response assertMutationSucceeds(Mutation mutation) {
-    try {
-      return client.invoke(mutation);
-    } catch (RuntimeException e) {
-      TestCase.fail("Mutation failed");
-    }
-    return null;
-  }
 
   public Mutation assertMutationFails(Mutation mutation) {
     if (mutation.getClass().getSimpleName().toLowerCase().contains("insert")) {

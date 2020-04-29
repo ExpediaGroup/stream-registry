@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.repositories;
 
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.data.ProducerData;
+import com.expediagroup.streamplatform.streamregistry.data.keys.ProducerDataKey;
 
-public interface ProducerRepository extends CachingJpaRepository<Producer, ProducerKey> {}
+public interface ProducerRepository extends CachingJpaRepository<ProducerData, ProducerDataKey> {}

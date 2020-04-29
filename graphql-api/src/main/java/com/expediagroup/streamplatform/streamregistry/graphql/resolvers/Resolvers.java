@@ -25,8 +25,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -99,7 +99,7 @@ interface Resolvers {
     ObjectNode getAgentStatus(com.expediagroup.streamplatform.streamregistry.model.Status status);
   }
 
-  interface EntityResolver<E extends ManagedType> {
+  interface EntityResolver<E extends Entity> {
     default Status status(E entity) {
       return Optional.ofNullable(entity.getStatus()).orElseGet(Status::new);
     }

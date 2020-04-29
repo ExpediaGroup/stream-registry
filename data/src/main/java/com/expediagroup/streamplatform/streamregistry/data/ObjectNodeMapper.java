@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.data;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class ObjectNodeMapper {
     try {
       return (ObjectNode) mapper.readTree(data);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException(data,e);
     }
   }
 
@@ -43,7 +43,7 @@ public class ObjectNodeMapper {
     try {
       return mapper.writeValueAsString(objectNode);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException(objectNode.toString(),e);
     }
   }
 }

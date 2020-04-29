@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
+import static org.mockito.ArgumentMatchers.any;
+
 import java.util.Optional;
 
 import org.junit.Assert;
@@ -27,16 +30,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.expediagroup.streamplatform.streamregistry.DataToModel;
+import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.repositories.DomainRepository;
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
+import com.expediagroup.streamplatform.streamregistry.data.DomainData;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfig.class)
 public class NotificationEventEmitterDomainServiceTest {
+
+  private DataToModel dataToModel = new DataToModel();
+  private ModelToData modelToData = new ModelToData();
 
   @MockBean
   private ApplicationEventMulticaster applicationEventMulticaster;
@@ -60,21 +69,23 @@ public class NotificationEventEmitterDomainServiceTest {
         .applicationEventMulticaster(applicationEventMulticaster)
         .build());
 
-    domainService = Mockito.spy(new DomainService(handlerService, domainValidator, domainRepository, domainServiceEventEmitter));
+    domainService = Mockito.spy(new DomainService(dataToModel, modelToData, handlerService, domainValidator, domainRepository, domainServiceEventEmitter));
   }
 
   @Test
   public void givenADomainForCreate_validateThatNotificationEventIsEmitted() {
-    final Domain entity = getDummyDomain();
+    final Domain entity = new Domain();
+    final DomainData data = new ModelToData().convertToData(entity);
+
     final EventType type = EventType.CREATE;
     final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.when(domainRepository.findById(any())).thenReturn(Optional.empty());
     Mockito.doNothing().when(domainValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-    Mockito.when(domainRepository.save(entity)).thenReturn(entity);
+    Mockito.when(domainRepository.save(any())).thenReturn(data);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     domainService.create(entity);
@@ -83,21 +94,23 @@ public class NotificationEventEmitterDomainServiceTest {
         .multicastEvent(event);
 
     Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
-        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+        .onFailedEmitting(any(), Mockito.eq(event));
   }
 
   @Test
   public void givenADomainForUpdate_validateThatNotificationEventIsEmitted() {
-    final Domain entity = getDummyDomain();
+    final Domain entity = new Domain();
+    final DomainData data = new ModelToData().convertToData(entity);
+
     final EventType type = EventType.UPDATE;
     final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-    Mockito.doNothing().when(domainValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(domainRepository.findById(any())).thenReturn(Optional.of(data));
+    Mockito.doNothing().when(domainValidator).validateForUpdate(Mockito.eq(entity), any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
-    Mockito.when(domainRepository.save(entity)).thenReturn(entity);
+    Mockito.when(domainRepository.save(any())).thenReturn(data);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     domainService.update(entity);
@@ -106,61 +119,65 @@ public class NotificationEventEmitterDomainServiceTest {
         .multicastEvent(event);
 
     Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
-        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+        .onFailedEmitting(any(), Mockito.eq(event));
   }
 
   @Test
   public void givenANullDomainRetrievedByRepositoryForCreate_validateThatNotificationEventIsNotEmitted() {
-    final Domain entity = getDummyDomain();
+    final Domain entity = new Domain();
+    final DomainData data = new ModelToData().convertToData(entity);
 
-    Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.when(domainRepository.findById(any())).thenReturn(Optional.empty());
     Mockito.doNothing().when(domainValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-    Mockito.when(domainRepository.save(entity)).thenReturn(null);
-    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(domainRepository.save(any())).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(any());
 
     domainService.create(entity);
 
     Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-        .multicastEvent(Mockito.any());
+        .multicastEvent(any());
 
     Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
-        .onFailedEmitting(Mockito.any(), Mockito.any());
+        .onFailedEmitting(any(), any());
   }
 
   @Test
   public void givenANullDomainRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
-    final Domain entity = getDummyDomain();
+    final Domain entity = new Domain();
+    final DomainData data = new ModelToData().convertToData(entity);
 
-    Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-    Mockito.doNothing().when(domainValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(domainRepository.findById(any())).thenReturn(Optional.of(data));
+    Mockito.doNothing().when(domainValidator).validateForUpdate(Mockito.eq(entity), any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
-    Mockito.when(domainRepository.save(entity)).thenReturn(null);
-    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(Mockito.any());
+    Mockito.when(domainRepository.save(any())).thenReturn(null);
+    Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(any());
 
     domainService.update(entity);
 
     Mockito.verify(applicationEventMulticaster, Mockito.timeout(1000).times(0))
-        .multicastEvent(Mockito.any());
+        .multicastEvent(any());
 
     Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
-        .onFailedEmitting(Mockito.any(), Mockito.any());
+        .onFailedEmitting(any(), any());
   }
 
   @Test
   public void givenADomainForUpsert_validateThatNotificationEventIsEmitted() {
-    final Domain entity = getDummyDomain();
+    final Domain entity = new Domain();
+    final DomainData data = new ModelToData().convertToData(entity);
+
     final EventType type = EventType.UPDATE;
     final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.of(entity));
-    Mockito.doNothing().when(domainValidator).validateForUpdate(Mockito.eq(entity), Mockito.any());
-    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), Mockito.any())).thenReturn(getDummySpecification());
+    Mockito.when(domainRepository.findById(any())).thenReturn(Optional.of(data));
+    Mockito.doNothing().when(domainValidator).validateForUpdate(Mockito.eq(entity), any());
+    Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
-    Mockito.when(domainRepository.save(entity)).thenReturn(entity);
+    Mockito.when(domainRepository.save(any())).thenReturn(data);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     domainService.upsert(entity);
@@ -169,21 +186,23 @@ public class NotificationEventEmitterDomainServiceTest {
         .multicastEvent(event);
 
     Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(0))
-        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+        .onFailedEmitting(any(), Mockito.eq(event));
   }
 
   @Test
   public void givenADomainForCreate_handleAMulticasterException() {
-    final Domain entity = getDummyDomain();
+    final Domain entity = new Domain();
+    final DomainData data = new ModelToData().convertToData(entity);
+
     final EventType type = EventType.CREATE;
     final String source = domainServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<Domain> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(domainRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Mockito.when(domainRepository.findById(any())).thenReturn(Optional.empty());
     Mockito.doNothing().when(domainValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-    Mockito.when(domainRepository.save(entity)).thenReturn(entity);
+    Mockito.when(domainRepository.save(any())).thenReturn(data);
     Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
 
     Optional<Domain> response = domainService.create(entity);
@@ -192,7 +211,7 @@ public class NotificationEventEmitterDomainServiceTest {
         .multicastEvent(event);
 
     Mockito.verify(domainServiceEventEmitter, Mockito.timeout(1000).times(1))
-        .onFailedEmitting(Mockito.any(), Mockito.eq(event));
+        .onFailedEmitting(any(), Mockito.eq(event));
 
     Assert.assertTrue(response.isPresent());
     Assert.assertEquals(response.get(), entity);
@@ -206,17 +225,10 @@ public class NotificationEventEmitterDomainServiceTest {
         .build();
   }
 
-  public Domain getDummyDomain() {
-    final Domain entity = new Domain();
-
-    return entity;
-  }
-
   public Specification getDummySpecification() {
     Specification spec = new Specification();
-    spec.setConfigJson("{}");
+    spec.setConfiguration(deserialise("{}"));
     spec.setDescription("dummy spec");
-
     return spec;
   }
 }
