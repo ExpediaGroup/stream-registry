@@ -52,8 +52,8 @@
     <module>handler-spi</module>
     <module>model</module>
     <module>notification-support</module>
-    <module>repository-api</module>
-    <module>repository-postgres</module>
+    <module>repository/api</module>
+    <module>repository/postgres</module>
     <module>spring-boot-starter</module>
     <module>it</module>
   </modules>

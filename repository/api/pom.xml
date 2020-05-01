@@ -6,6 +6,7 @@
     <groupId>com.expediagroup.streamplatform</groupId>
     <artifactId>stream-registry</artifactId>
     <version>0.10.6-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>stream-registry-repository-api</artifactId>
