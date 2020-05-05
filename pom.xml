@@ -51,10 +51,11 @@
     <module>graphql-scalars</module>
     <module>handler-spi</module>
     <module>model</module>
-    <module>it</module>
-    <module>spring-boot-starter</module>
     <module>notification-support</module>
-    <module>data</module>
+    <module>repository/api</module>
+    <module>repository/postgres</module>
+    <module>spring-boot-starter</module>
+    <module>it</module>
   </modules>
 
   <properties>

@@ -24,7 +24,7 @@
     </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-data</artifactId>
+      <artifactId>stream-registry-repository-api</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -37,30 +37,17 @@
       <artifactId>micrometer-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
-      <version>6.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-ehcache</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-commons</artifactId>
     </dependency>
 
     <dependency>
@@ -84,38 +71,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <!--
-          Generate the postgre SQL schema for the model during a build.
-          This schema is not automatically applied to the production Database but must be manually
-          validated and applied.
-
-          See http://jpdigital.github.io/hibernate5-ddl-maven-plugin/usage.html
-      -->
-      <plugin>
-        <groupId>de.jpdigital</groupId>
-        <artifactId>hibernate54-ddl-maven-plugin</artifactId>
-        <version>2.3.0</version>
-        <configuration>
-          <dialects>
-            <param>postgresql9</param>
-          </dialects>
-          <packages>
-            <param>com.expediagroup.streamplatform.streamregistry.data</param>
-          </packages>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>gen-ddl</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -25,69 +27,62 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.SchemaRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
 
 @Component
 @RequiredArgsConstructor
 public class SchemaService {
-  private final DataToModel dataToModel;
-  private final ModelToData modelToData;
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
   private final NotificationEventEmitter<Schema> schemaServiceEventEmitter;
 
   public Optional<Schema> create(Schema schema) throws ValidationException {
-    var data = modelToData.convertToData(schema);
-    if (schemaRepository.findById(data.getKey()).isPresent()) {
+    if (read(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     schemaValidator.validateForCreate(schema);
-    data.setSpecification(modelToData.convertToData(handlerService.handleInsert(schema)));
-    Schema out = dataToModel.convertToModel(schemaRepository.save(data));
-    schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
-    return Optional.ofNullable(out);
-  }
-
-  public Optional<Schema> read(SchemaKey key) {
-    var data = schemaRepository.findById(modelToData.convertToData(key));
-    return data.map(dataToModel::convertToModel);
+    schema.setSpecification(handlerService.handleInsert(schema));
+    return save(schema, CREATE);
   }
 
   public Optional<Schema> update(Schema schema) throws ValidationException {
-    var schemaData = modelToData.convertToData(schema);
-    var existing = schemaRepository.findById(schemaData.getKey());
+    var existing = read(schema.getKey());
     if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
+      throw new ValidationException("Can't update " + schema.getKey().getName() + " because it doesn't exist");
     }
-    schemaValidator.validateForUpdate(schema, dataToModel.convertToModel(existing.get()));
-    schemaData.setSpecification(modelToData.convertToData(handlerService.handleUpdate(schema, dataToModel.convertToModel(existing.get()))));
-    Schema out = dataToModel.convertToModel(schemaRepository.save(schemaData));
-    schemaServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
-    return Optional.ofNullable(out);
+    schemaValidator.validateForUpdate(schema, existing.get());
+    schema.setSpecification(handlerService.handleUpdate(schema, existing.get()));
+    return save(schema, UPDATE);
+  }
+
+  private Optional<Schema> save(Schema schema, EventType eventType) {
+    schema = schemaRepository.save(schema);
+    schemaServiceEventEmitter.emitEventOnProcessedEntity(eventType, schema);
+    return Optional.ofNullable(schema);
   }
 
   public Optional<Schema> upsert(Schema schema) throws ValidationException {
-    return !schemaRepository.findById(modelToData.convertToData(schema).getKey()).isPresent() ?
-        create(schema) :
-        update(schema);
+    return !read(schema.getKey()).isPresent() ? create(schema) : update(schema);
+  }
+
+  public Optional<Schema> read(SchemaKey key) {
+    return schemaRepository.findById(key);
+  }
+
+  public List<Schema> findAll(Predicate<Schema> filter) {
+    return schemaRepository.findAll().stream().filter(filter).collect(toList());
   }
 
   public void delete(Schema schema) {
     throw new UnsupportedOperationException();
-  }
-
-  public List<Schema> findAll(Predicate<Schema> filter) {
-    return schemaRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(SchemaKey key) {

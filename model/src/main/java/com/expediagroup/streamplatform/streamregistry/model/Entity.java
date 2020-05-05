@@ -15,4 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-public interface Entity<K> extends Stated, Specified {}
+public interface Entity<K> extends Stated, Specified {
+  K getKey();
+}

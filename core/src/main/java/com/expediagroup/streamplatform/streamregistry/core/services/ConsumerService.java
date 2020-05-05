@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -25,70 +27,62 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 
 @Component
 @RequiredArgsConstructor
 public class ConsumerService {
-  private final DataToModel dataToModel;
-  private final ModelToData modelToData;
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
   private final NotificationEventEmitter<Consumer> consumerServiceEventEmitter;
 
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
-    var data = modelToData.convertToData(consumer);
-    if (consumerRepository.findById(data.getKey()).isPresent()) {
+    if (read(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerValidator.validateForCreate(consumer);
-    data.setSpecification(modelToData.convertToData(handlerService.handleInsert(consumer)));
-    Consumer out = dataToModel.convertToModel(consumerRepository.save(data));
-    consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
-    return Optional.ofNullable(out);
-  }
-
-  public Optional<Consumer> read(ConsumerKey key) {
-    var data = consumerRepository.findById(modelToData.convertToData(key));
-    return data.map(dataToModel::convertToModel);
+    consumer.setSpecification(handlerService.handleInsert(consumer));
+    return save(consumer, CREATE);
   }
 
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
-    var consumerData = modelToData.convertToData(consumer);
-    var existing = consumerRepository.findById(consumerData.getKey());
+    var existing = read(consumer.getKey());
     if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
+      throw new ValidationException("Can't update " + consumer.getKey().getName() + " because it doesn't exist");
     }
-    consumerValidator.validateForUpdate(consumer, dataToModel.convertToModel(existing.get()));
-    consumerData.setSpecification(modelToData.convertToData(handlerService.handleUpdate(consumer, dataToModel.convertToModel(existing.get()))));
-    Consumer out = dataToModel.convertToModel(consumerRepository.save(consumerData));
-    consumerServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
-    return Optional.ofNullable(out);
+    consumerValidator.validateForUpdate(consumer, existing.get());
+    consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
+    return save(consumer, UPDATE);
+  }
+
+  private Optional<Consumer> save(Consumer consumer, EventType eventType) {
+    consumer = consumerRepository.save(consumer);
+    consumerServiceEventEmitter.emitEventOnProcessedEntity(eventType, consumer);
+    return Optional.ofNullable(consumer);
   }
 
   public Optional<Consumer> upsert(Consumer consumer) throws ValidationException {
-    var consumerData = modelToData.convertToData(consumer);
-    return !consumerRepository.findById(consumerData.getKey()).isPresent() ?
-        create(consumer) :
-        update(consumer);
+    return !read(consumer.getKey()).isPresent() ? create(consumer) : update(consumer);
+  }
+
+  public Optional<Consumer> read(ConsumerKey key) {
+    return consumerRepository.findById(key);
+  }
+
+  public List<Consumer> findAll(Predicate<Consumer> filter) {
+    return consumerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
   public void delete(Consumer consumer) {
     throw new UnsupportedOperationException();
-  }
-
-  public List<Consumer> findAll(Predicate<Consumer> filter) {
-    return consumerRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
   }
 
   public boolean exists(ConsumerKey key) {

@@ -15,10 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
-import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,22 +31,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
-import com.expediagroup.streamplatform.streamregistry.data.ConsumerBindingData;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfig.class)
 public class NotificationEventEmitterConsumerBindingServiceTest {
-
-  private DataToModel dataToModel=new DataToModel();
-  private ModelToData modelToData=new ModelToData();
 
   @MockBean
   private ApplicationEventMulticaster applicationEventMulticaster;
@@ -64,20 +59,19 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
 
   @Before
   public void before() {
-    consumerBindingServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<ConsumerBinding> builder()
+    consumerBindingServiceEventEmitter = Mockito.spy(DefaultNotificationEventEmitter.<ConsumerBinding>builder()
         .classType(ConsumerBinding.class)
         .applicationEventMulticaster(applicationEventMulticaster)
         .build());
 
     consumerBindingService = Mockito.spy(
-        new ConsumerBindingService(dataToModel, modelToData, handlerService, consumerBindingValidator, consumerBindingRepository,
+        new ConsumerBindingService(handlerService, consumerBindingValidator, consumerBindingRepository,
             consumerBindingServiceEventEmitter));
   }
 
   @Test
   public void givenAConsumerBindingForCreate_validateThatNotificationEventIsEmitted() {
     final ConsumerBinding entity = new ConsumerBinding();
-    final ConsumerBindingData entityData = modelToData.convertToData(entity);
 
     final EventType type = EventType.CREATE;
     final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
@@ -87,7 +81,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     Mockito.doNothing().when(consumerBindingValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-    Mockito.when(consumerBindingRepository.save(any())).thenReturn(entityData);
+    Mockito.when(consumerBindingRepository.save(any())).thenReturn(entity);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     consumerBindingService.create(entity);
@@ -103,18 +97,17 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
   public void givenAConsumerBindingForUpdate_validateThatNotificationEventIsEmitted() {
 
     final ConsumerBinding entity = new ConsumerBinding();
-    final ConsumerBindingData entityData = modelToData.convertToData(entity);
 
-    final Optional<ConsumerBinding> v=Optional.of(entity);
+    final Optional<ConsumerBinding> v = Optional.of(entity);
     final EventType type = EventType.UPDATE;
     final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<ConsumerBinding> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(consumerBindingRepository.findById(any())).thenReturn(Optional.of(new ModelToData().convertToData(entity)));
+    Mockito.when(consumerBindingRepository.findById(any())).thenReturn(Optional.of(entity));
     Mockito.doNothing().when(consumerBindingValidator).validateForUpdate(Mockito.eq(entity), any());
     Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
-    Mockito.when(consumerBindingRepository.save(any())).thenReturn(entityData);
+    Mockito.when(consumerBindingRepository.save(any())).thenReturn(entity);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     consumerBindingService.update(entity);
@@ -150,7 +143,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
   public void givenANullConsumerBindingRetrievedByRepositoryForUpdate_validateThatNotificationEventIsNotEmitted() {
     final ConsumerBinding entity = new ConsumerBinding();
 
-    Mockito.when(consumerBindingRepository.findById(any())).thenReturn(Optional.of(new ModelToData().convertToData(entity)));
+    Mockito.when(consumerBindingRepository.findById(any())).thenReturn(Optional.of(entity));
     Mockito.doNothing().when(consumerBindingValidator).validateForUpdate(Mockito.eq(entity), any());
     Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
@@ -173,11 +166,11 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
     final NotificationEvent<ConsumerBinding> event = getDummyNotificationEvent(source, type, entity);
 
-    Mockito.when(consumerBindingRepository.findById(any())).thenReturn(Optional.of(new ModelToData().convertToData(entity)));
+    Mockito.when(consumerBindingRepository.findById(any())).thenReturn(Optional.of(entity));
     Mockito.doNothing().when(consumerBindingValidator).validateForUpdate(Mockito.eq(entity), any());
     Mockito.when(handlerService.handleUpdate(Mockito.eq(entity), any())).thenReturn(getDummySpecification());
 
-    Mockito.when(consumerBindingRepository.save(any())).thenReturn(new ModelToData().convertToData(entity));
+    Mockito.when(consumerBindingRepository.save(any())).thenReturn(entity);
     Mockito.doNothing().when(applicationEventMulticaster).multicastEvent(event);
 
     consumerBindingService.upsert(entity);
@@ -192,7 +185,6 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
   @Test
   public void givenAConsumerBindingForCreate_handleAMulticasterException() {
     final ConsumerBinding entity = new ConsumerBinding();
-    final ConsumerBindingData entityData = modelToData.convertToData(entity);
 
     final EventType type = EventType.CREATE;
     final String source = consumerBindingServiceEventEmitter.getSourceEventPrefix(entity).concat(type.toString().toLowerCase());
@@ -202,7 +194,7 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
     Mockito.doNothing().when(consumerBindingValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(getDummySpecification());
 
-    Mockito.when(consumerBindingRepository.save(any())).thenReturn(entityData);
+    Mockito.when(consumerBindingRepository.save(any())).thenReturn(entity);
     Mockito.doThrow(new RuntimeException("BOOOOOOOM")).when(applicationEventMulticaster).multicastEvent(event);
 
     Optional<ConsumerBinding> response = consumerBindingService.create(entity);
@@ -218,16 +210,18 @@ public class NotificationEventEmitterConsumerBindingServiceTest {
   }
 
   public <T> NotificationEvent<T> getDummyNotificationEvent(String source, EventType type, T entity) {
-    return NotificationEvent.<T> builder()
+    return NotificationEvent.<T>builder()
         .source(source)
         .eventType(type)
         .entity(entity)
         .build();
   }
 
+  private final ObjectMapper mapper = new ObjectMapper();
+
   public Specification getDummySpecification() {
     Specification spec = new Specification();
-    spec.setConfiguration(deserialise("{}"));
+    spec.setConfiguration(mapper.createObjectNode());
     spec.setDescription("dummy spec");
     return spec;
   }

@@ -16,6 +16,8 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.serialise;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_PRODUCER_KEY_PARSER_CLASS_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_PRODUCER_KEY_PARSER_METHOD_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_PRODUCER_PARSER_ENABLED_PROPERTY;
@@ -26,8 +28,6 @@ import static com.expediagroup.streamplatform.streamregistry.core.events.config.
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_NAME_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_TOPIC_SETUP_PROPERTY;
-import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.deserialise;
-import static com.expediagroup.streamplatform.streamregistry.data.ObjectNodeMapper.serialise;
 
 import java.time.Instant;
 import java.util.Collections;

@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -23,94 +25,81 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.DataToModel;
-import com.expediagroup.streamplatform.streamregistry.ModelToData;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
-import com.expediagroup.streamplatform.streamregistry.data.ConsumerBindingData;
-import com.expediagroup.streamplatform.streamregistry.data.keys.ConsumerBindingDataKey;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 
 @Component
 @RequiredArgsConstructor
 public class ConsumerBindingService {
 
-  private final DataToModel dataToModel;
-  private final ModelToData modelToData;
   private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
   private final NotificationEventEmitter<ConsumerBinding> consumerBindingServiceEventEmitter;
 
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
-    consumerBindingValidator.validateForCreate(consumerBinding);
-    ConsumerBindingData consumerBindingData = modelToData.convertToData(consumerBinding);
-    if (consumerBindingRepository.findById(consumerBindingData.getKey()).isPresent()) {
+    if (read(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
-    consumerBindingData.setSpecification(modelToData.convertToData(handlerService.handleInsert(consumerBinding)));
-    ConsumerBinding out = dataToModel.convertToModel(consumerBindingRepository.save(consumerBindingData));
-    consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, out);
-    return Optional.ofNullable(out);
-  }
-
-  public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
-    var data = consumerBindingRepository.findById(modelToData.convertToData(key));
-    return data.map(dataToModel::convertToModel);
+    consumerBindingValidator.validateForCreate(consumerBinding);
+    consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
+    return save(consumerBinding, CREATE);
   }
 
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
-    var consumerBindingData = modelToData.convertToData(consumerBinding);
-    var existing = consumerBindingRepository.findById(consumerBindingData.getKey());
+    var existing = read(consumerBinding.getKey());
     if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
+      throw new ValidationException("Can't update " + consumerBinding.getKey() + " because it doesn't exist");
     }
+    consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
+    consumerBinding.setSpecification(handlerService.handleUpdate(consumerBinding, existing.get()));
+    return save(consumerBinding, UPDATE);
+  }
 
-    consumerBindingValidator.validateForUpdate(consumerBinding, dataToModel.convertToModel(existing.get()));
-    consumerBindingData.setSpecification(modelToData.convertToData(handlerService.handleUpdate(consumerBinding, dataToModel.convertToModel(existing.get()))));
-    ConsumerBinding out = dataToModel.convertToModel(consumerBindingRepository.save(consumerBindingData));
-    consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, out);
-    return Optional.ofNullable(out);
+  private Optional<ConsumerBinding> save(ConsumerBinding consumerBinding, EventType eventType) {
+    consumerBinding = consumerBindingRepository.save(consumerBinding);
+    consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(eventType, consumerBinding);
+    return Optional.ofNullable(consumerBinding);
   }
 
   public Optional<ConsumerBinding> upsert(ConsumerBinding consumerBinding) throws ValidationException {
-    return !consumerBindingRepository.findById(modelToData.convertToData(consumerBinding).getKey()).isPresent() ?
-        create(consumerBinding) :
-        update(consumerBinding);
+    return !read(consumerBinding.getKey()).isPresent() ? create(consumerBinding) : update(consumerBinding);
+  }
+
+  public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
+    return consumerBindingRepository.findById(key);
+  }
+
+  public List<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
+    return consumerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
   public void delete(ConsumerBinding consumerBinding) {
     throw new UnsupportedOperationException();
   }
 
-  public List<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
-    return consumerBindingRepository.findAll().stream().map(dataToModel::convertToModel).filter(filter).collect(toList());
+  public boolean exists(ConsumerBindingKey key) {
+    return read(key).isPresent();
   }
 
   public Optional<ConsumerBinding> find(ConsumerKey key) {
-    var example = new
-        ConsumerBindingData(
-        new ConsumerBindingDataKey(
-            key.getStreamDomain(),
-            key.getStreamName(),
-            key.getStreamVersion(),
-            key.getZone(),
-            null,
-            key.getName()
-        ), null, null);
-    return consumerBindingRepository.findAll(Example.of(example)).stream().findFirst().map(dataToModel::convertToModel);
-  }
-
-  public boolean exists(ConsumerBindingKey key) {
-    return read(key).isPresent();
+    var example = new ConsumerBinding(new ConsumerBindingKey(
+        key.getStreamDomain(),
+        key.getStreamName(),
+        key.getStreamVersion(),
+        key.getZone(),
+        null,
+        key.getName()
+    ), null, null);
+    return consumerBindingRepository.findAll(example).stream().findFirst();
   }
 }
