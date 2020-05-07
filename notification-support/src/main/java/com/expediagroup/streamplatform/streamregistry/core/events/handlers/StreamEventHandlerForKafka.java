@@ -15,7 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events.handlers;
 
-import java.util.Optional;
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventHandler.sendEntityNotificationEvent;
+
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
@@ -23,18 +24,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import org.apache.avro.specific.SpecificRecord;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.messaging.support.MessageBuilder;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventHandler;
-import com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConstants;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Slf4j
@@ -75,27 +71,12 @@ public class StreamEventHandlerForKafka implements NotificationEventHandler<Stre
   }
 
   private Future<SendResult<SpecificRecord, SpecificRecord>> sendStreamNotificationEvent(NotificationEvent<Stream> event) {
-    val key = streamToKeyRecord.apply(event.getEntity());
-    val value = streamToValueRecord.apply(event.getEntity());
-
-    val eventType = Optional.ofNullable(event.getEventType())
-        .map(EventType::toString)
-        .orElse(NotificationEventConstants.NOTIFICATION_TYPE_HEADER.defaultValue);
-
-    val entity = Optional.ofNullable(event.getEntity())
-        .map(Object::getClass)
-        .map(Class::getSimpleName)
-        .map(String::toUpperCase)
-        .orElse(NotificationEventConstants.ENTITY_TYPE_HEADER.defaultValue);
-
-    val message = MessageBuilder
-        .withPayload(value)
-        .setHeader(KafkaHeaders.MESSAGE_KEY, key)
-        .setHeader(KafkaHeaders.TOPIC, notificationEventsTopic)
-        .setHeader(NotificationEventConstants.NOTIFICATION_TYPE_HEADER.name, eventType)
-        .setHeader(NotificationEventConstants.ENTITY_TYPE_HEADER.name, entity)
-        .build();
-
-    return kafkaTemplate.send(message);
+    return sendEntityNotificationEvent(
+        streamToKeyRecord,
+        streamToValueRecord,
+        kafkaTemplate::send,
+        notificationEventsTopic,
+        event
+    );
   }
 }
