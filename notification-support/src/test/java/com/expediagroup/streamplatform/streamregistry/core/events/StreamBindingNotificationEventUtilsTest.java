@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
+
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -47,7 +49,7 @@ public class StreamBindingNotificationEventUtilsTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
@@ -65,12 +67,11 @@ public class StreamBindingNotificationEventUtilsTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    val status = new Status(deserialise(statusJson));
 
     val streamBinding = new StreamBinding();
     streamBinding.setKey(key);

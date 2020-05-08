@@ -16,6 +16,8 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.serialise;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_STREAM_BINDING_KEY_PARSER_CLASS_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_STREAM_BINDING_KEY_PARSER_METHOD_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_STREAM_BINDING_PARSER_ENABLED_PROPERTY;
@@ -155,8 +157,8 @@ public class CustomStreamBindingMethodsLoadingTest {
         .setDescription(streamBinding.getSpecification().getDescription())
         .setTags(Collections.emptyList())
         .setType(streamBinding.getSpecification().getType())
-        .setConfigurationString(streamBinding.getSpecification().getConfigJson())
-        .setStatusString(streamBinding.getStatus().getStatusJson())
+        .setConfigurationString(serialise(streamBinding.getSpecification().getConfiguration()))
+        .setStatusString(serialise(streamBinding.getStatus().getObjectNode()))
         .build();
 
     val event = AvroEvent.newBuilder().setStreamBindingEntity(avroEvent).build();
@@ -172,7 +174,7 @@ public class CustomStreamBindingMethodsLoadingTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
@@ -190,12 +192,11 @@ public class CustomStreamBindingMethodsLoadingTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    val status = new Status(deserialise(statusJson));
 
     val streamBinding = new StreamBinding();
     streamBinding.setKey(key);

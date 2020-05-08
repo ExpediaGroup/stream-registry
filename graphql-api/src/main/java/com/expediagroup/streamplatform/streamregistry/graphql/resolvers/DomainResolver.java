@@ -31,6 +31,7 @@ public class DomainResolver implements Resolvers.DomainResolver {
   private final SchemaService schemaService;
 
   public List<Schema> schemas(Domain domain) {
-    return schemaService.find(domain.getKey());
+    throw new UnsupportedOperationException("schemaService.find(domain.getKey())");
+    //return schemaService.find(domain.getKey());
   }
 }

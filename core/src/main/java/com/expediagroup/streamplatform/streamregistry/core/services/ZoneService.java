@@ -15,8 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -27,10 +30,11 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.ZoneRepository;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
 
 @Component
 @RequiredArgsConstructor
@@ -41,49 +45,47 @@ public class ZoneService {
   private final NotificationEventEmitter<Zone> zoneServiceEventEmitter;
 
   public Optional<Zone> create(Zone zone) throws ValidationException {
-    if (zoneRepository.findById(zone.getKey()).isPresent()) {
+    if (read(zone.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     zoneValidator.validateForCreate(zone);
     zone.setSpecification(handlerService.handleInsert(zone));
-    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, zoneRepository.save(zone));
+    return save(zone, CREATE);
+  }
+
+  public Optional<Zone> update(Zone zone) throws ValidationException {
+    var existing = read(zone.getKey());
+    if (!existing.isPresent()) {
+      throw new ValidationException("Can't update " + zone.getKey().getName() + " because it doesn't exist");
+    }
+    zoneValidator.validateForUpdate(zone, existing.get());
+    zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
+    return save(zone, UPDATE);
+  }
+
+  private Optional<Zone> save(Zone zone, EventType eventType) {
+    zone = zoneRepository.save(zone);
+    zoneServiceEventEmitter.emitEventOnProcessedEntity(eventType, zone);
+    return Optional.ofNullable(zone);
+  }
+
+  public Optional<Zone> upsert(Zone zone) throws ValidationException {
+    return !read(zone.getKey()).isPresent() ? create(zone) : update(zone);
   }
 
   public Optional<Zone> read(ZoneKey key) {
     return zoneRepository.findById(key);
   }
 
-  public Iterable<Zone> readAll() {
-    return zoneRepository.findAll();
-  }
-
-  public Optional<Zone> update(Zone zone) throws ValidationException {
-    Optional<Zone> existing = zoneRepository.findById(zone.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
-    }
-    zoneValidator.validateForUpdate(zone, existing.get());
-    zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
-    return zoneServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, zoneRepository.save(zone));
-  }
-
-  public Optional<Zone> upsert(Zone zone) throws ValidationException {
-    return !zoneRepository.findById(zone.getKey()).isPresent() ?
-        create(zone) :
-        update(zone);
+  public List<Zone> findAll(Predicate<Zone> filter) {
+    return zoneRepository.findAll().stream().filter(filter).collect(toList());
   }
 
   public void delete(Zone zone) {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<Zone> findAll(Predicate<Zone> filter) {
-    return zoneRepository.findAll().stream().filter(filter).collect(toList());
-  }
-
-  public void validateZoneExists(ZoneKey key) {
-    if (read(key).isEmpty()) {
-      throw new ValidationException("Zone does not exist");
-    }
+  public boolean exists(ZoneKey key) {
+    return read(key).isPresent();
   }
 }

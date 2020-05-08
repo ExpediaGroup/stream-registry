@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,18 +24,16 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
 public class ConsumerKey implements Serializable {
 
-  @Column(length = 100)
   private String streamDomain;
-  @Column(length = 100)
+
   private String streamName;
-  @Column(length = 100)
+
   private Integer streamVersion;
-  @Column(length = 100)
+
   private String zone;
-  @Column(length = 100)
+
   private String name;
 
   public StreamKey getStreamKey() {

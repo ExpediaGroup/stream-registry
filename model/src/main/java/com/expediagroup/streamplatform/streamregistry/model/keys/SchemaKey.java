@@ -17,9 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.model.keys;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,13 +25,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
 @EqualsAndHashCode
 public class SchemaKey implements Serializable {
 
-  @Column(name = "SKdomain", length = 100)
   private String domain;
-  @Column(name = "SKname", length = 100)
   private String name;
 
   public DomainKey getDomainKey() {

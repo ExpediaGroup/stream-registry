@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
 @Component
@@ -44,8 +43,12 @@ public class StreamBindingValidator implements Validator<StreamBinding> {
   }
 
   private void validateForCreateAndUpdate(StreamBinding streambinding) throws ValidationException {
-    streamService.validateStreamExists(streambinding.getKey().getStreamKey());
-    infrastructureService.validateInfrastructureExists(streambinding.getKey().getInfrastructureKey());
+    if (!streamService.exists(streambinding.getKey().getStreamKey())) {
+      throw new ValidationException("Stream does not exist");
+    }
+    if (!infrastructureService.exists(streambinding.getKey().getInfrastructureKey())) {
+      throw new ValidationException("Infrastructure does not exist");
+    }
   }
 
 }

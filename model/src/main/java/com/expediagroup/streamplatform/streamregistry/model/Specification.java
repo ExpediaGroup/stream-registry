@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,58 +15,32 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.deserialise;
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Data
-@Embeddable
+@NoArgsConstructor
 public class Specification {
 
   private String description;
-
-  @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
   private List<Tag> tags = new ArrayList<>();
-
-  @Column(name = "rword_type")
   private String type;
+  private ObjectNode configuration;
 
-  @Lob
-  @Column(name = "config_json", length = 20000)
-  private String configJson;
-
-  public Specification(String description, List<Tag> tags, String type, String configJson) {
+  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration) {
     this.description = description;
     this.tags = tags;
     this.type = type;
-    this.configJson = configJson;
+    this.configuration = configuration;
   }
-
-  public Specification() {}
 
   public List<Tag> getTags() {
     return tags == null ? Collections.emptyList() : tags;
-  }
-
-  public ObjectNode getConfiguration() {
-    return deserialise(getConfigJson());
-  }
-
-  public void setConfiguration(ObjectNode configuration) {
-    configJson = serialise(configuration);
   }
 }

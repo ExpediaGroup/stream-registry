@@ -15,8 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -27,10 +30,11 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 
 @Component
 @RequiredArgsConstructor
@@ -41,49 +45,47 @@ public class StreamBindingService {
   private final NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
 
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    if (streamBindingRepository.findById(streamBinding.getKey()).isPresent()) {
+    if (read(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
     streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
-    return streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, streamBindingRepository.save(streamBinding));
+    return save(streamBinding, CREATE);
+  }
+
+  public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
+    var existing = read(streamBinding.getKey());
+    if (!existing.isPresent()) {
+      throw new ValidationException("Can't update " + streamBinding.getKey() + " because it doesn't exist");
+    }
+    streamBindingValidator.validateForUpdate(streamBinding, existing.get());
+    streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
+    return save(streamBinding, UPDATE);
+  }
+
+  private Optional<StreamBinding> save(StreamBinding streamBinding, EventType eventType) {
+    streamBinding = streamBindingRepository.save(streamBinding);
+    streamBindingServiceEventEmitter.emitEventOnProcessedEntity(eventType, streamBinding);
+    return Optional.ofNullable(streamBinding);
+  }
+
+  public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
+    return !read(streamBinding.getKey()).isPresent() ? create(streamBinding) : update(streamBinding);
   }
 
   public Optional<StreamBinding> read(StreamBindingKey key) {
     return streamBindingRepository.findById(key);
   }
 
-  public Iterable<StreamBinding> readAll() {
-    return streamBindingRepository.findAll();
-  }
-
-  public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    Optional<StreamBinding> existing = streamBindingRepository.findById(streamBinding.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
-    }
-    streamBindingValidator.validateForUpdate(streamBinding, existing.get());
-    streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
-    return streamBindingServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, streamBindingRepository.save(streamBinding));
-  }
-
-  public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
-    return !streamBindingRepository.findById(streamBinding.getKey()).isPresent() ?
-        create(streamBinding) :
-        update(streamBinding);
+  public List<StreamBinding> findAll(Predicate<StreamBinding> filter) {
+    return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
   public void delete(StreamBinding streamBinding) {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
-  }
-
-  public void validateStreamBindingExists(StreamBindingKey key) {
-    if (read(key).isEmpty()) {
-      throw new ValidationException("StreamBinding does not exist");
-    }
+  public boolean exists(StreamBindingKey key) {
+    return read(key).isPresent();
   }
 }

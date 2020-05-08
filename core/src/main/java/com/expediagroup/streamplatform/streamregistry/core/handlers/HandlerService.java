@@ -29,13 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -48,7 +48,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 @Component
 @Slf4j
 public class HandlerService {
-  private final Map<Key, Handler<?>> handlers;
+  private final Map<Key, Handler> handlers;
 
   public HandlerService(List<Handler> handlers) {
     validateHandlers(handlers);
@@ -79,32 +79,32 @@ public class HandlerService {
     checkArgument(handlerTargets.contains(target), "No Handlers for " + target.getSimpleName() + " defined");
   }
 
-  private <T extends ManagedType> Handler<T> getHandler(T managedType) {
-    Handler<?> handler = handlers.get(new Key(managedType.getSpecification().getType(), managedType.getClass()));
+  private <T extends Entity> Handler<T> getHandler(T entity) {
+    Handler<?> handler = handlers.get(new Key(entity.getSpecification().getType(), entity.getClass()));
     if (handler == null) {
       Set<String> supportedTypes = handlers.keySet().stream()
-          .filter(k -> k.entityClass.equals(managedType.getClass()))
+          .filter(k -> k.entityClass.equals(entity.getClass()))
           .map(Key::getType)
           .collect(toSet());
       throw new ValidationException(
-          "There is no handler for " + managedType.getClass().getSimpleName()
-              + " entities with type " + managedType.getSpecification().getType()
+          "There is no handler for " + entity.getClass().getSimpleName()
+              + " entities with type " + entity.getSpecification().getType()
               + ". Expected one of " + supportedTypes);
     }
     return (Handler<T>) handler;
   }
 
-  public <T extends ManagedType> Specification handleInsert(T managedType) {
+  public <T extends Entity> Specification handleInsert(T entity) {
     try {
-      return getHandler(managedType).handleInsert(managedType);
+      return getHandler(entity).handleInsert(entity);
     } catch (Exception e) {
       throw new ValidationException(e);
     }
   }
 
-  public Specification handleUpdate(ManagedType managedType, ManagedType existing) {
+  public Specification handleUpdate(Entity entity, Entity existing) {
     try {
-      return getHandler(managedType).handleUpdate(managedType, existing);
+      return getHandler(entity).handleUpdate(entity, existing);
     } catch (Exception e) {
       throw new ValidationException(e);
     }

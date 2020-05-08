@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -50,12 +51,17 @@
     <module>graphql-scalars</module>
     <module>handler-spi</module>
     <module>model</module>
-    <module>it</module>
-    <module>spring-boot-starter</module>
     <module>notification-support</module>
+    <module>repository/api</module>
+    <module>repository/postgres</module>
+    <module>spring-boot-starter</module>
+    <module>it</module>
   </modules>
 
   <properties>
+
+    <jacoco.version>0.8.5</jacoco.version>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>11</jdk.version>

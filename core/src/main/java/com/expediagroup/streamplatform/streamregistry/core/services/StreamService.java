@@ -15,8 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
+import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -27,10 +30,11 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.repositories.StreamRepository;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
 @Component
 @RequiredArgsConstructor
@@ -41,54 +45,48 @@ public class StreamService {
   private final NotificationEventEmitter<Stream> streamServiceEventEmitter;
 
   public Optional<Stream> create(Stream stream) throws ValidationException {
-    if (stream.getKey() != null && streamRepository.findById(stream.getKey()).isPresent()) {
+    if (read(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamValidator.validateForCreate(stream);
     stream.setSpecification(handlerService.handleInsert(stream));
-    return streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.CREATE, streamRepository.save(stream));
+    return save(stream, CREATE);
+  }
+
+  public Optional<Stream> update(Stream stream) throws ValidationException {
+    var existing = read(stream.getKey());
+    if (!existing.isPresent()) {
+      throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
+    }
+    stream.setSchemaKey(existing.get().getSchemaKey());
+    streamValidator.validateForUpdate(stream, existing.get());
+    stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
+    return save(stream, UPDATE);
+  }
+
+  private Optional<Stream> save(Stream stream, EventType eventType) {
+    stream = streamRepository.save(stream);
+    streamServiceEventEmitter.emitEventOnProcessedEntity(eventType, stream);
+    return Optional.ofNullable(stream);
+  }
+
+  public Optional<Stream> upsert(Stream stream) throws ValidationException {
+    return !read(stream.getKey()).isPresent() ? create(stream) : update(stream);
   }
 
   public Optional<Stream> read(StreamKey key) {
     return streamRepository.findById(key);
   }
 
-  public Iterable<Stream> readAll() {
-    return streamRepository.findAll();
-  }
-
-  public Optional<Stream> update(Stream stream) throws ValidationException {
-    Optional<Stream> existing = streamRepository.findById(stream.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't update because it doesn't exist");
-    }
-    if(stream.getSchemaKey() != null && !stream.getSchemaKey().equals(existing.get().getSchemaKey())) {
-      //there is a schema change
-      throw new ValidationException("Can't update because schema change is not allowed");
-    }
-    stream.setSchemaKey(existing.get().getSchemaKey());
-    streamValidator.validateForUpdate(stream, existing.get());
-    stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
-    return streamServiceEventEmitter.emitEventOnProcessedEntity(EventType.UPDATE, streamRepository.save(stream));
-  }
-
-  public Optional<Stream> upsert(Stream stream) throws ValidationException {
-    return !streamRepository.findById(stream.getKey()).isPresent() ?
-        create(stream) :
-        update(stream);
+  public List<Stream> findAll(Predicate<Stream> filter) {
+    return streamRepository.findAll().stream().filter(filter).collect(toList());
   }
 
   public void delete(Stream stream) {
     throw new UnsupportedOperationException();
   }
 
-  public Iterable<Stream> findAll(Predicate<Stream> filter) {
-    return streamRepository.findAll().stream().filter(filter).collect(toList());
-  }
-
-  public void validateStreamExists(StreamKey key) {
-    if (read(key).isEmpty()) {
-      throw new ValidationException("Stream does not exist");
-    }
+  public boolean exists(StreamKey key) {
+    return read(key).isPresent();
   }
 }

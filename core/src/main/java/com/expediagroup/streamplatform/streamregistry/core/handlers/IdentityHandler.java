@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package com.expediagroup.streamplatform.streamregistry.core.handlers;
 import lombok.RequiredArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.handler.Handler;
-import com.expediagroup.streamplatform.streamregistry.model.ManagedType;
+import com.expediagroup.streamplatform.streamregistry.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 @RequiredArgsConstructor
-public class IdentityHandler<T extends ManagedType> implements Handler<T> {
+public class IdentityHandler<T extends Entity> implements Handler<T> {
   public static final String DEFAULT = "default";
   private final String type;
   private final Class<T> target;
@@ -46,4 +46,5 @@ public class IdentityHandler<T extends ManagedType> implements Handler<T> {
   public Specification handleUpdate(T entity, T existing) {
     return entity.getSpecification();
   }
+
 }

@@ -6,10 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Emit event on producer mutation (create and update).
-- Emit event on consumer mutation (create and update).
+- Emit event on producer mutation.
 - Emit event on streambinding mutation.
-- Notification type and entity headers in Kafka messages
+- Added `repository-api` module to define new repository abstraction exposing model instead of data.
+- Added `repository-postgres` module to implement new repository adapting JPA to consolidate JPA/Hibernate implementation details.
+
+### Changed
+- Split internal representation into Model and Data
+- Fixed issues with Stream updates
+- Addressed possible issue with notifications
 
 ### Bugfix
 - Fixed issues with referential integrity on binding entities.

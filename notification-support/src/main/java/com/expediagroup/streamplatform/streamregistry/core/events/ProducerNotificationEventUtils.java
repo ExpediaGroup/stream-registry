@@ -15,9 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.serialise;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroProducer;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 @Slf4j
 public class ProducerNotificationEventUtils {
@@ -89,11 +88,12 @@ public class ProducerNotificationEventUtils {
         .collect(Collectors.toList());
 
     val type = specification.getType();
-    val configJson = specification.getConfigJson();
+    String config = serialise(specification.getConfiguration());
 
-    val statusJson = Optional.ofNullable(producer.getStatus())
-        .map(Status::getStatusJson)
-        .orElse(null);
+    String statusJson =
+        producer == null || producer.getStatus() == null || producer.getStatus().getObjectNode() == null
+            ? null
+            : serialise(producer.getStatus().getObjectNode());
 
     val avroProducer = AvroProducer.newBuilder()
         .setName(producerName)
@@ -104,7 +104,7 @@ public class ProducerNotificationEventUtils {
         .setDescription(description)
         .setTags(tags)
         .setType(type)
-        .setConfigurationString(configJson)
+        .setConfigurationString(config)
         .setStatusString(statusJson)
         .build();
 
@@ -130,7 +130,7 @@ public class ProducerNotificationEventUtils {
     requireNonNull(producer.getSpecification().getDescription(), canNotBeNull("spec's description"));
     requireNonNull(producer.getSpecification().getTags(), canNotBeNull("spec's tags"));
     requireNonNull(producer.getSpecification().getType(), canNotBeNull("spec's type"));
-    requireNonNull(producer.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
+    requireNonNull(producer.getSpecification().getConfiguration(), canNotBeNull("spec's config json"));
   }
 
   private static String canNotBeNull(String target) {

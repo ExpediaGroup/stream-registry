@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2019 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
-
-import static com.expediagroup.streamplatform.streamregistry.model.ObjectNodeMapper.serialise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,7 @@ public class SpecificationInput {
         description,
         getTags(tags),
         type,
-        serialise(configuration)
+        configuration
     );
   }
 }

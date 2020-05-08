@@ -16,6 +16,8 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.serialise;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_PRODUCER_KEY_PARSER_CLASS_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_PRODUCER_KEY_PARSER_METHOD_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_PRODUCER_PARSER_ENABLED_PROPERTY;
@@ -155,8 +157,8 @@ public class CustomProducerMethodsLoadingTest {
         .setDescription(producer.getSpecification().getDescription())
         .setTags(Collections.emptyList())
         .setType(producer.getSpecification().getType())
-        .setConfigurationString(producer.getSpecification().getConfigJson())
-        .setStatusString(producer.getStatus().getStatusJson())
+        .setConfigurationString(serialise(producer.getSpecification().getConfiguration()))
+        .setStatusString(serialise(producer.getStatus().getObjectNode()))
         .build();
 
     val event = AvroEvent.newBuilder().setProducerEntity(avroEvent).build();
@@ -167,16 +169,16 @@ public class CustomProducerMethodsLoadingTest {
   }
 
   public static Producer getDummyProducer() {
-    val name = Instant.now().toString();
-    val domain = "domain";
-    val description = "description";
-    val type = "type";
-    val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    String name = Instant.now().toString();
+    String domain = "domain";
+    String description = "description";
+    String type = "type";
+    String configJson = "{}";
+    String statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
-    val zone = "aws_us_east_1";
-    val streamName = "stream01";
+    String zone = "aws_us_east_1";
+    String streamName = "stream01";
 
     // Key
     val key = new ProducerKey();
@@ -190,12 +192,11 @@ public class CustomProducerMethodsLoadingTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
     val producer = new Producer();
     producer.setKey(key);
