@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_BOOTSTRAP_SERVERS_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_NOTIFICATIONS_ENABLED_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.KAFKA_SCHEMA_REGISTRY_URL_PROPERTY;
@@ -302,6 +303,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Schema> getDummySchemaEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Schema schema = getDummySchema();
+
     return NotificationEvent.<Schema>builder()
         .entity(schema)
         .source(source)
@@ -315,7 +317,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
 
     // Key
@@ -323,16 +325,9 @@ public class NotificationEventListenerKafkaIntegrationTest {
     key.setName(name);
     key.setDomain(domain);
 
-    // Spec
-    val spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfigJson(configJson);
-    spec.setTags(tags);
+    Specification spec = new Specification(description, tags, type, deserialise(configJson));
 
-    // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    Status status = new Status(deserialise(statusJson));
 
     val schema = new Schema();
     schema.setKey(key);
@@ -345,6 +340,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Stream> getDummyStreamEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Stream stream = getDummyStream();
+
     return NotificationEvent.<Stream>builder()
         .entity(stream)
         .source(source)
@@ -358,7 +354,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
 
@@ -368,16 +364,9 @@ public class NotificationEventListenerKafkaIntegrationTest {
     key.setDomain(domain);
     key.setVersion(version);
 
-    // Spec
-    val spec = new Specification();
-    spec.setDescription(description);
-    spec.setType(type);
-    spec.setConfigJson(configJson);
-    spec.setTags(tags);
+    val spec = new Specification(description, tags, type, deserialise(configJson));
 
-    // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    val status = new Status(deserialise(statusJson));
 
     val stream = new Stream();
     stream.setKey(key);
@@ -395,6 +384,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<StreamBinding> getDummyStreamBindingEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     StreamBinding streamBinding = getDummyStreamBinding();
+
     return NotificationEvent.<StreamBinding>builder()
         .entity(streamBinding)
         .source(source)
@@ -408,7 +398,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
@@ -426,12 +416,11 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    val status = new Status(deserialise(statusJson));
 
     val streamBinding = new StreamBinding();
     streamBinding.setKey(key);
@@ -444,6 +433,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Producer> getDummyProducerEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Producer producer = getDummyProducer();
+
     return NotificationEvent.<Producer>builder()
         .entity(producer)
         .source(source)
@@ -454,6 +444,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
   public NotificationEvent<Consumer> getDummyConsumerEvent(int event, EventType eventType, String source) {
     log.info("Emitting event {}", event);
     Consumer consumer = getDummyConsumer();
+
     return NotificationEvent.<Consumer>builder()
         .entity(consumer)
         .source(source)
@@ -468,7 +459,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
@@ -485,12 +476,11 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    val status = new Status(deserialise(statusJson));
 
     val producer = new Producer();
     producer.setKey(key);
@@ -507,7 +497,7 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    val statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
@@ -524,12 +514,11 @@ public class NotificationEventListenerKafkaIntegrationTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    val status = new Status(deserialise(statusJson));
 
     val consumer = new Consumer();
     consumer.setKey(key);

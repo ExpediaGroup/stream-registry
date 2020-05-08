@@ -15,9 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.serialise;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.val;
@@ -27,7 +27,6 @@ import com.expediagroup.streamplatform.streamregistry.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.avro.AvroKeyType;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 
 public class ConsumerNotificationEventUtils {
 
@@ -87,11 +86,12 @@ public class ConsumerNotificationEventUtils {
         .collect(Collectors.toList());
 
     val type = specification.getType();
-    val configJson = specification.getConfigJson();
+    String config = serialise(specification.getConfiguration());
 
-    val statusJson = Optional.ofNullable(consumer.getStatus())
-        .map(Status::getStatusJson)
-        .orElse(null);
+    String statusJson =
+        consumer == null || consumer.getStatus() == null || consumer.getStatus().getObjectNode() == null
+            ? null
+            : serialise(consumer.getStatus().getObjectNode());
 
     val avroConsumer = AvroConsumer.newBuilder()
         .setName(consumerName)
@@ -102,7 +102,7 @@ public class ConsumerNotificationEventUtils {
         .setDescription(description)
         .setTags(tags)
         .setType(type)
-        .setConfigurationString(configJson)
+        .setConfigurationString(config)
         .setStatusString(statusJson)
         .build();
 
@@ -128,7 +128,7 @@ public class ConsumerNotificationEventUtils {
     requireNonNull(consumer.getSpecification().getDescription(), canNotBeNull("spec's description"));
     requireNonNull(consumer.getSpecification().getTags(), canNotBeNull("spec's tags"));
     requireNonNull(consumer.getSpecification().getType(), canNotBeNull("spec's type"));
-    requireNonNull(consumer.getSpecification().getConfigJson(), canNotBeNull("spec's config json"));
+    requireNonNull(consumer.getSpecification().getConfiguration(), canNotBeNull("spec's config json"));
   }
 
   private static String canNotBeNull(String target) {

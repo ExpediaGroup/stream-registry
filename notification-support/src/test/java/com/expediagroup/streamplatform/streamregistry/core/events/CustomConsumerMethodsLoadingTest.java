@@ -16,6 +16,8 @@
 package com.expediagroup.streamplatform.streamregistry.core.events;
 
 import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventUtils.getWarningMessageOnNotDefinedProp;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.deserialise;
+import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.serialise;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_CONSUMER_KEY_PARSER_CLASS_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_CONSUMER_KEY_PARSER_METHOD_PROPERTY;
 import static com.expediagroup.streamplatform.streamregistry.core.events.config.NotificationEventConfig.CUSTOM_CONSUMER_PARSER_ENABLED_PROPERTY;
@@ -155,8 +157,8 @@ public class CustomConsumerMethodsLoadingTest {
         .setDescription(consumer.getSpecification().getDescription())
         .setTags(Collections.emptyList())
         .setType(consumer.getSpecification().getType())
-        .setConfigurationString(consumer.getSpecification().getConfigJson())
-        .setStatusString(consumer.getStatus().getStatusJson())
+        .setConfigurationString(serialise(consumer.getSpecification().getConfiguration()))
+        .setStatusString(serialise(consumer.getStatus().getObjectNode()))
         .build();
 
     val event = AvroEvent.newBuilder().setConsumerEntity(avroEvent).build();
@@ -172,7 +174,7 @@ public class CustomConsumerMethodsLoadingTest {
     val description = "description";
     val type = "type";
     val configJson = "{}";
-    val statusJson = "{foo:bar}";
+    String statusJson = "{\"foo\":\"bar\"}";
     val tags = Collections.singletonList(new Tag("tag-name", "tag-value"));
     val version = 1;
     val zone = "aws_us_east_1";
@@ -190,12 +192,11 @@ public class CustomConsumerMethodsLoadingTest {
     val spec = new Specification();
     spec.setDescription(description);
     spec.setType(type);
-    spec.setConfigJson(configJson);
+    spec.setConfiguration(deserialise(configJson));
     spec.setTags(tags);
 
     // Status
-    val status = new Status();
-    status.setStatusJson(statusJson);
+    val status = new Status(deserialise(statusJson));
 
     val consumer = new Consumer();
     consumer.setKey(key);
