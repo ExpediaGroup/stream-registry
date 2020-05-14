@@ -39,24 +39,24 @@ public class ConsumerNotificationEventUtils {
     val streamDomain = key.getStreamDomain();
     val zone = key.getZone();
 
-    var domainKey = AvroKey.newBuilder()
+    val domainKey = AvroKey.newBuilder()
         .setId(streamDomain)
         .setType(AvroKeyType.DOMAIN)
         .build();
 
-    var zoneKey = AvroKey.newBuilder()
+    val zoneKey = AvroKey.newBuilder()
         .setId(zone)
         .setParent(domainKey)
         .setType(AvroKeyType.ZONE)
         .build();
 
-    var streamKey = AvroKey.newBuilder()
+    val streamKey = AvroKey.newBuilder()
         .setId(streamName)
         .setParent(zoneKey)
         .setType(AvroKeyType.STREAM)
         .build();
 
-    var streamVersionKey = AvroKey.newBuilder()
+    val streamVersionKey = AvroKey.newBuilder()
         .setId(streamVersion.toString())
         .setParent(streamKey)
         .setType(AvroKeyType.STREAM_VERSION)
