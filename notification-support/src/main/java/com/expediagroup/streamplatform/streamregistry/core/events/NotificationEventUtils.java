@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.core.events;
 import static com.expediagroup.streamplatform.streamregistry.core.events.ObjectNodeMapper.serialise;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
