@@ -91,7 +91,10 @@ public class NotificationEventUtils {
     val type = specification.getType();
     val config = specification.getConfiguration();
 
-    val status = Optional.ofNullable(schema.getStatus()).orElse(null);
+    String statusJson =
+        schema == null || schema.getStatus() == null || schema.getStatus().getObjectNode() == null
+            ? null
+            : serialise(schema.getStatus().getObjectNode());
 
     val avroSchema = AvroSchema.newBuilder()
         .setDomain(domain)
@@ -100,7 +103,7 @@ public class NotificationEventUtils {
         .setTags(tags)
         .setType(type)
         .setConfigurationString(serialise(config))
-        .setStatusString(serialise(status.getObjectNode()))
+        .setStatusString(statusJson)
         .build();
 
     return AvroEvent.newBuilder()
@@ -153,7 +156,10 @@ public class NotificationEventUtils {
     val type = specification.getType();
     val config = specification.getConfiguration();
 
-    val status = Optional.ofNullable(stream.getStatus()).orElse(null);
+    String statusJson =
+        stream == null || stream.getStatus() == null || stream.getStatus().getObjectNode() == null
+            ? null
+            : serialise(stream.getStatus().getObjectNode());
 
     val avroStream = AvroStream.newBuilder()
         .setVersion(version)
@@ -163,7 +169,7 @@ public class NotificationEventUtils {
         .setTags(tags)
         .setType(type)
         .setConfigurationString(serialise(config))
-        .setStatusString(serialise(status.getObjectNode()))
+        .setStatusString(statusJson)
         .setSchemaKey(avroSchema)
         .build();
 
