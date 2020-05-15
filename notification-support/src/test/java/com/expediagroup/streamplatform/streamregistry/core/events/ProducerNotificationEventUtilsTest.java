@@ -100,7 +100,7 @@ public class ProducerNotificationEventUtilsTest {
     Assert.assertEquals(type, avroEvent.getProducerEntity().getType());
     Assert.assertEquals(configJson, avroEvent.getProducerEntity().getConfigurationString());
     Assert.assertEquals(statusJson, avroEvent.getProducerEntity().getStatusString());
-    Assert.assertEquals(version, avroEvent.getProducerEntity().getStreamVersion().intValue());
+    Assert.assertEquals(version, avroEvent.getProducerEntity().getStreamVersion());
   }
 
 }

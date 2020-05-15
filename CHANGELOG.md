@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Emit event on streambinding mutation.
 - Added `repository-api` module to define new repository abstraction exposing model instead of data.
 - Added `repository-postgres` module to implement new repository adapting JPA to consolidate JPA/Hibernate implementation details.
+- Added state library.
 
 ### Changed
 - Split internal representation into Model and Data

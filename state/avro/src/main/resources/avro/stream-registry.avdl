@@ -1,0 +1,107 @@
+@namespace("com.expediagroup.streamplatform.streamregistry.state.avro")
+protocol StreamRegistry {
+  record AvroDomainKey {
+    string name;
+  }
+
+  record AvroSchemaKey {
+    AvroDomainKey domainKey;
+    string name;
+  }
+
+  record AvroStreamKey {
+    AvroDomainKey domainKey;
+    string name;
+    int version;
+  }
+
+  record AvroZoneKey {
+    string name;
+  }
+
+  record AvroInfrastructureKey {
+    AvroZoneKey zoneKey;
+    string name;
+  }
+
+  record AvroProducerKey {
+    AvroStreamKey streamKey;
+    AvroZoneKey zoneKey;
+    string name;
+  }
+
+  record AvroConsumerKey {
+    AvroStreamKey streamKey;
+    AvroZoneKey zoneKey;
+    string name;
+  }
+
+  record AvroStreamBindingKey {
+    AvroStreamKey streamKey;
+    AvroInfrastructureKey infrastructureKey;
+  }
+
+  record AvroProducerBindingKey {
+    AvroProducerKey producerKey;
+    AvroStreamBindingKey streamBindingKey;
+  }
+
+  record AvroConsumerBindingKey {
+    AvroConsumerKey consumerKey;
+    AvroStreamBindingKey streamBindingKey;
+  }
+
+  record AvroTag {
+    string name;
+    union { null, string } value = null;
+  }
+
+  record AvroObject {
+    map<union{ AvroObject, AvroArray, string, long, double, boolean, null }> value;
+  }
+
+  record AvroArray {
+    array<union{ AvroObject, AvroArray, string, long, double, boolean, null }> value;
+  }
+
+  record AvroSpecification {
+    string description;
+    array<AvroTag> tags;
+    string type;
+    AvroObject configuration;
+  }
+
+  record AvroStreamSpecification {
+    string description;
+    array<AvroTag> tags;
+    string type;
+    AvroObject configuration;
+    AvroSchemaKey schemaKey;
+  }
+
+  record AvroSpecificationKey {
+    union { AvroDomainKey, AvroSchemaKey, AvroStreamKey, AvroZoneKey, AvroInfrastructureKey, AvroProducerKey, AvroConsumerKey, AvroStreamBindingKey, AvroProducerBindingKey, AvroConsumerBindingKey } key;
+  }
+
+  record AvroStatusKey {
+    union { AvroDomainKey, AvroSchemaKey, AvroStreamKey, AvroZoneKey, AvroInfrastructureKey, AvroProducerKey, AvroConsumerKey, AvroStreamBindingKey, AvroProducerBindingKey, AvroConsumerBindingKey } key;
+    string statusName;
+  }
+
+  record AvroStatus {
+    AvroObject value;
+  }
+
+  record AvroKey {
+    union { AvroSpecificationKey, AvroStatusKey } key;
+  }
+
+  record AvroValue {
+    union { AvroSpecification, AvroStreamSpecification, AvroStatus } value;
+  }
+
+  record AvroEvent {
+    AvroKey key;
+    AvroValue value;
+  }
+}

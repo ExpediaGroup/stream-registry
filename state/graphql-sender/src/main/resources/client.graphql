@@ -1,0 +1,149 @@
+mutation DomainSpecification($key: DomainKeyInput!, $specification: SpecificationInput!) {
+  domain {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation DomainStatus($key: DomainKeyInput!, $status: StatusInput!) {
+  domain {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation SchemaSpecification($key: SchemaKeyInput!, $specification: SpecificationInput!) {
+  schema {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation SchemaStatus($key: SchemaKeyInput!, $status: StatusInput!) {
+  schema {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation StreamSpecification($key: StreamKeyInput!, $specification: SpecificationInput!, $schemaKey: SchemaKeyInput) {
+  stream {
+    upsert(key: $key, specification: $specification, schema: $schemaKey) {
+      __typename
+    }
+  }
+}
+mutation StreamStatus($key: StreamKeyInput!, $status: StatusInput!) {
+  stream {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation ZoneSpecification($key: ZoneKeyInput!, $specification: SpecificationInput!) {
+  zone {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation ZoneStatus($key: ZoneKeyInput!, $status: StatusInput!) {
+  zone {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation InfrastructureSpecification($key: InfrastructureKeyInput!, $specification: SpecificationInput!) {
+  infrastructure {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation InfrastructureStatus($key: InfrastructureKeyInput!, $status: StatusInput!) {
+  infrastructure {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation ProducerSpecification($key: ProducerKeyInput!, $specification: SpecificationInput!) {
+  producer {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation ProducerStatus($key: ProducerKeyInput!, $status: StatusInput!) {
+  producer {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation ConsumerSpecification($key: ConsumerKeyInput!, $specification: SpecificationInput!) {
+  consumer {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation ConsumerStatus($key: ConsumerKeyInput!, $status: StatusInput!) {
+  consumer {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation StreamBindingSpecification($key: StreamBindingKeyInput!, $specification: SpecificationInput!) {
+  streamBinding {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation StreamBindingStatus($key: StreamBindingKeyInput!, $status: StatusInput!) {
+  streamBinding {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation ProducerBindingSpecification($key: ProducerBindingKeyInput!, $specification: SpecificationInput!) {
+  producerBinding {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation ProducerBindingStatus($key: ProducerBindingKeyInput!, $status: StatusInput!) {
+  producerBinding {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+
+mutation ConsumerBindingSpecification($key: ConsumerBindingKeyInput!, $specification: SpecificationInput!) {
+  consumerBinding {
+    upsert(key: $key, specification: $specification) {
+      __typename
+    }
+  }
+}
+mutation ConsumerBindingStatus($key: ConsumerBindingKeyInput!, $status: StatusInput!) {
+  consumerBinding {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}

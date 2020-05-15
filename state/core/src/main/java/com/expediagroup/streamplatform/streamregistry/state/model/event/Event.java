@@ -1,0 +1,38 @@
+/**
+ * Copyright (C) 2018-2020 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.expediagroup.streamplatform.streamregistry.state.model.event;
+
+import lombok.NonNull;
+
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
+
+public interface Event<K extends Entity.Key<S>, S extends Specification> {
+  K getKey();
+
+  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key, @NonNull S specification) {
+    return new SpecificationEvent<>(key, specification);
+  }
+
+  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key, @NonNull StatusEntry statusEntry) {
+    return new StatusEvent<>(key, statusEntry);
+  }
+
+  Event<?, ?> LOAD_COMPLETE = (Event<DomainKey, DefaultSpecification>) () -> null;
+}
