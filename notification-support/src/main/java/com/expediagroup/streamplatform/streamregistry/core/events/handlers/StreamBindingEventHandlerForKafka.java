@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.events.handlers;
 
+import static com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventHandler.sendEntityNotificationEvent;
+
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
@@ -22,7 +24,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import org.apache.avro.specific.SpecificRecord;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -70,9 +71,12 @@ public class StreamBindingEventHandlerForKafka implements NotificationEventHandl
   }
 
   private Future<SendResult<SpecificRecord, SpecificRecord>> sendStreamBindingNotificationEvent(NotificationEvent<StreamBinding> event) {
-    val key = streamBindingToKeyRecord.apply(event.getEntity());
-    val value = streamBindingToValueRecord.apply(event.getEntity());
-
-    return kafkaTemplate.send(notificationEventsTopic, (SpecificRecord) key, (SpecificRecord) value);
+    return sendEntityNotificationEvent(
+        streamBindingToKeyRecord,
+        streamBindingToValueRecord,
+        kafkaTemplate::send,
+        notificationEventsTopic,
+        event
+    );
   }
 }

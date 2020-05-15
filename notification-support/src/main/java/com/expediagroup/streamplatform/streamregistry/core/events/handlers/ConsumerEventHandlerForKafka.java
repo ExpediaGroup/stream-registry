@@ -31,11 +31,11 @@ import org.springframework.kafka.support.SendResult;
 
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEvent;
 import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventHandler;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 @Slf4j
 @Builder
-public class ProducerEventHandlerForKafka implements NotificationEventHandler<Producer> {
+public class ConsumerEventHandlerForKafka implements NotificationEventHandler<Consumer> {
 
   @Getter
   @NonNull
@@ -43,37 +43,37 @@ public class ProducerEventHandlerForKafka implements NotificationEventHandler<Pr
 
   @Getter
   @NonNull
-  private final Function<Producer, ?> producerToKeyRecord;
+  private final Function<Consumer, ?> consumerToKeyRecord;
 
   @Getter
   @NonNull
-  private final Function<Producer, ?> producerToValueRecord;
+  private final Function<Consumer, ?> consumerToValueRecord;
 
   @Getter
   @NonNull
   private final KafkaTemplate<SpecificRecord, SpecificRecord> kafkaTemplate;
 
   @Override
-  public void onCreate(NotificationEvent<Producer> event) {
-    log.info("Pushing create-producer event {} to Kafka", event);
-    sendProducerNotificationEvent(event);
+  public void onCreate(NotificationEvent<Consumer> event) {
+    log.info("Pushing create-consumer event {} to Kafka", event);
+    sendConsumerNotificationEvent(event);
   }
 
   @Override
-  public void onUpdate(NotificationEvent<Producer> event) {
-    log.info("Pushing update-producer event {} to Kafka", event);
-    sendProducerNotificationEvent(event);
+  public void onUpdate(NotificationEvent<Consumer> event) {
+    log.info("Pushing update-consumer event {} to Kafka", event);
+    sendConsumerNotificationEvent(event);
   }
 
   @Override
-  public void onDelete(NotificationEvent<Producer> event) {
-    log.warn("On delete-producer is not implemented in ProducerEventHandlerForKafka. Event {} is going to be ignored", event);
+  public void onDelete(NotificationEvent<Consumer> event) {
+    log.warn("On delete-consumer is not implemented in ConsumerEventHandlerForKafka. Event {} is going to be ignored", event);
   }
 
-  private Future<SendResult<SpecificRecord, SpecificRecord>> sendProducerNotificationEvent(NotificationEvent<Producer> event) {
+  private Future<SendResult<SpecificRecord, SpecificRecord>> sendConsumerNotificationEvent(NotificationEvent<Consumer> event) {
     return sendEntityNotificationEvent(
-        producerToKeyRecord,
-        producerToValueRecord,
+        consumerToKeyRecord,
+        consumerToValueRecord,
         kafkaTemplate::send,
         notificationEventsTopic,
         event
