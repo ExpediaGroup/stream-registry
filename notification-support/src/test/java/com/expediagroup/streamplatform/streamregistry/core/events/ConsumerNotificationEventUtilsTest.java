@@ -100,7 +100,7 @@ public class ConsumerNotificationEventUtilsTest {
     Assert.assertEquals(type, avroEvent.getConsumerEntity().getType());
     Assert.assertEquals(configJson, avroEvent.getConsumerEntity().getConfigurationString());
     Assert.assertEquals(statusJson, avroEvent.getConsumerEntity().getStatusString());
-    Assert.assertEquals(version, avroEvent.getConsumerEntity().getStreamVersion().intValue());
+    Assert.assertEquals(version, avroEvent.getConsumerEntity().getStreamVersion());
   }
 
 }
