@@ -15,8 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
-import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaConfig.CORRELATION_ID_HEADER;
-import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaConfig.TOPIC_CONFIG;
+import static com.expediagroup.streamplatform.streamregistry.state.EventCorrelator.CORRELATION_ID;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
@@ -37,8 +36,10 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
+import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
@@ -49,6 +50,7 @@ import org.apache.kafka.common.TopicPartition;
 
 import com.expediagroup.streamplatform.streamregistry.state.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
+import com.expediagroup.streamplatform.streamregistry.state.EventReceiverListener;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
@@ -56,38 +58,38 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
 public class KafkaEventReceiver implements EventReceiver {
-  @NonNull private final KafkaConsumer<AvroKey, AvroValue> consumer;
-  @NonNull private final String topic;
-  @NonNull private final AvroConverter avroConverter;
+  @NonNull private final Config config;
   @NonNull private final EventCorrelator correlator;
+  @NonNull private final AvroConverter converter;
+  @NonNull private final KafkaConsumer<AvroKey, AvroValue> consumer;
   @NonNull private final ScheduledExecutorService executorService;
   private volatile boolean shuttingDown = false;
 
-  public KafkaEventReceiver(Map<String, Object> config, EventCorrelator correlator) {
+  public KafkaEventReceiver(Config config, EventCorrelator correlator) {
     this(
-        new KafkaConsumer<>(consumerConfig(config)),
-        (String) config.get(TOPIC_CONFIG),
-        new AvroConverter(),
+        config,
         correlator,
+        new AvroConverter(),
+        new KafkaConsumer<>(consumerConfig(config)),
         newScheduledThreadPool(2)
     );
   }
 
-  public KafkaEventReceiver(Map<String, Object> config) {
+  public KafkaEventReceiver(Config config) {
     this(config, EventCorrelator.NULL);
   }
 
   @Override
-  public void receive(Listener listener) {
+  public void receive(EventReceiverListener listener) {
     executorService.execute(() -> consume(listener));
   }
 
-  private void consume(Listener listener) {
+  private void consume(EventReceiverListener listener) {
     var currentOffset = new AtomicLong(0L);
     var progressLogger = executorService
         .scheduleAtFixedRate(() -> log.info("Current offset {}", currentOffset.get()), 10, 10, SECONDS);
 
-    var topicPartition = new TopicPartition(topic, 0);
+    var topicPartition = new TopicPartition(config.getTopic(), 0);
     var topicPartitions = List.of(topicPartition);
 
     int partitions = consumer.partitionsFor(topicPartition.topic()).size();
@@ -112,7 +114,7 @@ public class KafkaEventReceiver implements EventReceiver {
 
     while (!shuttingDown) {
       for (ConsumerRecord<AvroKey, AvroValue> record : consumer.poll(Duration.ofMillis(100))) {
-        var event = avroConverter.toModel(record.key(), record.value());
+        var event = converter.toModel(record.key(), record.value());
         currentOffset.set(record.offset());
         listener.onEvent(event);
         receiveCorrelationId(record);
@@ -127,7 +129,7 @@ public class KafkaEventReceiver implements EventReceiver {
   }
 
   private void receiveCorrelationId(ConsumerRecord<?, ?> record) {
-    var headerIterator = record.headers().headers(CORRELATION_ID_HEADER).iterator();
+    var headerIterator = record.headers().headers(CORRELATION_ID).iterator();
     if (headerIterator.hasNext()) {
       var header = headerIterator.next();
       var correlationId = new String(header.value(), UTF_8);
@@ -142,16 +144,25 @@ public class KafkaEventReceiver implements EventReceiver {
     consumer.close();
   }
 
-  static Map<String, Object> consumerConfig(Map<String, Object> config) {
+  static Map<String, Object> consumerConfig(Config config) {
     return Map.of(
-        BOOTSTRAP_SERVERS_CONFIG, config.get(BOOTSTRAP_SERVERS_CONFIG),
-        GROUP_ID_CONFIG, config.get(GROUP_ID_CONFIG),
+        BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers(),
+        GROUP_ID_CONFIG, config.getGroupId(),
         AUTO_OFFSET_RESET_CONFIG, "earliest",
         ENABLE_AUTO_COMMIT_CONFIG, false,
         KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class,
         VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class,
-        SCHEMA_REGISTRY_URL_CONFIG, config.get(SCHEMA_REGISTRY_URL_CONFIG),
+        SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl(),
         SPECIFIC_AVRO_READER_CONFIG, true
     );
+  }
+
+  @Value
+  @Builder
+  public static class Config {
+    @NonNull String bootstrapServers;
+    @NonNull String topic;
+    @NonNull String schemaRegistryUrl;
+    @NonNull String groupId;
   }
 }

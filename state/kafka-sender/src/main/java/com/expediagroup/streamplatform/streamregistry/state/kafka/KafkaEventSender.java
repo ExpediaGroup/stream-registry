@@ -15,8 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
-import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaConfig.CORRELATION_ID_HEADER;
-import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaConfig.TOPIC_CONFIG;
+import static com.expediagroup.streamplatform.streamregistry.state.EventCorrelator.CORRELATION_ID;
 import static io.confluent.kafka.serializers.KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.UUID.randomUUID;
@@ -30,8 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
@@ -53,27 +54,27 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
 public class KafkaEventSender implements EventSender {
-  @NonNull private final KafkaProducer<AvroKey, AvroValue> producer;
-  @NonNull private final String topic;
-  @NonNull private final AvroConverter avroConverter;
+  @NonNull private final Config config;
   @NonNull private final EventCorrelator correlator;
+  @NonNull private final AvroConverter converter;
+  @NonNull private final KafkaProducer<AvroKey, AvroValue> producer;
 
-  public KafkaEventSender(Map<String, Object> config, EventCorrelator correlator) {
+  public KafkaEventSender(Config config, EventCorrelator correlator) {
     this(
-        new KafkaProducer<>(producerConfig(config)),
-        (String) config.get(TOPIC_CONFIG),
+        config,
+        correlator,
         new AvroConverter(),
-        correlator
+        new KafkaProducer<>(producerConfig(config))
     );
   }
 
-  public KafkaEventSender(Map<String, Object> config) {
+  public KafkaEventSender(Config config) {
     this(config, EventCorrelator.NULL);
   }
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(@NonNull Event<K, S> event) {
-    var avroEvent = avroConverter.toAvro(event);
+    var avroEvent = converter.toAvro(event);
     return send(avroEvent.getKey(), avroEvent.getValue());
   }
 
@@ -81,8 +82,8 @@ public class KafkaEventSender implements EventSender {
     var correlationId = randomUUID().toString();
     var future = new CompletableFuture<Void>();
     correlator.register(correlationId, future);
-    var headers = List.<Header>of(new RecordHeader(CORRELATION_ID_HEADER, correlationId.getBytes(UTF_8)));
-    var record = new ProducerRecord<AvroKey, AvroValue>(topic, null, null, key, value, headers);
+    var headers = List.<Header>of(new RecordHeader(CORRELATION_ID, correlationId.getBytes(UTF_8)));
+    var record = new ProducerRecord<>(config.getTopic(), null, null, key, value, headers);
     producer.send(record, (rm, e) -> {
       if (rm != null) {
         log.debug("Sent {}", rm);
@@ -99,13 +100,21 @@ public class KafkaEventSender implements EventSender {
     producer.close();
   }
 
-  static Map<String, Object> producerConfig(Map<String, Object> config) {
+  static Map<String, Object> producerConfig(Config config) {
     return Map.of(
-        BOOTSTRAP_SERVERS_CONFIG, config.get(BOOTSTRAP_SERVERS_CONFIG),
+        BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers(),
         ACKS_CONFIG, "all",
         KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class,
         VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class,
-        SCHEMA_REGISTRY_URL_CONFIG, config.get(SCHEMA_REGISTRY_URL_CONFIG)
+        SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl()
     );
+  }
+
+  @Value
+  @Builder
+  public static class Config {
+    @NonNull String bootstrapServers;
+    @NonNull String topic;
+    @NonNull String schemaRegistryUrl;
   }
 }

@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state;
+package com.expediagroup.streamplatform.streamregistry.state.model.specification;
 
-import java.io.Closeable;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import lombok.NonNull;
+import lombok.Value;
+import lombok.With;
 
-public interface EventSender extends Closeable {
-  <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(Event<K, S> entity);
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+@Value
+public class DefaultSpecification implements Specification {
+  @With
+  @NonNull String description;
+  @NonNull List<Tag> tags;
+  @NonNull String type;
+  @NonNull ObjectNode configuration;
 }

@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.kafka;
+package com.expediagroup.streamplatform.streamregistry.state;
 
-public final class KafkaConfig {
-  private KafkaConfig() {}
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
-  public static final String TOPIC_CONFIG = "topic";
-  public static final String CORRELATION_ID_HEADER = "correlationId";
+public interface EventReceiverListener {
+  <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event);
 }

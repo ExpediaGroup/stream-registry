@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.model.specification;
+package com.expediagroup.streamplatform.streamregistry.state;
 
-import java.util.List;
+import java.io.Closeable;
 
-import lombok.NonNull;
-import lombok.Value;
+public interface EventReceiver extends Closeable {
+  void receive(EventReceiverListener listener);
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-@Value
-public class DefaultSpecification implements Specification {
-  @NonNull String description;
-  @NonNull List<Tag> tags;
-  @NonNull String type;
-  @NonNull ObjectNode configuration;
 }

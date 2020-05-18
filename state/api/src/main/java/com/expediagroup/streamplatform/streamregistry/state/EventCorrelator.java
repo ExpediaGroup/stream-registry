@@ -15,16 +15,25 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
-import java.io.Closeable;
+import java.util.concurrent.CompletableFuture;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+public interface EventCorrelator {
+  void register(String correlationId, CompletableFuture<Void> future);
 
-public interface EventReceiver extends Closeable {
-  void receive(Listener listener);
+  void received(String correlationId);
 
-  interface Listener {
-    <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event);
-  }
+  void failed(String correlationId, Exception e);
+
+  String CORRELATION_ID = "correlationId";
+
+  EventCorrelator NULL = new EventCorrelator() {
+    @Override
+    public void register(String correlationId, CompletableFuture<Void> future) {}
+
+    @Override
+    public void received(String correlationId) {}
+
+    @Override
+    public void failed(String correlationId, Exception e) {}
+  };
 }

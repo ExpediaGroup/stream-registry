@@ -24,14 +24,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
-@Slf4j
 class AvroObjectDeserializer extends JsonDeserializer<AvroObject> {
   @Override
   public AvroObject deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -43,7 +40,6 @@ class AvroObjectDeserializer extends JsonDeserializer<AvroObject> {
 
   Object deserialize(JsonParser p) throws IOException {
     while (p.currentToken() != null) {
-      log.trace("token: {}, name: {}, value: {}", p.currentToken(), p.getCurrentName(), p.getText());
       switch (p.currentToken()) {
         case VALUE_STRING:
           return p.getText();
@@ -80,7 +76,7 @@ class AvroObjectDeserializer extends JsonDeserializer<AvroObject> {
   }
 
   private AvroArray deserializeArray(JsonParser p) throws IOException {
-    var items = new ArrayList<Object>();
+    var items = new ArrayList<>();
     process(p, END_ARRAY, (name, item) -> items.add(item));
     return new AvroArray(items);
   }

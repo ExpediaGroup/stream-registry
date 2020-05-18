@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static lombok.AccessLevel.PACKAGE;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -34,32 +34,52 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
 @RequiredArgsConstructor(access = PACKAGE)
-public class EntityView implements Closeable {
+public class DefaultEntityView implements EntityView {
   @NonNull private final EventReceiver receiver;
   @NonNull private final Map<Entity.Key<?>, Entity<?, ?>> entities;
   @NonNull private final EntityViewUpdater updater;
 
-  EntityView(EventReceiver receiver, Map<Entity.Key<?>, Entity<?, ?>> entities) {
+  DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, Entity<?, ?>> entities) {
     this(receiver, entities, new EntityViewUpdater(entities));
   }
 
-  public EntityView(EventReceiver receiver) {
+  public DefaultEntityView(EventReceiver receiver) {
     this(receiver, new HashMap<>());
   }
 
-  public CompletableFuture<Void> load(@NonNull Listener listener) {
+  @Override
+  public CompletableFuture<Void> load(@NonNull EntityViewListener listener) {
     var future = new CompletableFuture<Void>();
     receiver.receive(new ReceiverListener(listener, future));
     return future;
   }
 
+  @Override
   public CompletableFuture<Void> load() {
-    return load(Listener.NULL);
+    return load(EntityViewListener.NULL);
   }
 
+  @Override
+  public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> get(K key) {
+    return Optional.ofNullable((Entity<K, S>) entities.get(key));
+  }
+
+  @Override
+  public <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass) {
+    return entities.values().stream()
+        .filter(x -> x.getKey().getClass().equals(keyClass))
+        .map(x -> (Entity<K, S>) x);
+  }
+
+  @Override
+  public void close() throws IOException {
+    receiver.close();
+  }
+
+  @Getter // for testing
   @RequiredArgsConstructor
-  class ReceiverListener implements EventReceiver.Listener {
-    private final Listener listener;
+  class ReceiverListener implements EventReceiverListener {
+    private final EntityViewListener listener;
     private final CompletableFuture<Void> future;
 
     @Override
@@ -73,29 +93,5 @@ public class EntityView implements Closeable {
         }
       }
     }
-  }
-
-  public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> get(K key) {
-    return Optional.ofNullable((Entity<K, S>) entities.get(key));
-  }
-
-  public <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass) {
-    return entities.values().stream()
-        .filter(x -> x.getKey().getClass().equals(keyClass))
-        .map(x -> (Entity<K, S>) x);
-  }
-
-  @Override
-  public void close() throws IOException {
-    receiver.close();
-  }
-
-  public interface Listener {
-    <K extends Entity.Key<S>, S extends Specification> void onEvent(Entity<K, S> oldEntity, Event<K, S> event);
-
-    Listener NULL = new Listener() {
-      @Override
-      public <K extends Entity.Key<S>, S extends Specification> void onEvent(Entity<K, S> oldEntity, Event<K, S> event) { }
-    };
   }
 }

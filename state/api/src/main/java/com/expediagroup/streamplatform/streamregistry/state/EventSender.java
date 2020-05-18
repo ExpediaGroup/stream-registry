@@ -13,37 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.graphql;
+package com.expediagroup.streamplatform.streamregistry.state;
 
-import static lombok.AccessLevel.PACKAGE;
-
+import java.io.Closeable;
 import java.util.concurrent.CompletableFuture;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
-import com.apollographql.apollo.ApolloClient;
-
-import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
-@RequiredArgsConstructor(access = PACKAGE)
-public class GraphQLEventSender implements EventSender {
-  @NonNull private final ApolloExecutor executor;
-  @NonNull private final GraphQLConverter converter;
-
-  public GraphQLEventSender(ApolloClient client) {
-    this(new ApolloExecutor(client), new GraphQLConverter());
-  }
-
-  @Override
-  public <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(Event<K, S> event) {
-    var mutation = converter.convert(event);
-    return executor.execute(mutation);
-  }
-
-  @Override
-  public void close() {}
+public interface EventSender extends Closeable {
+  <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(Event<K, S> event);
 }

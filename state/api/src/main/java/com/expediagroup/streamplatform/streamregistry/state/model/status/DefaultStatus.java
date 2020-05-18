@@ -23,11 +23,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+@EqualsAndHashCode
+@ToString
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultStatus implements Status {
   @NonNull
@@ -56,8 +60,8 @@ public class DefaultStatus implements Status {
   }
 
   @Override
-  public Status with(@NonNull StatusEntry entry) {
-    Map<String, ObjectNode> statusMap = new HashMap<>(this.statusMap);
+  public DefaultStatus with(@NonNull StatusEntry entry) {
+    var statusMap = new HashMap<>(this.statusMap);
     statusMap.put(entry.getName(), entry.getValue());
     return new DefaultStatus(statusMap);
   }

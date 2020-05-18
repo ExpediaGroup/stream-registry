@@ -17,9 +17,10 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import java.util.concurrent.CompletableFuture;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import com.apollographql.apollo.ApolloCall.Callback;
+import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Response;
@@ -29,27 +30,30 @@ import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 class ApolloExecutor {
-  private final ApolloClient client;
+  @NonNull private final ApolloClient client;
 
   CompletableFuture<Void> execute(Mutation<?, ?, ?> mutation) {
     var future = new CompletableFuture<Void>();
-    client.mutate(mutation).enqueue(
-        new Callback() {
-          @Override
-          public void onResponse(@NotNull Response response) {
-            if (!response.errors().isEmpty()) {
-              future.completeExceptionally(new IllegalStateException("Unexpected response: " + response.errors()));
-            } else {
-              future.complete(null);
-            }
-          }
-
-          @Override
-          public void onFailure(@NotNull ApolloException e) {
-            future.completeExceptionally(e);
-          }
-        }
-    );
+    client.mutate(mutation).enqueue(new Callback(future));
     return future;
+  }
+
+  @RequiredArgsConstructor
+  class Callback extends ApolloCall.Callback {
+    private final CompletableFuture<Void> future;
+
+    @Override
+    public void onResponse(@NotNull Response response) {
+      if (!response.errors().isEmpty()) {
+        future.completeExceptionally(new IllegalStateException("Unexpected response: " + response.errors()));
+      } else {
+        future.complete(null);
+      }
+    }
+
+    @Override
+    public void onFailure(@NotNull ApolloException e) {
+      future.completeExceptionally(e);
+    }
   }
 }

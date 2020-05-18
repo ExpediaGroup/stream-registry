@@ -55,6 +55,7 @@
     <module>repository/api</module>
     <module>repository/postgres</module>
     <module>spring-boot-starter</module>
+    <module>state/api</module>
     <module>state/avro</module>
     <module>state/core</module>
     <module>state/graphql-sender</module>
