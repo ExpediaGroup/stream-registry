@@ -19,5 +19,4 @@ import java.io.Closeable;
 
 public interface EventReceiver extends Closeable {
   void receive(EventReceiverListener listener);
-
 }
