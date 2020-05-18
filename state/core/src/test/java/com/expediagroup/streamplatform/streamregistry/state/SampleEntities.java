@@ -25,7 +25,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainK
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
-import com.expediagroup.streamplatform.streamregistry.state.model.status.Status;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 final class SampleEntities {
@@ -37,7 +36,7 @@ final class SampleEntities {
   static final DefaultSpecification specification = new DefaultSpecification("description", List.of(), "type", configuration);
   static final ObjectNode statusValue = mapper.createObjectNode();
   static final StatusEntry statusEntry = new StatusEntry("name", statusValue);
-  static final Status status = new DefaultStatus().with(statusEntry);
+  static final DefaultStatus status = (DefaultStatus) new DefaultStatus().with(statusEntry);
   static final Entity<DomainKey, DefaultSpecification> entity = new Entity<>(key, specification, status);
   static final Event<DomainKey, DefaultSpecification> specificationEvent = Event.of(key, specification);
   static final Event<DomainKey, DefaultSpecification> statusEvent = Event.of(key, statusEntry);

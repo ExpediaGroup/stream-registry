@@ -15,93 +15,144 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.entity;
+import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.key;
+import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specificationEvent;
+import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+import java.util.HashMap;
+import java.util.Map;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView.ReceiverListener;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultEntityViewTest {
-//  @Mock private EventReceiver.Factory receiverFactory;
-//  @Mock private EventReceiver receiver;
-//  @Mock private EventReceiver.Listener receiverListener;
-//  @Mock private EntityViewListener listener;
-//  @Mock private DefaultEventReceiverListener.Factory receiverListenerFactory;
-//
-//  private final Map<Entity.Key<?>, Entity<?, ?>> entities = new HashMap<>();
-//
-//  private EntityView underTest;
-//
-//  @Before
-//  public void before() {
-//    underTest = new EntityView(receiverFactory, entities, receiverListenerFactory);
-//
-//    when(receiverFactory.create()).thenReturn(receiver);
-//  }
-//
-//  @Test
-//  public void load() {
-//    when(receiverListenerFactory.create(eq(listener), any())).thenReturn(receiverListener);
-//
-//    CompletableFuture<Void> future = underTest.load(listener);
-//
-//    ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-//    verify(receiverListenerFactory).create(eq(listener), runnableCaptor.capture());
-//    verify(receiver).receive(receiverListener);
-//
-//    Runnable runnable = runnableCaptor.getValue();
-//    assertThat(future.isDone(), is(false));
-//    runnable.run();
-//    assertThat(future.isDone(), is(true));
-//  }
-//
-//  @Test
-//  public void getPresent() {
-//    entities.put(key, entity);
-//
-//    Optional<Entity<DomainKey, DefaultSpecification>> result = underTest.get(key);
-//
-//    assertThat(result.isPresent(), is(true));
-//    assertThat(result.get(), is(entity));
-//  }
-//
-//  @Test
-//  public void getAbsent() {
-//    Optional<Entity<DomainKey, DefaultSpecification>> result = underTest.get(key);
-//
-//    assertThat(result.isPresent(), is(false));
-//  }
-//
-//  @Test
-//  public void allPresent() {
-//    entities.put(key, entity);
-//
-//    List<Entity<DomainKey, DefaultSpecification>> result = underTest.all(DomainKey.class).collect(toList());
-//
-//    assertThat(result.size(), is(1));
-//    assertThat(result.get(0), is(entity));
-//  }
-//
-//  @Test
-//  public void allAbsent() {
-//    List<Entity<DomainKey, DefaultSpecification>> result = underTest.all(DomainKey.class).collect(toList());
-//
-//    assertThat(result.size(), is(0));
-//  }
-//
-//  @Test
-//  public void close() throws Exception {
-//    underTest.load(listener);
-//    underTest.close();
-//
-//    verify(receiver).close();
-//  }
-//
-//  @Test
-//  public void closeWithoutLoad() throws Exception {
-//    underTest.close();
-//
-//    verify(receiver, never()).close();
-//  }
+  @Mock private EventReceiver receiver;
+  @Mock private EntityViewUpdater updater;
+  @Mock private EntityViewListener listener;
+
+  private final Map<Entity.Key<?>, Entity<?, ?>> entities = new HashMap<>();
+
+  private EntityView underTest;
+
+  @Before
+  public void before() {
+    underTest = new DefaultEntityView(receiver, entities, updater);
+  }
+
+  @Test
+  public void load() {
+    var future = underTest.load(listener);
+    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    verify(receiver).receive(captor.capture());
+    var receiverListener = captor.getValue();
+    assertThat(receiverListener.getListener(), is(listener));
+    assertThat(receiverListener.getFuture(), is(future));
+  }
+
+  @Test
+  public void loadNoArgs() {
+    var future = underTest.load();
+
+    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    verify(receiver).receive(captor.capture());
+    var receiverListener = captor.getValue();
+    assertThat(receiverListener.getListener(), is(EntityViewListener.NULL));
+    assertThat(receiverListener.getFuture(), is(future));
+  }
+
+  @Test
+  public void updateNotLoaded() {
+    var future = underTest.load(listener);
+
+    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    verify(receiver).receive(captor.capture());
+    var receiverListener = captor.getValue();
+    receiverListener.onEvent(specificationEvent);
+    verify(updater).update(specificationEvent);
+    assertThat(future.isDone(), is(false));
+    verify(listener, never()).onEvent(null, specificationEvent);
+  }
+
+  @Test
+  public void updateLoaded() {
+    var future = underTest.load(listener);
+
+    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    verify(receiver).receive(captor.capture());
+    var receiverListener = captor.getValue();
+    receiverListener.onEvent(LOAD_COMPLETE);
+    verify(updater, never()).update(any());
+    assertThat(future.isDone(), is(true));
+    verify(listener, never()).onEvent(null, specificationEvent);
+  }
+
+  @Test
+  public void updateLoadedListenerInvoked() {
+    underTest.load(listener);
+
+    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    verify(receiver).receive(captor.capture());
+    var receiverListener = captor.getValue();
+    receiverListener.onEvent(LOAD_COMPLETE);
+    receiverListener.onEvent(specificationEvent);
+    verify(updater).update(specificationEvent);
+    verify(listener).onEvent(null, specificationEvent);
+  }
+
+  @Test
+  public void getPresent() {
+    entities.put(key, entity);
+
+    var result = underTest.get(key);
+
+    assertThat(result.isPresent(), is(true));
+    assertThat(result.get(), is(entity));
+  }
+
+  @Test
+  public void getAbsent() {
+    var result = underTest.get(key);
+
+    assertThat(result.isPresent(), is(false));
+  }
+
+  @Test
+  public void allPresent() {
+    entities.put(key, entity);
+
+    var result = underTest.all(DomainKey.class).collect(toList());
+
+    assertThat(result.size(), is(1));
+    assertThat(result.get(0), is(entity));
+  }
+
+  @Test
+  public void allAbsent() {
+    var result = underTest.all(DomainKey.class).collect(toList());
+
+    assertThat(result.size(), is(0));
+  }
+
+  @Test
+  public void close() throws Exception {
+    underTest.close();
+
+    verify(receiver).close();
+  }
 }

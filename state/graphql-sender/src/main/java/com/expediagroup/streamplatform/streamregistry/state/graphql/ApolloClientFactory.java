@@ -21,10 +21,9 @@ import java.util.function.Consumer;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
-
-import okhttp3.OkHttpClient;
 
 public interface ApolloClientFactory {
   ApolloClient create();
