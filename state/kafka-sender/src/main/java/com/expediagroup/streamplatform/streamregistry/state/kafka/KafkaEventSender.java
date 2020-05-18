@@ -36,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
@@ -54,21 +55,21 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 @RequiredArgsConstructor(access = PACKAGE)
 public class KafkaEventSender implements EventSender {
   @NonNull private final Config config;
-  @NonNull private final EventCorrelator correlator;
+  @NonNull private final CorrelationStrategy correlationStrategy;
   @NonNull private final AvroConverter converter;
   @NonNull private final KafkaProducer<AvroKey, AvroValue> producer;
 
   public KafkaEventSender(Config config, EventCorrelator correlator) {
     this(
         config,
-        correlator,
+        correlator == null ? new NullCorrelationStrategy() : new CorrelationStrategyImpl(correlator),
         new AvroConverter(),
         new KafkaProducer<>(producerConfig(config))
     );
   }
 
   public KafkaEventSender(Config config) {
-    this(config, EventCorrelator.NULL);
+    this(config, null);
   }
 
   @Override
@@ -79,19 +80,73 @@ public class KafkaEventSender implements EventSender {
 
   private CompletableFuture<Void> send(AvroKey key, AvroValue value) {
     var future = new CompletableFuture<Void>();
-    var correlationId = correlator.register(future);
-    var headers = List.<Header>of(new RecordHeader(CORRELATION_ID, correlationId.getBytes(UTF_8)));
+    var correlationId = correlationStrategy.correlationId(future);
+    var headers = correlationStrategy.headers(correlationId);
     var record = new ProducerRecord<>(config.getTopic(), null, null, key, value, headers);
-    producer.send(record, (rm, e) -> {
-      if (rm != null) {
-        log.debug("Sent {}", rm);
-      } else {
-        log.error("Error sending record", e);
-        correlator.failed(correlationId, e);
-      }
-    });
+    producer.send(record, correlationStrategy.callback(correlationId, future));
     return future;
   }
+
+  interface CorrelationStrategy {
+    String correlationId(CompletableFuture<Void> future);
+
+    List<Header> headers(String correlationId);
+
+    Callback callback(String correlationId, CompletableFuture<Void> future);
+  }
+
+  static class NullCorrelationStrategy implements CorrelationStrategy {
+    @Override
+    public String correlationId(CompletableFuture<Void> future) {
+      return null;
+    }
+
+    @Override
+    public List<Header> headers(String correlationId) {
+      return List.of();
+    }
+
+    @Override
+    public Callback callback(String correlationId, CompletableFuture<Void> future) {
+      return (rm, e) -> {
+        if (rm != null) {
+          log.debug("Sent {}", rm);
+          future.complete(null);
+        } else {
+          log.error("Error sending record", e);
+          future.completeExceptionally(e);
+        }
+      };
+    }
+  }
+
+  @RequiredArgsConstructor
+  static class CorrelationStrategyImpl implements CorrelationStrategy {
+    private final EventCorrelator correlator;
+
+    @Override
+    public String correlationId(CompletableFuture<Void> future) {
+      return correlator.register(future);
+    }
+
+    @Override
+    public List<Header> headers(String correlationId) {
+      return List.<Header>of(new RecordHeader(CORRELATION_ID, correlationId.getBytes(UTF_8)));
+    }
+
+    @Override
+    public Callback callback(String correlationId, CompletableFuture<Void> future) {
+      return (rm, e) -> {
+        if (rm != null) {
+          log.debug("Sent {}", rm);
+        } else {
+          log.error("Error sending record", e);
+          correlator.failed(correlationId, e);
+        }
+      };
+    }
+  }
+
 
   @Override
   public void close() {

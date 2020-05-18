@@ -18,25 +18,11 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import java.util.concurrent.CompletableFuture;
 
 public interface EventCorrelator {
+  String CORRELATION_ID = "correlationId";
+
   String register(CompletableFuture<Void> future);
 
   void received(String correlationId);
 
   void failed(String correlationId, Exception e);
-
-  String CORRELATION_ID = "correlationId";
-
-  EventCorrelator NULL = new EventCorrelator() {
-    @Override
-    public String register(CompletableFuture<Void> future) {
-      future.complete(null);
-      return null;
-    }
-
-    @Override
-    public void received(String correlationId) {}
-
-    @Override
-    public void failed(String correlationId, Exception e) {}
-  };
 }
