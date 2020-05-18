@@ -18,38 +18,41 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static lombok.AccessLevel.PACKAGE;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
-public
-class DefaultEventCorrelator implements EventCorrelator {
+public class DefaultEventCorrelator implements EventCorrelator {
   private final Map<String, CompletableFuture<Void>> futures;
 
-  DefaultEventCorrelator() {
+  public DefaultEventCorrelator() {
     this(new ConcurrentHashMap<>());
   }
 
   @Override
   public void register(String correlationId, CompletableFuture<Void> future) {
+    log.debug("registered: {}", correlationId);
     futures.put(correlationId, future);
   }
 
   @Override
   public void received(String correlationId) {
-    var future = futures.remove(correlationId);
-    if (future != null) {
-      future.complete(null);
-    }
+    log.debug("received: {}", correlationId);
+    remove(correlationId).ifPresent(future -> future.complete(null));
   }
 
   @Override
   public void failed(String correlationId, Exception e) {
-    var future = futures.remove(correlationId);
-    if (future != null) {
-      future.completeExceptionally(e);
-    }
+    log.debug("failed: {}", correlationId);
+    remove(correlationId).ifPresent(future -> future.completeExceptionally(e));
+  }
+
+  private Optional<CompletableFuture<Void>> remove(String correlationId) {
+    return Optional.ofNullable(futures.remove(correlationId));
   }
 }

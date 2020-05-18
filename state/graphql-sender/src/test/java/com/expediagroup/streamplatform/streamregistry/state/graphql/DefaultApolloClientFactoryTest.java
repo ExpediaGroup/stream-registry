@@ -36,10 +36,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.expediagroup.streamplatform.streamregistry.state.graphql.ApolloClientFactory.DefaultApolloClientFactory;
-
 @RunWith(MockitoJUnitRunner.class)
-public class ApolloClientFactoryTest {
+public class DefaultApolloClientFactoryTest {
   @Mock private ApolloClient.Builder builder;
   @Mock private Consumer<ApolloClient.Builder> configurer;
 

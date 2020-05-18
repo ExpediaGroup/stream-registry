@@ -29,7 +29,7 @@ import com.apollographql.apollo.exception.ApolloException;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
-class ApolloExecutor {
+public class ApolloExecutor {
   @NonNull private final ApolloClient client;
 
   CompletableFuture<Void> execute(Mutation<?, ?, ?> mutation) {

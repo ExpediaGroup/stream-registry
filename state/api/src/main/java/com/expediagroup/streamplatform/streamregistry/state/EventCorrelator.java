@@ -28,7 +28,9 @@ public interface EventCorrelator {
 
   EventCorrelator NULL = new EventCorrelator() {
     @Override
-    public void register(String correlationId, CompletableFuture<Void> future) {}
+    public void register(String correlationId, CompletableFuture<Void> future) {
+      future.complete(null);
+    }
 
     @Override
     public void received(String correlationId) {}
