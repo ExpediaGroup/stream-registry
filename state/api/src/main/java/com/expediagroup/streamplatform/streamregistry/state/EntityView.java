@@ -24,7 +24,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
 public interface EntityView extends Closeable {
-
   CompletableFuture<Void> load(EntityViewListener listener);
 
   CompletableFuture<Void> load();
