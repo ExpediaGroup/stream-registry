@@ -41,7 +41,7 @@ public class StateIT {
 
     var correlator = new DefaultEventCorrelator();
 
-    var recevier = new KafkaEventReceiver(KafkaEventReceiver.Config.builder()
+    var receiver = new KafkaEventReceiver(KafkaEventReceiver.Config.builder()
         .bootstrapServers(kafka.getBootstrapServers())
         .schemaRegistryUrl(schemaRegistryUrl)
         .topic(topic)
@@ -54,7 +54,7 @@ public class StateIT {
         .topic(topic)
         .build(), correlator);
 
-    EntityView view = new DefaultEntityView(recevier);
+    EntityView view = new DefaultEntityView(receiver);
     var listener = mock(EntityViewListener.class);
     view.load(listener).join();
 
