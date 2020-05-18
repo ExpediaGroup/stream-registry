@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.state.kafka;
 import static com.expediagroup.streamplatform.streamregistry.state.EventCorrelator.CORRELATION_ID;
 import static io.confluent.kafka.serializers.KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.UUID.randomUUID;
 import static lombok.AccessLevel.PACKAGE;
 import static org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
@@ -79,9 +78,8 @@ public class KafkaEventSender implements EventSender {
   }
 
   private CompletableFuture<Void> send(AvroKey key, AvroValue value) {
-    var correlationId = randomUUID().toString();
     var future = new CompletableFuture<Void>();
-    correlator.register(correlationId, future);
+    var correlationId = correlator.register(future);
     var headers = List.<Header>of(new RecordHeader(CORRELATION_ID, correlationId.getBytes(UTF_8)));
     var record = new ProducerRecord<>(config.getTopic(), null, null, key, value, headers);
     producer.send(record, (rm, e) -> {

@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
-import static com.expediagroup.streamplatform.streamregistry.state.EventCorrelator.CORRELATION_ID;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -33,15 +32,15 @@ public class DefaultEventCorrelatorTest {
 
   @Test
   public void register() {
-    underTest.register(CORRELATION_ID, future);
+    var correlationId = underTest.register(future);
 
-    assertThat(futures.get(CORRELATION_ID), is(future));
+    assertThat(futures.get(correlationId), is(future));
   }
 
   @Test
   public void received() {
-    underTest.register(CORRELATION_ID, future);
-    underTest.received(CORRELATION_ID);
+    var correlationId = underTest.register(future);
+    underTest.received(correlationId);
 
     assertThat(futures.isEmpty(), is(true));
     assertThat(future.isDone(), is(true));
@@ -49,8 +48,8 @@ public class DefaultEventCorrelatorTest {
 
   @Test
   public void failed() {
-    underTest.register(CORRELATION_ID, future);
-    underTest.failed(CORRELATION_ID, new Exception());
+    var correlationId = underTest.register(future);
+    underTest.failed(correlationId, new Exception());
 
     assertThat(futures.isEmpty(), is(true));
     assertThat(future.isCompletedExceptionally(), is(true));

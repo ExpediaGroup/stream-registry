@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import static java.util.UUID.randomUUID;
 import static lombok.AccessLevel.PACKAGE;
 
 import java.util.Map;
@@ -35,9 +36,11 @@ public class DefaultEventCorrelator implements EventCorrelator {
   }
 
   @Override
-  public void register(String correlationId, CompletableFuture<Void> future) {
-    log.debug("registered: {}", correlationId);
+  public String register(CompletableFuture<Void> future) {
+    String correlationId = randomUUID().toString();
     futures.put(correlationId, future);
+    log.debug("registered: {}", correlationId);
+    return correlationId;
   }
 
   @Override
