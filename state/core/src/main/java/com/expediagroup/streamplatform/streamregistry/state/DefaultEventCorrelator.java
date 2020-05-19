@@ -37,7 +37,7 @@ public class DefaultEventCorrelator implements EventCorrelator {
 
   @Override
   public String register(CompletableFuture<Void> future) {
-    String correlationId = randomUUID().toString();
+    var correlationId = randomUUID().toString();
     futures.put(correlationId, future);
     log.debug("registered: {}", correlationId);
     return correlationId;

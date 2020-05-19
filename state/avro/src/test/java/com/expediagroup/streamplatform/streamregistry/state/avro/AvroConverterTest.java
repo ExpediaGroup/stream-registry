@@ -68,49 +68,49 @@ public class AvroConverterTest {
 
   @Test
   public void specificationToModel() {
-    Event<?, ?> result = underTest.toModel(avroSpecificationEvent.getKey(), avroSpecificationEvent.getValue());
+    var result = underTest.toModel(avroSpecificationEvent.getKey(), avroSpecificationEvent.getValue());
     assertThat(result, is(Event.of(domainKey, specification)));
   }
 
   @Test
   public void specificationDeleteToModel() {
-    Event<?, ?> result = underTest.toModel(new AvroKey(avroSpecificationKey), null);
+    var result = underTest.toModel(new AvroKey(avroSpecificationKey), null);
     assertThat(result, is(Event.of(domainKey)));
   }
 
   @Test
   public void statusToModel() {
-    Event<?, ?> result = underTest.toModel(new AvroKey(avroStatusKey), new AvroValue(avroStatus));
+    var result = underTest.toModel(new AvroKey(avroStatusKey), new AvroValue(avroStatus));
     assertThat(result, is(Event.of(domainKey, statusEntry)));
   }
 
   @Test
   public void statusDeleteToModel() {
-    Event<?, ?> result = underTest.toModel(new AvroKey(avroStatusKey), null);
+    var result = underTest.toModel(new AvroKey(avroStatusKey), null);
     assertThat(result, is(Event.of(domainKey, "statusName")));
   }
 
   @Test
   public void specificationToAvro() throws IOException {
-    AvroEvent result = underTest.toAvro(Event.of(domainKey, specification));
+    var result = underTest.toAvro(Event.of(domainKey, specification));
     assertEquals(avroSpecificationEvent.toByteBuffer(), result.toByteBuffer());
   }
 
   @Test
   public void specificationDeleteToAvro() throws IOException {
-    AvroEvent result = underTest.toAvro(Event.of(domainKey));
+    var result = underTest.toAvro(Event.of(domainKey));
     assertEquals(avroSpecificationDeletionEvent.toByteBuffer(), result.toByteBuffer());
   }
 
   @Test
   public void statusToAvro() throws IOException {
-    AvroEvent result = underTest.toAvro(Event.of(domainKey, statusEntry));
+    var result = underTest.toAvro(Event.of(domainKey, statusEntry));
     assertEquals(avroStatusEvent.toByteBuffer(), result.toByteBuffer());
   }
 
   @Test
   public void statusDeleteToAvro() throws IOException {
-    AvroEvent result = underTest.toAvro(Event.of(domainKey, "statusName"));
+    var result = underTest.toAvro(Event.of(domainKey, "statusName"));
     assertEquals(avroStatusDeletionEvent.toByteBuffer(), result.toByteBuffer());
   }
 }

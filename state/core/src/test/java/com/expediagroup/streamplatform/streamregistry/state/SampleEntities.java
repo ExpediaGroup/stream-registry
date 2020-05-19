@@ -40,5 +40,4 @@ final class SampleEntities {
   static final Entity<DomainKey, DefaultSpecification> entity = new Entity<>(key, specification, status);
   static final Event<DomainKey, DefaultSpecification> specificationEvent = Event.of(key, specification);
   static final Event<DomainKey, DefaultSpecification> statusEvent = Event.of(key, statusEntry);
-
 }

@@ -187,7 +187,7 @@ public class AvroConverter {
   }
 
   public AvroEvent toAvro(Event<?, ?> event) {
-    EntityConverter<?, ?> avroConverter = avroConverter(event.getKey());
+    var avroConverter = avroConverter(event.getKey());
     if (event instanceof SpecificationEvent) {
       return avroConverter.toAvro((SpecificationEvent<?, ?>) event);
     } else if (event instanceof StatusEvent) {

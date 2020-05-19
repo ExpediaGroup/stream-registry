@@ -15,13 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
-
-
-
 import com.apollographql.apollo.ApolloClient;
-
 
 public interface ApolloClientFactory {
   ApolloClient create();
-
 }
