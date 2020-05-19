@@ -1,5 +1,14 @@
 @startuml
 
+participant Sender
+participant Listener
+participant EntityView
+participant Receiver
+participant Kafka
+
+Sender -> Kafka : Send\nAgents: via GraphQL\nStream Registry: direct
+...
+
 Listener -> EntityView : Load
 activate Listener
 activate EntityView
