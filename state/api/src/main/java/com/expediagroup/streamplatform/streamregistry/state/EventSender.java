@@ -22,6 +22,17 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
+/**
+ * An interface for sending entity state change {@link Event Events}.
+ */
 public interface EventSender extends Closeable {
+  /**
+   * Method for sending an {@link Event}
+   *
+   * @param event the event.
+   * @param <K>   the key type.
+   * @param <S>   the specification type.
+   * @return a future that completes when the event has successfully sent or when received if using a correlator.
+   */
   <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(Event<K, S> event);
 }

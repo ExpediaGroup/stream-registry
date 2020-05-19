@@ -19,6 +19,16 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
+/**
+ * A listener that is invoked for each event received by the {@link EventReceiver}.
+ */
 public interface EventReceiverListener {
+  /**
+   * Method invoked upon receiving an {@link Event} by the {@link EventReceiver}.
+   *
+   * @param event the event.
+   * @param <K>   the key type.
+   * @param <S>   the specification type.
+   */
   <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event);
 }

@@ -17,6 +17,18 @@ package com.expediagroup.streamplatform.streamregistry.state;
 
 import java.io.Closeable;
 
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+
+/**
+ * An interface for receiving an ordered stream of {@link Event Events}
+ */
 public interface EventReceiver extends Closeable {
+  /**
+   * Commences receiving events and invokes the provided {@link EventReceiverListener} for each event. When the
+   * receiver is fully loaded it passes the {@link Event#LOAD_COMPLETE} event then continues passes events
+   * as they arrive.
+   *
+   * @param listener to be invoked for each event received.
+   */
   void receive(EventReceiverListener listener);
 }

@@ -19,9 +19,25 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
+/**
+ * A listener that is invoked for each event after the {@link EntityView} is fully loaded.
+ */
 public interface EntityViewListener {
+  /**
+   * Method invoked upon receiving an {@link Event} after the {@link EntityView} is fully loaded.
+   * It is provided with the {@link Entity} state prior to receiving the event or {@code null} if it did not
+   * exist along with the event itself.
+   *
+   * @param oldEntity the entity state prior to receiving the event.
+   * @param event     the event itself.
+   * @param <K>       the key type.
+   * @param <S>       the specification type.
+   */
   <K extends Entity.Key<S>, S extends Specification> void onEvent(Entity<K, S> oldEntity, Event<K, S> event);
 
+  /**
+   * A null object listener.
+   */
   EntityViewListener NULL = new EntityViewListener() {
     @Override
     public <K extends Entity.Key<S>, S extends Specification> void onEvent(Entity<K, S> oldEntity, Event<K, S> event) {}
