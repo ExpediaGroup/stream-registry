@@ -45,7 +45,9 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamB
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationEvent;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
@@ -101,12 +103,18 @@ public class AvroConverter {
     private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, AvroSpecification avroSpecification) {
       var key = convertObject(avroSpecificationKey.getKey(), modelKeyClass);
       var specification = convertObject(avroSpecification, modelSpecificationClass);
+      if (specification == null) {
+        return Event.of(key);
+      }
       return Event.of(key, specification);
     }
 
     private Event<?, ?> toModel(AvroStatusKey avroStatusKey, AvroStatus avroStatus) {
       var key = convertObject(avroStatusKey.getKey(), modelKeyClass);
       var statusName = avroStatusKey.getStatusName();
+      if (avroStatus == null) {
+        return Event.of(key, statusName);
+      }
       var statusValue = convertObject(avroStatus.getValue(), ObjectNode.class);
       return Event.of(key, new StatusEntry(statusName, statusValue));
     }
@@ -129,13 +137,40 @@ public class AvroConverter {
           new AvroValue(new AvroStatus(statusValue))
       );
     }
+
+    private AvroEvent toAvro(SpecificationDeletionEvent<?, ?> event) {
+      var key = convertObject(event.getKey(), avroKeyClass);
+      return new AvroEvent(
+          new AvroKey(new AvroSpecificationKey(key)),
+          null
+      );
+    }
+
+    private AvroEvent toAvro(StatusDeletionEvent<?, ?> event) {
+      var key = convertObject(event.getKey(), avroKeyClass);
+      var statusName = event.getStatusName();
+      return new AvroEvent(
+          new AvroKey(new AvroStatusKey(key, statusName)),
+          null
+      );
+    }
   }
 
   public Event<?, ?> toModel(AvroKey avroKey, AvroValue avroValue) {
     if (avroKey.getKey() instanceof AvroSpecificationKey) {
-      return toModel((AvroSpecificationKey) avroKey.getKey(), (AvroSpecification) avroValue.getValue());
+      AvroSpecification specification = null;
+      if (avroValue != null) {
+        specification = (AvroSpecification) avroValue.getValue();
+      }
+      return toModel((AvroSpecificationKey) avroKey.getKey(), specification);
+    } else if (avroKey.getKey() instanceof AvroStatusKey) {
+      AvroStatus avroStatus = null;
+      if (avroValue != null) {
+        avroStatus = (AvroStatus) avroValue.getValue();
+      }
+      return toModel((AvroStatusKey) avroKey.getKey(), avroStatus);
     } else {
-      return toModel((AvroStatusKey) avroKey.getKey(), (AvroStatus) avroValue.getValue());
+      throw new IllegalArgumentException("Unknown key " + avroKey);
     }
   }
 
@@ -152,19 +187,18 @@ public class AvroConverter {
   }
 
   public AvroEvent toAvro(Event<?, ?> event) {
+    EntityConverter<?, ?> avroConverter = avroConverter(event.getKey());
     if (event instanceof SpecificationEvent) {
-      return toAvro((SpecificationEvent<?, ?>) event);
+      return avroConverter.toAvro((SpecificationEvent<?, ?>) event);
+    } else if (event instanceof StatusEvent) {
+      return avroConverter.toAvro((StatusEvent<?, ?>) event);
+    } else if (event instanceof SpecificationDeletionEvent) {
+      return avroConverter.toAvro((SpecificationDeletionEvent<?, ?>) event);
+    } else if (event instanceof StatusDeletionEvent) {
+      return avroConverter.toAvro((StatusDeletionEvent<?, ?>) event);
     } else {
-      return toAvro((StatusEvent<?, ?>) event);
+      throw new IllegalArgumentException("Unknown event " + event);
     }
-  }
-
-  private AvroEvent toAvro(SpecificationEvent<?, ?> event) {
-    return avroConverter(event.getKey()).toAvro(event);
-  }
-
-  private AvroEvent toAvro(StatusEvent<?, ?> event) {
-    return avroConverter(event.getKey()).toAvro(event);
   }
 
   private EntityConverter<?, ?> avroConverter(Object key) {

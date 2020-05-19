@@ -47,7 +47,9 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamB
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationEvent;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
@@ -56,7 +58,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusE
 
 class GraphQLConverter {
 
-  private final Map<Class<? extends Entity.Key<?>>, Converter<?, ?, ?, ?, ?>> converters = Map.of(
+  private final Map<Class<? extends Entity.Key<?>>, Converter<?, ?, ?, ?, ?, ?>> converters = Map.of(
       DomainKey.class, new DomainConverter(),
       SchemaKey.class, new SchemaConverter(),
       StreamKey.class, new StreamConverter(),
@@ -70,20 +72,32 @@ class GraphQLConverter {
   );
 
   <K extends Entity.Key<S>, S extends Specification> Mutation<?, ?, ?> convert(Event<K, S> event) {
-    var converter = (Converter<?, ?, ?, K, S>) converters.get(event.getKey().getClass());
+    var converter = (Converter<?, ?, ?, ?, K, S>) converters.get(event.getKey().getClass());
 
     if (converter == null) {
-      throw new IllegalStateException("Unknown key class " + event.getKey().getClass());
+      throw new IllegalArgumentException("Unknown key class " + event.getKey().getClass());
     }
 
     if (event instanceof SpecificationEvent) {
       return converter.convertSpecificationEvent((SpecificationEvent<K, S>) event);
-    } else {
+    } else if (event instanceof StatusEvent) {
       return converter.convertStatusEvent((StatusEvent<K, S>) event);
+    } else if (event instanceof SpecificationDeletionEvent) {
+      return converter.convertSpecificationDeletionEvent((SpecificationDeletionEvent<K, S>) event);
+    } else if (event instanceof StatusDeletionEvent) {
+      throw new UnsupportedOperationException("Status deletion events are currently unsupported");
+    } else {
+      throw new IllegalArgumentException("Unknown event " + event);
     }
   }
 
-  interface Converter<GK extends InputType, GSP extends Mutation<?, ?, ?>, GST extends Mutation<?, ?, ?>, K extends Entity.Key<S>, S extends Specification> {
+  interface Converter<
+      GK extends InputType,
+      GSP extends Mutation<?, ?, ?>,
+      GST extends Mutation<?, ?, ?>,
+      GD extends Mutation<?, ?, ?>,
+      K extends Entity.Key<S>,
+      S extends Specification> {
     GK convertKey(K key);
 
     GSP convertSpecificationEvent(SpecificationEvent<K, S> event);
@@ -112,9 +126,11 @@ class GraphQLConverter {
           .agentStatus(entry.getValue())
           .build();
     }
+
+    GD convertSpecificationDeletionEvent(SpecificationDeletionEvent<K, S> event);
   }
 
-  static class DomainConverter implements Converter<DomainKeyInput, DomainSpecificationMutation, DomainStatusMutation, DomainKey, DefaultSpecification> {
+  static class DomainConverter implements Converter<DomainKeyInput, DomainSpecificationMutation, DomainStatusMutation, DomainDeletionMutation, DomainKey, DefaultSpecification> {
     @Override
     public DomainKeyInput convertKey(DomainKey key) {
       return DomainKeyInput.builder()
@@ -137,9 +153,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public DomainDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<DomainKey, DefaultSpecification> event) {
+      return DomainDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class SchemaConverter implements Converter<SchemaKeyInput, SchemaSpecificationMutation, SchemaStatusMutation, SchemaKey, DefaultSpecification> {
+  static class SchemaConverter implements Converter<SchemaKeyInput, SchemaSpecificationMutation, SchemaStatusMutation, SchemaDeletionMutation, SchemaKey, DefaultSpecification> {
     @Override
     public SchemaKeyInput convertKey(SchemaKey key) {
       return SchemaKeyInput.builder()
@@ -163,9 +186,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public SchemaDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<SchemaKey, DefaultSpecification> event) {
+      return SchemaDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class StreamConverter implements Converter<StreamKeyInput, StreamSpecificationMutation, StreamStatusMutation, StreamKey, StreamSpecification> {
+  static class StreamConverter implements Converter<StreamKeyInput, StreamSpecificationMutation, StreamStatusMutation, StreamDeletionMutation, StreamKey, StreamSpecification> {
     @Override
     public StreamKeyInput convertKey(StreamKey key) {
       return StreamKeyInput.builder()
@@ -194,9 +224,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public StreamDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<StreamKey, StreamSpecification> event) {
+      return StreamDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class ZoneConverter implements Converter<ZoneKeyInput, ZoneSpecificationMutation, ZoneStatusMutation, ZoneKey, DefaultSpecification> {
+  static class ZoneConverter implements Converter<ZoneKeyInput, ZoneSpecificationMutation, ZoneStatusMutation, ZoneDeletionMutation, ZoneKey, DefaultSpecification> {
     @Override
     public ZoneKeyInput convertKey(ZoneKey key) {
       return ZoneKeyInput.builder()
@@ -219,9 +256,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public ZoneDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<ZoneKey, DefaultSpecification> event) {
+      return ZoneDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class InfrastructureConverter implements Converter<InfrastructureKeyInput, InfrastructureSpecificationMutation, InfrastructureStatusMutation, InfrastructureKey, DefaultSpecification> {
+  static class InfrastructureConverter implements Converter<InfrastructureKeyInput, InfrastructureSpecificationMutation, InfrastructureStatusMutation, InfrastructureDeletionMutation, InfrastructureKey, DefaultSpecification> {
     @Override
     public InfrastructureKeyInput convertKey(InfrastructureKey key) {
       return InfrastructureKeyInput.builder()
@@ -245,9 +289,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public InfrastructureDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<InfrastructureKey, DefaultSpecification> event) {
+      return InfrastructureDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class ProducerConverter implements Converter<ProducerKeyInput, ProducerSpecificationMutation, ProducerStatusMutation, ProducerKey, DefaultSpecification> {
+  static class ProducerConverter implements Converter<ProducerKeyInput, ProducerSpecificationMutation, ProducerStatusMutation, ProducerDeletionMutation, ProducerKey, DefaultSpecification> {
     @Override
     public ProducerKeyInput convertKey(ProducerKey key) {
       return ProducerKeyInput.builder()
@@ -274,9 +325,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public ProducerDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<ProducerKey, DefaultSpecification> event) {
+      return ProducerDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class ConsumerConverter implements Converter<ConsumerKeyInput, ConsumerSpecificationMutation, ConsumerStatusMutation, ConsumerKey, DefaultSpecification> {
+  static class ConsumerConverter implements Converter<ConsumerKeyInput, ConsumerSpecificationMutation, ConsumerStatusMutation, ConsumerDeletionMutation, ConsumerKey, DefaultSpecification> {
     @Override
     public ConsumerKeyInput convertKey(ConsumerKey key) {
       return ConsumerKeyInput.builder()
@@ -303,9 +361,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public ConsumerDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<ConsumerKey, DefaultSpecification> event) {
+      return ConsumerDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class StreamBindingConverter implements Converter<StreamBindingKeyInput, StreamBindingSpecificationMutation, StreamBindingStatusMutation, StreamBindingKey, DefaultSpecification> {
+  static class StreamBindingConverter implements Converter<StreamBindingKeyInput, StreamBindingSpecificationMutation, StreamBindingStatusMutation, StreamBindingDeletionMutation, StreamBindingKey, DefaultSpecification> {
     @Override
     public StreamBindingKeyInput convertKey(StreamBindingKey key) {
       return StreamBindingKeyInput.builder()
@@ -332,9 +397,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public StreamBindingDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<StreamBindingKey, DefaultSpecification> event) {
+      return StreamBindingDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class ProducerBindingConverter implements Converter<ProducerBindingKeyInput, ProducerBindingSpecificationMutation, ProducerBindingStatusMutation, ProducerBindingKey, DefaultSpecification> {
+  static class ProducerBindingConverter implements Converter<ProducerBindingKeyInput, ProducerBindingSpecificationMutation, ProducerBindingStatusMutation, ProducerBindingDeletionMutation, ProducerBindingKey, DefaultSpecification> {
     @Override
     public ProducerBindingKeyInput convertKey(ProducerBindingKey key) {
       return ProducerBindingKeyInput.builder()
@@ -362,9 +434,16 @@ class GraphQLConverter {
           .status(convertStatus(event.getStatusEntry()))
           .build();
     }
+
+    @Override
+    public ProducerBindingDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<ProducerBindingKey, DefaultSpecification> event) {
+      return ProducerBindingDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
+          .build();
+    }
   }
 
-  static class ConsumerBindingConverter implements Converter<ConsumerBindingKeyInput, ConsumerBindingSpecificationMutation, ConsumerBindingStatusMutation, ConsumerBindingKey, DefaultSpecification> {
+  static class ConsumerBindingConverter implements Converter<ConsumerBindingKeyInput, ConsumerBindingSpecificationMutation, ConsumerBindingStatusMutation, ConsumerBindingDeletionMutation, ConsumerBindingKey, DefaultSpecification> {
     @Override
     public ConsumerBindingKeyInput convertKey(ConsumerBindingKey key) {
       return ConsumerBindingKeyInput.builder()
@@ -390,6 +469,13 @@ class GraphQLConverter {
       return ConsumerBindingStatusMutation.builder()
           .key(convertKey(event.getKey()))
           .status(convertStatus(event.getStatusEntry()))
+          .build();
+    }
+
+    @Override
+    public ConsumerBindingDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<ConsumerBindingKey, DefaultSpecification> event) {
+      return ConsumerBindingDeletionMutation.builder()
+          .key(convertKey(event.getKey()))
           .build();
     }
   }

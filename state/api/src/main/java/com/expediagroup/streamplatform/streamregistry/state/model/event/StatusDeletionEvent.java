@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.graphql;
+package com.expediagroup.streamplatform.streamregistry.state.model.event;
 
+import static lombok.AccessLevel.PACKAGE;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
-import com.apollographql.apollo.ApolloClient;
-
-
-public interface ApolloClientFactory {
-  ApolloClient create();
-
+@Value
+@RequiredArgsConstructor(access = PACKAGE)
+public class StatusDeletionEvent<K extends Entity.Key<S>, S extends Specification> implements Event<K, S> {
+  @NonNull K key;
+  @NonNull String statusName;
 }

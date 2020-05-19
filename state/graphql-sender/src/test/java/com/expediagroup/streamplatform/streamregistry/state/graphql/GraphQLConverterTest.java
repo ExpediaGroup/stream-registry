@@ -57,10 +57,20 @@ public class GraphQLConverterTest {
   private final StreamSpecification streamSpecification = new StreamSpecification("description", List.of(tag), "type", configuration, schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void unknownKey() {
     var key = new Entity.Key<>() {};
     underTest.convert(Event.of(key, specification));
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void statusDeletion() {
+    underTest.convert(Event.of(domainKey, "statusName"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void unknownEvent() {
+    underTest.convert(() -> domainKey);
   }
 
   @Test(expected = UnsupportedOperationException.class)
@@ -81,6 +91,12 @@ public class GraphQLConverterTest {
   }
 
   @Test
+  public void domainDeletion() {
+    var mutation = underTest.convert(Event.of(domainKey));
+    assertThat(mutation, is(instanceOf(DomainDeletionMutation.class)));
+  }
+
+  @Test
   public void schemaSpecification() {
     var mutation = underTest.convert(Event.of(schemaKey, specification));
     assertThat(mutation, is(instanceOf(SchemaSpecificationMutation.class)));
@@ -90,6 +106,12 @@ public class GraphQLConverterTest {
   public void schemaStatus() {
     var mutation = underTest.convert(Event.of(schemaKey, statusEntry));
     assertThat(mutation, is(instanceOf(SchemaStatusMutation.class)));
+  }
+
+  @Test
+  public void schemaDeletion() {
+    var mutation = underTest.convert(Event.of(schemaKey));
+    assertThat(mutation, is(instanceOf(SchemaDeletionMutation.class)));
   }
 
   @Test
@@ -105,6 +127,12 @@ public class GraphQLConverterTest {
   }
 
   @Test
+  public void streamDeletion() {
+    var mutation = underTest.convert(Event.of(streamkey));
+    assertThat(mutation, is(instanceOf(StreamDeletionMutation.class)));
+  }
+
+  @Test
   public void zoneSpecification() {
     var mutation = underTest.convert(Event.of(zoneKey, specification));
     assertThat(mutation, is(instanceOf(ZoneSpecificationMutation.class)));
@@ -114,6 +142,12 @@ public class GraphQLConverterTest {
   public void zoneStatus() {
     var mutation = underTest.convert(Event.of(zoneKey, statusEntry));
     assertThat(mutation, is(instanceOf(ZoneStatusMutation.class)));
+  }
+
+  @Test
+  public void zoneDeletion() {
+    var mutation = underTest.convert(Event.of(zoneKey));
+    assertThat(mutation, is(instanceOf(ZoneDeletionMutation.class)));
   }
 
   @Test
@@ -129,6 +163,12 @@ public class GraphQLConverterTest {
   }
 
   @Test
+  public void infrastructureDeletion() {
+    var mutation = underTest.convert(Event.of(infrastructureKey));
+    assertThat(mutation, is(instanceOf(InfrastructureDeletionMutation.class)));
+  }
+
+  @Test
   public void producerSpecification() {
     var mutation = underTest.convert(Event.of(producerKey, specification));
     assertThat(mutation, is(instanceOf(ProducerSpecificationMutation.class)));
@@ -138,6 +178,12 @@ public class GraphQLConverterTest {
   public void producerStatus() {
     var mutation = underTest.convert(Event.of(producerKey, statusEntry));
     assertThat(mutation, is(instanceOf(ProducerStatusMutation.class)));
+  }
+
+  @Test
+  public void producerDeletion() {
+    var mutation = underTest.convert(Event.of(producerKey));
+    assertThat(mutation, is(instanceOf(ProducerDeletionMutation.class)));
   }
 
   @Test
@@ -153,6 +199,12 @@ public class GraphQLConverterTest {
   }
 
   @Test
+  public void consumerDeletion() {
+    var mutation = underTest.convert(Event.of(consumerKey));
+    assertThat(mutation, is(instanceOf(ConsumerDeletionMutation.class)));
+  }
+
+  @Test
   public void streamBindingSpecification() {
     var mutation = underTest.convert(Event.of(streamBindingKey, specification));
     assertThat(mutation, is(instanceOf(StreamBindingSpecificationMutation.class)));
@@ -162,6 +214,12 @@ public class GraphQLConverterTest {
   public void streamBindingStatus() {
     var mutation = underTest.convert(Event.of(streamBindingKey, statusEntry));
     assertThat(mutation, is(instanceOf(StreamBindingStatusMutation.class)));
+  }
+
+  @Test
+  public void streamBindingDeletion() {
+    var mutation = underTest.convert(Event.of(streamBindingKey));
+    assertThat(mutation, is(instanceOf(StreamBindingDeletionMutation.class)));
   }
 
   @Test
@@ -177,6 +235,12 @@ public class GraphQLConverterTest {
   }
 
   @Test
+  public void producerBindingDeletion() {
+    var mutation = underTest.convert(Event.of(producerBindingKey));
+    assertThat(mutation, is(instanceOf(ProducerBindingDeletionMutation.class)));
+  }
+
+  @Test
   public void consumerBindingSpecification() {
     var mutation = underTest.convert(Event.of(consumerBindingKey, specification));
     assertThat(mutation, is(instanceOf(ConsumerBindingSpecificationMutation.class)));
@@ -186,5 +250,11 @@ public class GraphQLConverterTest {
   public void consumerBindingStatus() {
     var mutation = underTest.convert(Event.of(consumerBindingKey, statusEntry));
     assertThat(mutation, is(instanceOf(ConsumerBindingStatusMutation.class)));
+  }
+
+  @Test
+  public void consumerBindingDeletion() {
+    var mutation = underTest.convert(Event.of(consumerBindingKey));
+    assertThat(mutation, is(instanceOf(ConsumerBindingDeletionMutation.class)));
   }
 }

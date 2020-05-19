@@ -30,4 +30,6 @@ public interface Status {
   List<StatusEntry> getEntries();
 
   Status with(@NonNull StatusEntry entry);
+
+  Status without(@NonNull String name);
 }

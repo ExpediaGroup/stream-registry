@@ -12,6 +12,11 @@ mutation DomainStatus($key: DomainKeyInput!, $status: StatusInput!) {
     }
   }
 }
+mutation DomainDeletion($key: DomainKeyInput!) {
+  domain {
+    delete(key: $key)
+  }
+}
 
 mutation SchemaSpecification($key: SchemaKeyInput!, $specification: SpecificationInput!) {
   schema {
@@ -25,6 +30,11 @@ mutation SchemaStatus($key: SchemaKeyInput!, $status: StatusInput!) {
     updateStatus(key: $key, status: $status) {
       __typename
     }
+  }
+}
+mutation SchemaDeletion($key: SchemaKeyInput!) {
+  schema {
+    delete(key: $key)
   }
 }
 
@@ -42,6 +52,11 @@ mutation StreamStatus($key: StreamKeyInput!, $status: StatusInput!) {
     }
   }
 }
+mutation StreamDeletion($key: StreamKeyInput!) {
+  stream {
+    delete(key: $key)
+  }
+}
 
 mutation ZoneSpecification($key: ZoneKeyInput!, $specification: SpecificationInput!) {
   zone {
@@ -55,6 +70,11 @@ mutation ZoneStatus($key: ZoneKeyInput!, $status: StatusInput!) {
     updateStatus(key: $key, status: $status) {
       __typename
     }
+  }
+}
+mutation ZoneDeletion($key: ZoneKeyInput!) {
+  zone {
+    delete(key: $key)
   }
 }
 
@@ -72,6 +92,11 @@ mutation InfrastructureStatus($key: InfrastructureKeyInput!, $status: StatusInpu
     }
   }
 }
+mutation InfrastructureDeletion($key: InfrastructureKeyInput!) {
+  infrastructure {
+    delete(key: $key)
+  }
+}
 
 mutation ProducerSpecification($key: ProducerKeyInput!, $specification: SpecificationInput!) {
   producer {
@@ -85,6 +110,11 @@ mutation ProducerStatus($key: ProducerKeyInput!, $status: StatusInput!) {
     updateStatus(key: $key, status: $status) {
       __typename
     }
+  }
+}
+mutation ProducerDeletion($key: ProducerKeyInput!) {
+  producer {
+    delete(key: $key)
   }
 }
 
@@ -102,6 +132,11 @@ mutation ConsumerStatus($key: ConsumerKeyInput!, $status: StatusInput!) {
     }
   }
 }
+mutation ConsumerDeletion($key: ConsumerKeyInput!) {
+  consumer {
+    delete(key: $key)
+  }
+}
 
 mutation StreamBindingSpecification($key: StreamBindingKeyInput!, $specification: SpecificationInput!) {
   streamBinding {
@@ -115,6 +150,11 @@ mutation StreamBindingStatus($key: StreamBindingKeyInput!, $status: StatusInput!
     updateStatus(key: $key, status: $status) {
       __typename
     }
+  }
+}
+mutation StreamBindingDeletion($key: StreamBindingKeyInput!) {
+  streamBinding {
+    delete(key: $key)
   }
 }
 
@@ -132,6 +172,11 @@ mutation ProducerBindingStatus($key: ProducerBindingKeyInput!, $status: StatusIn
     }
   }
 }
+mutation ProducerBindingDeletion($key: ProducerBindingKeyInput!) {
+  producerBinding {
+    delete(key: $key)
+  }
+}
 
 mutation ConsumerBindingSpecification($key: ConsumerBindingKeyInput!, $specification: SpecificationInput!) {
   consumerBinding {
@@ -145,5 +190,10 @@ mutation ConsumerBindingStatus($key: ConsumerBindingKeyInput!, $status: StatusIn
     updateStatus(key: $key, status: $status) {
       __typename
     }
+  }
+}
+mutation ConsumerBindingDeletion($key: ConsumerBindingKeyInput!) {
+  consumerBinding {
+    delete(key: $key)
   }
 }

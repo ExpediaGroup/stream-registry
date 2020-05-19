@@ -34,5 +34,13 @@ public interface Event<K extends Entity.Key<S>, S extends Specification> {
     return new StatusEvent<>(key, statusEntry);
   }
 
+  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key) {
+    return new SpecificationDeletionEvent<>(key);
+  }
+
+  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key, @NonNull String statusName) {
+    return new StatusDeletionEvent<>(key, statusName);
+  }
+
   Event<?, ?> LOAD_COMPLETE = (Event<DomainKey, DefaultSpecification>) () -> null;
 }

@@ -59,7 +59,7 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 @RequiredArgsConstructor(access = PACKAGE)
 public class KafkaEventReceiver implements EventReceiver {
   @NonNull private final Config config;
-  @NonNull private final EventCorrelator correlator;
+  private final EventCorrelator correlator;
   @NonNull private final AvroConverter converter;
   @NonNull private final KafkaConsumer<AvroKey, AvroValue> consumer;
   @NonNull private final ScheduledExecutorService executorService;
@@ -76,7 +76,7 @@ public class KafkaEventReceiver implements EventReceiver {
   }
 
   public KafkaEventReceiver(Config config) {
-    this(config, EventCorrelator.NULL);
+    this(config, null);
   }
 
   @Override
@@ -84,7 +84,7 @@ public class KafkaEventReceiver implements EventReceiver {
     executorService.execute(() -> consume(listener));
   }
 
-  private void consume(EventReceiverListener listener) {
+  void consume(EventReceiverListener listener) {
     var currentOffset = new AtomicLong(0L);
     var progressLogger = executorService
         .scheduleAtFixedRate(() -> log.info("Current offset {}", currentOffset.get()), 10, 10, SECONDS);
@@ -129,11 +129,13 @@ public class KafkaEventReceiver implements EventReceiver {
   }
 
   private void receiveCorrelationId(ConsumerRecord<?, ?> record) {
-    var headerIterator = record.headers().headers(CORRELATION_ID).iterator();
-    if (headerIterator.hasNext()) {
-      var header = headerIterator.next();
-      var correlationId = new String(header.value(), UTF_8);
-      correlator.received(correlationId);
+    if (correlator != null) {
+      var headerIterator = record.headers().headers(CORRELATION_ID).iterator();
+      if (headerIterator.hasNext()) {
+        var header = headerIterator.next();
+        var correlationId = new String(header.value(), UTF_8);
+        correlator.received(correlationId);
+      }
     }
   }
 

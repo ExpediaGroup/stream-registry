@@ -65,4 +65,11 @@ public class DefaultStatus implements Status {
     statusMap.put(entry.getName(), entry.getValue());
     return new DefaultStatus(statusMap);
   }
+
+  @Override
+  public Status without(@NonNull String name) {
+    var statusMap = new HashMap<>(this.statusMap);
+    statusMap.remove(name);
+    return new DefaultStatus(statusMap);
+  }
 }

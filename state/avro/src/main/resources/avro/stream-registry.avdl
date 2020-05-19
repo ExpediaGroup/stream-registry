@@ -102,6 +102,6 @@ protocol StreamRegistry {
 
   record AvroEvent {
     AvroKey key;
-    AvroValue value;
+    union{ AvroValue, null } value;
   }
 }
