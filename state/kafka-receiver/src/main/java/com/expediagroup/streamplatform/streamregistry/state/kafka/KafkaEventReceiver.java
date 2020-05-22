@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
-import static com.expediagroup.streamplatform.streamregistry.state.EventCorrelator.CORRELATION_ID;
+import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
@@ -48,7 +48,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 
-import com.expediagroup.streamplatform.streamregistry.state.EventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiverListener;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state;
+package com.expediagroup.streamplatform.streamregistry.state.internal;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
+import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 
 /**

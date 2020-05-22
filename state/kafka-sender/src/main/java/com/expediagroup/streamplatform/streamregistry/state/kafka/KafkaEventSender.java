@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
-import static com.expediagroup.streamplatform.streamregistry.state.EventCorrelator.CORRELATION_ID;
+import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
 import static io.confluent.kafka.serializers.KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static lombok.AccessLevel.PACKAGE;
@@ -42,7 +42,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 
-import com.expediagroup.streamplatform.streamregistry.state.EventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;

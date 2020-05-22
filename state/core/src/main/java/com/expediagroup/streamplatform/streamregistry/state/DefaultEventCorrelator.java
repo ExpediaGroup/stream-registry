@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
+
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultEventCorrelator implements EventCorrelator {
