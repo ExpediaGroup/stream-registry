@@ -32,14 +32,14 @@ import org.jetbrains.annotations.NotNull;
 public class ApolloExecutor {
   @NonNull private final ApolloClient client;
 
-  CompletableFuture<Void> execute(Mutation<?, ?, ?> mutation) {
+  public CompletableFuture<Void> execute(Mutation<?, ?, ?> mutation) {
     var future = new CompletableFuture<Void>();
     client.mutate(mutation).enqueue(new Callback(future));
     return future;
   }
 
   @RequiredArgsConstructor
-  class Callback extends ApolloCall.Callback {
+  public class Callback extends ApolloCall.Callback {
     private final CompletableFuture<Void> future;
 
     @Override
