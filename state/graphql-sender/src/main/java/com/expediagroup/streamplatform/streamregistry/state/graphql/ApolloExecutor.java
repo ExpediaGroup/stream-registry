@@ -39,7 +39,7 @@ public class ApolloExecutor {
   }
 
   @RequiredArgsConstructor
-  public class Callback extends ApolloCall.Callback {
+  class Callback extends ApolloCall.Callback {
     private final CompletableFuture<Void> future;
 
     @Override
