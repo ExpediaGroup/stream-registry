@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static lombok.AccessLevel.PACKAGE;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -69,11 +68,6 @@ public class DefaultEntityView implements EntityView {
     return entities.values().stream()
         .filter(x -> x.getKey().getClass().equals(keyClass))
         .map(x -> (Entity<K, S>) x);
-  }
-
-  @Override
-  public void close() throws IOException {
-    receiver.close();
   }
 
   @Getter // for testing

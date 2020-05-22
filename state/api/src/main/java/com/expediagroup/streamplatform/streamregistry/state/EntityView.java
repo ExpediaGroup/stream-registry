@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
-import java.io.Closeable;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -27,7 +26,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 /**
  * Provides a unified view of the current state of all entities held in Stream Registry.
  */
-public interface EntityView extends Closeable {
+public interface EntityView {
   /**
    * Commences loading the view. The returned {@link CompletableFuture} completes when the view has fully loaded.
    * Once fully loaded the provided {@link EntityViewListener} will be invoked for each subsequent event.

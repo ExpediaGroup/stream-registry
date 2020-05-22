@@ -148,11 +148,4 @@ public class DefaultEntityViewTest {
 
     assertThat(result.size(), is(0));
   }
-
-  @Test
-  public void close() throws Exception {
-    underTest.close();
-
-    verify(receiver).close();
-  }
 }
