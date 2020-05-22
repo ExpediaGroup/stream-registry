@@ -32,22 +32,22 @@ import org.jetbrains.annotations.NotNull;
 public class ApolloExecutor {
   @NonNull private final ApolloClient client;
 
-  public CompletableFuture<Void> execute(Mutation<?, ?, ?> mutation) {
-    var future = new CompletableFuture<Void>();
+  public CompletableFuture<Response> execute(Mutation<?, ?, ?> mutation) {
+    var future = new CompletableFuture<Response>();
     client.mutate(mutation).enqueue(new Callback(future));
     return future;
   }
 
   @RequiredArgsConstructor
   class Callback extends ApolloCall.Callback {
-    private final CompletableFuture<Void> future;
+    private final CompletableFuture<Response> future;
 
     @Override
     public void onResponse(@NotNull Response response) {
       if (!response.errors().isEmpty()) {
         future.completeExceptionally(new IllegalStateException("Unexpected response: " + response.errors()));
       } else {
-        future.complete(null);
+        future.complete(response);
       }
     }
 

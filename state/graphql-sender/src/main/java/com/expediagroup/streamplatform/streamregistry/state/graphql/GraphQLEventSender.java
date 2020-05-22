@@ -41,7 +41,7 @@ public class GraphQLEventSender implements EventSender {
   @Override
   public <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(Event<K, S> event) {
     var mutation = converter.convert(event);
-    return executor.execute(mutation);
+    return executor.execute(mutation).thenApply(x -> null);
   }
 
   @Override

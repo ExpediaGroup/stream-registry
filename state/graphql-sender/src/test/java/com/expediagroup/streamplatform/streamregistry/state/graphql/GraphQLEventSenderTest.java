@@ -17,11 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 import com.apollographql.apollo.api.Mutation;
+import com.apollographql.apollo.api.Response;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,17 +42,20 @@ public class GraphQLEventSenderTest {
   @SuppressWarnings("rawtypes")
   @Mock
   private Mutation mutation;
-  @Mock private CompletableFuture<Void> future;
+  @Mock private CompletableFuture<Response> responseFuture;
+  @Mock private CompletableFuture<Void> voidFuture;
 
   @InjectMocks private GraphQLEventSender underTest;
 
   @Test
   public void test() {
     when(converter.convert(event)).thenReturn(mutation);
-    when(executor.execute(mutation)).thenReturn(future);
+    when(executor.execute(mutation)).thenReturn(responseFuture);
+    Function<Response,Void> any = any();
+    when(responseFuture.thenApply(any)).thenReturn(voidFuture);
 
     var result = underTest.send(event);
 
-    assertThat(result, is(future));
+    assertThat(result, is(voidFuture));
   }
 }
