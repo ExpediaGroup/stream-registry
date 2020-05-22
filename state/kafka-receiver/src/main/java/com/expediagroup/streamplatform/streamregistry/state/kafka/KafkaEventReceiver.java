@@ -48,12 +48,12 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 
-import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiverListener;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
+import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)

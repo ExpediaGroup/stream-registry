@@ -38,11 +38,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroEvent;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
+import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender.Config;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender.CorrelationStrategyImpl;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender.NullCorrelationStrategy;
