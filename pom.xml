@@ -57,6 +57,7 @@
     <module>state/api</module>
     <module>state/avro</module>
     <module>state/core</module>
+    <module>state/example</module>
     <module>state/graphql-sender</module>
     <module>state/it</module>
     <module>state/kafka-sender</module>
