@@ -12,7 +12,7 @@
   <artifactId>stream-registry-state-graphql-sender</artifactId>
 
   <properties>
-    <apollo.version>1.2.2</apollo.version>
+    <apollo.version>2.1.0</apollo.version>
 
     <introspectionFile>${project.build.directory}/graphql-schema/schema.json</introspectionFile>
     <clientPackage>com.expediagroup.streamplatform.streamregistry.state.graphql</clientPackage>
@@ -82,7 +82,7 @@
       <plugin>
         <groupId>com.github.sparow199</groupId>
         <artifactId>apollo-client-maven-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <id>graphql-generate-sources</id>
@@ -102,6 +102,16 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <!-- Generated code possibly exposing JDK bug -->
+        <!-- https://bugs.openjdk.java.net/browse/JDK-8215407 -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
   </build>

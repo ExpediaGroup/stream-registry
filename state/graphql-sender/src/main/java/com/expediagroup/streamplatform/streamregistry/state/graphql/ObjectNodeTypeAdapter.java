@@ -15,9 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
-import com.apollographql.apollo.response.CustomTypeAdapter;
-import com.apollographql.apollo.response.CustomTypeValue;
-import com.apollographql.apollo.response.CustomTypeValue.GraphQLJsonObject;
+import com.apollographql.apollo.api.CustomTypeAdapter;
+import com.apollographql.apollo.api.CustomTypeValue;
+import com.apollographql.apollo.api.CustomTypeValue.GraphQLJsonObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -26,7 +26,7 @@ public class ObjectNodeTypeAdapter implements CustomTypeAdapter<Object> {
   private static final ObjectMapper mapper = new ObjectMapper();
 
   @Override
-  public CustomTypeValue encode(Object value) {
+  public CustomTypeValue<?> encode(Object value) {
     if (!(value instanceof ObjectNode)) {
       throw new IllegalArgumentException("Expected 'ObjectNode', got: " + value);
     }

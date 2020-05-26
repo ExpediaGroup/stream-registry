@@ -20,9 +20,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
-import com.apollographql.apollo.response.CustomTypeValue.GraphQLJsonObject;
-import com.apollographql.apollo.response.CustomTypeValue.GraphQLNumber;
-import com.apollographql.apollo.response.CustomTypeValue.GraphQLString;
+import com.apollographql.apollo.api.CustomTypeValue;
+import com.apollographql.apollo.api.CustomTypeValue.GraphQLJsonObject;
+import com.apollographql.apollo.api.CustomTypeValue.GraphQLString;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,7 +47,7 @@ public class ObjectNodeTypeAdapterTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void decodeNotObject() {
-    underTest.decode(new GraphQLNumber(1));
+    underTest.decode(new CustomTypeValue.GraphQLNumber(1));
   }
 
   @Test
