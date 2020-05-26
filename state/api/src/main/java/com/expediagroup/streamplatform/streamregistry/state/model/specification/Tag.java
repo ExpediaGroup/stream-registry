@@ -21,5 +21,5 @@ import lombok.Value;
 @Value
 public class Tag {
   @NonNull String name;
-  @NonNull String value;
+  String value;
 }
