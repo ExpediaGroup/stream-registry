@@ -54,6 +54,8 @@ class AvroObjectSerializer extends StdSerializer<AvroObject> {
       g.writeBoolean((boolean) value);
     } else if (value == null) {
       g.writeNull();
+    } else {
+      throw new IllegalStateException("Unexpected value " + value.getClass() + ": " + value);
     }
   }
 
