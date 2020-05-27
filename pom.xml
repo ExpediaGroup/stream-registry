@@ -42,12 +42,9 @@
   <modules>
     <module>app</module>
     <module>core</module>
-    <module>graphql-api</module>
-    <module>graphql-client</module>
-    <module>graphql-client-reactor</module>
-    <module>graphql-client-support</module>
-    <module>graphql-maven-plugin</module>
-    <module>graphql-scalars</module>
+    <module>graphql/api</module>
+    <module>graphql/maven-plugin</module>
+    <module>graphql/scalars</module>
     <module>handler-spi</module>
     <module>model</module>
     <module>notification-support</module>
@@ -75,11 +72,11 @@
 
     <confluent.version>5.3.1</confluent.version>
     <avro.version>1.9.2</avro.version>
-    <apollographql.version>1.0.0</apollographql.version>
+    <apollo.version>2.1.0</apollo.version>
     <bull.version>1.4.7.3</bull.version>
     <guava.version>28.0-jre</guava.version>
     <graphql.version>5.8.1</graphql.version>
-    <graphql-java.version>13.0</graphql-java.version>
+    <graphql-java.version>14.0</graphql-java.version>
     <kotlin.version>1.3.10</kotlin.version>
     <slf4j.version>1.7.26</slf4j.version>
     <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
@@ -131,7 +128,7 @@
       <dependency>
         <groupId>com.apollographql.apollo</groupId>
         <artifactId>apollo-runtime</artifactId>
-        <version>${apollographql.version}</version>
+        <version>${apollo.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>

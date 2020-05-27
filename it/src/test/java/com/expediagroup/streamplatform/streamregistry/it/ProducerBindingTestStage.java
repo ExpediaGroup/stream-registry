@@ -23,14 +23,16 @@ import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerBindingsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerBindingQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ProducerBindingPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class ProducerBindingTestStage extends AbstractTestStage {
@@ -46,8 +48,12 @@ public class ProducerBindingTestStage extends AbstractTestStage {
         ((InsertProducerBindingMutation.Data) client.getOptionalData(insertMutation).get())
             .getProducerBinding().getInsert();
 
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ProducerBindingPart part = insert.getFragments().getProducerBindingPart();
+    assertThat(part.getKey().getProducerName(), is(factory.producerName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
 
     assertMutationFails(insertMutation);
   }
@@ -66,8 +72,12 @@ public class ProducerBindingTestStage extends AbstractTestStage {
     Object data = client.getOptionalData(updateMutation).get();
     UpdateProducerBindingMutation.Update update = ((UpdateProducerBindingMutation.Data) data).getProducerBinding().getUpdate();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ProducerBindingPart part = update.getFragments().getProducerBindingPart();
+    assertThat(part.getKey().getProducerName(), is(factory.producerName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -77,8 +87,12 @@ public class ProducerBindingTestStage extends AbstractTestStage {
 
     UpsertProducerBindingMutation.Upsert upsert = ((UpsertProducerBindingMutation.Data) data).getProducerBinding().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ProducerBindingPart part = upsert.getFragments().getProducerBindingPart();
+    assertThat(part.getKey().getProducerName(), is(factory.producerName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -89,8 +103,10 @@ public class ProducerBindingTestStage extends AbstractTestStage {
     UpdateProducerBindingStatusMutation.UpdateStatus update =
         ((UpdateProducerBindingStatusMutation.Data) data).getProducerBinding().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    ProducerBindingPart part = update.getFragments().getProducerBindingPart();
+
+    assertThat(part.getSpecification().getFragments().getSpecificationPart().getDescription().get(), is(factory.description));
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -108,7 +124,7 @@ public class ProducerBindingTestStage extends AbstractTestStage {
 
     ProducerBindingQuery.Data after = (ProducerBindingQuery.Data) client.getOptionalData(ProducerBindingQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getProducerBinding().getByKey().get().getKey().getStreamDomain(), input.streamDomain());
+    assertEquals(after.getProducerBinding().getByKey().get().getFragments().getProducerBindingPart().getKey().getStreamDomain(), input.streamDomain());
   }
 
   @Override
@@ -125,7 +141,9 @@ public class ProducerBindingTestStage extends AbstractTestStage {
     ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getOptionalData(ProducerBindingsQuery.builder().key(query).build()).get();
 
     assertEquals(after.getProducerBinding().getByQuery().size(), before.getProducerBinding().getByQuery().size() + 1);
-    assertNotNull(after.getProducerBinding().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getProducerBinding().getByQuery().get(0)
+        .getFragments().getProducerBindingPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

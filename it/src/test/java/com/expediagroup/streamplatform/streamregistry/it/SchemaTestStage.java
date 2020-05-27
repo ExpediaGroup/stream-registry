@@ -21,14 +21,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.SchemaQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.SchemasQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.SchemaQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.SchemasQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SchemaPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class SchemaTestStage extends AbstractTestStage {
@@ -37,10 +39,14 @@ public class SchemaTestStage extends AbstractTestStage {
   public void create() {
     Object data = client.getOptionalData(factory.insertSchemaMutationBuilder().build()).get();
 
-    InsertSchemaMutation.Insert upsert = ((InsertSchemaMutation.Data) data).getSchema().getInsert();
+    InsertSchemaMutation.Insert insert = ((InsertSchemaMutation.Data) data).getSchema().getInsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SchemaPart part = insert.getFragments().getSchemaPart();
+    assertThat(part.getKey().getName(), is(factory.schemaName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -48,10 +54,14 @@ public class SchemaTestStage extends AbstractTestStage {
 
     Object data = client.getOptionalData(factory.updateSchemaMutationBuilder().build()).get();
 
-    UpdateSchemaMutation.Update upsert = ((UpdateSchemaMutation.Data) data).getSchema().getUpdate();
+    UpdateSchemaMutation.Update update = ((UpdateSchemaMutation.Data) data).getSchema().getUpdate();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SchemaPart part = update.getFragments().getSchemaPart();
+    assertThat(part.getKey().getName(), is(factory.schemaName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -61,8 +71,12 @@ public class SchemaTestStage extends AbstractTestStage {
 
     UpsertSchemaMutation.Upsert upsert = ((UpsertSchemaMutation.Data) data).getSchema().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SchemaPart part = upsert.getFragments().getSchemaPart();
+    assertThat(part.getKey().getName(), is(factory.schemaName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -73,8 +87,10 @@ public class SchemaTestStage extends AbstractTestStage {
     UpdateSchemaStatusMutation.UpdateStatus update =
         ((UpdateSchemaStatusMutation.Data) data).getSchema().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    SchemaPart part = update.getFragments().getSchemaPart();
+
+    assertThat(part.getSpecification().getFragments().getSpecificationPart().getDescription().get(), is(factory.description));
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -92,7 +108,7 @@ public class SchemaTestStage extends AbstractTestStage {
 
     SchemaQuery.Data after = (SchemaQuery.Data) client.getOptionalData(SchemaQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getSchema().getByKey().get().getKey().getName(), input.name());
+    assertEquals(after.getSchema().getByKey().get().getFragments().getSchemaPart().getKey().getName(), input.name());
   }
 
   @Override
@@ -110,7 +126,9 @@ public class SchemaTestStage extends AbstractTestStage {
 
     assertEquals(after.getSchema().getByQuery().size(), before.getSchema().getByQuery().size() + 1);
 
-    assertNotNull(after.getSchema().getByQuery().get(1).getStatus().get().getAgentStatus());
+    assertNotNull(after.getSchema().getByQuery().get(1)
+        .getFragments().getSchemaPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

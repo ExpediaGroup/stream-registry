@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamRegistryClient;
 
 public class ITestClient extends StreamRegistryClient {
 
@@ -28,7 +27,7 @@ public class ITestClient extends StreamRegistryClient {
   }
 
   public void createSchema(ITestDataFactory factory) {
-    upsertSchema(factory.upsertSchemaMutationBuilder().build());
+    invoke(factory.upsertSchemaMutationBuilder().build());
   }
 
   public void createStream(ITestDataFactory factory) {

@@ -21,56 +21,59 @@ import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateSchemaStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SpecificationInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StatusInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SpecificationInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StatusInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ZoneKeyInput;
+
 
 public class ITestDataFactory {
 
@@ -83,13 +86,14 @@ public class ITestDataFactory {
   public String key;
   public String value;
   public String description;
-  private String infrastructureName;
-  private String producerName;
+  public String infrastructureName;
+  public String producerName;
 
   public ITestDataFactory(String suffix) {
     zoneName = "zone_name_" + suffix;
     domainName = "domain_name_" + suffix;
     consumerName = "consumer_name_" + suffix;
+    schemaName = "schema_name_" + suffix;
     streamName = "stream_name_" + suffix;
     infrastructureName = "infrastructure_name_" + suffix;
     producerName = "producer_name_" + suffix;
@@ -148,6 +152,20 @@ public class ITestDataFactory {
     return UpsertZoneMutation.builder()
         .key(zoneKeyInputBuilder().build())
         .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public UpdateZoneMutation.Builder updateZoneMutationBuilder() {
+    return UpdateZoneMutation.builder()
+        .key(zoneKeyInputBuilder().build())
+        .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public UpdateZoneStatusMutation.Builder updateZoneStatusBuilder() {
+    return UpdateZoneStatusMutation.builder()
+        .key(zoneKeyInputBuilder().build())
+        .status(StatusInput.builder().agentStatus(
+            mapper.createObjectNode().put("skey", "svalue")
+        ).build());
   }
 
   public ZoneKeyInput.Builder zoneKeyInputBuilder() {
@@ -304,7 +322,7 @@ public class ITestDataFactory {
   public SchemaKeyInput.Builder schemaKeyInputBuilder() {
     return SchemaKeyInput.builder()
         .domain(domainName)
-        .name(streamName);
+        .name(schemaName);
   }
 
   public InsertStreamBindingMutation.Builder insertStreamBindingMutationBuilder() {

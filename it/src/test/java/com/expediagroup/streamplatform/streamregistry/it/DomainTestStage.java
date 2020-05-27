@@ -23,14 +23,16 @@ import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.DomainsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateDomainStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.DomainKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DomainsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.DomainPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class DomainTestStage extends AbstractTestStage {
@@ -46,10 +48,12 @@ public class DomainTestStage extends AbstractTestStage {
 
     InsertDomainMutation.Insert insert = ((InsertDomainMutation.Data) data).getDomain().getInsert();
 
-    assertThat(insert.getKey().getName(), is(factory.domainName));
+    DomainPart part = insert.getFragments().getDomainPart();
+    assertThat(part.getKey().getName(), is(factory.domainName));
 
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -66,10 +70,12 @@ public class DomainTestStage extends AbstractTestStage {
     UpdateDomainMutation.Update update =
         ((UpdateDomainMutation.Data) client.getOptionalData(updateMutation).get()).getDomain().getUpdate();
 
-    assertThat(update.getKey().getName(), is(factory.domainName));
+    DomainPart domainPart = update.getFragments().getDomainPart();
+    assertThat(domainPart.getKey().getName(), is(factory.domainName));
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SpecificationPart specificationPart = domainPart.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -81,9 +87,12 @@ public class DomainTestStage extends AbstractTestStage {
 
     UpsertDomainMutation.Upsert upsert = ((UpsertDomainMutation.Data) data).getDomain().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is(factory.domainName));
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    DomainPart domainPart = upsert.getFragments().getDomainPart();
+    assertThat(domainPart.getKey().getName(), is(factory.domainName));
+
+    SpecificationPart specificationPart = domainPart.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -94,7 +103,9 @@ public class DomainTestStage extends AbstractTestStage {
     UpdateDomainStatusMutation.UpdateStatus update =
         ((UpdateDomainStatusMutation.Data) data).getDomain().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
+    DomainPart part = update.getFragments().getDomainPart();
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
   }
 
   @Override
@@ -112,7 +123,7 @@ public class DomainTestStage extends AbstractTestStage {
 
     DomainQuery.Data after = (DomainQuery.Data) client.getOptionalData(DomainQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getDomain().getByKey().get().getKey().getName(), input.name());
+    assertEquals(after.getDomain().getByKey().get().getFragments().getDomainPart().getKey().getName(), input.name());
   }
 
   @Override
@@ -129,7 +140,9 @@ public class DomainTestStage extends AbstractTestStage {
     DomainsQuery.Data after = (DomainsQuery.Data) client.getOptionalData(DomainsQuery.builder().key(query).build()).get();
 
     assertEquals(before.getDomain().getByQuery().size() + 1, after.getDomain().getByQuery().size());
-    assertNotNull(after.getDomain().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getDomain().getByQuery().get(0)
+        .getFragments().getDomainPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

@@ -21,12 +21,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ZoneQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ZonesQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ZoneKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ZoneQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ZonesQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ZonePart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class ZoneTestStage extends AbstractTestStage {
@@ -35,22 +39,28 @@ public class ZoneTestStage extends AbstractTestStage {
   public void create() {
     Object data = client.getOptionalData(factory.insertZoneMutationBuilder().build()).get();
 
-    InsertZoneMutation.Insert Insert = ((InsertZoneMutation.Data) data).getZone().getInsert();
+    InsertZoneMutation.Insert insert = ((InsertZoneMutation.Data) data).getZone().getInsert();
 
-    assertThat(Insert.getKey().getName(), is(factory.zoneName));
-    assertThat(Insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(Insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ZonePart part = insert.getFragments().getZonePart();
+    assertThat(part.getKey().getName(), is(factory.zoneName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void update() {
-    Object data = client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateZoneMutationBuilder().build()).get();
 
-    UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
+    UpdateZoneMutation.Update update = ((UpdateZoneMutation.Data) data).getZone().getUpdate();
 
-    assertThat(upsert.getKey().getName(), is(factory.zoneName));
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ZonePart part = update.getFragments().getZonePart();
+    assertThat(part.getKey().getName(), is(factory.zoneName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -59,20 +69,26 @@ public class ZoneTestStage extends AbstractTestStage {
 
     UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
 
-    assertThat(upsert.getKey().getName(), is(factory.zoneName));
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ZonePart part = upsert.getFragments().getZonePart();
+    assertThat(part.getKey().getName(), is(factory.zoneName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void updateStatus() {
-    Object data = client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
+    client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
+    Object data = client.getOptionalData(factory.updateZoneStatusBuilder().build()).get();
 
-    UpsertZoneMutation.Upsert upsert = ((UpsertZoneMutation.Data) data).getZone().getUpsert();
+    UpdateZoneStatusMutation.UpdateStatus update =
+        ((UpdateZoneStatusMutation.Data) data).getZone().getUpdateStatus();
 
-    assertThat(upsert.getKey().getName(), is(factory.zoneName));
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ZonePart part = update.getFragments().getZonePart();
+
+    assertThat(part.getSpecification().getFragments().getSpecificationPart().getDescription().get(), is(factory.description));
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -90,7 +106,7 @@ public class ZoneTestStage extends AbstractTestStage {
 
     ZoneQuery.Data after = (ZoneQuery.Data) client.getOptionalData(ZoneQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getZone().getByKey().get().getKey().getName(), input.name());
+    assertEquals(after.getZone().getByKey().get().getFragments().getZonePart().getKey().getName(), input.name());
   }
 
   @Override
@@ -106,8 +122,9 @@ public class ZoneTestStage extends AbstractTestStage {
 
     ZonesQuery.Data after = (ZonesQuery.Data) client.getOptionalData(ZonesQuery.builder().key(query).build()).get();
 
-    assertEquals(after.getZone().getByQuery().size(), before.getZone().getByQuery().size() + 1);
-    assertNotNull(after.getZone().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getZone().getByQuery().get(0)
+        .getFragments().getZonePart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

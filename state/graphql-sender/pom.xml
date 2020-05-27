@@ -12,8 +12,6 @@
   <artifactId>stream-registry-state-graphql-sender</artifactId>
 
   <properties>
-    <apollo.version>2.1.0</apollo.version>
-
     <introspectionFile>${project.build.directory}/graphql-schema/schema.json</introspectionFile>
     <clientPackage>com.expediagroup.streamplatform.streamregistry.state.graphql</clientPackage>
   </properties>
@@ -28,7 +26,6 @@
     <dependency>
       <groupId>com.apollographql.apollo</groupId>
       <artifactId>apollo-runtime</artifactId>
-      <version>${apollo.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains</groupId>

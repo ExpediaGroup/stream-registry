@@ -17,15 +17,11 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
-
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.ApolloMutationCall;
-import com.apollographql.apollo.api.Error;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
@@ -62,7 +58,7 @@ public class ApolloExecutorTest {
     var callback = captor.getValue();
 
     assertThat(result.isDone(), is(false));
-    when(response.errors()).thenReturn(List.of());
+    when(response.hasErrors()).thenReturn(false);
     callback.onResponse(response);
     assertThat(result.isDone(), is(true));
   }
@@ -78,10 +74,8 @@ public class ApolloExecutorTest {
     verify(mutationCall).enqueue(captor.capture());
     var callback = captor.getValue();
 
-    var error = mock(Error.class);
-
     assertThat(result.isDone(), is(false));
-    when(response.errors()).thenReturn(List.of(error));
+    when(response.hasErrors()).thenReturn(true);
     callback.onResponse(response);
     assertThat(result.isCompletedExceptionally(), is(true));
   }
