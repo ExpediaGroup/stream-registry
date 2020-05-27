@@ -9,7 +9,7 @@ jdk:
 # See https://docs.travis-ci.com/user/job-lifecycle/#skipping-the-installation-phase
 install: true
 
-script: mvn clean install -Djib.skip -B
+script: ./mvnw clean install -Djib.skip -B
 
 after_failure:
 - cat infra-provider-kafka/surefire-reports/*.txt
