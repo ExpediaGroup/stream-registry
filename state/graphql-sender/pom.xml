@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.expediagroup.streamplatform</groupId>
+    <artifactId>stream-registry</artifactId>
+    <version>0.10.7-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>stream-registry-state-graphql-sender</artifactId>
+
+  <properties>
+    <apollo.version>2.1.0</apollo.version>
+
+    <introspectionFile>${project.build.directory}/graphql-schema/schema.json</introspectionFile>
+    <clientPackage>com.expediagroup.streamplatform.streamregistry.state.graphql</clientPackage>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.expediagroup.streamplatform</groupId>
+      <artifactId>stream-registry-state-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.apollographql.apollo</groupId>
+      <artifactId>apollo-runtime</artifactId>
+      <version>${apollo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>19.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.expediagroup.streamplatform</groupId>
+        <artifactId>stream-registry-graphql-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceSdlResource>stream-registry.graphql</sourceSdlResource>
+              <targetIntrospectionFile>${introspectionFile}</targetIntrospectionFile>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.expediagroup.streamplatform</groupId>
+            <artifactId>stream-registry-graphql-api</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.github.sparow199</groupId>
+        <artifactId>apollo-client-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>graphql-generate-sources</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceDirName>${project.basedir}/src/main/resources</sourceDirName>
+              <outputDirectory>${project.build.directory}/generated-sources/graphql-client</outputDirectory>
+              <introspectionFile>${introspectionFile}</introspectionFile>
+              <rootPackageName>${clientPackage}</rootPackageName>
+              <customTypeMap>
+                <ObjectNode>com.fasterxml.jackson.databind.node.ObjectNode</ObjectNode>
+              </customTypeMap>
+              <suppressRawTypesWarning>true</suppressRawTypesWarning>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Generated code possibly exposing JDK bug -->
+        <!-- https://bugs.openjdk.java.net/browse/JDK-8215407 -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

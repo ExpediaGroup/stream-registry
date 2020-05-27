@@ -1,0 +1,48 @@
+@startuml
+
+participant Sender
+participant Listener
+participant EntityView
+participant Receiver
+participant Kafka
+
+Sender -> Kafka : Send\nAgents: via GraphQL\nStream Registry: direct
+...
+
+Listener -> EntityView : Load
+activate Listener
+activate EntityView
+
+EntityView -> Receiver : Receive
+activate Receiver
+
+Receiver -> Kafka : Get Offsets
+activate Kafka
+Receiver <- Kafka : Return Offsets
+
+Receiver -> Kafka : Assign
+Receiver -> Kafka : Seek to Beginning
+
+loop until shutdown
+  Receiver -> Kafka : Poll
+  Receiver <- Kafka : Return Records
+end
+...
+loop foreach Record
+  Receiver -> Receiver : Avro Conversion
+  EntityView <- Receiver : onEvent
+  EntityView -> EntityView : Update State
+end
+...
+Receiver -> Receiver : End Offset Reached
+EntityView <- Receiver : onLoaded
+Listener <<- EntityView : Ready
+...
+loop foreach Record
+  Receiver -> Receiver : Avro Conversion
+  EntityView <- Receiver : onEvent
+  EntityView -> EntityView : Update State
+  Listener <- EntityView : onEvent
+end
+
+@enduml

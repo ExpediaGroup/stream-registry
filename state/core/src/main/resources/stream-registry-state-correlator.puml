@@ -1,0 +1,25 @@
+@startuml
+
+participant Sender
+participant Receiver
+
+Sender -> Correlator : Register Future
+activate Sender
+activate Correlator
+Correlator -> Correlator : Store CorrelationId\n& Future
+deactivate Correlator
+Sender -> Sender : Add CorrelationId\nRecord Header
+Sender -> Kafka : Send Record
+
+Receiver <- Kafka : Receive Record
+activate Receiver
+Receiver -> Receiver : Extract CorrelationId\nRecord Header
+Receiver -> Correlator : Mark Received
+deactivate Receiver
+activate Correlator
+Correlator -> Correlator : Complete Future
+deactivate Correlator
+Sender <<- Correlator : Unblock
+deactivate Sender
+
+@enduml

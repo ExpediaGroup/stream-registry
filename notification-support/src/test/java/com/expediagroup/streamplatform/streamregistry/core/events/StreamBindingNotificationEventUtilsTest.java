@@ -103,7 +103,7 @@ public class StreamBindingNotificationEventUtilsTest {
     Assert.assertEquals(domain, avroEvent.getStreamBindingEntity().getStreamDomain());
     Assert.assertEquals(zone, avroEvent.getStreamBindingEntity().getInfrastructureZone());
     Assert.assertEquals(infrastructureName, avroEvent.getStreamBindingEntity().getInfrastructureName());
-    Assert.assertEquals(version, avroEvent.getStreamBindingEntity().getStreamVersion().intValue());
+    Assert.assertEquals(version, avroEvent.getStreamBindingEntity().getStreamVersion());
 
     Assert.assertEquals(description, avroEvent.getStreamBindingEntity().getDescription());
     Assert.assertEquals(type, avroEvent.getStreamBindingEntity().getType());

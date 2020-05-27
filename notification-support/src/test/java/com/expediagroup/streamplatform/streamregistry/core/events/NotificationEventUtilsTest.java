@@ -169,7 +169,7 @@ public class NotificationEventUtilsTest {
     Assert.assertEquals(type, avroEvent.getStreamEntity().getType());
     Assert.assertEquals(configJson, avroEvent.getStreamEntity().getConfigurationString());
     Assert.assertEquals(statusJson, avroEvent.getStreamEntity().getStatusString());
-    Assert.assertEquals(version, avroEvent.getStreamEntity().getVersion().intValue());
+    Assert.assertEquals(version, avroEvent.getStreamEntity().getVersion());
   }
 
   // Don't remove, is loaded by reflection for this test...
