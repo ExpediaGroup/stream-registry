@@ -21,14 +21,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamBindingsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.StreamBindingPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class StreamBindingTestStage extends AbstractTestStage {
@@ -39,8 +41,12 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
     InsertStreamBindingMutation.Insert insert = ((InsertStreamBindingMutation.Data) data).getStreamBinding().getInsert();
 
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    StreamBindingPart part = insert.getFragments().getStreamBindingPart();
+    assertThat(part.getKey().getStreamName(), is(factory.streamName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -49,8 +55,12 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
     UpdateStreamBindingMutation.Update update = ((UpdateStreamBindingMutation.Data) data).getStreamBinding().getUpdate();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    StreamBindingPart part = update.getFragments().getStreamBindingPart();
+    assertThat(part.getKey().getStreamName(), is(factory.streamName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -60,8 +70,12 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
     UpsertStreamBindingMutation.Upsert upsert = ((UpsertStreamBindingMutation.Data) data).getStreamBinding().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    StreamBindingPart part = upsert.getFragments().getStreamBindingPart();
+    assertThat(part.getKey().getStreamName(), is(factory.streamName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -72,8 +86,10 @@ public class StreamBindingTestStage extends AbstractTestStage {
     UpdateStreamBindingStatusMutation.UpdateStatus update =
         ((UpdateStreamBindingStatusMutation.Data) data).getStreamBinding().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    StreamBindingPart part = update.getFragments().getStreamBindingPart();
+
+    assertThat(part.getSpecification().getFragments().getSpecificationPart().getDescription().get(), is(factory.description));
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -91,7 +107,7 @@ public class StreamBindingTestStage extends AbstractTestStage {
 
     StreamBindingQuery.Data after = (StreamBindingQuery.Data) client.getOptionalData(StreamBindingQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getStreamBinding().getByKey().get().getKey().getStreamName(), input.streamName());
+    assertEquals(after.getStreamBinding().getByKey().get().getFragments().getStreamBindingPart().getKey().getStreamName(), input.streamName());
   }
 
   @Override
@@ -108,7 +124,9 @@ public class StreamBindingTestStage extends AbstractTestStage {
     StreamBindingsQuery.Data after = (StreamBindingsQuery.Data) client.getOptionalData(StreamBindingsQuery.builder().key(query).build()).get();
 
     assertEquals(after.getStreamBinding().getByQuery().size(), before.getStreamBinding().getByQuery().size() + 1);
-    assertNotNull(after.getStreamBinding().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getStreamBinding().getByQuery().get(0)
+        .getFragments().getStreamBindingPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
+import static java.util.stream.Collectors.joining;
+
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import lombok.NonNull;
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
+import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 
@@ -38,14 +42,21 @@ public class ApolloExecutor {
     return future;
   }
 
+  public CompletableFuture<Response> execute(Query<?, ?, ?> query) {
+    var future = new CompletableFuture<Response>();
+    client.query(query).enqueue(new Callback(future));
+    return future;
+  }
+
   @RequiredArgsConstructor
   class Callback extends ApolloCall.Callback {
     private final CompletableFuture<Response> future;
 
     @Override
     public void onResponse(@NotNull Response response) {
-      if (!response.errors().isEmpty()) {
-        future.completeExceptionally(new IllegalStateException("Unexpected response: " + response.errors()));
+      if (response.hasErrors()) {
+        List<com.apollographql.apollo.api.Error> errors = response.getErrors();
+        future.completeExceptionally(new IllegalStateException("Unexpected response: " + errors.stream().map(e -> e.getMessage()).collect(joining(", "))));
       } else {
         future.complete(response);
       }

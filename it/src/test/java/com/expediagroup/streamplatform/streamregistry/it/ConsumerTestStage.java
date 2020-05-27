@@ -25,32 +25,19 @@ import com.apollographql.apollo.api.Mutation;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumersQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumersQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ConsumerPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class ConsumerTestStage extends AbstractTestStage {
-
-  @Test
-  public void upsert() {
-
-    setFactorySuffix("upsert");
-
-    Object data = client.getOptionalData(factory.upsertConsumerMutationBuilder().build()).get();
-
-    UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data) data).getConsumer().getUpsert();
-
-    assertThat(upsert.getKey().getName(), is(factory.consumerName));
-
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
-  }
 
   @Override
   public void create() {
@@ -63,10 +50,12 @@ public class ConsumerTestStage extends AbstractTestStage {
 
     InsertConsumerMutation.Insert insert = ((InsertConsumerMutation.Data) data).getConsumer().getInsert();
 
-    assertThat(insert.getKey().getName(), is(factory.consumerName));
+    ConsumerPart part = insert.getFragments().getConsumerPart();
+    assertThat(part.getKey().getName(), is(factory.consumerName));
 
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Test
@@ -83,10 +72,29 @@ public class ConsumerTestStage extends AbstractTestStage {
     UpdateConsumerMutation.Update update = ((UpdateConsumerMutation.Data) client.getOptionalData(updateMutation).get())
         .getConsumer().getUpdate();
 
-    assertThat(update.getKey().getName(), is(factory.consumerName));
+    ConsumerPart part = update.getFragments().getConsumerPart();
+    assertThat(part.getKey().getName(), is(factory.consumerName));
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
+  }
+
+  @Test
+  public void upsert() {
+
+    setFactorySuffix("upsert");
+
+    Object data = client.getOptionalData(factory.upsertConsumerMutationBuilder().build()).get();
+
+    UpsertConsumerMutation.Upsert upsert = ((UpsertConsumerMutation.Data) data).getConsumer().getUpsert();
+
+    ConsumerPart part = upsert.getFragments().getConsumerPart();
+    assertThat(part.getKey().getName(), is(factory.consumerName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Test
@@ -99,11 +107,14 @@ public class ConsumerTestStage extends AbstractTestStage {
     UpdateConsumerStatusMutation.UpdateStatus update =
         ((UpdateConsumerStatusMutation.Data) data).getConsumer().getUpdateStatus();
 
-    assertThat(update.getKey().getName(), is(factory.consumerName));
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ConsumerPart part = update.getFragments().getConsumerPart();
+    assertThat(part.getKey().getName(), is(factory.consumerName));
 
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
+
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -121,7 +132,7 @@ public class ConsumerTestStage extends AbstractTestStage {
 
     ConsumerQuery.Data after = (ConsumerQuery.Data) client.getOptionalData(ConsumerQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getConsumer().getByKey().get().getKey().getName(), input.name());
+    assertEquals(after.getConsumer().getByKey().get().getFragments().getConsumerPart().getKey().getName(), input.name());
   }
 
   @Override
@@ -138,7 +149,9 @@ public class ConsumerTestStage extends AbstractTestStage {
     ConsumersQuery.Data after = (ConsumersQuery.Data) client.getOptionalData(ConsumersQuery.builder().key(query).build()).get();
 
     assertEquals(before.getConsumer().getByQuery().size() + 1, after.getConsumer().getByQuery().size());
-    assertNotNull(after.getConsumer().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getConsumer().getByQuery().get(0)
+        .getFragments().getConsumerPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

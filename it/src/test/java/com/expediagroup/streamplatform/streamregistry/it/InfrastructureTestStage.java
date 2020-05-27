@@ -25,14 +25,16 @@ import com.apollographql.apollo.api.Mutation;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructureQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InfrastructuresQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateInfrastructureStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.InfrastructureKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InfrastructureQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InfrastructuresQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertInfrastructureMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.InfrastructurePart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.InfrastructureKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class InfrastructureTestStage extends AbstractTestStage {
@@ -48,8 +50,12 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
     InsertInfrastructureMutation.Insert insert = ((InsertInfrastructureMutation.Data) data).getInfrastructure().getInsert();
 
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    InfrastructurePart part = insert.getFragments().getInfrastructurePart();
+    assertThat(part.getKey().getName(), is(factory.infrastructureName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Test
@@ -66,8 +72,12 @@ public class InfrastructureTestStage extends AbstractTestStage {
     UpdateInfrastructureMutation.Update update =
         ((UpdateInfrastructureMutation.Data) client.getOptionalData(updateMutation).get()).getInfrastructure().getUpdate();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    InfrastructurePart part = update.getFragments().getInfrastructurePart();
+    assertThat(part.getKey().getName(), is(factory.infrastructureName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -76,8 +86,12 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
     UpsertInfrastructureMutation.Upsert upsert = ((UpsertInfrastructureMutation.Data) data).getInfrastructure().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    InfrastructurePart part = upsert.getFragments().getInfrastructurePart();
+    assertThat(part.getKey().getName(), is(factory.infrastructureName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -88,8 +102,13 @@ public class InfrastructureTestStage extends AbstractTestStage {
     UpdateInfrastructureStatusMutation.UpdateStatus update =
         ((UpdateInfrastructureStatusMutation.Data) data).getInfrastructure().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    InfrastructurePart part = update.getFragments().getInfrastructurePart();
+    assertThat(part.getKey().getName(), is(factory.infrastructureName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -107,7 +126,7 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
     InfrastructureQuery.Data after = (InfrastructureQuery.Data) client.getOptionalData(InfrastructureQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getInfrastructure().getByKey().get().getKey().getName(), input.name());
+    assertEquals(after.getInfrastructure().getByKey().get().getFragments().getInfrastructurePart().getKey().getName(), input.name());
   }
 
   @Override
@@ -124,7 +143,9 @@ public class InfrastructureTestStage extends AbstractTestStage {
     InfrastructuresQuery.Data after = (InfrastructuresQuery.Data) client.getOptionalData(InfrastructuresQuery.builder().key(query).build()).get();
 
     assertEquals(before.getInfrastructure().getByQuery().size() + 1, after.getInfrastructure().getByQuery().size());
-    assertNotNull(after.getInfrastructure().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getInfrastructure().getByQuery().get(0)
+        .getFragments().getInfrastructurePart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

@@ -25,14 +25,16 @@ import com.apollographql.apollo.api.Mutation;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ConsumerBindingsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateConsumerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ConsumerBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerBindingQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ConsumerBindingPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class ConsumerBindingTestStage extends AbstractTestStage {
@@ -48,10 +50,12 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     InsertConsumerBindingMutation.Insert insert = ((InsertConsumerBindingMutation.Data) data).getConsumerBinding().getInsert();
 
-    assertThat(insert.getKey().getStreamName(), is(factory.streamName));
+    ConsumerBindingPart part = insert.getFragments().getConsumerBindingPart();
+    assertThat(part.getKey().getStreamName(), is(factory.streamName));
 
-    assertThat(insert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(insert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Test
@@ -68,10 +72,12 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
     UpdateConsumerBindingMutation.Update update = ((UpdateConsumerBindingMutation.Data) client.getOptionalData(updateMutation).get())
         .getConsumerBinding().getUpdate();
 
-    assertThat(update.getKey().getStreamName(), is(factory.streamName));
+    ConsumerBindingPart part = update.getFragments().getConsumerBindingPart();
+    assertThat(part.getKey().getStreamName(), is(factory.streamName));
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -83,8 +89,10 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     UpsertConsumerBindingMutation.Upsert upsert = ((UpsertConsumerBindingMutation.Data) data).getConsumerBinding().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ConsumerBindingPart part = upsert.getFragments().getConsumerBindingPart();
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -95,8 +103,10 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
     UpdateConsumerBindingStatusMutation.UpdateStatus update =
         ((UpdateConsumerBindingStatusMutation.Data) data).getConsumerBinding().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    ConsumerBindingPart part = update.getFragments().getConsumerBindingPart();
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -114,7 +124,7 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     ConsumerBindingQuery.Data after = (ConsumerBindingQuery.Data) client.getOptionalData(ConsumerBindingQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getConsumerBinding().getByKey().get().getKey().getStreamName(), input.streamName());
+    assertEquals(after.getConsumerBinding().getByKey().get().getFragments().getConsumerBindingPart().getKey().getStreamName(), input.streamName());
   }
 
   @Override
@@ -133,7 +143,9 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
     assertEquals(before.getConsumerBinding().getByQuery().size() + 1,
         after.getConsumerBinding().getByQuery().size());
 
-    assertNotNull(after.getConsumerBinding().getByQuery().get(1).getStatus().get().getAgentStatus());
+    assertNotNull(after.getConsumerBinding().getByQuery().get(1)
+        .getFragments().getConsumerBindingPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

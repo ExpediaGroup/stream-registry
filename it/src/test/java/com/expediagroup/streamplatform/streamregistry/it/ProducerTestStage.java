@@ -23,14 +23,16 @@ import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducerQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.ProducersQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateProducerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.ProducerKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducersQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ProducerPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class ProducerTestStage extends AbstractTestStage {
@@ -42,10 +44,14 @@ public class ProducerTestStage extends AbstractTestStage {
 
     Object data = client.getOptionalData(createMutation).get();
 
-    InsertProducerMutation.Insert update = ((InsertProducerMutation.Data) data).getProducer().getInsert();
+    InsertProducerMutation.Insert insert = ((InsertProducerMutation.Data) data).getProducer().getInsert();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ProducerPart part = insert.getFragments().getProducerPart();
+    assertThat(part.getKey().getName(), is(factory.producerName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
 
     assertMutationFails(createMutation);
   }
@@ -64,8 +70,12 @@ public class ProducerTestStage extends AbstractTestStage {
     Object data = client.getOptionalData(updateMutation).get();
     UpdateProducerMutation.Update update = ((UpdateProducerMutation.Data) data).getProducer().getUpdate();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ProducerPart part = update.getFragments().getProducerPart();
+    assertThat(part.getKey().getName(), is(factory.producerName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -75,8 +85,12 @@ public class ProducerTestStage extends AbstractTestStage {
 
     UpsertProducerMutation.Upsert upsert = ((UpsertProducerMutation.Data) data).getProducer().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(upsert.getSpecification().getConfiguration().get(factory.key).asText(), is(factory.value));
+    ProducerPart part = upsert.getFragments().getProducerPart();
+    assertThat(part.getKey().getName(), is(factory.producerName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -87,8 +101,10 @@ public class ProducerTestStage extends AbstractTestStage {
     UpdateProducerStatusMutation.UpdateStatus update =
         ((UpdateProducerStatusMutation.Data) data).getProducer().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    ProducerPart part = update.getFragments().getProducerPart();
+
+    assertThat(part.getSpecification().getFragments().getSpecificationPart().getDescription().get(), is(factory.description));
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -106,7 +122,7 @@ public class ProducerTestStage extends AbstractTestStage {
 
     ProducerQuery.Data after = (ProducerQuery.Data) client.getOptionalData(ProducerQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getProducer().getByKey().get().getKey().getName(), input.name());
+    assertEquals(after.getProducer().getByKey().get().getFragments().getProducerPart().getKey().getName(), input.name());
   }
 
   @Override
@@ -123,7 +139,9 @@ public class ProducerTestStage extends AbstractTestStage {
     ProducersQuery.Data after = (ProducersQuery.Data) client.getOptionalData(ProducersQuery.builder().key(query).build()).get();
 
     assertEquals(after.getProducer().getByQuery().size(), before.getProducer().getByQuery().size() + 1);
-    assertNotNull(after.getProducer().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getProducer().getByQuery().get(0)
+        .getFragments().getProducerPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override

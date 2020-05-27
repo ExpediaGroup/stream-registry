@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import junit.framework.TestCase;
@@ -75,7 +74,7 @@ public abstract class AbstractTestStage {
       client.invoke(m);
       TestCase.fail("Expected a ValidationException");
     } catch (RuntimeException e) {
-      assertEquals("Can't create because it already exists", e.getMessage());
+      assertTrue(e.getMessage().contains("Can't create because it already exists"));
     }
   }
 
@@ -89,7 +88,7 @@ public abstract class AbstractTestStage {
       client.invoke(m);
       TestCase.fail("Expected a ValidationException");
     } catch (RuntimeException e) {
-      assertTrue(e.getMessage().startsWith("Can't update"));
+      assertTrue(e.getMessage().contains("Can't update"));
     }
   }
 }

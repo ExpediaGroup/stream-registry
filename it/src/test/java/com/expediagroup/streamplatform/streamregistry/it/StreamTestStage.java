@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import static com.expediagroup.streamplatform.streamregistry.core.handlers.IdentityHandler.DEFAULT;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -24,15 +23,17 @@ import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.InsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.StreamsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpdateStreamStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.UpsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.type.StreamKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.StreamPart;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
 
 public class StreamTestStage extends AbstractTestStage {
@@ -41,18 +42,28 @@ public class StreamTestStage extends AbstractTestStage {
   public void create() {
     Object data = client.getOptionalData(factory.insertStreamMutationBuilder().build()).get();
 
-    InsertStreamMutation.Insert Insert = ((InsertStreamMutation.Data) data).getStream().getInsert();
+    InsertStreamMutation.Insert insert = ((InsertStreamMutation.Data) data).getStream().getInsert();
 
-    assertThat(Insert.getSpecification().getDescription().get(), is(factory.description));
+    StreamPart part = insert.getFragments().getStreamPart();
+    assertThat(part.getKey().getName(), is(factory.streamName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
   public void update() {
     Object data = client.getOptionalData(factory.updateStreamMutationBuilder().build()).get();
 
-    UpdateStreamMutation.Update Update = ((UpdateStreamMutation.Data) data).getStream().getUpdate();
+    UpdateStreamMutation.Update update = ((UpdateStreamMutation.Data) data).getStream().getUpdate();
 
-    assertThat(Update.getSpecification().getDescription().get(), is(factory.description));
+    StreamPart part = update.getFragments().getStreamPart();
+    assertThat(part.getKey().getName(), is(factory.streamName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -82,7 +93,12 @@ public class StreamTestStage extends AbstractTestStage {
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();
 
-    assertThat(upsert.getSpecification().getDescription().get(), is(factory.description));
+    StreamPart part = upsert.getFragments().getStreamPart();
+    assertThat(part.getKey().getName(), is(factory.streamName));
+
+    SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
+    assertThat(specificationPart.getDescription().get(), is(factory.description));
+    assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
   }
 
   @Override
@@ -93,8 +109,10 @@ public class StreamTestStage extends AbstractTestStage {
     UpdateStreamStatusMutation.UpdateStatus update =
         ((UpdateStreamStatusMutation.Data) data).getStream().getUpdateStatus();
 
-    assertThat(update.getSpecification().getDescription().get(), is(factory.description));
-    assertThat(update.getStatus().get().getAgentStatus().get("skey").asText(), is("svalue"));
+    StreamPart part = update.getFragments().getStreamPart();
+
+    assertThat(part.getSpecification().getFragments().getSpecificationPart().getDescription().get(), is(factory.description));
+    assertThat(part.getStatus().get().getFragments().getStatusPart().getAgentStatus().get("skey").asText(), is("svalue"));
   }
 
   @Override
@@ -112,9 +130,7 @@ public class StreamTestStage extends AbstractTestStage {
 
     StreamQuery.Data after = (StreamQuery.Data) client.getOptionalData(StreamQuery.builder().key(input).build()).get();
 
-    assertEquals(after.getStream().getByKey().get().getKey().getName(), input.name());
-
-    assertEquals(after.getStream().getByKey().get().getSchema().getSpecification().getType(), DEFAULT);
+    assertEquals(after.getStream().getByKey().get().getFragments().getStreamPart().getKey().getName(), input.name());
   }
 
   @Override
@@ -130,8 +146,9 @@ public class StreamTestStage extends AbstractTestStage {
 
     StreamsQuery.Data after = (StreamsQuery.Data) client.getOptionalData(StreamsQuery.builder().key(query).build()).get();
 
-    assertEquals(before.getStream().getByQuery().size() + 1, after.getStream().getByQuery().size());
-    assertNotNull(after.getStream().getByQuery().get(0).getStatus().get().getAgentStatus());
+    assertNotNull(after.getStream().getByQuery().get(0)
+        .getFragments().getStreamPart().getStatus().get()
+        .getFragments().getStatusPart().getAgentStatus());
   }
 
   @Override
