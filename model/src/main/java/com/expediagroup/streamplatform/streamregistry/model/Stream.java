@@ -26,10 +26,8 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Stream implements Entity {
-
+public class Stream implements Entity<StreamKey> {
   private StreamKey key;
-
   private SchemaKey schemaKey;
   private Specification specification;
   private Status status;

@@ -15,11 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
-
 import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.CacheManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -30,11 +26,10 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
-import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.KafkaContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
-import com.expediagroup.streamplatform.streamregistry.repository.postgres.data.DomainData;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -55,12 +50,7 @@ public class StreamRegistryIT {
   private static ConfigurableApplicationContext context;
 
   @ClassRule
-  public static GenericContainer postgres =
-      new GenericContainer<>("postgres:12.0-alpine")
-          .withLogConsumer(o -> log.info("Postgres: {}", o.getUtf8String().trim()))
-          .withEnv("POSTGRES_USER", "streamregistry")
-          .withEnv("POSTGRES_PASSWORD", "streamregistry")
-          .withEnv("POSTGRES_DB", "streamregistry");
+  public static KafkaContainer kafka = new KafkaContainer();
 
   @BeforeClass
   public static void before() {
@@ -76,11 +66,9 @@ public class StreamRegistryIT {
     */
     String[] args = new String[] {
         String.format("--server.port=%d", port),
-        "--spring.profiles.active=default,graphql,hibernate",
-        "--spring.datasource.url=jdbc:postgresql://localhost:" + postgres.getMappedPort(5432) + "/streamregistry",
-        "--spring.datasource.username=streamregistry",
-        "--spring.datasource.password=streamregistry",
-        "--spring.jpa.show-sql=false"
+        "--spring.profiles.active=default,graphql",
+        "--repository.kafka.bootstrapServers=" + kafka.getBootstrapServers(),
+        "--repository.kafka.schemaRegistryUrl=mock://schemas"
     };
 
     context = SpringApplication.run(StreamRegistryApp.class, args);
@@ -91,9 +79,6 @@ public class StreamRegistryIT {
 
   @AfterClass
   public static void after() {
-    int domainCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0).getCache(DomainData.class.getName()).getSize();
-    assertThat(domainCacheSize, greaterThan(0));
-
     if (context != null) {
       context.close();
       context = null;

@@ -24,8 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StreamBinding implements Entity {
-
+public class StreamBinding implements Entity<StreamBindingKey> {
   private StreamBindingKey key;
   private Specification specification;
   private Status status;

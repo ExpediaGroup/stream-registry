@@ -23,7 +23,7 @@
     </dependency>
     <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
-      <artifactId>stream-registry-repository-postgres</artifactId>
+      <artifactId>stream-registry-repository-kafka</artifactId>
       <version>${project.version}</version>
     </dependency>
 

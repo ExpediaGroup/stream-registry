@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Added logging to Kafka and Apollo state code.
+- Kafka Repository implementation.
 
 ### Changed
 - Moved graphql modules under graphql directory.
