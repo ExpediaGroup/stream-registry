@@ -43,6 +43,11 @@
       <version>7.0.1</version>
     </dependency>
     <dependency>
+      <groupId>com.graphql-java-kickstart</groupId>
+      <artifactId>graphiql-spring-boot-starter</artifactId>
+      <version>7.0.1</version>
+    </dependency>
+    <dependency>
       <groupId>com.hotels.beans</groupId>
       <artifactId>bean-utils-library</artifactId>
     </dependency>
