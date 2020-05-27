@@ -17,11 +17,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.apollographql.apollo</groupId>
-      <artifactId>apollo-api-jvm</artifactId>
-      <version>${apollo.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
