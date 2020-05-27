@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import lombok.NonNull;
+
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
@@ -33,7 +35,7 @@ public interface EntityViewListener {
    * @param <K>       the key type.
    * @param <S>       the specification type.
    */
-  <K extends Entity.Key<S>, S extends Specification> void onEvent(Entity<K, S> oldEntity, Event<K, S> event);
+  <K extends Entity.Key<S>, S extends Specification> void onEvent(Entity<K, S> oldEntity, @NonNull Event<K, S> event);
 
   /**
    * A null object listener.

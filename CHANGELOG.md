@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Moved graphql modules under graphql directory.
 - Bumped graphql-java versions to latest.
 - Fix a bug in state Avro conversion of stream entities.
+- Enhanced `EntityViewListener` to show nullability of parameters to give more control to Kotlin consumers.
 
 ### Removed
 - graphql-client, graphql-client-reactor & graphql-client-support modules.
