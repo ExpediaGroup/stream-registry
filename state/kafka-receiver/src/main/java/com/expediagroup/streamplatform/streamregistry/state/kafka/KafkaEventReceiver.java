@@ -81,7 +81,14 @@ public class KafkaEventReceiver implements EventReceiver {
 
   @Override
   public void receive(EventReceiverListener listener) {
-    executorService.execute(() -> consume(listener));
+    executorService.execute(() -> {
+      try {
+        consume(listener);
+      } catch (Exception e) {
+        log.error("Receiving failed", e);
+        throw e;
+      }
+    });
   }
 
   void consume(EventReceiverListener listener) {

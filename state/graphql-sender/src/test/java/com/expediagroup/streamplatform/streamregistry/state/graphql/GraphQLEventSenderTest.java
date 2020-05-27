@@ -51,7 +51,7 @@ public class GraphQLEventSenderTest {
   public void test() {
     when(converter.convert(event)).thenReturn(mutation);
     when(executor.execute(mutation)).thenReturn(responseFuture);
-    Function<Response,Void> any = any();
+    Function<Response, Void> any = any();
     when(responseFuture.thenApply(any)).thenReturn(voidFuture);
 
     var result = underTest.send(event);

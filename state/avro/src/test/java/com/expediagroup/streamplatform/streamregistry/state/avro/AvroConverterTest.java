@@ -27,9 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
 
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
@@ -39,6 +42,7 @@ public class AvroConverterTest {
   private final AvroConverter underTest = new AvroConverter();
 
   private final AvroDomainKey avroDomainKey = new AvroDomainKey("domain");
+  private final AvroStreamKey avroStreamKey = new AvroStreamKey(avroDomainKey, "stream", 1);
 
   private final AvroSpecificationKey avroSpecificationKey = new AvroSpecificationKey(avroDomainKey);
   private final AvroSpecification avroSpecification = new AvroSpecification(
@@ -47,12 +51,20 @@ public class AvroConverterTest {
       "type",
       new AvroObject(Map.of("foo", "bar"))
   );
+  private final AvroStreamSpecification avroStreamSpecification = new AvroStreamSpecification(
+      "description",
+      List.of(new AvroTag("name", "value")),
+      "type",
+      new AvroObject(Map.of("foo", "bar")),
+      new AvroSchemaKey(avroDomainKey, "schema")
+  );
 
   private final AvroStatusKey avroStatusKey = new AvroStatusKey(avroDomainKey, "statusName");
   private final AvroObject avroObjectStatus = new AvroObject(Map.of("foo", "baz"));
   private final AvroStatus avroStatus = new AvroStatus(avroObjectStatus);
 
   private final AvroEvent avroSpecificationEvent = new AvroEvent(new AvroKey(avroSpecificationKey), new AvroValue(avroSpecification));
+  private final AvroEvent avroStreamSpecificationEvent = new AvroEvent(new AvroKey(new AvroSpecificationKey(avroStreamKey)), new AvroValue(avroStreamSpecification));
   private final AvroEvent avroStatusEvent = new AvroEvent(new AvroKey(avroStatusKey), new AvroValue(avroStatus));
   private final AvroEvent avroSpecificationDeletionEvent = new AvroEvent(new AvroKey(avroSpecificationKey), null);
   private final AvroEvent avroStatusDeletionEvent = new AvroEvent(new AvroKey(avroStatusKey), null);
@@ -65,6 +77,14 @@ public class AvroConverterTest {
       mapper.createObjectNode().put("foo", "bar")
   );
   private final StatusEntry statusEntry = new StatusEntry("statusName", mapper.createObjectNode().put("foo", "baz"));
+  private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
+  private final StreamSpecification streamSpecification = new StreamSpecification(
+      "description",
+      List.of(new Tag("name", "value")),
+      "type",
+      mapper.createObjectNode().put("foo", "bar"),
+      new Entity.SchemaKey(domainKey, "schema")
+  );
 
   @Test
   public void specificationToModel() {
@@ -112,5 +132,17 @@ public class AvroConverterTest {
   public void statusDeleteToAvro() throws IOException {
     var result = underTest.toAvro(Event.of(domainKey, "statusName"));
     assertEquals(avroStatusDeletionEvent.toByteBuffer(), result.toByteBuffer());
+  }
+
+  @Test
+  public void streamSpecificationToModel() {
+    var result = underTest.toModel(avroStreamSpecificationEvent.getKey(), avroStreamSpecificationEvent.getValue());
+    assertThat(result, is(Event.of(streamKey, streamSpecification)));
+  }
+
+  @Test
+  public void streamSpecificationToAvro() throws IOException {
+    var result = underTest.toAvro(Event.of(streamKey, streamSpecification));
+    assertEquals(avroStreamSpecificationEvent.toByteBuffer(), result.toByteBuffer());
   }
 }
