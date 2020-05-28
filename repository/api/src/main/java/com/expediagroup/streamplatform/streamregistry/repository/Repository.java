@@ -25,5 +25,9 @@ public interface Repository<T, ID> {
 
   List<T> findAll();
 
-   List<T> findAll(T example);
+  /**
+   * @deprecated Use {link {@link #findAll()}} and filter the results with predicates.
+   */
+  @Deprecated
+  List<T> findAll(T example);
 }

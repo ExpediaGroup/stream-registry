@@ -24,8 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Consumer implements Entity {
-
+public class Consumer implements Entity<ConsumerKey> {
   private ConsumerKey key;
   private Specification specification;
   private Status status;

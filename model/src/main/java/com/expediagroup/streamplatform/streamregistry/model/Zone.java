@@ -25,8 +25,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Zone implements Entity {
-
+public class Zone implements Entity<ZoneKey> {
   private ZoneKey key;
   private Specification specification;
   private Status status;

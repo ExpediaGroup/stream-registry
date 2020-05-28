@@ -24,8 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBinding
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ConsumerBinding implements Entity {
-
+public class ConsumerBinding implements Entity<ConsumerBindingKey> {
   private ConsumerBindingKey key;
   private Specification specification;
   private Status status;

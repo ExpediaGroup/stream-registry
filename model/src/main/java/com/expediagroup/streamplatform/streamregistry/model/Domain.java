@@ -24,8 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Domain implements Entity {
-
+public class Domain implements Entity<DomainKey> {
   private DomainKey key;
   private Specification specification;
   private Status status;

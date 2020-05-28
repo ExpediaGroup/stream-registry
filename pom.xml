@@ -49,6 +49,7 @@
     <module>model</module>
     <module>notification-support</module>
     <module>repository/api</module>
+    <module>repository/kafka</module>
     <module>repository/postgres</module>
     <module>spring-boot-starter</module>
     <module>state/api</module>

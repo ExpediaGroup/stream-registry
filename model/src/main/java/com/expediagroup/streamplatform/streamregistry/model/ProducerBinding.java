@@ -24,8 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBinding
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProducerBinding implements Entity {
-
+public class ProducerBinding implements Entity<ProducerBindingKey> {
   private ProducerBindingKey key;
   private Specification specification;
   private Status status;
