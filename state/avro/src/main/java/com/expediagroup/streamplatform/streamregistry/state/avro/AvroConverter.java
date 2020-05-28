@@ -100,7 +100,7 @@ public class AvroConverter {
     private final Class<? extends SpecificRecord> avroKeyClass;
     @NonNull private final Class<? extends SpecificRecord> avroSpecificationClass;
 
-    private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, AvroSpecification avroSpecification) {
+    private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, Object avroSpecification) {
       var key = convertObject(avroSpecificationKey.getKey(), modelKeyClass);
       var specification = convertObject(avroSpecification, modelSpecificationClass);
       if (specification == null) {
@@ -158,9 +158,9 @@ public class AvroConverter {
 
   public Event<?, ?> toModel(AvroKey avroKey, AvroValue avroValue) {
     if (avroKey.getKey() instanceof AvroSpecificationKey) {
-      AvroSpecification specification = null;
+      Object specification = null;
       if (avroValue != null) {
-        specification = (AvroSpecification) avroValue.getValue();
+        specification = avroValue.getValue();
       }
       return toModel((AvroSpecificationKey) avroKey.getKey(), specification);
     } else if (avroKey.getKey() instanceof AvroStatusKey) {
@@ -174,7 +174,7 @@ public class AvroConverter {
     }
   }
 
-  private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, AvroSpecification avroSpecification) {
+  private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, Object avroSpecification) {
     return modelConverters(avroSpecificationKey.getKey()).toModel(avroSpecificationKey, avroSpecification);
   }
 

@@ -49,7 +49,7 @@ public class ExampleAgentApp {
   }
 
   @Bean
-  EventReceiver receiver(
+  EventReceiver eventReceiver(
       @Value("${bootstrapServers}") String bootstrapServers,
       @Value("${topic}") String topic,
       @Value("${groupId}") String groupId,
@@ -65,7 +65,7 @@ public class ExampleAgentApp {
   }
 
   @Bean
-  EntityView entityView(EventReceiver receiver) {
-    return new DefaultEntityView(receiver);
+  EntityView entityView(EventReceiver eventReceiver) {
+    return new DefaultEntityView(eventReceiver);
   }
 }

@@ -83,6 +83,7 @@ public class KafkaEventSender implements EventSender {
     var correlationId = correlationStrategy.correlationId(future);
     var headers = correlationStrategy.headers(correlationId);
     var record = new ProducerRecord<>(config.getTopic(), null, null, key, value, headers);
+    log.debug("Sending {} - {}", correlationId, record);
     producer.send(record, correlationStrategy.callback(correlationId, future));
     return future;
   }
@@ -110,10 +111,10 @@ public class KafkaEventSender implements EventSender {
     public Callback callback(String correlationId, CompletableFuture<Void> future) {
       return (rm, e) -> {
         if (rm != null) {
-          log.debug("Sent {}", rm);
+          log.debug("Sent {} - {}", correlationId, rm);
           future.complete(null);
         } else {
-          log.error("Error sending record", e);
+          log.error("Error sending record {}", correlationId, e);
           future.completeExceptionally(e);
         }
       };
@@ -138,9 +139,9 @@ public class KafkaEventSender implements EventSender {
     public Callback callback(String correlationId, CompletableFuture<Void> future) {
       return (rm, e) -> {
         if (rm != null) {
-          log.debug("Sent {}", rm);
+          log.debug("Sent {} - {}", correlationId, rm);
         } else {
-          log.error("Error sending record", e);
+          log.error("Error sending record {}", correlationId, e);
           correlator.failed(correlationId, e);
         }
       };

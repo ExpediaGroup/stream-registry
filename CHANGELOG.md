@@ -5,9 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added logging to Kafka and Apollo state code.
+
 ### Changed
 - Moved graphql modules under graphql directory.
 - Bumped graphql-java versions to latest.
+- Fix a bug in state Avro conversion of stream entities.
+- Enhanced `EntityViewListener` to show nullability of parameters to give more control to Kotlin consumers.
 
 ### Removed
 - graphql-client, graphql-client-reactor & graphql-client-support modules.

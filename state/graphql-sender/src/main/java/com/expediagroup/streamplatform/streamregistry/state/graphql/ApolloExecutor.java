@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
@@ -32,6 +33,7 @@ import com.apollographql.apollo.exception.ApolloException;
 
 import org.jetbrains.annotations.NotNull;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ApolloExecutor {
   @NonNull private final ApolloClient client;
@@ -64,6 +66,7 @@ public class ApolloExecutor {
 
     @Override
     public void onFailure(@NotNull ApolloException e) {
+      log.error("Operation failed", e);
       future.completeExceptionally(e);
     }
   }

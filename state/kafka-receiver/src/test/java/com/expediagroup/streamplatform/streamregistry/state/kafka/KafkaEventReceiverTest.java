@@ -25,7 +25,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -56,7 +55,6 @@ public class KafkaEventReceiverTest {
   @Mock private KafkaConsumer<AvroKey, AvroValue> consumer;
   @Mock private EventReceiverListener listener;
   @Mock private PartitionInfo partitionInfo;
-  @Mock private ScheduledFuture progressLogger;
   @Mock private ConsumerRecord<AvroKey, AvroValue> record;
   @Mock private AvroKey avroKey;
   @Mock private AvroValue avroValue;
