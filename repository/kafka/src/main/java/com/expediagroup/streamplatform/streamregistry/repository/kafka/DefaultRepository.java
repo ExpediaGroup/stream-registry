@@ -30,6 +30,12 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
+/**
+ * @param <ME> Model Entity
+ * @param <MK> Model Key
+ * @param <SK> State Key
+ * @param <SS> State Specification
+ */
 @RequiredArgsConstructor
 abstract class DefaultRepository<
     ME extends com.expediagroup.streamplatform.streamregistry.model.Entity<MK>,
