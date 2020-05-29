@@ -125,7 +125,7 @@ public class KafkaEventReceiver implements EventReceiver {
         currentOffset.set(record.offset());
         listener.onEvent(event);
         receiveCorrelationId(record);
-        if (!loaded && record.offset() >= endOffset) {
+        if (!loaded && record.offset() >= endOffset - 1L) {
           progressLogger.cancel(true);
           log.info("Loading complete. Reached offset " + record.offset());
           listener.onEvent(LOAD_COMPLETE);
