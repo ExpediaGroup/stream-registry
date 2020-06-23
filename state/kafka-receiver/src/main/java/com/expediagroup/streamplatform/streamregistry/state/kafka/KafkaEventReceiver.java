@@ -126,7 +126,7 @@ public class KafkaEventReceiver implements EventReceiver {
         try {
           listener.onEvent(event);
         } catch (Exception e) {
-          log.error("listener.onEvent failed", e);
+          log.error("Listener failed for event {}", event, e);
         }
         receiveCorrelationId(record);
         if (!loaded && record.offset() >= endOffset - 1L) {
