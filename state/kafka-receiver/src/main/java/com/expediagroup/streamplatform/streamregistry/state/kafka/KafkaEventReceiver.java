@@ -123,7 +123,11 @@ public class KafkaEventReceiver implements EventReceiver {
       for (ConsumerRecord<AvroKey, AvroValue> record : consumer.poll(Duration.ofMillis(100))) {
         var event = converter.toModel(record.key(), record.value());
         currentOffset.set(record.offset());
-        listener.onEvent(event);
+        try {
+          listener.onEvent(event);
+        } catch (Exception e) {
+          log.error("listener.onEvent failed", e);
+        }
         receiveCorrelationId(record);
         if (!loaded && record.offset() >= endOffset - 1L) {
           progressLogger.cancel(true);

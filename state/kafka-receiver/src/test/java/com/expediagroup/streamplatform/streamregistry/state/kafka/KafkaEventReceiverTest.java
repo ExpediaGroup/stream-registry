@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.state.internal.Even
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
@@ -84,6 +85,31 @@ public class KafkaEventReceiverTest {
     when(record.value()).thenReturn(avroValue);
     when(converter.toModel(avroKey, avroValue)).thenReturn(event);
     when(record.headers()).thenReturn(new RecordHeaders(List.of(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+
+    underTest.receive(listener);
+    Thread.sleep(100L);
+    underTest.close();
+
+    var inOrder = Mockito.inOrder(consumer, listener, correlator);
+    inOrder.verify(consumer).assign(topicPartitions);
+    inOrder.verify(consumer).seekToBeginning(topicPartitions);
+    inOrder.verify(listener).onEvent(LOAD_COMPLETE);
+    inOrder.verify(listener).onEvent(event);
+    inOrder.verify(correlator).received("foo");
+  }
+
+  @Test
+  public void listenerThrowsException() throws Exception {
+    when(config.getTopic()).thenReturn(topic);
+    when(consumer.partitionsFor(topic)).thenReturn(List.of(partitionInfo));
+    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Map.of(topicPartition, 0L));
+    when(consumer.endOffsets(topicPartitions)).thenReturn(Map.of(topicPartition, 0L));
+    when(consumer.poll(Duration.ofMillis(100))).thenReturn(new ConsumerRecords<>(Map.of(topicPartition, List.of(record))));
+    when(record.key()).thenReturn(avroKey);
+    when(record.value()).thenReturn(avroValue);
+    when(converter.toModel(avroKey, avroValue)).thenReturn(event);
+    when(record.headers()).thenReturn(new RecordHeaders(List.of(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+    doThrow(new RuntimeException("listener error")).when(listener).onEvent(event);
 
     underTest.receive(listener);
     Thread.sleep(100L);
