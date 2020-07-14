@@ -80,8 +80,8 @@ public class DefaultRepositoryTest {
 
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
-    verify(sender).send(Event.of(expected.getKey(), expected.getSpecification()));
-    verify(sender).send(Event.of(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
+    verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
   }
 
   @Test
@@ -99,8 +99,8 @@ public class DefaultRepositoryTest {
 
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
-    verify(sender).send(Event.of(expected.getKey(), expected.getSpecification()));
-    verify(sender, never()).send(Event.of(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
+    verify(sender, never()).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
   }
 
   @Test
@@ -119,8 +119,8 @@ public class DefaultRepositoryTest {
 
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
-    verify(sender, never()).send(Event.of(expected.getKey(), expected.getSpecification()));
-    verify(sender).send(Event.of(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender, never()).send(Event.specification(expected.getKey(), expected.getSpecification()));
+    verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
   }
 
   @Test
@@ -136,8 +136,8 @@ public class DefaultRepositoryTest {
 
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
-    verify(sender).send(Event.of(expected.getKey(), expected.getSpecification()));
-    verify(sender).send(Event.of(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
+    verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
   }
 
   @Test

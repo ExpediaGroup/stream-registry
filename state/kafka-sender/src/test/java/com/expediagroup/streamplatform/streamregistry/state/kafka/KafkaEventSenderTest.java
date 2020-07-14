@@ -59,7 +59,7 @@ public class KafkaEventSenderTest {
   private final ObjectMapper mapper = new ObjectMapper();
   private final DomainKey key = new DomainKey("domain");
   private final DefaultSpecification specification = new DefaultSpecification("description", List.of(), "type", mapper.createObjectNode());
-  private final Event<DomainKey, DefaultSpecification> event = Event.of(key, specification);
+  private final Event<DomainKey, DefaultSpecification> event = Event.specification(key, specification);
 
   @Mock private AvroEvent avroEvent;
   @Mock private AvroKey avroKey;
