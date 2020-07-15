@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -44,7 +40,6 @@ public class ConsumerBindingService {
   private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
-  private final NotificationEventEmitter<ConsumerBinding> consumerBindingServiceEventEmitter;
 
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
     if (read(consumerBinding.getKey()).isPresent()) {
@@ -52,7 +47,7 @@ public class ConsumerBindingService {
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
     consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
-    return save(consumerBinding, CREATE);
+    return save(consumerBinding);
   }
 
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
@@ -62,12 +57,11 @@ public class ConsumerBindingService {
     }
     consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
     consumerBinding.setSpecification(handlerService.handleUpdate(consumerBinding, existing.get()));
-    return save(consumerBinding, UPDATE);
+    return save(consumerBinding);
   }
 
-  private Optional<ConsumerBinding> save(ConsumerBinding consumerBinding, EventType eventType) {
+  private Optional<ConsumerBinding> save(ConsumerBinding consumerBinding) {
     consumerBinding = consumerBindingRepository.save(consumerBinding);
-    consumerBindingServiceEventEmitter.emitEventOnProcessedEntity(eventType, consumerBinding);
     return Optional.ofNullable(consumerBinding);
   }
 

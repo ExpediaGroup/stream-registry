@@ -47,7 +47,6 @@
     <module>graphql/scalars</module>
     <module>handler-spi</module>
     <module>model</module>
-    <module>notification-support</module>
     <module>repository/api</module>
     <module>repository/kafka</module>
     <module>repository/postgres</module>

@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -42,7 +38,6 @@ public class InfrastructureService {
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
-  private final NotificationEventEmitter<Infrastructure> infrastructureServiceEventEmitter;
 
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (read(infrastructure.getKey()).isPresent()) {
@@ -50,7 +45,7 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForCreate(infrastructure);
     infrastructure.setSpecification(handlerService.handleInsert(infrastructure));
-    return save(infrastructure, CREATE);
+    return save(infrastructure);
   }
 
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
@@ -60,12 +55,11 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForUpdate(infrastructure, existing.get());
     infrastructure.setSpecification(handlerService.handleUpdate(infrastructure, existing.get()));
-    return save(infrastructure, UPDATE);
+    return save(infrastructure);
   }
 
-  private Optional<Infrastructure> save(Infrastructure infrastructure, EventType eventType) {
+  private Optional<Infrastructure> save(Infrastructure infrastructure) {
     infrastructure = infrastructureRepository.save(infrastructure);
-    infrastructureServiceEventEmitter.emitEventOnProcessedEntity(eventType, infrastructure);
     return Optional.ofNullable(infrastructure);
   }
 

@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -42,7 +38,6 @@ public class ProducerService {
   private final HandlerService handlerService;
   private final ProducerValidator producerValidator;
   private final ProducerRepository producerRepository;
-  private final NotificationEventEmitter<Producer> producerServiceEventEmitter;
 
   public Optional<Producer> create(Producer producer) throws ValidationException {
     if (read(producer.getKey()).isPresent()) {
@@ -50,7 +45,7 @@ public class ProducerService {
     }
     producerValidator.validateForCreate(producer);
     producer.setSpecification(handlerService.handleInsert(producer));
-    return save(producer, CREATE);
+    return save(producer);
   }
 
   public Optional<Producer> update(Producer producer) throws ValidationException {
@@ -60,12 +55,11 @@ public class ProducerService {
     }
     producerValidator.validateForUpdate(producer, existing.get());
     producer.setSpecification(handlerService.handleUpdate(producer, existing.get()));
-    return save(producer, UPDATE);
+    return save(producer);
   }
 
-  private Optional<Producer> save(Producer producer, EventType eventType) {
+  private Optional<Producer> save(Producer producer) {
     producer = producerRepository.save(producer);
-    producerServiceEventEmitter.emitEventOnProcessedEntity(eventType, producer);
     return Optional.ofNullable(producer);
   }
 

@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -42,7 +38,6 @@ public class StreamService {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
-  private final NotificationEventEmitter<Stream> streamServiceEventEmitter;
 
   public Optional<Stream> create(Stream stream) throws ValidationException {
     if (read(stream.getKey()).isPresent()) {
@@ -50,7 +45,7 @@ public class StreamService {
     }
     streamValidator.validateForCreate(stream);
     stream.setSpecification(handlerService.handleInsert(stream));
-    return save(stream, CREATE);
+    return save(stream);
   }
 
   public Optional<Stream> update(Stream stream) throws ValidationException {
@@ -61,12 +56,11 @@ public class StreamService {
     stream.setSchemaKey(existing.get().getSchemaKey());
     streamValidator.validateForUpdate(stream, existing.get());
     stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
-    return save(stream, UPDATE);
+    return save(stream);
   }
 
-  private Optional<Stream> save(Stream stream, EventType eventType) {
+  private Optional<Stream> save(Stream stream) {
     stream = streamRepository.save(stream);
-    streamServiceEventEmitter.emitEventOnProcessedEntity(eventType, stream);
     return Optional.ofNullable(stream);
   }
 
