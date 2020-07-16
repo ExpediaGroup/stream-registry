@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.events;
+package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -30,7 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
@@ -89,7 +88,6 @@ public class ProducerBindingServiceTest {
 
     when(entity.getKey()).thenReturn(key);
 
-
     when(producerBindingRepository.findById(key)).thenReturn(Optional.of(existingEntity));
     doNothing().when(producerBindingValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
@@ -114,7 +112,6 @@ public class ProducerBindingServiceTest {
     final ProducerBinding existingEntity = mock(ProducerBinding.class);
 
     when(entity.getKey()).thenReturn(key);
-
 
     when(producerBindingRepository.findById(key)).thenReturn(Optional.of(existingEntity));
     doNothing().when(producerBindingValidator).validateForUpdate(entity, existingEntity);

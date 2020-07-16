@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.events;
+package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -30,7 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
@@ -89,7 +88,6 @@ public class ConsumerBindingServiceTest {
 
     when(entity.getKey()).thenReturn(key);
 
-
     when(consumerBindingRepository.findById(key)).thenReturn(Optional.of(existingEntity));
     doNothing().when(consumerBindingValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
@@ -114,7 +112,6 @@ public class ConsumerBindingServiceTest {
     final ConsumerBinding existingEntity = mock(ConsumerBinding.class);
 
     when(entity.getKey()).thenReturn(key);
-
 
     when(consumerBindingRepository.findById(key)).thenReturn(Optional.of(existingEntity));
     doNothing().when(consumerBindingValidator).validateForUpdate(entity, existingEntity);
