@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -43,7 +39,6 @@ public class ProducerBindingService {
   private final HandlerService handlerService;
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
-  private final NotificationEventEmitter<ProducerBinding> producerBindingServiceEventEmitter;
 
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
     if (read(producerBinding.getKey()).isPresent()) {
@@ -51,7 +46,7 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForCreate(producerBinding);
     producerBinding.setSpecification(handlerService.handleInsert(producerBinding));
-    return save(producerBinding, CREATE);
+    return save(producerBinding);
   }
 
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
@@ -61,12 +56,11 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForUpdate(producerBinding, existing.get());
     producerBinding.setSpecification(handlerService.handleUpdate(producerBinding, existing.get()));
-    return save(producerBinding, UPDATE);
+    return save(producerBinding);
   }
 
-  private Optional<ProducerBinding> save(ProducerBinding producerBinding, EventType eventType) {
+  private Optional<ProducerBinding> save(ProducerBinding producerBinding) {
     producerBinding = producerBindingRepository.save(producerBinding);
-    producerBindingServiceEventEmitter.emitEventOnProcessedEntity(eventType, producerBinding);
     return Optional.ofNullable(producerBinding);
   }
 

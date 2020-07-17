@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
-
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +24,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -42,7 +37,6 @@ public class DomainService {
   private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
-  private final NotificationEventEmitter<Domain> domainServiceEventEmitter;
 
   public Optional<Domain> create(Domain domain) throws ValidationException {
     if (read(domain.getKey()).isPresent()) {
@@ -50,7 +44,7 @@ public class DomainService {
     }
     domainValidator.validateForCreate(domain);
     domain.setSpecification(handlerService.handleInsert(domain));
-    return save(domain, CREATE);
+    return save(domain);
   }
 
   public Optional<Domain> update(Domain domain) throws ValidationException {
@@ -60,12 +54,11 @@ public class DomainService {
     }
     domainValidator.validateForUpdate(domain, existing.get());
     domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
-    return save(domain, UPDATE);
+    return save(domain);
   }
 
-  private Optional<Domain> save(Domain domain, EventType eventType) {
+  private Optional<Domain> save(Domain domain) {
     domain = domainRepository.save(domain);
-    domainServiceEventEmitter.emitEventOnProcessedEntity(eventType, domain);
     return Optional.ofNullable(domain);
   }
 

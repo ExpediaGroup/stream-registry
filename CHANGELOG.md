@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Changed `Event.of` factory methods to more descriptive names and return the actual type. 
+- Removed notification support.
 
 ## [0.12.3] - 2020-06-24
 ### Bugfix

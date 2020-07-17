@@ -15,11 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry;
 
-
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
-@ComponentScan({"com.expediagroup.streamplatform.streamregistry.core.events"})
 public class StreamRegistryAutoConfiguration {}

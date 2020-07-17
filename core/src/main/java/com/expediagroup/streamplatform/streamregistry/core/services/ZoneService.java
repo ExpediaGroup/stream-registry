@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
@@ -42,7 +38,6 @@ public class ZoneService {
   private final HandlerService handlerService;
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
-  private final NotificationEventEmitter<Zone> zoneServiceEventEmitter;
 
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (read(zone.getKey()).isPresent()) {
@@ -50,7 +45,7 @@ public class ZoneService {
     }
     zoneValidator.validateForCreate(zone);
     zone.setSpecification(handlerService.handleInsert(zone));
-    return save(zone, CREATE);
+    return save(zone);
   }
 
   public Optional<Zone> update(Zone zone) throws ValidationException {
@@ -60,12 +55,11 @@ public class ZoneService {
     }
     zoneValidator.validateForUpdate(zone, existing.get());
     zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
-    return save(zone, UPDATE);
+    return save(zone);
   }
 
-  private Optional<Zone> save(Zone zone, EventType eventType) {
+  private Optional<Zone> save(Zone zone) {
     zone = zoneRepository.save(zone);
-    zoneServiceEventEmitter.emitEventOnProcessedEntity(eventType, zone);
     return Optional.ofNullable(zone);
   }
 

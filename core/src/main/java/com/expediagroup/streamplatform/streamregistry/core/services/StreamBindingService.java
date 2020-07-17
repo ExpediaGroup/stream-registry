@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -42,7 +38,6 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
-  private final NotificationEventEmitter<StreamBinding> streamBindingServiceEventEmitter;
 
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
     if (read(streamBinding.getKey()).isPresent()) {
@@ -50,7 +45,7 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForCreate(streamBinding);
     streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
-    return save(streamBinding, CREATE);
+    return save(streamBinding);
   }
 
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
@@ -60,12 +55,11 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForUpdate(streamBinding, existing.get());
     streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
-    return save(streamBinding, UPDATE);
+    return save(streamBinding);
   }
 
-  private Optional<StreamBinding> save(StreamBinding streamBinding, EventType eventType) {
+  private Optional<StreamBinding> save(StreamBinding streamBinding) {
     streamBinding = streamBindingRepository.save(streamBinding);
-    streamBindingServiceEventEmitter.emitEventOnProcessedEntity(eventType, streamBinding);
     return Optional.ofNullable(streamBinding);
   }
 

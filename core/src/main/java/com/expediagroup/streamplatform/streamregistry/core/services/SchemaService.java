@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -42,7 +38,6 @@ public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
-  private final NotificationEventEmitter<Schema> schemaServiceEventEmitter;
 
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (read(schema.getKey()).isPresent()) {
@@ -50,7 +45,7 @@ public class SchemaService {
     }
     schemaValidator.validateForCreate(schema);
     schema.setSpecification(handlerService.handleInsert(schema));
-    return save(schema, CREATE);
+    return save(schema);
   }
 
   public Optional<Schema> update(Schema schema) throws ValidationException {
@@ -60,12 +55,11 @@ public class SchemaService {
     }
     schemaValidator.validateForUpdate(schema, existing.get());
     schema.setSpecification(handlerService.handleUpdate(schema, existing.get()));
-    return save(schema, UPDATE);
+    return save(schema);
   }
 
-  private Optional<Schema> save(Schema schema, EventType eventType) {
+  private Optional<Schema> save(Schema schema) {
     schema = schemaRepository.save(schema);
-    schemaServiceEventEmitter.emitEventOnProcessedEntity(eventType, schema);
     return Optional.ofNullable(schema);
   }
 

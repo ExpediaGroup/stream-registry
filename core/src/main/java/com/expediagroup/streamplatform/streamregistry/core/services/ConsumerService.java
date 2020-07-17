@@ -15,8 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.CREATE;
-import static com.expediagroup.streamplatform.streamregistry.core.events.EventType.UPDATE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -27,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.events.EventType;
-import com.expediagroup.streamplatform.streamregistry.core.events.NotificationEventEmitter;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -42,7 +38,6 @@ public class ConsumerService {
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
-  private final NotificationEventEmitter<Consumer> consumerServiceEventEmitter;
 
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (read(consumer.getKey()).isPresent()) {
@@ -50,7 +45,7 @@ public class ConsumerService {
     }
     consumerValidator.validateForCreate(consumer);
     consumer.setSpecification(handlerService.handleInsert(consumer));
-    return save(consumer, CREATE);
+    return save(consumer);
   }
 
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
@@ -60,12 +55,11 @@ public class ConsumerService {
     }
     consumerValidator.validateForUpdate(consumer, existing.get());
     consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
-    return save(consumer, UPDATE);
+    return save(consumer);
   }
 
-  private Optional<Consumer> save(Consumer consumer, EventType eventType) {
+  private Optional<Consumer> save(Consumer consumer) {
     consumer = consumerRepository.save(consumer);
-    consumerServiceEventEmitter.emitEventOnProcessedEntity(eventType, consumer);
     return Optional.ofNullable(consumer);
   }
 
