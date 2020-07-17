@@ -104,19 +104,19 @@ public class AvroConverter {
       var key = convertObject(avroSpecificationKey.getKey(), modelKeyClass);
       var specification = convertObject(avroSpecification, modelSpecificationClass);
       if (specification == null) {
-        return Event.of(key);
+        return Event.specificationDeletion(key);
       }
-      return Event.of(key, specification);
+      return Event.specification(key, specification);
     }
 
     private Event<?, ?> toModel(AvroStatusKey avroStatusKey, AvroStatus avroStatus) {
       var key = convertObject(avroStatusKey.getKey(), modelKeyClass);
       var statusName = avroStatusKey.getStatusName();
       if (avroStatus == null) {
-        return Event.of(key, statusName);
+        return Event.statusDeletion(key, statusName);
       }
       var statusValue = convertObject(avroStatus.getValue(), ObjectNode.class);
-      return Event.of(key, new StatusEntry(statusName, statusValue));
+      return Event.status(key, new StatusEntry(statusName, statusValue));
     }
 
     private AvroEvent toAvro(SpecificationEvent<?, ?> event) {

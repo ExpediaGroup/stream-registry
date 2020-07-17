@@ -26,19 +26,19 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusE
 public interface Event<K extends Entity.Key<S>, S extends Specification> {
   K getKey();
 
-  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key, @NonNull S specification) {
+  static <K extends Entity.Key<S>, S extends Specification> SpecificationEvent<K, S> specification(@NonNull K key, @NonNull S specification) {
     return new SpecificationEvent<>(key, specification);
   }
 
-  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key, @NonNull StatusEntry statusEntry) {
+  static <K extends Entity.Key<S>, S extends Specification> StatusEvent<K, S> status(@NonNull K key, @NonNull StatusEntry statusEntry) {
     return new StatusEvent<>(key, statusEntry);
   }
 
-  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key) {
+  static <K extends Entity.Key<S>, S extends Specification> SpecificationDeletionEvent<K, S> specificationDeletion(@NonNull K key) {
     return new SpecificationDeletionEvent<>(key);
   }
 
-  static <K extends Entity.Key<S>, S extends Specification> Event<K, S> of(@NonNull K key, @NonNull String statusName) {
+  static <K extends Entity.Key<S>, S extends Specification> StatusDeletionEvent<K, S> statusDeletion(@NonNull K key, @NonNull String statusName) {
     return new StatusDeletionEvent<>(key, statusName);
   }
 
