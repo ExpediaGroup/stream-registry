@@ -38,6 +38,6 @@ final class SampleEntities {
   static final StatusEntry statusEntry = new StatusEntry("name", statusValue);
   static final DefaultStatus status = (DefaultStatus) new DefaultStatus().with(statusEntry);
   static final Entity<DomainKey, DefaultSpecification> entity = new Entity<>(key, specification, status);
-  static final Event<DomainKey, DefaultSpecification> specificationEvent = Event.of(key, specification);
-  static final Event<DomainKey, DefaultSpecification> statusEvent = Event.of(key, statusEntry);
+  static final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);
+  static final Event<DomainKey, DefaultSpecification> statusEvent = Event.status(key, statusEntry);
 }

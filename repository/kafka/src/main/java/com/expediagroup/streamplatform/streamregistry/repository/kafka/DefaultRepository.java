@@ -57,18 +57,18 @@ abstract class DefaultRepository<
     if (existing.isPresent()) {
       Entity<SK, SS> existingStateEntity = converter.convertEntity(existing.get());
       if (!existingStateEntity.getSpecification().equals(stateEntity.getSpecification())) {
-        send(Event.of(stateEntity.getKey(), stateEntity.getSpecification()), futures);
+        send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification()), futures);
       }
       for (StatusEntry entry : stateEntity.getStatus().getEntries()) {
         if (existingStateEntity.getStatus().getNames().contains(entry.getName())
             && !entry.getValue().equals(existingStateEntity.getStatus().getValue(entry.getName()))) {
-          send(Event.of(stateEntity.getKey(), entry), futures);
+          send(Event.status(stateEntity.getKey(), entry), futures);
         }
       }
     } else {
-      send(Event.of(stateEntity.getKey(), stateEntity.getSpecification()), futures);
+      send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification()), futures);
       for (StatusEntry entry : stateEntity.getStatus().getEntries()) {
-        send(Event.of(stateEntity.getKey(), entry), futures);
+        send(Event.status(stateEntity.getKey(), entry), futures);
       }
     }
     futures.forEach(CompletableFuture::join);

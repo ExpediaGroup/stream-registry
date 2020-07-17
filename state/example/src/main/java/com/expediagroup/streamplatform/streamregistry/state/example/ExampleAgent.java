@@ -68,7 +68,7 @@ public class ExampleAgent implements EntityViewListener {
     Stream<Entity<DomainKey, DefaultSpecification>> allDomains = entityView.all(DomainKey.class);
 
     //Mutate an entity
-    CompletableFuture<Void> future = eventSender.send(Event.of(
+    CompletableFuture<Void> future = eventSender.send(Event.specification(
         new DomainKey("my_domain"),
         new DefaultSpecification(
             "description",

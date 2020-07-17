@@ -53,10 +53,10 @@ public class StateIT {
   private final DefaultSpecification specification = new DefaultSpecification("description", List.of(), "type", configuration);
   private final ObjectNode statusValue = mapper.createObjectNode();
   private final StatusEntry statusEntry = new StatusEntry("statusName", statusValue);
-  private final Event<DomainKey, DefaultSpecification> specificationEvent = Event.of(key, specification);
-  private final Event<DomainKey, DefaultSpecification> statusEvent = Event.of(key, statusEntry);
-  private final Event<DomainKey, DefaultSpecification> statusDeletionEvent = Event.of(key, "statusName");
-  private final Event<DomainKey, DefaultSpecification> specificationDeletionEvent = Event.of(key);
+  private final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);
+  private final Event<DomainKey, DefaultSpecification> statusEvent = Event.status(key, statusEntry);
+  private final Event<DomainKey, DefaultSpecification> statusDeletionEvent = Event.statusDeletion(key, "statusName");
+  private final Event<DomainKey, DefaultSpecification> specificationDeletionEvent = Event.specificationDeletion(key);
 
   @Test
   public void test() throws Exception {
