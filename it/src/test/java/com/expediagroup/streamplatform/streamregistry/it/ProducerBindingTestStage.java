@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
@@ -132,18 +131,12 @@ public class ProducerBindingTestStage extends AbstractTestStage {
 
     setFactorySuffix("query_by_regex");
 
-    ProducerBindingKeyQuery query = ProducerBindingKeyQuery.builder().producerNameRegex("producerName.*").build();
-
-    ProducerBindingsQuery.Data before = (ProducerBindingsQuery.Data) client.getOptionalData(ProducerBindingsQuery.builder().key(query).build()).get();
-
     client.invoke(factory.upsertProducerBindingMutationBuilder().build());
 
-    ProducerBindingsQuery.Data after = (ProducerBindingsQuery.Data) client.getOptionalData(ProducerBindingsQuery.builder().key(query).build()).get();
+    ProducerBindingKeyQuery query = ProducerBindingKeyQuery.builder().producerNameRegex(".*query_by_regex").build();
+    ProducerBindingsQuery.Data data = (ProducerBindingsQuery.Data) client.getOptionalData(ProducerBindingsQuery.builder().key(query).build()).get();
 
-    assertEquals(after.getProducerBinding().getByQuery().size(), before.getProducerBinding().getByQuery().size() + 1);
-    assertNotNull(after.getProducerBinding().getByQuery().get(0)
-        .getFragments().getProducerBindingPart().getStatus().get()
-        .getFragments().getStatusPart().getAgentStatus());
+    assertEquals(1, data.getProducerBinding().getByQuery().size());
   }
 
   @Override

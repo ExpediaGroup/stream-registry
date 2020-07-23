@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
@@ -132,20 +131,12 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
 
     setFactorySuffix("query_by_regex");
 
-    ConsumerBindingKeyQuery query = ConsumerBindingKeyQuery.builder().consumerNameRegex(".*").build();
-
-    ConsumerBindingsQuery.Data before = (ConsumerBindingsQuery.Data) client.getOptionalData(ConsumerBindingsQuery.builder().key(query).build()).get();
-
     client.invoke(factory.upsertConsumerBindingMutationBuilder().build());
 
-    ConsumerBindingsQuery.Data after = (ConsumerBindingsQuery.Data) client.getOptionalData(ConsumerBindingsQuery.builder().key(query).build()).get();
+    ConsumerBindingKeyQuery query = ConsumerBindingKeyQuery.builder().consumerNameRegex(".*query_by_regex").build();
+    ConsumerBindingsQuery.Data data = (ConsumerBindingsQuery.Data) client.getOptionalData(ConsumerBindingsQuery.builder().key(query).build()).get();
 
-    assertEquals(before.getConsumerBinding().getByQuery().size() + 1,
-        after.getConsumerBinding().getByQuery().size());
-
-    assertNotNull(after.getConsumerBinding().getByQuery().get(1)
-        .getFragments().getConsumerBindingPart().getStatus().get()
-        .getFragments().getStatusPart().getAgentStatus());
+    assertEquals(1, data.getConsumerBinding().getByQuery().size());
   }
 
   @Override
