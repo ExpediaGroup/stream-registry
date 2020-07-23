@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Bugfix
 - Fixed erroneous tag filter.
+- Fixed missing filter for name in Producer and Consumer Binding queries.
+
 ### Removed
 - Removed postgres repository.
 
