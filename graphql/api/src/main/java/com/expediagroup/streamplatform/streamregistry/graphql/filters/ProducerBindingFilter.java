@@ -52,6 +52,9 @@ public class ProducerBindingFilter implements Predicate<ProducerBinding> {
       if (keyQuery.getStreamVersion() != null && d.getKey().getStreamVersion() != keyQuery.getStreamVersion()) {
         return false;
       }
+      if (!matches(d.getKey().getProducerName(), keyQuery.getProducerNameRegex())) {
+        return false;
+      }
     }
     return matchesSpecification(d.getSpecification(), specQuery);
   }

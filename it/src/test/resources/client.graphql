@@ -121,6 +121,9 @@ fragment ConsumerBindingPart on ConsumerBinding{
     streamDomain
     streamName
     streamVersion
+    infrastructureZone
+    infrastructureName
+    consumerName
   }
   specification{
     __typename

@@ -52,6 +52,9 @@ public class ConsumerBindingFilter implements Predicate<ConsumerBinding> {
       if (keyQuery.getStreamVersion() != null && d.getKey().getStreamVersion() != keyQuery.getStreamVersion()) {
         return false;
       }
+      if (!matches(d.getKey().getConsumerName(), keyQuery.getConsumerNameRegex())) {
+        return false;
+      }
     }
     return matchesSpecification(d.getSpecification(), specQuery);
   }

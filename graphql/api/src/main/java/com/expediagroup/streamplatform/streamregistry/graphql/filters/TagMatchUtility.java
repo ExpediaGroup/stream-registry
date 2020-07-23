@@ -56,8 +56,8 @@ public class TagMatchUtility {
     return false;
   }
 
-  private static boolean matchesTag(Tag tag, TagQuery tagQuery) {
+  static boolean matchesTag(Tag tag, TagQuery tagQuery) {
     return matches(tag.getName(), tagQuery.getNameRegex())
-        && matches(tag.getValue(), tagQuery.getNameRegex());
+        && matches(tag.getValue(), tagQuery.getValueRegex());
   }
 }
