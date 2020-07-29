@@ -19,7 +19,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 @Value
-public class ServiceCredentials {
+public class Credentials {
   @NonNull private final String userName;
   @NonNull private final String password;
 }

@@ -309,7 +309,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.3.2] - 2018-12-16
 ### Changed
 - Updated README to something that outlines this a bit better. (#54)
-- Changed .travis.yml and added a setup script to securely send serviceCredentials for sigining and deploying master builds. (#57)
+- Changed .travis.yml and added a setup script to securely send credentials for sigining and deploying master builds. (#57)
 - Added appropriate variables so that all encrypted keys work. (#57)
 
 ## [0.3.1] - 2018-12-12
