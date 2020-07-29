@@ -16,8 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
+import static kotlin.text.Charsets.UTF_8;
 
-import java.util.function.Consumer;
+import java.util.Base64;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,42 +29,25 @@ import com.apollographql.apollo.ApolloClient;
 @RequiredArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {
   @NonNull private final String streamRegistryUrl;
-  @NonNull private final Consumer<ApolloClient.Builder> configurer;
   private Credentials credentials;
 
-  public DefaultApolloClientFactory(String streamRegistryUrl) {
-    this(streamRegistryUrl, builder -> {});
-  }
-
   public DefaultApolloClientFactory(String streamRegistryUrl, Credentials credentials) {
-    this(streamRegistryUrl, builder -> {});
-    this.credentials = credentials;
-  }
-
-  public DefaultApolloClientFactory(String streamRegistryUrl, Consumer<ApolloClient.Builder> configurer, Credentials credentials) {
-    this(streamRegistryUrl, configurer);
+    this(streamRegistryUrl);
     this.credentials = credentials;
   }
 
   @Override
   public ApolloClient create() {
-    OkHttpClient okHttpClient;
-
+    var okHttpClientBuilder = new OkHttpClient.Builder();
     if (credentials != null) {
-      okHttpClient = new OkHttpClient.Builder()
-          .authenticator((route, response) -> response.request().newBuilder()
-              .header("Authorization", credentials.basic())
-              .build())
-          .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
-              .header("Authorization", credentials.basic())
-              .build()))
-          .build();
-    } else {
-      okHttpClient = new OkHttpClient.Builder().build();
+      okHttpClientBuilder.addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
+          .header("Authorization", (Base64.getEncoder().encodeToString((credentials.getUserName() + ":" + credentials.getPassword()).getBytes(UTF_8))))
+          .build()));
     }
 
+    var okHttpClient = okHttpClientBuilder.build();
+
     var builder = builder().okHttpClient(okHttpClient);
-    configurer.accept(builder);
     ApolloClient apolloClient = builder
         .serverUrl(streamRegistryUrl)
         .addCustomTypeAdapter(OBJECTNODE, new ObjectNodeTypeAdapter())

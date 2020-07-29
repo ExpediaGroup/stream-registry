@@ -15,18 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
-import static kotlin.text.Charsets.UTF_8;
-
-import java.util.Base64;
-
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class Credentials {
-  private final String userName;
-  private final String password;
+  @NonNull private final String userName;
+  @NonNull private final String password;
 
-  public String basic() {
-    return Base64.getEncoder().encodeToString((userName + ":" + password).getBytes(UTF_8));
+  public String getUserName() {
+    return userName;
+  }
+
+  public String getPassword() {
+    return password;
   }
 }
