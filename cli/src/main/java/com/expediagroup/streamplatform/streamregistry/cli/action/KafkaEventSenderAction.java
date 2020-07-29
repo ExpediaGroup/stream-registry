@@ -25,7 +25,7 @@ import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSend
 public abstract class KafkaEventSenderAction implements EventSenderAction {
   @Option(names = "--bootstrapServers", required = true)
   @Getter String bootstrapServers;
-  @Option(names = "--topic", required = true)
+  @Option(names = "--topic", required = true, defaultValue = "_streamregistry")
   @Getter String topic;
   @Option(names = "--schemaRegistryUrl", required = true)
   @Getter String schemaRegistryUrl;

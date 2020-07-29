@@ -32,7 +32,7 @@ import picocli.CommandLine.ParseResult;
 public class DeleteTest {
   private final CommandLine underTest = new CommandLine(new Delete());
 
-  private final String[] kafkaOptions = {"--bootstrapServers=bootstrapServers", "--topic=topic", "--schemaRegistryUrl=schemaRegistryUrl"};
+  private final String[] kafkaOptions = {"--bootstrapServers=bootstrapServers", "--schemaRegistryUrl=schemaRegistryUrl"};
 
   private final DomainKey domainKey = new DomainKey("domain");
   private final SchemaKey schemaKey = new SchemaKey(domainKey, "schema");
@@ -219,7 +219,7 @@ public class DeleteTest {
 
   private void assertKafkaOptions(KafkaEventSenderAction action) {
     assertThat(action.getBootstrapServers(), is("bootstrapServers"));
-    assertThat(action.getTopic(), is("topic"));
+    assertThat(action.getTopic(), is("_streamregistry"));
     assertThat(action.getSchemaRegistryUrl(), is("schemaRegistryUrl"));
   }
 }
