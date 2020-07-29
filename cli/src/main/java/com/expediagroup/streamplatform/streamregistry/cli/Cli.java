@@ -15,11 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.cli;
 
-import com.expediagroup.streamplatform.streamregistry.cli.command.Apply;
-import com.expediagroup.streamplatform.streamregistry.cli.command.Delete;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+
+import com.expediagroup.streamplatform.streamregistry.cli.command.Apply;
+import com.expediagroup.streamplatform.streamregistry.cli.command.Delete;
 
 @Command(
     name = "streamctl",

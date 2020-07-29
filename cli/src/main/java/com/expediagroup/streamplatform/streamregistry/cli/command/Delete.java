@@ -21,6 +21,9 @@ import static com.expediagroup.streamplatform.streamregistry.state.model.event.E
 import java.util.List;
 
 import lombok.Getter;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Option;
 
 import com.expediagroup.streamplatform.streamregistry.cli.action.KafkaEventSenderAction;
 import com.expediagroup.streamplatform.streamregistry.cli.option.EntityOptions;
@@ -39,10 +42,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
-
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Mixin;
-import picocli.CommandLine.Option;
 
 @Command(name = "delete", subcommands = {
     Delete.Domain.class,

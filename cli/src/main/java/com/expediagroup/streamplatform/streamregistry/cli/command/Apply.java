@@ -23,6 +23,10 @@ import lombok.Getter;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Option;
+
 import com.expediagroup.streamplatform.streamregistry.cli.action.GraphQLEventSenderAction;
 import com.expediagroup.streamplatform.streamregistry.cli.option.EntityOptions;
 import com.expediagroup.streamplatform.streamregistry.cli.option.ObjectNodeConverter;
@@ -43,10 +47,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
-
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Mixin;
-import picocli.CommandLine.Option;
 
 @Command(name = "apply", subcommands = {
     Apply.Domain.class,
