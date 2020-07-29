@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Added CLI supporting creation and deletion of entities.
+- Added authentication support for state api
 
 ### Bugfix
 - Fixed erroneous tag filter.

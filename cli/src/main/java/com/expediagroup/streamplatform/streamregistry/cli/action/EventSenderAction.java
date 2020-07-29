@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.cli.action;
 
 import java.io.PrintStream;
-import java.util.Collection;
 import java.util.List;
 
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;

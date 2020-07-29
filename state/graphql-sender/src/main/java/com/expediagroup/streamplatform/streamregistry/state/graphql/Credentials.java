@@ -13,24 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.cli;
+package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
+import lombok.NonNull;
+import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.cli.command.Apply;
-import com.expediagroup.streamplatform.streamregistry.cli.command.Delete;
-
-@Command(
-    name = "streamctl",
-    subcommands = {
-        Apply.class,
-        Delete.class
-    },
-    mixinStandardHelpOptions = true
-)
-public class Cli {
-  public static void main(String[] args) {
-    System.exit(new CommandLine(new Cli()).execute(args));
-  }
+@Value
+public class Credentials {
+  @NonNull private final String username;
+  @NonNull private final String password;
 }

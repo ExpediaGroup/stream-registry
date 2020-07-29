@@ -16,30 +16,33 @@
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
+import static okhttp3.Credentials.basic;
 
-import java.util.function.Consumer;
-
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
 import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {
   @NonNull private final String streamRegistryUrl;
-  @NonNull private final Consumer<ApolloClient.Builder> configurer;
-
-  public DefaultApolloClientFactory(String streamRegistryUrl) {
-    this(streamRegistryUrl, builder -> {});
-  }
+  private Credentials credentials;
 
   @Override
   public ApolloClient create() {
-    var builder = builder()
-        .okHttpClient(new OkHttpClient.Builder().build());
-    configurer.accept(builder);
-    return builder
+    var okHttpClientBuilder = new OkHttpClient.Builder();
+    if (credentials != null) {
+      okHttpClientBuilder.addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
+          .header("Authorization", basic(credentials.getUsername(), credentials.getPassword()))
+          .build()));
+    }
+
+    return builder()
+        .okHttpClient(okHttpClientBuilder.build())
         .serverUrl(streamRegistryUrl)
         .addCustomTypeAdapter(OBJECTNODE, new ObjectNodeTypeAdapter())
         .build();

@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.cli.action;
 
 import lombok.Getter;
-
 import picocli.CommandLine.Option;
 
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
