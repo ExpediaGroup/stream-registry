@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added CLI supporting creation and deletion of entities.
+
 ### Bugfix
 - Fixed erroneous tag filter.
 - Fixed missing filter for name in Producer and Consumer Binding queries.
