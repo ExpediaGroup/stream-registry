@@ -40,7 +40,7 @@ public class DefaultApolloClientFactory implements ApolloClientFactory {
     var okHttpClientBuilder = new OkHttpClient.Builder();
     if (credentials != null) {
       okHttpClientBuilder.addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
-          .header("Authorization", basic(credentials.getUserName(), credentials.getPassword()))
+          .header("Authorization", basic(credentials.getUsername(), credentials.getPassword()))
           .build()));
     }
 

@@ -20,6 +20,6 @@ import lombok.Value;
 
 @Value
 public class Credentials {
-  @NonNull private final String userName;
+  @NonNull private final String username;
   @NonNull private final String password;
 }
