@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,9 +28,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.function.Consumer;
 
+import okhttp3.OkHttpClient;
+
 import com.apollographql.apollo.ApolloClient;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -45,13 +47,10 @@ public class DefaultApolloClientFactoryTest {
 
   private DefaultApolloClientFactory underTest;
 
-  @Before
-  public void before() {
-    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, configurer));
-  }
-
   @Test
-  public void test() {
+  public void test_withoutCredentials() {
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, configurer));
+
     when(underTest.builder()).thenReturn(builder);
     when(builder.okHttpClient(any())).thenReturn(builder);
     when(builder.serverUrl(streamRegistryUrl)).thenReturn(builder);
@@ -68,5 +67,31 @@ public class DefaultApolloClientFactoryTest {
     inOrder.verify(builder).build();
 
     assertThat(captor.getValue(), is(notNullValue()));
+  }
+
+  @Test
+  public void test_withCredentials() {
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, configurer, new Credentials("userName", "password")));
+
+    when(underTest.builder()).thenReturn(builder);
+    when(builder.okHttpClient(any())).thenReturn(builder);
+    when(builder.serverUrl(streamRegistryUrl)).thenReturn(builder);
+    when(builder.addCustomTypeAdapter(any(), any())).thenReturn(builder);
+
+    underTest.create();
+
+    var objectNodeTypeAdapterCaptor = ArgumentCaptor.forClass(ObjectNodeTypeAdapter.class);
+    var okHttpClientcaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+
+    var inOrder = inOrder(builder, configurer);
+    inOrder.verify(builder).okHttpClient(okHttpClientcaptor.capture());
+    inOrder.verify(configurer).accept(builder);
+    inOrder.verify(builder).serverUrl(streamRegistryUrl);
+    inOrder.verify(builder).addCustomTypeAdapter(eq(OBJECTNODE), objectNodeTypeAdapterCaptor.capture());
+    inOrder.verify(builder).build();
+
+    assertNotNull(okHttpClientcaptor.getValue().authenticator());
+    assertThat(okHttpClientcaptor.getValue().interceptors().size(), is(1));
+    assertThat(objectNodeTypeAdapterCaptor.getValue(), is(notNullValue()));
   }
 }

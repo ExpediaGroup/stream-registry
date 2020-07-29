@@ -29,20 +29,46 @@ import com.apollographql.apollo.ApolloClient;
 public class DefaultApolloClientFactory implements ApolloClientFactory {
   @NonNull private final String streamRegistryUrl;
   @NonNull private final Consumer<ApolloClient.Builder> configurer;
+  private Credentials credentials;
 
   public DefaultApolloClientFactory(String streamRegistryUrl) {
     this(streamRegistryUrl, builder -> {});
   }
 
+  public DefaultApolloClientFactory(String streamRegistryUrl, Credentials credentials) {
+    this(streamRegistryUrl, builder -> {});
+    this.credentials = credentials;
+  }
+
+  public DefaultApolloClientFactory(String streamRegistryUrl, Consumer<ApolloClient.Builder> configurer, Credentials credentials) {
+    this(streamRegistryUrl, configurer);
+    this.credentials = credentials;
+  }
+
   @Override
   public ApolloClient create() {
-    var builder = builder()
-        .okHttpClient(new OkHttpClient.Builder().build());
+    OkHttpClient okHttpClient;
+
+    if (credentials != null) {
+      okHttpClient = new OkHttpClient.Builder()
+          .authenticator((route, response) -> response.request().newBuilder()
+              .header("Authorization", credentials.basic())
+              .build())
+          .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
+              .header("Authorization", credentials.basic())
+              .build()))
+          .build();
+    } else {
+      okHttpClient = new OkHttpClient.Builder().build();
+    }
+
+    var builder = builder().okHttpClient(okHttpClient);
     configurer.accept(builder);
-    return builder
+    ApolloClient apolloClient = builder
         .serverUrl(streamRegistryUrl)
         .addCustomTypeAdapter(OBJECTNODE, new ObjectNodeTypeAdapter())
         .build();
+    return apolloClient;
   }
 
   // for testing
