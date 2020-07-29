@@ -111,5 +111,4 @@ public class StateIT {
     entity = view.get(key);
     assertThat(entity.isPresent(), is(false));
   }
-
 }
