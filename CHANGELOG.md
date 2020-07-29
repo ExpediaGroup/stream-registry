@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Removed postgres repository.
 
+### Added
+- Added authentication support for state api
+
 ## [0.13.0] - 2020-07-17
 ### Changed
 - Changed `Event.of` factory methods to more descriptive names and return the actual type. 
