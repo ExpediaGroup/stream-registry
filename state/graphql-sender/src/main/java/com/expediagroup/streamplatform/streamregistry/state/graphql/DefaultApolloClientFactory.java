@@ -16,12 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
-import static kotlin.text.Charsets.UTF_8;
-
-import java.util.Base64;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
@@ -29,19 +27,19 @@ import com.apollographql.apollo.ApolloClient;
 @RequiredArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {
   @NonNull private final String streamRegistryUrl;
-  private Credentials credentials;
+  private ServiceCredentials serviceCredentials;
 
-  public DefaultApolloClientFactory(String streamRegistryUrl, Credentials credentials) {
+  public DefaultApolloClientFactory(String streamRegistryUrl, ServiceCredentials serviceCredentials) {
     this(streamRegistryUrl);
-    this.credentials = credentials;
+    this.serviceCredentials = serviceCredentials;
   }
 
   @Override
   public ApolloClient create() {
     var okHttpClientBuilder = new OkHttpClient.Builder();
-    if (credentials != null) {
+    if (serviceCredentials != null) {
       okHttpClientBuilder.addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
-          .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((credentials.getUserName() + ":" + credentials.getPassword()).getBytes(UTF_8)))
+          .header("Authorization", Credentials.basic(serviceCredentials.getUserName(), serviceCredentials.getPassword()))
           .build()));
     }
 

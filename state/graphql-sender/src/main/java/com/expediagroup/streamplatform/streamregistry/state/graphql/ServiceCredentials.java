@@ -19,7 +19,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class Credentials {
+public class ServiceCredentials {
   @NonNull private final String userName;
   @NonNull private final String password;
 

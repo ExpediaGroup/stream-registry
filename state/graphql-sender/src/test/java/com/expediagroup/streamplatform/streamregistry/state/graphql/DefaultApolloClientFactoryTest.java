@@ -68,7 +68,7 @@ public class DefaultApolloClientFactoryTest {
 
   @Test
   public void test_withCredentials() {
-    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new Credentials("userName", "password")));
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new ServiceCredentials("userName", "password")));
 
     when(underTest.builder()).thenReturn(builder);
     when(builder.okHttpClient(any())).thenReturn(builder);
