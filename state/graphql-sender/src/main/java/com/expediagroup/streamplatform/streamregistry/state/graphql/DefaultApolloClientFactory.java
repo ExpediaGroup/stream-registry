@@ -43,14 +43,11 @@ public class DefaultApolloClientFactory implements ApolloClientFactory {
           .build()));
     }
 
-    var okHttpClient = okHttpClientBuilder.build();
-
-    var builder = builder().okHttpClient(okHttpClient);
-    ApolloClient apolloClient = builder
+    return builder()
+        .okHttpClient(okHttpClientBuilder.build())
         .serverUrl(streamRegistryUrl)
         .addCustomTypeAdapter(OBJECTNODE, new ObjectNodeTypeAdapter())
         .build();
-    return apolloClient;
   }
 
   // for testing

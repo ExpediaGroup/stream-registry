@@ -16,18 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-@RequiredArgsConstructor
+@Value
 public class ServiceCredentials {
   @NonNull private final String userName;
   @NonNull private final String password;
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public String getPassword() {
-    return password;
-  }
 }
