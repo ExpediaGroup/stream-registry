@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
 import static okhttp3.Credentials.basic;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -26,14 +27,10 @@ import okhttp3.OkHttpClient;
 import com.apollographql.apollo.ApolloClient;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {
   @NonNull private final String streamRegistryUrl;
   private Credentials credentials;
-
-  public DefaultApolloClientFactory(String streamRegistryUrl, Credentials credentials) {
-    this(streamRegistryUrl);
-    this.credentials = credentials;
-  }
 
   @Override
   public ApolloClient create() {
