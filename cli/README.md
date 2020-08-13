@@ -6,8 +6,8 @@ This is a low level tool that bypasses Stream Registry model validation and cons
 
 ### Triple check what you are deleting
 * Check
-** Target environemnt (Stream Registry URL)
-** Entity key
+  * Target environemnt (Stream Registry URL)
+  * Entity key
 
 ### Do NOT create orphans
 This is a sure way to make state inconsistent. Do not delete parent entities without also deleting their children.
