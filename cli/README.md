@@ -13,9 +13,9 @@ This is a low level tool that bypasses Stream Registry model validation and cons
 This is a sure way to make state inconsistent. Do not delete parent entities without also deleting their children.
 
 * **Delete a `Schema`:**
-  * also delete in order `ConsumerBindings`, `Consumers`, `ProducerBindings`, `Producers`, `StreamBindings`, `Stream`
+  * also delete in `ConsumerBindings`, `Consumers`, `ProducerBindings`, `Producers`, `StreamBindings`, `Stream`
 * **Delete a `Stream`:**
-  * also delete in order `ConsumerBindings`, `Consumers`, `ProducerBindings`, `Producers`, `StreamBindings`
+  * also delete in `ConsumerBindings`, `Consumers`, `ProducerBindings`, `Producers`, `StreamBindings`
   * also delete `Schema` after if no longer needed
 * **Delete a `StreamBinding`:**
   * also delete `ConsumerBindings`, `ProducerBindings`
