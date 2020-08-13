@@ -23,7 +23,9 @@ This is a sure way to make state inconsistent. Do not delete parent entities wit
   * also delete `ConsumerBinding`
 * **Delete a `Producer`:**
   * also delete `ProducerBinding`
-  
+
+Determine children by querying the target entities graph using the GraphQL endpoint.
+
 **BEWARE OF AGENTS** Agents create bindings from other entities. If you delete a binding, it may be rapdidly recreated by an agent from the parent entity. If this is a problem, delete the parent first, but don't forget to delete the children.
 
 ## Example Usage
