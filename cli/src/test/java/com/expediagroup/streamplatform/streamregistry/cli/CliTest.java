@@ -26,7 +26,7 @@ import picocli.CommandLine.ParseResult;
 import picocli.CommandLine.UnmatchedArgumentException;
 
 import com.expediagroup.streamplatform.streamregistry.cli.command.Apply;
-import com.expediagroup.streamplatform.streamregistry.cli.command.Delete;
+import com.expediagroup.streamplatform.streamregistry.cli.command.delete.Delete;
 
 public class CliTest {
   private final CommandLine underTest = new CommandLine(new Cli());

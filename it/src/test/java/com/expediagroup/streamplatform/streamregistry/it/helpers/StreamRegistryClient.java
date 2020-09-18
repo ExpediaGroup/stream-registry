@@ -63,9 +63,9 @@ public class StreamRegistryClient {
   public Response invoke(Operation operation) {
     Response response;
     if (operation instanceof Mutation) {
-      response = executor.execute((Mutation) operation).join();
+      response = (Response) executor.execute((Mutation) operation).join();
     } else {
-      response = executor.execute((Query) operation).join();
+      response = (Response) executor.execute((Query) operation).join();
     }
     if (response.hasErrors()) {
       throw new RuntimeException(((com.apollographql.apollo.api.Error) response.errors().get(0)).message());

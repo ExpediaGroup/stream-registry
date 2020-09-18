@@ -12,6 +12,8 @@
 
   <properties>
     <picocli.version>4.4.0</picocli.version>
+    <introspectionFile>${project.build.directory}/graphql-schema/schema.json</introspectionFile>
+    <clientPackage>com.expediagroup.streamplatform.streamregistry.cli.graphql</clientPackage>
   </properties>
 
   <dependencies>
@@ -31,6 +33,10 @@
       <artifactId>logback-classic</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+    <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
       <version>${picocli.version}</version>
@@ -47,6 +53,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
@@ -60,6 +71,54 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.expediagroup.streamplatform</groupId>
+        <artifactId>stream-registry-graphql-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceSdlResource>stream-registry.graphql</sourceSdlResource>
+              <targetIntrospectionFile>${introspectionFile}</targetIntrospectionFile>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.expediagroup.streamplatform</groupId>
+            <artifactId>stream-registry-graphql-api</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.github.sparow199</groupId>
+        <artifactId>apollo-client-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>graphql-generate-sources</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceDirName>${project.basedir}/src/main/resources</sourceDirName>
+              <outputDirectory>${project.build.directory}/generated-sources/graphql-client</outputDirectory>
+              <introspectionFile>${introspectionFile}</introspectionFile>
+              <rootPackageName>${clientPackage}</rootPackageName>
+              <customTypeMap>
+                <ObjectNode>com.fasterxml.jackson.databind.node.ObjectNode</ObjectNode>
+              </customTypeMap>
+              <suppressRawTypesWarning>true</suppressRawTypesWarning>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -80,6 +139,14 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
+        <configuration>
+          <excludePackageNames>${clientPackage}</excludePackageNames>
+        </configuration>
       </plugin>
     </plugins>
   </build>
