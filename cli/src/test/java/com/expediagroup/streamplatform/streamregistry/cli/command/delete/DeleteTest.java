@@ -121,13 +121,6 @@ public class DeleteTest {
     verifyNoInteractions(deleter);
   }
 
-//  @Test
-//  public void stream() {
-//    ParseResult result = parseArgs("stream",
-//        "--domain=domain", "--stream=stream", "--version=1");
-//    assertSpecificationDeletion(result, streamKey);
-//  }
-
   @Test
   public void stream() {
     when(client.streams("domain", "stream", 1, null, null))
