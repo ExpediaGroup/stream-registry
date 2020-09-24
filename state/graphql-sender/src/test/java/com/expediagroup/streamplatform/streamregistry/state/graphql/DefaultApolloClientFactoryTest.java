@@ -68,7 +68,7 @@ public class DefaultApolloClientFactoryTest {
 
   @Test
   public void test_withCredentials() {
-    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new Credentials("userName", "password")));
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new Credentials("userName", "password"), false, false));
 
     when(underTest.builder()).thenReturn(builder);
     when(builder.okHttpClient(any())).thenReturn(builder);
@@ -87,5 +87,62 @@ public class DefaultApolloClientFactoryTest {
 
     assertThat(okHttpClientCaptor.getValue().interceptors().size(), is(1));
     assertThat(objectNodeTypeAdapterCaptor.getValue(), is(notNullValue()));
+
+    assertThat(okHttpClientCaptor.getValue().hostnameVerifier().getClass().getName(), is("okhttp3.internal.tls.OkHostnameVerifier"));
+    assertThat(okHttpClientCaptor.getValue().sslSocketFactory().getClass().getName(), is("sun.security.ssl.SSLSocketFactoryImpl"));
+  }
+
+  @Test
+  public void test_disable_hostname_verification() {
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new Credentials("userName", "password"), true, false));
+
+    when(underTest.builder()).thenReturn(builder);
+    when(builder.okHttpClient(any())).thenReturn(builder);
+    when(builder.serverUrl(streamRegistryUrl)).thenReturn(builder);
+    when(builder.addCustomTypeAdapter(any(), any())).thenReturn(builder);
+
+    underTest.create();
+
+    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    verify(builder).okHttpClient(okHttpClientCaptor.capture());
+
+    assertThat(okHttpClientCaptor.getValue().hostnameVerifier().verify(null, null), is(true));
+    assertThat(okHttpClientCaptor.getValue().sslSocketFactory().getClass().getName(), is("sun.security.ssl.SSLSocketFactoryImpl"));
+  }
+
+  @Test
+  public void test_disable_certificate_verification() {
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new Credentials("userName", "password"), false, true));
+
+    when(underTest.builder()).thenReturn(builder);
+    when(builder.okHttpClient(any())).thenReturn(builder);
+    when(builder.serverUrl(streamRegistryUrl)).thenReturn(builder);
+    when(builder.addCustomTypeAdapter(any(), any())).thenReturn(builder);
+
+    underTest.create();
+
+    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    verify(builder).okHttpClient(okHttpClientCaptor.capture());
+
+    assertThat(okHttpClientCaptor.getValue().hostnameVerifier().getClass().getName(), is("okhttp3.internal.tls.OkHostnameVerifier"));
+    assertThat(okHttpClientCaptor.getValue().sslSocketFactory().getClass().getName(), is("sun.security.ssl.SSLSocketFactoryImpl"));
+  }
+
+  @Test
+  public void test_disable_both_hostname_and_certificate_verification() {
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new Credentials("userName", "password"), true, true));
+
+    when(underTest.builder()).thenReturn(builder);
+    when(builder.okHttpClient(any())).thenReturn(builder);
+    when(builder.serverUrl(streamRegistryUrl)).thenReturn(builder);
+    when(builder.addCustomTypeAdapter(any(), any())).thenReturn(builder);
+
+    underTest.create();
+
+    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    verify(builder).okHttpClient(okHttpClientCaptor.capture());
+
+    assertThat(okHttpClientCaptor.getValue().hostnameVerifier().verify(null, null), is(true));
+    assertThat(okHttpClientCaptor.getValue().sslSocketFactory().getClass().getName(), is("sun.security.ssl.SSLSocketFactoryImpl"));
   }
 }
