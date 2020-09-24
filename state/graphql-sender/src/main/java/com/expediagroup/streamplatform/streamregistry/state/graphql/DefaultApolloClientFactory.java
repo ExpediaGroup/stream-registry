@@ -20,8 +20,10 @@ import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.
 import static okhttp3.Credentials.basic;
 
 import java.security.SecureRandom;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
