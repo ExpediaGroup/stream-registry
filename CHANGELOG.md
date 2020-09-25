@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added CLI command to discover and delete all child entities of a stream.
 
+## [0.14.1] - 2020-09-25
+### Added
+- Added custom configurer to `DefaultApolloClientFactory` customise okhttp client.
+
 ## [0.14.0] - 2020-07-29
 ### Added
 - Added CLI supporting creation and deletion of entities.
