@@ -83,7 +83,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.domains(domain));
+      return unmodifiableList(client.getDomainKeys(domain));
     }
   }
 
@@ -94,7 +94,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.schemas(domain, schema));
+      return unmodifiableList(client.getSchemaKeys(domain, schema));
     }
   }
 
@@ -109,17 +109,17 @@ public class Delete {
     List<Key<? extends Specification>> findEntities(EntityClient client) {
       if (cascade) {
         List<Key<? extends Specification>> result = new ArrayList<>();
-        result.addAll(client.consumerBindings(domain, stream, version, null, null, null));
-        result.addAll(client.consumers(domain, stream, version, null, null));
-        result.addAll(client.producerBindings(domain, stream, version, null, null, null));
-        result.addAll(client.producers(domain, stream, version, null, null));
-        result.addAll(client.streamBindings(domain, stream, version, null, null));
-        List<StreamKeyWithSchemaKey> streams = client.streams(domain, stream, version, null, null);
+        result.addAll(client.getConsumerBindingKeys(domain, stream, version, null, null, null));
+        result.addAll(client.getConsumerKeys(domain, stream, version, null, null));
+        result.addAll(client.getProducerBindingKeys(domain, stream, version, null, null, null));
+        result.addAll(client.getProducerKeys(domain, stream, version, null, null));
+        result.addAll(client.getStreamBindingKeys(domain, stream, version, null, null));
+        List<StreamKeyWithSchemaKey> streams = client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null);
         result.addAll(streams.stream().map(StreamKeyWithSchemaKey::getStream).collect(toList()));
         result.addAll(streams.stream().map(StreamKeyWithSchemaKey::getSchema).collect(toList()));
         return unmodifiableList(result);
       }
-      return unmodifiableList(client.streams(domain, stream, version, null, null)
+      return unmodifiableList(client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null)
           .stream()
           .map(StreamKeyWithSchemaKey::getStream)
           .collect(toList()));
@@ -132,7 +132,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.zones(zone));
+      return unmodifiableList(client.getZoneKeys(zone));
     }
   }
 
@@ -143,7 +143,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.infrastructures(zone, infrastructure));
+      return unmodifiableList(client.getInfrastructureKeys(zone, infrastructure));
     }
   }
 
@@ -157,7 +157,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.producers(domain, stream, version, zone, producer));
+      return unmodifiableList(client.getProducerKeys(domain, stream, version, zone, producer));
     }
   }
 
@@ -171,7 +171,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.consumers(domain, stream, version, zone, consumer));
+      return unmodifiableList(client.getConsumerKeys(domain, stream, version, zone, consumer));
     }
   }
 
@@ -185,7 +185,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.streamBindings(domain, stream, version, zone, infrastructure));
+      return unmodifiableList(client.getStreamBindingKeys(domain, stream, version, zone, infrastructure));
     }
   }
 
@@ -200,7 +200,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.producerBindings(domain, stream, version, zone, infrastructure, producer));
+      return unmodifiableList(client.getProducerBindingKeys(domain, stream, version, zone, infrastructure, producer));
     }
   }
 
@@ -215,7 +215,7 @@ public class Delete {
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
-      return unmodifiableList(client.consumerBindings(domain, stream, version, zone, infrastructure, consumer));
+      return unmodifiableList(client.getConsumerBindingKeys(domain, stream, version, zone, infrastructure, consumer));
     }
   }
 }

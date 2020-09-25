@@ -63,7 +63,7 @@ class EntityClient {
     SchemaKey schema;
   }
 
-  List<DomainKey> domains(String domain) {
+  List<DomainKey> getDomainKeys(String domain) {
     return execute(
         DomainQuery.builder()
             .domain(domain)
@@ -72,7 +72,7 @@ class EntityClient {
         .map(x -> converter.domainKey(x.getKey())).collect(toList());
   }
 
-  List<SchemaKey> schemas(String domain, String schema) {
+  List<SchemaKey> getSchemaKeys(String domain, String schema) {
     return execute(
         SchemaQuery.builder()
             .domain(domain)
@@ -82,7 +82,7 @@ class EntityClient {
         .map(x -> converter.schemaKey(x.getKey())).collect(toList());
   }
 
-  List<StreamKeyWithSchemaKey> streams(String domain, String stream, int version, String schemaDomain, String schema) {
+  List<StreamKeyWithSchemaKey> getStreamKeyWithSchemaKeys(String domain, String stream, int version, String schemaDomain, String schema) {
     return execute(
         StreamQuery.builder()
             .domain(domain)
@@ -99,7 +99,7 @@ class EntityClient {
         }).collect(toList());
   }
 
-  List<ZoneKey> zones(String zone) {
+  List<ZoneKey> getZoneKeys(String zone) {
     return execute(
         ZoneQuery.builder()
             .zone(zone)
@@ -108,7 +108,7 @@ class EntityClient {
         .map(x -> converter.zoneKey(x.getKey())).collect(toList());
   }
 
-  List<InfrastructureKey> infrastructures(String zone, String infrastructure) {
+  List<InfrastructureKey> getInfrastructureKeys(String zone, String infrastructure) {
     return execute(
         InfrastructureQuery.builder()
             .zone(zone)
@@ -118,7 +118,7 @@ class EntityClient {
         .map(x -> converter.infrastructureKey(x.getKey())).collect(toList());
   }
 
-  List<ProducerKey> producers(String domain, String stream, int version, String zone, String producer) {
+  List<ProducerKey> getProducerKeys(String domain, String stream, int version, String zone, String producer) {
     return execute(
         ProducerQuery.builder()
             .domain(domain)
@@ -131,7 +131,7 @@ class EntityClient {
         .map(x -> converter.producerKey(x.getKey())).collect(toList());
   }
 
-  List<ConsumerKey> consumers(String domain, String stream, int version, String zone, String consumer) {
+  List<ConsumerKey> getConsumerKeys(String domain, String stream, int version, String zone, String consumer) {
     return execute(
         ConsumerQuery.builder()
             .domain(domain)
@@ -144,7 +144,7 @@ class EntityClient {
         .map(x -> converter.consumerKey(x.getKey())).collect(toList());
   }
 
-  List<ProducerBindingKey> producerBindings(String domain, String stream, int version, String zone, String infrastructure, String producer) {
+  List<ProducerBindingKey> getProducerBindingKeys(String domain, String stream, int version, String zone, String infrastructure, String producer) {
     return execute(
         ProducerBindingQuery.builder()
             .domain(domain)
@@ -158,7 +158,7 @@ class EntityClient {
         .map(x -> converter.producerBindingKey(x.getKey())).collect(toList());
   }
 
-  List<ConsumerBindingKey> consumerBindings(String domain, String stream, int version, String zone, String infrastructure, String consumer) {
+  List<ConsumerBindingKey> getConsumerBindingKeys(String domain, String stream, int version, String zone, String infrastructure, String consumer) {
     return execute(
         ConsumerBindingQuery.builder()
             .domain(domain)
@@ -172,7 +172,7 @@ class EntityClient {
         .map(x -> converter.consumerBindingKey(x.getKey())).collect(toList());
   }
 
-  List<StreamBindingKey> streamBindings(String domain, String stream, int version, String zone, String infrastructure) {
+  List<StreamBindingKey> getStreamBindingKeys(String domain, String stream, int version, String zone, String infrastructure) {
     return execute(
         StreamBindingQuery.builder()
             .domain(domain)

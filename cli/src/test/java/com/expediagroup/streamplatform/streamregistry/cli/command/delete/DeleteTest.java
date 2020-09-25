@@ -68,7 +68,7 @@ public class DeleteTest {
 
   @Test
   public void noEntitiesFound() {
-    when(client.domains("domain"))
+    when(client.getDomainKeys("domain"))
         .thenReturn(List.of());
 
     run("domain",
@@ -79,7 +79,7 @@ public class DeleteTest {
 
   @Test
   public void domain() {
-    when(client.domains("domain"))
+    when(client.getDomainKeys("domain"))
         .thenReturn(List.of(domainKey));
 
     run("domain",
@@ -90,7 +90,7 @@ public class DeleteTest {
 
   @Test
   public void domainDryRun() {
-    when(client.domains("domain"))
+    when(client.getDomainKeys("domain"))
         .thenReturn(List.of(domainKey));
 
     run("domain", "--dryRun",
@@ -101,7 +101,7 @@ public class DeleteTest {
 
   @Test
   public void schema() {
-    when(client.schemas("domain", "schema"))
+    when(client.getSchemaKeys("domain", "schema"))
         .thenReturn(List.of(schemaKey));
 
     run("schema",
@@ -112,7 +112,7 @@ public class DeleteTest {
 
   @Test
   public void schemaDryRun() {
-    when(client.schemas("domain", "schema"))
+    when(client.getSchemaKeys("domain", "schema"))
         .thenReturn(List.of(schemaKey));
 
     run("schema", "--dryRun",
@@ -123,7 +123,7 @@ public class DeleteTest {
 
   @Test
   public void stream() {
-    when(client.streams("domain", "stream", 1, null, null))
+    when(client.getStreamKeyWithSchemaKeys("domain", "stream", 1, null, null))
         .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
 
     run("stream",
@@ -134,7 +134,7 @@ public class DeleteTest {
 
   @Test
   public void streamDryRun() {
-    when(client.streams("domain", "stream", 1, null, null))
+    when(client.getStreamKeyWithSchemaKeys("domain", "stream", 1, null, null))
         .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
 
     run("stream", "--dryRun",
@@ -145,17 +145,17 @@ public class DeleteTest {
 
   @Test
   public void streamCascade() {
-    when(client.consumerBindings("domain", "stream", 1, null, null, null))
+    when(client.getConsumerBindingKeys("domain", "stream", 1, null, null, null))
         .thenReturn(List.of(consumerBindingKey));
-    when(client.consumers("domain", "stream", 1, null, null))
+    when(client.getConsumerKeys("domain", "stream", 1, null, null))
         .thenReturn(List.of(consumerKey));
-    when(client.producerBindings("domain", "stream", 1, null, null, null))
+    when(client.getProducerBindingKeys("domain", "stream", 1, null, null, null))
         .thenReturn(List.of(producerBindingKey));
-    when(client.producers("domain", "stream", 1, null, null))
+    when(client.getProducerKeys("domain", "stream", 1, null, null))
         .thenReturn(List.of(producerKey));
-    when(client.streamBindings("domain", "stream", 1, null, null))
+    when(client.getStreamBindingKeys("domain", "stream", 1, null, null))
         .thenReturn(List.of(streamBindingKey));
-    when(client.streams("domain", "stream", 1, null, null))
+    when(client.getStreamKeyWithSchemaKeys("domain", "stream", 1, null, null))
         .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
 
     run("stream", "--cascade",
@@ -173,7 +173,7 @@ public class DeleteTest {
 
   @Test
   public void zone() {
-    when(client.zones("zone"))
+    when(client.getZoneKeys("zone"))
         .thenReturn(List.of(zoneKey));
 
     run("zone",
@@ -184,7 +184,7 @@ public class DeleteTest {
 
   @Test
   public void zoneDryRun() {
-    when(client.zones("zone"))
+    when(client.getZoneKeys("zone"))
         .thenReturn(List.of(zoneKey));
 
     run("zone", "--dryRun",
@@ -195,7 +195,7 @@ public class DeleteTest {
 
   @Test
   public void infrastructure() {
-    when(client.infrastructures("zone", "infrastructure"))
+    when(client.getInfrastructureKeys("zone", "infrastructure"))
         .thenReturn(List.of(infrastructureKey));
 
     run("infrastructure",
@@ -206,7 +206,7 @@ public class DeleteTest {
 
   @Test
   public void infrastructureDryRun() {
-    when(client.infrastructures("zone", "infrastructure"))
+    when(client.getInfrastructureKeys("zone", "infrastructure"))
         .thenReturn(List.of(infrastructureKey));
 
     run("infrastructure", "--dryRun",
@@ -217,7 +217,7 @@ public class DeleteTest {
 
   @Test
   public void producer() {
-    when(client.producers("domain", "stream", 1, "zone", "producer"))
+    when(client.getProducerKeys("domain", "stream", 1, "zone", "producer"))
         .thenReturn(List.of(producerKey));
 
     run("producer",
@@ -228,7 +228,7 @@ public class DeleteTest {
 
   @Test
   public void producerDryRun() {
-    when(client.producers("domain", "stream", 1, "zone", "producer"))
+    when(client.getProducerKeys("domain", "stream", 1, "zone", "producer"))
         .thenReturn(List.of(producerKey));
 
     run("producer", "--dryRun",
@@ -239,7 +239,7 @@ public class DeleteTest {
 
   @Test
   public void consumer() {
-    when(client.consumers("domain", "stream", 1, "zone", "consumer"))
+    when(client.getConsumerKeys("domain", "stream", 1, "zone", "consumer"))
         .thenReturn(List.of(consumerKey));
 
     run("consumer",
@@ -250,7 +250,7 @@ public class DeleteTest {
 
   @Test
   public void consumerDryRun() {
-    when(client.consumers("domain", "stream", 1, "zone", "consumer"))
+    when(client.getConsumerKeys("domain", "stream", 1, "zone", "consumer"))
         .thenReturn(List.of(consumerKey));
 
     run("consumer", "--dryRun",
@@ -261,7 +261,7 @@ public class DeleteTest {
 
   @Test
   public void streamBinding() {
-    when(client.streamBindings("domain", "stream", 1, "zone", "infrastructure"))
+    when(client.getStreamBindingKeys("domain", "stream", 1, "zone", "infrastructure"))
         .thenReturn(List.of(streamBindingKey));
 
     run("streamBinding",
@@ -272,7 +272,7 @@ public class DeleteTest {
 
   @Test
   public void streamBindingDryRun() {
-    when(client.streamBindings("domain", "stream", 1, "zone", "infrastructure"))
+    when(client.getStreamBindingKeys("domain", "stream", 1, "zone", "infrastructure"))
         .thenReturn(List.of(streamBindingKey));
 
     run("streamBinding", "--dryRun",
@@ -283,7 +283,7 @@ public class DeleteTest {
 
   @Test
   public void producerBinding() {
-    when(client.producerBindings("domain", "stream", 1, "zone", "infrastructure", "producer"))
+    when(client.getProducerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "producer"))
         .thenReturn(List.of(producerBindingKey));
 
     run("producerBinding",
@@ -294,7 +294,7 @@ public class DeleteTest {
 
   @Test
   public void producerBindingDryRun() {
-    when(client.producerBindings("domain", "stream", 1, "zone", "infrastructure", "producer"))
+    when(client.getProducerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "producer"))
         .thenReturn(List.of(producerBindingKey));
 
     run("producerBinding", "--dryRun",
@@ -305,7 +305,7 @@ public class DeleteTest {
 
   @Test
   public void consumerBinding() {
-    when(client.consumerBindings("domain", "stream", 1, "zone", "infrastructure", "consumer"))
+    when(client.getConsumerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "consumer"))
         .thenReturn(List.of(consumerBindingKey));
 
     run("consumerBinding",
@@ -316,7 +316,7 @@ public class DeleteTest {
 
   @Test
   public void consumerBindingDryRun() {
-    when(client.consumerBindings("domain", "stream", 1, "zone", "infrastructure", "consumer"))
+    when(client.getConsumerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "consumer"))
         .thenReturn(List.of(consumerBindingKey));
 
     run("consumerBinding", "--dryRun",
@@ -328,6 +328,6 @@ public class DeleteTest {
   private void run(String entity, String... args) {
     ParseResult result = underTest.parseArgs(concat(concat(entity, standardOptions), args, String.class));
     Delete.Base action = (Delete.Base) result.subcommand().commandSpec().userObject();
-    action.run(System.out, err, client, deleter);
+    action.run(out, err, client, deleter);
   }
 }
