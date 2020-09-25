@@ -103,7 +103,7 @@ public class Delete {
     @Option(names = "--domain", required = true) private String domain;
     @Option(names = "--stream", required = true) private String stream;
     @Option(names = "--version", required = true) private int version;
-    @Option(names = "--cascade") boolean cascade;
+    @Option(names = "--cascade") private boolean cascade;
 
     @Override
     List<Key<? extends Specification>> findEntities(EntityClient client) {
