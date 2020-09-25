@@ -15,49 +15,44 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
-import static com.expediagroup.streamplatform.streamregistry.state.graphql.security.X509TrustManagers.TRUST_ALL;
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
 import static okhttp3.Credentials.basic;
-
-import java.security.SecureRandom;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
+import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
+import okhttp3.OkHttpClient.Builder;
 
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {
   @NonNull private final String streamRegistryUrl;
   private Credentials credentials;
-  private boolean disableHostnameVerification;
-  private boolean disableCertificateVerification;
+  @NonNull private final Consumer<OkHttpClient.Builder> configurer;
+
+  public DefaultApolloClientFactory(String streamRegistryUrl) {
+    this(streamRegistryUrl, null, builder -> {});
+  }
+  public DefaultApolloClientFactory(String streamRegistryUrl, Consumer<Builder> configurer) {
+    this(streamRegistryUrl, null, configurer);
+  }
+  public DefaultApolloClientFactory(String streamRegistryUrl, Credentials credentials) {
+    this(streamRegistryUrl, credentials, builder -> {});
+  }
 
   @Override
   @SneakyThrows
   public ApolloClient create() {
     var okHttpClientBuilder = new OkHttpClient.Builder();
+    configurer.accept(okHttpClientBuilder);
+
     if (credentials != null) {
       okHttpClientBuilder.addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
           .header("Authorization", basic(credentials.getUsername(), credentials.getPassword()))
           .build()));
-    }
-
-    if (disableHostnameVerification) {
-      okHttpClientBuilder.hostnameVerifier((hostname, session) -> true);
-    }
-
-    if (disableCertificateVerification) {
-      SSLContext sslContext = SSLContext.getInstance("SSL");
-      sslContext.init(null, new TrustManager[]{TRUST_ALL}, new SecureRandom());
-      okHttpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), TRUST_ALL);
     }
 
     return builder()

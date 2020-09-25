@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Added Custom SSL socket factory to disable certificate verification and hostname verification.
+- Added custom configurer to `DefaultApolloClientFactory` customise okhttp client.
 
 ## [0.14.0] - 2020-07-29
 ### Added
