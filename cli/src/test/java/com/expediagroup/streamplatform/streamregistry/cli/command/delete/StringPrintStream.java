@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.cli;
+package com.expediagroup.streamplatform.streamregistry.cli.command.delete;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.expediagroup.streamplatform.streamregistry.cli.command.Apply;
-import com.expediagroup.streamplatform.streamregistry.cli.command.delete.Delete;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
-@Command(
-    name = "streamctl",
-    subcommands = {
-        Apply.class,
-        Delete.class
-    },
-    mixinStandardHelpOptions = true
-)
-public class Cli {
-  public static void main(String[] args) {
-    System.exit(new CommandLine(new Cli()).execute(args));
+class StringPrintStream extends PrintStream {
+  private static final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+  StringPrintStream() {
+    super(baos, true, UTF_8);
+  }
+
+  @Override
+  public String toString() {
+    return new String(baos.toByteArray(), UTF_8);
   }
 }

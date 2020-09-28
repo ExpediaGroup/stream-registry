@@ -62,3 +62,19 @@ java -jar cli/target/stream-registry-cli-*-shaded.jar \
   --infrastructure=my_infrastructure \
   --statusName=agentStatus
 ```
+
+Delete a stream and all child entities:
+
+```shell script
+java -jar cli/target/stream-registry-cli-*-shaded.jar \
+  delete stream \
+  --streamRegistryUrl=http://stream-registry/graphql \
+  --bootstrapServers=kafka:9092 \
+  --topic=_streamregistry \
+  --schemaRegistryUrl=http://schema-registry \
+  --domain=my_domain \
+  --stream=my_stream \
+  --version=1 \
+  --cascade \
+  --dryRun
+```

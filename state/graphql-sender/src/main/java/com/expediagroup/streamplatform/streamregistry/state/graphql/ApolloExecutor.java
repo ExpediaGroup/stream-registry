@@ -27,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
+import com.apollographql.apollo.api.Operation.Data;
+import com.apollographql.apollo.api.Operation.Variables;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
@@ -38,24 +40,24 @@ import org.jetbrains.annotations.NotNull;
 public class ApolloExecutor {
   @NonNull private final ApolloClient client;
 
-  public CompletableFuture<Response> execute(Mutation<?, ?, ?> mutation) {
-    var future = new CompletableFuture<Response>();
-    client.mutate(mutation).enqueue(new Callback(future));
+  public <D extends Data, T, V extends Variables> CompletableFuture<Response<T>> execute(Mutation<D, T, V> mutation) {
+    var future = new CompletableFuture<Response<T>>();
+    client.mutate(mutation).enqueue(new Callback<>(future));
     return future;
   }
 
-  public CompletableFuture<Response> execute(Query<?, ?, ?> query) {
-    var future = new CompletableFuture<Response>();
-    client.query(query).enqueue(new Callback(future));
+  public <D extends Data, T, V extends Variables> CompletableFuture<Response<T>> execute(Query<D, T, V> query) {
+    var future = new CompletableFuture<Response<T>>();
+    client.query(query).enqueue(new Callback<>(future));
     return future;
   }
 
   @RequiredArgsConstructor
-  class Callback extends ApolloCall.Callback {
-    private final CompletableFuture<Response> future;
+  static class Callback<T> extends ApolloCall.Callback<T> {
+    private final CompletableFuture<Response<T>> future;
 
     @Override
-    public void onResponse(@NotNull Response response) {
+    public void onResponse(@NotNull Response<T> response) {
       if (response.hasErrors()) {
         List<com.apollographql.apollo.api.Error> errors = response.getErrors();
         future.completeExceptionally(new IllegalStateException("Unexpected response: " + errors.stream().map(e -> e.getMessage()).collect(joining(", "))));
