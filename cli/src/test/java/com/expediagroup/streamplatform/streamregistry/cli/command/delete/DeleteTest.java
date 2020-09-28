@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 20VERSION8-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import picocli.CommandLine;
-import picocli.CommandLine.ParseResult;
-
 import com.expediagroup.streamplatform.streamregistry.cli.command.delete.EntityClient.StreamKeyWithSchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
@@ -44,19 +41,45 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamB
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 
+import picocli.CommandLine;
+import picocli.CommandLine.ParseResult;
+
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class DeleteTest {
   private final CommandLine underTest = new CommandLine(new Delete());
 
   private final String[] standardOptions = {"--bootstrapServers=bootstrapServers", "--schemaRegistryUrl=schemaRegistryUrl", "--streamRegistryUrl=streamRegistryUrl"};
 
-  private final DomainKey domainKey = new DomainKey("domain");
-  private final SchemaKey schemaKey = new SchemaKey(domainKey, "schema");
-  private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
-  private final ZoneKey zoneKey = new ZoneKey("zone");
-  private final InfrastructureKey infrastructureKey = new InfrastructureKey(zoneKey, "infrastructure");
-  private final ProducerKey producerKey = new ProducerKey(streamKey, zoneKey, "producer");
-  private final ConsumerKey consumerKey = new ConsumerKey(streamKey, zoneKey, "consumer");
+  private static final String DOMAIN = "domain";
+  private static final String SCHEMA = "schema";
+  private static final String STREAM = "stream";
+  private static final int VERSION = 1;
+  private static final String ZONE = "zone";
+  private static final String INFRASTRUCTURE = "infrastructure";
+  private static final String PRODUCER = "producer";
+  private static final String CONSUMER = "consumer";
+  private static final String STREAM_BINDING = "streamBinding";
+  private static final String PRODUCER_BINDING = "producerBinding";
+  private static final String CONSUMER_BINDING = "consumerBinding";
+
+  private static final String DOMAIN_ARG = "--domain=" + DOMAIN;
+  private static final String SCHEMA_ARG = "--schema=" + SCHEMA;
+  private static final String STREAM_ARG = "--stream=" + STREAM;
+  private static final String VERSION_ARG = "--version=" + VERSION;
+  private static final String ZONE_ARG = "--zone=" + ZONE;
+  private static final String INFRASTRUCTURE_ARG = "--infrastructure=" + INFRASTRUCTURE;
+  private static final String PRODUCER_ARG = "--producer=" + PRODUCER;
+  private static final String CONSUMER_ARG = "--consumer=" + CONSUMER;
+  private static final String DRY_RUN_ARG = "--dryRun";
+  private static final String CASCADE_ARG = "--cascade";
+
+  private final DomainKey domainKey = new DomainKey(DOMAIN);
+  private final SchemaKey schemaKey = new SchemaKey(domainKey, SCHEMA);
+  private final StreamKey streamKey = new StreamKey(domainKey, STREAM, VERSION);
+  private final ZoneKey zoneKey = new ZoneKey(ZONE);
+  private final InfrastructureKey infrastructureKey = new InfrastructureKey(zoneKey, INFRASTRUCTURE);
+  private final ProducerKey producerKey = new ProducerKey(streamKey, zoneKey, PRODUCER);
+  private final ConsumerKey consumerKey = new ConsumerKey(streamKey, zoneKey, CONSUMER);
   private final StreamBindingKey streamBindingKey = new StreamBindingKey(streamKey, infrastructureKey);
   private final ProducerBindingKey producerBindingKey = new ProducerBindingKey(producerKey, streamBindingKey);
   private final ConsumerBindingKey consumerBindingKey = new ConsumerBindingKey(consumerKey, streamBindingKey);
@@ -68,98 +91,98 @@ public class DeleteTest {
 
   @Test
   public void noEntitiesFound() {
-    when(client.getDomainKeys("domain"))
+    when(client.getDomainKeys(DOMAIN))
         .thenReturn(List.of());
 
-    run("domain",
-        "--domain=domain");
+    run(DOMAIN,
+        DOMAIN_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void domain() {
-    when(client.getDomainKeys("domain"))
+    when(client.getDomainKeys(DOMAIN))
         .thenReturn(List.of(domainKey));
 
-    run("domain",
-        "--domain=domain");
+    run(DOMAIN,
+        DOMAIN_ARG);
 
     verify(deleter).delete(domainKey);
   }
 
   @Test
   public void domainDryRun() {
-    when(client.getDomainKeys("domain"))
+    when(client.getDomainKeys(DOMAIN))
         .thenReturn(List.of(domainKey));
 
-    run("domain", "--dryRun",
-        "--domain=domain");
+    run(DOMAIN, DRY_RUN_ARG,
+        DOMAIN_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void schema() {
-    when(client.getSchemaKeys("domain", "schema"))
+    when(client.getSchemaKeys(DOMAIN, SCHEMA))
         .thenReturn(List.of(schemaKey));
 
-    run("schema",
-        "--domain=domain", "--schema=schema");
+    run(SCHEMA,
+        DOMAIN_ARG, SCHEMA_ARG);
 
     verify(deleter).delete(schemaKey);
   }
 
   @Test
   public void schemaDryRun() {
-    when(client.getSchemaKeys("domain", "schema"))
+    when(client.getSchemaKeys(DOMAIN, SCHEMA))
         .thenReturn(List.of(schemaKey));
 
-    run("schema", "--dryRun",
-        "--domain=domain", "--schema=schema");
+    run(SCHEMA, DRY_RUN_ARG,
+        DOMAIN_ARG, SCHEMA_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void stream() {
-    when(client.getStreamKeyWithSchemaKeys("domain", "stream", 1, null, null))
+    when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
 
-    run("stream",
-        "--domain=domain", "--stream=stream", "--version=1");
+    run(STREAM,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
 
     verify(deleter).delete(streamKey);
   }
 
   @Test
   public void streamDryRun() {
-    when(client.getStreamKeyWithSchemaKeys("domain", "stream", 1, null, null))
+    when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
 
-    run("stream", "--dryRun",
-        "--domain=domain", "--stream=stream", "--version=1");
+    run(STREAM, DRY_RUN_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void streamCascade() {
-    when(client.getConsumerBindingKeys("domain", "stream", 1, null, null, null))
+    when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
         .thenReturn(List.of(consumerBindingKey));
-    when(client.getConsumerKeys("domain", "stream", 1, null, null))
+    when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(consumerKey));
-    when(client.getProducerBindingKeys("domain", "stream", 1, null, null, null))
+    when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
         .thenReturn(List.of(producerBindingKey));
-    when(client.getProducerKeys("domain", "stream", 1, null, null))
+    when(client.getProducerKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(producerKey));
-    when(client.getStreamBindingKeys("domain", "stream", 1, null, null))
+    when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(streamBindingKey));
-    when(client.getStreamKeyWithSchemaKeys("domain", "stream", 1, null, null))
+    when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
 
-    run("stream", "--cascade",
-        "--domain=domain", "--stream=stream", "--version=1");
+    run(STREAM, CASCADE_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
 
     InOrder inOrder = inOrder(deleter);
     inOrder.verify(deleter).delete(consumerBindingKey);
@@ -173,154 +196,154 @@ public class DeleteTest {
 
   @Test
   public void zone() {
-    when(client.getZoneKeys("zone"))
+    when(client.getZoneKeys(ZONE))
         .thenReturn(List.of(zoneKey));
 
-    run("zone",
-        "--zone=zone");
+    run(ZONE,
+        ZONE_ARG);
 
     verify(deleter).delete(zoneKey);
   }
 
   @Test
   public void zoneDryRun() {
-    when(client.getZoneKeys("zone"))
+    when(client.getZoneKeys(ZONE))
         .thenReturn(List.of(zoneKey));
 
-    run("zone", "--dryRun",
-        "--zone=zone");
+    run(ZONE, DRY_RUN_ARG,
+        ZONE_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void infrastructure() {
-    when(client.getInfrastructureKeys("zone", "infrastructure"))
+    when(client.getInfrastructureKeys(ZONE, INFRASTRUCTURE))
         .thenReturn(List.of(infrastructureKey));
 
-    run("infrastructure",
-        "--zone=zone", "--infrastructure=infrastructure");
+    run(INFRASTRUCTURE,
+        ZONE_ARG, INFRASTRUCTURE_ARG);
 
     verify(deleter).delete(infrastructureKey);
   }
 
   @Test
   public void infrastructureDryRun() {
-    when(client.getInfrastructureKeys("zone", "infrastructure"))
+    when(client.getInfrastructureKeys(ZONE, INFRASTRUCTURE))
         .thenReturn(List.of(infrastructureKey));
 
-    run("infrastructure", "--dryRun",
-        "--zone=zone", "--infrastructure=infrastructure");
+    run(INFRASTRUCTURE, DRY_RUN_ARG,
+        ZONE_ARG, INFRASTRUCTURE_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void producer() {
-    when(client.getProducerKeys("domain", "stream", 1, "zone", "producer"))
+    when(client.getProducerKeys(DOMAIN, STREAM, VERSION, ZONE, PRODUCER))
         .thenReturn(List.of(producerKey));
 
-    run("producer",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--producer=producer");
+    run(PRODUCER,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, PRODUCER_ARG);
 
     verify(deleter).delete(producerKey);
   }
 
   @Test
   public void producerDryRun() {
-    when(client.getProducerKeys("domain", "stream", 1, "zone", "producer"))
+    when(client.getProducerKeys(DOMAIN, STREAM, VERSION, ZONE, PRODUCER))
         .thenReturn(List.of(producerKey));
 
-    run("producer", "--dryRun",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--producer=producer");
+    run(PRODUCER, DRY_RUN_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, PRODUCER_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void consumer() {
-    when(client.getConsumerKeys("domain", "stream", 1, "zone", "consumer"))
+    when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, ZONE, CONSUMER))
         .thenReturn(List.of(consumerKey));
 
-    run("consumer",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--consumer=consumer");
+    run(CONSUMER,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, CONSUMER_ARG);
 
     verify(deleter).delete(consumerKey);
   }
 
   @Test
   public void consumerDryRun() {
-    when(client.getConsumerKeys("domain", "stream", 1, "zone", "consumer"))
+    when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, ZONE, CONSUMER))
         .thenReturn(List.of(consumerKey));
 
-    run("consumer", "--dryRun",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--consumer=consumer");
+    run(CONSUMER, DRY_RUN_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, CONSUMER_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void streamBinding() {
-    when(client.getStreamBindingKeys("domain", "stream", 1, "zone", "infrastructure"))
+    when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE))
         .thenReturn(List.of(streamBindingKey));
 
-    run("streamBinding",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--infrastructure=infrastructure");
+    run(STREAM_BINDING,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG);
 
     verify(deleter).delete(streamBindingKey);
   }
 
   @Test
   public void streamBindingDryRun() {
-    when(client.getStreamBindingKeys("domain", "stream", 1, "zone", "infrastructure"))
+    when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE))
         .thenReturn(List.of(streamBindingKey));
 
-    run("streamBinding", "--dryRun",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--infrastructure=infrastructure");
+    run(STREAM_BINDING, DRY_RUN_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void producerBinding() {
-    when(client.getProducerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "producer"))
+    when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, PRODUCER))
         .thenReturn(List.of(producerBindingKey));
 
-    run("producerBinding",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--infrastructure=infrastructure", "--producer=producer");
+    run(PRODUCER_BINDING,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, PRODUCER_ARG);
 
     verify(deleter).delete(producerBindingKey);
   }
 
   @Test
   public void producerBindingDryRun() {
-    when(client.getProducerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "producer"))
+    when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, PRODUCER))
         .thenReturn(List.of(producerBindingKey));
 
-    run("producerBinding", "--dryRun",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--infrastructure=infrastructure", "--producer=producer");
+    run(PRODUCER_BINDING, DRY_RUN_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, PRODUCER_ARG);
 
     verifyNoInteractions(deleter);
   }
 
   @Test
   public void consumerBinding() {
-    when(client.getConsumerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "consumer"))
+    when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, CONSUMER))
         .thenReturn(List.of(consumerBindingKey));
 
-    run("consumerBinding",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--infrastructure=infrastructure", "--consumer=consumer");
+    run(CONSUMER_BINDING,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, CONSUMER_ARG);
 
     verify(deleter).delete(consumerBindingKey);
   }
 
   @Test
   public void consumerBindingDryRun() {
-    when(client.getConsumerBindingKeys("domain", "stream", 1, "zone", "infrastructure", "consumer"))
+    when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, CONSUMER))
         .thenReturn(List.of(consumerBindingKey));
 
-    run("consumerBinding", "--dryRun",
-        "--domain=domain", "--stream=stream", "--version=1", "--zone=zone", "--infrastructure=infrastructure", "--consumer=consumer");
+    run(CONSUMER_BINDING, DRY_RUN_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, CONSUMER_ARG);
 
     verifyNoInteractions(deleter);
   }
