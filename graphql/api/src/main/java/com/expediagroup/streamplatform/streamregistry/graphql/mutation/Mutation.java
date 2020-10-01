@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import graphql.kickstart.tools.GraphQLMutationResolver;
@@ -25,7 +26,9 @@ import graphql.kickstart.tools.GraphQLMutationResolver;
 @Component
 @RequiredArgsConstructor
 @Getter
+@PreAuthorize("hasAuthority('stream_registry_writes')")
 public class Mutation implements GraphQLMutationResolver {
+
   private final DomainMutation domain;
   private final SchemaMutation schema;
   private final StreamMutation stream;
@@ -36,4 +39,5 @@ public class Mutation implements GraphQLMutationResolver {
   private final StreamBindingMutation streamBinding;
   private final ProducerBindingMutation producerBinding;
   private final ConsumerBindingMutation consumerBinding;
+
 }
