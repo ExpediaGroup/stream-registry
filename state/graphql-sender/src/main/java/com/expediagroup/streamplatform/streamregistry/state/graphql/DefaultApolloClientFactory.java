@@ -17,15 +17,16 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
 import static okhttp3.Credentials.basic;
+
 import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
+import okhttp3.OkHttpClient.Builder;
 
 import com.apollographql.apollo.ApolloClient;
-import okhttp3.OkHttpClient.Builder;
 
 @AllArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {

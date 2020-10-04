@@ -26,7 +26,7 @@ import graphql.kickstart.tools.GraphQLMutationResolver;
 @Component
 @RequiredArgsConstructor
 @Getter
-@PreAuthorize("hasAuthority('stream_registry_writes')")
+@PreAuthorize("@security.authorize()")
 public class Mutation implements GraphQLMutationResolver {
 
   private final DomainMutation domain;
