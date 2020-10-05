@@ -101,6 +101,17 @@ public class ApplyTest {
   }
 
   @Test
+  public void zone_withoutCredentials() {
+    ParseResult result = underTest.parseArgs("zone",
+        "--streamRegistryUrl=streamRegistryUrl",
+        "--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}",
+        "--zone=zone");
+    GraphQLEventSenderAction action = (GraphQLEventSenderAction) result.subcommand().commandSpec().userObject();
+    List<Event<?, ?>> events = action.events();
+    assertThat(events.size(), is(1));
+  }
+
+  @Test
   public void infrastructure() {
     ParseResult result = parseArgs("infrastructure",
         "--zone=zone", "--infrastructure=infrastructure");

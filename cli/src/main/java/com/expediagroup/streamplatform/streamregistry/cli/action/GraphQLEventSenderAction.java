@@ -38,7 +38,12 @@ public abstract class GraphQLEventSenderAction implements EventSenderAction {
 
   @Override
   public EventSender sender() {
-    ApolloClient client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
+    ApolloClient client;
+    if(streamRegistryUsername != null && streamRegistryPassword != null) {
+      client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
+    } else {
+      client = new DefaultApolloClientFactory(streamRegistryUrl).create();
+    }
     return new GraphQLEventSender(client);
   }
 }

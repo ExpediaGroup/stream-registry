@@ -196,7 +196,12 @@ class EntityClient {
     @Option(names = "--streamRegistryPassword", required = false) String streamRegistryPassword;
 
     EntityClient create() {
-      ApolloClient client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
+      ApolloClient client;
+      if(streamRegistryUsername != null && streamRegistryPassword != null) {
+        client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
+      } else {
+        client = new DefaultApolloClientFactory(streamRegistryUrl).create();
+      }
       ApolloExecutor executor = new ApolloExecutor(client);
       KeyConverter converter = new KeyConverter();
       return new EntityClient(executor, converter);
