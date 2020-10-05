@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 20VERSION8-2020 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import picocli.CommandLine;
+import picocli.CommandLine.ParseResult;
+
 import com.expediagroup.streamplatform.streamregistry.cli.command.delete.EntityClient.StreamKeyWithSchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
@@ -41,14 +44,11 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamB
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 
-import picocli.CommandLine;
-import picocli.CommandLine.ParseResult;
-
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class DeleteTest {
   private final CommandLine underTest = new CommandLine(new Delete());
 
-  private final String[] standardOptions = {"--bootstrapServers=bootstrapServers", "--schemaRegistryUrl=schemaRegistryUrl", "--streamRegistryUrl=streamRegistryUrl"};
+  private final String[] standardOptions = {"--bootstrapServers=bootstrapServers", "--schemaRegistryUrl=schemaRegistryUrl", "--streamRegistryUrl=streamRegistryUrl", "--username=username", "--password=password"};
 
   private static final String DOMAIN = "domain";
   private static final String SCHEMA = "schema";

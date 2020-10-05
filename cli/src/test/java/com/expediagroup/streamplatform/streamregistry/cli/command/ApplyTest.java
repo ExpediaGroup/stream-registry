@@ -49,7 +49,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 public class ApplyTest {
   private final CommandLine underTest = new CommandLine(new Apply());
 
-  private final String[] graphqlOptions = {"--streamRegistryUrl=streamRegistryUrl"};
+  private final String[] graphqlOptions = {"--streamRegistryUrl=streamRegistryUrl", "--username=username", "--password=password"};
   private final String[] configurationOptions = {"--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}"};
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -93,6 +93,8 @@ public class ApplyTest {
   public void zone() {
     ParseResult result = underTest.parseArgs("zone",
         "--streamRegistryUrl=streamRegistryUrl",
+        "--username=username",
+        "--password=password",
         "--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}",
         "--zone=zone");
     assertEvent(result, zoneKey);
@@ -161,5 +163,7 @@ public class ApplyTest {
 
   private void assertGraphQLOptions(GraphQLEventSenderAction action) {
     assertThat(action.getStreamRegistryUrl(), is("streamRegistryUrl"));
+    assertThat(action.getUsername(), is("username"));
+    assertThat(action.getPassword(), is("password"));
   }
 }

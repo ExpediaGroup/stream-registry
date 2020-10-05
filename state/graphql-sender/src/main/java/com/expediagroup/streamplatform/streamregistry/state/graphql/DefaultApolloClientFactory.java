@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static com.expediagroup.streamplatform.streamregistry.state.graphql.type.CustomType.OBJECTNODE;
 import static okhttp3.Credentials.basic;
+
 import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +26,6 @@ import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
-import okhttp3.OkHttpClient.Builder;
 
 @AllArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {
@@ -33,12 +33,6 @@ public class DefaultApolloClientFactory implements ApolloClientFactory {
   private Credentials credentials;
   @NonNull private final Consumer<OkHttpClient.Builder> configurer;
 
-  public DefaultApolloClientFactory(String streamRegistryUrl) {
-    this(streamRegistryUrl, null, builder -> {});
-  }
-  public DefaultApolloClientFactory(String streamRegistryUrl, Consumer<Builder> configurer) {
-    this(streamRegistryUrl, null, configurer);
-  }
   public DefaultApolloClientFactory(String streamRegistryUrl, Credentials credentials) {
     this(streamRegistryUrl, credentials, builder -> {});
   }
