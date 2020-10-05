@@ -43,18 +43,13 @@ public class SecurityAuthorizer {
         .getBeanProvider(AuthorizationProvider.class);
 
     AuthorizationProvider authorizationProvider = authorizationProviderObjectProvider
-        .getIfAvailable(() -> () -> securityContext -> true);
+        .getIfAvailable(() -> () -> securityContext -> false);
 
     Predicate<SecurityContext> provide = authorizationProvider.provide();
     SecurityContext securityContext = SecurityContextHolder.getContext();
     boolean isAccessGranted = provide.test(securityContext);
     log.info("Authorization isAccessGranted: {}", isAccessGranted);
     return isAccessGranted;
-  }
-
-  public interface AuthorizationProvider {
-
-    Predicate<SecurityContext> provide();
   }
 
   @Getter
