@@ -40,6 +40,7 @@ import com.expediagroup.streamplatform.streamregistry.cli.graphql.StreamBindingQ
 import com.expediagroup.streamplatform.streamregistry.cli.graphql.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.cli.graphql.ZoneQuery;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.ApolloExecutor;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.Credentials;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApolloClientFactory;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
@@ -191,9 +192,16 @@ class EntityClient {
 
   static class Factory {
     @Option(names = "--streamRegistryUrl", required = true) String streamRegistryUrl;
+    @Option(names = "--streamRegistryUsername", required = false) String streamRegistryUsername;
+    @Option(names = "--streamRegistryPassword", required = false) String streamRegistryPassword;
 
     EntityClient create() {
-      ApolloClient client = new DefaultApolloClientFactory(streamRegistryUrl).create();
+      ApolloClient client;
+      if(streamRegistryUsername != null && streamRegistryPassword != null) {
+        client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
+      } else {
+        client = new DefaultApolloClientFactory(streamRegistryUrl).create();
+      }
       ApolloExecutor executor = new ApolloExecutor(client);
       KeyConverter converter = new KeyConverter();
       return new EntityClient(executor, converter);

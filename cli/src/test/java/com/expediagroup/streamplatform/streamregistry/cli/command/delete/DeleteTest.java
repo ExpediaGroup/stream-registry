@@ -48,7 +48,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey
 public class DeleteTest {
   private final CommandLine underTest = new CommandLine(new Delete());
 
-  private final String[] standardOptions = {"--bootstrapServers=bootstrapServers", "--schemaRegistryUrl=schemaRegistryUrl", "--streamRegistryUrl=streamRegistryUrl"};
+  private final String[] standardOptions = {"--bootstrapServers=bootstrapServers", "--schemaRegistryUrl=schemaRegistryUrl", "--streamRegistryUrl=streamRegistryUrl", "--streamRegistryUsername=streamRegistryUsername", "--streamRegistryPassword=streamRegistryPassword"};
 
   private static final String DOMAIN = "domain";
   private static final String SCHEMA = "schema";

@@ -26,6 +26,7 @@ import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.Credentials;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApolloClientFactory;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.GraphQLEventSender;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
@@ -38,9 +39,11 @@ public class ExampleAgentApp {
 
   @Bean
   ApolloClient apolloClient(
-      @Value("${streamRegistryUrl}") String streamRegistryUrl
+      @Value("${streamRegistryUrl}") String streamRegistryUrl,
+      @Value("${streamRegistryUsername}") String streamRegistryUsername,
+      @Value("${streamRegistryPassword}") String streamRegistryPassword
   ) {
-    return new DefaultApolloClientFactory(streamRegistryUrl).create();
+    return new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
   }
 
   @Bean

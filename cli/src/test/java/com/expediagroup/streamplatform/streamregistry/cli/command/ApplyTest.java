@@ -49,7 +49,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 public class ApplyTest {
   private final CommandLine underTest = new CommandLine(new Apply());
 
-  private final String[] graphqlOptions = {"--streamRegistryUrl=streamRegistryUrl"};
+  private final String[] graphqlOptions = {"--streamRegistryUrl=streamRegistryUrl", "--streamRegistryUsername=streamRegistryUsername", "--streamRegistryPassword=streamRegistryPassword"};
   private final String[] configurationOptions = {"--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}"};
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -93,9 +93,22 @@ public class ApplyTest {
   public void zone() {
     ParseResult result = underTest.parseArgs("zone",
         "--streamRegistryUrl=streamRegistryUrl",
+        "--streamRegistryUsername=streamRegistryUsername",
+        "--streamRegistryPassword=streamRegistryPassword",
         "--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}",
         "--zone=zone");
     assertEvent(result, zoneKey);
+  }
+
+  @Test
+  public void zone_withoutCredentials() {
+    ParseResult result = underTest.parseArgs("zone",
+        "--streamRegistryUrl=streamRegistryUrl",
+        "--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}",
+        "--zone=zone");
+    GraphQLEventSenderAction action = (GraphQLEventSenderAction) result.subcommand().commandSpec().userObject();
+    List<Event<?, ?>> events = action.events();
+    assertThat(events.size(), is(1));
   }
 
   @Test
@@ -161,5 +174,7 @@ public class ApplyTest {
 
   private void assertGraphQLOptions(GraphQLEventSenderAction action) {
     assertThat(action.getStreamRegistryUrl(), is("streamRegistryUrl"));
+    assertThat(action.getStreamRegistryUsername(), is("streamRegistryUsername"));
+    assertThat(action.getStreamRegistryPassword(), is("streamRegistryPassword"));
   }
 }

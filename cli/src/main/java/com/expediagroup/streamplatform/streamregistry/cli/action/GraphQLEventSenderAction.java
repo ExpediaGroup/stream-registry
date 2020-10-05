@@ -22,6 +22,7 @@ import com.apollographql.apollo.ApolloClient;
 import picocli.CommandLine.Option;
 
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.Credentials;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApolloClientFactory;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.GraphQLEventSender;
 
@@ -29,9 +30,20 @@ public abstract class GraphQLEventSenderAction implements EventSenderAction {
   @Option(names = "--streamRegistryUrl", required = true)
   @Getter String streamRegistryUrl;
 
+  @Option(names = "--streamRegistryUsername", required = false)
+  @Getter String streamRegistryUsername;
+
+  @Option(names = "--streamRegistryPassword", required = false)
+  @Getter String streamRegistryPassword;
+
   @Override
   public EventSender sender() {
-    ApolloClient client = new DefaultApolloClientFactory(streamRegistryUrl).create();
+    ApolloClient client;
+    if(streamRegistryUsername != null && streamRegistryPassword != null) {
+      client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
+    } else {
+      client = new DefaultApolloClientFactory(streamRegistryUrl).create();
+    }
     return new GraphQLEventSender(client);
   }
 }

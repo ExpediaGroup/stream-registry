@@ -46,14 +46,15 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.S
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.ApolloExecutor;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.Credentials;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApolloClientFactory;
 
 @RequiredArgsConstructor
 public class StreamRegistryClient {
   private final ApolloExecutor executor;
 
-  public StreamRegistryClient(final String url) {
-    this(new DefaultApolloClientFactory(url).create());
+  public StreamRegistryClient(final String url, final String streamRegistryUsername, final String streamRegistryPassword) {
+    this(new DefaultApolloClientFactory(url, new Credentials(streamRegistryUsername, streamRegistryPassword)).create());
   }
 
   public StreamRegistryClient(ApolloClient apolloClient) {
