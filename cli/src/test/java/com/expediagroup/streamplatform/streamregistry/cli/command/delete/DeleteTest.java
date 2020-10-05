@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 20VERSION8-2020 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import picocli.CommandLine;
+import picocli.CommandLine.ParseResult;
+
 import com.expediagroup.streamplatform.streamregistry.cli.command.delete.EntityClient.StreamKeyWithSchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
@@ -40,9 +43,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
-
-import picocli.CommandLine;
-import picocli.CommandLine.ParseResult;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class DeleteTest {
