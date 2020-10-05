@@ -86,7 +86,7 @@
     <maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
     <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
     <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
-<!--    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>-->
+    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <jib-maven-plugin.version>1.4.0</jib-maven-plugin.version>
     <jib.goal>dockerBuild</jib.goal>
   </properties>
@@ -255,7 +255,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-<!--        <version>${maven-compiler-plugin.version}</version>-->
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <release>${jdk.version}</release>
           <encoding>${project.build.sourceEncoding}</encoding>
