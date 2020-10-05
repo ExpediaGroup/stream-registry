@@ -44,6 +44,29 @@ public class DefaultApolloClientFactoryTest {
   private DefaultApolloClientFactory underTest;
 
   @Test
+  public void test_withoutCredentials() {
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl));
+
+    when(underTest.builder()).thenReturn(builder);
+    when(builder.okHttpClient(any())).thenReturn(builder);
+    when(builder.serverUrl(streamRegistryUrl)).thenReturn(builder);
+    when(builder.addCustomTypeAdapter(any(), any())).thenReturn(builder);
+
+    underTest.create();
+
+    var captor = ArgumentCaptor.forClass(ObjectNodeTypeAdapter.class);
+    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+
+    verify(builder).okHttpClient(okHttpClientCaptor.capture());
+    verify(builder).serverUrl(streamRegistryUrl);
+    verify(builder).addCustomTypeAdapter(eq(OBJECTNODE), captor.capture());
+    verify(builder).build();
+
+    assertThat(okHttpClientCaptor.getValue().interceptors().size(), is(0));
+    assertThat(captor.getValue(), is(notNullValue()));
+  }
+
+  @Test
   public void test_withCredentials() {
     underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, new Credentials("userName", "password")));
 
@@ -64,6 +87,24 @@ public class DefaultApolloClientFactoryTest {
 
     assertThat(okHttpClientCaptor.getValue().interceptors().size(), is(1));
     assertThat(objectNodeTypeAdapterCaptor.getValue(), is(notNullValue()));
+  }
+
+  @Test
+  public void test_configure_okhttp_builder() {
+    underTest = spy(new DefaultApolloClientFactory(streamRegistryUrl, builder -> builder.hostnameVerifier((hostname, session) -> true)));
+
+    when(underTest.builder()).thenReturn(builder);
+    when(builder.okHttpClient(any())).thenReturn(builder);
+    when(builder.serverUrl(streamRegistryUrl)).thenReturn(builder);
+    when(builder.addCustomTypeAdapter(any(), any())).thenReturn(builder);
+
+    underTest.create();
+
+    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    verify(builder).okHttpClient(okHttpClientCaptor.capture());
+
+    assertThat(okHttpClientCaptor.getValue().interceptors().size(), is(0));
+    assertThat(okHttpClientCaptor.getValue().hostnameVerifier().verify(null, null), is(true));
   }
 
   @Test

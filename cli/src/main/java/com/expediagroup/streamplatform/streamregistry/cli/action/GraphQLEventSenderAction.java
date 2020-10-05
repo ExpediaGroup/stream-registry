@@ -30,15 +30,15 @@ public abstract class GraphQLEventSenderAction implements EventSenderAction {
   @Option(names = "--streamRegistryUrl", required = true)
   @Getter String streamRegistryUrl;
 
-  @Option(names = "--username", required = true)
-  @Getter String username;
+  @Option(names = "--streamRegistryUsername", required = false)
+  @Getter String streamRegistryUsername;
 
-  @Option(names = "--password", required = true)
-  @Getter String password;
+  @Option(names = "--streamRegistryPassword", required = false)
+  @Getter String streamRegistryPassword;
 
   @Override
   public EventSender sender() {
-    ApolloClient client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(username, password)).create();
+    ApolloClient client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
     return new GraphQLEventSender(client);
   }
 }

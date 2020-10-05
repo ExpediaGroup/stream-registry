@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Access control setup to handle who can perform mutations on GraphQL.
 
 ### Changed
-- Enforced Authentication: GraphQLEventSender previously allowed anonymous access. Now, authentication will be mandatory
+- Enhanced support for authentication - cli now supports streamRegistryUsername and streamRegistryPassword
 
 ## [0.14.2] - 2020-09-29
 ### Added

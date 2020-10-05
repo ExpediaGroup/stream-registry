@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
+import okhttp3.OkHttpClient.Builder;
 
 import com.apollographql.apollo.ApolloClient;
 
@@ -33,6 +34,12 @@ public class DefaultApolloClientFactory implements ApolloClientFactory {
   private Credentials credentials;
   @NonNull private final Consumer<OkHttpClient.Builder> configurer;
 
+  public DefaultApolloClientFactory(String streamRegistryUrl) {
+    this(streamRegistryUrl, null, builder -> {});
+  }
+  public DefaultApolloClientFactory(String streamRegistryUrl, Consumer<Builder> configurer) {
+    this(streamRegistryUrl, null, configurer);
+  }
   public DefaultApolloClientFactory(String streamRegistryUrl, Credentials credentials) {
     this(streamRegistryUrl, credentials, builder -> {});
   }

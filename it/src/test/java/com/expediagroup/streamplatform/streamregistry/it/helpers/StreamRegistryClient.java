@@ -53,8 +53,8 @@ import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApoll
 public class StreamRegistryClient {
   private final ApolloExecutor executor;
 
-  public StreamRegistryClient(final String url, final String username, final String password) {
-    this(new DefaultApolloClientFactory(url, new Credentials(username, password)).create());
+  public StreamRegistryClient(final String url, final String streamRegistryUsername, final String streamRegistryPassword) {
+    this(new DefaultApolloClientFactory(url, new Credentials(streamRegistryUsername, streamRegistryPassword)).create());
   }
 
   public StreamRegistryClient(ApolloClient apolloClient) {

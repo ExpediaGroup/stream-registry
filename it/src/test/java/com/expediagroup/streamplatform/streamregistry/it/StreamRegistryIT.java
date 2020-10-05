@@ -74,7 +74,7 @@ public class StreamRegistryIT {
     context = SpringApplication.run(StreamRegistryApp.class, args);
 
     final String url = String.format("http://localhost:%d/graphql", port);
-    client = new ITestClient(url, "username", "password");
+    client = new ITestClient(url, "streamRegistryUsername", "streamRegistryUsername");
   }
 
   @AfterClass

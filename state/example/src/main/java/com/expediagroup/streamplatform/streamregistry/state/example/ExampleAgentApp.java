@@ -40,10 +40,10 @@ public class ExampleAgentApp {
   @Bean
   ApolloClient apolloClient(
       @Value("${streamRegistryUrl}") String streamRegistryUrl,
-      @Value("${username}") String username,
-      @Value("${password}") String password
+      @Value("${streamRegistryUsername}") String streamRegistryUsername,
+      @Value("${streamRegistryPassword}") String streamRegistryPassword
   ) {
-    return new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(username, password)).create();
+    return new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
   }
 
   @Bean

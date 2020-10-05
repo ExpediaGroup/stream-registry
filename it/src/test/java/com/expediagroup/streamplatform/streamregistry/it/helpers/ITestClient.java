@@ -18,8 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 public class ITestClient extends StreamRegistryClient {
 
-  public ITestClient(final String url, final String username, final String password) {
-    super(url, username, password);
+  public ITestClient(final String url, final String streamRegistryUsername, final String streamRegistryPassword) {
+    super(url, streamRegistryUsername, streamRegistryPassword);
   }
 
   public void createDomain(ITestDataFactory factory) {
