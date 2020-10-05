@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.security;
 
-import java.util.function.Predicate;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -38,16 +37,17 @@ public class SecurityAuthorizer {
 
   private final BeanFactory beanFactory;
 
+  @SuppressWarnings("unchecked")
   public boolean authorize() {
-    ObjectProvider<AuthorizationProvider> authorizationProviderObjectProvider = beanFactory
-        .getBeanProvider(AuthorizationProvider.class);
+    ObjectProvider<AuthorizationContextProvider> authorizationProviderObjectProvider = beanFactory
+        .getBeanProvider(AuthorizationContextProvider.class);
 
-    AuthorizationProvider authorizationProvider = authorizationProviderObjectProvider
+    AuthorizationContextProvider<SecurityContext> authorizationContextProvider = authorizationProviderObjectProvider
         .getIfAvailable(() -> () -> securityContext -> false);
 
-    Predicate<SecurityContext> provide = authorizationProvider.provide();
+    AuthorizationContext<SecurityContext> provide = authorizationContextProvider.provide();
     SecurityContext securityContext = SecurityContextHolder.getContext();
-    boolean isAccessGranted = provide.test(securityContext);
+    boolean isAccessGranted = provide.isAuthorized(securityContext);
     log.info("Authorization isAccessGranted: {}", isAccessGranted);
     return isAccessGranted;
   }

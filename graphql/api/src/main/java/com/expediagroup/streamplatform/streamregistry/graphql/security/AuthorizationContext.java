@@ -15,11 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.security;
 
-import java.util.function.Predicate;
+public interface AuthorizationContext<T> {
 
-import org.springframework.security.core.context.SecurityContext;
-
-public interface AuthorizationProvider {
-
-  Predicate<SecurityContext> provide();
+  boolean isAuthorized(T type);
 }
