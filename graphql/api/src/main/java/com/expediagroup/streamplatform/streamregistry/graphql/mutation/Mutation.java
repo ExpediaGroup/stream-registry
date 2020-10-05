@@ -26,8 +26,9 @@ import graphql.kickstart.tools.GraphQLMutationResolver;
 @Component
 @RequiredArgsConstructor
 @Getter
-@PreAuthorize("isAuthenticated()")
+@PreAuthorize("@security.authorize()")
 public class Mutation implements GraphQLMutationResolver {
+
   private final DomainMutation domain;
   private final SchemaMutation schema;
   private final StreamMutation stream;
@@ -38,4 +39,5 @@ public class Mutation implements GraphQLMutationResolver {
   private final StreamBindingMutation streamBinding;
   private final ProducerBindingMutation producerBinding;
   private final ConsumerBindingMutation consumerBinding;
+
 }
