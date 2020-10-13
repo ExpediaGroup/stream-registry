@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -34,11 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureR
 
 @Component
 @RequiredArgsConstructor
-public class InfrastructureService {
+public class InfrastructureService implements AccessControlledService<InfrastructureKey, Infrastructure> {
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
 
+  @Override
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (read(infrastructure.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class InfrastructureService {
     return save(infrastructure);
   }
 
+  @Override
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
     var existing = read(infrastructure.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class InfrastructureService {
     return infrastructureRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @Override
   public void delete(Infrastructure infrastructure) {
     throw new UnsupportedOperationException();
   }

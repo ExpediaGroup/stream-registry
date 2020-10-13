@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -34,11 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRe
 
 @Component
 @RequiredArgsConstructor
-public class StreamBindingService {
+public class StreamBindingService implements AccessControlledService<StreamBindingKey, StreamBinding>  {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
 
+  @Override
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
     if (read(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class StreamBindingService {
     return save(streamBinding);
   }
 
+  @Override
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
     var existing = read(streamBinding.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class StreamBindingService {
     return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @Override
   public void delete(StreamBinding streamBinding) {
     throw new UnsupportedOperationException();
   }

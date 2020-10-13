@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -35,11 +36,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.ProducerBinding
 
 @Component
 @RequiredArgsConstructor
-public class ProducerBindingService {
+public class ProducerBindingService implements AccessControlledService<ProducerBindingKey, ProducerBinding> {
   private final HandlerService handlerService;
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
 
+  @Override
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
     if (read(producerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -49,6 +51,7 @@ public class ProducerBindingService {
     return save(producerBinding);
   }
 
+  @Override
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
     var existing = read(producerBinding.getKey());
     if (!existing.isPresent()) {
@@ -76,6 +79,7 @@ public class ProducerBindingService {
     return producerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @Override
   public void delete(ProducerBinding producerBinding) {
     throw new UnsupportedOperationException();
   }

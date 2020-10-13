@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -34,11 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.ConsumerReposit
 
 @Component
 @RequiredArgsConstructor
-public class ConsumerService {
+public class ConsumerService implements AccessControlledService<ConsumerKey, Consumer> {
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
 
+  @Override
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (read(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class ConsumerService {
     return save(consumer);
   }
 
+  @Override
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
     var existing = read(consumer.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class ConsumerService {
     return consumerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @Override
   public void delete(Consumer consumer) {
     throw new UnsupportedOperationException();
   }

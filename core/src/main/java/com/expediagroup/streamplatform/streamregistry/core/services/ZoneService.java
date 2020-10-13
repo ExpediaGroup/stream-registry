@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
@@ -34,11 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
 
 @Component
 @RequiredArgsConstructor
-public class ZoneService {
+public class ZoneService implements AccessControlledService<ZoneKey, Zone>  {
   private final HandlerService handlerService;
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
 
+  @Override
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (read(zone.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class ZoneService {
     return save(zone);
   }
 
+  @Override
   public Optional<Zone> update(Zone zone) throws ValidationException {
     var existing = read(zone.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class ZoneService {
     return zoneRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @Override
   public void delete(Zone zone) {
     throw new UnsupportedOperationException();
   }

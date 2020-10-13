@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -34,11 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepositor
 
 @Component
 @RequiredArgsConstructor
-public class SchemaService {
+public class SchemaService implements AccessControlledService<SchemaKey, Schema>  {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
 
+  @Override
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (read(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class SchemaService {
     return save(schema);
   }
 
+  @Override
   public Optional<Schema> update(Schema schema) throws ValidationException {
     var existing = read(schema.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class SchemaService {
     return schemaRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @Override
   public void delete(Schema schema) {
     throw new UnsupportedOperationException();
   }

@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -34,11 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.StreamRepositor
 
 @Component
 @RequiredArgsConstructor
-public class StreamService {
+public class StreamService implements AccessControlledService<StreamKey, Stream>  {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
 
+  @Override
   public Optional<Stream> create(Stream stream) throws ValidationException {
     if (read(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class StreamService {
     return save(stream);
   }
 
+  @Override
   public Optional<Stream> update(Stream stream) throws ValidationException {
     var existing = read(stream.getKey());
     if (!existing.isPresent()) {
@@ -76,6 +79,7 @@ public class StreamService {
     return streamRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @Override
   public void delete(Stream stream) {
     throw new UnsupportedOperationException();
   }
