@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain;
+package com.expediagroup.streamplatform.streamregistry.accesscontrol.domain;
 
 public interface AcessControlledResourceFields {
 
@@ -28,5 +28,4 @@ public interface AcessControlledResourceFields {
   public static final String INFRASTRUCTURE_NAME = "infrastructure-name";
 
   public static final String SPECIFICATION_TYPE = "specification-type";
-
 }

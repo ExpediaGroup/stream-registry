@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain;
+package com.expediagroup.streamplatform.streamregistry.accesscontrol.domain;
 
 import java.util.Map;
 
@@ -24,20 +24,11 @@ public class AccessControlledResource {
   private Map<String, String> keys;
   private Map<String, String> additionalInfo;
 
-  //TODO - improve this
   public Map<String, String> getKeys() {
     return keys;
   }
 
-  public void setKeys(Map<String, String> keys) {
-    this.keys = keys;
-  }
-
   public Map<String, String> getAdditionalInfo() {
     return additionalInfo;
-  }
-
-  public void setAdditionalInfo(Map<String, String> additionalInfo) {
-    this.additionalInfo = additionalInfo;
   }
 }

@@ -18,11 +18,13 @@ package com.expediagroup.streamplatform.streamregistry.core.accesscontrol;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessControlledResource;
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessType;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.AccessControlAuthoriser;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessType;
 
 @Component
 public class DefaultAccessControlAuthoriser implements AccessControlAuthoriser {
+
   @Override
   public boolean hasAccess(AccessControlledResource accessControlledResource, AccessType accessType, Authentication authentication) {
     return true;

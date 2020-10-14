@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessType;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessType;
 
 public class AccessTypeMapperTest {
 

@@ -15,16 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper;
 
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.DOMAIN_NAME;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.SCHEMA_NAME;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.SPECIFICATION_TYPE;
+import static com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AcessControlledResourceFields.DOMAIN_NAME;
+import static com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AcessControlledResourceFields.SCHEMA_NAME;
+import static com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AcessControlledResourceFields.SPECIFICATION_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessControlledResource;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;

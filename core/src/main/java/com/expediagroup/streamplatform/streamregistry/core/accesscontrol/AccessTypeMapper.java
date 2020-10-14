@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.core.accesscontrol;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessType;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessType;
 
 @Component
 public class AccessTypeMapper {

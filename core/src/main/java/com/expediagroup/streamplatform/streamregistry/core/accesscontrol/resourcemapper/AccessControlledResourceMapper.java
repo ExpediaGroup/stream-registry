@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessControlledResource;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
 
 public interface AccessControlledResourceMapper {
 

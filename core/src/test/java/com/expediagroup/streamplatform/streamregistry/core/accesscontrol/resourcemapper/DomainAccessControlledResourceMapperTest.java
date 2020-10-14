@@ -15,13 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper;
 
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.DOMAIN_NAME;
+import static com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AcessControlledResourceFields.DOMAIN_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessControlledResource;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;

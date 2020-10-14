@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.accesscontrol;
+package com.expediagroup.streamplatform.streamregistry.accesscontrol;
 
 import org.springframework.security.core.Authentication;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessControlledResource;
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessType;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessType;
 
 public interface AccessControlAuthoriser {
   boolean hasAccess(AccessControlledResource accessControlledResource, AccessType accessType, Authentication authentication);

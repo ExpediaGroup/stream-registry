@@ -15,15 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper;
 
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.INFRASTRUCTURE_NAME;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.SPECIFICATION_TYPE;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.ZONE_NAME;
+import static com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AcessControlledResourceFields.INFRASTRUCTURE_NAME;
+import static com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AcessControlledResourceFields.SPECIFICATION_TYPE;
+import static com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AcessControlledResourceFields.ZONE_NAME;
 
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessControlledResource;
+import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
 @Component
