@@ -15,8 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper;
 
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.CONSUMER_NAME;
 import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.DOMAIN_NAME;
+import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.PRODUCER_NAME;
 import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.SPECIFICATION_TYPE;
 import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.STREAM_NAME;
 import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.STREAM_VERSION;
@@ -47,7 +47,7 @@ public class ProducerAccessControlledResourceMapper implements AccessControlledR
             STREAM_NAME, producer.getKey().getStreamName(),
             STREAM_VERSION, valueOf(producer.getKey().getStreamVersion()),
             ZONE_NAME, producer.getKey().getZone(),
-            CONSUMER_NAME, producer.getKey().getName()
+            PRODUCER_NAME, producer.getKey().getName()
         ),
         Map.of(SPECIFICATION_TYPE, producer.getSpecification().getType()));
   }

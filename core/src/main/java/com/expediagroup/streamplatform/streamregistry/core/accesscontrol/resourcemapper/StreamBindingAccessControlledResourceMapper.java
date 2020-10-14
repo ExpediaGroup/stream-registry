@@ -47,8 +47,7 @@ public class StreamBindingAccessControlledResourceMapper implements AccessContro
             STREAM_NAME, streamBinding.getKey().getStreamName(),
             STREAM_VERSION, valueOf(streamBinding.getKey().getStreamVersion()),
             ZONE_NAME, streamBinding.getKey().getInfrastructureZone(),
-            INFRASTRUCTURE_NAME, streamBinding.getKey().getInfrastructureName(),
-            STREAM_NAME, streamBinding.getKey().getStreamName()
+            INFRASTRUCTURE_NAME, streamBinding.getKey().getInfrastructureName()
         ),
         Map.of(SPECIFICATION_TYPE, streamBinding.getSpecification().getType()));
   }
