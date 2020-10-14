@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -35,12 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.StreamRepositor
 
 @Component
 @RequiredArgsConstructor
-public class StreamService implements AccessControlledService<StreamKey, Stream>  {
+public class StreamService {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
 
-  @Override
+  @PreAuthorize("hasPermission(#stream, 'create')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
     if (read(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +50,7 @@ public class StreamService implements AccessControlledService<StreamKey, Stream>
     return save(stream);
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#stream, 'update')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
     var existing = read(stream.getKey());
     if (!existing.isPresent()) {
@@ -79,7 +79,7 @@ public class StreamService implements AccessControlledService<StreamKey, Stream>
     return streamRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#stream, 'delete')")
   public void delete(Stream stream) {
     throw new UnsupportedOperationException();
   }

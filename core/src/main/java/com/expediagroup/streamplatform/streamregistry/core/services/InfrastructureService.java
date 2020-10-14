@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -35,12 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureR
 
 @Component
 @RequiredArgsConstructor
-public class InfrastructureService implements AccessControlledService<InfrastructureKey, Infrastructure> {
+public class InfrastructureService {
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
 
-  @Override
+  @PreAuthorize("hasPermission(#infrastructure, 'create')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (read(infrastructure.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +50,7 @@ public class InfrastructureService implements AccessControlledService<Infrastruc
     return save(infrastructure);
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#infrastructure, 'update')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
     var existing = read(infrastructure.getKey());
     if (!existing.isPresent()) {
@@ -78,7 +78,7 @@ public class InfrastructureService implements AccessControlledService<Infrastruc
     return infrastructureRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#infrastructure, 'delete')")
   public void delete(Infrastructure infrastructure) {
     throw new UnsupportedOperationException();
   }

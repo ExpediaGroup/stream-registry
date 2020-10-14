@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -36,12 +36,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.ProducerBinding
 
 @Component
 @RequiredArgsConstructor
-public class ProducerBindingService implements AccessControlledService<ProducerBindingKey, ProducerBinding> {
+public class ProducerBindingService {
   private final HandlerService handlerService;
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
 
-  @Override
+  @PreAuthorize("hasPermission(#producerBinding, 'create')")
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
     if (read(producerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class ProducerBindingService implements AccessControlledService<ProducerB
     return save(producerBinding);
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#producerBinding, 'update')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
     var existing = read(producerBinding.getKey());
     if (!existing.isPresent()) {
@@ -79,7 +79,7 @@ public class ProducerBindingService implements AccessControlledService<ProducerB
     return producerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#producerBinding, 'delete')")
   public void delete(ProducerBinding producerBinding) {
     throw new UnsupportedOperationException();
   }

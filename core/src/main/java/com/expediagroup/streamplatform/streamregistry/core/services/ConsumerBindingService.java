@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -36,13 +36,13 @@ import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBinding
 
 @Component
 @RequiredArgsConstructor
-public class ConsumerBindingService implements AccessControlledService<ConsumerBindingKey, ConsumerBinding> {
+public class ConsumerBindingService {
 
   private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
 
-  @Override
+  @PreAuthorize("hasPermission(#consumerBinding, 'create')")
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
     if (read(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -52,7 +52,7 @@ public class ConsumerBindingService implements AccessControlledService<ConsumerB
     return save(consumerBinding);
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#consumerBinding, 'update')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
     var existing = read(consumerBinding.getKey());
     if (!existing.isPresent()) {
@@ -80,7 +80,7 @@ public class ConsumerBindingService implements AccessControlledService<ConsumerB
     return consumerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#consumerBinding, 'delete')")
   public void delete(ConsumerBinding consumerBinding) {
     throw new UnsupportedOperationException();
   }

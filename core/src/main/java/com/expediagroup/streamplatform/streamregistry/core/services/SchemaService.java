@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -35,12 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepositor
 
 @Component
 @RequiredArgsConstructor
-public class SchemaService implements AccessControlledService<SchemaKey, Schema>  {
+public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
 
-  @Override
+  @PreAuthorize("hasPermission(#schema, 'create')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (read(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +50,7 @@ public class SchemaService implements AccessControlledService<SchemaKey, Schema>
     return save(schema);
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#schema, 'update')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
     var existing = read(schema.getKey());
     if (!existing.isPresent()) {
@@ -78,7 +78,7 @@ public class SchemaService implements AccessControlledService<SchemaKey, Schema>
     return schemaRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#schema, 'delete')")
   public void delete(Schema schema) {
     throw new UnsupportedOperationException();
   }

@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -35,12 +35,12 @@ import com.expediagroup.streamplatform.streamregistry.repository.ConsumerReposit
 
 @Component
 @RequiredArgsConstructor
-public class ConsumerService implements AccessControlledService<ConsumerKey, Consumer> {
+public class ConsumerService {
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
 
-  @Override
+  @PreAuthorize("hasPermission(#consumer, 'create')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (read(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +50,7 @@ public class ConsumerService implements AccessControlledService<ConsumerKey, Con
     return save(consumer);
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#consumer, 'update')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
     var existing = read(consumer.getKey());
     if (!existing.isPresent()) {
@@ -78,7 +78,7 @@ public class ConsumerService implements AccessControlledService<ConsumerKey, Con
     return consumerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @Override
+  @PreAuthorize("hasPermission(#consumer, 'delete')")
   public void delete(Consumer consumer) {
     throw new UnsupportedOperationException();
   }

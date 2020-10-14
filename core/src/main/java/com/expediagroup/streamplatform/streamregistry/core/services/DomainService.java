@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.AccessControlledService;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -35,30 +35,30 @@ import com.expediagroup.streamplatform.streamregistry.repository.DomainRepositor
 
 @Component
 @RequiredArgsConstructor
-public class DomainService implements AccessControlledService<DomainKey, Domain> {
+public class DomainService {
   private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
 
-  @Override
-  public Optional<Domain> create(Domain entity) throws ValidationException {
-    if (read(entity.getKey()).isPresent()) {
+  @PreAuthorize("hasPermission(#domain, 'create')")
+  public Optional<Domain> create(Domain domain) throws ValidationException {
+    if (read(domain.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
-    domainValidator.validateForCreate(entity);
-    entity.setSpecification(handlerService.handleInsert(entity));
-    return save(entity);
+    domainValidator.validateForCreate(domain);
+    domain.setSpecification(handlerService.handleInsert(domain));
+    return save(domain);
   }
 
-  @Override
-  public Optional<Domain> update(Domain entity) throws ValidationException {
-    var existing = read(entity.getKey());
+  @PreAuthorize("hasPermission(#domain, 'update')")
+  public Optional<Domain> update(Domain domain) throws ValidationException {
+    var existing = read(domain.getKey());
     if (!existing.isPresent()) {
-      throw new ValidationException("Can't update " + entity.getKey().getName() + " because it doesn't exist");
+      throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
-    domainValidator.validateForUpdate(entity, existing.get());
-    entity.setSpecification(handlerService.handleUpdate(entity, existing.get()));
-    return save(entity);
+    domainValidator.validateForUpdate(domain, existing.get());
+    domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
+    return save(domain);
   }
 
   private Optional<Domain> save(Domain domain) {
@@ -78,8 +78,8 @@ public class DomainService implements AccessControlledService<DomainKey, Domain>
     return domainRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @Override
-  public void delete(Domain entity) {
+  @PreAuthorize("hasPermission(#domain, 'delete')")
+  public void delete(Domain domain) {
     throw new UnsupportedOperationException();
   }
 
