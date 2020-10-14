@@ -15,12 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper;
 
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper.AcessControlledResourceFields.DOMAIN_NAME;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper.AcessControlledResourceFields.INFRASTRUCTURE_NAME;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper.AcessControlledResourceFields.SPECIFICATION_TYPE;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper.AcessControlledResourceFields.STREAM_NAME;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper.AcessControlledResourceFields.STREAM_VERSION;
-import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper.AcessControlledResourceFields.ZONE_NAME;
+import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.DOMAIN_NAME;
+import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.INFRASTRUCTURE_NAME;
+import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.SPECIFICATION_TYPE;
+import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.STREAM_NAME;
+import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.STREAM_VERSION;
+import static com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AcessControlledResourceFields.ZONE_NAME;
 import static java.lang.String.valueOf;
 
 import java.util.Map;

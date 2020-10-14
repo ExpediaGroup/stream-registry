@@ -17,7 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain
 
 public enum AccessType {
 
-  READ("read"), CREATE("create"), UPDATE("update"), DELETE("delete"), UPDATE_STATUS("update-status");
+  CREATE("create"), UPDATE("update"), DELETE("delete");
 
   private String accessType;
 

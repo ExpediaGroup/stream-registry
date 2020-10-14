@@ -15,25 +15,25 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.accesscontrol;
 
-import org.springframework.stereotype.Component;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.core.accesscontrol.domain.AccessType;
 
-@Component
-public class AccessTypeMapper {
+public class AccessTypeMapperTest {
 
-  public AccessType map(Object permission) {
-    String permissionString = (String) permission;
+  private AccessTypeMapper underTest = new AccessTypeMapper();
 
-    switch (permissionString) {
-      case "create":
-        return AccessType.CREATE;
-      case "update":
-        return AccessType.UPDATE;
-      case "delete":
-        return AccessType.DELETE;
-      default:
-        throw new IllegalArgumentException("Unsupported AccessType");
-    }
+  @Test
+  public void mapAccessType() {
+    assertEquals(AccessType.CREATE, underTest.map("create"));
+    assertEquals(AccessType.UPDATE, underTest.map("update"));
+    assertEquals(AccessType.DELETE, underTest.map("delete"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void mapAccessType_invalidType() {
+    assertEquals(AccessType.CREATE, underTest.map("invalid"));
   }
 }
