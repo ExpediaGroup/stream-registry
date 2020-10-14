@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.accesscontrol.resourcemapper;
+package com.expediagroup.streamplatform.streamregistry.accesscontrol;
 
-import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
+public enum AccessType {
 
-public interface AccessControlledResourceMapper {
+  CREATE("create"), UPDATE("update"), DELETE("delete");
 
-  boolean canMap(Object domainObject);
-  AccessControlledResource map(Object domainObject);
+  private String accessType;
+
+  AccessType(String accessType) {
+    this.accessType = accessType;
+  }
+
+  public String getAccessType() {
+    return accessType;
+  }
 }

@@ -17,9 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.accesscontrol;
 
 import org.springframework.security.core.Authentication;
 
-import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessControlledResource;
-import com.expediagroup.streamplatform.streamregistry.accesscontrol.domain.AccessType;
-
 public interface AccessControlAuthoriser {
   boolean hasAccess(AccessControlledResource accessControlledResource, AccessType accessType, Authentication authentication);
 }

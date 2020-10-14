@@ -42,7 +42,6 @@
   <modules>
     <module>app</module>
     <module>cli</module>
-    <module>access-control</module>
     <module>core</module>
     <module>graphql/api</module>
     <module>graphql/maven-plugin</module>
