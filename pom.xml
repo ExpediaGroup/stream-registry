@@ -308,12 +308,12 @@
       <url>https://repo.maven.apache.org/maven2</url>
     </repository>
     <repository>
-      <id>confluent</id>
-      <url>http://packages.confluent.io/maven/</url>
-    </repository>
-    <repository>
       <id>jcenter</id>
       <url>https://jcenter.bintray.com/</url>
+    </repository>
+    <repository>
+      <id>confluent</id>
+      <url>http://packages.confluent.io/maven/</url>
     </repository>
   </repositories>
 
