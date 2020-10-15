@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
+
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -38,6 +40,7 @@ public class DomainService {
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
 
+  @PreAuthorize("hasPermission(#domain, 'create')")
   public Optional<Domain> create(Domain domain) throws ValidationException {
     if (read(domain.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -47,6 +50,7 @@ public class DomainService {
     return save(domain);
   }
 
+  @PreAuthorize("hasPermission(#domain, 'update')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
     var existing = read(domain.getKey());
     if (!existing.isPresent()) {
@@ -74,6 +78,7 @@ public class DomainService {
     return domainRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @PreAuthorize("hasPermission(#domain, 'delete')")
   public void delete(Domain domain) {
     throw new UnsupportedOperationException();
   }

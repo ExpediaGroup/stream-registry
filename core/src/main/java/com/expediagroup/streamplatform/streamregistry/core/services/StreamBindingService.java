@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,6 +40,7 @@ public class StreamBindingService {
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
 
+  @PreAuthorize("hasPermission(#streamBinding, 'create')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
     if (read(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class StreamBindingService {
     return save(streamBinding);
   }
 
+  @PreAuthorize("hasPermission(#streamBinding, 'update')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
     var existing = read(streamBinding.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class StreamBindingService {
     return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @PreAuthorize("hasPermission(#streamBinding, 'delete')")
   public void delete(StreamBinding streamBinding) {
     throw new UnsupportedOperationException();
   }

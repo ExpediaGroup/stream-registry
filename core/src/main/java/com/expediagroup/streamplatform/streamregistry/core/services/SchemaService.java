@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,6 +40,7 @@ public class SchemaService {
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
 
+  @PreAuthorize("hasPermission(#schema, 'create')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (read(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class SchemaService {
     return save(schema);
   }
 
+  @PreAuthorize("hasPermission(#schema, 'update')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
     var existing = read(schema.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class SchemaService {
     return schemaRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @PreAuthorize("hasPermission(#schema, 'delete')")
   public void delete(Schema schema) {
     throw new UnsupportedOperationException();
   }

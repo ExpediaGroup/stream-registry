@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,6 +40,7 @@ public class ZoneService {
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
 
+  @PreAuthorize("hasPermission(#zone, 'create')")
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (read(zone.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class ZoneService {
     return save(zone);
   }
 
+  @PreAuthorize("hasPermission(#zone, 'update')")
   public Optional<Zone> update(Zone zone) throws ValidationException {
     var existing = read(zone.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class ZoneService {
     return zoneRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @PreAuthorize("hasPermission(#zone, 'delete')")
   public void delete(Zone zone) {
     throw new UnsupportedOperationException();
   }

@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
@@ -39,6 +40,7 @@ public class ConsumerService {
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
 
+  @PreAuthorize("hasPermission(#consumer, 'create')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (read(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -48,6 +50,7 @@ public class ConsumerService {
     return save(consumer);
   }
 
+  @PreAuthorize("hasPermission(#consumer, 'update')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
     var existing = read(consumer.getKey());
     if (!existing.isPresent()) {
@@ -75,6 +78,7 @@ public class ConsumerService {
     return consumerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
+  @PreAuthorize("hasPermission(#consumer, 'delete')")
   public void delete(Consumer consumer) {
     throw new UnsupportedOperationException();
   }
