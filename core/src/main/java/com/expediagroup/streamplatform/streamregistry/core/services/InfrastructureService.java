@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
 
@@ -58,6 +59,13 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForUpdate(infrastructure, existing.get());
     infrastructure.setSpecification(handlerService.handleUpdate(infrastructure, existing.get()));
+    return save(infrastructure);
+  }
+
+  @PreAuthorize("hasPermission(#infrastructureKey, 'updateStatus')")
+  public Optional<Infrastructure> updateStatus(InfrastructureKey infrastructureKey, Status status) {
+    Infrastructure infrastructure = read(infrastructureKey).get();
+    infrastructure.setStatus(status);
     return save(infrastructure);
   }
 

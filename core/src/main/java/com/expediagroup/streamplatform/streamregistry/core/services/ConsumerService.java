@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 
@@ -58,6 +59,13 @@ public class ConsumerService {
     }
     consumerValidator.validateForUpdate(consumer, existing.get());
     consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
+    return save(consumer);
+  }
+
+  @PreAuthorize("hasPermission(#consumerKey, 'updateStatus')")
+  public Optional<Consumer> updateStatus(ConsumerKey consumerKey, Status status) {
+    Consumer consumer = read(consumerKey).get();
+    consumer.setStatus(status);
     return save(consumer);
   }
 

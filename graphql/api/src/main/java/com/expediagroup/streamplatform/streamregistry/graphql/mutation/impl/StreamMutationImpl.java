@@ -58,9 +58,7 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Stream updateStatus(StreamKeyInput key, StatusInput status) {
-    Stream stream = streamService.read(key.asStreamKey()).get();
-    stream.setStatus(status.asStatus());
-    return streamService.update(stream).get();
+    return streamService.updateStatus(key.asStreamKey(), status.asStatus()).get();
   }
 
   private Stream asStream(StreamKeyInput key, SpecificationInput specification, Optional<SchemaKeyInput> schema) {

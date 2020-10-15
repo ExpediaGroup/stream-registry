@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.repository.DomainRepository;
 
@@ -58,6 +59,13 @@ public class DomainService {
     }
     domainValidator.validateForUpdate(domain, existing.get());
     domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
+    return save(domain);
+  }
+
+  @PreAuthorize("hasPermission(#domainKey, 'updateStatus')")
+  public Optional<Domain> updateStatus(DomainKey domainKey, Status status) {
+    Domain domain = read(domainKey).get();
+    domain.setStatus(status);
     return save(domain);
   }
 

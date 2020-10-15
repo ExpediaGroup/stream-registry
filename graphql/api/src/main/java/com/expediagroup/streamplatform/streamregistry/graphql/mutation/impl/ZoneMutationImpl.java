@@ -55,9 +55,7 @@ public class ZoneMutationImpl implements ZoneMutation {
 
   @Override
   public Zone updateStatus(ZoneKeyInput key, StatusInput status) {
-    Zone zone = zoneService.read(key.asZoneKey()).get();
-    zone.setStatus(status.asStatus());
-    return zoneService.update(zone).get();
+    return zoneService.updateStatus(key.asZoneKey(), status.asStatus()).get();
   }
 
   private Zone asZone(ZoneKeyInput key, SpecificationInput specification) {

@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
@@ -58,6 +59,13 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForUpdate(streamBinding, existing.get());
     streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
+    return save(streamBinding);
+  }
+
+  @PreAuthorize("hasPermission(#streamBindingKey, 'updateStatus')")
+  public Optional<StreamBinding> updateStatus(StreamBindingKey streamBindingKey, Status status) {
+    StreamBinding streamBinding = read(streamBindingKey).get();
+    streamBinding.setStatus(status);
     return save(streamBinding);
   }
 

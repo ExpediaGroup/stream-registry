@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
@@ -59,6 +60,13 @@ public class StreamService {
     stream.setSchemaKey(existing.get().getSchemaKey());
     streamValidator.validateForUpdate(stream, existing.get());
     stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
+    return save(stream);
+  }
+
+  @PreAuthorize("hasPermission(#streamKey, 'updateStatus')")
+  public Optional<Stream> updateStatus(StreamKey streamKey, Status status) {
+    Stream stream = read(streamKey).get();
+    stream.setStatus(status);
     return save(stream);
   }
 

@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
 
@@ -58,6 +59,13 @@ public class SchemaService {
     }
     schemaValidator.validateForUpdate(schema, existing.get());
     schema.setSpecification(handlerService.handleUpdate(schema, existing.get()));
+    return save(schema);
+  }
+
+  @PreAuthorize("hasPermission(#schemaKey, 'updateStatus')")
+  public Optional<Schema> updateStatus(SchemaKey schemaKey, Status status) {
+    Schema schema = read(schemaKey).get();
+    schema.setStatus(status);
     return save(schema);
   }
 

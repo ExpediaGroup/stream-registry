@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
@@ -59,6 +60,13 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForUpdate(producerBinding, existing.get());
     producerBinding.setSpecification(handlerService.handleUpdate(producerBinding, existing.get()));
+    return save(producerBinding);
+  }
+
+  @PreAuthorize("hasPermission(#producerBindingKey, 'updateStatus')")
+  public Optional<ProducerBinding> updateStatus(ProducerBindingKey producerBindingKey, Status status) {
+    ProducerBinding producerBinding = read(producerBindingKey).get();
+    producerBinding.setStatus(status);
     return save(producerBinding);
   }
 

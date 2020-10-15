@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
@@ -58,6 +59,13 @@ public class ZoneService {
     }
     zoneValidator.validateForUpdate(zone, existing.get());
     zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
+    return save(zone);
+  }
+
+  @PreAuthorize("hasPermission(#zoneKey, 'updateStatus')")
+  public Optional<Zone> updateStatus(ZoneKey zoneKey, Status status) {
+    Zone zone = read(zoneKey).get();
+    zone.setStatus(status);
     return save(zone);
   }
 

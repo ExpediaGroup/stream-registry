@@ -33,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 
@@ -100,6 +101,21 @@ public class ConsumerServiceTest {
     verify(consumerRepository).findById(key);
     verify(consumerValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
+    verify(consumerRepository).save(entity);
+  }
+
+  @Test
+  public void updateStatus() {
+    final ConsumerKey key = mock(ConsumerKey.class);
+    final Status status = mock(Status.class);
+    final Consumer entity = mock(Consumer.class);
+
+    when(consumerRepository.findById(key)).thenReturn(Optional.of(entity));
+    when(consumerRepository.save(entity)).thenReturn(entity);
+
+    consumerService.updateStatus(key, status);
+
+    verify(consumerRepository).findById(key);
     verify(consumerRepository).save(entity);
   }
 

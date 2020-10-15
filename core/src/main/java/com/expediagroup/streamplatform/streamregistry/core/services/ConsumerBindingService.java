@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
@@ -60,6 +61,13 @@ public class ConsumerBindingService {
     }
     consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
     consumerBinding.setSpecification(handlerService.handleUpdate(consumerBinding, existing.get()));
+    return save(consumerBinding);
+  }
+
+  @PreAuthorize("hasPermission(#consumerBindingKey, 'updateStatus')")
+  public Optional<ConsumerBinding> updateStatus(ConsumerBindingKey consumerBindingKey, Status status) {
+    ConsumerBinding consumerBinding = read(consumerBindingKey).get();
+    consumerBinding.setStatus(status);
     return save(consumerBinding);
   }
 

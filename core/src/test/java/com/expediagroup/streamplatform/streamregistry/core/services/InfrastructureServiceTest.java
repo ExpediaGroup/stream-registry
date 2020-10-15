@@ -35,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
 
@@ -100,6 +101,21 @@ public class InfrastructureServiceTest {
     verify(infrastructureRepository).findById(key);
     verify(infrastructureValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
+    verify(infrastructureRepository).save(entity);
+  }
+
+  @Test
+  public void updateStatus() {
+    final Infrastructure entity = mock(Infrastructure.class);
+    final InfrastructureKey key = mock(InfrastructureKey.class);
+    final Status status = mock(Status.class);
+
+    when(infrastructureRepository.findById(key)).thenReturn(Optional.of(entity));
+    when(infrastructureRepository.save(entity)).thenReturn(entity);
+
+    infrastructureService.updateStatus(key, status);
+
+    verify(infrastructureRepository).findById(key);
     verify(infrastructureRepository).save(entity);
   }
 

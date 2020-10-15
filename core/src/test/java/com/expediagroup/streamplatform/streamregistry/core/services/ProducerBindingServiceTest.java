@@ -33,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 
@@ -100,6 +101,21 @@ public class ProducerBindingServiceTest {
     verify(producerBindingRepository).findById(key);
     verify(producerBindingValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
+    verify(producerBindingRepository).save(entity);
+  }
+
+  @Test
+  public void updateStatus() {
+    final ProducerBindingKey key = mock(ProducerBindingKey.class);
+    final Status status = mock(Status.class);
+    final ProducerBinding entity = mock(ProducerBinding.class);
+
+    when(producerBindingRepository.findById(key)).thenReturn(Optional.of(entity));
+    when(producerBindingRepository.save(entity)).thenReturn(entity);
+
+    producerBindingService.updateStatus(key, status);
+
+    verify(producerBindingRepository).findById(key);
     verify(producerBindingRepository).save(entity);
   }
 

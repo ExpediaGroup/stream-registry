@@ -33,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 
@@ -100,6 +101,21 @@ public class ConsumerBindingServiceTest {
     verify(consumerBindingRepository).findById(key);
     verify(consumerBindingValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
+    verify(consumerBindingRepository).save(entity);
+  }
+
+  @Test
+  public void updateStatus() {
+    final ConsumerBindingKey key = mock(ConsumerBindingKey.class);
+    final Status status = mock(Status.class);
+    final ConsumerBinding entity = mock(ConsumerBinding.class);
+
+    when(consumerBindingRepository.findById(key)).thenReturn(Optional.of(entity));
+    when(consumerBindingRepository.save(entity)).thenReturn(entity);
+
+    consumerBindingService.updateStatus(key, status);
+
+    verify(consumerBindingRepository).findById(key);
     verify(consumerBindingRepository).save(entity);
   }
 
