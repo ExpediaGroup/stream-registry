@@ -55,9 +55,7 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   @Override
   public Schema updateStatus(SchemaKeyInput key, StatusInput status) {
-    Schema schema = schemaService.read(key.asSchemaKey()).get();
-    schema.setStatus(status.asStatus());
-    return schemaService.update(schema).get();
+    return schemaService.updateStatus(key.asSchemaKey(), status.asStatus()).get();
   }
 
   private Schema asSchema(SchemaKeyInput key, SpecificationInput specification) {

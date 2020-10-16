@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
@@ -40,7 +41,7 @@ public class StreamService {
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
 
-  @PreAuthorize("hasPermission(#stream, 'create')")
+  @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
     if (read(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +51,7 @@ public class StreamService {
     return save(stream);
   }
 
-  @PreAuthorize("hasPermission(#stream, 'update')")
+  @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
     var existing = read(stream.getKey());
     if (!existing.isPresent()) {
@@ -59,6 +60,13 @@ public class StreamService {
     stream.setSchemaKey(existing.get().getSchemaKey());
     streamValidator.validateForUpdate(stream, existing.get());
     stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
+    return save(stream);
+  }
+
+  @PreAuthorize("hasPermission(#streamKey, 'UPDATE_STATUS')")
+  public Optional<Stream> updateStatus(StreamKey streamKey, Status status) {
+    Stream stream = read(streamKey).get();
+    stream.setStatus(status);
     return save(stream);
   }
 
@@ -79,7 +87,7 @@ public class StreamService {
     return streamRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#stream, 'delete')")
+  @PreAuthorize("hasPermission(#stream, 'DELETE')")
   public void delete(Stream stream) {
     throw new UnsupportedOperationException();
   }

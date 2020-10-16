@@ -54,9 +54,7 @@ public class DomainMutationImpl implements DomainMutation {
 
   @Override
   public Domain updateStatus(DomainKeyInput key, StatusInput status) {
-    Domain domain = domainService.read(key.asDomainKey()).get();
-    domain.setStatus(status.asStatus());
-    return domainService.update(domain).get();
+    return domainService.updateStatus(key.asDomainKey(), status.asStatus()).get();
   }
 
   private Domain asDomain(DomainKeyInput key, SpecificationInput specification) {

@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 
@@ -40,7 +41,7 @@ public class ConsumerService {
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
 
-  @PreAuthorize("hasPermission(#consumer, 'create')")
+  @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (read(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +51,7 @@ public class ConsumerService {
     return save(consumer);
   }
 
-  @PreAuthorize("hasPermission(#consumer, 'update')")
+  @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
     var existing = read(consumer.getKey());
     if (!existing.isPresent()) {
@@ -58,6 +59,13 @@ public class ConsumerService {
     }
     consumerValidator.validateForUpdate(consumer, existing.get());
     consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
+    return save(consumer);
+  }
+
+  @PreAuthorize("hasPermission(#consumerKey, 'UPDATE_STATUS')")
+  public Optional<Consumer> updateStatus(ConsumerKey consumerKey, Status status) {
+    Consumer consumer = read(consumerKey).get();
+    consumer.setStatus(status);
     return save(consumer);
   }
 
@@ -78,7 +86,7 @@ public class ConsumerService {
     return consumerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#consumer, 'delete')")
+  @PreAuthorize("hasPermission(#consumer, 'DELETE')")
   public void delete(Consumer consumer) {
     throw new UnsupportedOperationException();
   }

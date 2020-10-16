@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
 
@@ -40,7 +41,7 @@ public class InfrastructureService {
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
 
-  @PreAuthorize("hasPermission(#infrastructure, 'create')")
+  @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (read(infrastructure.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +51,7 @@ public class InfrastructureService {
     return save(infrastructure);
   }
 
-  @PreAuthorize("hasPermission(#infrastructure, 'update')")
+  @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
     var existing = read(infrastructure.getKey());
     if (!existing.isPresent()) {
@@ -58,6 +59,13 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForUpdate(infrastructure, existing.get());
     infrastructure.setSpecification(handlerService.handleUpdate(infrastructure, existing.get()));
+    return save(infrastructure);
+  }
+
+  @PreAuthorize("hasPermission(#infrastructureKey, 'UPDATE_STATUS')")
+  public Optional<Infrastructure> updateStatus(InfrastructureKey infrastructureKey, Status status) {
+    Infrastructure infrastructure = read(infrastructureKey).get();
+    infrastructure.setStatus(status);
     return save(infrastructure);
   }
 
@@ -78,7 +86,7 @@ public class InfrastructureService {
     return infrastructureRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#infrastructure, 'delete')")
+  @PreAuthorize("hasPermission(#infrastructure, 'DELETE')")
   public void delete(Infrastructure infrastructure) {
     throw new UnsupportedOperationException();
   }

@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
 
@@ -40,7 +41,7 @@ public class ProducerService {
   private final ProducerValidator producerValidator;
   private final ProducerRepository producerRepository;
 
-  @PreAuthorize("hasPermission(#producer, 'create')")
+  @PreAuthorize("hasPermission(#producer, 'CREATE')")
   public Optional<Producer> create(Producer producer) throws ValidationException {
     if (read(producer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +51,7 @@ public class ProducerService {
     return save(producer);
   }
 
-  @PreAuthorize("hasPermission(#producer, 'update')")
+  @PreAuthorize("hasPermission(#producer, 'UPDATE')")
   public Optional<Producer> update(Producer producer) throws ValidationException {
     var existing = read(producer.getKey());
     if (!existing.isPresent()) {
@@ -58,6 +59,13 @@ public class ProducerService {
     }
     producerValidator.validateForUpdate(producer, existing.get());
     producer.setSpecification(handlerService.handleUpdate(producer, existing.get()));
+    return save(producer);
+  }
+
+  @PreAuthorize("hasPermission(#producerKey, 'UPDATE_STATUS')")
+  public Optional<Producer> updateStatus(ProducerKey producerKey, Status status) {
+    Producer producer = read(producerKey).get();
+    producer.setStatus(status);
     return save(producer);
   }
 
@@ -78,7 +86,7 @@ public class ProducerService {
     return producerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#producer, 'delete')")
+  @PreAuthorize("hasPermission(#producer, 'DELETE')")
   public void delete(Producer producer) {
     throw new UnsupportedOperationException();
   }

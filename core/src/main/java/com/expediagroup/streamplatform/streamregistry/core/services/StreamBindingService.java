@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
@@ -40,7 +41,7 @@ public class StreamBindingService {
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
 
-  @PreAuthorize("hasPermission(#streamBinding, 'create')")
+  @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
     if (read(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +51,7 @@ public class StreamBindingService {
     return save(streamBinding);
   }
 
-  @PreAuthorize("hasPermission(#streamBinding, 'update')")
+  @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
     var existing = read(streamBinding.getKey());
     if (!existing.isPresent()) {
@@ -58,6 +59,13 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForUpdate(streamBinding, existing.get());
     streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
+    return save(streamBinding);
+  }
+
+  @PreAuthorize("hasPermission(#streamBindingKey, 'UPDATE_STATUS')")
+  public Optional<StreamBinding> updateStatus(StreamBindingKey streamBindingKey, Status status) {
+    StreamBinding streamBinding = read(streamBindingKey).get();
+    streamBinding.setStatus(status);
     return save(streamBinding);
   }
 
@@ -78,7 +86,7 @@ public class StreamBindingService {
     return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#streamBinding, 'delete')")
+  @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
     throw new UnsupportedOperationException();
   }

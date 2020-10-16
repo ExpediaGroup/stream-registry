@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
@@ -41,7 +42,7 @@ public class ProducerBindingService {
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
 
-  @PreAuthorize("hasPermission(#producerBinding, 'create')")
+  @PreAuthorize("hasPermission(#producerBinding, 'CREATE')")
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
     if (read(producerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +52,7 @@ public class ProducerBindingService {
     return save(producerBinding);
   }
 
-  @PreAuthorize("hasPermission(#producerBinding, 'update')")
+  @PreAuthorize("hasPermission(#producerBinding, 'UPDATE')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
     var existing = read(producerBinding.getKey());
     if (!existing.isPresent()) {
@@ -59,6 +60,13 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForUpdate(producerBinding, existing.get());
     producerBinding.setSpecification(handlerService.handleUpdate(producerBinding, existing.get()));
+    return save(producerBinding);
+  }
+
+  @PreAuthorize("hasPermission(#producerBindingKey, 'UPDATE_STATUS')")
+  public Optional<ProducerBinding> updateStatus(ProducerBindingKey producerBindingKey, Status status) {
+    ProducerBinding producerBinding = read(producerBindingKey).get();
+    producerBinding.setStatus(status);
     return save(producerBinding);
   }
 
@@ -79,7 +87,7 @@ public class ProducerBindingService {
     return producerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#producerBinding, 'delete')")
+  @PreAuthorize("hasPermission(#producerBinding, 'DELETE')")
   public void delete(ProducerBinding producerBinding) {
     throw new UnsupportedOperationException();
   }

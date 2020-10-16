@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
@@ -40,7 +41,7 @@ public class ZoneService {
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
 
-  @PreAuthorize("hasPermission(#zone, 'create')")
+  @PreAuthorize("hasPermission(#zone, 'CREATE')")
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (read(zone.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -50,7 +51,7 @@ public class ZoneService {
     return save(zone);
   }
 
-  @PreAuthorize("hasPermission(#zone, 'update')")
+  @PreAuthorize("hasPermission(#zone, 'UPDATE')")
   public Optional<Zone> update(Zone zone) throws ValidationException {
     var existing = read(zone.getKey());
     if (!existing.isPresent()) {
@@ -58,6 +59,13 @@ public class ZoneService {
     }
     zoneValidator.validateForUpdate(zone, existing.get());
     zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
+    return save(zone);
+  }
+
+  @PreAuthorize("hasPermission(#zoneKey, 'UPDATE_STATUS')")
+  public Optional<Zone> updateStatus(ZoneKey zoneKey, Status status) {
+    Zone zone = read(zoneKey).get();
+    zone.setStatus(status);
     return save(zone);
   }
 
@@ -78,7 +86,7 @@ public class ZoneService {
     return zoneRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#zone, 'delete')")
+  @PreAuthorize("hasPermission(#zone, 'DELETE')")
   public void delete(Zone zone) {
     throw new UnsupportedOperationException();
   }

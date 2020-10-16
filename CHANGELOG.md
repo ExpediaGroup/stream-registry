@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## UNRELEASED - 2020-10-14
 ### Added
-- Authorisation for create, update, and delete operations for Consumer, ConsumerBinding, 
+- Authorisation for create, update, delete, and updateStatus operations for Consumer, ConsumerBinding, 
   Domain, Infrastructure, Producer, ProducerBinding, Schema, Stream, StreamBinding, Zone
-
+  
+### Changed
+- Refactored updateStatus for Consumer, ConsumerBinding, Domain, Infrastructure, Producer, 
+  ProducerBinding, Schema, Stream, StreamBinding, Zone
+  
 ## [0.14.4] - 2020-10-05
 ### Added
 - Access control setup to handle who can perform mutations on GraphQL.

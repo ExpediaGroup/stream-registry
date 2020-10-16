@@ -55,9 +55,7 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Producer updateStatus(ProducerKeyInput key, StatusInput status) {
-    Producer producer = producerService.read(key.asProducerKey()).get();
-    producer.setStatus(status.asStatus());
-    return producerService.update(producer).get();
+    return producerService.updateStatus(key.asProducerKey(), status.asStatus()).get();
   }
 
   private Producer asProducer(ProducerKeyInput key, SpecificationInput specification) {

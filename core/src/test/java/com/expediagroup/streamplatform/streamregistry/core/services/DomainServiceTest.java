@@ -35,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.repository.DomainRepository;
 
@@ -100,6 +101,21 @@ public class DomainServiceTest {
     verify(domainRepository).findById(key);
     verify(domainValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
+    verify(domainRepository).save(entity);
+  }
+
+  @Test
+  public void updateStatus() {
+    final Domain entity = mock(Domain.class);
+    final DomainKey key = mock(DomainKey.class);
+    final Status status = mock(Status.class);
+
+    when(domainRepository.findById(key)).thenReturn(Optional.of(entity));
+    when(domainRepository.save(entity)).thenReturn(entity);
+
+    domainService.updateStatus(key, status);
+
+    verify(domainRepository).findById(key);
     verify(domainRepository).save(entity);
   }
 

@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
@@ -42,7 +43,7 @@ public class ConsumerBindingService {
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
 
-  @PreAuthorize("hasPermission(#consumerBinding, 'create')")
+  @PreAuthorize("hasPermission(#consumerBinding, 'CREATE')")
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
     if (read(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -52,7 +53,7 @@ public class ConsumerBindingService {
     return save(consumerBinding);
   }
 
-  @PreAuthorize("hasPermission(#consumerBinding, 'update')")
+  @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
     var existing = read(consumerBinding.getKey());
     if (!existing.isPresent()) {
@@ -60,6 +61,13 @@ public class ConsumerBindingService {
     }
     consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
     consumerBinding.setSpecification(handlerService.handleUpdate(consumerBinding, existing.get()));
+    return save(consumerBinding);
+  }
+
+  @PreAuthorize("hasPermission(#consumerBindingKey, 'UPDATE_STATUS')")
+  public Optional<ConsumerBinding> updateStatus(ConsumerBindingKey consumerBindingKey, Status status) {
+    ConsumerBinding consumerBinding = read(consumerBindingKey).get();
+    consumerBinding.setStatus(status);
     return save(consumerBinding);
   }
 
@@ -80,7 +88,7 @@ public class ConsumerBindingService {
     return consumerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#consumerBinding, 'delete')")
+  @PreAuthorize("hasPermission(#consumerBinding, 'DELETE')")
   public void delete(ConsumerBinding consumerBinding) {
     throw new UnsupportedOperationException();
   }
