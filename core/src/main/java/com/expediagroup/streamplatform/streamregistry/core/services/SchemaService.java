@@ -41,7 +41,7 @@ public class SchemaService {
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
 
-  @PreAuthorize("hasPermission(#schema, 'create')")
+  @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
     if (read(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class SchemaService {
     return save(schema);
   }
 
-  @PreAuthorize("hasPermission(#schema, 'update')")
+  @PreAuthorize("hasPermission(#schema, 'UPDATE')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
     var existing = read(schema.getKey());
     if (!existing.isPresent()) {
@@ -62,7 +62,7 @@ public class SchemaService {
     return save(schema);
   }
 
-  @PreAuthorize("hasPermission(#schemaKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#schemaKey, 'UPDATE_STATUS')")
   public Optional<Schema> updateStatus(SchemaKey schemaKey, Status status) {
     Schema schema = read(schemaKey).get();
     schema.setStatus(status);
@@ -86,7 +86,7 @@ public class SchemaService {
     return schemaRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#schema, 'delete')")
+  @PreAuthorize("hasPermission(#schema, 'DELETE')")
   public void delete(Schema schema) {
     throw new UnsupportedOperationException();
   }

@@ -41,7 +41,7 @@ public class InfrastructureService {
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
 
-  @PreAuthorize("hasPermission(#infrastructure, 'create')")
+  @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
     if (read(infrastructure.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class InfrastructureService {
     return save(infrastructure);
   }
 
-  @PreAuthorize("hasPermission(#infrastructure, 'update')")
+  @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
     var existing = read(infrastructure.getKey());
     if (!existing.isPresent()) {
@@ -62,7 +62,7 @@ public class InfrastructureService {
     return save(infrastructure);
   }
 
-  @PreAuthorize("hasPermission(#infrastructureKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#infrastructureKey, 'UPDATE_STATUS')")
   public Optional<Infrastructure> updateStatus(InfrastructureKey infrastructureKey, Status status) {
     Infrastructure infrastructure = read(infrastructureKey).get();
     infrastructure.setStatus(status);
@@ -86,7 +86,7 @@ public class InfrastructureService {
     return infrastructureRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#infrastructure, 'delete')")
+  @PreAuthorize("hasPermission(#infrastructure, 'DELETE')")
   public void delete(Infrastructure infrastructure) {
     throw new UnsupportedOperationException();
   }

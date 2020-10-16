@@ -41,7 +41,7 @@ public class StreamBindingService {
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
 
-  @PreAuthorize("hasPermission(#streamBinding, 'create')")
+  @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
     if (read(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class StreamBindingService {
     return save(streamBinding);
   }
 
-  @PreAuthorize("hasPermission(#streamBinding, 'update')")
+  @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
     var existing = read(streamBinding.getKey());
     if (!existing.isPresent()) {
@@ -62,7 +62,7 @@ public class StreamBindingService {
     return save(streamBinding);
   }
 
-  @PreAuthorize("hasPermission(#streamBindingKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#streamBindingKey, 'UPDATE_STATUS')")
   public Optional<StreamBinding> updateStatus(StreamBindingKey streamBindingKey, Status status) {
     StreamBinding streamBinding = read(streamBindingKey).get();
     streamBinding.setStatus(status);
@@ -86,7 +86,7 @@ public class StreamBindingService {
     return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#streamBinding, 'delete')")
+  @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
     throw new UnsupportedOperationException();
   }

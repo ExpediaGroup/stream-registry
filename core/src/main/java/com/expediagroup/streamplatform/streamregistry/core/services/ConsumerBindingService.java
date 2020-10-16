@@ -43,7 +43,7 @@ public class ConsumerBindingService {
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
 
-  @PreAuthorize("hasPermission(#consumerBinding, 'create')")
+  @PreAuthorize("hasPermission(#consumerBinding, 'CREATE')")
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
     if (read(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -53,7 +53,7 @@ public class ConsumerBindingService {
     return save(consumerBinding);
   }
 
-  @PreAuthorize("hasPermission(#consumerBinding, 'update')")
+  @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
     var existing = read(consumerBinding.getKey());
     if (!existing.isPresent()) {
@@ -64,7 +64,7 @@ public class ConsumerBindingService {
     return save(consumerBinding);
   }
 
-  @PreAuthorize("hasPermission(#consumerBindingKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#consumerBindingKey, 'UPDATE_STATUS')")
   public Optional<ConsumerBinding> updateStatus(ConsumerBindingKey consumerBindingKey, Status status) {
     ConsumerBinding consumerBinding = read(consumerBindingKey).get();
     consumerBinding.setStatus(status);
@@ -88,7 +88,7 @@ public class ConsumerBindingService {
     return consumerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#consumerBinding, 'delete')")
+  @PreAuthorize("hasPermission(#consumerBinding, 'DELETE')")
   public void delete(ConsumerBinding consumerBinding) {
     throw new UnsupportedOperationException();
   }

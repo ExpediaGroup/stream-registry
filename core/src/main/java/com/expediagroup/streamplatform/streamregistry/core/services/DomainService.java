@@ -41,7 +41,7 @@ public class DomainService {
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
 
-  @PreAuthorize("hasPermission(#domain, 'create')")
+  @PreAuthorize("hasPermission(#domain, 'CREATE')")
   public Optional<Domain> create(Domain domain) throws ValidationException {
     if (read(domain.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class DomainService {
     return save(domain);
   }
 
-  @PreAuthorize("hasPermission(#domain, 'update')")
+  @PreAuthorize("hasPermission(#domain, 'UPDATE')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
     var existing = read(domain.getKey());
     if (!existing.isPresent()) {
@@ -62,7 +62,7 @@ public class DomainService {
     return save(domain);
   }
 
-  @PreAuthorize("hasPermission(#domainKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#domainKey, 'UPDATE_STATUS')")
   public Optional<Domain> updateStatus(DomainKey domainKey, Status status) {
     Domain domain = read(domainKey).get();
     domain.setStatus(status);
@@ -86,7 +86,7 @@ public class DomainService {
     return domainRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#domain, 'delete')")
+  @PreAuthorize("hasPermission(#domain, 'DELETE')")
   public void delete(Domain domain) {
     throw new UnsupportedOperationException();
   }

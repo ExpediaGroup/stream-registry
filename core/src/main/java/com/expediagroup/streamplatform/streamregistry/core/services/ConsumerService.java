@@ -41,7 +41,7 @@ public class ConsumerService {
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
 
-  @PreAuthorize("hasPermission(#consumer, 'create')")
+  @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
     if (read(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class ConsumerService {
     return save(consumer);
   }
 
-  @PreAuthorize("hasPermission(#consumer, 'update')")
+  @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
     var existing = read(consumer.getKey());
     if (!existing.isPresent()) {
@@ -62,7 +62,7 @@ public class ConsumerService {
     return save(consumer);
   }
 
-  @PreAuthorize("hasPermission(#consumerKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#consumerKey, 'UPDATE_STATUS')")
   public Optional<Consumer> updateStatus(ConsumerKey consumerKey, Status status) {
     Consumer consumer = read(consumerKey).get();
     consumer.setStatus(status);
@@ -86,7 +86,7 @@ public class ConsumerService {
     return consumerRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#consumer, 'delete')")
+  @PreAuthorize("hasPermission(#consumer, 'DELETE')")
   public void delete(Consumer consumer) {
     throw new UnsupportedOperationException();
   }

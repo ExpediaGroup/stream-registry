@@ -41,7 +41,7 @@ public class ZoneService {
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
 
-  @PreAuthorize("hasPermission(#zone, 'create')")
+  @PreAuthorize("hasPermission(#zone, 'CREATE')")
   public Optional<Zone> create(Zone zone) throws ValidationException {
     if (read(zone.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class ZoneService {
     return save(zone);
   }
 
-  @PreAuthorize("hasPermission(#zone, 'update')")
+  @PreAuthorize("hasPermission(#zone, 'UPDATE')")
   public Optional<Zone> update(Zone zone) throws ValidationException {
     var existing = read(zone.getKey());
     if (!existing.isPresent()) {
@@ -62,7 +62,7 @@ public class ZoneService {
     return save(zone);
   }
 
-  @PreAuthorize("hasPermission(#zoneKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#zoneKey, 'UPDATE_STATUS')")
   public Optional<Zone> updateStatus(ZoneKey zoneKey, Status status) {
     Zone zone = read(zoneKey).get();
     zone.setStatus(status);
@@ -86,7 +86,7 @@ public class ZoneService {
     return zoneRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#zone, 'delete')")
+  @PreAuthorize("hasPermission(#zone, 'DELETE')")
   public void delete(Zone zone) {
     throw new UnsupportedOperationException();
   }

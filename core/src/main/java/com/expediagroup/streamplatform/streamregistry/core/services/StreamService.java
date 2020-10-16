@@ -41,7 +41,7 @@ public class StreamService {
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
 
-  @PreAuthorize("hasPermission(#stream, 'create')")
+  @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
     if (read(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
@@ -51,7 +51,7 @@ public class StreamService {
     return save(stream);
   }
 
-  @PreAuthorize("hasPermission(#stream, 'update')")
+  @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
     var existing = read(stream.getKey());
     if (!existing.isPresent()) {
@@ -63,7 +63,7 @@ public class StreamService {
     return save(stream);
   }
 
-  @PreAuthorize("hasPermission(#streamKey, 'updateStatus')")
+  @PreAuthorize("hasPermission(#streamKey, 'UPDATE_STATUS')")
   public Optional<Stream> updateStatus(StreamKey streamKey, Status status) {
     Stream stream = read(streamKey).get();
     stream.setStatus(status);
@@ -87,7 +87,7 @@ public class StreamService {
     return streamRepository.findAll().stream().filter(filter).collect(toList());
   }
 
-  @PreAuthorize("hasPermission(#stream, 'delete')")
+  @PreAuthorize("hasPermission(#stream, 'DELETE')")
   public void delete(Stream stream) {
     throw new UnsupportedOperationException();
   }
