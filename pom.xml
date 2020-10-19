@@ -16,9 +16,9 @@
   <inceptionYear>2018</inceptionYear>
 
   <scm>
-    <url>https://github.com/ExpediaGroup/stream-registry/tree/master</url>
-    <connection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</connection>
-    <developerConnection>scm:git:git@github.com:ExpediaGroup/stream-registry.git</developerConnection>
+    <connection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</connection>
+    <developerConnection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</developerConnection>
+    <url>https://github.com/ExpediaGroup/stream-registry</url>
     <tag>HEAD</tag>
   </scm>
 
