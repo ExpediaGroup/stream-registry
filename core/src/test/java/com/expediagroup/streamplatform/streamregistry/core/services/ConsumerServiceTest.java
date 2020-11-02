@@ -17,7 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -116,31 +115,6 @@ public class ConsumerServiceTest {
     consumerService.updateStatus(key, status);
 
     verify(consumerRepository).findById(key);
-    verify(consumerRepository).save(entity);
-  }
-
-  @Test
-  public void upsert() {
-    final ConsumerKey key = mock(ConsumerKey.class);
-    final Specification specification = mock(Specification.class);
-
-    final Consumer entity = mock(Consumer.class);
-    final Consumer existingEntity = mock(Consumer.class);
-
-    when(entity.getKey()).thenReturn(key);
-
-    when(consumerRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    doNothing().when(consumerValidator).validateForUpdate(entity, existingEntity);
-    when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
-
-    when(consumerRepository.save(entity)).thenReturn(entity);
-
-    consumerService.upsert(entity);
-
-    verify(entity, times(2)).getKey();
-    verify(consumerRepository, times(2)).findById(key);
-    verify(consumerValidator).validateForUpdate(entity, existingEntity);
-    verify(handlerService).handleUpdate(entity, existingEntity);
     verify(consumerRepository).save(entity);
   }
 }

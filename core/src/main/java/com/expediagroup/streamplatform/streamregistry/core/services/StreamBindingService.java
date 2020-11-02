@@ -74,10 +74,6 @@ public class StreamBindingService {
     return Optional.ofNullable(streamBinding);
   }
 
-  public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
-    return !read(streamBinding.getKey()).isPresent() ? create(streamBinding) : update(streamBinding);
-  }
-
   public Optional<StreamBinding> read(StreamBindingKey key) {
     return streamBindingRepository.findById(key);
   }

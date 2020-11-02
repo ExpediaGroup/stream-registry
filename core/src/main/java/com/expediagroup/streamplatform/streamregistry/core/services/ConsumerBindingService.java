@@ -76,10 +76,6 @@ public class ConsumerBindingService {
     return Optional.ofNullable(consumerBinding);
   }
 
-  public Optional<ConsumerBinding> upsert(ConsumerBinding consumerBinding) throws ValidationException {
-    return !read(consumerBinding.getKey()).isPresent() ? create(consumerBinding) : update(consumerBinding);
-  }
-
   public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
     return consumerBindingRepository.findById(key);
   }

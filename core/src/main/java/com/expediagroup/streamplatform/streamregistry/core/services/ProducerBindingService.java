@@ -75,10 +75,6 @@ public class ProducerBindingService {
     return Optional.ofNullable(producerBinding);
   }
 
-  public Optional<ProducerBinding> upsert(ProducerBinding producerBinding) throws ValidationException {
-    return !read(producerBinding.getKey()).isPresent() ? create(producerBinding) : update(producerBinding);
-  }
-
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
     return producerBindingRepository.findById(key);
   }

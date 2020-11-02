@@ -74,10 +74,6 @@ public class ConsumerService {
     return Optional.ofNullable(consumer);
   }
 
-  public Optional<Consumer> upsert(Consumer consumer) throws ValidationException {
-    return !read(consumer.getKey()).isPresent() ? create(consumer) : update(consumer);
-  }
-
   public Optional<Consumer> read(ConsumerKey key) {
     return consumerRepository.findById(key);
   }

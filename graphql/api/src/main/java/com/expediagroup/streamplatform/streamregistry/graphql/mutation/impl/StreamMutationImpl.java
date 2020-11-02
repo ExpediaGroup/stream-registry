@@ -48,7 +48,12 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
-    return streamService.upsert(asStream(key, specification, Optional.ofNullable(schema))).get();
+    Stream stream = asStream(key, specification, Optional.ofNullable(schema));
+    if (!streamService.read(stream.getKey()).isPresent()) {
+      return streamService.create(stream).get();
+    } else {
+      return streamService.update(stream).get();
+    }
   }
 
   @Override

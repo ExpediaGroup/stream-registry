@@ -45,7 +45,12 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.upsert(asStreamBinding(key, specification)).get();
+    StreamBinding streamBinding = asStreamBinding(key, specification);
+    if (!streamBindingService.read(streamBinding.getKey()).isPresent()) {
+      return streamBindingService.create(streamBinding).get();
+    } else {
+      return streamBindingService.update(streamBinding).get();
+    }
   }
 
   @Override

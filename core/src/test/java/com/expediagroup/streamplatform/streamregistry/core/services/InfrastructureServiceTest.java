@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -116,30 +115,6 @@ public class InfrastructureServiceTest {
     infrastructureService.updateStatus(key, status);
 
     verify(infrastructureRepository).findById(key);
-    verify(infrastructureRepository).save(entity);
-  }
-
-  @Test
-  public void upsert() {
-    final Infrastructure entity = mock(Infrastructure.class);
-    final InfrastructureKey key = mock(InfrastructureKey.class);
-    final Infrastructure existingEntity = mock(Infrastructure.class);
-    final Specification specification = mock(Specification.class);
-
-    when(entity.getKey()).thenReturn(key);
-
-    when(infrastructureRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    doNothing().when(infrastructureValidator).validateForUpdate(entity, existingEntity);
-    when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
-
-    when(infrastructureRepository.save(entity)).thenReturn(entity);
-
-    infrastructureService.upsert(entity);
-
-    verify(entity, times(2)).getKey();
-    verify(infrastructureRepository, times(2)).findById(key);
-    verify(infrastructureValidator).validateForUpdate(entity, existingEntity);
-    verify(handlerService).handleUpdate(entity, existingEntity);
     verify(infrastructureRepository).save(entity);
   }
 }

@@ -45,7 +45,12 @@ public class ZoneMutationImpl implements ZoneMutation {
 
   @Override
   public Zone upsert(ZoneKeyInput key, SpecificationInput specification) {
-    return zoneService.upsert(asZone(key, specification)).get();
+    Zone zone = asZone(key, specification);
+    if (!zoneService.read(zone.getKey()).isPresent()) {
+      return zoneService.create(zone).get();
+    } else {
+      return zoneService.update(zone).get();
+    }
   }
 
   @Override

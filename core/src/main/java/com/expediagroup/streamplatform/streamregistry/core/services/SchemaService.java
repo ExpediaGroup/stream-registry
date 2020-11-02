@@ -74,10 +74,6 @@ public class SchemaService {
     return Optional.ofNullable(schema);
   }
 
-  public Optional<Schema> upsert(Schema schema) throws ValidationException {
-    return !read(schema.getKey()).isPresent() ? create(schema) : update(schema);
-  }
-
   public Optional<Schema> read(SchemaKey key) {
     return schemaRepository.findById(key);
   }

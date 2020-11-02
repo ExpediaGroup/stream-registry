@@ -74,10 +74,6 @@ public class DomainService {
     return Optional.ofNullable(domain);
   }
 
-  public Optional<Domain> upsert(Domain domain) throws ValidationException {
-    return !read(domain.getKey()).isPresent() ? create(domain) : update(domain);
-  }
-
   public Optional<Domain> read(DomainKey key) {
     return domainRepository.findById(key);
   }

@@ -45,7 +45,12 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Consumer upsert(ConsumerKeyInput key, SpecificationInput specification) {
-    return consumerService.upsert(asConsumer(key, specification)).get();
+    Consumer consumer = asConsumer(key, specification);
+    if (!consumerService.read(consumer.getKey()).isPresent()) {
+      return consumerService.create(consumer).get();
+    } else {
+      return consumerService.update(consumer).get();
+    }
   }
 
   @Override

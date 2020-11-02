@@ -74,10 +74,6 @@ public class InfrastructureService {
     return Optional.ofNullable(infrastructure);
   }
 
-  public Optional<Infrastructure> upsert(Infrastructure infrastructure) throws ValidationException {
-    return !read(infrastructure.getKey()).isPresent() ? create(infrastructure) : update(infrastructure);
-  }
-
   public Optional<Infrastructure> read(InfrastructureKey key) {
     return infrastructureRepository.findById(key);
   }

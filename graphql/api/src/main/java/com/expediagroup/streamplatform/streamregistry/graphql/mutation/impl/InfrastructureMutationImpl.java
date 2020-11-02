@@ -45,7 +45,12 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
 
   @Override
   public Infrastructure upsert(InfrastructureKeyInput key, SpecificationInput specification) {
-    return infrastructureService.upsert(asInfrastructure(key, specification)).get();
+    Infrastructure infrastructure = asInfrastructure(key, specification);
+    if (!infrastructureService.read(infrastructure.getKey()).isPresent()) {
+      return infrastructureService.create(infrastructure).get();
+    } else {
+      return infrastructureService.update(infrastructure).get();
+    }
   }
 
   @Override

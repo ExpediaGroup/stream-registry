@@ -45,7 +45,12 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public ConsumerBinding upsert(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return consumerBindingService.upsert(asConsumerBinding(key, specification)).get();
+    ConsumerBinding consumerBinding = asConsumerBinding(key, specification);
+    if (!consumerBindingService.read(consumerBinding.getKey()).isPresent()) {
+      return consumerBindingService.create(consumerBinding).get();
+    } else {
+      return consumerBindingService.update(consumerBinding).get();
+    }
   }
 
   @Override

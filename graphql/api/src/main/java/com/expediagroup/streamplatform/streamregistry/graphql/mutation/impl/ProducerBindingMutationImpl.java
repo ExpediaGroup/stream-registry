@@ -45,7 +45,12 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public ProducerBinding upsert(ProducerBindingKeyInput key, SpecificationInput specification) {
-    return producerBindingService.upsert(asProducerBinding(key, specification)).get();
+    ProducerBinding producerBinding = asProducerBinding(key, specification);
+    if (!producerBindingService.read(producerBinding.getKey()).isPresent()) {
+      return producerBindingService.create(producerBinding).get();
+    } else {
+      return producerBindingService.update(producerBinding).get();
+    }
   }
 
   @Override

@@ -74,10 +74,6 @@ public class ProducerService {
     return Optional.ofNullable(producer);
   }
 
-  public Optional<Producer> upsert(Producer producer) throws ValidationException {
-    return !read(producer.getKey()).isPresent() ? create(producer) : update(producer);
-  }
-
   public Optional<Producer> read(ProducerKey key) {
     return producerRepository.findById(key);
   }

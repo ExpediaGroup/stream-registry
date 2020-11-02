@@ -17,7 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -116,31 +115,6 @@ public class ProducerBindingServiceTest {
     producerBindingService.updateStatus(key, status);
 
     verify(producerBindingRepository).findById(key);
-    verify(producerBindingRepository).save(entity);
-  }
-
-  @Test
-  public void upsert() {
-    final ProducerBindingKey key = mock(ProducerBindingKey.class);
-    final Specification specification = mock(Specification.class);
-
-    final ProducerBinding entity = mock(ProducerBinding.class);
-    final ProducerBinding existingEntity = mock(ProducerBinding.class);
-
-    when(entity.getKey()).thenReturn(key);
-
-    when(producerBindingRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    doNothing().when(producerBindingValidator).validateForUpdate(entity, existingEntity);
-    when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
-
-    when(producerBindingRepository.save(entity)).thenReturn(entity);
-
-    producerBindingService.upsert(entity);
-
-    verify(entity, times(2)).getKey();
-    verify(producerBindingRepository, times(2)).findById(key);
-    verify(producerBindingValidator).validateForUpdate(entity, existingEntity);
-    verify(handlerService).handleUpdate(entity, existingEntity);
     verify(producerBindingRepository).save(entity);
   }
 }

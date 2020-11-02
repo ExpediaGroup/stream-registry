@@ -75,10 +75,6 @@ public class StreamService {
     return Optional.ofNullable(stream);
   }
 
-  public Optional<Stream> upsert(Stream stream) throws ValidationException {
-    return !read(stream.getKey()).isPresent() ? create(stream) : update(stream);
-  }
-
   public Optional<Stream> read(StreamKey key) {
     return streamRepository.findById(key);
   }

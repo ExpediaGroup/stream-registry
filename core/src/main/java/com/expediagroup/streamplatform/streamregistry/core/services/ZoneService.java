@@ -74,10 +74,6 @@ public class ZoneService {
     return Optional.ofNullable(zone);
   }
 
-  public Optional<Zone> upsert(Zone zone) throws ValidationException {
-    return !read(zone.getKey()).isPresent() ? create(zone) : update(zone);
-  }
-
   public Optional<Zone> read(ZoneKey key) {
     return zoneRepository.findById(key);
   }
