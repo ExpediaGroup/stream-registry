@@ -60,7 +60,8 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status) {
-    return streamBindingService.updateStatus(key.asStreamBindingKey(), status.asStatus()).get();
+    StreamBinding streamBinding = streamBindingService.read(key.asStreamBindingKey()).get();
+    return streamBindingService.updateStatus(streamBinding, status.asStatus()).get();
   }
 
   private StreamBinding asStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {

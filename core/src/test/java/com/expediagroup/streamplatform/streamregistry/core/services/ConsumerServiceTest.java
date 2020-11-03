@@ -105,16 +105,13 @@ public class ConsumerServiceTest {
 
   @Test
   public void updateStatus() {
-    final ConsumerKey key = mock(ConsumerKey.class);
     final Status status = mock(Status.class);
     final Consumer entity = mock(Consumer.class);
 
-    when(consumerRepository.findById(key)).thenReturn(Optional.of(entity));
     when(consumerRepository.save(entity)).thenReturn(entity);
 
-    consumerService.updateStatus(key, status);
+    consumerService.updateStatus(entity, status);
 
-    verify(consumerRepository).findById(key);
     verify(consumerRepository).save(entity);
   }
 }

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## UNRELEASED
 ### Changed
 - Refactored upsert calls in mutations and removed upsert methods from services
+- Refactored update_status calls 
 
 ## [0.14.5] - 2020-10-19
 ### Added

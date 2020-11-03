@@ -62,9 +62,8 @@ public class SchemaService {
     return save(schema);
   }
 
-  @PreAuthorize("hasPermission(#schemaKey, 'UPDATE_STATUS')")
-  public Optional<Schema> updateStatus(SchemaKey schemaKey, Status status) {
-    Schema schema = read(schemaKey).get();
+  @PreAuthorize("hasPermission(#schema, 'UPDATE_STATUS')")
+  public Optional<Schema> updateStatus(Schema schema, Status status) {
     schema.setStatus(status);
     return save(schema);
   }

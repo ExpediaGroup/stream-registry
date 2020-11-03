@@ -62,9 +62,8 @@ public class ProducerService {
     return save(producer);
   }
 
-  @PreAuthorize("hasPermission(#producerKey, 'UPDATE_STATUS')")
-  public Optional<Producer> updateStatus(ProducerKey producerKey, Status status) {
-    Producer producer = read(producerKey).get();
+  @PreAuthorize("hasPermission(#producer, 'UPDATE_STATUS')")
+  public Optional<Producer> updateStatus(Producer producer, Status status) {
     producer.setStatus(status);
     return save(producer);
   }

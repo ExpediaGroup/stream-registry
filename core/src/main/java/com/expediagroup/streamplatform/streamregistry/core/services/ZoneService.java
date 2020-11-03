@@ -62,9 +62,8 @@ public class ZoneService {
     return save(zone);
   }
 
-  @PreAuthorize("hasPermission(#zoneKey, 'UPDATE_STATUS')")
-  public Optional<Zone> updateStatus(ZoneKey zoneKey, Status status) {
-    Zone zone = read(zoneKey).get();
+  @PreAuthorize("hasPermission(#zone, 'UPDATE_STATUS')")
+  public Optional<Zone> updateStatus(Zone zone, Status status) {
     zone.setStatus(status);
     return save(zone);
   }

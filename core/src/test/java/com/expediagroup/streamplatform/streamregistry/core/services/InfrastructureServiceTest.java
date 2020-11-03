@@ -106,15 +106,12 @@ public class InfrastructureServiceTest {
   @Test
   public void updateStatus() {
     final Infrastructure entity = mock(Infrastructure.class);
-    final InfrastructureKey key = mock(InfrastructureKey.class);
     final Status status = mock(Status.class);
 
-    when(infrastructureRepository.findById(key)).thenReturn(Optional.of(entity));
     when(infrastructureRepository.save(entity)).thenReturn(entity);
 
-    infrastructureService.updateStatus(key, status);
+    infrastructureService.updateStatus(entity, status);
 
-    verify(infrastructureRepository).findById(key);
     verify(infrastructureRepository).save(entity);
   }
 }

@@ -62,9 +62,8 @@ public class DomainService {
     return save(domain);
   }
 
-  @PreAuthorize("hasPermission(#domainKey, 'UPDATE_STATUS')")
-  public Optional<Domain> updateStatus(DomainKey domainKey, Status status) {
-    Domain domain = read(domainKey).get();
+  @PreAuthorize("hasPermission(#domain, 'UPDATE_STATUS')")
+  public Optional<Domain> updateStatus(Domain domain, Status status) {
     domain.setStatus(status);
     return save(domain);
   }

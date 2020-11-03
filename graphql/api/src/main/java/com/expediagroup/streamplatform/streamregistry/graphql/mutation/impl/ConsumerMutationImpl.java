@@ -60,7 +60,8 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Consumer updateStatus(ConsumerKeyInput key, StatusInput status) {
-    return consumerService.updateStatus(key.asConsumerKey(), status.asStatus()).get();
+    Consumer consumer = consumerService.read(key.asConsumerKey()).get();
+    return consumerService.updateStatus(consumer, status.asStatus()).get();
   }
 
   private Consumer asConsumer(ConsumerKeyInput key, SpecificationInput specification) {

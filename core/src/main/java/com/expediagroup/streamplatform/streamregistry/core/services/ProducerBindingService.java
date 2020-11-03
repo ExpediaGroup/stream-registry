@@ -63,9 +63,8 @@ public class ProducerBindingService {
     return save(producerBinding);
   }
 
-  @PreAuthorize("hasPermission(#producerBindingKey, 'UPDATE_STATUS')")
-  public Optional<ProducerBinding> updateStatus(ProducerBindingKey producerBindingKey, Status status) {
-    ProducerBinding producerBinding = read(producerBindingKey).get();
+  @PreAuthorize("hasPermission(#producerBinding, 'UPDATE_STATUS')")
+  public Optional<ProducerBinding> updateStatus(ProducerBinding producerBinding, Status status) {
     producerBinding.setStatus(status);
     return save(producerBinding);
   }

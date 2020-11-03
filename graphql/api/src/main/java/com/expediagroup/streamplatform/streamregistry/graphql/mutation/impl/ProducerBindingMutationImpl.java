@@ -60,7 +60,8 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public ProducerBinding updateStatus(ProducerBindingKeyInput key, StatusInput status) {
-    return producerBindingService.updateStatus(key.asProducerBindingKey(), status.asStatus()).get();
+    ProducerBinding producerBinding = producerBindingService.read(key.asProducerBindingKey()).get();
+    return producerBindingService.updateStatus(producerBinding, status.asStatus()).get();
   }
 
   private ProducerBinding asProducerBinding(ProducerBindingKeyInput key, SpecificationInput specification) {

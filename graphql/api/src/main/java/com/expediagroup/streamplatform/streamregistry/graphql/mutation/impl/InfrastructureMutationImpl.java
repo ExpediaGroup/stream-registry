@@ -60,7 +60,8 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
 
   @Override
   public Infrastructure updateStatus(InfrastructureKeyInput key, StatusInput status) {
-    return infrastructureService.updateStatus(key.asInfrastructureKey(), status.asStatus()).get();
+    Infrastructure infrastructure = infrastructureService.read(key.asInfrastructureKey()).get();
+    return infrastructureService.updateStatus(infrastructure, status.asStatus()).get();
   }
 
   private Infrastructure asInfrastructure(InfrastructureKeyInput key, SpecificationInput specification) {

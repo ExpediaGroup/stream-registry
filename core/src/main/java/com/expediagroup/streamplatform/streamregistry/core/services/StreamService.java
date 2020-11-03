@@ -63,9 +63,8 @@ public class StreamService {
     return save(stream);
   }
 
-  @PreAuthorize("hasPermission(#streamKey, 'UPDATE_STATUS')")
-  public Optional<Stream> updateStatus(StreamKey streamKey, Status status) {
-    Stream stream = read(streamKey).get();
+  @PreAuthorize("hasPermission(#stream, 'UPDATE_STATUS')")
+  public Optional<Stream> updateStatus(Stream stream, Status status) {
     stream.setStatus(status);
     return save(stream);
   }

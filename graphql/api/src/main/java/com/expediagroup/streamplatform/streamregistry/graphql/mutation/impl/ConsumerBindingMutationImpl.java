@@ -60,7 +60,8 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status) {
-    return consumerBindingService.updateStatus(key.asConsumerBindingKey(), status.asStatus()).get();
+    ConsumerBinding consumerBinding = consumerBindingService.read(key.asConsumerBindingKey()).get();
+    return consumerBindingService.updateStatus(consumerBinding, status.asStatus()).get();
   }
 
   private ConsumerBinding asConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {

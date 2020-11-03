@@ -105,16 +105,13 @@ public class ConsumerBindingServiceTest {
 
   @Test
   public void updateStatus() {
-    final ConsumerBindingKey key = mock(ConsumerBindingKey.class);
     final Status status = mock(Status.class);
     final ConsumerBinding entity = mock(ConsumerBinding.class);
 
-    when(consumerBindingRepository.findById(key)).thenReturn(Optional.of(entity));
     when(consumerBindingRepository.save(entity)).thenReturn(entity);
 
-    consumerBindingService.updateStatus(key, status);
+    consumerBindingService.updateStatus(entity, status);
 
-    verify(consumerBindingRepository).findById(key);
     verify(consumerBindingRepository).save(entity);
   }
 }

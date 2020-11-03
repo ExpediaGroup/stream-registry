@@ -62,9 +62,8 @@ public class InfrastructureService {
     return save(infrastructure);
   }
 
-  @PreAuthorize("hasPermission(#infrastructureKey, 'UPDATE_STATUS')")
-  public Optional<Infrastructure> updateStatus(InfrastructureKey infrastructureKey, Status status) {
-    Infrastructure infrastructure = read(infrastructureKey).get();
+  @PreAuthorize("hasPermission(#infrastructure, 'UPDATE_STATUS')")
+  public Optional<Infrastructure> updateStatus(Infrastructure infrastructure, Status status) {
     infrastructure.setStatus(status);
     return save(infrastructure);
   }

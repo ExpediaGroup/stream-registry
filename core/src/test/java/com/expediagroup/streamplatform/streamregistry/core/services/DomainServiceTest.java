@@ -106,15 +106,12 @@ public class DomainServiceTest {
   @Test
   public void updateStatus() {
     final Domain entity = mock(Domain.class);
-    final DomainKey key = mock(DomainKey.class);
     final Status status = mock(Status.class);
 
-    when(domainRepository.findById(key)).thenReturn(Optional.of(entity));
     when(domainRepository.save(entity)).thenReturn(entity);
 
-    domainService.updateStatus(key, status);
+    domainService.updateStatus(entity, status);
 
-    verify(domainRepository).findById(key);
     verify(domainRepository).save(entity);
   }
 }

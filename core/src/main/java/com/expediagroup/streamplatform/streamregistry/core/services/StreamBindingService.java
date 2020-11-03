@@ -62,9 +62,8 @@ public class StreamBindingService {
     return save(streamBinding);
   }
 
-  @PreAuthorize("hasPermission(#streamBindingKey, 'UPDATE_STATUS')")
-  public Optional<StreamBinding> updateStatus(StreamBindingKey streamBindingKey, Status status) {
-    StreamBinding streamBinding = read(streamBindingKey).get();
+  @PreAuthorize("hasPermission(#streamBinding, 'UPDATE_STATUS')")
+  public Optional<StreamBinding> updateStatus(StreamBinding streamBinding, Status status) {
     streamBinding.setStatus(status);
     return save(streamBinding);
   }

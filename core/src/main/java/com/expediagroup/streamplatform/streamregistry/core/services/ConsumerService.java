@@ -62,9 +62,8 @@ public class ConsumerService {
     return save(consumer);
   }
 
-  @PreAuthorize("hasPermission(#consumerKey, 'UPDATE_STATUS')")
-  public Optional<Consumer> updateStatus(ConsumerKey consumerKey, Status status) {
-    Consumer consumer = read(consumerKey).get();
+  @PreAuthorize("hasPermission(#consumer, 'UPDATE_STATUS')")
+  public Optional<Consumer> updateStatus(Consumer consumer, Status status) {
     consumer.setStatus(status);
     return save(consumer);
   }

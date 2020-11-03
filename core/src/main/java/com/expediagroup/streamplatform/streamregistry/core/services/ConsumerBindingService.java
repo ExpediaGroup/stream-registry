@@ -64,9 +64,8 @@ public class ConsumerBindingService {
     return save(consumerBinding);
   }
 
-  @PreAuthorize("hasPermission(#consumerBindingKey, 'UPDATE_STATUS')")
-  public Optional<ConsumerBinding> updateStatus(ConsumerBindingKey consumerBindingKey, Status status) {
-    ConsumerBinding consumerBinding = read(consumerBindingKey).get();
+  @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE_STATUS')")
+  public Optional<ConsumerBinding> updateStatus(ConsumerBinding consumerBinding, Status status) {
     consumerBinding.setStatus(status);
     return save(consumerBinding);
   }

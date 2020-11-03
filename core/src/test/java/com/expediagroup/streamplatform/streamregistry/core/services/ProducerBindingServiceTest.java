@@ -105,16 +105,13 @@ public class ProducerBindingServiceTest {
 
   @Test
   public void updateStatus() {
-    final ProducerBindingKey key = mock(ProducerBindingKey.class);
     final Status status = mock(Status.class);
     final ProducerBinding entity = mock(ProducerBinding.class);
 
-    when(producerBindingRepository.findById(key)).thenReturn(Optional.of(entity));
     when(producerBindingRepository.save(entity)).thenReturn(entity);
 
-    producerBindingService.updateStatus(key, status);
+    producerBindingService.updateStatus(entity, status);
 
-    verify(producerBindingRepository).findById(key);
     verify(producerBindingRepository).save(entity);
   }
 }
