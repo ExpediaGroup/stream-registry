@@ -36,7 +36,7 @@ public class ConsumerQueryImpl implements ConsumerQuery {
 
   @Override
   public Optional<Consumer> byKey(ConsumerKeyInput key) {
-    return consumerService.read(key.asConsumerKey());
+    return consumerService.get(key.asConsumerKey());
   }
 
   @Override

@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -74,10 +76,16 @@ public class ProducerBindingService {
     return Optional.ofNullable(producerBinding);
   }
 
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<ProducerBinding> get(ProducerBindingKey key) {
+    return read(key);
+  }
+
   public Optional<ProducerBinding> read(ProducerBindingKey key) {
     return producerBindingRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
     return producerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -91,6 +99,7 @@ public class ProducerBindingService {
     return read(key).isPresent();
   }
 
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<ProducerBinding> find(ProducerKey key) {
     var example = new ProducerBinding(new ProducerBindingKey(
         key.getStreamDomain(),

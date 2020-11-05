@@ -36,7 +36,7 @@ public class ZoneQueryImpl implements ZoneQuery {
 
   @Override
   public Optional<Zone> byKey(ZoneKeyInput key) {
-    return zoneService.read(key.asZoneKey());
+    return zoneService.get(key.asZoneKey());
   }
 
   @Override

@@ -36,7 +36,7 @@ public class InfrastructureQueryImpl implements InfrastructureQuery {
 
   @Override
   public Optional<Infrastructure> byKey(InfrastructureKeyInput key) {
-    return infrastructureService.read(key.asInfrastructureKey());
+    return infrastructureService.get(key.asInfrastructureKey());
   }
 
   @Override

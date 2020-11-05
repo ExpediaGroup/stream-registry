@@ -37,7 +37,7 @@ public class StreamQueryImpl implements StreamQuery {
 
   @Override
   public Optional<Stream> byKey(StreamKeyInput key) {
-    return streamService.read(key.asStreamKey());
+    return streamService.get(key.asStreamKey());
   }
 
   @Override

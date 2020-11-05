@@ -36,7 +36,7 @@ public class DomainQueryImpl implements DomainQuery {
 
   @Override
   public Optional<Domain> byKey(DomainKeyInput key) {
-    return domainService.read(key.asDomainKey());
+    return domainService.get(key.asDomainKey());
   }
 
   @Override

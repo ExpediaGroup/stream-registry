@@ -36,7 +36,7 @@ public class SchemaQueryImpl implements SchemaQuery {
 
   @Override
   public Optional<Schema> byKey(SchemaKeyInput key) {
-    return schemaService.read(key.asSchemaKey());
+    return schemaService.get(key.asSchemaKey());
   }
 
   @Override

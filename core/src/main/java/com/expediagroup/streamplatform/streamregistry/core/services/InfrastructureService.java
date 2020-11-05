@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -73,10 +75,16 @@ public class InfrastructureService {
     return Optional.ofNullable(infrastructure);
   }
 
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Infrastructure> get(InfrastructureKey key) {
+    return read(key);
+  }
+
   public Optional<Infrastructure> read(InfrastructureKey key) {
     return infrastructureRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Infrastructure> findAll(Predicate<Infrastructure> filter) {
     return infrastructureRepository.findAll().stream().filter(filter).collect(toList());
   }

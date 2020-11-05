@@ -35,11 +35,11 @@ public class ConsumerResolver implements Resolvers.ConsumerResolver {
   private final ConsumerBindingService consumerBindingService;
 
   public Stream stream(Consumer consumer) {
-    return streamService.read(consumer.getKey().getStreamKey()).orElse(null);
+    return streamService.get(consumer.getKey().getStreamKey()).orElse(null);
   }
 
   public Zone zone(Consumer consumer) {
-    return zoneService.read(consumer.getKey().getZoneKey()).orElse(null);
+    return zoneService.get(consumer.getKey().getZoneKey()).orElse(null);
   }
 
   public ConsumerBinding binding(Consumer consumer) {

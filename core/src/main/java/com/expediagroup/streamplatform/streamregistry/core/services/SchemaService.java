@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -73,10 +75,16 @@ public class SchemaService {
     return Optional.ofNullable(schema);
   }
 
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Schema> get(SchemaKey key) {
+    return read(key);
+  }
+
   public Optional<Schema> read(SchemaKey key) {
     return schemaRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Schema> findAll(Predicate<Schema> filter) {
     return schemaRepository.findAll().stream().filter(filter).collect(toList());
   }
