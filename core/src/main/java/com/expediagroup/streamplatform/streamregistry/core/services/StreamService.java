@@ -45,7 +45,7 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
-    if (read(stream.getKey()).isPresent()) {
+    if (unsecuredGet(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamValidator.validateForCreate(stream);
@@ -55,7 +55,7 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
-    var existing = read(stream.getKey());
+    var existing = unsecuredGet(stream.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
@@ -78,10 +78,10 @@ public class StreamService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<Stream> get(StreamKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<Stream> read(StreamKey key) {
+  public Optional<Stream> unsecuredGet(StreamKey key) {
     return streamRepository.findById(key);
   }
 
@@ -96,6 +96,6 @@ public class StreamService {
   }
 
   public boolean exists(StreamKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

@@ -45,7 +45,7 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    if (read(streamBinding.getKey()).isPresent()) {
+    if (unsecuredGet(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
@@ -55,7 +55,7 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    var existing = read(streamBinding.getKey());
+    var existing = unsecuredGet(streamBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + streamBinding.getKey() + " because it doesn't exist");
     }
@@ -77,10 +77,10 @@ public class StreamBindingService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<StreamBinding> get(StreamBindingKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<StreamBinding> read(StreamBindingKey key) {
+  public Optional<StreamBinding> unsecuredGet(StreamBindingKey key) {
     return streamBindingRepository.findById(key);
   }
 
@@ -95,6 +95,6 @@ public class StreamBindingService {
   }
 
   public boolean exists(StreamBindingKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

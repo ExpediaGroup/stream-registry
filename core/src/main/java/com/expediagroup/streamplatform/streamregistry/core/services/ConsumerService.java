@@ -45,7 +45,7 @@ public class ConsumerService {
 
   @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
-    if (read(consumer.getKey()).isPresent()) {
+    if (unsecuredGet(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerValidator.validateForCreate(consumer);
@@ -55,7 +55,7 @@ public class ConsumerService {
 
   @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
-    var existing = read(consumer.getKey());
+    var existing = unsecuredGet(consumer.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + consumer.getKey().getName() + " because it doesn't exist");
     }
@@ -77,10 +77,10 @@ public class ConsumerService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<Consumer> get(ConsumerKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<Consumer> read(ConsumerKey key) {
+  public Optional<Consumer> unsecuredGet(ConsumerKey key) {
     return consumerRepository.findById(key);
   }
 
@@ -95,6 +95,6 @@ public class ConsumerService {
   }
 
   public boolean exists(ConsumerKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

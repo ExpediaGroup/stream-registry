@@ -47,7 +47,7 @@ public class ConsumerBindingService {
 
   @PreAuthorize("hasPermission(#consumerBinding, 'CREATE')")
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
-    if (read(consumerBinding.getKey()).isPresent()) {
+    if (unsecuredGet(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
@@ -57,7 +57,7 @@ public class ConsumerBindingService {
 
   @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
-    var existing = read(consumerBinding.getKey());
+    var existing = unsecuredGet(consumerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + consumerBinding.getKey() + " because it doesn't exist");
     }
@@ -79,10 +79,10 @@ public class ConsumerBindingService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<ConsumerBinding> get(ConsumerBindingKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
+  public Optional<ConsumerBinding> unsecuredGet(ConsumerBindingKey key) {
     return consumerBindingRepository.findById(key);
   }
 
@@ -97,7 +97,7 @@ public class ConsumerBindingService {
   }
 
   public boolean exists(ConsumerBindingKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")

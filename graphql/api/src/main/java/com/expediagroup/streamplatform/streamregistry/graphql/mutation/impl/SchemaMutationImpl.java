@@ -46,7 +46,7 @@ public class SchemaMutationImpl implements SchemaMutation {
   @Override
   public Schema upsert(SchemaKeyInput key, SpecificationInput specification) {
     Schema schema = asSchema(key, specification);
-    if (!schemaService.read(schema.getKey()).isPresent()) {
+    if (!schemaService.unsecuredGet(schema.getKey()).isPresent()) {
       return schemaService.create(schema).get();
     } else {
       return schemaService.update(schema).get();
@@ -60,7 +60,7 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   @Override
   public Schema updateStatus(SchemaKeyInput key, StatusInput status) {
-    Schema schema = schemaService.read(key.asSchemaKey()).get();
+    Schema schema = schemaService.unsecuredGet(key.asSchemaKey()).get();
     return schemaService.updateStatus(schema, status.asStatus()).get();
   }
 
@@ -68,7 +68,7 @@ public class SchemaMutationImpl implements SchemaMutation {
     Schema schema = new Schema();
     schema.setKey(key.asSchemaKey());
     schema.setSpecification(specification.asSpecification());
-    maintainState(schema, schemaService.read(schema.getKey()));
+    maintainState(schema, schemaService.unsecuredGet(schema.getKey()));
     return schema;
   }
 }

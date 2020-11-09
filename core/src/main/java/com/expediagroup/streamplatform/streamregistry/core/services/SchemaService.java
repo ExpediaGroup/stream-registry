@@ -45,7 +45,7 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
-    if (read(schema.getKey()).isPresent()) {
+    if (unsecuredGet(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     schemaValidator.validateForCreate(schema);
@@ -55,7 +55,7 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'UPDATE')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
-    var existing = read(schema.getKey());
+    var existing = unsecuredGet(schema.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + schema.getKey().getName() + " because it doesn't exist");
     }
@@ -77,10 +77,10 @@ public class SchemaService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<Schema> get(SchemaKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<Schema> read(SchemaKey key) {
+  public Optional<Schema> unsecuredGet(SchemaKey key) {
     return schemaRepository.findById(key);
   }
 
@@ -95,6 +95,6 @@ public class SchemaService {
   }
 
   public boolean exists(SchemaKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

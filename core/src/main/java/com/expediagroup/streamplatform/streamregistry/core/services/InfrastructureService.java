@@ -45,7 +45,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
-    if (read(infrastructure.getKey()).isPresent()) {
+    if (unsecuredGet(infrastructure.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
@@ -55,7 +55,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
-    var existing = read(infrastructure.getKey());
+    var existing = unsecuredGet(infrastructure.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + infrastructure.getKey().getName() + " because it doesn't exist");
     }
@@ -77,10 +77,10 @@ public class InfrastructureService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<Infrastructure> get(InfrastructureKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<Infrastructure> read(InfrastructureKey key) {
+  public Optional<Infrastructure> unsecuredGet(InfrastructureKey key) {
     return infrastructureRepository.findById(key);
   }
 
@@ -95,6 +95,6 @@ public class InfrastructureService {
   }
 
   public boolean exists(InfrastructureKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

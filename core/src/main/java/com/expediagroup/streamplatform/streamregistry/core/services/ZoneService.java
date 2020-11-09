@@ -45,7 +45,7 @@ public class ZoneService {
 
   @PreAuthorize("hasPermission(#zone, 'CREATE')")
   public Optional<Zone> create(Zone zone) throws ValidationException {
-    if (read(zone.getKey()).isPresent()) {
+    if (unsecuredGet(zone.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     zoneValidator.validateForCreate(zone);
@@ -55,7 +55,7 @@ public class ZoneService {
 
   @PreAuthorize("hasPermission(#zone, 'UPDATE')")
   public Optional<Zone> update(Zone zone) throws ValidationException {
-    var existing = read(zone.getKey());
+    var existing = unsecuredGet(zone.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + zone.getKey().getName() + " because it doesn't exist");
     }
@@ -77,10 +77,10 @@ public class ZoneService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<Zone> get(ZoneKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<Zone> read(ZoneKey key) {
+  public Optional<Zone> unsecuredGet(ZoneKey key) {
     return zoneRepository.findById(key);
   }
 
@@ -95,6 +95,6 @@ public class ZoneService {
   }
 
   public boolean exists(ZoneKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

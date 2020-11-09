@@ -46,7 +46,7 @@ public class ProducerBindingService {
 
   @PreAuthorize("hasPermission(#producerBinding, 'CREATE')")
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
-    if (read(producerBinding.getKey()).isPresent()) {
+    if (unsecuredGet(producerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     producerBindingValidator.validateForCreate(producerBinding);
@@ -56,7 +56,7 @@ public class ProducerBindingService {
 
   @PreAuthorize("hasPermission(#producerBinding, 'UPDATE')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
-    var existing = read(producerBinding.getKey());
+    var existing = unsecuredGet(producerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producerBinding.getKey() + " because it doesn't exist");
     }
@@ -78,10 +78,10 @@ public class ProducerBindingService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<ProducerBinding> get(ProducerBindingKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<ProducerBinding> read(ProducerBindingKey key) {
+  public Optional<ProducerBinding> unsecuredGet(ProducerBindingKey key) {
     return producerBindingRepository.findById(key);
   }
 
@@ -96,7 +96,7 @@ public class ProducerBindingService {
   }
 
   public boolean exists(ProducerBindingKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")

@@ -45,7 +45,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'CREATE')")
   public Optional<Domain> create(Domain domain) throws ValidationException {
-    if (read(domain.getKey()).isPresent()) {
+    if (unsecuredGet(domain.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     domainValidator.validateForCreate(domain);
@@ -55,7 +55,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'UPDATE')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
-    var existing = read(domain.getKey());
+    var existing = unsecuredGet(domain.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
@@ -77,10 +77,10 @@ public class DomainService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<Domain> get(DomainKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<Domain> read(DomainKey key) {
+  public Optional<Domain> unsecuredGet(DomainKey key) {
     return domainRepository.findById(key);
   }
 
@@ -95,6 +95,6 @@ public class DomainService {
   }
 
   public boolean exists(DomainKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

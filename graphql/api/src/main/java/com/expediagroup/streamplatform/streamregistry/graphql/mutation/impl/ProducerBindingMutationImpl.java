@@ -46,7 +46,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
   @Override
   public ProducerBinding upsert(ProducerBindingKeyInput key, SpecificationInput specification) {
     ProducerBinding producerBinding = asProducerBinding(key, specification);
-    if (!producerBindingService.read(producerBinding.getKey()).isPresent()) {
+    if (!producerBindingService.unsecuredGet(producerBinding.getKey()).isPresent()) {
       return producerBindingService.create(producerBinding).get();
     } else {
       return producerBindingService.update(producerBinding).get();
@@ -60,7 +60,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public ProducerBinding updateStatus(ProducerBindingKeyInput key, StatusInput status) {
-    ProducerBinding producerBinding = producerBindingService.read(key.asProducerBindingKey()).get();
+    ProducerBinding producerBinding = producerBindingService.unsecuredGet(key.asProducerBindingKey()).get();
     return producerBindingService.updateStatus(producerBinding, status.asStatus()).get();
   }
 
@@ -68,7 +68,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
     ProducerBinding producerBinding = new ProducerBinding();
     producerBinding.setKey(key.asProducerBindingKey());
     producerBinding.setSpecification(specification.asSpecification());
-    maintainState(producerBinding, producerBindingService.read(producerBinding.getKey()));
+    maintainState(producerBinding, producerBindingService.unsecuredGet(producerBinding.getKey()));
     return producerBinding;
   }
 }

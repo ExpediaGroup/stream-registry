@@ -45,7 +45,7 @@ public class ProducerService {
 
   @PreAuthorize("hasPermission(#producer, 'CREATE')")
   public Optional<Producer> create(Producer producer) throws ValidationException {
-    if (read(producer.getKey()).isPresent()) {
+    if (unsecuredGet(producer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     producerValidator.validateForCreate(producer);
@@ -55,7 +55,7 @@ public class ProducerService {
 
   @PreAuthorize("hasPermission(#producer, 'UPDATE')")
   public Optional<Producer> update(Producer producer) throws ValidationException {
-    var existing = read(producer.getKey());
+    var existing = unsecuredGet(producer.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producer.getKey().getName() + " because it doesn't exist");
     }
@@ -77,10 +77,10 @@ public class ProducerService {
 
   @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<Producer> get(ProducerKey key) {
-    return read(key);
+    return unsecuredGet(key);
   }
 
-  public Optional<Producer> read(ProducerKey key) {
+  public Optional<Producer> unsecuredGet(ProducerKey key) {
     return producerRepository.findById(key);
   }
 
@@ -95,6 +95,6 @@ public class ProducerService {
   }
 
   public boolean exists(ProducerKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }
