@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import graphql.kickstart.tools.GraphQLMutationResolver;
@@ -26,7 +25,6 @@ import graphql.kickstart.tools.GraphQLMutationResolver;
 @Component
 @RequiredArgsConstructor
 @Getter
-@PreAuthorize("@security.authorize()")
 public class Mutation implements GraphQLMutationResolver {
 
   private final DomainMutation domain;
