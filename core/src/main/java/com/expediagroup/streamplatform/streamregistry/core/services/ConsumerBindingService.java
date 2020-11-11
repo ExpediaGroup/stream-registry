@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +47,7 @@ public class ConsumerBindingService {
 
   @PreAuthorize("hasPermission(#consumerBinding, 'CREATE')")
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
-    if (read(consumerBinding.getKey()).isPresent()) {
+    if (unsecuredGet(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
@@ -55,7 +57,7 @@ public class ConsumerBindingService {
 
   @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
-    var existing = read(consumerBinding.getKey());
+    var existing = unsecuredGet(consumerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + consumerBinding.getKey() + " because it doesn't exist");
     }
@@ -64,9 +66,8 @@ public class ConsumerBindingService {
     return save(consumerBinding);
   }
 
-  @PreAuthorize("hasPermission(#consumerBindingKey, 'UPDATE_STATUS')")
-  public Optional<ConsumerBinding> updateStatus(ConsumerBindingKey consumerBindingKey, Status status) {
-    ConsumerBinding consumerBinding = read(consumerBindingKey).get();
+  @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE_STATUS')")
+  public Optional<ConsumerBinding> updateStatus(ConsumerBinding consumerBinding, Status status) {
     consumerBinding.setStatus(status);
     return save(consumerBinding);
   }
@@ -76,14 +77,16 @@ public class ConsumerBindingService {
     return Optional.ofNullable(consumerBinding);
   }
 
-  public Optional<ConsumerBinding> upsert(ConsumerBinding consumerBinding) throws ValidationException {
-    return !read(consumerBinding.getKey()).isPresent() ? create(consumerBinding) : update(consumerBinding);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<ConsumerBinding> get(ConsumerBindingKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<ConsumerBinding> read(ConsumerBindingKey key) {
+  public Optional<ConsumerBinding> unsecuredGet(ConsumerBindingKey key) {
     return consumerBindingRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
     return consumerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -94,9 +97,10 @@ public class ConsumerBindingService {
   }
 
   public boolean exists(ConsumerBindingKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<ConsumerBinding> find(ConsumerKey key) {
     var example = new ConsumerBinding(new ConsumerBindingKey(
         key.getStreamDomain(),

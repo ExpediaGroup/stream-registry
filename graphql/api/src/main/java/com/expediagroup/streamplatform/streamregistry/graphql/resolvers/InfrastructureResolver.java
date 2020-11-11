@@ -29,6 +29,6 @@ public class InfrastructureResolver implements Resolvers.InfrastructureResolver 
   private final ZoneService zoneService;
 
   public Zone zone(Infrastructure infrastructure) {
-    return zoneService.read(infrastructure.getKey().getZoneKey()).orElse(null);
+    return zoneService.get(infrastructure.getKey().getZoneKey()).orElse(null);
   }
 }

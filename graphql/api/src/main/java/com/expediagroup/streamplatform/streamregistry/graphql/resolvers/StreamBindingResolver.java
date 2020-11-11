@@ -32,10 +32,10 @@ public class StreamBindingResolver implements Resolvers.StreamBindingResolver {
   private final InfrastructureService infrastructureService;
 
   public Stream stream(StreamBinding streamBinding) {
-    return streamService.read(streamBinding.getKey().getStreamKey()).orElse(null);
+    return streamService.get(streamBinding.getKey().getStreamKey()).orElse(null);
   }
 
   public Infrastructure infrastructure(StreamBinding streamBinding) {
-    return infrastructureService.read(streamBinding.getKey().getInfrastructureKey()).orElse(null);
+    return infrastructureService.get(streamBinding.getKey().getInfrastructureKey()).orElse(null);
   }
 }

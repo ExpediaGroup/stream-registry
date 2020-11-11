@@ -32,10 +32,10 @@ public class ConsumerBindingResolver implements Resolvers.ConsumerBindingResolve
   private final StreamBindingService streamBindingService;
 
   public Consumer consumer(ConsumerBinding consumerBinding) {
-    return consumerService.read(consumerBinding.getKey().getConsumerKey()).orElse(null);
+    return consumerService.get(consumerBinding.getKey().getConsumerKey()).orElse(null);
   }
 
   public StreamBinding binding(ConsumerBinding consumerBinding) {
-    return streamBindingService.read(consumerBinding.getKey().getStreamBindingKey()).orElse(null);
+    return streamBindingService.get(consumerBinding.getKey().getStreamBindingKey()).orElse(null);
   }
 }

@@ -32,10 +32,10 @@ public class ProducerBindingResolver implements Resolvers.ProducerBindingResolve
   private final StreamBindingService streamBindingService;
 
   public Producer producer(ProducerBinding producerBinding) {
-    return producerService.read(producerBinding.getKey().getProducerKey()).orElse(null);
+    return producerService.get(producerBinding.getKey().getProducerKey()).orElse(null);
   }
 
   public StreamBinding binding(ProducerBinding producerBinding) {
-    return streamBindingService.read(producerBinding.getKey().getStreamBindingKey()).orElse(null);
+    return streamBindingService.get(producerBinding.getKey().getStreamBindingKey()).orElse(null);
   }
 }

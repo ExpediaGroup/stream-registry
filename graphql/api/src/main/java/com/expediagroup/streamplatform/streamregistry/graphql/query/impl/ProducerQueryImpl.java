@@ -36,7 +36,7 @@ public class ProducerQueryImpl implements ProducerQuery {
 
   @Override
   public Optional<Producer> byKey(ProducerKeyInput key) {
-    return producerService.read(key.asProducerKey());
+    return producerService.get(key.asProducerKey());
   }
 
   @Override

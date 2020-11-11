@@ -35,11 +35,11 @@ public class ProducerResolver implements Resolvers.ProducerResolver {
   private final ProducerBindingService producerBindingService;
 
   public Stream stream(Producer producer) {
-    return streamService.read(producer.getKey().getStreamKey()).get();
+    return streamService.get(producer.getKey().getStreamKey()).get();
   }
 
   public Zone zone(Producer producer) {
-    return zoneService.read(producer.getKey().getZoneKey()).orElse(null);
+    return zoneService.get(producer.getKey().getZoneKey()).orElse(null);
   }
 
   public ProducerBinding binding(Producer producer) {

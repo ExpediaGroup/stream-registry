@@ -45,7 +45,12 @@ public class ZoneMutationImpl implements ZoneMutation {
 
   @Override
   public Zone upsert(ZoneKeyInput key, SpecificationInput specification) {
-    return zoneService.upsert(asZone(key, specification)).get();
+    Zone zone = asZone(key, specification);
+    if (!zoneService.unsecuredGet(zone.getKey()).isPresent()) {
+      return zoneService.create(zone).get();
+    } else {
+      return zoneService.update(zone).get();
+    }
   }
 
   @Override
@@ -55,14 +60,15 @@ public class ZoneMutationImpl implements ZoneMutation {
 
   @Override
   public Zone updateStatus(ZoneKeyInput key, StatusInput status) {
-    return zoneService.updateStatus(key.asZoneKey(), status.asStatus()).get();
+    Zone zone = zoneService.unsecuredGet(key.asZoneKey()).get();
+    return zoneService.updateStatus(zone, status.asStatus()).get();
   }
 
   private Zone asZone(ZoneKeyInput key, SpecificationInput specification) {
     Zone zone = new Zone();
     zone.setKey(key.asZoneKey());
     zone.setSpecification(specification.asSpecification());
-    maintainState(zone, zoneService.read(zone.getKey()));
+    maintainState(zone, zoneService.unsecuredGet(zone.getKey()));
     return zone;
   }
 }

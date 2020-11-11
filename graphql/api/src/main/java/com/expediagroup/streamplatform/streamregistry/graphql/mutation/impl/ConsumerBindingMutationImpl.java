@@ -45,7 +45,12 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public ConsumerBinding upsert(ConsumerBindingKeyInput key, SpecificationInput specification) {
-    return consumerBindingService.upsert(asConsumerBinding(key, specification)).get();
+    ConsumerBinding consumerBinding = asConsumerBinding(key, specification);
+    if (!consumerBindingService.unsecuredGet(consumerBinding.getKey()).isPresent()) {
+      return consumerBindingService.create(consumerBinding).get();
+    } else {
+      return consumerBindingService.update(consumerBinding).get();
+    }
   }
 
   @Override
@@ -55,14 +60,15 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status) {
-    return consumerBindingService.updateStatus(key.asConsumerBindingKey(), status.asStatus()).get();
+    ConsumerBinding consumerBinding = consumerBindingService.unsecuredGet(key.asConsumerBindingKey()).get();
+    return consumerBindingService.updateStatus(consumerBinding, status.asStatus()).get();
   }
 
   private ConsumerBinding asConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {
     ConsumerBinding consumerBinding = new ConsumerBinding();
     consumerBinding.setKey(key.asConsumerBindingKey());
     consumerBinding.setSpecification(specification.asSpecification());
-    maintainState(consumerBinding, consumerBindingService.read(key.asConsumerBindingKey()));
+    maintainState(consumerBinding, consumerBindingService.unsecuredGet(key.asConsumerBindingKey()));
     return consumerBinding;
   }
 }

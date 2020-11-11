@@ -42,9 +42,15 @@ public class DomainMutationImpl implements DomainMutation {
   public Domain update(DomainKeyInput key, SpecificationInput specification) {
     return domainService.update(asDomain(key, specification)).get();
   }
+
   @Override
   public Domain upsert(DomainKeyInput key, SpecificationInput specification) {
-    return domainService.upsert(asDomain(key, specification)).get();
+    Domain domain = asDomain(key, specification);
+    if (!domainService.unsecuredGet(domain.getKey()).isPresent()) {
+      return domainService.create(domain).get();
+    } else {
+      return domainService.update(domain).get();
+    }
   }
 
   @Override
@@ -54,14 +60,15 @@ public class DomainMutationImpl implements DomainMutation {
 
   @Override
   public Domain updateStatus(DomainKeyInput key, StatusInput status) {
-    return domainService.updateStatus(key.asDomainKey(), status.asStatus()).get();
+    Domain domain = domainService.unsecuredGet(key.asDomainKey()).get();
+    return domainService.updateStatus(domain, status.asStatus()).get();
   }
 
   private Domain asDomain(DomainKeyInput key, SpecificationInput specification) {
     Domain domain = new Domain();
     domain.setKey(key.asDomainKey());
     domain.setSpecification(specification.asSpecification());
-    maintainState(domain, domainService.read(domain.getKey()));
+    maintainState(domain, domainService.unsecuredGet(domain.getKey()));
     return domain;
   }
 }

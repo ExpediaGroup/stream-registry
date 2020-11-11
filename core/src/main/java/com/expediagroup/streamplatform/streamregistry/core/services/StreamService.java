@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
-    if (read(stream.getKey()).isPresent()) {
+    if (unsecuredGet(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamValidator.validateForCreate(stream);
@@ -53,7 +55,7 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
-    var existing = read(stream.getKey());
+    var existing = unsecuredGet(stream.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
@@ -63,9 +65,8 @@ public class StreamService {
     return save(stream);
   }
 
-  @PreAuthorize("hasPermission(#streamKey, 'UPDATE_STATUS')")
-  public Optional<Stream> updateStatus(StreamKey streamKey, Status status) {
-    Stream stream = read(streamKey).get();
+  @PreAuthorize("hasPermission(#stream, 'UPDATE_STATUS')")
+  public Optional<Stream> updateStatus(Stream stream, Status status) {
     stream.setStatus(status);
     return save(stream);
   }
@@ -75,14 +76,16 @@ public class StreamService {
     return Optional.ofNullable(stream);
   }
 
-  public Optional<Stream> upsert(Stream stream) throws ValidationException {
-    return !read(stream.getKey()).isPresent() ? create(stream) : update(stream);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Stream> get(StreamKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<Stream> read(StreamKey key) {
+  public Optional<Stream> unsecuredGet(StreamKey key) {
     return streamRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Stream> findAll(Predicate<Stream> filter) {
     return streamRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -93,6 +96,6 @@ public class StreamService {
   }
 
   public boolean exists(StreamKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

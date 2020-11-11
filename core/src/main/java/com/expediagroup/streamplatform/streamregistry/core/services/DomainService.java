@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'CREATE')")
   public Optional<Domain> create(Domain domain) throws ValidationException {
-    if (read(domain.getKey()).isPresent()) {
+    if (unsecuredGet(domain.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     domainValidator.validateForCreate(domain);
@@ -53,7 +55,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'UPDATE')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
-    var existing = read(domain.getKey());
+    var existing = unsecuredGet(domain.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
@@ -62,9 +64,8 @@ public class DomainService {
     return save(domain);
   }
 
-  @PreAuthorize("hasPermission(#domainKey, 'UPDATE_STATUS')")
-  public Optional<Domain> updateStatus(DomainKey domainKey, Status status) {
-    Domain domain = read(domainKey).get();
+  @PreAuthorize("hasPermission(#domain, 'UPDATE_STATUS')")
+  public Optional<Domain> updateStatus(Domain domain, Status status) {
     domain.setStatus(status);
     return save(domain);
   }
@@ -74,14 +75,16 @@ public class DomainService {
     return Optional.ofNullable(domain);
   }
 
-  public Optional<Domain> upsert(Domain domain) throws ValidationException {
-    return !read(domain.getKey()).isPresent() ? create(domain) : update(domain);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Domain> get(DomainKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<Domain> read(DomainKey key) {
+  public Optional<Domain> unsecuredGet(DomainKey key) {
     return domainRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Domain> findAll(Predicate<Domain> filter) {
     return domainRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -92,6 +95,6 @@ public class DomainService {
   }
 
   public boolean exists(DomainKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

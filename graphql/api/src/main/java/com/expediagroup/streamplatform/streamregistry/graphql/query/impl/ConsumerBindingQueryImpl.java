@@ -36,7 +36,7 @@ public class ConsumerBindingQueryImpl implements ConsumerBindingQuery {
 
   @Override
   public Optional<ConsumerBinding> byKey(ConsumerBindingKeyInput key) {
-    return consumerBindingService.read(key.asConsumerBindingKey());
+    return consumerBindingService.get(key.asConsumerBindingKey());
   }
 
   public Iterable<ConsumerBinding> byQuery(ConsumerBindingKeyQuery key, SpecificationQuery specification) {

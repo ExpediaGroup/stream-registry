@@ -17,7 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -106,41 +105,13 @@ public class ConsumerBindingServiceTest {
 
   @Test
   public void updateStatus() {
-    final ConsumerBindingKey key = mock(ConsumerBindingKey.class);
     final Status status = mock(Status.class);
     final ConsumerBinding entity = mock(ConsumerBinding.class);
 
-    when(consumerBindingRepository.findById(key)).thenReturn(Optional.of(entity));
     when(consumerBindingRepository.save(entity)).thenReturn(entity);
 
-    consumerBindingService.updateStatus(key, status);
+    consumerBindingService.updateStatus(entity, status);
 
-    verify(consumerBindingRepository).findById(key);
-    verify(consumerBindingRepository).save(entity);
-  }
-
-  @Test
-  public void upsert() {
-    final ConsumerBindingKey key = mock(ConsumerBindingKey.class);
-    final Specification specification = mock(Specification.class);
-
-    final ConsumerBinding entity = mock(ConsumerBinding.class);
-    final ConsumerBinding existingEntity = mock(ConsumerBinding.class);
-
-    when(entity.getKey()).thenReturn(key);
-
-    when(consumerBindingRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    doNothing().when(consumerBindingValidator).validateForUpdate(entity, existingEntity);
-    when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
-
-    when(consumerBindingRepository.save(entity)).thenReturn(entity);
-
-    consumerBindingService.upsert(entity);
-
-    verify(entity, times(2)).getKey();
-    verify(consumerBindingRepository, times(2)).findById(key);
-    verify(consumerBindingValidator).validateForUpdate(entity, existingEntity);
-    verify(handlerService).handleUpdate(entity, existingEntity);
     verify(consumerBindingRepository).save(entity);
   }
 }

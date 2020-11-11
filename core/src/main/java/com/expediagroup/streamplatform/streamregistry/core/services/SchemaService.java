@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
-    if (read(schema.getKey()).isPresent()) {
+    if (unsecuredGet(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     schemaValidator.validateForCreate(schema);
@@ -53,7 +55,7 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'UPDATE')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
-    var existing = read(schema.getKey());
+    var existing = unsecuredGet(schema.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + schema.getKey().getName() + " because it doesn't exist");
     }
@@ -62,9 +64,8 @@ public class SchemaService {
     return save(schema);
   }
 
-  @PreAuthorize("hasPermission(#schemaKey, 'UPDATE_STATUS')")
-  public Optional<Schema> updateStatus(SchemaKey schemaKey, Status status) {
-    Schema schema = read(schemaKey).get();
+  @PreAuthorize("hasPermission(#schema, 'UPDATE_STATUS')")
+  public Optional<Schema> updateStatus(Schema schema, Status status) {
     schema.setStatus(status);
     return save(schema);
   }
@@ -74,14 +75,16 @@ public class SchemaService {
     return Optional.ofNullable(schema);
   }
 
-  public Optional<Schema> upsert(Schema schema) throws ValidationException {
-    return !read(schema.getKey()).isPresent() ? create(schema) : update(schema);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Schema> get(SchemaKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<Schema> read(SchemaKey key) {
+  public Optional<Schema> unsecuredGet(SchemaKey key) {
     return schemaRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Schema> findAll(Predicate<Schema> filter) {
     return schemaRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -92,6 +95,6 @@ public class SchemaService {
   }
 
   public boolean exists(SchemaKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

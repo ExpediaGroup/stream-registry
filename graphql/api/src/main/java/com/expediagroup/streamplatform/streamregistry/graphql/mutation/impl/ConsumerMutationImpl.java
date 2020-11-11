@@ -45,7 +45,12 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Consumer upsert(ConsumerKeyInput key, SpecificationInput specification) {
-    return consumerService.upsert(asConsumer(key, specification)).get();
+    Consumer consumer = asConsumer(key, specification);
+    if (!consumerService.unsecuredGet(consumer.getKey()).isPresent()) {
+      return consumerService.create(consumer).get();
+    } else {
+      return consumerService.update(consumer).get();
+    }
   }
 
   @Override
@@ -55,14 +60,15 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Consumer updateStatus(ConsumerKeyInput key, StatusInput status) {
-    return consumerService.updateStatus(key.asConsumerKey(), status.asStatus()).get();
+    Consumer consumer = consumerService.unsecuredGet(key.asConsumerKey()).get();
+    return consumerService.updateStatus(consumer, status.asStatus()).get();
   }
 
   private Consumer asConsumer(ConsumerKeyInput key, SpecificationInput specification) {
     Consumer consumer = new Consumer();
     consumer.setKey(key.asConsumerKey());
     consumer.setSpecification(specification.asSpecification());
-    maintainState(consumer, consumerService.read(consumer.getKey()));
+    maintainState(consumer, consumerService.unsecuredGet(consumer.getKey()));
     return consumer;
   }
 }

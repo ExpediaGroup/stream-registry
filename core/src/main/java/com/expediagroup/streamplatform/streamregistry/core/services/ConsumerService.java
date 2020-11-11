@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class ConsumerService {
 
   @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
-    if (read(consumer.getKey()).isPresent()) {
+    if (unsecuredGet(consumer.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     consumerValidator.validateForCreate(consumer);
@@ -53,7 +55,7 @@ public class ConsumerService {
 
   @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
-    var existing = read(consumer.getKey());
+    var existing = unsecuredGet(consumer.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + consumer.getKey().getName() + " because it doesn't exist");
     }
@@ -62,9 +64,8 @@ public class ConsumerService {
     return save(consumer);
   }
 
-  @PreAuthorize("hasPermission(#consumerKey, 'UPDATE_STATUS')")
-  public Optional<Consumer> updateStatus(ConsumerKey consumerKey, Status status) {
-    Consumer consumer = read(consumerKey).get();
+  @PreAuthorize("hasPermission(#consumer, 'UPDATE_STATUS')")
+  public Optional<Consumer> updateStatus(Consumer consumer, Status status) {
     consumer.setStatus(status);
     return save(consumer);
   }
@@ -74,14 +75,16 @@ public class ConsumerService {
     return Optional.ofNullable(consumer);
   }
 
-  public Optional<Consumer> upsert(Consumer consumer) throws ValidationException {
-    return !read(consumer.getKey()).isPresent() ? create(consumer) : update(consumer);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Consumer> get(ConsumerKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<Consumer> read(ConsumerKey key) {
+  public Optional<Consumer> unsecuredGet(ConsumerKey key) {
     return consumerRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Consumer> findAll(Predicate<Consumer> filter) {
     return consumerRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -92,6 +95,6 @@ public class ConsumerService {
   }
 
   public boolean exists(ConsumerKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    if (read(streamBinding.getKey()).isPresent()) {
+    if (unsecuredGet(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
@@ -53,7 +55,7 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    var existing = read(streamBinding.getKey());
+    var existing = unsecuredGet(streamBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + streamBinding.getKey() + " because it doesn't exist");
     }
@@ -62,9 +64,8 @@ public class StreamBindingService {
     return save(streamBinding);
   }
 
-  @PreAuthorize("hasPermission(#streamBindingKey, 'UPDATE_STATUS')")
-  public Optional<StreamBinding> updateStatus(StreamBindingKey streamBindingKey, Status status) {
-    StreamBinding streamBinding = read(streamBindingKey).get();
+  @PreAuthorize("hasPermission(#streamBinding, 'UPDATE_STATUS')")
+  public Optional<StreamBinding> updateStatus(StreamBinding streamBinding, Status status) {
     streamBinding.setStatus(status);
     return save(streamBinding);
   }
@@ -74,14 +75,16 @@ public class StreamBindingService {
     return Optional.ofNullable(streamBinding);
   }
 
-  public Optional<StreamBinding> upsert(StreamBinding streamBinding) throws ValidationException {
-    return !read(streamBinding.getKey()).isPresent() ? create(streamBinding) : update(streamBinding);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<StreamBinding> get(StreamBindingKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<StreamBinding> read(StreamBindingKey key) {
+  public Optional<StreamBinding> unsecuredGet(StreamBindingKey key) {
     return streamBindingRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<StreamBinding> findAll(Predicate<StreamBinding> filter) {
     return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -92,6 +95,6 @@ public class StreamBindingService {
   }
 
   public boolean exists(StreamBindingKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

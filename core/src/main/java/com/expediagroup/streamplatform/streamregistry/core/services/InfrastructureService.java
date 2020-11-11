@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
-    if (read(infrastructure.getKey()).isPresent()) {
+    if (unsecuredGet(infrastructure.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
@@ -53,7 +55,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
-    var existing = read(infrastructure.getKey());
+    var existing = unsecuredGet(infrastructure.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + infrastructure.getKey().getName() + " because it doesn't exist");
     }
@@ -62,9 +64,8 @@ public class InfrastructureService {
     return save(infrastructure);
   }
 
-  @PreAuthorize("hasPermission(#infrastructureKey, 'UPDATE_STATUS')")
-  public Optional<Infrastructure> updateStatus(InfrastructureKey infrastructureKey, Status status) {
-    Infrastructure infrastructure = read(infrastructureKey).get();
+  @PreAuthorize("hasPermission(#infrastructure, 'UPDATE_STATUS')")
+  public Optional<Infrastructure> updateStatus(Infrastructure infrastructure, Status status) {
     infrastructure.setStatus(status);
     return save(infrastructure);
   }
@@ -74,14 +75,16 @@ public class InfrastructureService {
     return Optional.ofNullable(infrastructure);
   }
 
-  public Optional<Infrastructure> upsert(Infrastructure infrastructure) throws ValidationException {
-    return !read(infrastructure.getKey()).isPresent() ? create(infrastructure) : update(infrastructure);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Infrastructure> get(InfrastructureKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<Infrastructure> read(InfrastructureKey key) {
+  public Optional<Infrastructure> unsecuredGet(InfrastructureKey key) {
     return infrastructureRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Infrastructure> findAll(Predicate<Infrastructure> filter) {
     return infrastructureRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -92,6 +95,6 @@ public class InfrastructureService {
   }
 
   public boolean exists(InfrastructureKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

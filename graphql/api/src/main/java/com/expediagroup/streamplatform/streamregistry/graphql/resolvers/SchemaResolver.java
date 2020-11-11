@@ -29,6 +29,6 @@ public class SchemaResolver implements Resolvers.SchemaResolver {
   private final DomainService domainService;
 
   public Domain domain(Schema schema) {
-    return domainService.read(schema.getKey().getDomainKey()).orElse(null);
+    return domainService.get(schema.getKey().getDomainKey()).orElse(null);
   }
 }

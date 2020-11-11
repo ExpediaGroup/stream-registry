@@ -36,7 +36,7 @@ public class ProducerBindingQueryImpl implements ProducerBindingQuery {
 
   @Override
   public Optional<ProducerBinding> byKey(ProducerBindingKeyInput key) {
-    return producerBindingService.read(key.asProducerBindingKey());
+    return producerBindingService.get(key.asProducerBindingKey());
   }
 
   @Override

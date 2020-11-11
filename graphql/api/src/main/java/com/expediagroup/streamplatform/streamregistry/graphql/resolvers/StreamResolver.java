@@ -32,10 +32,10 @@ public class StreamResolver implements Resolvers.StreamResolver {
   private final SchemaService schemaService;
 
   public Domain domain(Stream stream) {
-    return domainService.read(stream.getKey().getDomainKey()).orElse(null);
+    return domainService.get(stream.getKey().getDomainKey()).orElse(null);
   }
 
   public Schema schema(Stream stream) {
-    return schemaService.read(stream.getSchemaKey()).orElse(null);
+    return schemaService.get(stream.getSchemaKey()).orElse(null);
   }
 }

@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +46,7 @@ public class ProducerBindingService {
 
   @PreAuthorize("hasPermission(#producerBinding, 'CREATE')")
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
-    if (read(producerBinding.getKey()).isPresent()) {
+    if (unsecuredGet(producerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     producerBindingValidator.validateForCreate(producerBinding);
@@ -54,7 +56,7 @@ public class ProducerBindingService {
 
   @PreAuthorize("hasPermission(#producerBinding, 'UPDATE')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
-    var existing = read(producerBinding.getKey());
+    var existing = unsecuredGet(producerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producerBinding.getKey() + " because it doesn't exist");
     }
@@ -63,9 +65,8 @@ public class ProducerBindingService {
     return save(producerBinding);
   }
 
-  @PreAuthorize("hasPermission(#producerBindingKey, 'UPDATE_STATUS')")
-  public Optional<ProducerBinding> updateStatus(ProducerBindingKey producerBindingKey, Status status) {
-    ProducerBinding producerBinding = read(producerBindingKey).get();
+  @PreAuthorize("hasPermission(#producerBinding, 'UPDATE_STATUS')")
+  public Optional<ProducerBinding> updateStatus(ProducerBinding producerBinding, Status status) {
     producerBinding.setStatus(status);
     return save(producerBinding);
   }
@@ -75,14 +76,16 @@ public class ProducerBindingService {
     return Optional.ofNullable(producerBinding);
   }
 
-  public Optional<ProducerBinding> upsert(ProducerBinding producerBinding) throws ValidationException {
-    return !read(producerBinding.getKey()).isPresent() ? create(producerBinding) : update(producerBinding);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<ProducerBinding> get(ProducerBindingKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<ProducerBinding> read(ProducerBindingKey key) {
+  public Optional<ProducerBinding> unsecuredGet(ProducerBindingKey key) {
     return producerBindingRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
     return producerBindingRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -93,9 +96,10 @@ public class ProducerBindingService {
   }
 
   public boolean exists(ProducerBindingKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
   public Optional<ProducerBinding> find(ProducerKey key) {
     var example = new ProducerBinding(new ProducerBindingKey(
         key.getStreamDomain(),

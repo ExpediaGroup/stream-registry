@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class ZoneService {
 
   @PreAuthorize("hasPermission(#zone, 'CREATE')")
   public Optional<Zone> create(Zone zone) throws ValidationException {
-    if (read(zone.getKey()).isPresent()) {
+    if (unsecuredGet(zone.getKey()).isPresent()) {
       throw new ValidationException("Can't create because it already exists");
     }
     zoneValidator.validateForCreate(zone);
@@ -53,7 +55,7 @@ public class ZoneService {
 
   @PreAuthorize("hasPermission(#zone, 'UPDATE')")
   public Optional<Zone> update(Zone zone) throws ValidationException {
-    var existing = read(zone.getKey());
+    var existing = unsecuredGet(zone.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + zone.getKey().getName() + " because it doesn't exist");
     }
@@ -62,9 +64,8 @@ public class ZoneService {
     return save(zone);
   }
 
-  @PreAuthorize("hasPermission(#zoneKey, 'UPDATE_STATUS')")
-  public Optional<Zone> updateStatus(ZoneKey zoneKey, Status status) {
-    Zone zone = read(zoneKey).get();
+  @PreAuthorize("hasPermission(#zone, 'UPDATE_STATUS')")
+  public Optional<Zone> updateStatus(Zone zone, Status status) {
     zone.setStatus(status);
     return save(zone);
   }
@@ -74,14 +75,16 @@ public class ZoneService {
     return Optional.ofNullable(zone);
   }
 
-  public Optional<Zone> upsert(Zone zone) throws ValidationException {
-    return !read(zone.getKey()).isPresent() ? create(zone) : update(zone);
+  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  public Optional<Zone> get(ZoneKey key) {
+    return unsecuredGet(key);
   }
 
-  public Optional<Zone> read(ZoneKey key) {
+  public Optional<Zone> unsecuredGet(ZoneKey key) {
     return zoneRepository.findById(key);
   }
 
+  @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Zone> findAll(Predicate<Zone> filter) {
     return zoneRepository.findAll().stream().filter(filter).collect(toList());
   }
@@ -92,6 +95,6 @@ public class ZoneService {
   }
 
   public boolean exists(ZoneKey key) {
-    return read(key).isPresent();
+    return unsecuredGet(key).isPresent();
   }
 }

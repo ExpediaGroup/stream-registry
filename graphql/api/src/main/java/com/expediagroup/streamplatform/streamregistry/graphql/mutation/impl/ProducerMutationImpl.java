@@ -45,7 +45,12 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Producer upsert(ProducerKeyInput key, SpecificationInput specification) {
-    return producerService.upsert(asProducer(key, specification)).get();
+    Producer producer = asProducer(key, specification);
+    if (!producerService.unsecuredGet(producer.getKey()).isPresent()) {
+      return producerService.create(producer).get();
+    } else {
+      return producerService.update(producer).get();
+    }
   }
 
   @Override
@@ -55,14 +60,15 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Producer updateStatus(ProducerKeyInput key, StatusInput status) {
-    return producerService.updateStatus(key.asProducerKey(), status.asStatus()).get();
+    Producer producer = producerService.unsecuredGet(key.asProducerKey()).get();
+    return producerService.updateStatus(producer, status.asStatus()).get();
   }
 
   private Producer asProducer(ProducerKeyInput key, SpecificationInput specification) {
     Producer producer = new Producer();
     producer.setKey(key.asProducerKey());
     producer.setSpecification(specification.asSpecification());
-    maintainState(producer, producerService.read(producer.getKey()));
+    maintainState(producer, producerService.unsecuredGet(producer.getKey()));
     return producer;
   }
 }

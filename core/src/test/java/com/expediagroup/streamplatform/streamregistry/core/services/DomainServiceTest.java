@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -107,37 +106,12 @@ public class DomainServiceTest {
   @Test
   public void updateStatus() {
     final Domain entity = mock(Domain.class);
-    final DomainKey key = mock(DomainKey.class);
     final Status status = mock(Status.class);
 
-    when(domainRepository.findById(key)).thenReturn(Optional.of(entity));
     when(domainRepository.save(entity)).thenReturn(entity);
 
-    domainService.updateStatus(key, status);
+    domainService.updateStatus(entity, status);
 
-    verify(domainRepository).findById(key);
-    verify(domainRepository).save(entity);
-  }
-
-  @Test
-  public void upsert() {
-    final Domain entity = mock(Domain.class);
-    final DomainKey key = mock(DomainKey.class);
-    final Domain existingEntity = mock(Domain.class);
-    final Specification specification = mock(Specification.class);
-
-    when(entity.getKey()).thenReturn(key);
-    when(domainRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    doNothing().when(domainValidator).validateForUpdate(entity, existingEntity);
-    when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
-    when(domainRepository.save(entity)).thenReturn(entity);
-
-    domainService.upsert(entity);
-
-    verify(entity, times(2)).getKey();
-    verify(domainRepository, times(2)).findById(key);
-    verify(domainValidator).validateForUpdate(entity, existingEntity);
-    verify(handlerService).handleUpdate(entity, existingEntity);
     verify(domainRepository).save(entity);
   }
 }

@@ -45,7 +45,12 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification) {
-    return streamBindingService.upsert(asStreamBinding(key, specification)).get();
+    StreamBinding streamBinding = asStreamBinding(key, specification);
+    if (!streamBindingService.unsecuredGet(streamBinding.getKey()).isPresent()) {
+      return streamBindingService.create(streamBinding).get();
+    } else {
+      return streamBindingService.update(streamBinding).get();
+    }
   }
 
   @Override
@@ -55,14 +60,15 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status) {
-    return streamBindingService.updateStatus(key.asStreamBindingKey(), status.asStatus()).get();
+    StreamBinding streamBinding = streamBindingService.unsecuredGet(key.asStreamBindingKey()).get();
+    return streamBindingService.updateStatus(streamBinding, status.asStatus()).get();
   }
 
   private StreamBinding asStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {
     StreamBinding streamBinding = new StreamBinding();
     streamBinding.setKey(key.asStreamBindingKey());
     streamBinding.setSpecification(specification.asSpecification());
-    maintainState(streamBinding, streamBindingService.read(streamBinding.getKey()));
+    maintainState(streamBinding, streamBindingService.unsecuredGet(streamBinding.getKey()));
     return streamBinding;
   }
 }

@@ -36,7 +36,7 @@ public class StreamBindingQueryImpl implements StreamBindingQuery {
 
   @Override
   public Optional<StreamBinding> byKey(StreamBindingKeyInput key) {
-    return streamBindingService.read(key.asStreamBindingKey());
+    return streamBindingService.get(key.asStreamBindingKey());
   }
 
   @Override
