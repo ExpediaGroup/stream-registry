@@ -16,11 +16,13 @@
 package com.expediagroup.streamplatform.streamregistry.cli.command.delete;
 
 import static java.util.Collections.unmodifiableList;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import lombok.SneakyThrows;
 import picocli.CommandLine.Command;
@@ -28,8 +30,9 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 import com.expediagroup.streamplatform.streamregistry.cli.action.Action;
-import com.expediagroup.streamplatform.streamregistry.cli.command.delete.EntityClient.StreamKeyWithSchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
 @Command(name = "delete", subcommands = {
@@ -114,15 +117,14 @@ public class Delete {
         result.addAll(client.getProducerBindingKeys(domain, stream, version, null, null, null));
         result.addAll(client.getProducerKeys(domain, stream, version, null, null));
         result.addAll(client.getStreamBindingKeys(domain, stream, version, null, null));
-        List<StreamKeyWithSchemaKey> streams = client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null);
-        result.addAll(streams.stream().map(StreamKeyWithSchemaKey::getStream).collect(toList()));
-        result.addAll(streams.stream().map(StreamKeyWithSchemaKey::getSchema).collect(toList()));
+        StreamAndSchemaDiscoverer discoverer = new StreamAndSchemaDiscoverer(client);
+        Map<StreamKey, Optional<SchemaKey>> streams = discoverer.discover(domain, stream, version);
+        result.addAll(streams.keySet());
+        result.addAll(streams.values().stream().flatMap(Optional::stream).collect(toSet()));
         return unmodifiableList(result);
       }
-      return unmodifiableList(client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null)
-          .stream()
-          .map(StreamKeyWithSchemaKey::getStream)
-          .collect(toList()));
+      return unmodifiableList(new ArrayList<>(client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null)
+          .keySet()));
     }
   }
 

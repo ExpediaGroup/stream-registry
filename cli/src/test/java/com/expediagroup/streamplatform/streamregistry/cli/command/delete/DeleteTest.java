@@ -17,11 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.cli.command.delete;
 
 import static com.google.common.collect.ObjectArrays.concat;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +34,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import picocli.CommandLine;
 import picocli.CommandLine.ParseResult;
 
-import com.expediagroup.streamplatform.streamregistry.cli.command.delete.EntityClient.StreamKeyWithSchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
@@ -76,6 +77,7 @@ public class DeleteTest {
   private final DomainKey domainKey = new DomainKey(DOMAIN);
   private final SchemaKey schemaKey = new SchemaKey(domainKey, SCHEMA);
   private final StreamKey streamKey = new StreamKey(domainKey, STREAM, VERSION);
+  private final StreamKey streamKey2 = new StreamKey(domainKey, STREAM, 2);
   private final ZoneKey zoneKey = new ZoneKey(ZONE);
   private final InfrastructureKey infrastructureKey = new InfrastructureKey(zoneKey, INFRASTRUCTURE);
   private final ProducerKey producerKey = new ProducerKey(streamKey, zoneKey, PRODUCER);
@@ -147,7 +149,7 @@ public class DeleteTest {
   @Test
   public void stream() {
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
+        .thenReturn(Map.of(streamKey, schemaKey));
 
     run(STREAM,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -158,7 +160,7 @@ public class DeleteTest {
   @Test
   public void streamDryRun() {
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
+        .thenReturn(Map.of(streamKey, schemaKey));
 
     run(STREAM, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -179,7 +181,9 @@ public class DeleteTest {
     when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(streamBindingKey));
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
+        .thenReturn(Map.of(streamKey, schemaKey));
+    when(client.getStreamKeyWithSchemaKeys(null, null, null, DOMAIN, SCHEMA))
+        .thenReturn(Map.of(streamKey, schemaKey));
 
     run(STREAM, CASCADE_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -192,6 +196,36 @@ public class DeleteTest {
     inOrder.verify(deleter).delete(streamBindingKey);
     inOrder.verify(deleter).delete(streamKey);
     inOrder.verify(deleter).delete(schemaKey);
+  }
+
+  @Test
+  public void streamCascadeReusedSchema() {
+    when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
+        .thenReturn(List.of(consumerBindingKey));
+    when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, null, null))
+        .thenReturn(List.of(consumerKey));
+    when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
+        .thenReturn(List.of(producerBindingKey));
+    when(client.getProducerKeys(DOMAIN, STREAM, VERSION, null, null))
+        .thenReturn(List.of(producerKey));
+    when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, null, null))
+        .thenReturn(List.of(streamBindingKey));
+    when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
+        .thenReturn(Map.of(streamKey, schemaKey));
+    when(client.getStreamKeyWithSchemaKeys(null, null, null, DOMAIN, SCHEMA))
+        .thenReturn(Map.of(streamKey, schemaKey, streamKey2, schemaKey));
+
+    run(STREAM, CASCADE_ARG,
+        DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
+
+    InOrder inOrder = inOrder(deleter);
+    inOrder.verify(deleter).delete(consumerBindingKey);
+    inOrder.verify(deleter).delete(consumerKey);
+    inOrder.verify(deleter).delete(producerBindingKey);
+    inOrder.verify(deleter).delete(producerKey);
+    inOrder.verify(deleter).delete(streamBindingKey);
+    inOrder.verify(deleter).delete(streamKey);
+    inOrder.verify(deleter, never()).delete(schemaKey);
   }
 
   @Test

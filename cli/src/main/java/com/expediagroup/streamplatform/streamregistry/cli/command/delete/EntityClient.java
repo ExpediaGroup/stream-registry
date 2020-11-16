@@ -16,12 +16,13 @@
 package com.expediagroup.streamplatform.streamregistry.cli.command.delete;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Operation;
@@ -58,12 +59,6 @@ class EntityClient {
   private final ApolloExecutor executor;
   private final KeyConverter converter;
 
-  @Value
-  static class StreamKeyWithSchemaKey {
-    StreamKey stream;
-    SchemaKey schema;
-  }
-
   List<DomainKey> getDomainKeys(String domain) {
     return execute(
         DomainQuery.builder()
@@ -83,7 +78,7 @@ class EntityClient {
         .map(x -> converter.schemaKey(x.getKey())).collect(toList());
   }
 
-  List<StreamKeyWithSchemaKey> getStreamKeyWithSchemaKeys(String domain, String stream, int version, String schemaDomain, String schema) {
+  Map<StreamKey, SchemaKey> getStreamKeyWithSchemaKeys(String domain, String stream, Integer version, String schemaDomain, String schema) {
     return execute(
         StreamQuery.builder()
             .domain(domain)
@@ -93,11 +88,10 @@ class EntityClient {
             .schema(schema)
             .build())
         .getStream().getByQuery().stream()
-        .map(x -> {
-          var streamKey = converter.streamKey(x.getKey());
-          var schemaKey = converter.schemaKey(x.getSchema().getKey());
-          return new StreamKeyWithSchemaKey(streamKey, schemaKey);
-        }).collect(toList());
+        .collect(toMap(
+            x -> converter.streamKey(x.getKey()),
+            x -> converter.schemaKey(x.getSchema().getKey())
+        ));
   }
 
   List<ZoneKey> getZoneKeys(String zone) {
@@ -197,7 +191,7 @@ class EntityClient {
 
     EntityClient create() {
       ApolloClient client;
-      if(streamRegistryUsername != null && streamRegistryPassword != null) {
+      if (streamRegistryUsername != null && streamRegistryPassword != null) {
         client = new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
       } else {
         client = new DefaultApolloClientFactory(streamRegistryUrl).create();
