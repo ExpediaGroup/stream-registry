@@ -16,11 +16,13 @@
 package com.expediagroup.streamplatform.streamregistry.cli.command.delete;
 
 import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toSet;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import lombok.SneakyThrows;
 import picocli.CommandLine.Command;
@@ -115,9 +117,10 @@ public class Delete {
         result.addAll(client.getProducerBindingKeys(domain, stream, version, null, null, null));
         result.addAll(client.getProducerKeys(domain, stream, version, null, null));
         result.addAll(client.getStreamBindingKeys(domain, stream, version, null, null));
-        Map<StreamKey, SchemaKey> streams = client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null);
+        StreamAndSchemaDiscoverer discoverer = new StreamAndSchemaDiscoverer(client);
+        Map<StreamKey, Optional<SchemaKey>> streams = discoverer.discover(domain, stream, version);
         result.addAll(streams.keySet());
-        result.addAll(streams.values());
+        result.addAll(streams.values().stream().flatMap(Optional::stream).collect(toSet()));
         return unmodifiableList(result);
       }
       return unmodifiableList(new ArrayList<>(client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null)
