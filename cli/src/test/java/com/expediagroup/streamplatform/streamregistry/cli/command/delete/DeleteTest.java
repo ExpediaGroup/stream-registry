@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import picocli.CommandLine;
 import picocli.CommandLine.ParseResult;
 
-import com.expediagroup.streamplatform.streamregistry.cli.command.delete.EntityClient.StreamKeyWithSchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
@@ -147,7 +147,7 @@ public class DeleteTest {
   @Test
   public void stream() {
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
+        .thenReturn(Map.of(streamKey, schemaKey));
 
     run(STREAM,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -158,7 +158,7 @@ public class DeleteTest {
   @Test
   public void streamDryRun() {
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
+        .thenReturn(Map.of(streamKey, schemaKey));
 
     run(STREAM, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -179,7 +179,7 @@ public class DeleteTest {
     when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, null, null))
         .thenReturn(List.of(streamBindingKey));
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(new StreamKeyWithSchemaKey(streamKey, schemaKey)));
+        .thenReturn(Map.of(streamKey, schemaKey));
 
     run(STREAM, CASCADE_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);

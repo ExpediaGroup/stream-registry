@@ -14,7 +14,7 @@ query Schema($domain: String, $schema: String) {
   }
 }
 
-query Stream($domain: String, $stream: String, $version: Int,$schemaDomain: String, $schema: String) {
+query Stream($domain: String, $stream: String, $version: Int, $schemaDomain: String, $schema: String) {
   stream {
     byQuery(key: {domainRegex: $domain, nameRegex: $stream, version: $version}, schema: {domainRegex: $schemaDomain, nameRegex: $schema}) {
       key { domain name version }
