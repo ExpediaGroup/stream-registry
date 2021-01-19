@@ -134,7 +134,7 @@ public class AgentIT {
       // onEvent has been called for the deleted entity
       assertThat(dummyAgent.events, hasSize(2));
       assertThat(dummyAgent.events, hasItem(Pair.of(null, data.getSpecificationEvent())));
-      assertThat(dummyAgent.events, hasItem(Pair.of(data.getEntity(), specificationDeletion(data.getKey()))));
+      assertThat(dummyAgent.events, hasItem(Pair.of(data.getEntity(), specificationDeletion(data.getKey()))));  // the agent would be expected to handle the deletion event.
     });
 
     // purge would be called by the agent after the delete has been handled
