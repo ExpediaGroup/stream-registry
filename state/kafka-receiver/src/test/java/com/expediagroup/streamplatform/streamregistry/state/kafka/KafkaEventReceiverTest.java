@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+
+import lombok.val;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -67,7 +69,7 @@ public class KafkaEventReceiverTest {
 
   private final String topic = "topic";
   private final TopicPartition topicPartition = new TopicPartition(topic, 0);
-  private final List<TopicPartition> topicPartitions = List.of(topicPartition);
+  private final List<TopicPartition> topicPartitions = Collections.singletonList(topicPartition);
 
   @Before
   public void before() {
@@ -77,20 +79,20 @@ public class KafkaEventReceiverTest {
   @Test
   public void typical() throws Exception {
     when(config.getTopic()).thenReturn(topic);
-    when(consumer.partitionsFor(topic)).thenReturn(List.of(partitionInfo));
-    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Map.of(topicPartition, 0L));
-    when(consumer.endOffsets(topicPartitions)).thenReturn(Map.of(topicPartition, 0L));
-    when(consumer.poll(Duration.ofMillis(100))).thenReturn(new ConsumerRecords<>(Map.of(topicPartition, List.of(record))));
+    when(consumer.partitionsFor(topic)).thenReturn(Collections.singletonList(partitionInfo));
+    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.endOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.poll(Duration.ofMillis(100))).thenReturn(new ConsumerRecords<>(Collections.singletonMap(topicPartition, Collections.singletonList(record))));
     when(record.key()).thenReturn(avroKey);
     when(record.value()).thenReturn(avroValue);
     when(converter.toModel(avroKey, avroValue)).thenReturn(event);
-    when(record.headers()).thenReturn(new RecordHeaders(List.of(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+    when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
 
     underTest.receive(listener);
     Thread.sleep(100L);
     underTest.close();
 
-    var inOrder = Mockito.inOrder(consumer, listener, correlator);
+    val inOrder = Mockito.inOrder(consumer, listener, correlator);
     inOrder.verify(consumer).assign(topicPartitions);
     inOrder.verify(consumer).seekToBeginning(topicPartitions);
     inOrder.verify(listener).onEvent(LOAD_COMPLETE);
@@ -101,21 +103,21 @@ public class KafkaEventReceiverTest {
   @Test
   public void listenerThrowsException() throws Exception {
     when(config.getTopic()).thenReturn(topic);
-    when(consumer.partitionsFor(topic)).thenReturn(List.of(partitionInfo));
-    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Map.of(topicPartition, 0L));
-    when(consumer.endOffsets(topicPartitions)).thenReturn(Map.of(topicPartition, 0L));
-    when(consumer.poll(Duration.ofMillis(100))).thenReturn(new ConsumerRecords<>(Map.of(topicPartition, List.of(record))));
+    when(consumer.partitionsFor(topic)).thenReturn(Collections.singletonList(partitionInfo));
+    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.endOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.poll(Duration.ofMillis(100))).thenReturn(new ConsumerRecords<>(Collections.singletonMap(topicPartition, Collections.singletonList(record))));
     when(record.key()).thenReturn(avroKey);
     when(record.value()).thenReturn(avroValue);
     when(converter.toModel(avroKey, avroValue)).thenReturn(event);
-    when(record.headers()).thenReturn(new RecordHeaders(List.of(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+    when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
     doThrow(new RuntimeException("listener error")).when(listener).onEvent(event);
 
     underTest.receive(listener);
     Thread.sleep(100L);
     underTest.close();
 
-    var inOrder = Mockito.inOrder(consumer, listener, correlator);
+    val inOrder = Mockito.inOrder(consumer, listener, correlator);
     inOrder.verify(consumer).assign(topicPartitions);
     inOrder.verify(consumer).seekToBeginning(topicPartitions);
     inOrder.verify(listener).onEvent(LOAD_COMPLETE);
@@ -125,7 +127,7 @@ public class KafkaEventReceiverTest {
 
   @Test(expected = IllegalStateException.class)
   public void incorrectNumberOfPartitions() {
-    when(consumer.partitionsFor(topic)).thenReturn(List.of());
+    when(consumer.partitionsFor(topic)).thenReturn(Collections.emptyList());
 
     underTest.consume(listener);
   }

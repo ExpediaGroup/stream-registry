@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-import java.util.List;
+
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,7 +44,7 @@ final class SampleState {
   private static DefaultSpecification specification() {
     return new DefaultSpecification(
         "description",
-        List.of(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+        Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
         "type",
         mapper.createObjectNode()
     );
@@ -52,7 +53,7 @@ final class SampleState {
   static StreamSpecification streamSpecification() {
     return new StreamSpecification(
         "description",
-        List.of(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+        Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
         "type",
         mapper.createObjectNode(),
         schemaKey()

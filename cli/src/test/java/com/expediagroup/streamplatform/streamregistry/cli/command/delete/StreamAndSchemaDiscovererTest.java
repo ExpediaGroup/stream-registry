@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,13 +51,13 @@ public class StreamAndSchemaDiscovererTest {
   @Before
   public void before() {
     when(client.getStreamKeyWithSchemaKeys("domain", ".*", 1, null, null))
-        .thenReturn(Map.of(streamKey1, schemaKey));
+        .thenReturn(Collections.singletonMap(streamKey1, schemaKey));
   }
 
   @Test
   public void schemaIsPresent() {
     when(client.getStreamKeyWithSchemaKeys(null, null, null, "domain", "schema"))
-        .thenReturn(Map.of(streamKey1, schemaKey));
+        .thenReturn(Collections.singletonMap(streamKey1, schemaKey));
 
     Map<StreamKey, Optional<SchemaKey>> result = underTest.discover("domain", ".*", 1);
 
@@ -66,7 +68,12 @@ public class StreamAndSchemaDiscovererTest {
   @Test
   public void reusedSchemaIsRemoved() {
     when(client.getStreamKeyWithSchemaKeys(null, null, null, "domain", "schema"))
-        .thenReturn(Map.of(streamKey1, schemaKey, streamKey2, schemaKey));
+        .thenReturn(
+            new HashMap<StreamKey, SchemaKey>() {{
+              put(streamKey1, schemaKey);
+              put(streamKey2, schemaKey);
+            }}
+        );
 
     Map<StreamKey, Optional<SchemaKey>> result = underTest.discover("domain", ".*", 1);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
+
+import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -50,7 +52,7 @@ public class StateIT {
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode();
   private final DomainKey key = new DomainKey("domain");
-  private final DefaultSpecification specification = new DefaultSpecification("description", List.of(), "type", configuration);
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration);
   private final ObjectNode statusValue = mapper.createObjectNode();
   private final StatusEntry statusEntry = new StatusEntry("statusName", statusValue);
   private final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);
@@ -60,26 +62,26 @@ public class StateIT {
 
   @Test
   public void test() throws Exception {
-    var topic = "topic";
-    var schemaRegistryUrl = "mock://schemas";
+    val topic = "topic";
+    val schemaRegistryUrl = "mock://schemas";
 
-    var correlator = new DefaultEventCorrelator();
+    val correlator = new DefaultEventCorrelator();
 
-    var receiver = new KafkaEventReceiver(KafkaEventReceiver.Config.builder()
+    val receiver = new KafkaEventReceiver(KafkaEventReceiver.Config.builder()
         .bootstrapServers(kafka.getBootstrapServers())
         .schemaRegistryUrl(schemaRegistryUrl)
         .topic(topic)
         .groupId("groupId")
         .build(), correlator);
 
-    var kafkaSender = new KafkaEventSender(KafkaEventSender.Config.builder()
+    val kafkaSender = new KafkaEventSender(KafkaEventSender.Config.builder()
         .bootstrapServers(kafka.getBootstrapServers())
         .schemaRegistryUrl(schemaRegistryUrl)
         .topic(topic)
         .build(), correlator);
 
     EntityView view = new DefaultEntityView(receiver);
-    var listener = mock(EntityViewListener.class);
+    val listener = mock(EntityViewListener.class);
     view.load(listener).join();
 
     Optional<Entity<DomainKey, DefaultSpecification>> entity;

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.avro;
 
-import java.util.List;
-import java.util.Map;
+
+import java.util.Collections;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -26,8 +26,8 @@ class AvroObjectModule extends SimpleModule {
     super(
         AvroObject.class.getSimpleName(),
         Version.unknownVersion(),
-        Map.of(AvroObject.class, new AvroObjectDeserializer()),
-        List.of(new AvroObjectSerializer())
+        Collections.singletonMap(AvroObject.class, new AvroObjectDeserializer()),
+        Collections.singletonList(new AvroObjectSerializer())
     );
   }
 }

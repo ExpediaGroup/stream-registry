@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.val;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -61,14 +62,14 @@ public class DefaultStatus implements Status {
 
   @Override
   public DefaultStatus with(@NonNull StatusEntry entry) {
-    var statusMap = new HashMap<>(this.statusMap);
+    val statusMap = new HashMap<>(this.statusMap);
     statusMap.put(entry.getName(), entry.getValue());
     return new DefaultStatus(statusMap);
   }
 
   @Override
   public Status without(@NonNull String name) {
-    var statusMap = new HashMap<>(this.statusMap);
+    val statusMap = new HashMap<>(this.statusMap);
     statusMap.remove(name);
     return new DefaultStatus(statusMap);
   }

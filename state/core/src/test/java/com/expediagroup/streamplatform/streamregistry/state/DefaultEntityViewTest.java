@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import static org.mockito.Mockito.verify;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.val;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,32 +59,32 @@ public class DefaultEntityViewTest {
 
   @Test
   public void load() {
-    var future = underTest.load(listener);
-    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    val future = underTest.load(listener);
+    val captor = ArgumentCaptor.forClass(ReceiverListener.class);
     verify(receiver).receive(captor.capture());
-    var receiverListener = captor.getValue();
+    val receiverListener = captor.getValue();
     assertThat(receiverListener.getListener(), is(listener));
     assertThat(receiverListener.getFuture(), is(future));
   }
 
   @Test
   public void loadNoArgs() {
-    var future = underTest.load();
+    val future = underTest.load();
 
-    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    val captor = ArgumentCaptor.forClass(ReceiverListener.class);
     verify(receiver).receive(captor.capture());
-    var receiverListener = captor.getValue();
+    val receiverListener = captor.getValue();
     assertThat(receiverListener.getListener(), is(EntityViewListener.NULL));
     assertThat(receiverListener.getFuture(), is(future));
   }
 
   @Test
   public void updateNotLoaded() {
-    var future = underTest.load(listener);
+    val future = underTest.load(listener);
 
-    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    val captor = ArgumentCaptor.forClass(ReceiverListener.class);
     verify(receiver).receive(captor.capture());
-    var receiverListener = captor.getValue();
+    val receiverListener = captor.getValue();
     receiverListener.onEvent(specificationEvent);
     verify(updater).update(specificationEvent);
     assertThat(future.isDone(), is(false));
@@ -91,11 +93,11 @@ public class DefaultEntityViewTest {
 
   @Test
   public void updateLoaded() {
-    var future = underTest.load(listener);
+    val future = underTest.load(listener);
 
-    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    val captor = ArgumentCaptor.forClass(ReceiverListener.class);
     verify(receiver).receive(captor.capture());
-    var receiverListener = captor.getValue();
+    val receiverListener = captor.getValue();
     receiverListener.onEvent(LOAD_COMPLETE);
     verify(updater, never()).update(any());
     assertThat(future.isDone(), is(true));
@@ -106,9 +108,9 @@ public class DefaultEntityViewTest {
   public void updateLoadedListenerInvoked() {
     underTest.load(listener);
 
-    var captor = ArgumentCaptor.forClass(ReceiverListener.class);
+    val captor = ArgumentCaptor.forClass(ReceiverListener.class);
     verify(receiver).receive(captor.capture());
-    var receiverListener = captor.getValue();
+    val receiverListener = captor.getValue();
     receiverListener.onEvent(LOAD_COMPLETE);
     receiverListener.onEvent(specificationEvent);
     verify(updater).update(specificationEvent);
@@ -119,7 +121,7 @@ public class DefaultEntityViewTest {
   public void getPresent() {
     entities.put(key, entity);
 
-    var result = underTest.get(key);
+    val result = underTest.get(key);
 
     assertThat(result.isPresent(), is(true));
     assertThat(result.get(), is(entity));
@@ -127,7 +129,7 @@ public class DefaultEntityViewTest {
 
   @Test
   public void getAbsent() {
-    var result = underTest.get(key);
+    val result = underTest.get(key);
 
     assertThat(result.isPresent(), is(false));
   }
@@ -136,7 +138,7 @@ public class DefaultEntityViewTest {
   public void allPresent() {
     entities.put(key, entity);
 
-    var result = underTest.all(DomainKey.class).collect(toList());
+    val result = underTest.all(DomainKey.class).collect(toList());
 
     assertThat(result.size(), is(1));
     assertThat(result.get(0), is(entity));
@@ -144,7 +146,7 @@ public class DefaultEntityViewTest {
 
   @Test
   public void allAbsent() {
-    var result = underTest.all(DomainKey.class).collect(toList());
+    val result = underTest.all(DomainKey.class).collect(toList());
 
     assertThat(result.size(), is(0));
   }

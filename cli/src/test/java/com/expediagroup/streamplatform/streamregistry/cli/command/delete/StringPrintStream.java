@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,21 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 class StringPrintStream extends PrintStream {
   private static final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-  StringPrintStream() {
-    super(baos, true, UTF_8);
+  StringPrintStream() throws UnsupportedEncodingException {
+    super(baos, true, UTF_8.name());
+  }
+
+  static StringPrintStream create() {
+    try {
+      return new StringPrintStream();
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override

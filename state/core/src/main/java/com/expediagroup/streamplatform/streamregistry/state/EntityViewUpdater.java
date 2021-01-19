@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
@@ -51,42 +52,42 @@ class EntityViewUpdater {
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(SpecificationEvent<K, S> event) {
-    var oldEntity = (Entity<K, S>) entities.get(event.getKey());
-    var status = Optional
+    val oldEntity = (Entity<K, S>) entities.get(event.getKey());
+    val status = Optional
         .ofNullable(oldEntity)
         .map(Entity::getStatus)
         .orElseGet(DefaultStatus::new);
-    var entity = new Entity<>(event.getKey(), event.getSpecification(), status);
+    val entity = new Entity<>(event.getKey(), event.getSpecification(), status);
     entities.put(event.getKey(), entity);
     log.debug("Updated {} with {}", event.getKey(), event.getSpecification());
     return oldEntity;
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(StatusEvent<K, S> event) {
-    var oldEntity = (Entity<K, S>) entities.get(event.getKey());
+    val oldEntity = (Entity<K, S>) entities.get(event.getKey());
     if (oldEntity == null) {
       log.warn("Received status {} non existent entity {}", event.getStatusEntry().getName(), event.getKey());
       return null;
     }
-    var entity = new Entity<>(event.getKey(), oldEntity.getSpecification(), oldEntity.getStatus().with(event.getStatusEntry()));
+    val entity = new Entity<>(event.getKey(), oldEntity.getSpecification(), oldEntity.getStatus().with(event.getStatusEntry()));
     entities.put(event.getKey(), entity);
     log.debug("Updated {} with {}", event.getKey(), event.getStatusEntry());
     return oldEntity;
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(SpecificationDeletionEvent<K, S> event) {
-    var oldEntity = (Entity<K, S>) entities.remove(event.getKey());
+    val oldEntity = (Entity<K, S>) entities.remove(event.getKey());
     log.debug("Deleted entity for {}", event.getKey());
     return oldEntity;
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(StatusDeletionEvent<K, S> event) {
-    var oldEntity = (Entity<K, S>) entities.get(event.getKey());
+    val oldEntity = (Entity<K, S>) entities.get(event.getKey());
     if (oldEntity == null) {
       log.warn("Received status deletion {} for non existent entity {}", event.getStatusName(), event.getKey());
       return null;
     }
-    var entity = oldEntity.withStatus(oldEntity.getStatus().without(event.getStatusName()));
+    val entity = oldEntity.withStatus(oldEntity.getStatus().without(event.getStatusName()));
     entities.put(event.getKey(), entity);
     log.debug("Deleted status {} for {}", event.getStatusName(), event.getKey());
     return oldEntity;

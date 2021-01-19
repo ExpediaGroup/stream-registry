@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.example;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -72,7 +72,7 @@ public class ExampleAgent implements EntityViewListener {
         new DomainKey("my_domain"),
         new DefaultSpecification(
             "description",
-            List.of(new Tag("name", "value")),
+            Collections.singletonList(new Tag("name", "value")),
             "type",
             mapper.createObjectNode()
         )

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import lombok.val;
 import okhttp3.OkHttpClient;
 
 import com.apollographql.apollo.ApolloClient;
@@ -54,8 +55,8 @@ public class DefaultApolloClientFactoryTest {
 
     underTest.create();
 
-    var captor = ArgumentCaptor.forClass(ObjectNodeTypeAdapter.class);
-    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    val captor = ArgumentCaptor.forClass(ObjectNodeTypeAdapter.class);
+    val okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
 
     verify(builder).okHttpClient(okHttpClientCaptor.capture());
     verify(builder).serverUrl(streamRegistryUrl);
@@ -77,8 +78,8 @@ public class DefaultApolloClientFactoryTest {
 
     underTest.create();
 
-    var objectNodeTypeAdapterCaptor = ArgumentCaptor.forClass(ObjectNodeTypeAdapter.class);
-    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    val objectNodeTypeAdapterCaptor = ArgumentCaptor.forClass(ObjectNodeTypeAdapter.class);
+    val okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
 
     verify(builder).okHttpClient(okHttpClientCaptor.capture());
     verify(builder).serverUrl(streamRegistryUrl);
@@ -100,7 +101,7 @@ public class DefaultApolloClientFactoryTest {
 
     underTest.create();
 
-    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    val okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
     verify(builder).okHttpClient(okHttpClientCaptor.capture());
 
     assertThat(okHttpClientCaptor.getValue().interceptors().size(), is(0));
@@ -118,7 +119,7 @@ public class DefaultApolloClientFactoryTest {
 
     underTest.create();
 
-    var okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
+    val okHttpClientCaptor = ArgumentCaptor.forClass(OkHttpClient.class);
     verify(builder).okHttpClient(okHttpClientCaptor.capture());
 
     assertThat(okHttpClientCaptor.getValue().interceptors().size(), is(1));

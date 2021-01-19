@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +35,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 
@@ -74,15 +77,15 @@ public class KafkaEventSender implements EventSender {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(@NonNull Event<K, S> event) {
-    var avroEvent = converter.toAvro(event);
+    val avroEvent = converter.toAvro(event);
     return send(avroEvent.getKey(), avroEvent.getValue());
   }
 
   private CompletableFuture<Void> send(AvroKey key, AvroValue value) {
-    var future = new CompletableFuture<Void>();
-    var correlationId = correlationStrategy.correlationId(future);
-    var headers = correlationStrategy.headers(correlationId);
-    var record = new ProducerRecord<>(config.getTopic(), null, null, key, value, headers);
+    val future = new CompletableFuture<Void>();
+    val correlationId = correlationStrategy.correlationId(future);
+    val headers = correlationStrategy.headers(correlationId);
+    val record = new ProducerRecord<>(config.getTopic(), null, null, key, value, headers);
     log.debug("Sending {} - {}", correlationId, record);
     producer.send(record, correlationStrategy.callback(correlationId, future));
     return future;
@@ -104,7 +107,7 @@ public class KafkaEventSender implements EventSender {
 
     @Override
     public List<Header> headers(String correlationId) {
-      return List.of();
+      return Collections.emptyList();
     }
 
     @Override
@@ -132,7 +135,7 @@ public class KafkaEventSender implements EventSender {
 
     @Override
     public List<Header> headers(String correlationId) {
-      return List.<Header>of(new RecordHeader(CORRELATION_ID, correlationId.getBytes(UTF_8)));
+      return Collections.singletonList(new RecordHeader(CORRELATION_ID, correlationId.getBytes(UTF_8)));
     }
 
     @Override
@@ -155,13 +158,13 @@ public class KafkaEventSender implements EventSender {
   }
 
   static Map<String, Object> producerConfig(Config config) {
-    return Map.of(
-        BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers(),
-        ACKS_CONFIG, "all",
-        KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class,
-        VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class,
-        SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl()
-    );
+    return new HashMap<String, Object>() {{
+      put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
+      put(ACKS_CONFIG, "all");
+      put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+      put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+      put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
+    }};
   }
 
   @Value

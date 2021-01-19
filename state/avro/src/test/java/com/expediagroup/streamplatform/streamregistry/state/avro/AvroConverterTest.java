@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
+
+import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,20 +48,20 @@ public class AvroConverterTest {
   private final AvroSpecificationKey avroSpecificationKey = new AvroSpecificationKey(avroDomainKey);
   private final AvroSpecification avroSpecification = new AvroSpecification(
       "description",
-      List.of(new AvroTag("name", "value")),
+      Collections.singletonList(new AvroTag("name", "value")),
       "type",
-      new AvroObject(Map.of("foo", "bar"))
+      new AvroObject(Collections.singletonMap("foo", "bar"))
   );
   private final AvroStreamSpecification avroStreamSpecification = new AvroStreamSpecification(
       "description",
-      List.of(new AvroTag("name", "value")),
+      Collections.singletonList(new AvroTag("name", "value")),
       "type",
-      new AvroObject(Map.of("foo", "bar")),
+      new AvroObject(Collections.singletonMap("foo", "bar")),
       new AvroSchemaKey(avroDomainKey, "schema")
   );
 
   private final AvroStatusKey avroStatusKey = new AvroStatusKey(avroDomainKey, "statusName");
-  private final AvroObject avroObjectStatus = new AvroObject(Map.of("foo", "baz"));
+  private final AvroObject avroObjectStatus = new AvroObject(Collections.singletonMap("foo", "baz"));
   private final AvroStatus avroStatus = new AvroStatus(avroObjectStatus);
 
   private final AvroEvent avroSpecificationEvent = new AvroEvent(new AvroKey(avroSpecificationKey), new AvroValue(avroSpecification));
@@ -72,7 +73,7 @@ public class AvroConverterTest {
   private final DomainKey domainKey = new DomainKey("domain");
   private final DefaultSpecification specification = new DefaultSpecification(
       "description",
-      List.of(new Tag("name", "value")),
+      Collections.singletonList(new Tag("name", "value")),
       "type",
       mapper.createObjectNode().put("foo", "bar")
   );
@@ -80,7 +81,7 @@ public class AvroConverterTest {
   private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
   private final StreamSpecification streamSpecification = new StreamSpecification(
       "description",
-      List.of(new Tag("name", "value")),
+      Collections.singletonList(new Tag("name", "value")),
       "type",
       mapper.createObjectNode().put("foo", "bar"),
       new Entity.SchemaKey(domainKey, "schema")
@@ -88,61 +89,61 @@ public class AvroConverterTest {
 
   @Test
   public void specificationToModel() {
-    var result = underTest.toModel(avroSpecificationEvent.getKey(), avroSpecificationEvent.getValue());
+    val result = underTest.toModel(avroSpecificationEvent.getKey(), avroSpecificationEvent.getValue());
     assertThat(result, is(Event.specification(domainKey, specification)));
   }
 
   @Test
   public void specificationDeleteToModel() {
-    var result = underTest.toModel(new AvroKey(avroSpecificationKey), null);
+    val result = underTest.toModel(new AvroKey(avroSpecificationKey), null);
     assertThat(result, is(Event.specificationDeletion(domainKey)));
   }
 
   @Test
   public void statusToModel() {
-    var result = underTest.toModel(new AvroKey(avroStatusKey), new AvroValue(avroStatus));
+    val result = underTest.toModel(new AvroKey(avroStatusKey), new AvroValue(avroStatus));
     assertThat(result, is(Event.status(domainKey, statusEntry)));
   }
 
   @Test
   public void statusDeleteToModel() {
-    var result = underTest.toModel(new AvroKey(avroStatusKey), null);
+    val result = underTest.toModel(new AvroKey(avroStatusKey), null);
     assertThat(result, is(Event.statusDeletion(domainKey, "statusName")));
   }
 
   @Test
   public void specificationToAvro() throws IOException {
-    var result = underTest.toAvro(Event.specification(domainKey, specification));
+    val result = underTest.toAvro(Event.specification(domainKey, specification));
     assertEquals(avroSpecificationEvent.toByteBuffer(), result.toByteBuffer());
   }
 
   @Test
   public void specificationDeleteToAvro() throws IOException {
-    var result = underTest.toAvro(Event.specificationDeletion(domainKey));
+    val result = underTest.toAvro(Event.specificationDeletion(domainKey));
     assertEquals(avroSpecificationDeletionEvent.toByteBuffer(), result.toByteBuffer());
   }
 
   @Test
   public void statusToAvro() throws IOException {
-    var result = underTest.toAvro(Event.status(domainKey, statusEntry));
+    val result = underTest.toAvro(Event.status(domainKey, statusEntry));
     assertEquals(avroStatusEvent.toByteBuffer(), result.toByteBuffer());
   }
 
   @Test
   public void statusDeleteToAvro() throws IOException {
-    var result = underTest.toAvro(Event.statusDeletion(domainKey, "statusName"));
+    val result = underTest.toAvro(Event.statusDeletion(domainKey, "statusName"));
     assertEquals(avroStatusDeletionEvent.toByteBuffer(), result.toByteBuffer());
   }
 
   @Test
   public void streamSpecificationToModel() {
-    var result = underTest.toModel(avroStreamSpecificationEvent.getKey(), avroStreamSpecificationEvent.getValue());
+    val result = underTest.toModel(avroStreamSpecificationEvent.getKey(), avroStreamSpecificationEvent.getValue());
     assertThat(result, is(Event.specification(streamKey, streamSpecification)));
   }
 
   @Test
   public void streamSpecificationToAvro() throws IOException {
-    var result = underTest.toAvro(Event.specification(streamKey, streamSpecification));
+    val result = underTest.toAvro(Event.specification(streamKey, streamSpecification));
     assertEquals(avroStreamSpecificationEvent.toByteBuffer(), result.toByteBuffer());
   }
 }

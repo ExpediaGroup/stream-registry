@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+
+import lombok.val;
 
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Response;
@@ -54,7 +56,7 @@ public class GraphQLEventSenderTest {
     Function<Response, Void> any = any();
     when(responseFuture.thenApply(any)).thenReturn(voidFuture);
 
-    var result = underTest.send(event);
+    val result = underTest.send(event);
 
     assertThat(result, is(voidFuture));
   }
