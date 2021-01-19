@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,9 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class KafkaEventReceiverTest {
@@ -128,5 +130,15 @@ public class KafkaEventReceiverTest {
     when(consumer.partitionsFor(topic)).thenReturn(List.of());
 
     underTest.consume(listener);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void onlySupportsOneReceiver() {
+    var doNothingListener = new EventReceiverListener() {
+      @Override
+      public <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event) { }
+    };
+    underTest.receive(doNothingListener);
+    underTest.receive(doNothingListener);
   }
 }

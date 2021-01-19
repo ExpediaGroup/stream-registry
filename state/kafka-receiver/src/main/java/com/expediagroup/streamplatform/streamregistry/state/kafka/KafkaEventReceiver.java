@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import lombok.Builder;
@@ -64,6 +65,7 @@ public class KafkaEventReceiver implements EventReceiver {
   @NonNull private final KafkaConsumer<AvroKey, AvroValue> consumer;
   @NonNull private final ScheduledExecutorService executorService;
   private volatile boolean shuttingDown = false;
+  private final AtomicBoolean started = new AtomicBoolean(false);
 
   public KafkaEventReceiver(Config config, EventCorrelator correlator) {
     this(
@@ -71,7 +73,7 @@ public class KafkaEventReceiver implements EventReceiver {
         correlator,
         new AvroConverter(),
         new KafkaConsumer<>(consumerConfig(config)),
-        newScheduledThreadPool(2)
+        newScheduledThreadPool(1)
     );
   }
 
@@ -81,6 +83,9 @@ public class KafkaEventReceiver implements EventReceiver {
 
   @Override
   public void receive(EventReceiverListener listener) {
+    if(started.getAndSet(true)) {
+      throw new IllegalStateException("Only a single EventReceiverListener is supported");
+    }
     executorService.execute(() -> {
       try {
         consume(listener);

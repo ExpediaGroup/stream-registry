@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,22 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.entity;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.key;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specificationEvent;
+import static com.expediagroup.streamplatform.streamregistry.state.StateKey.deleted;
+import static com.expediagroup.streamplatform.streamregistry.state.StateKey.existing;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +52,7 @@ public class DefaultEntityViewTest {
   @Mock private EntityViewUpdater updater;
   @Mock private EntityViewListener listener;
 
-  private final Map<Entity.Key<?>, Entity<?, ?>> entities = new HashMap<>();
+  private final Map<StateKey, Entity<?, ?>> entities = new HashMap<>();
 
   private EntityView underTest;
 
@@ -117,7 +123,7 @@ public class DefaultEntityViewTest {
 
   @Test
   public void getPresent() {
-    entities.put(key, entity);
+    entities.put(existing(key), entity);
 
     var result = underTest.get(key);
 
@@ -134,7 +140,7 @@ public class DefaultEntityViewTest {
 
   @Test
   public void allPresent() {
-    entities.put(key, entity);
+    entities.put(existing(key), entity);
 
     var result = underTest.all(DomainKey.class).collect(toList());
 
@@ -147,5 +153,31 @@ public class DefaultEntityViewTest {
     var result = underTest.all(DomainKey.class).collect(toList());
 
     assertThat(result.size(), is(0));
+  }
+
+  @Test
+  public void allDeletedEntities() {
+    entities.put(deleted(key), entity);
+
+    var existingEntities = underTest.all(DomainKey.class).collect(toList());
+    var deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
+
+    assertThat(existingEntities, hasSize(0));
+    assertThat(deletedEntities, hasSize(1));
+  }
+
+  @Test
+  public void allPurgeEntities() {
+    entities.put(deleted(key), entity);
+    var deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
+    assertThat(deletedEntities, hasSize(1));
+
+    when(updater.purge(key)).thenAnswer(i -> Optional.ofNullable(entities.remove(deleted(key))));
+    var purged = underTest.purgeDeleted(key);
+
+    var deletedEntitiesPostPurge = underTest.allDeleted(DomainKey.class).collect(toList());
+    assertThat(purged, is(Optional.of(entity)));
+    assertThat(deletedEntitiesPostPurge, hasSize(0));
+    assertThat(entities, is(aMapWithSize(0)));
   }
 }

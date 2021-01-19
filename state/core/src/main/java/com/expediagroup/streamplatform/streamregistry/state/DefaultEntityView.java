@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,10 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultEntityView implements EntityView {
   @NonNull private final EventReceiver receiver;
-  @NonNull private final Map<Entity.Key<?>, Entity<?, ?>> entities;
+  @NonNull private final Map<StateKey, Entity<?, ?>> entities;
   @NonNull private final EntityViewUpdater updater;
 
-  DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, Entity<?, ?>> entities) {
+  DefaultEntityView(EventReceiver receiver, Map<StateKey, Entity<?, ?>> entities) {
     this(receiver, entities, new EntityViewUpdater(entities));
   }
 
@@ -60,14 +60,30 @@ public class DefaultEntityView implements EntityView {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> get(K key) {
-    return Optional.ofNullable((Entity<K, S>) entities.get(key));
+    return Optional.ofNullable((Entity<K, S>) entities.get(StateKey.existing(key)));
   }
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass) {
-    return entities.values().stream()
-        .filter(x -> x.getKey().getClass().equals(keyClass))
-        .map(x -> (Entity<K, S>) x);
+    return all(keyClass, false);
+  }
+
+  @Override
+  public <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> allDeleted(Class<K> keyClass) {
+    return all(keyClass, true);
+  }
+
+  @Override
+  public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> purgeDeleted(K key) {
+    return updater.purge(key);
+  }
+
+  private <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass, boolean deleted) {
+    return entities.entrySet().stream()
+      .filter(entry -> deleted == entry.getKey().deleted)
+      .map(Map.Entry::getValue)
+      .filter(x -> x.getKey().getClass().equals(keyClass))
+      .map(x -> (Entity<K, S>) x);
   }
 
   @Getter // for testing

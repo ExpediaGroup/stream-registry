@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,4 +63,25 @@ public interface EntityView {
    * @return a stream containing all entities of the given key type.
    */
   <K extends Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass);
+
+  /**
+   * Returns a {@link Stream} containing all entities of the given {@link Key} type which have been deleted but not
+   * purged ({@link #purgeDeleted(Key)})
+   *
+   * @param keyClass the key class of an entity type.
+   * @param <K>      the key type.
+   * @param <S>      the specification type.
+   * @return a stream containing all deleted entities of the given key type.
+   */
+  <K extends Key<S>, S extends Specification> Stream<Entity<K, S>> allDeleted(Class<K> keyClass);
+
+  /**
+   * Purge a deleted entity so that it no longer appears in {@link #allDeleted(Class)}.
+   *
+   * @param key the key of the entity to be purged
+   * @param <K> the key type.
+   * @param <S> the specification type.
+   * @return an optional containing the entity that was purged or empty if no entity exists.
+   */
+  <K extends Key<S>, S extends Specification> Optional<Entity<K, S>> purgeDeleted(K key);
 }
