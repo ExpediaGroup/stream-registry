@@ -19,12 +19,16 @@ import static com.expediagroup.streamplatform.streamregistry.state.internal.Even
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 
 import lombok.val;
@@ -87,9 +91,14 @@ public class KafkaEventReceiverTest {
     when(record.value()).thenReturn(avroValue);
     when(converter.toModel(avroKey, avroValue)).thenReturn(event);
     when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+    val latch = new CountDownLatch(1);
+    doAnswer((correlationId) ->{
+      latch.countDown();
+      return null;
+    }).when(correlator).received(anyString());
 
     underTest.receive(listener);
-    Thread.sleep(100L);
+    latch.await(1, SECONDS);
     underTest.close();
 
     val inOrder = Mockito.inOrder(consumer, listener, correlator);
@@ -112,9 +121,14 @@ public class KafkaEventReceiverTest {
     when(converter.toModel(avroKey, avroValue)).thenReturn(event);
     when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
     doThrow(new RuntimeException("listener error")).when(listener).onEvent(event);
+    val latch = new CountDownLatch(1);
+    doAnswer((correlationId) ->{
+      latch.countDown();
+      return null;
+    }).when(correlator).received(anyString());
 
     underTest.receive(listener);
-    Thread.sleep(100L);
+    latch.await(1, SECONDS);
     underTest.close();
 
     val inOrder = Mockito.inOrder(consumer, listener, correlator);
