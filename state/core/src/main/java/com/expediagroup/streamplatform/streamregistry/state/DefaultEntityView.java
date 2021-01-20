@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
@@ -48,7 +49,7 @@ public class DefaultEntityView implements EntityView {
 
   @Override
   public CompletableFuture<Void> load(@NonNull EntityViewListener listener) {
-    var future = new CompletableFuture<Void>();
+    val future = new CompletableFuture<Void>();
     receiver.receive(new ReceiverListener(listener, future));
     return future;
   }
@@ -97,7 +98,7 @@ public class DefaultEntityView implements EntityView {
       if (!future.isDone() && event == LOAD_COMPLETE) {
         future.complete(null);
       } else {
-        var oldEntity = updater.update(event);
+        val oldEntity = updater.update(event);
         if (future.isDone()) {
           listener.onEvent(oldEntity, event);
         }

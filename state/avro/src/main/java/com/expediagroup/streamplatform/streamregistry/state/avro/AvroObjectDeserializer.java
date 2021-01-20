@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
+
+import lombok.val;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -70,13 +72,13 @@ class AvroObjectDeserializer extends JsonDeserializer<AvroObject> {
   }
 
   private AvroObject deserializeObject(JsonParser p) throws IOException {
-    var fields = new HashMap<String, Object>();
+    val fields = new HashMap<String, Object>();
     process(p, END_OBJECT, fields::put);
     return new AvroObject(fields);
   }
 
   private AvroArray deserializeArray(JsonParser p) throws IOException {
-    var items = new ArrayList<>();
+    val items = new ArrayList<>();
     process(p, END_ARRAY, (name, item) -> items.add(item));
     return new AvroArray(items);
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -56,7 +57,7 @@ public class ProducerBindingService {
 
   @PreAuthorize("hasPermission(#producerBinding, 'UPDATE')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
-    var existing = unsecuredGet(producerBinding.getKey());
+    val existing = unsecuredGet(producerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producerBinding.getKey() + " because it doesn't exist");
     }
@@ -76,7 +77,7 @@ public class ProducerBindingService {
     return Optional.ofNullable(producerBinding);
   }
 
-  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<ProducerBinding> get(ProducerBindingKey key) {
     return unsecuredGet(key);
   }
@@ -99,9 +100,9 @@ public class ProducerBindingService {
     return unsecuredGet(key).isPresent();
   }
 
-  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<ProducerBinding> find(ProducerKey key) {
-    var example = new ProducerBinding(new ProducerBindingKey(
+    val example = new ProducerBinding(new ProducerBindingKey(
         key.getStreamDomain(),
         key.getStreamName(),
         key.getStreamVersion(),

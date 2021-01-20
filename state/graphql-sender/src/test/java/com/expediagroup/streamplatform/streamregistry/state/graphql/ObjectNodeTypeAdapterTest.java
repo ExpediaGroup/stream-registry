@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Map;
+import java.util.Collections;
+
+import lombok.val;
 
 import com.apollographql.apollo.api.CustomTypeValue;
 import com.apollographql.apollo.api.CustomTypeValue.GraphQLJsonObject;
@@ -40,7 +42,7 @@ public class ObjectNodeTypeAdapterTest {
 
   @Test
   public void encode() {
-    var result = (GraphQLString) underTest.encode(mapper.createObjectNode());
+    val result = (GraphQLString) underTest.encode(mapper.createObjectNode());
 
     assertThat(result.value, is("{}"));
   }
@@ -52,7 +54,7 @@ public class ObjectNodeTypeAdapterTest {
 
   @Test
   public void decode() {
-    var result = (JsonNode) underTest.decode(new GraphQLJsonObject(Map.of()));
+    val result = (JsonNode) underTest.decode(new GraphQLJsonObject(Collections.emptyMap()));
 
     assertThat(result, is(mapper.createObjectNode()));
   }

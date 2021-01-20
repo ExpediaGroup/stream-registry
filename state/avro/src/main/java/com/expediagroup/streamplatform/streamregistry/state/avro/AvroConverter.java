@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker.Std;
@@ -60,28 +62,28 @@ public class AvroConverter {
       .setVisibility(new Std(NONE).withFieldVisibility(ANY))
       .registerModule(new AvroObjectModule());
 
-  private final List<EntityConverter<?, ?>> entityConverters = List.of(
-      new EntityConverter<>(DomainKey.class, DefaultSpecification.class,
-          AvroDomainKey.class, AvroSpecification.class),
-      new EntityConverter<>(SchemaKey.class, DefaultSpecification.class,
-          AvroSchemaKey.class, AvroSpecification.class),
-      new EntityConverter<>(StreamKey.class, StreamSpecification.class,
-          AvroStreamKey.class, AvroStreamSpecification.class),
-      new EntityConverter<>(ZoneKey.class, DefaultSpecification.class,
-          AvroZoneKey.class, AvroSpecification.class),
-      new EntityConverter<>(InfrastructureKey.class, DefaultSpecification.class,
-          AvroInfrastructureKey.class, AvroSpecification.class),
-      new EntityConverter<>(ProducerKey.class, DefaultSpecification.class,
-          AvroProducerKey.class, AvroSpecification.class),
-      new EntityConverter<>(ConsumerKey.class, DefaultSpecification.class,
-          AvroConsumerKey.class, AvroSpecification.class),
-      new EntityConverter<>(StreamBindingKey.class, DefaultSpecification.class,
-          AvroStreamBindingKey.class, AvroSpecification.class),
-      new EntityConverter<>(ProducerBindingKey.class, DefaultSpecification.class,
-          AvroProducerBindingKey.class, AvroSpecification.class),
-      new EntityConverter<>(ConsumerBindingKey.class, DefaultSpecification.class,
-          AvroConsumerBindingKey.class, AvroSpecification.class)
-  );
+  private final List<EntityConverter<?, ?>> entityConverters = new ArrayList<EntityConverter<?, ?>>() {{
+    add(new EntityConverter<>(DomainKey.class, DefaultSpecification.class,
+        AvroDomainKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(SchemaKey.class, DefaultSpecification.class,
+        AvroSchemaKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(StreamKey.class, StreamSpecification.class,
+        AvroStreamKey.class, AvroStreamSpecification.class));
+    add(new EntityConverter<>(ZoneKey.class, DefaultSpecification.class,
+        AvroZoneKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(InfrastructureKey.class, DefaultSpecification.class,
+        AvroInfrastructureKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(ProducerKey.class, DefaultSpecification.class,
+        AvroProducerKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(ConsumerKey.class, DefaultSpecification.class,
+        AvroConsumerKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(StreamBindingKey.class, DefaultSpecification.class,
+        AvroStreamBindingKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(ProducerBindingKey.class, DefaultSpecification.class,
+        AvroProducerBindingKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(ConsumerBindingKey.class, DefaultSpecification.class,
+        AvroConsumerBindingKey.class, AvroSpecification.class));
+  }};
 
   private final Map<Class<? extends SpecificRecord>, ? extends EntityConverter<?, ?>> modelConverters = entityConverters
       .stream().collect(toMap(EntityConverter::getAvroKeyClass, c -> c));
@@ -101,8 +103,8 @@ public class AvroConverter {
     @NonNull private final Class<? extends SpecificRecord> avroSpecificationClass;
 
     private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, Object avroSpecification) {
-      var key = convertObject(avroSpecificationKey.getKey(), modelKeyClass);
-      var specification = convertObject(avroSpecification, modelSpecificationClass);
+      val key = convertObject(avroSpecificationKey.getKey(), modelKeyClass);
+      val specification = convertObject(avroSpecification, modelSpecificationClass);
       if (specification == null) {
         return Event.specificationDeletion(key);
       }
@@ -110,18 +112,18 @@ public class AvroConverter {
     }
 
     private Event<?, ?> toModel(AvroStatusKey avroStatusKey, AvroStatus avroStatus) {
-      var key = convertObject(avroStatusKey.getKey(), modelKeyClass);
-      var statusName = avroStatusKey.getStatusName();
+      val key = convertObject(avroStatusKey.getKey(), modelKeyClass);
+      val statusName = avroStatusKey.getStatusName();
       if (avroStatus == null) {
         return Event.statusDeletion(key, statusName);
       }
-      var statusValue = convertObject(avroStatus.getValue(), ObjectNode.class);
+      val statusValue = convertObject(avroStatus.getValue(), ObjectNode.class);
       return Event.status(key, new StatusEntry(statusName, statusValue));
     }
 
     private AvroEvent toAvro(SpecificationEvent<?, ?> event) {
-      var key = convertObject(event.getKey(), avroKeyClass);
-      var specification = convertObject(event.getSpecification(), avroSpecificationClass);
+      val key = convertObject(event.getKey(), avroKeyClass);
+      val specification = convertObject(event.getSpecification(), avroSpecificationClass);
       return new AvroEvent(
           new AvroKey(new AvroSpecificationKey(key)),
           new AvroValue(specification)
@@ -129,9 +131,9 @@ public class AvroConverter {
     }
 
     private AvroEvent toAvro(StatusEvent<?, ?> event) {
-      var key = convertObject(event.getKey(), avroKeyClass);
-      var statusName = event.getStatusEntry().getName();
-      var statusValue = convertObject(event.getStatusEntry().getValue(), AvroObject.class);
+      val key = convertObject(event.getKey(), avroKeyClass);
+      val statusName = event.getStatusEntry().getName();
+      val statusValue = convertObject(event.getStatusEntry().getValue(), AvroObject.class);
       return new AvroEvent(
           new AvroKey(new AvroStatusKey(key, statusName)),
           new AvroValue(new AvroStatus(statusValue))
@@ -139,7 +141,7 @@ public class AvroConverter {
     }
 
     private AvroEvent toAvro(SpecificationDeletionEvent<?, ?> event) {
-      var key = convertObject(event.getKey(), avroKeyClass);
+      val key = convertObject(event.getKey(), avroKeyClass);
       return new AvroEvent(
           new AvroKey(new AvroSpecificationKey(key)),
           null
@@ -147,8 +149,8 @@ public class AvroConverter {
     }
 
     private AvroEvent toAvro(StatusDeletionEvent<?, ?> event) {
-      var key = convertObject(event.getKey(), avroKeyClass);
-      var statusName = event.getStatusName();
+      val key = convertObject(event.getKey(), avroKeyClass);
+      val statusName = event.getStatusName();
       return new AvroEvent(
           new AvroKey(new AvroStatusKey(key, statusName)),
           null
@@ -187,7 +189,7 @@ public class AvroConverter {
   }
 
   public AvroEvent toAvro(Event<?, ?> event) {
-    var avroConverter = avroConverter(event.getKey());
+    val avroConverter = avroConverter(event.getKey());
     if (event instanceof SpecificationEvent) {
       return avroConverter.toAvro((SpecificationEvent<?, ?>) event);
     } else if (event instanceof StatusEvent) {

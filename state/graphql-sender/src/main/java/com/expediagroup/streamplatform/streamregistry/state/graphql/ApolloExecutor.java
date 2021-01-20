@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,11 @@ import java.util.concurrent.CompletableFuture;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Error;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation.Data;
 import com.apollographql.apollo.api.Operation.Variables;
@@ -41,13 +43,13 @@ public class ApolloExecutor {
   @NonNull private final ApolloClient client;
 
   public <D extends Data, T, V extends Variables> CompletableFuture<Response<T>> execute(Mutation<D, T, V> mutation) {
-    var future = new CompletableFuture<Response<T>>();
+    val future = new CompletableFuture<Response<T>>();
     client.mutate(mutation).enqueue(new Callback<>(future));
     return future;
   }
 
   public <D extends Data, T, V extends Variables> CompletableFuture<Response<T>> execute(Query<D, T, V> query) {
-    var future = new CompletableFuture<Response<T>>();
+    val future = new CompletableFuture<Response<T>>();
     client.query(query).enqueue(new Callback<>(future));
     return future;
   }
@@ -59,8 +61,13 @@ public class ApolloExecutor {
     @Override
     public void onResponse(@NotNull Response<T> response) {
       if (response.hasErrors()) {
-        List<com.apollographql.apollo.api.Error> errors = response.getErrors();
-        future.completeExceptionally(new IllegalStateException("Unexpected response: " + errors.stream().map(e -> e.getMessage()).collect(joining(", "))));
+        List<Error> errors = response.getErrors();
+        future.completeExceptionally(
+          new ApolloResponseException(
+            "Unexpected response: " + errors.stream().map(e -> e.getMessage()).collect(joining(", ")),
+            response
+          )
+        );
       } else {
         future.complete(response);
       }

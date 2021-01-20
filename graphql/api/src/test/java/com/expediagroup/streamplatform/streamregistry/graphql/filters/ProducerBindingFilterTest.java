@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -45,7 +45,7 @@ public class ProducerBindingFilterTest {
       ),
       new Specification(
           "description",
-          List.of(new Tag("name", "value")),
+          Collections.singletonList(new Tag("name", "value")),
           "type",
           new ObjectMapper().createObjectNode()
       ),
@@ -64,7 +64,7 @@ public class ProducerBindingFilterTest {
         .build();
     SpecificationQuery specQuery = SpecificationQuery.builder()
         .descriptionRegex("description")
-        .tags(List.of(TagQuery.builder()
+        .tags(Collections.singletonList(TagQuery.builder()
             .nameRegex("name")
             .valueRegex("value")
             .build()))
@@ -156,7 +156,7 @@ public class ProducerBindingFilterTest {
     ProducerBindingKeyQuery keyQuery = ProducerBindingKeyQuery.builder()
         .build();
     SpecificationQuery specQuery = SpecificationQuery.builder()
-        .tags(List.of(TagQuery.builder()
+        .tags(Collections.singletonList(TagQuery.builder()
             .nameRegex("x")
             .valueRegex("x")
             .build()))

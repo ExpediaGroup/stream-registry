@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -55,7 +56,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'UPDATE')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
-    var existing = unsecuredGet(domain.getKey());
+    val existing = unsecuredGet(domain.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
@@ -75,7 +76,7 @@ public class DomainService {
     return Optional.ofNullable(domain);
   }
 
-  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Domain> get(DomainKey key) {
     return unsecuredGet(key);
   }

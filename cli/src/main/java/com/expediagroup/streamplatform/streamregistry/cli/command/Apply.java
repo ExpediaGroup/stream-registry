@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.cli.command;
 
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.specification;
 
+import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
@@ -65,7 +66,7 @@ public class Apply {
     @Option(names = "--description", required = true)
     protected String description;
     @Option(names = "--tag", converter = TagConverter.class)
-    protected List<Tag> tags = List.of();
+    protected List<Tag> tags = Collections.emptyList();
     @Option(names = "--type", required = true)
     protected String type;
     @Option(names = "--configuration", required = true, converter = ObjectNodeConverter.class)
@@ -73,7 +74,7 @@ public class Apply {
 
     @Override
     public List<Event<?, ?>> events() {
-      return List.of(specification(getEntityOptions().key(), getSpecification()));
+      return Collections.singletonList(specification(getEntityOptions().key(), getSpecification()));
     }
 
     protected abstract EntityOptions<K, S> getEntityOptions();

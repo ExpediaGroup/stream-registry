@@ -31,7 +31,8 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,6 +43,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
@@ -97,12 +99,12 @@ public class KafkaEventReceiver implements EventReceiver {
   }
 
   void consume(EventReceiverListener listener) {
-    var currentOffset = new AtomicLong(0L);
-    var progressLogger = executorService
+    val currentOffset = new AtomicLong(0L);
+    val progressLogger = executorService
         .scheduleAtFixedRate(() -> log.info("Current offset {}", currentOffset.get()), 10, 10, SECONDS);
 
-    var topicPartition = new TopicPartition(config.getTopic(), 0);
-    var topicPartitions = List.of(topicPartition);
+    val topicPartition = new TopicPartition(config.getTopic(), 0);
+    val topicPartitions = Collections.singletonList(topicPartition);
 
     int partitions = consumer.partitionsFor(topicPartition.topic()).size();
     if (partitions != 1) {
@@ -116,7 +118,7 @@ public class KafkaEventReceiver implements EventReceiver {
     consumer.assign(topicPartitions);
     consumer.seekToBeginning(topicPartitions);
 
-    var loaded = false;
+    boolean loaded = false;
     if (endOffset == 0L) {
       progressLogger.cancel(true);
       log.info("Loading complete. Empty topic.");
@@ -126,7 +128,7 @@ public class KafkaEventReceiver implements EventReceiver {
 
     while (!shuttingDown) {
       for (ConsumerRecord<AvroKey, AvroValue> record : consumer.poll(Duration.ofMillis(100))) {
-        var event = converter.toModel(record.key(), record.value());
+        val event = converter.toModel(record.key(), record.value());
         currentOffset.set(record.offset());
         try {
           listener.onEvent(event);
@@ -146,10 +148,10 @@ public class KafkaEventReceiver implements EventReceiver {
 
   private void receiveCorrelationId(ConsumerRecord<?, ?> record) {
     if (correlator != null) {
-      var headerIterator = record.headers().headers(CORRELATION_ID).iterator();
+      val headerIterator = record.headers().headers(CORRELATION_ID).iterator();
       if (headerIterator.hasNext()) {
-        var header = headerIterator.next();
-        var correlationId = new String(header.value(), UTF_8);
+        val header = headerIterator.next();
+        val correlationId = new String(header.value(), UTF_8);
         correlator.received(correlationId);
       }
     }
@@ -163,16 +165,16 @@ public class KafkaEventReceiver implements EventReceiver {
   }
 
   static Map<String, Object> consumerConfig(Config config) {
-    return Map.of(
-        BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers(),
-        GROUP_ID_CONFIG, config.getGroupId(),
-        AUTO_OFFSET_RESET_CONFIG, "earliest",
-        ENABLE_AUTO_COMMIT_CONFIG, false,
-        KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class,
-        VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class,
-        SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl(),
-        SPECIFIC_AVRO_READER_CONFIG, true
-    );
+    return new HashMap<String, Object>() {{
+      put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
+      put(GROUP_ID_CONFIG, config.getGroupId());
+      put(AUTO_OFFSET_RESET_CONFIG, "earliest");
+      put(ENABLE_AUTO_COMMIT_CONFIG, false);
+      put(KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+      put(VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+      put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
+      put(SPECIFIC_AVRO_READER_CONFIG, true);
+    }};
   }
 
   @Value

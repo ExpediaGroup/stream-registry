@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,15 @@
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.concurrent.CompletableFuture;
+
+import lombok.val;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.ApolloMutationCall;
@@ -50,12 +56,12 @@ public class ApolloExecutorTest {
   public void onResponseNoErrors() {
     when(client.mutate(mutation)).thenReturn(mutationCall);
 
-    var result = underTest.execute(mutation);
+    CompletableFuture<? extends Response<?>> result = underTest.execute(mutation);
 
-    var captor = ArgumentCaptor.forClass(Callback.class);
+    val captor = ArgumentCaptor.forClass(Callback.class);
     verify(client).mutate(mutation);
     verify(mutationCall).enqueue(captor.capture());
-    var callback = captor.getValue();
+    val callback = captor.getValue();
 
     assertThat(result.isDone(), is(false));
     when(response.hasErrors()).thenReturn(false);
@@ -67,26 +73,33 @@ public class ApolloExecutorTest {
   public void onResponseErrors() {
     when(client.mutate(mutation)).thenReturn(mutationCall);
 
-    var result = underTest.execute(mutation);
+    CompletableFuture<? extends Response<?>> result = underTest.execute(mutation);
 
-    var captor = ArgumentCaptor.forClass(Callback.class);
+    val captor = ArgumentCaptor.forClass(Callback.class);
     verify(client).mutate(mutation);
     verify(mutationCall).enqueue(captor.capture());
-    var callback = captor.getValue();
+    val callback = captor.getValue();
 
     assertThat(result.isDone(), is(false));
     when(response.hasErrors()).thenReturn(true);
     callback.onResponse(response);
     assertThat(result.isCompletedExceptionally(), is(true));
+    try {
+      result.get();
+      fail("Expected exception");
+    } catch (Exception ex) {
+      assertThat(ex.getCause(), instanceOf(ApolloResponseException.class));
+      assertThat(((ApolloResponseException)ex.getCause()).getResponse(), is(response));
+    }
   }
 
   @Test
   public void onFailure() {
     when(client.mutate(mutation)).thenReturn(mutationCall);
 
-    var result = underTest.execute(mutation);
+    CompletableFuture<? extends Response<?>> result = underTest.execute(mutation);
 
-    var captor = ArgumentCaptor.forClass(Callback.class);
+    val captor = ArgumentCaptor.forClass(Callback.class);
     verify(client).mutate(mutation);
     verify(mutationCall).enqueue(captor.capture());
     Callback callback = captor.getValue();

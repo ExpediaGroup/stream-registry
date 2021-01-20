@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,13 @@ import static com.fasterxml.jackson.core.Version.unknownVersion;
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.WRITE_DOC_START_MARKER;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import lombok.SneakyThrows;
+import lombok.val;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -45,18 +47,18 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 
 public class Formatter {
   private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(WRITE_DOC_START_MARKER))
-      .registerModule(new SimpleModule("keys", unknownVersion(), List.of(
-          new DomainKeySerializer(),
-          new SchemaKeySerializer(),
-          new StreamKeySerializer(),
-          new ZoneKeySerializer(),
-          new InfrastructureKeySerializer(),
-          new ProducerKeySerializer(),
-          new ConsumerKeySerializer(),
-          new StreamBindingKeySerializer(),
-          new ProducerBindingKeySerializer(),
-          new ConsumerBindingKeySerializer()
-      )));
+      .registerModule(new SimpleModule("keys", unknownVersion(), new ArrayList<JsonSerializer<?>>() {{
+        add(new DomainKeySerializer());
+        add(new SchemaKeySerializer());
+        add(new StreamKeySerializer());
+        add(new ZoneKeySerializer());
+        add(new InfrastructureKeySerializer());
+        add(new ProducerKeySerializer());
+        add(new ConsumerKeySerializer());
+        add(new StreamBindingKeySerializer());
+        add(new ProducerBindingKeySerializer());
+        add(new ConsumerBindingKeySerializer());
+      }}));
 
   @SneakyThrows
   public <S extends Specification> String format(Key<S> key) {
@@ -73,7 +75,7 @@ public class Formatter {
 
     @Override
     public void serialize(K key, JsonGenerator g, SerializerProvider p) throws IOException {
-      var localStartObject = !g.getOutputContext().inObject();
+      val localStartObject = !g.getOutputContext().inObject();
       if (localStartObject) {
         g.writeStartObject();
         g.writeFieldName(name);

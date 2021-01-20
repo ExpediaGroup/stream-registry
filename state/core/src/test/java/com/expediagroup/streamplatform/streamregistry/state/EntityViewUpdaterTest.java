@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.After;
+import lombok.val;
+
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
@@ -63,7 +65,7 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void newSpecification() {
-    var result = underTest.update(specificationEvent);
+    val result = underTest.update(specificationEvent);
 
     assertThat(result, is(nullValue()));
     assertThat(entities.get(existing(key)), is(entity.withStatus(oldStatus)));
@@ -72,7 +74,7 @@ public class EntityViewUpdaterTest {
   @Test
   public void updateSpecification() {
     entities.put(existing(key), oldEntity);
-    var result = underTest.update(specificationEvent);
+    val result = underTest.update(specificationEvent);
 
     assertThat(result, is(oldEntity));
     assertThat(entities.get(existing(key)), is(entity.withStatus(oldStatus)));
@@ -81,7 +83,7 @@ public class EntityViewUpdaterTest {
   @Test
   public void newStatusExistingEntity() {
     entities.put(existing(key), oldEntity);
-    var result = underTest.update(statusEvent);
+    val result = underTest.update(statusEvent);
 
     assertThat(result, is(oldEntity));
     assertThat(entities.get(existing(key)), is(oldEntity.withStatus(status)));
@@ -89,7 +91,7 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void statusNoEntity() {
-    var result = underTest.update(statusEvent);
+    val result = underTest.update(statusEvent);
 
     assertThat(result, is(nullValue()));
     assertThat(entities.get(existing(key)), is(nullValue()));
@@ -97,14 +99,14 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void deleteSpecificationEvent() {
-    var previousEntity = underTest.update(specificationEvent);
+    val previousEntity = underTest.update(specificationEvent);
 
     assertThat(previousEntity, is(nullValue()));
     assertThat(entities.get(existing(key)), is(entity.withStatus(oldStatus)));
     assertThat(entities, hasEntry(existing(key), entity.withStatus(oldStatus)));
     assertThat(entities, is(aMapWithSize(1)));
 
-    var deletedEntity = underTest.update(specificationDeletionEvent);
+    val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(entity.withStatus(oldStatus)));
     assertThat(entities.get(existing(key)), is(nullValue()));
     assertThat(entities, hasEntry(deleted(key), entity.withStatus(oldStatus)));
@@ -115,12 +117,12 @@ public class EntityViewUpdaterTest {
   public void deleteStatusEvent() {
     entities.put(existing(key), oldEntity);
 
-    var updatedStatusEventResult = underTest.update(statusEvent);
+    val updatedStatusEventResult = underTest.update(statusEvent);
     assertThat(updatedStatusEventResult, is(oldEntity));
     assertThat(entities, hasEntry(existing(key), oldEntity.withStatus(status)));
     assertThat(entities, is(aMapWithSize(1)));
 
-    var deletedStatusEventResult = underTest.update(statusDeletionEvent);
+    val deletedStatusEventResult = underTest.update(statusDeletionEvent);
     assertThat(deletedStatusEventResult, is(oldEntity.withStatus(status)));
     assertThat(entities, hasEntry(existing(key), oldEntity));
     assertThat(entities.get(deleted(key)), is(nullValue()));
@@ -141,7 +143,7 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void purgeNonExistingEntity() {
-    var purgedEntity = underTest.purge(key);
+    val purgedEntity = underTest.purge(key);
 
     assertThat(purgedEntity.isEmpty(), is(true));
     assertThat(entities, is(aMapWithSize(0)));
@@ -151,7 +153,7 @@ public class EntityViewUpdaterTest {
   public void purgeDeletedEntity() {
     entities.put(deleted(key), oldEntity);
 
-    var purgedEntity = underTest.purge(key);
+    val purgedEntity = underTest.purge(key);
 
     assertThat(purgedEntity.isPresent(), is(true));
     assertThat(purgedEntity.get(), is(oldEntity));
@@ -162,7 +164,7 @@ public class EntityViewUpdaterTest {
   public void purgeNonDeletedEntity() {
     entities.put(existing(key), oldEntity);
 
-    var purgedEntity = underTest.purge(key);
+    val purgedEntity = underTest.purge(key);
 
     assertThat(purgedEntity.isEmpty(), is(true));
     assertThat(entities, hasEntry(existing(key), oldEntity));

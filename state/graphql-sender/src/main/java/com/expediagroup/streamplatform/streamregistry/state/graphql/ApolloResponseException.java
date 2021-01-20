@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.avro;
+package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
+import lombok.Getter;
 
-import java.util.Collections;
+import com.apollographql.apollo.api.Response;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+@Getter
+public class ApolloResponseException extends IllegalStateException {
 
-class AvroObjectModule extends SimpleModule {
-  AvroObjectModule() {
-    super(
-        AvroObject.class.getSimpleName(),
-        Version.unknownVersion(),
-        Collections.singletonMap(AvroObject.class, new AvroObjectDeserializer()),
-        Collections.singletonList(new AvroObjectSerializer())
-    );
+  private final Response<?> response;
+
+  public ApolloResponseException(String message, Response<?> response) {
+    super(message);
+    this.response = response;
   }
 }

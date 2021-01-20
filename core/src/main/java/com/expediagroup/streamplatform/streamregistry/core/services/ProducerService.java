@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -55,7 +56,7 @@ public class ProducerService {
 
   @PreAuthorize("hasPermission(#producer, 'UPDATE')")
   public Optional<Producer> update(Producer producer) throws ValidationException {
-    var existing = unsecuredGet(producer.getKey());
+    val existing = unsecuredGet(producer.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producer.getKey().getName() + " because it doesn't exist");
     }
@@ -75,7 +76,7 @@ public class ProducerService {
     return Optional.ofNullable(producer);
   }
 
-  @PostAuthorize("returnObject.isEmpty() ? true: hasPermission(returnObject, 'READ')")
+  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Producer> get(ProducerKey key) {
     return unsecuredGet(key);
   }
