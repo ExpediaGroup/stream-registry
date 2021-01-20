@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.val;
+
 import org.junit.Test;
 
 public class DefaultEventCorrelatorTest {
@@ -32,14 +34,14 @@ public class DefaultEventCorrelatorTest {
 
   @Test
   public void register() {
-    var correlationId = underTest.register(future);
+    val correlationId = underTest.register(future);
 
     assertThat(futures.get(correlationId), is(future));
   }
 
   @Test
   public void received() {
-    var correlationId = underTest.register(future);
+    val correlationId = underTest.register(future);
     underTest.received(correlationId);
 
     assertThat(futures.isEmpty(), is(true));
@@ -48,7 +50,7 @@ public class DefaultEventCorrelatorTest {
 
   @Test
   public void failed() {
-    var correlationId = underTest.register(future);
+    val correlationId = underTest.register(future);
     underTest.failed(correlationId, new Exception());
 
     assertThat(futures.isEmpty(), is(true));

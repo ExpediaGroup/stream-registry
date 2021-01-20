@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 import com.apollographql.apollo.api.Mutation;
@@ -153,6 +153,6 @@ public class ProducerBindingTestStage extends AbstractTestStage {
   @Override
   public void queryByInvalidKey() {
     ProducerBindingKeyInput input = factory.producerBindingKeyInputBuilder().producerName("disnae_exist").build();
-    assertTrue(client.getProducerBinding(input).isEmpty());
+    assertFalse(client.getProducerBinding(input).isPresent());
   }
 }

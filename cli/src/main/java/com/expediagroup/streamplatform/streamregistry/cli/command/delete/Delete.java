@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import lombok.SneakyThrows;
+import lombok.val;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
@@ -57,8 +58,8 @@ public class Delete {
     @SneakyThrows
     @Override
     public void run(PrintStream out, PrintStream err) {
-      var client = clientFactory.create();
-      try (var deleter = deleterFactory.create()) {
+      val client = clientFactory.create();
+      try (val deleter = deleterFactory.create()) {
         run(out, err, client, deleter);
       }
     }
@@ -120,7 +121,13 @@ public class Delete {
         StreamAndSchemaDiscoverer discoverer = new StreamAndSchemaDiscoverer(client);
         Map<StreamKey, Optional<SchemaKey>> streams = discoverer.discover(domain, stream, version);
         result.addAll(streams.keySet());
-        result.addAll(streams.values().stream().flatMap(Optional::stream).collect(toSet()));
+
+        result.addAll(
+            streams.values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toSet())
+        );
         return unmodifiableList(result);
       }
       return unmodifiableList(new ArrayList<>(client.getStreamKeyWithSchemaKeys(domain, stream, version, null, null)

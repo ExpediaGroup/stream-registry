@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import static com.google.common.collect.ObjectArrays.concat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -166,7 +167,10 @@ public class ApplyTest {
     assertThat(event.getKey(), is(key));
     Specification specification = event.getSpecification();
     assertThat(specification.getDescription(), is("description"));
-    assertThat(specification.getTags(), is(List.of(new Tag("a", "b"), new Tag("c", "d"))));
+    assertThat(specification.getTags(), is(new ArrayList<Tag>() {{
+      add(new Tag("a", "b"));
+      add(new Tag("c", "d"));
+    }}));
     assertThat(specification.getType(), is("type"));
     assertThat(specification.getConfiguration(), is(configuration));
 

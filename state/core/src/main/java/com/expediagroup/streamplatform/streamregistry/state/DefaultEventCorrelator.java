@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 
@@ -39,7 +40,7 @@ public class DefaultEventCorrelator implements EventCorrelator {
 
   @Override
   public String register(CompletableFuture<Void> future) {
-    var correlationId = randomUUID().toString();
+    val correlationId = randomUUID().toString();
     futures.put(correlationId, future);
     log.debug("registered: {}", correlationId);
     return correlationId;

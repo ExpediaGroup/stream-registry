@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import com.apollographql.apollo.ApolloClient;
 
@@ -40,7 +41,7 @@ public class GraphQLEventSender implements EventSender {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(Event<K, S> event) {
-    var mutation = converter.convert(event);
+    val mutation = converter.convert(event);
     return executor.execute(mutation).thenApply(x -> null);
   }
 

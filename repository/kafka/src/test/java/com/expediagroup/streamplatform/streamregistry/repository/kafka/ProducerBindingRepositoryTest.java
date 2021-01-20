@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +51,7 @@ public class ProducerBindingRepositoryTest {
   @Test
   public void findAllMatch() {
     ProducerBinding producerBinding = SampleModel.producerBinding();
-    doReturn(List.of(producerBinding)).when(underTest).findAll();
+    doReturn(Collections.singletonList(producerBinding)).when(underTest).findAll();
 
     List<ProducerBinding> result = underTest.findAll(SampleModel.producerBinding());
 
@@ -62,7 +63,7 @@ public class ProducerBindingRepositoryTest {
   public void findAllNoMatch() {
     ProducerBinding producerBinding = SampleModel.producerBinding();
     producerBinding.getKey().setProducerName("different producer");
-    doReturn(List.of(producerBinding)).when(underTest).findAll();
+    doReturn(Collections.singletonList(producerBinding)).when(underTest).findAll();
 
     List<ProducerBinding> result = underTest.findAll(SampleModel.producerBinding());
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -49,7 +49,7 @@ public class EventSenderActionTest {
   public void before() {
     when(underTest.sender()).thenReturn(sender);
     when(sender.send(any())).thenReturn(future);
-    when(underTest.events()).thenReturn(List.of(event));
+    when(underTest.events()).thenReturn(Collections.singletonList(event));
     doCallRealMethod().when(underTest).run(any(), any());
   }
 

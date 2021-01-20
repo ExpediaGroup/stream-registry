@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.val;
+
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
@@ -49,7 +51,7 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void newSpecification() {
-    var result = underTest.update(specificationEvent);
+    val result = underTest.update(specificationEvent);
 
     assertThat(result, is(nullValue()));
     assertThat(entities.get(key), is(entity.withStatus(oldStatus)));
@@ -58,7 +60,7 @@ public class EntityViewUpdaterTest {
   @Test
   public void updateSpecification() {
     entities.put(key, oldEntity);
-    var result = underTest.update(specificationEvent);
+    val result = underTest.update(specificationEvent);
 
     assertThat(result, is(oldEntity));
     assertThat(entities.get(key), is(entity.withStatus(oldStatus)));
@@ -67,7 +69,7 @@ public class EntityViewUpdaterTest {
   @Test
   public void newStatusExistingEntity() {
     entities.put(key, oldEntity);
-    var result = underTest.update(statusEvent);
+    val result = underTest.update(statusEvent);
 
     assertThat(result, is(oldEntity));
     assertThat(entities.get(key), is(oldEntity.withStatus(status)));
@@ -75,7 +77,7 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void statusNoEntity() {
-    var result = underTest.update(statusEvent);
+    val result = underTest.update(statusEvent);
 
     assertThat(result, is(nullValue()));
     assertThat(entities.get(key), is(nullValue()));

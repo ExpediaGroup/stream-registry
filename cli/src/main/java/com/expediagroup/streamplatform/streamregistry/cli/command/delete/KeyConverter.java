@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.cli.command.delete;
+
+import lombok.val;
 
 import com.expediagroup.streamplatform.streamregistry.cli.graphql.ConsumerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.cli.graphql.ConsumerQuery;
@@ -42,12 +44,12 @@ class KeyConverter {
   }
 
   SchemaKey schemaKey(SchemaQuery.Key key) {
-    var domainKey = new DomainKey(key.getDomain());
+    val domainKey = new DomainKey(key.getDomain());
     return new SchemaKey(domainKey, key.getName());
   }
 
   SchemaKey schemaKey(StreamQuery.Key1 key) {
-    var domainKey = new DomainKey(key.getDomain());
+    val domainKey = new DomainKey(key.getDomain());
     return new SchemaKey(domainKey, key.getName());
   }
 
@@ -56,54 +58,54 @@ class KeyConverter {
   }
 
   InfrastructureKey infrastructureKey(InfrastructureQuery.Key key) {
-    var zoneKey = new ZoneKey(key.getZone());
+    val zoneKey = new ZoneKey(key.getZone());
     return new InfrastructureKey(zoneKey, key.getName());
   }
 
   StreamKey streamKey(StreamQuery.Key key) {
-    var domainKey = new DomainKey(key.getDomain());
+    val domainKey = new DomainKey(key.getDomain());
     return new StreamKey(domainKey, key.getName(), key.getVersion());
   }
 
   ProducerKey producerKey(ProducerQuery.Key key) {
-    var domainKey = new DomainKey(key.getStreamDomain());
-    var streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
-    var zoneKey = new ZoneKey(key.getZone());
+    val domainKey = new DomainKey(key.getStreamDomain());
+    val streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
+    val zoneKey = new ZoneKey(key.getZone());
     return new ProducerKey(streamKey, zoneKey, key.getName());
   }
 
   ConsumerKey consumerKey(ConsumerQuery.Key key) {
-    var domainKey = new DomainKey(key.getStreamDomain());
-    var streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
-    var zoneKey = new ZoneKey(key.getZone());
+    val domainKey = new DomainKey(key.getStreamDomain());
+    val streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
+    val zoneKey = new ZoneKey(key.getZone());
     return new ConsumerKey(streamKey, zoneKey, key.getName());
   }
 
   ProducerBindingKey producerBindingKey(ProducerBindingQuery.Key key) {
-    var domainKey = new DomainKey(key.getStreamDomain());
-    var streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
-    var zoneKey = new ZoneKey(key.getInfrastructureZone());
-    var producerKey = new ProducerKey(streamKey, zoneKey, key.getProducerName());
-    var infrastructureKey = new InfrastructureKey(zoneKey, key.getInfrastructureName());
-    var streamBindingKey = new StreamBindingKey(streamKey, infrastructureKey);
+    val domainKey = new DomainKey(key.getStreamDomain());
+    val streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
+    val zoneKey = new ZoneKey(key.getInfrastructureZone());
+    val producerKey = new ProducerKey(streamKey, zoneKey, key.getProducerName());
+    val infrastructureKey = new InfrastructureKey(zoneKey, key.getInfrastructureName());
+    val streamBindingKey = new StreamBindingKey(streamKey, infrastructureKey);
     return new ProducerBindingKey(producerKey, streamBindingKey);
   }
 
   ConsumerBindingKey consumerBindingKey(ConsumerBindingQuery.Key key) {
-    var domainKey = new DomainKey(key.getStreamDomain());
-    var streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
-    var zoneKey = new ZoneKey(key.getInfrastructureZone());
-    var consumerKey = new ConsumerKey(streamKey, zoneKey, key.getConsumerName());
-    var infrastructureKey = new InfrastructureKey(zoneKey, key.getInfrastructureName());
-    var streamBindingKey = new StreamBindingKey(streamKey, infrastructureKey);
+    val domainKey = new DomainKey(key.getStreamDomain());
+    val streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
+    val zoneKey = new ZoneKey(key.getInfrastructureZone());
+    val consumerKey = new ConsumerKey(streamKey, zoneKey, key.getConsumerName());
+    val infrastructureKey = new InfrastructureKey(zoneKey, key.getInfrastructureName());
+    val streamBindingKey = new StreamBindingKey(streamKey, infrastructureKey);
     return new ConsumerBindingKey(consumerKey, streamBindingKey);
   }
 
   StreamBindingKey streamBindingKey(StreamBindingQuery.Key key) {
-    var domainKey = new DomainKey(key.getStreamDomain());
-    var streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
-    var zoneKey = new ZoneKey(key.getInfrastructureZone());
-    var infrastructureKey = new InfrastructureKey(zoneKey, key.getInfrastructureName());
+    val domainKey = new DomainKey(key.getStreamDomain());
+    val streamKey = new StreamKey(domainKey, key.getStreamName(), key.getStreamVersion());
+    val zoneKey = new ZoneKey(key.getInfrastructureZone());
+    val infrastructureKey = new InfrastructureKey(zoneKey, key.getInfrastructureName());
     return new StreamBindingKey(streamKey, infrastructureKey);
   }
 }

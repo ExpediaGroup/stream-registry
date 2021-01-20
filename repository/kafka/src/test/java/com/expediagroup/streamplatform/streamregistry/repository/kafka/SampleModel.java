@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-import java.util.List;
+
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,7 +52,7 @@ final class SampleModel {
   static Specification specification() {
     Specification specification = new Specification();
     specification.setDescription("description");
-    specification.setTags(List.of(new Tag("name", "value")));
+    specification.setTags(Collections.singletonList(new Tag("name", "value")));
     specification.setType("type");
     specification.setConfiguration(mapper.createObjectNode());
     return specification;

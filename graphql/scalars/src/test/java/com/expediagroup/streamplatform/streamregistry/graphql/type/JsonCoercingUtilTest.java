@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -83,7 +82,7 @@ public class JsonCoercingUtilTest {
   @Test
   public void variableReferenceValue() {
     Value value = VariableReference.newVariableReference().name("a").build();
-    Object result = JsonCoercingUtil.parseLiteral(value, Map.of("a", "b"));
+    Object result = JsonCoercingUtil.parseLiteral(value, Collections.singletonMap("a", "b"));
     assertThat(result, is("b"));
   }
 
@@ -93,7 +92,7 @@ public class JsonCoercingUtilTest {
         .value(StringValue.newStringValue("a").build())
         .build();
     Object result = JsonCoercingUtil.parseLiteral(value, emptyMap());
-    assertThat(result, is(List.of("a")));
+    assertThat(result, is(Collections.singletonList("a")));
   }
 
   @Test
@@ -105,6 +104,6 @@ public class JsonCoercingUtilTest {
             .build())
         .build();
     Object result = JsonCoercingUtil.parseLiteral(value, emptyMap());
-    assertThat(result, is(Map.of("a", "b")));
+    assertThat(result, is(Collections.singletonMap("a", "b")));
   }
 }

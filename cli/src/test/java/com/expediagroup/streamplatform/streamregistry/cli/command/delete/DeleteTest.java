@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,13 +88,13 @@ public class DeleteTest {
 
   @Mock private EntityClient client;
   @Mock private EntityDeleter deleter;
-  private final StringPrintStream out = new StringPrintStream();
-  private final StringPrintStream err = new StringPrintStream();
+  private final StringPrintStream out = StringPrintStream.create();
+  private final StringPrintStream err = StringPrintStream.create();
 
   @Test
   public void noEntitiesFound() {
     when(client.getDomainKeys(DOMAIN))
-        .thenReturn(List.of());
+        .thenReturn(Collections.emptyList());
 
     run(DOMAIN,
         DOMAIN_ARG);
@@ -105,7 +105,7 @@ public class DeleteTest {
   @Test
   public void domain() {
     when(client.getDomainKeys(DOMAIN))
-        .thenReturn(List.of(domainKey));
+        .thenReturn(Collections.singletonList(domainKey));
 
     run(DOMAIN,
         DOMAIN_ARG);
@@ -116,7 +116,7 @@ public class DeleteTest {
   @Test
   public void domainDryRun() {
     when(client.getDomainKeys(DOMAIN))
-        .thenReturn(List.of(domainKey));
+        .thenReturn(Collections.singletonList(domainKey));
 
     run(DOMAIN, DRY_RUN_ARG,
         DOMAIN_ARG);
@@ -127,7 +127,7 @@ public class DeleteTest {
   @Test
   public void schema() {
     when(client.getSchemaKeys(DOMAIN, SCHEMA))
-        .thenReturn(List.of(schemaKey));
+        .thenReturn(Collections.singletonList(schemaKey));
 
     run(SCHEMA,
         DOMAIN_ARG, SCHEMA_ARG);
@@ -138,7 +138,7 @@ public class DeleteTest {
   @Test
   public void schemaDryRun() {
     when(client.getSchemaKeys(DOMAIN, SCHEMA))
-        .thenReturn(List.of(schemaKey));
+        .thenReturn(Collections.singletonList(schemaKey));
 
     run(SCHEMA, DRY_RUN_ARG,
         DOMAIN_ARG, SCHEMA_ARG);
@@ -149,7 +149,7 @@ public class DeleteTest {
   @Test
   public void stream() {
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(Map.of(streamKey, schemaKey));
+        .thenReturn(Collections.singletonMap(streamKey, schemaKey));
 
     run(STREAM,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -160,7 +160,7 @@ public class DeleteTest {
   @Test
   public void streamDryRun() {
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(Map.of(streamKey, schemaKey));
+        .thenReturn(Collections.singletonMap(streamKey, schemaKey));
 
     run(STREAM, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -171,19 +171,19 @@ public class DeleteTest {
   @Test
   public void streamCascade() {
     when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
-        .thenReturn(List.of(consumerBindingKey));
+        .thenReturn(Collections.singletonList(consumerBindingKey));
     when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(consumerKey));
+        .thenReturn(Collections.singletonList(consumerKey));
     when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
-        .thenReturn(List.of(producerBindingKey));
+        .thenReturn(Collections.singletonList(producerBindingKey));
     when(client.getProducerKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(producerKey));
+        .thenReturn(Collections.singletonList(producerKey));
     when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(streamBindingKey));
+        .thenReturn(Collections.singletonList(streamBindingKey));
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(Map.of(streamKey, schemaKey));
+        .thenReturn(Collections.singletonMap(streamKey, schemaKey));
     when(client.getStreamKeyWithSchemaKeys(null, null, null, DOMAIN, SCHEMA))
-        .thenReturn(Map.of(streamKey, schemaKey));
+        .thenReturn(Collections.singletonMap(streamKey, schemaKey));
 
     run(STREAM, CASCADE_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -201,19 +201,22 @@ public class DeleteTest {
   @Test
   public void streamCascadeReusedSchema() {
     when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
-        .thenReturn(List.of(consumerBindingKey));
+        .thenReturn(Collections.singletonList(consumerBindingKey));
     when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(consumerKey));
+        .thenReturn(Collections.singletonList(consumerKey));
     when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, null, null, null))
-        .thenReturn(List.of(producerBindingKey));
+        .thenReturn(Collections.singletonList(producerBindingKey));
     when(client.getProducerKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(producerKey));
+        .thenReturn(Collections.singletonList(producerKey));
     when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(List.of(streamBindingKey));
+        .thenReturn(Collections.singletonList(streamBindingKey));
     when(client.getStreamKeyWithSchemaKeys(DOMAIN, STREAM, VERSION, null, null))
-        .thenReturn(Map.of(streamKey, schemaKey));
+        .thenReturn(Collections.singletonMap(streamKey, schemaKey));
     when(client.getStreamKeyWithSchemaKeys(null, null, null, DOMAIN, SCHEMA))
-        .thenReturn(Map.of(streamKey, schemaKey, streamKey2, schemaKey));
+        .thenReturn(new HashMap<StreamKey, SchemaKey>() {{
+          put(streamKey, schemaKey);
+          put(streamKey2, schemaKey);
+        }});
 
     run(STREAM, CASCADE_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG);
@@ -231,7 +234,7 @@ public class DeleteTest {
   @Test
   public void zone() {
     when(client.getZoneKeys(ZONE))
-        .thenReturn(List.of(zoneKey));
+        .thenReturn(Collections.singletonList(zoneKey));
 
     run(ZONE,
         ZONE_ARG);
@@ -242,7 +245,7 @@ public class DeleteTest {
   @Test
   public void zoneDryRun() {
     when(client.getZoneKeys(ZONE))
-        .thenReturn(List.of(zoneKey));
+        .thenReturn(Collections.singletonList(zoneKey));
 
     run(ZONE, DRY_RUN_ARG,
         ZONE_ARG);
@@ -253,7 +256,7 @@ public class DeleteTest {
   @Test
   public void infrastructure() {
     when(client.getInfrastructureKeys(ZONE, INFRASTRUCTURE))
-        .thenReturn(List.of(infrastructureKey));
+        .thenReturn(Collections.singletonList(infrastructureKey));
 
     run(INFRASTRUCTURE,
         ZONE_ARG, INFRASTRUCTURE_ARG);
@@ -264,7 +267,7 @@ public class DeleteTest {
   @Test
   public void infrastructureDryRun() {
     when(client.getInfrastructureKeys(ZONE, INFRASTRUCTURE))
-        .thenReturn(List.of(infrastructureKey));
+        .thenReturn(Collections.singletonList(infrastructureKey));
 
     run(INFRASTRUCTURE, DRY_RUN_ARG,
         ZONE_ARG, INFRASTRUCTURE_ARG);
@@ -275,7 +278,7 @@ public class DeleteTest {
   @Test
   public void producer() {
     when(client.getProducerKeys(DOMAIN, STREAM, VERSION, ZONE, PRODUCER))
-        .thenReturn(List.of(producerKey));
+        .thenReturn(Collections.singletonList(producerKey));
 
     run(PRODUCER,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, PRODUCER_ARG);
@@ -286,7 +289,7 @@ public class DeleteTest {
   @Test
   public void producerDryRun() {
     when(client.getProducerKeys(DOMAIN, STREAM, VERSION, ZONE, PRODUCER))
-        .thenReturn(List.of(producerKey));
+        .thenReturn(Collections.singletonList(producerKey));
 
     run(PRODUCER, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, PRODUCER_ARG);
@@ -297,7 +300,7 @@ public class DeleteTest {
   @Test
   public void consumer() {
     when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, ZONE, CONSUMER))
-        .thenReturn(List.of(consumerKey));
+        .thenReturn(Collections.singletonList(consumerKey));
 
     run(CONSUMER,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, CONSUMER_ARG);
@@ -308,7 +311,7 @@ public class DeleteTest {
   @Test
   public void consumerDryRun() {
     when(client.getConsumerKeys(DOMAIN, STREAM, VERSION, ZONE, CONSUMER))
-        .thenReturn(List.of(consumerKey));
+        .thenReturn(Collections.singletonList(consumerKey));
 
     run(CONSUMER, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, CONSUMER_ARG);
@@ -319,7 +322,7 @@ public class DeleteTest {
   @Test
   public void streamBinding() {
     when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE))
-        .thenReturn(List.of(streamBindingKey));
+        .thenReturn(Collections.singletonList(streamBindingKey));
 
     run(STREAM_BINDING,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG);
@@ -330,7 +333,7 @@ public class DeleteTest {
   @Test
   public void streamBindingDryRun() {
     when(client.getStreamBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE))
-        .thenReturn(List.of(streamBindingKey));
+        .thenReturn(Collections.singletonList(streamBindingKey));
 
     run(STREAM_BINDING, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG);
@@ -341,7 +344,7 @@ public class DeleteTest {
   @Test
   public void producerBinding() {
     when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, PRODUCER))
-        .thenReturn(List.of(producerBindingKey));
+        .thenReturn(Collections.singletonList(producerBindingKey));
 
     run(PRODUCER_BINDING,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, PRODUCER_ARG);
@@ -352,7 +355,7 @@ public class DeleteTest {
   @Test
   public void producerBindingDryRun() {
     when(client.getProducerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, PRODUCER))
-        .thenReturn(List.of(producerBindingKey));
+        .thenReturn(Collections.singletonList(producerBindingKey));
 
     run(PRODUCER_BINDING, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, PRODUCER_ARG);
@@ -363,7 +366,7 @@ public class DeleteTest {
   @Test
   public void consumerBinding() {
     when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, CONSUMER))
-        .thenReturn(List.of(consumerBindingKey));
+        .thenReturn(Collections.singletonList(consumerBindingKey));
 
     run(CONSUMER_BINDING,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, CONSUMER_ARG);
@@ -374,7 +377,7 @@ public class DeleteTest {
   @Test
   public void consumerBindingDryRun() {
     when(client.getConsumerBindingKeys(DOMAIN, STREAM, VERSION, ZONE, INFRASTRUCTURE, CONSUMER))
-        .thenReturn(List.of(consumerBindingKey));
+        .thenReturn(Collections.singletonList(consumerBindingKey));
 
     run(CONSUMER_BINDING, DRY_RUN_ARG,
         DOMAIN_ARG, STREAM_ARG, VERSION_ARG, ZONE_ARG, INFRASTRUCTURE_ARG, CONSUMER_ARG);

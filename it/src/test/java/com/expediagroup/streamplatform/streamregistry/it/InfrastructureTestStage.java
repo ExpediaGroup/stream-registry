@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -156,6 +156,6 @@ public class InfrastructureTestStage extends AbstractTestStage {
   @Override
   public void queryByInvalidKey() {
     InfrastructureKeyInput input = factory.infrastructureKeyInputBuilder().name("disnae_exist").build();
-    assertTrue(client.getInfrastructure(input).isEmpty());
+    assertFalse(client.getInfrastructure(input).isPresent());
   }
 }

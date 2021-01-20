@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
+import java.util.Collections;
+
+import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -53,13 +55,13 @@ public class GraphQLConverterTest {
   private final ObjectMapper mapper = new ObjectMapper();
   private final Tag tag = new Tag("name", "value");
   private final ObjectNode configuration = mapper.createObjectNode();
-  private final DefaultSpecification specification = new DefaultSpecification("description", List.of(tag), "type", configuration);
-  private final StreamSpecification streamSpecification = new StreamSpecification("description", List.of(tag), "type", configuration, schemaKey);
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration);
+  private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());
 
   @Test(expected = IllegalArgumentException.class)
   public void unknownKey() {
-    var key = new Entity.Key<>() {};
+    val key = new Entity.Key<DefaultSpecification>() {};
     underTest.convert(Event.specification(key, specification));
   }
 
@@ -80,181 +82,181 @@ public class GraphQLConverterTest {
 
   @Test
   public void domainSpecification() {
-    var mutation = underTest.convert(Event.specification(domainKey, specification));
+    val mutation = underTest.convert(Event.specification(domainKey, specification));
     assertThat(mutation, is(instanceOf(DomainSpecificationMutation.class)));
   }
 
   @Test
   public void domainStatus() {
-    var mutation = underTest.convert(Event.status(domainKey, statusEntry));
+    val mutation = underTest.convert(Event.status(domainKey, statusEntry));
     assertThat(mutation, is(instanceOf(DomainStatusMutation.class)));
   }
 
   @Test
   public void domainDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(domainKey));
+    val mutation = underTest.convert(Event.specificationDeletion(domainKey));
     assertThat(mutation, is(instanceOf(DomainDeletionMutation.class)));
   }
 
   @Test
   public void schemaSpecification() {
-    var mutation = underTest.convert(Event.specification(schemaKey, specification));
+    val mutation = underTest.convert(Event.specification(schemaKey, specification));
     assertThat(mutation, is(instanceOf(SchemaSpecificationMutation.class)));
   }
 
   @Test
   public void schemaStatus() {
-    var mutation = underTest.convert(Event.status(schemaKey, statusEntry));
+    val mutation = underTest.convert(Event.status(schemaKey, statusEntry));
     assertThat(mutation, is(instanceOf(SchemaStatusMutation.class)));
   }
 
   @Test
   public void schemaDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(schemaKey));
+    val mutation = underTest.convert(Event.specificationDeletion(schemaKey));
     assertThat(mutation, is(instanceOf(SchemaDeletionMutation.class)));
   }
 
   @Test
   public void streamSpecification() {
-    var mutation = underTest.convert(Event.specification(streamkey, streamSpecification));
+    val mutation = underTest.convert(Event.specification(streamkey, streamSpecification));
     assertThat(mutation, is(instanceOf(StreamSpecificationMutation.class)));
   }
 
   @Test
   public void streamStatus() {
-    var mutation = underTest.convert(Event.status(streamkey, statusEntry));
+    val mutation = underTest.convert(Event.status(streamkey, statusEntry));
     assertThat(mutation, is(instanceOf(StreamStatusMutation.class)));
   }
 
   @Test
   public void streamDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(streamkey));
+    val mutation = underTest.convert(Event.specificationDeletion(streamkey));
     assertThat(mutation, is(instanceOf(StreamDeletionMutation.class)));
   }
 
   @Test
   public void zoneSpecification() {
-    var mutation = underTest.convert(Event.specification(zoneKey, specification));
+    val mutation = underTest.convert(Event.specification(zoneKey, specification));
     assertThat(mutation, is(instanceOf(ZoneSpecificationMutation.class)));
   }
 
   @Test
   public void zoneStatus() {
-    var mutation = underTest.convert(Event.status(zoneKey, statusEntry));
+    val mutation = underTest.convert(Event.status(zoneKey, statusEntry));
     assertThat(mutation, is(instanceOf(ZoneStatusMutation.class)));
   }
 
   @Test
   public void zoneDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(zoneKey));
+    val mutation = underTest.convert(Event.specificationDeletion(zoneKey));
     assertThat(mutation, is(instanceOf(ZoneDeletionMutation.class)));
   }
 
   @Test
   public void infrastructureSpecification() {
-    var mutation = underTest.convert(Event.specification(infrastructureKey, specification));
+    val mutation = underTest.convert(Event.specification(infrastructureKey, specification));
     assertThat(mutation, is(instanceOf(InfrastructureSpecificationMutation.class)));
   }
 
   @Test
   public void infrastructureStatus() {
-    var mutation = underTest.convert(Event.status(infrastructureKey, statusEntry));
+    val mutation = underTest.convert(Event.status(infrastructureKey, statusEntry));
     assertThat(mutation, is(instanceOf(InfrastructureStatusMutation.class)));
   }
 
   @Test
   public void infrastructureDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(infrastructureKey));
+    val mutation = underTest.convert(Event.specificationDeletion(infrastructureKey));
     assertThat(mutation, is(instanceOf(InfrastructureDeletionMutation.class)));
   }
 
   @Test
   public void producerSpecification() {
-    var mutation = underTest.convert(Event.specification(producerKey, specification));
+    val mutation = underTest.convert(Event.specification(producerKey, specification));
     assertThat(mutation, is(instanceOf(ProducerSpecificationMutation.class)));
   }
 
   @Test
   public void producerStatus() {
-    var mutation = underTest.convert(Event.status(producerKey, statusEntry));
+    val mutation = underTest.convert(Event.status(producerKey, statusEntry));
     assertThat(mutation, is(instanceOf(ProducerStatusMutation.class)));
   }
 
   @Test
   public void producerDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(producerKey));
+    val mutation = underTest.convert(Event.specificationDeletion(producerKey));
     assertThat(mutation, is(instanceOf(ProducerDeletionMutation.class)));
   }
 
   @Test
   public void consumerSpecification() {
-    var mutation = underTest.convert(Event.specification(consumerKey, specification));
+    val mutation = underTest.convert(Event.specification(consumerKey, specification));
     assertThat(mutation, is(instanceOf(ConsumerSpecificationMutation.class)));
   }
 
   @Test
   public void consumerStatus() {
-    var mutation = underTest.convert(Event.status(consumerKey, statusEntry));
+    val mutation = underTest.convert(Event.status(consumerKey, statusEntry));
     assertThat(mutation, is(instanceOf(ConsumerStatusMutation.class)));
   }
 
   @Test
   public void consumerDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(consumerKey));
+    val mutation = underTest.convert(Event.specificationDeletion(consumerKey));
     assertThat(mutation, is(instanceOf(ConsumerDeletionMutation.class)));
   }
 
   @Test
   public void streamBindingSpecification() {
-    var mutation = underTest.convert(Event.specification(streamBindingKey, specification));
+    val mutation = underTest.convert(Event.specification(streamBindingKey, specification));
     assertThat(mutation, is(instanceOf(StreamBindingSpecificationMutation.class)));
   }
 
   @Test
   public void streamBindingStatus() {
-    var mutation = underTest.convert(Event.status(streamBindingKey, statusEntry));
+    val mutation = underTest.convert(Event.status(streamBindingKey, statusEntry));
     assertThat(mutation, is(instanceOf(StreamBindingStatusMutation.class)));
   }
 
   @Test
   public void streamBindingDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(streamBindingKey));
+    val mutation = underTest.convert(Event.specificationDeletion(streamBindingKey));
     assertThat(mutation, is(instanceOf(StreamBindingDeletionMutation.class)));
   }
 
   @Test
   public void producerBindingSpecification() {
-    var mutation = underTest.convert(Event.specification(producerBindingKey, specification));
+    val mutation = underTest.convert(Event.specification(producerBindingKey, specification));
     assertThat(mutation, is(instanceOf(ProducerBindingSpecificationMutation.class)));
   }
 
   @Test
   public void producerBindingStatus() {
-    var mutation = underTest.convert(Event.status(producerBindingKey, statusEntry));
+    val mutation = underTest.convert(Event.status(producerBindingKey, statusEntry));
     assertThat(mutation, is(instanceOf(ProducerBindingStatusMutation.class)));
   }
 
   @Test
   public void producerBindingDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(producerBindingKey));
+    val mutation = underTest.convert(Event.specificationDeletion(producerBindingKey));
     assertThat(mutation, is(instanceOf(ProducerBindingDeletionMutation.class)));
   }
 
   @Test
   public void consumerBindingSpecification() {
-    var mutation = underTest.convert(Event.specification(consumerBindingKey, specification));
+    val mutation = underTest.convert(Event.specification(consumerBindingKey, specification));
     assertThat(mutation, is(instanceOf(ConsumerBindingSpecificationMutation.class)));
   }
 
   @Test
   public void consumerBindingStatus() {
-    var mutation = underTest.convert(Event.status(consumerBindingKey, statusEntry));
+    val mutation = underTest.convert(Event.status(consumerBindingKey, statusEntry));
     assertThat(mutation, is(instanceOf(ConsumerBindingStatusMutation.class)));
   }
 
   @Test
   public void consumerBindingDeletion() {
-    var mutation = underTest.convert(Event.specificationDeletion(consumerBindingKey));
+    val mutation = underTest.convert(Event.specificationDeletion(consumerBindingKey));
     assertThat(mutation, is(instanceOf(ConsumerBindingDeletionMutation.class)));
   }
 }

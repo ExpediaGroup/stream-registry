@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@ package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import lombok.val;
 
 import com.apollographql.apollo.api.InputType;
 import com.apollographql.apollo.api.Mutation;
@@ -58,21 +61,21 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusE
 
 class GraphQLConverter {
 
-  private final Map<Class<? extends Entity.Key<?>>, Converter<?, ?, ?, ?, ?, ?>> converters = Map.of(
-      DomainKey.class, new DomainConverter(),
-      SchemaKey.class, new SchemaConverter(),
-      StreamKey.class, new StreamConverter(),
-      ZoneKey.class, new ZoneConverter(),
-      InfrastructureKey.class, new InfrastructureConverter(),
-      ProducerKey.class, new ProducerConverter(),
-      ConsumerKey.class, new ConsumerConverter(),
-      StreamBindingKey.class, new StreamBindingConverter(),
-      ProducerBindingKey.class, new ProducerBindingConverter(),
-      ConsumerBindingKey.class, new ConsumerBindingConverter()
-  );
+  private final Map<Class<? extends Entity.Key<?>>, Converter<?, ?, ?, ?, ?, ?>> converters = new HashMap<Class<? extends Entity.Key<?>>, Converter<?, ?, ?, ?, ?, ?>>() {{
+    put(DomainKey.class, new DomainConverter());
+    put(SchemaKey.class, new SchemaConverter());
+    put(StreamKey.class, new StreamConverter());
+    put(ZoneKey.class, new ZoneConverter());
+    put(InfrastructureKey.class, new InfrastructureConverter());
+    put(ProducerKey.class, new ProducerConverter());
+    put(ConsumerKey.class, new ConsumerConverter());
+    put(StreamBindingKey.class, new StreamBindingConverter());
+    put(ProducerBindingKey.class, new ProducerBindingConverter());
+    put(ConsumerBindingKey.class, new ConsumerBindingConverter());
+  }};
 
   <K extends Entity.Key<S>, S extends Specification> Mutation<?, ?, ?> convert(Event<K, S> event) {
-    var converter = (Converter<?, ?, ?, ?, K, S>) converters.get(event.getKey().getClass());
+    val converter = (Converter<?, ?, ?, ?, K, S>) converters.get(event.getKey().getClass());
 
     if (converter == null) {
       throw new IllegalArgumentException("Unknown key class " + event.getKey().getClass());

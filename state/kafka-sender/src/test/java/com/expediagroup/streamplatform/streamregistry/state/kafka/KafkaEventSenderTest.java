@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
+import java.util.Collections;
+
+import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -58,7 +60,7 @@ public class KafkaEventSenderTest {
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final DomainKey key = new DomainKey("domain");
-  private final DefaultSpecification specification = new DefaultSpecification("description", List.of(), "type", mapper.createObjectNode());
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode());
   private final Event<DomainKey, DefaultSpecification> event = Event.specification(key, specification);
 
   @Mock private AvroEvent avroEvent;
@@ -78,94 +80,94 @@ public class KafkaEventSenderTest {
 
   @Test
   public void nullCorrelatorSuccess() {
-    var correlationStrategy = new NullCorrelationStrategy();
+    val correlationStrategy = new NullCorrelationStrategy();
 
-    var underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
+    val underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
 
-    var result = underTest.send(event);
+    val result = underTest.send(event);
 
     verify(producer).send(recordCaptor.capture(), callbackCaptor.capture());
 
-    var record = recordCaptor.getValue();
+    val record = recordCaptor.getValue();
     assertThat(record.topic(), is("topic"));
     assertThat(record.key(), is(avroKey));
     assertThat(record.value(), is(avroValue));
     assertThat(record.headers().toArray().length, is(0));
 
-    var callback = callbackCaptor.getValue();
+    val callback = callbackCaptor.getValue();
     assertThat(result.isDone(), is(false));
-    var recordMetadata = mock(RecordMetadata.class);
+    val recordMetadata = mock(RecordMetadata.class);
     callback.onCompletion(recordMetadata, null);
     assertThat(result.isDone(), is(true));
   }
 
   @Test
   public void correlatorSuccess() {
-    var correlator = mock(EventCorrelator.class);
-    var correlationStrategy = new CorrelationStrategyImpl(correlator);
+    val correlator = mock(EventCorrelator.class);
+    val correlationStrategy = new CorrelationStrategyImpl(correlator);
 
-    var underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
+    val underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
 
     when(correlator.register(any())).thenReturn("correlationId");
 
-    var result = underTest.send(event);
+    val result = underTest.send(event);
 
     verify(correlator).register(result);
     verify(producer).send(recordCaptor.capture(), callbackCaptor.capture());
 
-    var record = recordCaptor.getValue();
+    val record = recordCaptor.getValue();
     assertThat(record.topic(), is("topic"));
     assertThat(record.key(), is(avroKey));
     assertThat(record.value(), is(avroValue));
     assertThat(record.headers().toArray().length, is(1));
 
-    var callback = callbackCaptor.getValue();
+    val callback = callbackCaptor.getValue();
     assertThat(result.isDone(), is(false));
-    var recordMetadata = mock(RecordMetadata.class);
+    val recordMetadata = mock(RecordMetadata.class);
     callback.onCompletion(recordMetadata, null);
     assertThat(result.isDone(), is(false));
   }
 
   @Test
   public void nullCorrelatorFailure() {
-    var correlationStrategy = new NullCorrelationStrategy();
+    val correlationStrategy = new NullCorrelationStrategy();
 
-    var underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
+    val underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
 
-    var result = underTest.send(event);
+    val result = underTest.send(event);
 
     verify(producer).send(recordCaptor.capture(), callbackCaptor.capture());
 
-    var callback = callbackCaptor.getValue();
+    val callback = callbackCaptor.getValue();
     assertThat(result.isDone(), is(false));
-    var e = new Exception();
+    val e = new Exception();
     callback.onCompletion(null, e);
     assertThat(result.isCompletedExceptionally(), is(true));
   }
 
   @Test
   public void correlatorFailure() {
-    var correlator = mock(EventCorrelator.class);
-    var correlationStrategy = new CorrelationStrategyImpl(correlator);
+    val correlator = mock(EventCorrelator.class);
+    val correlationStrategy = new CorrelationStrategyImpl(correlator);
 
-    var underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
+    val underTest = new KafkaEventSender(config, correlationStrategy, converter, producer);
 
     when(correlator.register(any())).thenReturn("correlationId");
 
-    var result = underTest.send(event);
+    val result = underTest.send(event);
 
     verify(correlator).register(any());
     verify(producer).send(recordCaptor.capture(), callbackCaptor.capture());
 
-    var record = recordCaptor.getValue();
+    val record = recordCaptor.getValue();
     assertThat(record.topic(), is("topic"));
     assertThat(record.key(), is(avroKey));
     assertThat(record.value(), is(avroValue));
     assertThat(record.headers().toArray().length, is(1));
 
-    var callback = callbackCaptor.getValue();
+    val callback = callbackCaptor.getValue();
     assertThat(result.isDone(), is(false));
-    var e = new Exception();
+    val e = new Exception();
     callback.onCompletion(null, e);
     assertThat(result.isCompletedExceptionally(), is(false));
     verify(correlator).failed("correlationId", e);
