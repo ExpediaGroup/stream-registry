@@ -150,7 +150,7 @@ public class KafkaEventReceiverTest {
 
   @Test(expected = IllegalStateException.class)
   public void onlySupportsOneReceiver() {
-    var doNothingListener = new EventReceiverListener() {
+    val doNothingListener = new EventReceiverListener() {
       @Override
       public <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event) { }
     };

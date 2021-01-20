@@ -22,6 +22,7 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,13 +44,13 @@ public final class AgentData {
   private final SpecificationEvent<DomainKey, DefaultSpecification> specificationEvent;
 
   public AgentData withTags(List<Tag> tags) {
-    var specification = new DefaultSpecification(randomUUID().toString(), tags, "type", new ObjectMapper().createObjectNode());
+    val specification = new DefaultSpecification(randomUUID().toString(), tags, "type", new ObjectMapper().createObjectNode());
     return new AgentData(key, specification, entity(key, specification), specificationEvent(key, specification));
   }
 
   public static AgentData generateData() {
-    var key = key();
-    var specification = defaultSpecification();
+    val key = key();
+    val specification = defaultSpecification();
     return new AgentData(key, specification, entity(key, specification), specificationEvent(key, specification));
   }
 

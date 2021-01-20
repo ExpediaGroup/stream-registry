@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.val;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.awaitility.Awaitility;
@@ -70,11 +71,11 @@ public class AgentIT {
 
   @Test
   public void testBootstrapping() {
-    var topicName = topicName();
-    var kafkaEventSender = kafkaEventSender(topicName);
-    var entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    var dummyAgent = new StoringEntityViewListener();
-    var data = AgentData.generateData();
+    val topicName = topicName();
+    val kafkaEventSender = kafkaEventSender(topicName);
+    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    val dummyAgent = new StoringEntityViewListener();
+    val data = AgentData.generateData();
 
     sendSync(kafkaEventSender, data.getSpecificationEvent());
 
@@ -88,7 +89,7 @@ public class AgentIT {
     assertThat(dummyAgent.events, hasSize(0));
 
     // new events start after bootstrapping
-    var dataTwo = AgentData.generateData();
+    val dataTwo = AgentData.generateData();
     sendSync(kafkaEventSender, dataTwo.getSpecificationEvent());
 
     // after bootstrapping the state continues to be updated
@@ -104,14 +105,14 @@ public class AgentIT {
 
   @Test
   public void testDeletedEntities() {
-    var topicName = topicName();
-    var kafkaEventSender = kafkaEventSender(topicName);
-    var entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    var dummyAgent = new StoringEntityViewListener();
+    val topicName = topicName();
+    val kafkaEventSender = kafkaEventSender(topicName);
+    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    val dummyAgent = new StoringEntityViewListener();
 
     startAgent(entityView, dummyAgent);
 
-    var data = AgentData.generateData();
+    val data = AgentData.generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
 
     await.untilAsserted(() -> {
@@ -146,12 +147,12 @@ public class AgentIT {
 
   @Test
   public void testOfflineDeletes() {
-    var topicName = topicName();
-    var kafkaEventSender = kafkaEventSender(topicName);
-    var entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    var dummyAgent = new StoringEntityViewListener();
+    val topicName = topicName();
+    val kafkaEventSender = kafkaEventSender(topicName);
+    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    val dummyAgent = new StoringEntityViewListener();
 
-    var data = AgentData.generateData();
+    val data = AgentData.generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
     sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
 
@@ -169,8 +170,8 @@ public class AgentIT {
     assertThat(deletedDomainEvents(entityView), hasSize(0));
 
     // simulate the restart of an Agent
-    var restartedEntityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    var restartedAgent = new StoringEntityViewListener();
+    val restartedEntityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    val restartedAgent = new StoringEntityViewListener();
     startAgent(restartedEntityView, restartedAgent);
 
     // after a restart the delete will appear in the EntityView again. Agents need to handle this
@@ -187,16 +188,16 @@ public class AgentIT {
 
   @Test
   public void testOfflineDeletesFollowedByCreates() {
-    var topicName = topicName();
-    var kafkaEventSender = kafkaEventSender(topicName);
-    var entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    var dummyAgent = new StoringEntityViewListener();
+    val topicName = topicName();
+    val kafkaEventSender = kafkaEventSender(topicName);
+    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    val dummyAgent = new StoringEntityViewListener();
 
-    var data = AgentData.generateData();
+    val data = AgentData.generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
     sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
 
-    var updatedData = data.withTags(List.of(new Tag("dummyTag", "dummyValue")));
+    val updatedData = data.withTags(List.of(new Tag("dummyTag", "dummyValue")));
     sendSync(kafkaEventSender, updatedData.getSpecificationEvent());
 
     startAgent(entityView, dummyAgent);
@@ -209,7 +210,7 @@ public class AgentIT {
     assertThat(deletedDomainEvents(entityView), hasItem(data.getEntity()));
 
     // agent should check to ensure that the deleted entity hasn't been recreated (and doesn't now exist)
-    var deletedKey = deletedDomainEvents(entityView).stream().map(Entity::getKey).findFirst().orElse(null);
+    val deletedKey = deletedDomainEvents(entityView).stream().map(Entity::getKey).findFirst().orElse(null);
     assertThat(domainEvents(entityView).stream().anyMatch(it -> it.getKey().equals(deletedKey)), is(true));
     // agents should just purge the deleted entity without actioning
     entityView.purgeDeleted(data.getKey());

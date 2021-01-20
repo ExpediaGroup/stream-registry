@@ -133,7 +133,7 @@ public class EntityViewUpdaterTest {
   // This would happen when an agent bootstraps after being offline and the backing kafka topic has compacted
   @Test
   public void deleteSpecificationEventWithNoPreviousEntity() {
-    var deletedEntity = underTest.update(specificationDeletionEvent);
+    val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(nullValue()));
     assertThat(entities.get(deleted(key)), is(nullValue()));
     assertThat(entities, hasKey(deleted(key)));

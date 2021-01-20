@@ -161,8 +161,8 @@ public class DefaultEntityViewTest {
   public void allDeletedEntities() {
     entities.put(deleted(key), entity);
 
-    var existingEntities = underTest.all(DomainKey.class).collect(toList());
-    var deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
+    val existingEntities = underTest.all(DomainKey.class).collect(toList());
+    val deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
 
     assertThat(existingEntities, hasSize(0));
     assertThat(deletedEntities, hasSize(1));
@@ -171,13 +171,13 @@ public class DefaultEntityViewTest {
   @Test
   public void allPurgeEntities() {
     entities.put(deleted(key), entity);
-    var deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
+    val deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
     assertThat(deletedEntities, hasSize(1));
 
     when(updater.purge(key)).thenAnswer(i -> Optional.ofNullable(entities.remove(deleted(key))));
-    var purged = underTest.purgeDeleted(key);
+    val purged = underTest.purgeDeleted(key);
 
-    var deletedEntitiesPostPurge = underTest.allDeleted(DomainKey.class).collect(toList());
+    val deletedEntitiesPostPurge = underTest.allDeleted(DomainKey.class).collect(toList());
     assertThat(purged, is(Optional.of(entity)));
     assertThat(deletedEntitiesPostPurge, hasSize(0));
     assertThat(entities, is(aMapWithSize(0)));
