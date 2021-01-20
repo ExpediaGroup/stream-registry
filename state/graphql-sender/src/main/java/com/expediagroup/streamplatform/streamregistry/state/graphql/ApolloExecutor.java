@@ -27,6 +27,7 @@ import lombok.val;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Error;
 import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation.Data;
 import com.apollographql.apollo.api.Operation.Variables;
@@ -60,8 +61,13 @@ public class ApolloExecutor {
     @Override
     public void onResponse(@NotNull Response<T> response) {
       if (response.hasErrors()) {
-        List<com.apollographql.apollo.api.Error> errors = response.getErrors();
-        future.completeExceptionally(new IllegalStateException("Unexpected response: " + errors.stream().map(e -> e.getMessage()).collect(joining(", "))));
+        List<Error> errors = response.getErrors();
+        future.completeExceptionally(
+          new ApolloResponseException(
+            "Unexpected response: " + errors.stream().map(e -> e.getMessage()).collect(joining(", ")),
+            response
+          )
+        );
       } else {
         future.complete(response);
       }

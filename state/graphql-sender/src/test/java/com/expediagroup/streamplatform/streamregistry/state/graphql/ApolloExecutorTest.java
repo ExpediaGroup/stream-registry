@@ -16,7 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.state.graphql;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,6 +84,13 @@ public class ApolloExecutorTest {
     when(response.hasErrors()).thenReturn(true);
     callback.onResponse(response);
     assertThat(result.isCompletedExceptionally(), is(true));
+    try {
+      result.get();
+      fail("Expected exception");
+    } catch (Exception ex) {
+      assertThat(ex.getCause(), instanceOf(ApolloResponseException.class));
+      assertThat(((ApolloResponseException)ex.getCause()).getResponse(), is(response));
+    }
   }
 
   @Test

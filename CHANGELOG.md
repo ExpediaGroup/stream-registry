@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
+- `ApolloExecutor` returns a `ApolloResponseException` with access to the underlying `Response` on errors.
 - Downgraded to Java 8 to increase support within the wider streaming ecosystem.
 
 ## [0.15.1] - 2020-11-16
