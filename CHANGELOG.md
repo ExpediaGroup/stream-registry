@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- Downgraded to Java 8 to increase support within the wider streaming ecosystem.
+
 ## [0.15.1] - 2020-11-16
 ### Changed
 - cli: On cascading stream delete, don't delete schemas that are being used by other streams.
