@@ -35,10 +35,11 @@ import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import org.junit.After;
 import lombok.val;
 
+import org.junit.After;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
@@ -145,7 +146,7 @@ public class EntityViewUpdaterTest {
   public void purgeNonExistingEntity() {
     val purgedEntity = underTest.purge(key);
 
-    assertThat(purgedEntity.isEmpty(), is(true));
+    assertThat(purgedEntity.isPresent(), is(false));
     assertThat(entities, is(aMapWithSize(0)));
   }
 
@@ -153,7 +154,7 @@ public class EntityViewUpdaterTest {
   public void purgeDeletedEntity() {
     entities.put(deleted(key), oldEntity);
 
-    val purgedEntity = underTest.purge(key);
+    Optional<Entity<DomainKey, DefaultSpecification>> purgedEntity = underTest.purge(key);
 
     assertThat(purgedEntity.isPresent(), is(true));
     assertThat(purgedEntity.get(), is(oldEntity));
@@ -164,9 +165,9 @@ public class EntityViewUpdaterTest {
   public void purgeNonDeletedEntity() {
     entities.put(existing(key), oldEntity);
 
-    val purgedEntity = underTest.purge(key);
+    Optional<Entity<DomainKey, DefaultSpecification>> purgedEntity = underTest.purge(key);
 
-    assertThat(purgedEntity.isEmpty(), is(true));
+    assertThat(purgedEntity.isPresent(), is(false));
     assertThat(entities, hasEntry(existing(key), oldEntity));
     assertThat(entities, is(aMapWithSize(1)));
   }

@@ -27,6 +27,7 @@ import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.hamcrest.core.IsIterableContaining.hasItems;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -197,7 +198,7 @@ public class AgentIT {
     sendSync(kafkaEventSender, data.getSpecificationEvent());
     sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
 
-    val updatedData = data.withTags(List.of(new Tag("dummyTag", "dummyValue")));
+    AgentData updatedData = data.withTags(Collections.singletonList(new Tag("dummyTag", "dummyValue")));
     sendSync(kafkaEventSender, updatedData.getSpecificationEvent());
 
     startAgent(entityView, dummyAgent);

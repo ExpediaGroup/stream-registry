@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static java.util.UUID.randomUUID;
 import static lombok.AccessLevel.PRIVATE;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -59,7 +60,7 @@ public final class AgentData {
   }
 
   private static DefaultSpecification defaultSpecification() {
-    return new DefaultSpecification(randomUUID().toString(), List.of(), "type", new ObjectMapper().createObjectNode());
+    return new DefaultSpecification(randomUUID().toString(), new ArrayList<>(), "type", new ObjectMapper().createObjectNode());
   }
 
   private static <K extends Key<DefaultSpecification>> Entity<K, DefaultSpecification> entity(
