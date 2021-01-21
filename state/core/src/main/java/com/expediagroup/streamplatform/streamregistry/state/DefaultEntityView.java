@@ -61,7 +61,7 @@ public class DefaultEntityView implements EntityView {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> get(K key) {
-    return Optional.ofNullable(entities.get(key)).map( value -> (Entity<K, S>) value.entity);
+    return Optional.ofNullable(entities.get(key)).filter(it -> !it.deleted).map(value -> (Entity<K, S>) value.entity);
   }
 
   @Override
