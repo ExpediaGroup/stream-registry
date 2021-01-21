@@ -21,13 +21,11 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.hamcrest.core.IsIterableContaining.hasItems;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -57,7 +55,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 
 public class AgentIT {
 
