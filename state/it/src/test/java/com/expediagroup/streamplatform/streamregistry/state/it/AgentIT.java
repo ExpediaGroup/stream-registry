@@ -187,39 +187,6 @@ public class AgentIT {
     assertThat(deletedDomainEvents(restartedEntityView), hasSize(0));
   }
 
-  @Test
-  public void testOfflineDeletesFollowedByCreates() {
-    val topicName = topicName();
-    val kafkaEventSender = kafkaEventSender(topicName);
-    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    val dummyAgent = new StoringEntityViewListener();
-
-    val data = AgentData.generateData();
-    sendSync(kafkaEventSender, data.getSpecificationEvent());
-    sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
-
-    AgentData updatedData = data.withTags(Collections.singletonList(new Tag("dummyTag", "dummyValue")));
-    sendSync(kafkaEventSender, updatedData.getSpecificationEvent());
-
-    startAgent(entityView, dummyAgent);
-
-    assertThat(dummyAgent.events, hasSize(0));
-    assertThat(domainEvents(entityView), hasSize(1));
-    assertThat(domainEvents(entityView), hasItem(updatedData.getEntity()));
-    assertThat(domainEvents(entityView), not(hasItem(data.getEntity())));
-    assertThat(deletedDomainEvents(entityView), hasSize(1));
-    assertThat(deletedDomainEvents(entityView), hasItem(data.getEntity()));
-
-    // agent should check to ensure that the deleted entity hasn't been recreated (and doesn't now exist)
-    val deletedKey = deletedDomainEvents(entityView).stream().map(Entity::getKey).findFirst().orElse(null);
-    assertThat(domainEvents(entityView).stream().anyMatch(it -> it.getKey().equals(deletedKey)), is(true));
-    // agents should just purge the deleted entity without actioning
-    entityView.purgeDeleted(data.getKey());
-
-    assertThat(domainEvents(entityView), hasSize(1));
-    assertThat(deletedDomainEvents(entityView), hasSize(0));
-  }
-
   private KafkaEventReceiver kafkaEventReceiver(String topic, String consumerGroupId) {
     return new KafkaEventReceiver(KafkaEventReceiver.Config.builder()
       .bootstrapServers(kafka.getBootstrapServers())

@@ -36,10 +36,10 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultEntityView implements EntityView {
   @NonNull private final EventReceiver receiver;
-  @NonNull private final Map<StateKey, Entity<?, ?>> entities;
+  @NonNull private final Map<Entity.Key<?>, StateValue> entities;
   @NonNull private final EntityViewUpdater updater;
 
-  DefaultEntityView(EventReceiver receiver, Map<StateKey, Entity<?, ?>> entities) {
+  DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, StateValue> entities) {
     this(receiver, entities, new EntityViewUpdater(entities));
   }
 
@@ -61,7 +61,7 @@ public class DefaultEntityView implements EntityView {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> get(K key) {
-    return Optional.ofNullable((Entity<K, S>) entities.get(StateKey.existing(key)));
+    return Optional.ofNullable(entities.get(key)).map( value -> (Entity<K, S>) value.entity);
   }
 
   @Override
@@ -80,11 +80,10 @@ public class DefaultEntityView implements EntityView {
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass, boolean deleted) {
-    return entities.entrySet().stream()
-      .filter(entry -> deleted == entry.getKey().deleted)
-      .map(Map.Entry::getValue)
-      .filter(x -> x.getKey().getClass().equals(keyClass))
-      .map(x -> (Entity<K, S>) x);
+    return entities.values().stream()
+      .filter(value -> deleted == value.deleted)
+      .filter(x -> x.entity.getKey().getClass().equals(keyClass))
+      .map(x -> (Entity<K, S>) x.entity);
   }
 
   @Getter // for testing

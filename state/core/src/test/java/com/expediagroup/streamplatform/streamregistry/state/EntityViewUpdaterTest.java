@@ -23,10 +23,7 @@ import static com.expediagroup.streamplatform.streamregistry.state.SampleEntitie
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.status;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.statusDeletionEvent;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.statusEvent;
-import static com.expediagroup.streamplatform.streamregistry.state.StateKey.deleted;
-import static com.expediagroup.streamplatform.streamregistry.state.StateKey.existing;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.collection.IsMapContaining.hasKey;
@@ -49,7 +46,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.Default
 
 public class EntityViewUpdaterTest {
 
-  private final Map<StateKey, Entity<?, ?>> entities = new HashMap<>();
+  private final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
 
   private final EntityViewUpdater underTest = new EntityViewUpdater(entities);
 
@@ -69,25 +66,25 @@ public class EntityViewUpdaterTest {
     val result = underTest.update(specificationEvent);
 
     assertThat(result, is(nullValue()));
-    assertThat(entities.get(existing(key)), is(entity.withStatus(oldStatus)));
+    assertThat(entities.get(key), is(StateValue.existing(entity.withStatus(oldStatus))));
   }
 
   @Test
   public void updateSpecification() {
-    entities.put(existing(key), oldEntity);
+    entities.put(key, StateValue.existing(oldEntity));
     val result = underTest.update(specificationEvent);
 
     assertThat(result, is(oldEntity));
-    assertThat(entities.get(existing(key)), is(entity.withStatus(oldStatus)));
+    assertThat(entities.get(key), is(StateValue.existing(entity.withStatus(oldStatus))));
   }
 
   @Test
   public void newStatusExistingEntity() {
-    entities.put(existing(key), oldEntity);
+    entities.put(key, StateValue.existing(oldEntity));
     val result = underTest.update(statusEvent);
 
     assertThat(result, is(oldEntity));
-    assertThat(entities.get(existing(key)), is(oldEntity.withStatus(status)));
+    assertThat(entities.get(key), is(StateValue.existing(oldEntity.withStatus(status))));
   }
 
   @Test
@@ -95,7 +92,7 @@ public class EntityViewUpdaterTest {
     val result = underTest.update(statusEvent);
 
     assertThat(result, is(nullValue()));
-    assertThat(entities.get(existing(key)), is(nullValue()));
+    assertThat(entities.get(key), is(nullValue()));
   }
 
   @Test
@@ -103,31 +100,28 @@ public class EntityViewUpdaterTest {
     val previousEntity = underTest.update(specificationEvent);
 
     assertThat(previousEntity, is(nullValue()));
-    assertThat(entities.get(existing(key)), is(entity.withStatus(oldStatus)));
-    assertThat(entities, hasEntry(existing(key), entity.withStatus(oldStatus)));
+    assertThat(entities.get(key), is(StateValue.existing(entity.withStatus(oldStatus))));
+    assertThat(entities, hasEntry(key, StateValue.existing(entity.withStatus(oldStatus))));
     assertThat(entities, is(aMapWithSize(1)));
 
     val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(entity.withStatus(oldStatus)));
-    assertThat(entities.get(existing(key)), is(nullValue()));
-    assertThat(entities, hasEntry(deleted(key), entity.withStatus(oldStatus)));
+    assertThat(entities.get(key), is(StateValue.deleted(entity.withStatus(oldStatus))));
     assertThat(entities, is(aMapWithSize(1)));
   }
 
   @Test
   public void deleteStatusEvent() {
-    entities.put(existing(key), oldEntity);
+    entities.put(key, StateValue.existing(oldEntity));
 
     val updatedStatusEventResult = underTest.update(statusEvent);
     assertThat(updatedStatusEventResult, is(oldEntity));
-    assertThat(entities, hasEntry(existing(key), oldEntity.withStatus(status)));
+    assertThat(entities, hasEntry(key, StateValue.existing(oldEntity.withStatus(status))));
     assertThat(entities, is(aMapWithSize(1)));
 
     val deletedStatusEventResult = underTest.update(statusDeletionEvent);
     assertThat(deletedStatusEventResult, is(oldEntity.withStatus(status)));
-    assertThat(entities, hasEntry(existing(key), oldEntity));
-    assertThat(entities.get(deleted(key)), is(nullValue()));
-    assertThat(entities, not(hasKey(deleted(key))));
+    assertThat(entities, hasEntry(key, StateValue.existing(oldEntity)));
     assertThat(entities, is(aMapWithSize(1)));
   }
 
@@ -136,9 +130,8 @@ public class EntityViewUpdaterTest {
   public void deleteSpecificationEventWithNoPreviousEntity() {
     val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(nullValue()));
-    assertThat(entities.get(deleted(key)), is(nullValue()));
-    assertThat(entities, hasKey(deleted(key)));
-    assertThat(entities, not(hasKey(existing(key))));
+    assertThat(entities.get(key), is(StateValue.deleted(null)));
+    assertThat(entities, hasKey(key));
     assertThat(entities, is(aMapWithSize(1)));
   }
 
@@ -152,7 +145,7 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void purgeDeletedEntity() {
-    entities.put(deleted(key), oldEntity);
+    entities.put(key, StateValue.deleted(oldEntity));
 
     Optional<Entity<DomainKey, DefaultSpecification>> purgedEntity = underTest.purge(key);
 
@@ -163,12 +156,12 @@ public class EntityViewUpdaterTest {
 
   @Test
   public void purgeNonDeletedEntity() {
-    entities.put(existing(key), oldEntity);
+    entities.put(key, StateValue.existing(oldEntity));
 
     Optional<Entity<DomainKey, DefaultSpecification>> purgedEntity = underTest.purge(key);
 
     assertThat(purgedEntity.isPresent(), is(false));
-    assertThat(entities, hasEntry(existing(key), oldEntity));
+    assertThat(entities, hasEntry(key, StateValue.existing(oldEntity)));
     assertThat(entities, is(aMapWithSize(1)));
   }
 }
