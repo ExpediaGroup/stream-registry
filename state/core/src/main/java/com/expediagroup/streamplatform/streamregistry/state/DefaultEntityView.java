@@ -55,11 +55,6 @@ public class DefaultEntityView implements EntityView {
   }
 
   @Override
-  public CompletableFuture<Void> load() {
-    return load(EntityViewListener.NULL);
-  }
-
-  @Override
   public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> get(K key) {
     return Optional.ofNullable(entities.get(key)).filter(it -> !it.deleted).map(value -> (Entity<K, S>) value.entity);
   }

@@ -72,17 +72,6 @@ public class DefaultEntityViewTest {
   }
 
   @Test
-  public void loadNoArgs() {
-    val future = underTest.load();
-
-    val captor = ArgumentCaptor.forClass(ReceiverListener.class);
-    verify(receiver).receive(captor.capture());
-    val receiverListener = captor.getValue();
-    assertThat(receiverListener.getListener(), is(EntityViewListener.NULL));
-    assertThat(receiverListener.getFuture(), is(future));
-  }
-
-  @Test
   public void updateNotLoaded() {
     val future = underTest.load(listener);
 

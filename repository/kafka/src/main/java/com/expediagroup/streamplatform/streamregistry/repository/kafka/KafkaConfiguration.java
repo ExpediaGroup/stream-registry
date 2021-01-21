@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
+import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,7 +71,8 @@ public class KafkaConfiguration {
   @Bean
   EntityView entityView(EventReceiver eventReceiver) {
     EntityView entityView = new DefaultEntityView(eventReceiver);
-    entityView.load().join();
+    EntityViewListener entityViewListener = new PurgingEntityViewListener(entityView);
+    entityView.load(entityViewListener).join();
     return entityView;
   }
 }

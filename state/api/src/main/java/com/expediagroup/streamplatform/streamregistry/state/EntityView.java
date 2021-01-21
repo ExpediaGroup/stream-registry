@@ -37,13 +37,6 @@ public interface EntityView {
   CompletableFuture<Void> load(EntityViewListener listener);
 
   /**
-   * Commences loading the view. The returned {@link CompletableFuture} completes when the view has fully loaded.
-   *
-   * @return a future that completes when the view has fully loaded.
-   */
-  CompletableFuture<Void> load();
-
-  /**
    * Returns an {@link Optional} containing the {@link Entity} that is associated with the specified key.
    * If there is no entity for the specified key, then an empty optional is returned.
    *

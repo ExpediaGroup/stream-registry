@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2021 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-
-import java.util.Collections;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
@@ -31,32 +27,37 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Collections;
 
 final class SampleState {
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  private SampleState() {}
+  private SampleState() {
+  }
 
   private static DefaultSpecification specification() {
     return new DefaultSpecification(
-        "description",
-        Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
-        "type",
-        mapper.createObjectNode()
+      "description",
+      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      "type",
+      mapper.createObjectNode()
     );
   }
 
   static StreamSpecification streamSpecification() {
     return new StreamSpecification(
-        "description",
-        Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
-        "type",
-        mapper.createObjectNode(),
-        schemaKey()
+      "description",
+      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      "type",
+      mapper.createObjectNode(),
+      schemaKey()
     );
   }
 
@@ -142,5 +143,21 @@ final class SampleState {
 
   static Entity<ConsumerBindingKey, DefaultSpecification> consumerBinding() {
     return new Entity<>(consumerBindingKey(), specification(), status());
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainSpecificationDeletionEvent() {
+    return Event.specificationDeletion(domainKey());
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainSpecificationEvent() {
+    return Event.specification(domainKey(), domain().getSpecification());
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainStatusDeletionEvent() {
+    return Event.statusDeletion(domainKey(), "statusName");
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainStatusEvent() {
+    return Event.status(domainKey(), new StatusEntry("agentStatus", mapper.createObjectNode()));
   }
 }
