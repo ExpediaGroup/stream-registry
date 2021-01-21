@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;

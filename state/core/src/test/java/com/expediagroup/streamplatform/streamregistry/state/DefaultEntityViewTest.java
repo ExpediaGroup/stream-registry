@@ -18,6 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.entity;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.key;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specificationEvent;
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.deleted;
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.existing;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.hasSize;
@@ -112,7 +114,7 @@ public class DefaultEntityViewTest {
 
   @Test
   public void getPresent() {
-    entities.put(key, StateValue.existing(entity));
+    entities.put(key, existing(entity));
 
     val result = underTest.get(key);
 
@@ -128,8 +130,17 @@ public class DefaultEntityViewTest {
   }
 
   @Test
+  public void getIgnoresDeletedEntities() {
+    entities.put(key, deleted(entity));
+
+    val result = underTest.get(key);
+
+    assertThat(result.isPresent(), is(false));
+  }
+
+  @Test
   public void allPresent() {
-    entities.put(key, StateValue.existing(entity));
+    entities.put(key, existing(entity));
 
     val result = underTest.all(DomainKey.class).collect(toList());
 

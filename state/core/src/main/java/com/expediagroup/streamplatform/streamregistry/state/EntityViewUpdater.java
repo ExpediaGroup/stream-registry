@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.deleted;
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.existing;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -69,7 +72,7 @@ class EntityViewUpdater {
       .map(Entity::getStatus)
       .orElseGet(DefaultStatus::new);
     val entity = new Entity<>(event.getKey(), event.getSpecification(), status);
-    entities.put(event.getKey(), StateValue.existing(entity));
+    entities.put(event.getKey(), existing(entity));
     log.debug("Updated {} with {}", event.getKey(), event.getSpecification());
     return oldEntity;
   }
@@ -81,14 +84,14 @@ class EntityViewUpdater {
       return null;
     }
     val entity = new Entity<>(event.getKey(), oldEntity.getSpecification(), oldEntity.getStatus().with(event.getStatusEntry()));
-    entities.put(event.getKey(), StateValue.existing(entity));
+    entities.put(event.getKey(), existing(entity));
     log.debug("Updated {} with {}", event.getKey(), event.getStatusEntry());
     return oldEntity;
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(SpecificationDeletionEvent<K, S> event) {
     val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
-    entities.put(event.getKey(), StateValue.deleted(oldEntity));
+    entities.put(event.getKey(), deleted(oldEntity));
     log.debug("Deleted entity for {}", event.getKey());
     return oldEntity;
   }
@@ -100,12 +103,15 @@ class EntityViewUpdater {
       return null;
     }
     val entity = oldEntity.withStatus(oldEntity.getStatus().without(event.getStatusName()));
-    entities.put(event.getKey(), StateValue.existing(entity));
+    entities.put(event.getKey(), existing(entity));
     log.debug("Deleted status {} for {}", event.getStatusName(), event.getKey());
     return oldEntity;
   }
 
   private Entity<?, ?> getExistingEntity(Entity.Key<?> key) {
-    return Optional.ofNullable(entities.get(key)).filter(it -> !it.deleted).map(it -> it.entity).orElse(null);
+    return Optional.ofNullable(entities.get(key))
+      .filter(it -> !it.deleted)
+      .map(it -> it.entity)
+      .orElse(null);
   }
 }
