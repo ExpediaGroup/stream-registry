@@ -22,6 +22,7 @@ import static com.expediagroup.streamplatform.streamregistry.state.StateValue.de
 import static com.expediagroup.streamplatform.streamregistry.state.StateValue.existing;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
@@ -157,27 +158,41 @@ public class DefaultEntityViewTest {
 
   @Test
   public void allDeletedEntities() {
-    entities.put(key, StateValue.deleted(entity));
+    entities.put(key, deleted(entity));
 
     val existingEntities = underTest.all(DomainKey.class).collect(toList());
-    val deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
+    val deletedEntities = underTest.allDeleted(DomainKey.class);
 
     assertThat(existingEntities, hasSize(0));
-    assertThat(deletedEntities, hasSize(1));
+    assertThat(deletedEntities, is(aMapWithSize(1)));
+    assertThat(deletedEntities, hasEntry(key, Optional.of(entity)));
+  }
+
+  @Test
+  public void allDeletedEntitiesWhenNoneExisted() {
+    entities.put(key, deleted(null));
+
+    val existingEntities = underTest.all(DomainKey.class).collect(toList());
+    val deletedEntities = underTest.allDeleted(DomainKey.class);
+
+    assertThat(existingEntities, hasSize(0));
+    assertThat(deletedEntities, is(aMapWithSize(1)));
+    assertThat(deletedEntities, hasEntry(key, Optional.empty()));
   }
 
   @Test
   public void allPurgeEntities() {
-    entities.put(key, StateValue.deleted(entity));
-    val deletedEntities = underTest.allDeleted(DomainKey.class).collect(toList());
-    assertThat(deletedEntities, hasSize(1));
+    entities.put(key, deleted(entity));
+    val deletedEntities = underTest.allDeleted(DomainKey.class);
+    assertThat(deletedEntities, is(aMapWithSize(1)));
+    assertThat(deletedEntities, hasEntry(key, Optional.of(entity)));
 
     when(updater.purge(key)).thenAnswer(i -> Optional.ofNullable(entities.remove(key)).map(value -> value.entity));
     val purged = underTest.purgeDeleted(key);
 
-    val deletedEntitiesPostPurge = underTest.allDeleted(DomainKey.class).collect(toList());
+    val deletedEntitiesPostPurge = underTest.allDeleted(DomainKey.class);
     assertThat(purged, is(Optional.of(entity)));
-    assertThat(deletedEntitiesPostPurge, hasSize(0));
+    assertThat(deletedEntitiesPostPurge, is(aMapWithSize(0)));
     assertThat(entities, is(aMapWithSize(0)));
   }
 }

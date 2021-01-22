@@ -20,13 +20,17 @@ import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.hamcrest.core.IsIterableContaining.hasItems;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -82,7 +86,7 @@ public class AgentIT {
     // bootstrapping loads the state for the agent
     assertThat(domainEvents(entityView), hasSize(1));
     assertThat(domainEvents(entityView), hasItem(data.getEntity()));
-    assertThat(deletedDomainEvents(entityView), is(emptyIterable()));
+    assertThat(deletedDomainEvents(entityView), is(aMapWithSize(0)));
     // but no events are received during bootstrapping
     assertThat(dummyAgent.events, hasSize(0));
 
@@ -94,10 +98,19 @@ public class AgentIT {
     await.untilAsserted(() -> {
       assertThat(domainEvents(entityView), hasSize(2));
       assertThat(domainEvents(entityView), hasItems(data.getEntity(), dataTwo.getEntity()));
-      assertThat(deletedDomainEvents(entityView), is(emptyIterable()));
+      assertThat(deletedDomainEvents(entityView), is(aMapWithSize(0)));
       // Agents receive all new incoming events
       assertThat(dummyAgent.events, hasSize(1));
       assertThat(dummyAgent.events, hasItem(Pair.of(null, dataTwo.getSpecificationEvent())));
+    });
+
+    // updating event causes agent to receive the old entity
+    sendSync(kafkaEventSender, dataTwo.getSpecificationEvent());
+    await.untilAsserted(() -> {
+      assertThat(dummyAgent.events, hasSize(2));
+      assertThat(dummyAgent.events, contains(
+        Pair.of(null, dataTwo.getSpecificationEvent()), Pair.of(dataTwo.getEntity(), dataTwo.getSpecificationEvent())
+      ));
     });
   }
 
@@ -116,7 +129,7 @@ public class AgentIT {
     await.untilAsserted(() -> {
       assertThat(domainEvents(entityView), hasSize(1));
       assertThat(domainEvents(entityView), hasItem(data.getEntity()));
-      assertThat(deletedDomainEvents(entityView), is(emptyIterable()));
+      assertThat(deletedDomainEvents(entityView), is(aMapWithSize(0)));
       assertThat(dummyAgent.events, hasSize(1));
       assertThat(dummyAgent.events, hasItem(Pair.of(null, data.getSpecificationEvent())));
     });
@@ -127,8 +140,8 @@ public class AgentIT {
       // entity no longer exists
       assertThat(domainEvents(entityView), hasSize(0));
       // entity is marked as deleted
-      assertThat(deletedDomainEvents(entityView), hasSize(1));
-      assertThat(deletedDomainEvents(entityView), hasItem(data.getEntity()));
+      assertThat(deletedDomainEvents(entityView), is(aMapWithSize(1)));
+      assertThat(deletedDomainEvents(entityView), hasEntry(data.getKey(), Optional.of(data.getEntity())));
 
       // onEvent has been called for the deleted entity
       assertThat(dummyAgent.events, hasSize(2));
@@ -140,7 +153,7 @@ public class AgentIT {
     entityView.purgeDeleted(data.getKey());
     // the delete is removed from everywhere
     assertThat(domainEvents(entityView), hasSize(0));
-    assertThat(deletedDomainEvents(entityView), hasSize(0));
+    assertThat(deletedDomainEvents(entityView), is(aMapWithSize(0)));
   }
 
   @Test
@@ -158,14 +171,14 @@ public class AgentIT {
 
     assertThat(dummyAgent.events, hasSize(0));
     assertThat(domainEvents(entityView), hasSize(0));
-    assertThat(deletedDomainEvents(entityView), hasSize(1));
-    assertThat(deletedDomainEvents(entityView), hasItem(data.getEntity()));
+    assertThat(deletedDomainEvents(entityView), is(aMapWithSize(1)));
+    assertThat(deletedDomainEvents(entityView), hasEntry(data.getKey(), Optional.of(data.getEntity())));
 
     // agent would run a scheduled task to handle deletes that were issued while offline and then purge those deletes
     entityView.purgeDeleted(data.getKey());
 
     assertThat(domainEvents(entityView), hasSize(0));
-    assertThat(deletedDomainEvents(entityView), hasSize(0));
+    assertThat(deletedDomainEvents(entityView), is(aMapWithSize(0)));
 
     // simulate the restart of an Agent
     val restartedEntityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
@@ -175,13 +188,38 @@ public class AgentIT {
     // after a restart the delete will appear in the EntityView again. Agents need to handle this
     assertThat(restartedAgent.events, hasSize(0));
     assertThat(domainEvents(restartedEntityView), hasSize(0));
-    assertThat(deletedDomainEvents(restartedEntityView), hasSize(1));
-    assertThat(deletedDomainEvents(restartedEntityView), hasItem(data.getEntity()));
+    assertThat(deletedDomainEvents(restartedEntityView), is(aMapWithSize(1)));
+    assertThat(deletedDomainEvents(restartedEntityView), hasEntry(data.getKey(), Optional.of(data.getEntity())));
 
     // Agent should check to see if handling the delete is required, then purge the deleted entity
     restartedEntityView.purgeDeleted(data.getKey());
     assertThat(domainEvents(restartedEntityView), hasSize(0));
-    assertThat(deletedDomainEvents(restartedEntityView), hasSize(0));
+    assertThat(deletedDomainEvents(restartedEntityView), is(aMapWithSize(0)));
+  }
+
+  @Test
+  public void testDeleteWithMissingEntity()  {
+    val topicName = topicName();
+    val kafkaEventSender = kafkaEventSender(topicName);
+    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    val dummyAgent = new StoringEntityViewListener();
+
+    val data = AgentData.generateData();
+    startAgent(entityView, dummyAgent);
+
+    // backing topic will contain only the deletion and not the original updated entity
+    sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
+
+    await.untilAsserted(() -> {
+      assertThat(dummyAgent.events, hasItem(Pair.of(null, specificationDeletion(data.getKey()))));
+      assertThat(deletedDomainEvents(entityView), hasEntry(data.getKey(), Optional.empty()));
+    });
+
+    // purge would be called by the agent after the delete has been handled
+    entityView.purgeDeleted(data.getKey());
+    // the delete is removed from everywhere
+    assertThat(domainEvents(entityView), hasSize(0));
+    assertThat(deletedDomainEvents(entityView), is(aMapWithSize(0)));
   }
 
   private KafkaEventReceiver kafkaEventReceiver(String topic, String consumerGroupId) {
@@ -219,8 +257,8 @@ public class AgentIT {
     return entityView.all(DomainKey.class).collect(Collectors.toList());
   }
 
-  private List<Entity<DomainKey, DefaultSpecification>> deletedDomainEvents(EntityView entityView) {
-    return entityView.allDeleted(DomainKey.class).collect(Collectors.toList());
+  private Map<DomainKey, Optional<Entity<DomainKey, DefaultSpecification>>> deletedDomainEvents(EntityView entityView) {
+    return entityView.allDeleted(DomainKey.class);
   }
 
   /**

@@ -193,6 +193,17 @@ public class EntityViewUpdaterTest {
     assertThat(entities, is(aMapWithSize(1)));
   }
 
+  @Test
+  public void purgeWithNullPreviousEntry() {
+    underTest.update(specificationDeletionEvent);
+    assertThat(entities, hasEntry(key, deleted(null)));
+    assertThat(entities, is(aMapWithSize(1)));
+
+    underTest.purge(key);
+
+    assertThat(entities, is(aMapWithSize(0)));
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void unhandledEvents() {
     underTest.update(null);

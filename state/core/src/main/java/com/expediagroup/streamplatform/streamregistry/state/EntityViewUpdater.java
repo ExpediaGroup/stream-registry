@@ -56,14 +56,13 @@ class EntityViewUpdater {
   }
 
   <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> purge(K key) {
-    val entity = Optional.ofNullable(entities.get(key))
-      .filter(it -> it.deleted)
-      .map(it -> (Entity<K, S>) it.entity);
-    entity.ifPresent(it -> {
+    val stateEntity = Optional.ofNullable(entities.get(key))
+      .filter(it -> it.deleted);
+    stateEntity.ifPresent(it -> {
       entities.remove(key);
       log.debug("Purged entity for {}", key);
     });
-    return entity;
+    return stateEntity.map(it -> (Entity<K, S>) it.entity);
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(SpecificationEvent<K, S> event) {

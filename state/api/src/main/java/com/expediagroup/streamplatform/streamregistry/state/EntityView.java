@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -58,7 +59,7 @@ public interface EntityView {
   <K extends Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass);
 
   /**
-   * Returns a {@link Stream} containing all entities of the given {@link Key} type which have been deleted but not
+   * Returns a {@link Stream} containing all keys of the given {@link Key} type which have been deleted but not
    * purged ({@link #purgeDeleted(Key)})
    *
    * @param keyClass the key class of an entity type.
@@ -66,7 +67,7 @@ public interface EntityView {
    * @param <S>      the specification type.
    * @return a stream containing all deleted entities of the given key type.
    */
-  <K extends Key<S>, S extends Specification> Stream<Entity<K, S>> allDeleted(Class<K> keyClass);
+  <K extends Key<S>, S extends Specification> Map<K, Optional<Entity<K, S>>> allDeleted(Class<K> keyClass);
 
   /**
    * Purge a deleted entity so that it no longer appears in {@link #allDeleted(Class)}.

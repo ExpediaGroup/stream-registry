@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.Getter;
@@ -61,24 +62,30 @@ public class DefaultEntityView implements EntityView {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass) {
-    return all(keyClass, false);
+    return entities.values().stream()
+      .filter(it -> !it.deleted)
+      .filter(it -> it.entity.getKey().getClass().equals(keyClass))
+      .map(it -> (Entity<K, S>) it.entity);
   }
 
   @Override
-  public <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> allDeleted(Class<K> keyClass) {
-    return all(keyClass, true);
+  public <K extends Entity.Key<S>, S extends Specification> Map<K, Optional<Entity<K, S>>> allDeleted(Class<K> keyClass) {
+//    return entities.entrySet().stream()
+//      .filter(it -> it.getValue().deleted)
+//      .filter(it -> it.getKey().getClass().equals(keyClass))
+//      .map(it -> (K) it.getKey());
+    return entities.entrySet().stream()
+      .filter(it -> it.getValue().deleted)
+      .filter(it -> it.getKey().getClass().equals(keyClass))
+      .collect(Collectors.toMap(
+        entry -> (K)entry.getKey(),
+        entry -> Optional.ofNullable((Entity<K, S>)entry.getValue().entity))
+      );
   }
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> purgeDeleted(K key) {
     return updater.purge(key);
-  }
-
-  private <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass, boolean deleted) {
-    return entities.values().stream()
-      .filter(value -> deleted == value.deleted)
-      .filter(x -> x.entity.getKey().getClass().equals(keyClass))
-      .map(x -> (Entity<K, S>) x.entity);
   }
 
   @Getter // for testing
