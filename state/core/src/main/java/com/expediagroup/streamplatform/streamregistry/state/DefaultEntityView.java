@@ -70,10 +70,6 @@ public class DefaultEntityView implements EntityView {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Map<K, Optional<Entity<K, S>>> allDeleted(Class<K> keyClass) {
-//    return entities.entrySet().stream()
-//      .filter(it -> it.getValue().deleted)
-//      .filter(it -> it.getKey().getClass().equals(keyClass))
-//      .map(it -> (K) it.getKey());
     return entities.entrySet().stream()
       .filter(it -> it.getValue().deleted)
       .filter(it -> it.getKey().getClass().equals(keyClass))

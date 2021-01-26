@@ -59,13 +59,13 @@ public interface EntityView {
   <K extends Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass);
 
   /**
-   * Returns a {@link Stream} containing all keys of the given {@link Key} type which have been deleted but not
-   * purged ({@link #purgeDeleted(Key)})
+   * Returns a {@link Map} containing all keys of the given {@link Key} type which have been deleted but not
+   * purged ({@link #purgeDeleted(Key)}) mapped to the deleted Entity (if known)
    *
    * @param keyClass the key class of an entity type.
    * @param <K>      the key type.
    * @param <S>      the specification type.
-   * @return a stream containing all deleted entities of the given key type.
+   * @return a map containing all deleted keys of a give type to the key if known
    */
   <K extends Key<S>, S extends Specification> Map<K, Optional<Entity<K, S>>> allDeleted(Class<K> keyClass);
 
