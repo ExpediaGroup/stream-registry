@@ -42,6 +42,7 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionFactory;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.KafkaContainer;
@@ -71,14 +72,23 @@ public class AgentIT {
   @Rule
   public KafkaContainer kafka = new KafkaContainer();
 
+  private String topicName;
+  private KafkaEventSender kafkaEventSender;
+  private DefaultEntityView entityView;
+  private StoringEntityViewListener dummyAgent;
+  private AgentData data;
+
+  @Before
+  public void setUp() {
+    topicName = topicName();
+    kafkaEventSender = kafkaEventSender(topicName);
+    entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    dummyAgent = new StoringEntityViewListener();
+    data = AgentData.generateData();
+  }
+
   @Test
   public void testBootstrapping() {
-    val topicName = topicName();
-    val kafkaEventSender = kafkaEventSender(topicName);
-    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    val dummyAgent = new StoringEntityViewListener();
-    val data = AgentData.generateData();
-
     sendSync(kafkaEventSender, data.getSpecificationEvent());
 
     startAgent(entityView, dummyAgent);
@@ -116,11 +126,6 @@ public class AgentIT {
 
   @Test
   public void testDeletedEntities() {
-    val topicName = topicName();
-    val kafkaEventSender = kafkaEventSender(topicName);
-    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    val dummyAgent = new StoringEntityViewListener();
-
     startAgent(entityView, dummyAgent);
 
     val data = AgentData.generateData();
@@ -158,11 +163,6 @@ public class AgentIT {
 
   @Test
   public void testOfflineDeletes() {
-    val topicName = topicName();
-    val kafkaEventSender = kafkaEventSender(topicName);
-    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    val dummyAgent = new StoringEntityViewListener();
-
     val data = AgentData.generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
     sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
@@ -199,12 +199,6 @@ public class AgentIT {
 
   @Test
   public void testDeleteWithMissingEntity()  {
-    val topicName = topicName();
-    val kafkaEventSender = kafkaEventSender(topicName);
-    val entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
-    val dummyAgent = new StoringEntityViewListener();
-
-    val data = AgentData.generateData();
     startAgent(entityView, dummyAgent);
 
     // backing topic will contain only the deletion and not the original updated entity

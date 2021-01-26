@@ -29,7 +29,6 @@ import static java.util.UUID.randomUUID;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.hamcrest.collection.IsMapContaining.hasKey;
 import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.Assert.assertThat;
 
@@ -202,7 +201,7 @@ public class EntityViewUpdaterTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void unhandledEvents() {
+  public void nullEvents() {
     underTest.update(null);
   }
 }
