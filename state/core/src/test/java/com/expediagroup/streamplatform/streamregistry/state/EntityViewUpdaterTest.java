@@ -128,13 +128,13 @@ public class EntityViewUpdaterTest {
     val previousEntity = underTest.update(specificationEvent);
 
     assertThat(previousEntity, is(nullValue()));
-    assertThat(entities, hasEntry(key, existing(entity.withStatus(oldStatus))));
     assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, existing(entity.withStatus(oldStatus))));
 
     val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(entity.withStatus(oldStatus)));
-    assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
     assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
   }
 
   @Test
@@ -143,23 +143,21 @@ public class EntityViewUpdaterTest {
 
     val updatedStatusEventResult = underTest.update(statusEvent);
     assertThat(updatedStatusEventResult, is(oldEntity));
-    assertThat(entities, hasEntry(key, existing(oldEntity.withStatus(status))));
     assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, existing(oldEntity.withStatus(status))));
 
     val deletedStatusEventResult = underTest.update(statusDeletionEvent);
     assertThat(deletedStatusEventResult, is(oldEntity.withStatus(status)));
-    assertThat(entities, hasEntry(key, existing(oldEntity)));
     assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, existing(oldEntity)));
   }
 
-  // This would happen when an agent bootstraps after being offline and the backing kafka topic has compacted
   @Test
   public void deleteSpecificationEventWithNoPreviousEntity() {
     val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(nullValue()));
-    assertThat(entities.get(key), is(deleted(null)));
-    assertThat(entities, hasKey(key));
     assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, deleted(null)));
   }
 
   @Test
@@ -188,15 +186,15 @@ public class EntityViewUpdaterTest {
     Optional<Entity<DomainKey, DefaultSpecification>> purgedEntity = underTest.purge(key);
 
     assertThat(purgedEntity.isPresent(), is(false));
-    assertThat(entities, hasEntry(key, existing(oldEntity)));
     assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, existing(oldEntity)));
   }
 
   @Test
   public void purgeWithNullPreviousEntry() {
     underTest.update(specificationDeletionEvent);
-    assertThat(entities, hasEntry(key, deleted(null)));
     assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, deleted(null)));
 
     underTest.purge(key);
 
