@@ -60,7 +60,7 @@ class EntityViewUpdater {
       .filter(it -> it.deleted);
     stateEntity.ifPresent(it -> {
       entities.remove(key);
-      log.debug("Purged entity for {}", key);
+      log.debug("Purged entity for key={}", key);
     });
     return stateEntity.map(it -> (Entity<K, S>) it.entity);
   }

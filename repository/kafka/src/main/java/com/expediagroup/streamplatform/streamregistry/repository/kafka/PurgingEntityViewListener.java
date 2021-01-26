@@ -35,4 +35,21 @@ class PurgingEntityViewListener implements EntityViewListener {
       entityView.purgeDeleted(event.getKey());
     }
   }
+
+  void purgeAll() {
+    purgeAll(Entity.ConsumerBindingKey.class);
+    purgeAll(Entity.ProducerBindingKey.class);
+    purgeAll(Entity.ConsumerKey.class);
+    purgeAll(Entity.ProducerKey.class);
+    purgeAll(Entity.StreamBindingKey.class);
+    purgeAll(Entity.StreamKey.class);
+    purgeAll(Entity.InfrastructureKey.class);
+    purgeAll(Entity.DomainKey.class);
+    purgeAll(Entity.StreamKey.class);
+    purgeAll(Entity.ZoneKey.class);
+  }
+
+  private <K extends Entity.Key<S>, S extends Specification> void purgeAll(Class<K> keyClass) {
+    entityView.allDeleted(keyClass).forEach((key, entity) -> entityView.purgeDeleted(key));
+  }
 }

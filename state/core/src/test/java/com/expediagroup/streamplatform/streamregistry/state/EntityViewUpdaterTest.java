@@ -128,13 +128,12 @@ public class EntityViewUpdaterTest {
     val previousEntity = underTest.update(specificationEvent);
 
     assertThat(previousEntity, is(nullValue()));
-    assertThat(entities.get(key), is(existing(entity.withStatus(oldStatus))));
     assertThat(entities, hasEntry(key, existing(entity.withStatus(oldStatus))));
     assertThat(entities, is(aMapWithSize(1)));
 
     val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(entity.withStatus(oldStatus)));
-    assertThat(entities.get(key), is(deleted(entity.withStatus(oldStatus))));
+    assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
     assertThat(entities, is(aMapWithSize(1)));
   }
 
