@@ -37,33 +37,33 @@ public class KafkaConfiguration {
 
   @Bean
   EventSender eventSender(
-    @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
-    @Value("${repository.kafka.topic:_streamregistry}") String topic,
-    @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
-    EventCorrelator eventCorrelator
+      @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
+      @Value("${repository.kafka.topic:_streamregistry}") String topic,
+      @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+      EventCorrelator eventCorrelator
   ) {
     KafkaEventSender.Config config = KafkaEventSender.Config.builder()
-      .bootstrapServers(bootstrapServers)
-      .topic(topic)
-      .schemaRegistryUrl(schemaRegistryUrl)
-      .build();
+        .bootstrapServers(bootstrapServers)
+        .topic(topic)
+        .schemaRegistryUrl(schemaRegistryUrl)
+        .build();
     return new KafkaEventSender(config, eventCorrelator);
   }
 
   @Bean
   EventReceiver eventReceiver(
-    @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
-    @Value("${repository.kafka.topic:_streamregistry}") String topic,
-    @Value("${repository.kafka.groupId:stream-registry}") String groupId,
-    @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
-    EventCorrelator eventCorrelator
+      @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
+      @Value("${repository.kafka.topic:_streamregistry}") String topic,
+      @Value("${repository.kafka.groupId:stream-registry}") String groupId,
+      @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+      EventCorrelator eventCorrelator
   ) {
     KafkaEventReceiver.Config receiverConfig = KafkaEventReceiver.Config.builder()
-      .bootstrapServers(bootstrapServers)
-      .topic(topic)
-      .groupId(groupId)
-      .schemaRegistryUrl(schemaRegistryUrl)
-      .build();
+        .bootstrapServers(bootstrapServers)
+        .topic(topic)
+        .groupId(groupId)
+        .schemaRegistryUrl(schemaRegistryUrl)
+        .build();
     return new KafkaEventReceiver(receiverConfig, eventCorrelator);
   }
 
