@@ -82,13 +82,13 @@ public interface EntityView {
    * purged ({@link #purgeDeleted(Key)}) mapped to the deleted Entity (if known).
    * <p/>
    * Depending on underlying storage it is possible for an Entity to be marked deleted, by all references to the
-   * original entity having removed. In that case we still have the key and the map will contain an {@link Map.Entry}
-   * with an empty value.
+   * original entity having removed. In that case we still know that an entity with a given key has been deleted
+   * and the map will contain an {@link Map.Entry} with an empty value.
    *
    * @param keyClass the key class of an entity type.
    * @param <K>      the key type.
    * @param <S>      the specification type.
-   * @return a map containing all deleted keys of a give type to the key if known
+   * @return a map containing all deleted keys of a give type to the previously existing entity (if known)
    */
   <K extends Key<S>, S extends Specification> Map<K, Optional<Entity<K, S>>> allDeleted(Class<K> keyClass);
 
