@@ -26,6 +26,25 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 
 /**
  * Provides a unified view of the current state of all entities held in Stream Registry.
+ * <p/>
+ * The underlying state storage from which this is this is loaded may support entities which have been deleted. If
+ * that is the case it is important to understand the lifecycle of entities as it relates to {@link EntityView}.
+ * <p/>
+ * Entities may be created and updated in the underlying state storage. Any entity which has been created (but not
+ * deleted) will be returned by {@link #all(Class)} and {@link #get(Key)}. It is expected that users handle said
+ * entities accordingly (update external dependencies/respond to view requests etc).
+ * <p/>
+ * When entities are deleted in the underlying state storage, they will stop being returned by {@link #all(Class)} and
+ * {@link #get(Key)}. Instead they will be returned by {@link #allDeleted(Class)}. In this case it is expected that
+ * users handle those delete requests accordingly (e.g. remove the entity from external dependencies). This handling
+ * does not automatically remove the entities from this in memory state (or the underlying state storage). In order to
+ * remove the entity, {@link #purgeDeleted(Key)} should be used. This will remove all in memory references to said
+ * entity and it will no longer be returned by {@link #allDeleted(Class)}.
+ * <p/>
+ * <i>Note:</i> {@link #purgeDeleted(Key)} does not delete the entity from the underlying storage, only from memory. It
+ * is therefore possible that an entity that has previously had it's delete handled, will appear in
+ * {@link #allDeleted(Class)} after restarts. Users of this class should be aware and handle this case (e.g. by
+ * simply calling {@link #purgeDeleted(Key)} on said entities)
  */
 public interface EntityView {
   /**
@@ -60,7 +79,11 @@ public interface EntityView {
 
   /**
    * Returns a {@link Map} containing all keys of the given {@link Key} type which have been deleted but not
-   * purged ({@link #purgeDeleted(Key)}) mapped to the deleted Entity (if known)
+   * purged ({@link #purgeDeleted(Key)}) mapped to the deleted Entity (if known).
+   * <p/>
+   * Depending on underlying storage it is possible for an Entity to be marked deleted, by all references to the
+   * original entity having removed. In that case we still have the key and the map will contain an {@link Map.Entry}
+   * with an empty value.
    *
    * @param keyClass the key class of an entity type.
    * @param <K>      the key type.
@@ -70,7 +93,8 @@ public interface EntityView {
   <K extends Key<S>, S extends Specification> Map<K, Optional<Entity<K, S>>> allDeleted(Class<K> keyClass);
 
   /**
-   * Purge a deleted entity so that it no longer appears in {@link #allDeleted(Class)}.
+   * Purge a deleted entity so that it no longer appears in {@link #allDeleted(Class)}. It is removed from memory
+   * BUT NOT the underlying off memory state storage. Calling purge on any entity that is not deleted will do nothing.
    *
    * @param key the key of the entity to be purged
    * @param <K> the key type.
