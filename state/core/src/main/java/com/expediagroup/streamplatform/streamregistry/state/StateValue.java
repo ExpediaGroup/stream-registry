@@ -24,7 +24,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-public class StateValue {
+class StateValue {
   public final Entity<?, ?> entity;
   public final boolean deleted;
 
