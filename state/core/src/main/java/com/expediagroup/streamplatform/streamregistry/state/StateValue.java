@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.graphql;
+package com.expediagroup.streamplatform.streamregistry.state;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import com.apollographql.apollo.api.Response;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 
-@Getter
-public class ApolloResponseException extends IllegalStateException {
+@EqualsAndHashCode
+@ToString
+@AllArgsConstructor
+class StateValue {
+  public final Entity<?, ?> entity;
+  public final boolean deleted;
 
-  private final Response<?> response;
-
-  public ApolloResponseException(String message, Response<?> response) {
-    super(message);
-    this.response = response;
+  static StateValue existing(Entity<?, ?> entity) {
+    return new StateValue(entity, false);
+  }
+  static StateValue deleted(Entity<?, ?> entity) {
+    return new StateValue(entity, true);
   }
 }

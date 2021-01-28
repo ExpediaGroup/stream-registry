@@ -37,8 +37,10 @@ final class SampleEntities {
   static final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration);
   static final ObjectNode statusValue = mapper.createObjectNode();
   static final StatusEntry statusEntry = new StatusEntry("name", statusValue);
-  static final DefaultStatus status = (DefaultStatus) new DefaultStatus().with(statusEntry);
+  static final DefaultStatus status = new DefaultStatus().with(statusEntry);
   static final Entity<DomainKey, DefaultSpecification> entity = new Entity<>(key, specification, status);
   static final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);
   static final Event<DomainKey, DefaultSpecification> statusEvent = Event.status(key, statusEntry);
+  static final Event<DomainKey, DefaultSpecification> specificationDeletionEvent = Event.specificationDeletion(key);
+  static final Event<DomainKey, DefaultSpecification> statusDeletionEvent = Event.statusDeletion(key, statusEntry.getName());
 }

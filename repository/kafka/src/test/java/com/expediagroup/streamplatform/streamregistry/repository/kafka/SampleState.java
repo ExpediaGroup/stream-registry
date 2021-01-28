@@ -31,6 +31,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
@@ -39,24 +40,25 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusE
 final class SampleState {
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  private SampleState() {}
+  private SampleState() {
+  }
 
   private static DefaultSpecification specification() {
     return new DefaultSpecification(
-        "description",
-        Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
-        "type",
-        mapper.createObjectNode()
+      "description",
+      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      "type",
+      mapper.createObjectNode()
     );
   }
 
   static StreamSpecification streamSpecification() {
     return new StreamSpecification(
-        "description",
-        Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
-        "type",
-        mapper.createObjectNode(),
-        schemaKey()
+      "description",
+      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      "type",
+      mapper.createObjectNode(),
+      schemaKey()
     );
   }
 
@@ -142,5 +144,21 @@ final class SampleState {
 
   static Entity<ConsumerBindingKey, DefaultSpecification> consumerBinding() {
     return new Entity<>(consumerBindingKey(), specification(), status());
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainSpecificationDeletionEvent() {
+    return Event.specificationDeletion(domainKey());
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainSpecificationEvent() {
+    return Event.specification(domainKey(), domain().getSpecification());
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainStatusDeletionEvent() {
+    return Event.statusDeletion(domainKey(), "statusName");
+  }
+
+  static Event<DomainKey, DefaultSpecification> domainStatusEvent() {
+    return Event.status(domainKey(), new StatusEntry("agentStatus", mapper.createObjectNode()));
   }
 }

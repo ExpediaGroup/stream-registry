@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.deleted;
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.existing;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,7 +38,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.Default
 @Slf4j
 @RequiredArgsConstructor
 class EntityViewUpdater {
-  @NonNull private final Map<Entity.Key<?>, Entity<?, ?>> entities;
+  @NonNull
+  private final Map<Entity.Key<?>, StateValue> entities;
 
   <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(Event<K, S> event) {
     if (event instanceof SpecificationEvent) {
@@ -51,45 +55,62 @@ class EntityViewUpdater {
     }
   }
 
+  <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> purge(K key) {
+    val stateEntity = Optional.ofNullable(entities.get(key))
+      .filter(it -> it.deleted);
+    stateEntity.ifPresent(it -> {
+      entities.remove(key);
+      log.debug("Purged entity for key={}", key);
+    });
+    return stateEntity.map(it -> (Entity<K, S>) it.entity);
+  }
+
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(SpecificationEvent<K, S> event) {
-    val oldEntity = (Entity<K, S>) entities.get(event.getKey());
-    val status = Optional
-        .ofNullable(oldEntity)
-        .map(Entity::getStatus)
-        .orElseGet(DefaultStatus::new);
+    val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
+    val status = Optional.ofNullable(oldEntity)
+      .map(Entity::getStatus)
+      .orElseGet(DefaultStatus::new);
     val entity = new Entity<>(event.getKey(), event.getSpecification(), status);
-    entities.put(event.getKey(), entity);
+    entities.put(event.getKey(), existing(entity));
     log.debug("Updated {} with {}", event.getKey(), event.getSpecification());
     return oldEntity;
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(StatusEvent<K, S> event) {
-    val oldEntity = (Entity<K, S>) entities.get(event.getKey());
+    val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
     if (oldEntity == null) {
       log.warn("Received status {} non existent entity {}", event.getStatusEntry().getName(), event.getKey());
       return null;
     }
     val entity = new Entity<>(event.getKey(), oldEntity.getSpecification(), oldEntity.getStatus().with(event.getStatusEntry()));
-    entities.put(event.getKey(), entity);
+    entities.put(event.getKey(), existing(entity));
     log.debug("Updated {} with {}", event.getKey(), event.getStatusEntry());
     return oldEntity;
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(SpecificationDeletionEvent<K, S> event) {
-    val oldEntity = (Entity<K, S>) entities.remove(event.getKey());
+    val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
+    entities.put(event.getKey(), deleted(oldEntity));
     log.debug("Deleted entity for {}", event.getKey());
     return oldEntity;
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(StatusDeletionEvent<K, S> event) {
-    val oldEntity = (Entity<K, S>) entities.get(event.getKey());
+    val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
     if (oldEntity == null) {
       log.warn("Received status deletion {} for non existent entity {}", event.getStatusName(), event.getKey());
       return null;
     }
     val entity = oldEntity.withStatus(oldEntity.getStatus().without(event.getStatusName()));
-    entities.put(event.getKey(), entity);
+    entities.put(event.getKey(), existing(entity));
     log.debug("Deleted status {} for {}", event.getStatusName(), event.getKey());
     return oldEntity;
+  }
+
+  private Entity<?, ?> getExistingEntity(Entity.Key<?> key) {
+    return Optional.ofNullable(entities.get(key))
+      .filter(it -> !it.deleted)
+      .map(it -> it.entity)
+      .orElse(null);
   }
 }

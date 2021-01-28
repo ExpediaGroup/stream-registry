@@ -18,16 +18,23 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.entity;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.key;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specificationEvent;
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.deleted;
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.existing;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import lombok.val;
 
@@ -48,7 +55,7 @@ public class DefaultEntityViewTest {
   @Mock private EntityViewUpdater updater;
   @Mock private EntityViewListener listener;
 
-  private final Map<Entity.Key<?>, Entity<?, ?>> entities = new HashMap<>();
+  private final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
 
   private EntityView underTest;
 
@@ -64,17 +71,6 @@ public class DefaultEntityViewTest {
     verify(receiver).receive(captor.capture());
     val receiverListener = captor.getValue();
     assertThat(receiverListener.getListener(), is(listener));
-    assertThat(receiverListener.getFuture(), is(future));
-  }
-
-  @Test
-  public void loadNoArgs() {
-    val future = underTest.load();
-
-    val captor = ArgumentCaptor.forClass(ReceiverListener.class);
-    verify(receiver).receive(captor.capture());
-    val receiverListener = captor.getValue();
-    assertThat(receiverListener.getListener(), is(EntityViewListener.NULL));
     assertThat(receiverListener.getFuture(), is(future));
   }
 
@@ -119,7 +115,7 @@ public class DefaultEntityViewTest {
 
   @Test
   public void getPresent() {
-    entities.put(key, entity);
+    entities.put(key, existing(entity));
 
     val result = underTest.get(key);
 
@@ -135,8 +131,17 @@ public class DefaultEntityViewTest {
   }
 
   @Test
+  public void getIgnoresDeletedEntities() {
+    entities.put(key, deleted(entity));
+
+    val result = underTest.get(key);
+
+    assertThat(result.isPresent(), is(false));
+  }
+
+  @Test
   public void allPresent() {
-    entities.put(key, entity);
+    entities.put(key, existing(entity));
 
     val result = underTest.all(DomainKey.class).collect(toList());
 
@@ -149,5 +154,45 @@ public class DefaultEntityViewTest {
     val result = underTest.all(DomainKey.class).collect(toList());
 
     assertThat(result.size(), is(0));
+  }
+
+  @Test
+  public void allDeletedEntities() {
+    entities.put(key, deleted(entity));
+
+    val existingEntities = underTest.all(DomainKey.class).collect(toList());
+    val deletedEntities = underTest.allDeleted(DomainKey.class);
+
+    assertThat(existingEntities, hasSize(0));
+    assertThat(deletedEntities, is(aMapWithSize(1)));
+    assertThat(deletedEntities, hasEntry(key, Optional.of(entity)));
+  }
+
+  @Test
+  public void allDeletedEntitiesWhenNoneExisted() {
+    entities.put(key, deleted(null));
+
+    val existingEntities = underTest.all(DomainKey.class).collect(toList());
+    val deletedEntities = underTest.allDeleted(DomainKey.class);
+
+    assertThat(existingEntities, hasSize(0));
+    assertThat(deletedEntities, is(aMapWithSize(1)));
+    assertThat(deletedEntities, hasEntry(key, Optional.empty()));
+  }
+
+  @Test
+  public void allPurgeEntities() {
+    entities.put(key, deleted(entity));
+    val deletedEntities = underTest.allDeleted(DomainKey.class);
+    assertThat(deletedEntities, is(aMapWithSize(1)));
+    assertThat(deletedEntities, hasEntry(key, Optional.of(entity)));
+
+    when(updater.purge(key)).thenAnswer(i -> Optional.ofNullable(entities.remove(key)).map(value -> value.entity));
+    val purged = underTest.purgeDeleted(key);
+
+    val deletedEntitiesPostPurge = underTest.allDeleted(DomainKey.class);
+    assertThat(purged, is(Optional.of(entity)));
+    assertThat(deletedEntitiesPostPurge, is(aMapWithSize(0)));
+    assertThat(entities, is(aMapWithSize(0)));
   }
 }

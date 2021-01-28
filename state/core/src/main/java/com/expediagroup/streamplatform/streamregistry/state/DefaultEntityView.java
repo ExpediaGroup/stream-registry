@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.Getter;
@@ -36,10 +37,10 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultEntityView implements EntityView {
   @NonNull private final EventReceiver receiver;
-  @NonNull private final Map<Entity.Key<?>, Entity<?, ?>> entities;
+  @NonNull private final Map<Entity.Key<?>, StateValue> entities;
   @NonNull private final EntityViewUpdater updater;
 
-  DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, Entity<?, ?>> entities) {
+  DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, StateValue> entities) {
     this(receiver, entities, new EntityViewUpdater(entities));
   }
 
@@ -55,20 +56,32 @@ public class DefaultEntityView implements EntityView {
   }
 
   @Override
-  public CompletableFuture<Void> load() {
-    return load(EntityViewListener.NULL);
-  }
-
-  @Override
   public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> get(K key) {
-    return Optional.ofNullable((Entity<K, S>) entities.get(key));
+    return Optional.ofNullable(entities.get(key)).filter(it -> !it.deleted).map(value -> (Entity<K, S>) value.entity);
   }
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Stream<Entity<K, S>> all(Class<K> keyClass) {
     return entities.values().stream()
-        .filter(x -> x.getKey().getClass().equals(keyClass))
-        .map(x -> (Entity<K, S>) x);
+      .filter(it -> !it.deleted)
+      .filter(it -> it.entity.getKey().getClass().equals(keyClass))
+      .map(it -> (Entity<K, S>) it.entity);
+  }
+
+  @Override
+  public <K extends Entity.Key<S>, S extends Specification> Map<K, Optional<Entity<K, S>>> allDeleted(Class<K> keyClass) {
+    return entities.entrySet().stream()
+      .filter(it -> it.getValue().deleted)
+      .filter(it -> it.getKey().getClass().equals(keyClass))
+      .collect(Collectors.toMap(
+        entry -> (K)entry.getKey(),
+        entry -> Optional.ofNullable((Entity<K, S>)entry.getValue().entity))
+      );
+  }
+
+  @Override
+  public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> purgeDeleted(K key) {
+    return updater.purge(key);
   }
 
   @Getter // for testing

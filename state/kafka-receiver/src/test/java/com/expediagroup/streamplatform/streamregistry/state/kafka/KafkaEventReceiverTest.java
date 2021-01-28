@@ -52,7 +52,9 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class KafkaEventReceiverTest {
@@ -144,5 +146,15 @@ public class KafkaEventReceiverTest {
     when(consumer.partitionsFor(topic)).thenReturn(Collections.emptyList());
 
     underTest.consume(listener);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void onlySupportsOneReceiver() {
+    val doNothingListener = new EventReceiverListener() {
+      @Override
+      public <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event) { }
+    };
+    underTest.receive(doNothingListener);
+    underTest.receive(doNothingListener);
   }
 }

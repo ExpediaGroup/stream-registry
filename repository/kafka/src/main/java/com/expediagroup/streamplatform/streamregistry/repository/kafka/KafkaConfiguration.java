@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,10 @@ public class KafkaConfiguration {
   @Bean
   EntityView entityView(EventReceiver eventReceiver) {
     EntityView entityView = new DefaultEntityView(eventReceiver);
-    entityView.load().join();
+    PurgingEntityViewListener entityViewListener = new PurgingEntityViewListener(entityView);
+    entityView.load(entityViewListener)
+      .thenAccept(s -> entityViewListener.purgeAll())
+      .join();
     return entityView;
   }
 }
