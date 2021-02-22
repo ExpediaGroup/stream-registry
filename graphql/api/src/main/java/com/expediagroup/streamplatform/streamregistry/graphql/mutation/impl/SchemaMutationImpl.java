@@ -17,6 +17,10 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
+import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamFilter;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -28,10 +32,14 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Statu
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.SchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 @Component
 @RequiredArgsConstructor
 public class SchemaMutationImpl implements SchemaMutation {
   private final SchemaService schemaService;
+  private final StreamService streamService;
 
   @Override
   public Schema insert(SchemaKeyInput key, SpecificationInput specification) {
@@ -55,7 +63,9 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   @Override
   public Boolean delete(SchemaKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    Schema schema = new Schema();
+    schema.setKey(key.asSchemaKey());
+    return schemaService.delete(schema);
   }
 
   @Override

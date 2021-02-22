@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -43,6 +45,8 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
+  private final ProducerBindingService producerBindingService;
+  private final ConsumerBindingService consumerBindingService;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
@@ -91,8 +95,28 @@ public class StreamBindingService {
   }
 
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
-  public void delete(StreamBinding streamBinding) {
-    throw new UnsupportedOperationException();
+  public boolean delete(StreamBinding streamBinding) {
+    findAllAndDelete(streamBinding.getKey());
+    return streamBindingRepository.delete(streamBinding);
+  }
+
+  private void findAllAndDelete(StreamBindingKey key) {
+    val producerKey = new ProducerKey(
+            key.getStreamDomain(),
+            key.getStreamName(),
+            key.getStreamVersion(),
+            key.getInfrastructureZone(),
+            key.getInfrastructureName()
+    );
+    producerBindingService.findAllAndDelete(producerKey);
+    val consumerKey = new ConsumerKey(
+            key.getStreamDomain(),
+            key.getStreamName(),
+            key.getStreamVersion(),
+            key.getInfrastructureZone(),
+            key.getInfrastructureName()
+    );
+    consumerBindingService.findAllAndDelete(consumerKey);
   }
 
   public boolean exists(StreamBindingKey key) {

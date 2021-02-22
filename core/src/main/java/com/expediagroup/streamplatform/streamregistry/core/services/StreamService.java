@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -34,7 +37,6 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
 @Component
@@ -43,6 +45,7 @@ public class StreamService {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
+  private final StreamBindingService streamBindingService;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
@@ -92,8 +95,28 @@ public class StreamService {
   }
 
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
-  public void delete(Stream stream) {
-    throw new UnsupportedOperationException();
+  public boolean delete(Stream stream) {
+    StreamKey streamKey = stream.getKey();
+    StreamBinding streamBinding = new StreamBinding(
+            new StreamBindingKey(
+                    streamKey.getDomain(),
+                    streamKey.getName(),
+                    streamKey.getVersion(),
+                    null,
+                    null),
+            null, null);
+    streamBindingService.delete(streamBinding);
+    return streamRepository.delete(stream);
+  }
+
+  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
+  public boolean findAny(SchemaKey key) {
+    val example = new Stream(new StreamKey(
+            key.getDomain(),
+            key.getName(),
+            null
+    ), key, null, null);
+    return streamRepository.findAll(example).stream().findFirst().isPresent();
   }
 
   public boolean exists(StreamKey key) {

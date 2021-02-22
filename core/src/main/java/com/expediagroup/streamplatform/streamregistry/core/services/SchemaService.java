@@ -43,6 +43,7 @@ public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
+  private final StreamService streamService;
 
   @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
@@ -91,8 +92,12 @@ public class SchemaService {
   }
 
   @PreAuthorize("hasPermission(#schema, 'DELETE')")
-  public void delete(Schema schema) {
-    throw new UnsupportedOperationException();
+  public boolean delete(Schema schema) {
+    if(!streamService.findAny(schema.getKey())) {
+      return schemaRepository.delete(schema);
+    } else {
+      return false;
+    }
   }
 
   public boolean exists(SchemaKey key) {

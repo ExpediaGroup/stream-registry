@@ -43,6 +43,7 @@ public class ConsumerService {
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
+  private final ConsumerBindingService consumerBindingService;
 
   @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
@@ -91,8 +92,9 @@ public class ConsumerService {
   }
 
   @PreAuthorize("hasPermission(#consumer, 'DELETE')")
-  public void delete(Consumer consumer) {
-    throw new UnsupportedOperationException();
+  public boolean delete(Consumer consumer) {
+    consumerBindingService.findAllAndDelete(consumer.getKey());
+    return consumerRepository.delete(consumer);
   }
 
   public boolean exists(ConsumerKey key) {

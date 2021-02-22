@@ -92,8 +92,8 @@ public class ProducerBindingService {
   }
 
   @PreAuthorize("hasPermission(#producerBinding, 'DELETE')")
-  public void delete(ProducerBinding producerBinding) {
-    throw new UnsupportedOperationException();
+  public boolean delete(ProducerBinding producerBinding) {
+    return producerBindingRepository.delete(producerBinding);
   }
 
   public boolean exists(ProducerBindingKey key) {
@@ -111,5 +111,18 @@ public class ProducerBindingService {
         key.getName()
     ), null, null);
     return producerBindingRepository.findAll(example).stream().findFirst();
+  }
+
+  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
+  public void findAllAndDelete(ProducerKey key) {
+    val example = new ProducerBinding(new ProducerBindingKey(
+            key.getStreamDomain(),
+            key.getStreamName(),
+            key.getStreamVersion(),
+            key.getZone(),
+            null,
+            key.getName()
+    ), null, null);
+    producerBindingRepository.findAll(example).stream().forEach(pb -> delete(pb));
   }
 }

@@ -55,7 +55,9 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public Boolean delete(ConsumerBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    ConsumerBinding consumerBinding = new ConsumerBinding();
+    consumerBinding.setKey(key.asConsumerBindingKey());
+    return consumerBindingService.delete(consumerBinding);
   }
 
   @Override

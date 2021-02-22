@@ -58,7 +58,9 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Boolean delete(StreamKeyInput key) {
-    throw new UnsupportedOperationException("deleteStream");
+    Stream stream = new Stream();
+    stream.setKey(key.asStreamKey());
+    return streamService.delete(stream);
   }
 
   @Override

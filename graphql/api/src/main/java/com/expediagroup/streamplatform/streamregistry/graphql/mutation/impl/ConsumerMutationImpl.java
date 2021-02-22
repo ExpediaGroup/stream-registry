@@ -55,7 +55,9 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Boolean delete(ConsumerKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    Consumer consumer = new Consumer();
+    consumer.setKey(key.asConsumerKey());
+    return consumerService.delete(consumer);
   }
 
   @Override

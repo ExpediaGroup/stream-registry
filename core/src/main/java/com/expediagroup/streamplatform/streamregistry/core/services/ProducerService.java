@@ -43,6 +43,7 @@ public class ProducerService {
   private final HandlerService handlerService;
   private final ProducerValidator producerValidator;
   private final ProducerRepository producerRepository;
+  private final ProducerBindingService producerBindingService;
 
   @PreAuthorize("hasPermission(#producer, 'CREATE')")
   public Optional<Producer> create(Producer producer) throws ValidationException {
@@ -91,8 +92,9 @@ public class ProducerService {
   }
 
   @PreAuthorize("hasPermission(#producer, 'DELETE')")
-  public void delete(Producer producer) {
-    throw new UnsupportedOperationException();
+  public boolean delete(Producer producer) {
+    producerBindingService.findAllAndDelete(producer.getKey());
+    return producerRepository.delete(producer);
   }
 
   public boolean exists(ProducerKey key) {

@@ -55,7 +55,10 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public Boolean delete(ProducerBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    ProducerBinding producerBinding = new ProducerBinding();
+    producerBinding.setKey(key.asProducerBindingKey());
+    producerBindingService.delete(producerBinding);
+    return true;
   }
 
   @Override

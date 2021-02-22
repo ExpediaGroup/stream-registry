@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
@@ -98,4 +99,14 @@ abstract class DefaultRepository<
     //This is only used by ProducerBinding and ConsumerBinding
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  public boolean delete(ME entity) {
+    List<CompletableFuture<Void>> futures = new ArrayList<>();
+    Entity<SK, SS> stateEntity = converter.convertEntity(entity);
+    StatusEntry status = stateEntity.getStatus().getEntries().get(0);
+    send(Event.status(stateEntity.getKey(), status), futures);
+    return true;
+  }
+
 }

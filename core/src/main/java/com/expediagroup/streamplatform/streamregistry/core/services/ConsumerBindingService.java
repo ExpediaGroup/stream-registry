@@ -93,8 +93,8 @@ public class ConsumerBindingService {
   }
 
   @PreAuthorize("hasPermission(#consumerBinding, 'DELETE')")
-  public void delete(ConsumerBinding consumerBinding) {
-    throw new UnsupportedOperationException();
+  public boolean delete(ConsumerBinding consumerBinding) {
+    return consumerBindingRepository.delete(consumerBinding);
   }
 
   public boolean exists(ConsumerBindingKey key) {
@@ -112,5 +112,18 @@ public class ConsumerBindingService {
         key.getName()
     ), null, null);
     return consumerBindingRepository.findAll(example).stream().findFirst();
+  }
+
+  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
+  public void findAllAndDelete(ConsumerKey key) {
+    val example = new ConsumerBinding(new ConsumerBindingKey(
+            key.getStreamDomain(),
+            key.getStreamName(),
+            key.getStreamVersion(),
+            key.getZone(),
+            null,
+            key.getName()
+    ), null, null);
+    consumerBindingRepository.findAll(example).stream().forEach(cb -> delete(cb));
   }
 }
