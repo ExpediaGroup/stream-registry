@@ -93,8 +93,8 @@ public class ConsumerBindingService {
   }
 
   @PreAuthorize("hasPermission(#consumerBinding, 'DELETE')")
-  public boolean delete(ConsumerBinding consumerBinding) {
-    return consumerBindingRepository.delete(consumerBinding);
+  public void delete(ConsumerBinding consumerBinding) {
+    consumerBindingRepository.delete(consumerBinding);
   }
 
   public boolean exists(ConsumerBindingKey key) {
@@ -124,6 +124,6 @@ public class ConsumerBindingService {
             null,
             key.getName()
     ), null, null);
-    consumerBindingRepository.findAll(example).stream().forEach(cb -> delete(cb));
+    consumerBindingRepository.findAll(example).forEach(this::delete);
   }
 }

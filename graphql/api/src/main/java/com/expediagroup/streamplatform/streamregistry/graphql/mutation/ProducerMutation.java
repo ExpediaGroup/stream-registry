@@ -28,7 +28,7 @@ public interface ProducerMutation extends GraphQLApiType {
 
   Producer upsert(ProducerKeyInput key, SpecificationInput specification);
 
-  Boolean delete(ProducerKeyInput key);
+  void delete(ProducerKeyInput key);
 
   Producer updateStatus(ProducerKeyInput key, StatusInput status);
 }

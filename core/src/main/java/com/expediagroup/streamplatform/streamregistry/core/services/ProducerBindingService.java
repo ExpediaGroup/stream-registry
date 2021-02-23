@@ -92,8 +92,8 @@ public class ProducerBindingService {
   }
 
   @PreAuthorize("hasPermission(#producerBinding, 'DELETE')")
-  public boolean delete(ProducerBinding producerBinding) {
-    return producerBindingRepository.delete(producerBinding);
+  public void delete(ProducerBinding producerBinding) {
+    producerBindingRepository.delete(producerBinding);
   }
 
   public boolean exists(ProducerBindingKey key) {
@@ -123,6 +123,6 @@ public class ProducerBindingService {
             null,
             key.getName()
     ), null, null);
-    producerBindingRepository.findAll(example).stream().forEach(pb -> delete(pb));
+    producerBindingRepository.findAll(example).forEach(this::delete);
   }
 }

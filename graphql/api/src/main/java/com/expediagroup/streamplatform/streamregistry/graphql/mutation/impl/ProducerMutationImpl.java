@@ -66,10 +66,10 @@ public class ProducerMutationImpl implements ProducerMutation {
   }
 
   @Override
-  public Boolean delete(ProducerKeyInput key) {
+  public void delete(ProducerKeyInput key) {
     Producer producer = new Producer();
     producer.setKey(key.asProducerKey());
-    return producerService.delete(producer);
+    producerService.delete(producer);
   }
 
   @Override

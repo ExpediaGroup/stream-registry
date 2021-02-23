@@ -54,10 +54,10 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
   }
 
   @Override
-  public Boolean delete(StreamBindingKeyInput key) {
+  public void delete(StreamBindingKeyInput key) {
     StreamBinding streamBinding = new StreamBinding();
     streamBinding.setKey(key.asStreamBindingKey());
-    return streamBindingService.delete(streamBinding);
+    streamBindingService.delete(streamBinding);
   }
 
   @Override

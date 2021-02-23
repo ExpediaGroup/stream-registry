@@ -101,11 +101,10 @@ abstract class DefaultRepository<
   }
 
   @Override
-  public boolean delete(ME entity) {
+  public void delete(ME entity) {
     List<CompletableFuture<Void>> futures = new ArrayList<>();
     Entity<SK, SS> stateEntity = converter.convertEntity(entity);
     send(Event.specificationDeletion(stateEntity.getKey()), futures);
-    return true;
   }
 
 }

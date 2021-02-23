@@ -28,7 +28,7 @@ public interface StreamBindingMutation extends GraphQLApiType {
 
   StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification);
 
-  Boolean delete(StreamBindingKeyInput key);
+  void delete(StreamBindingKeyInput key);
 
   StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status);
 }

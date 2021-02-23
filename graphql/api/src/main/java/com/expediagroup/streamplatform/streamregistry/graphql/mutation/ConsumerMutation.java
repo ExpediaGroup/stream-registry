@@ -28,7 +28,7 @@ public interface ConsumerMutation extends GraphQLApiType {
 
   Consumer upsert(ConsumerKeyInput key, SpecificationInput specification);
 
-  Boolean delete(ConsumerKeyInput key);
+  void delete(ConsumerKeyInput key);
 
   Consumer updateStatus(ConsumerKeyInput key, StatusInput status);
 }

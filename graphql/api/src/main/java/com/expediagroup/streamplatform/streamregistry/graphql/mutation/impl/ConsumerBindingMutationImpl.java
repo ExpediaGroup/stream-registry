@@ -54,10 +54,10 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
   }
 
   @Override
-  public Boolean delete(ConsumerBindingKeyInput key) {
+  public void delete(ConsumerBindingKeyInput key) {
     ConsumerBinding consumerBinding = new ConsumerBinding();
     consumerBinding.setKey(key.asConsumerBindingKey());
-    return consumerBindingService.delete(consumerBinding);
+    consumerBindingService.delete(consumerBinding);
   }
 
   @Override

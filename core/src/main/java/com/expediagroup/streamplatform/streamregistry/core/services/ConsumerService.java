@@ -92,9 +92,9 @@ public class ConsumerService {
   }
 
   @PreAuthorize("hasPermission(#consumer, 'DELETE')")
-  public boolean delete(Consumer consumer) {
+  public void delete(Consumer consumer) {
     consumerBindingService.findAllAndDelete(consumer.getKey());
-    return consumerRepository.delete(consumer);
+    consumerRepository.delete(consumer);
   }
 
   public boolean exists(ConsumerKey key) {

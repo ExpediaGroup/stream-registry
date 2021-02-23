@@ -94,7 +94,7 @@ public class StreamService {
   }
 
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
-  public boolean delete(Stream stream) {
+  public void delete(Stream stream) {
     StreamKey streamKey = stream.getKey();
     StreamBinding streamBinding = new StreamBinding(
             new StreamBindingKey(
@@ -105,7 +105,7 @@ public class StreamService {
                     null),
             null, null);
     streamBindingService.delete(streamBinding);
-    return streamRepository.delete(stream);
+    streamRepository.delete(stream);
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

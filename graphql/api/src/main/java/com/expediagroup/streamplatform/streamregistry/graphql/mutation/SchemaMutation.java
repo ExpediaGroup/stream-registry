@@ -28,7 +28,7 @@ public interface SchemaMutation extends GraphQLApiType {
 
   Schema upsert(SchemaKeyInput key, SpecificationInput specification);
 
-  Boolean delete(SchemaKeyInput key);
+  void delete(SchemaKeyInput key);
 
   Schema updateStatus(SchemaKeyInput key, StatusInput status);
 }

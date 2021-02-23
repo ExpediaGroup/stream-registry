@@ -93,15 +93,13 @@ public class SchemaService {
   }
 
   @PreAuthorize("hasPermission(#schema, 'DELETE')")
-  public boolean delete(Schema schema) {
+  public void delete(Schema schema) {
     List<Stream> streams = streamService.findAll(schema.getKey());
     if(streams.isEmpty()) {
-      return schemaRepository.delete(schema);
+      schemaRepository.delete(schema);
     } else if(streams.size()==1) {
       streamService.delete(streams.get(0));
-      return schemaRepository.delete(schema);
-    } else {
-      return false;
+      schemaRepository.delete(schema);
     }
   }
 

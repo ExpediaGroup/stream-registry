@@ -97,9 +97,9 @@ public class StreamBindingService {
   }
 
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
-  public boolean delete(StreamBinding streamBinding) {
+  public void delete(StreamBinding streamBinding) {
     findAllAndDelete(streamBinding.getKey());
-    return streamBindingRepository.delete(streamBinding);
+    streamBindingRepository.delete(streamBinding);
   }
 
   private void findAllAndDelete(StreamBindingKey key) {

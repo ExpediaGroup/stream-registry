@@ -28,7 +28,7 @@ public interface ConsumerBindingMutation extends GraphQLApiType {
 
   ConsumerBinding upsert(ConsumerBindingKeyInput key, SpecificationInput specification);
 
-  Boolean delete(ConsumerBindingKeyInput key);
+  void delete(ConsumerBindingKeyInput key);
 
   ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status);
 }

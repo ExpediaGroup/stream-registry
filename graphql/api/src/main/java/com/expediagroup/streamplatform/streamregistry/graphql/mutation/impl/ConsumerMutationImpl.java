@@ -54,10 +54,10 @@ public class ConsumerMutationImpl implements ConsumerMutation {
   }
 
   @Override
-  public Boolean delete(ConsumerKeyInput key) {
+  public void delete(ConsumerKeyInput key) {
     Consumer consumer = new Consumer();
     consumer.setKey(key.asConsumerKey());
-    return consumerService.delete(consumer);
+    consumerService.delete(consumer);
   }
 
   @Override

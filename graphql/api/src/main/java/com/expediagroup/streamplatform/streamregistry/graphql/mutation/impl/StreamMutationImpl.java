@@ -57,10 +57,10 @@ public class StreamMutationImpl implements StreamMutation {
   }
 
   @Override
-  public Boolean delete(StreamKeyInput key) {
+  public void delete(StreamKeyInput key) {
     Stream stream = new Stream();
     stream.setKey(key.asStreamKey());
-    return streamService.delete(stream);
+    streamService.delete(stream);
   }
 
   @Override

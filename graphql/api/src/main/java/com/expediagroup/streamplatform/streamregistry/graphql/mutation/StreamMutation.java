@@ -29,7 +29,7 @@ public interface StreamMutation extends GraphQLApiType {
 
   Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema);
 
-  Boolean delete(StreamKeyInput key);
+  void delete(StreamKeyInput key);
 
   Stream updateStatus(StreamKeyInput key, StatusInput status);
 }

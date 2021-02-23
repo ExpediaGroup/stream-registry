@@ -92,9 +92,9 @@ public class ProducerService {
   }
 
   @PreAuthorize("hasPermission(#producer, 'DELETE')")
-  public boolean delete(Producer producer) {
+  public void delete(Producer producer) {
     producerBindingService.findAllAndDelete(producer.getKey());
-    return producerRepository.delete(producer);
+    producerRepository.delete(producer);
   }
 
   public boolean exists(ProducerKey key) {

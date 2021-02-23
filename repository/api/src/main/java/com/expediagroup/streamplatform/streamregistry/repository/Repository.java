@@ -31,5 +31,5 @@ public interface Repository<T, ID> {
   @Deprecated
   List<T> findAll(T example);
 
-  boolean delete(T entity);
+  void delete(T entity);
 }
