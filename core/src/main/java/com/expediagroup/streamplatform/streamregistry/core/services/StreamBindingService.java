@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +47,8 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
-  private final ProducerBindingService producerBindingService;
-  private final ConsumerBindingService consumerBindingService;
+  private final ProducerService producerService;
+  private final ConsumerService consumerService;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
@@ -101,22 +103,22 @@ public class StreamBindingService {
   }
 
   private void findAllAndDelete(StreamBindingKey key) {
-    val producerKey = new ProducerKey(
+    val producer = new Producer(new ProducerKey(
             key.getStreamDomain(),
             key.getStreamName(),
             key.getStreamVersion(),
             key.getInfrastructureZone(),
             key.getInfrastructureName()
-    );
-    producerBindingService.findAllAndDelete(producerKey);
-    val consumerKey = new ConsumerKey(
+    ), null, null);
+    producerService.delete(producer);
+    val consumer = new Consumer(new ConsumerKey(
             key.getStreamDomain(),
             key.getStreamName(),
             key.getStreamVersion(),
             key.getInfrastructureZone(),
             key.getInfrastructureName()
-    );
-    consumerBindingService.findAllAndDelete(consumerKey);
+    ), null, null);
+    consumerService.delete(consumer);
   }
 
   public boolean exists(StreamBindingKey key) {

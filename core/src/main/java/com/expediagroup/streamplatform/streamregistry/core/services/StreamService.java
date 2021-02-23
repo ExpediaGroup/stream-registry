@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import lombok.RequiredArgsConstructor;
@@ -110,13 +109,13 @@ public class StreamService {
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
-  public boolean findAny(SchemaKey key) {
+  public List<Stream> findAll(SchemaKey key) {
     val example = new Stream(new StreamKey(
             key.getDomain(),
             key.getName(),
             null
     ), key, null, null);
-    return streamRepository.findAll(example).stream().findFirst().isPresent();
+    return streamRepository.findAll(example);
   }
 
   public boolean exists(StreamKey key) {

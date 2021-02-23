@@ -104,8 +104,7 @@ abstract class DefaultRepository<
   public boolean delete(ME entity) {
     List<CompletableFuture<Void>> futures = new ArrayList<>();
     Entity<SK, SS> stateEntity = converter.convertEntity(entity);
-    StatusEntry status = stateEntity.getStatus().getEntries().get(0);
-    send(Event.status(stateEntity.getKey(), status), futures);
+    send(Event.specificationDeletion(stateEntity.getKey()), futures);
     return true;
   }
 

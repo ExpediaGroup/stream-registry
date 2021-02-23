@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -93,7 +94,11 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'DELETE')")
   public boolean delete(Schema schema) {
-    if(!streamService.findAny(schema.getKey())) {
+    List<Stream> streams = streamService.findAll(schema.getKey());
+    if(streams.isEmpty()) {
+      return schemaRepository.delete(schema);
+    } else if(streams.size()==1) {
+      streamService.delete(streams.get(0));
       return schemaRepository.delete(schema);
     } else {
       return false;
