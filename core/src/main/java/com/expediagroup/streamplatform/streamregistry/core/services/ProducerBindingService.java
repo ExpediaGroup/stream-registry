@@ -118,7 +118,7 @@ public class ProducerBindingService {
     return producerBindingRepository.findAll(example).stream().findFirst();
   }
 
-  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
+  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
   public void findAllAndDelete(ProducerKey key) {
     val example = new ProducerBinding(new ProducerBindingKey(
             key.getStreamDomain(),

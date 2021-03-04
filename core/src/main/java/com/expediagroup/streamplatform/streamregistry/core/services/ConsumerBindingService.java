@@ -119,7 +119,7 @@ public class ConsumerBindingService {
     return consumerBindingRepository.findAll(example).stream().findFirst();
   }
 
-  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
+  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
   public void findAllAndDelete(ConsumerKey key) {
     val example = new ConsumerBinding(new ConsumerBindingKey(
             key.getStreamDomain(),

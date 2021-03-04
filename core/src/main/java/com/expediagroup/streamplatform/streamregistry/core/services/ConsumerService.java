@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -100,6 +103,18 @@ public class ConsumerService {
     handlerService.handleDelete(consumer);
     consumerBindingService.findAllAndDelete(consumer.getKey());
     consumerRepository.delete(consumer);
+  }
+
+  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
+  public void findAllAndDelete(StreamKey key) {
+    val example = new Consumer(new ConsumerKey(
+            key.getDomain(),
+            key.getName(),
+            key.getVersion(),
+            null,
+            null
+    ), null, null);
+    consumerRepository.findAll(example).forEach(this::delete);
   }
 
   public boolean exists(ConsumerKey key) {

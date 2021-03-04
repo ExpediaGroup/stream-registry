@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -45,6 +46,8 @@ public class StreamService {
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
   private final StreamBindingService streamBindingService;
+  private final ConsumerService consumerService;
+  private final ProducerService producerService;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
@@ -100,6 +103,9 @@ public class StreamService {
       throw new ValidationException("Can't delete " + stream.getKey() + " because it doesn't exist");
     }
     handlerService.handleDelete(stream);
+    Consumer consumerKey;
+    consumerService.findAllAndDelete(stream.getKey());
+    producerService.findAllAndDelete(stream.getKey());
     StreamKey streamKey = stream.getKey();
     StreamBinding streamBinding = new StreamBinding(
             new StreamBindingKey(
