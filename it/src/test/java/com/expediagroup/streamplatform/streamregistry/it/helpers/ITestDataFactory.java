@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,46 +21,7 @@ import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyInput;
@@ -440,5 +401,33 @@ public class ITestDataFactory {
     return UpdateDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
         .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public DeleteConsumerBindingMutation.Builder deleteConsumerBindingMutationBuilder() {
+    return DeleteConsumerBindingMutation.builder().key(consumerBindingKeyInputBuilder().build());
+  }
+
+  public DeleteConsumerMutation.Builder deleteConsumerMutationBuilder() {
+    return DeleteConsumerMutation.builder().key(consumerKeyInputBuilder().build());
+  }
+
+  public DeleteProducerBindingMutation.Builder deleteProducerBindingMutationBuilder() {
+    return DeleteProducerBindingMutation.builder().key(producerBindingKeyInputBuilder().build());
+  }
+
+  public DeleteProducerMutation.Builder deleteProducerMutationBuilder() {
+    return DeleteProducerMutation.builder().key(producerKeyInputBuilder().build());
+  }
+
+  public DeleteSchemaMutation.Builder deleteSchemaMutationBuilder() {
+    return DeleteSchemaMutation.builder().key(schemaKeyInputBuilder().build());
+  }
+
+  public DeleteStreamMutation.Builder deleteStreamMutationBuilder() {
+    return DeleteStreamMutation.builder().key(streamKeyInputBuilder().build());
+  }
+
+  public DeleteStreamBindingMutation.Builder deleteStreamBindingMutationBuilder() {
+    return DeleteStreamBindingMutation.builder().key(streamBindingKeyInputBuilder().build());
   }
 }

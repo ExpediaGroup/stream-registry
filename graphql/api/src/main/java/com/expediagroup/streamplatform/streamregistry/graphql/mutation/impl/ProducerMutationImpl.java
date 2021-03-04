@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,9 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerBindingFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerBindingKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.TagQuery;
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
@@ -35,15 +29,11 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Statu
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.ProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
 public class ProducerMutationImpl implements ProducerMutation {
   private final ProducerService producerService;
-  private final ProducerBindingService producerBindingService;
 
   @Override
   public Producer insert(ProducerKeyInput key, SpecificationInput specification) {
@@ -66,10 +56,15 @@ public class ProducerMutationImpl implements ProducerMutation {
   }
 
   @Override
-  public void delete(ProducerKeyInput key) {
+  public Boolean delete(ProducerKeyInput key) {
     Producer producer = new Producer();
     producer.setKey(key.asProducerKey());
-    producerService.delete(producer);
+    try {
+      producerService.delete(producer);
+      return true;
+    } catch (Exception e) {
+      throw new ValidationException(e);
+    }
   }
 
   @Override

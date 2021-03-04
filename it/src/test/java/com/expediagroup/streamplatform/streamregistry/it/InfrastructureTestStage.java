@@ -95,6 +95,11 @@ public class InfrastructureTestStage extends AbstractTestStage {
   }
 
   @Override
+  public void delete() {
+    //not implemented for infrastructure
+  }
+
+  @Override
   public void updateStatus() {
     client.getOptionalData(factory.upsertInfrastructureMutationBuilder().build()).get();
     Object data = client.getOptionalData(factory.updateInfrastructureStatusBuilder().build()).get();

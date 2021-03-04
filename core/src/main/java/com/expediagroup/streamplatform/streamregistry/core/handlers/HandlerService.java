@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +105,14 @@ public class HandlerService {
   public Specification handleUpdate(Entity entity, Entity existing) {
     try {
       return getHandler(entity).handleUpdate(entity, existing);
+    } catch (Exception e) {
+      throw new ValidationException(e);
+    }
+  }
+
+  public void handleDelete(Entity entity) {
+    try {
+      getHandler(entity).handleDelete(entity);
     } catch (Exception e) {
       throw new ValidationException(e);
     }

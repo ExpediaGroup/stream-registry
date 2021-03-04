@@ -73,6 +73,14 @@ mutation UpsertConsumer(
   }
 }
 
+mutation DeleteConsumer(
+  $key: ConsumerKeyInput!
+) {
+  consumer{
+    delete(key: $key)
+  }
+}
+
 mutation UpdateConsumerStatus(
   $key: ConsumerKeyInput!
   $status: StatusInput!
@@ -168,6 +176,14 @@ mutation UpsertConsumerBinding(
       __typename
       ...ConsumerBindingPart
     }
+  }
+}
+
+mutation DeleteConsumerBinding(
+  $key: ConsumerBindingKeyInput!
+) {
+  consumerBinding{
+    delete(key: $key)
   }
 }
 
@@ -461,6 +477,14 @@ mutation UpsertProducer(
   }
 }
 
+mutation DeleteProducer(
+  $key: ProducerKeyInput!
+) {
+  producer{
+    delete(key: $key)
+  }
+}
+
 mutation UpdateProducerStatus(
   $key: ProducerKeyInput!
   $status: StatusInput!
@@ -559,6 +583,14 @@ mutation UpsertProducerBinding(
   }
 }
 
+mutation DeleteProducerBinding(
+  $key: ProducerBindingKeyInput!
+) {
+  producerBinding{
+    delete(key: $key)
+  }
+}
+
 mutation UpdateProducerBindingStatus(
   $key: ProducerBindingKeyInput!
   $status: StatusInput!
@@ -650,6 +682,14 @@ mutation UpsertSchema(
       __typename
       ...SchemaPart
     }
+  }
+}
+
+mutation DeleteSchema(
+  $key: SchemaKeyInput!
+) {
+  schema{
+    delete(key: $key)
   }
 }
 
@@ -754,6 +794,14 @@ mutation UpsertStream(
   }
 }
 
+mutation DeleteStream(
+  $key: StreamKeyInput!
+) {
+  stream{
+    delete(key: $key)
+  }
+}
+
 mutation UpdateStreamStatus(
   $key: StreamKeyInput!
   $status: StatusInput!
@@ -848,6 +896,14 @@ mutation UpsertStreamBinding(
       __typename
       ...StreamBindingPart
     }
+  }
+}
+
+mutation DeleteStreamBinding(
+  $key: StreamBindingKeyInput!
+) {
+  streamBinding{
+    delete(key: $key)
   }
 }
 

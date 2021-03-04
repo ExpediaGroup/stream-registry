@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
-import com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamFilter;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -32,14 +29,11 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Statu
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.SchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
-import java.util.List;
-import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
 public class SchemaMutationImpl implements SchemaMutation {
   private final SchemaService schemaService;
-  private final StreamService streamService;
 
   @Override
   public Schema insert(SchemaKeyInput key, SpecificationInput specification) {
@@ -62,10 +56,15 @@ public class SchemaMutationImpl implements SchemaMutation {
   }
 
   @Override
-  public void delete(SchemaKeyInput key) {
+  public Boolean delete(SchemaKeyInput key) {
     Schema schema = new Schema();
     schema.setKey(key.asSchemaKey());
-    schemaService.delete(schema);
+    try {
+      schemaService.delete(schema);
+      return true;
+    } catch (Exception e) {
+      throw new ValidationException(e);
+    }
   }
 
   @Override

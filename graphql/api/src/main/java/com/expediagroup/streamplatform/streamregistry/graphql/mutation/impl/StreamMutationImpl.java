@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -57,10 +58,15 @@ public class StreamMutationImpl implements StreamMutation {
   }
 
   @Override
-  public void delete(StreamKeyInput key) {
+  public Boolean delete(StreamKeyInput key) {
     Stream stream = new Stream();
     stream.setKey(key.asStreamKey());
-    streamService.delete(stream);
+    try {
+      streamService.delete(stream);
+      return true;
+    } catch (Exception e) {
+      throw new ValidationException(e);
+    }
   }
 
   @Override

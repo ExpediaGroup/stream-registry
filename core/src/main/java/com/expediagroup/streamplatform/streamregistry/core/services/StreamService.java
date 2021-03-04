@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -36,6 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
 @Component
@@ -95,6 +95,11 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
   public void delete(Stream stream) {
+    val existing = unsecuredGet(stream.getKey());
+    if (!existing.isPresent()) {
+      throw new ValidationException("Can't delete " + stream.getKey() + " because it doesn't exist");
+    }
+    handlerService.handleDelete(stream);
     StreamKey streamKey = stream.getKey();
     StreamBinding streamBinding = new StreamBinding(
             new StreamBindingKey(

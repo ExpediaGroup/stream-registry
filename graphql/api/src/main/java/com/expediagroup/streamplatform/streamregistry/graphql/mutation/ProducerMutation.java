@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public interface ProducerMutation extends GraphQLApiType {
 
   Producer upsert(ProducerKeyInput key, SpecificationInput specification);
 
-  void delete(ProducerKeyInput key);
+  Boolean delete(ProducerKeyInput key);
 
   Producer updateStatus(ProducerKeyInput key, StatusInput status);
 }

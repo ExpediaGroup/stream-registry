@@ -21,10 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -36,9 +32,8 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.*;
+import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 
 @Component
@@ -47,8 +42,8 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
-  private final ProducerService producerService;
-  private final ConsumerService consumerService;
+  private final ProducerBindingService producerBindingService;
+  private final ConsumerBindingService consumerBindingService;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
@@ -98,27 +93,32 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
+    val existing = unsecuredGet(streamBinding.getKey());
+    if (!existing.isPresent()) {
+      throw new ValidationException("Can't delete " + streamBinding.getKey() + " because it doesn't exist");
+    }
+    handlerService.handleDelete(streamBinding);
     findAllAndDelete(streamBinding.getKey());
     streamBindingRepository.delete(streamBinding);
   }
 
   private void findAllAndDelete(StreamBindingKey key) {
-    val producer = new Producer(new ProducerKey(
+    val producerKey = new ProducerKey(
             key.getStreamDomain(),
             key.getStreamName(),
             key.getStreamVersion(),
             key.getInfrastructureZone(),
             key.getInfrastructureName()
-    ), null, null);
-    producerService.delete(producer);
-    val consumer = new Consumer(new ConsumerKey(
+    );
+    producerBindingService.findAllAndDelete(producerKey);
+    val consumerKey = new ConsumerKey(
             key.getStreamDomain(),
             key.getStreamName(),
             key.getStreamVersion(),
             key.getInfrastructureZone(),
             key.getInfrastructureName()
-    ), null, null);
-    consumerService.delete(consumer);
+    );
+    consumerBindingService.findAllAndDelete(consumerKey);
   }
 
   public boolean exists(StreamBindingKey key) {

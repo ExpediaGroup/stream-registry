@@ -16,18 +16,11 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import com.apollographql.apollo.api.Mutation;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerBindingsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ProducerBindingPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerBindingKeyInput;
@@ -92,6 +85,17 @@ public class ProducerBindingTestStage extends AbstractTestStage {
     SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
     assertThat(specificationPart.getDescription().get(), is(factory.description));
     assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
+  }
+
+  @Override
+  public void delete() {
+    setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteProducerBindingMutationBuilder().build()).get();
+
+    boolean delete = ((DeleteProducerBindingMutation.Data) data).getProducerBinding().isDelete();
+
+    assertTrue(delete);
   }
 
   @Override

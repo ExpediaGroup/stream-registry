@@ -16,17 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.StreamBindingPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyInput;
@@ -76,6 +68,17 @@ public class StreamBindingTestStage extends AbstractTestStage {
     SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
     assertThat(specificationPart.getDescription().get(), is(factory.description));
     assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
+  }
+
+  @Override
+  public void delete() {
+    setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteStreamBindingMutationBuilder().build()).get();
+
+    boolean delete = ((DeleteStreamBindingMutation.Data) data).getStreamBinding().isDelete();
+
+    assertTrue(delete);
   }
 
   @Override

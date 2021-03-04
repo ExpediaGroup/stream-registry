@@ -16,21 +16,13 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import com.apollographql.apollo.api.Mutation;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumersQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ConsumerPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;
@@ -95,6 +87,17 @@ public class ConsumerTestStage extends AbstractTestStage {
     SpecificationPart specificationPart = part.getSpecification().getFragments().getSpecificationPart();
     assertThat(specificationPart.getDescription().get(), is(factory.description));
     assertThat(specificationPart.getConfiguration().get(factory.key).asText(), is(factory.value));
+  }
+
+  @Override
+  public void delete() {
+    setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteConsumerMutationBuilder().build()).get();
+
+    boolean delete = ((DeleteConsumerMutation.Data) data).getConsumer().isDelete();
+
+    assertTrue(delete);
   }
 
   @Test

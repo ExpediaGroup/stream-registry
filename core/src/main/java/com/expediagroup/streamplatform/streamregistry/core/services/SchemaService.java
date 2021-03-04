@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -35,6 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
 
@@ -94,6 +94,11 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'DELETE')")
   public void delete(Schema schema) {
+    val existing = unsecuredGet(schema.getKey());
+    if (!existing.isPresent()) {
+      throw new ValidationException("Can't delete " + schema.getKey().getName() + " because it doesn't exist");
+    }
+    handlerService.handleDelete(schema);
     List<Stream> streams = streamService.findAll(schema.getKey());
     if(streams.isEmpty()) {
       schemaRepository.delete(schema);

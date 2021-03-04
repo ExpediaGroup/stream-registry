@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -57,8 +58,12 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
   public Boolean delete(ProducerBindingKeyInput key) {
     ProducerBinding producerBinding = new ProducerBinding();
     producerBinding.setKey(key.asProducerBindingKey());
-    producerBindingService.delete(producerBinding);
-    return true;
+    try {
+      producerBindingService.delete(producerBinding);
+      return true;
+    } catch (Exception e) {
+      throw new ValidationException(e);
+    }
   }
 
   @Override

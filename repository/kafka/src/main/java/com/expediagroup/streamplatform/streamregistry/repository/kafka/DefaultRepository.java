@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
@@ -104,6 +103,9 @@ abstract class DefaultRepository<
   public void delete(ME entity) {
     List<CompletableFuture<Void>> futures = new ArrayList<>();
     Entity<SK, SS> stateEntity = converter.convertEntity(entity);
+    stateEntity.getStatus().getEntries().stream().forEach( e -> {
+      send(Event.statusDeletion(stateEntity.getKey(), e.getName()), futures);
+    });
     send(Event.specificationDeletion(stateEntity.getKey()), futures);
   }
 
