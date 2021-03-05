@@ -25,11 +25,22 @@ import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Component
 public class ProducerRepository
     extends DefaultRepository<Producer, ProducerKey, Entity.ProducerKey, DefaultSpecification>
     implements com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository {
   ProducerRepository(EntityView view, EventSender sender, ProducerConverter converter) {
     super(view, sender, converter, Entity.ProducerKey.class);
+  }
+
+  @Override
+  public List<Producer> findAll(Producer example) {
+    return findAll().stream()
+            .filter(pb -> pb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
+            .collect(toList());
   }
 }

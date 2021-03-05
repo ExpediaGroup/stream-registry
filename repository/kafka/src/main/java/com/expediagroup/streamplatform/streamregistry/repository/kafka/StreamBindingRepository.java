@@ -25,11 +25,22 @@ import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Component
 public class StreamBindingRepository
     extends DefaultRepository<StreamBinding, StreamBindingKey, Entity.StreamBindingKey, DefaultSpecification>
     implements com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository {
   StreamBindingRepository(EntityView view, EventSender sender, StreamBindingConverter converter) {
     super(view, sender, converter, Entity.StreamBindingKey.class);
+  }
+
+  @Override
+  public List<StreamBinding> findAll(StreamBinding example) {
+    return findAll().stream()
+            .filter(sb -> sb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
+            .collect(toList());
   }
 }

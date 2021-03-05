@@ -25,11 +25,22 @@ import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Component
 public class ConsumerRepository
     extends DefaultRepository<Consumer, ConsumerKey, Entity.ConsumerKey, DefaultSpecification>
     implements com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository {
   ConsumerRepository(EntityView view, EventSender sender, ConsumerConverter converter) {
     super(view, sender, converter, Entity.ConsumerKey.class);
+  }
+
+  @Override
+  public List<Consumer> findAll(Consumer example) {
+    return findAll().stream()
+            .filter(pb -> pb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
+            .collect(toList());
   }
 }

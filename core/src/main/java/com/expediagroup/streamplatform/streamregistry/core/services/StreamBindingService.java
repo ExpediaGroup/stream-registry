@@ -21,6 +21,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -32,8 +38,6 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
-import com.expediagroup.streamplatform.streamregistry.model.*;
-import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 
 @Component
@@ -119,6 +123,19 @@ public class StreamBindingService {
             key.getInfrastructureName()
     );
     consumerBindingService.findAllAndDelete(consumerKey);
+  }
+
+  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
+  public void findAllAndDelete(StreamKey key) {
+    val example  = new StreamBinding(
+            new StreamBindingKey(
+                    key.getDomain(),
+                    key.getName(),
+                    key.getVersion(),
+                    null,
+                    null),
+            null, null);
+    streamBindingRepository.findAll(example).forEach(this::delete);
   }
 
   public boolean exists(StreamBindingKey key) {

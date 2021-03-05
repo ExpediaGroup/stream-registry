@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

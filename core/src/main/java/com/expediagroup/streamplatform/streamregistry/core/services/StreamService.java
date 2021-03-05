@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -35,8 +36,6 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
 @Component
@@ -103,19 +102,9 @@ public class StreamService {
       throw new ValidationException("Can't delete " + stream.getKey() + " because it doesn't exist");
     }
     handlerService.handleDelete(stream);
-    Consumer consumerKey;
     consumerService.findAllAndDelete(stream.getKey());
     producerService.findAllAndDelete(stream.getKey());
-    StreamKey streamKey = stream.getKey();
-    StreamBinding streamBinding = new StreamBinding(
-            new StreamBindingKey(
-                    streamKey.getDomain(),
-                    streamKey.getName(),
-                    streamKey.getVersion(),
-                    null,
-                    null),
-            null, null);
-    streamBindingService.delete(streamBinding);
+    streamBindingService.findAllAndDelete(stream.getKey());
     streamRepository.delete(stream);
   }
 
