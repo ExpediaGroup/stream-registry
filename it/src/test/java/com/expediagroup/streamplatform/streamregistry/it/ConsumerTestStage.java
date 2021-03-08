@@ -16,13 +16,23 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumersQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerMutation;
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ConsumerPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;

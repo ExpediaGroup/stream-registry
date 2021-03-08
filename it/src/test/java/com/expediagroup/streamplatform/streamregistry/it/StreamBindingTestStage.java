@@ -16,9 +16,19 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.StreamBindingPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyInput;

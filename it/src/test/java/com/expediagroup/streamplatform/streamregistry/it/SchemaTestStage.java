@@ -16,9 +16,19 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.SchemaQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.SchemasQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SchemaPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyInput;
