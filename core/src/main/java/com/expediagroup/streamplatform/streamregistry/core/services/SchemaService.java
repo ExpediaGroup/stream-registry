@@ -94,17 +94,11 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'DELETE')")
   public void delete(Schema schema) {
-    val existing = unsecuredGet(schema.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't delete " + schema.getKey().getName() + " because it doesn't exist");
-    }
     handlerService.handleDelete(schema);
     List<Stream> streams = streamService.findAll(schema.getKey());
     if(streams.isEmpty()) {
       schemaRepository.delete(schema);
-    } else if(streams.size()==1) {
-      streamService.delete(streams.get(0));
-      schemaRepository.delete(schema);
+    } else {
     }
   }
 

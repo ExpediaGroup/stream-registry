@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -47,6 +48,7 @@ public class StreamService {
   private final StreamBindingService streamBindingService;
   private final ConsumerService consumerService;
   private final ProducerService producerService;
+  private final SchemaService schemaService;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
@@ -97,15 +99,13 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
   public void delete(Stream stream) {
-    val existing = unsecuredGet(stream.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't delete " + stream.getKey() + " because it doesn't exist");
-    }
     handlerService.handleDelete(stream);
+    Schema schema = new Schema(stream.getSchemaKey(), null,null);
     consumerService.findAllAndDelete(stream.getKey());
     producerService.findAllAndDelete(stream.getKey());
     streamBindingService.findAllAndDelete(stream.getKey());
     streamRepository.delete(stream);
+    schemaService.delete(schema);
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

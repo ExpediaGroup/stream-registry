@@ -57,14 +57,7 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   @Override
   public Boolean delete(SchemaKeyInput key) {
-    Schema schema = new Schema();
-    schema.setKey(key.asSchemaKey());
-    try {
-      schemaService.delete(schema);
-      return true;
-    } catch (Exception e) {
-      throw new ValidationException(e);
-    }
+    throw new UnsupportedOperationException("delete");
   }
 
   @Override
