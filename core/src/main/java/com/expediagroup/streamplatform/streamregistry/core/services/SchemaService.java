@@ -34,7 +34,6 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
 
@@ -44,7 +43,6 @@ public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
-  private final StreamService streamService;
 
   @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
