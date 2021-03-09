@@ -105,7 +105,10 @@ public class StreamService {
     producerService.findAllAndDelete(stream.getKey());
     streamBindingService.findAllAndDelete(stream.getKey());
     streamRepository.delete(stream);
-    schemaService.delete(schema);
+    List<Stream> streams = findAll(schema.getKey());
+    if(streams.isEmpty()) {
+      schemaService.delete(schema);
+    }
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
