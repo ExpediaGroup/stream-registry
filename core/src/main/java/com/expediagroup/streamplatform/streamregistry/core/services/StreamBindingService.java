@@ -97,10 +97,6 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
-    val existing = unsecuredGet(streamBinding.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't delete " + streamBinding.getKey() + " because it doesn't exist");
-    }
     handlerService.handleDelete(streamBinding);
     findAllAndDelete(streamBinding.getKey());
     streamBindingRepository.delete(streamBinding);

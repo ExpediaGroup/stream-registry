@@ -94,10 +94,6 @@ public class ConsumerBindingService {
 
   @PreAuthorize("hasPermission(#consumerBinding, 'DELETE')")
   public void delete(ConsumerBinding consumerBinding) {
-    val existing = unsecuredGet(consumerBinding.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't delete " + consumerBinding.getKey() + " because it doesn't exist");
-    }
     handlerService.handleDelete(consumerBinding);
     consumerBindingRepository.delete(consumerBinding);
   }

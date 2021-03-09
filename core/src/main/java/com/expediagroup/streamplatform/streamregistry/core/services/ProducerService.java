@@ -94,10 +94,6 @@ public class ProducerService {
 
   @PreAuthorize("hasPermission(#producer, 'DELETE')")
   public void delete(Producer producer) {
-    val existing = unsecuredGet(producer.getKey());
-    if (!existing.isPresent()) {
-      throw new ValidationException("Can't delete " + producer.getKey().getName() + " because it doesn't exist");
-    }
     handlerService.handleDelete(producer);
     producerBindingService.findAllAndDelete(producer.getKey());
     producerRepository.delete(producer);
