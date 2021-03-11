@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,13 +50,13 @@ public class ConsumerServiceTest {
   private ConsumerRepository consumerRepository;
 
   @Mock
-  private ConsumerBindingService consumerBindingService;
+  private ConsumerBindingRepository consumerBindingRepository;
 
   private ConsumerService consumerService;
 
   @Before
   public void before() {
-    consumerService = new ConsumerService(handlerService, consumerValidator, consumerRepository, consumerBindingService);
+    consumerService = new ConsumerService(handlerService, consumerValidator, consumerRepository, consumerBindingRepository);
   }
 
   @Test
