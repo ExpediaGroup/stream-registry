@@ -36,6 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragme
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
+import org.junit.Ignore;
 
 public class ProducerTestStage extends AbstractTestStage {
 
@@ -96,6 +97,7 @@ public class ProducerTestStage extends AbstractTestStage {
   }
 
   @Override
+  @Ignore
   public void delete() {
     setFactorySuffix("delete");
 

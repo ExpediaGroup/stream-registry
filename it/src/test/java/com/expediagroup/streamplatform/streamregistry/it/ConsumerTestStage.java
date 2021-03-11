@@ -31,6 +31,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.Insert
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerMutation;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ConsumerPart;
@@ -100,6 +101,7 @@ public class ConsumerTestStage extends AbstractTestStage {
   }
 
   @Override
+  @Ignore
   public void delete() {
     setFactorySuffix("delete");
 

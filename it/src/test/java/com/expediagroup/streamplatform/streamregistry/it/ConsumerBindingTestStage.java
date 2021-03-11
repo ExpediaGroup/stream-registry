@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.Insert
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerBindingMutation;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ConsumerBindingPart;
@@ -97,6 +98,7 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
   }
 
   @Override
+  @Ignore
   public void delete() {
     setFactorySuffix("delete");
 

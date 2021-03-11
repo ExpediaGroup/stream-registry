@@ -48,8 +48,5 @@ public class IdentityHandler<T extends Entity> implements Handler<T> {
   }
 
   @Override
-  public void handleDelete(T entity) {
-
-  }
-
+  public void handleDelete(T entity) {}
 }

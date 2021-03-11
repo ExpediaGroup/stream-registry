@@ -37,6 +37,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.S
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
+import org.junit.Ignore;
 
 public class StreamTestStage extends AbstractTestStage {
 
@@ -104,6 +105,7 @@ public class StreamTestStage extends AbstractTestStage {
   }
 
   @Override
+  @Ignore
   public void delete() {
     setFactorySuffix("delete");
 
