@@ -105,15 +105,8 @@ public class StreamTestStage extends AbstractTestStage {
   }
 
   @Override
-  @Ignore
   public void delete() {
     setFactorySuffix("delete");
-
-    Object data = client.getOptionalData(factory.deleteStreamMutationBuilder().build()).get();
-
-    boolean delete = ((DeleteStreamMutation.Data) data).getStream().isDelete();
-
-    assertTrue(delete);
   }
 
   @Override

@@ -98,15 +98,8 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
   }
 
   @Override
-  @Ignore
   public void delete() {
     setFactorySuffix("delete");
-
-    Object data = client.getOptionalData(factory.deleteConsumerBindingMutationBuilder().build()).get();
-
-    boolean delete = ((DeleteConsumerBindingMutation.Data) data).getConsumerBinding().isDelete();
-
-    assertTrue(delete);
   }
 
   @Override
