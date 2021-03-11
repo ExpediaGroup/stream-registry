@@ -97,15 +97,8 @@ public class ProducerTestStage extends AbstractTestStage {
   }
 
   @Override
-  @Ignore
   public void delete() {
     setFactorySuffix("delete");
-
-    Object data = client.getOptionalData(factory.deleteProducerMutationBuilder().build()).get();
-
-    boolean delete = ((DeleteProducerMutation.Data) data).getProducer().isDelete();
-
-    assertTrue(delete);
   }
 
   @Override

@@ -83,15 +83,8 @@ public class SchemaTestStage extends AbstractTestStage {
   }
 
   @Override
-  @Ignore
   public void delete() {
     setFactorySuffix("delete");
-
-    Object data = client.getOptionalData(factory.deleteSchemaMutationBuilder().build()).get();
-
-    boolean delete = ((DeleteSchemaMutation.Data) data).getSchema().isDelete();
-
-    assertTrue(delete);
   }
 
   @Override

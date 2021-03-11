@@ -98,15 +98,8 @@ public class ProducerBindingTestStage extends AbstractTestStage {
   }
 
   @Override
-  @Ignore
   public void delete() {
     setFactorySuffix("delete");
-
-    Object data = client.getOptionalData(factory.deleteProducerBindingMutationBuilder().build()).get();
-
-    boolean delete = ((DeleteProducerBindingMutation.Data) data).getProducerBinding().isDelete();
-
-    assertTrue(delete);
   }
 
   @Override
