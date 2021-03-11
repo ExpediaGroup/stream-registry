@@ -20,11 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamsQuery;
@@ -37,7 +35,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.S
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
-import org.junit.Ignore;
 
 public class StreamTestStage extends AbstractTestStage {
 

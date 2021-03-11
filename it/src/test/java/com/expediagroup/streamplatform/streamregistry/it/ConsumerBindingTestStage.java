@@ -19,20 +19,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
+import org.junit.Test;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerBindingsQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingStatusMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerBindingMutation;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.ConsumerBindingPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyInput;

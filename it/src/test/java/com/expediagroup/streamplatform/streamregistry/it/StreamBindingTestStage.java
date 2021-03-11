@@ -20,9 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingsQuery;
@@ -34,7 +32,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragme
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
-import org.junit.Ignore;
 
 public class StreamBindingTestStage extends AbstractTestStage {
 

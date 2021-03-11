@@ -15,7 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 import java.util.List;
 import java.util.Optional;

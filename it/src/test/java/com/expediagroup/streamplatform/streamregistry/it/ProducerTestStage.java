@@ -20,11 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducersQuery;
@@ -36,7 +34,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragme
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
-import org.junit.Ignore;
 
 public class ProducerTestStage extends AbstractTestStage {
 

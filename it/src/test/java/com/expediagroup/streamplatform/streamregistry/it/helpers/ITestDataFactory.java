@@ -19,6 +19,8 @@ import static com.expediagroup.streamplatform.streamregistry.core.handlers.Ident
 
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerBindingMutation;
@@ -66,8 +68,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.Upsert
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertZoneMutation;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyInput;

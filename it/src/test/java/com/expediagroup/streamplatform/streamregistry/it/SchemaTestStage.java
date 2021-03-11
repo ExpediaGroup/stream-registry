@@ -20,9 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertSchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.SchemaQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.SchemasQuery;
@@ -34,7 +32,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragme
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
-import org.junit.Ignore;
 
 public class SchemaTestStage extends AbstractTestStage {
 

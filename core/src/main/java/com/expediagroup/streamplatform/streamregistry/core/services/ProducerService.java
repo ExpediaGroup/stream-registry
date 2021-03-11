@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -36,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Validation
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
 
 @Component

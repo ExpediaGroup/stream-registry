@@ -22,10 +22,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -37,9 +33,13 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
 @Component
