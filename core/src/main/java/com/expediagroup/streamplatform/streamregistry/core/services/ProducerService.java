@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -35,7 +36,6 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Validation
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
 
 @Component
@@ -44,7 +44,7 @@ public class ProducerService {
   private final HandlerService handlerService;
   private final ProducerValidator producerValidator;
   private final ProducerRepository producerRepository;
-  private final ProducerBindingService producerBindingService;
+  private final ProducerBindingRepository producerBindingRepository;
 
   @PreAuthorize("hasPermission(#producer, 'CREATE')")
   public Optional<Producer> create(Producer producer) throws ValidationException {
@@ -95,20 +95,8 @@ public class ProducerService {
   @PreAuthorize("hasPermission(#producer, 'DELETE')")
   public void delete(Producer producer) {
     handlerService.handleDelete(producer);
-    producerBindingService.findAllAndDelete(producer.getKey());
+    producerBindingRepository.findAllAndDelete(producer.getKey());
     producerRepository.delete(producer);
-  }
-
-  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
-  public void findAllAndDelete(StreamKey key) {
-    val example = new Producer(new ProducerKey(
-            key.getDomain(),
-            key.getName(),
-            key.getVersion(),
-            null,
-            null
-    ), null, null);
-    producerRepository.findAll(example).forEach(this::delete);
   }
 
   public boolean exists(ProducerKey key) {

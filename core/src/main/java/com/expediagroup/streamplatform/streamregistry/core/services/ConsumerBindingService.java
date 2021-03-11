@@ -115,16 +115,4 @@ public class ConsumerBindingService {
     return consumerBindingRepository.findAll(example).stream().findFirst();
   }
 
-  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
-  public void findAllAndDelete(ConsumerKey key) {
-    val example = new ConsumerBinding(new ConsumerBindingKey(
-            key.getStreamDomain(),
-            key.getStreamName(),
-            key.getStreamVersion(),
-            key.getZone(),
-            null,
-            key.getName()
-    ), null, null);
-    consumerBindingRepository.findAll(example).forEach(this::delete);
-  }
 }

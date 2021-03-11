@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
@@ -42,5 +43,10 @@ public class ProducerRepository
     return findAll().stream()
             .filter(pb -> pb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
             .collect(toList());
+  }
+
+  public void findAllAndDelete(StreamKey key) {
+    findAll().stream()
+      .filter(p -> p.getKey().getStreamKey().equals(key));
   }
 }

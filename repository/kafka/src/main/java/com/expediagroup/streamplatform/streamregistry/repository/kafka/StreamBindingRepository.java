@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
@@ -42,5 +43,11 @@ public class StreamBindingRepository
     return findAll().stream()
             .filter(sb -> sb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
             .collect(toList());
+  }
+
+  public void findAllAndDelete(StreamKey key) {
+    findAll().stream()
+      .filter(sb -> sb.getKey().getStreamKey().equals(key))
+      .forEach(this::delete);
   }
 }

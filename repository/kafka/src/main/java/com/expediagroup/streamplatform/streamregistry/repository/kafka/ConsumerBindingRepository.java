@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -44,5 +46,11 @@ public class ConsumerBindingRepository
     return findAll().stream()
         .filter(cb -> cb.getKey().getConsumerKey().equals(example.getKey().getConsumerKey()))
         .collect(toList());
+  }
+
+  public void findAllAndDelete(ConsumerKey key) {
+    findAll().stream()
+      .filter(cb -> cb.getKey().getConsumerKey().equals(key))
+      .forEach(this::delete);
   }
 }

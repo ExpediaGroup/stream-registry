@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -44,7 +45,7 @@ public class ConsumerService {
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
-  private final ConsumerBindingService consumerBindingService;
+  private final ConsumerBindingRepository consumerBindingRepository;
 
   @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
@@ -95,20 +96,8 @@ public class ConsumerService {
   @PreAuthorize("hasPermission(#consumer, 'DELETE')")
   public void delete(Consumer consumer) {
     handlerService.handleDelete(consumer);
-    consumerBindingService.findAllAndDelete(consumer.getKey());
+    consumerBindingRepository.findAllAndDelete(consumer.getKey());
     consumerRepository.delete(consumer);
-  }
-
-  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
-  public void findAllAndDelete(StreamKey key) {
-    val example = new Consumer(new ConsumerKey(
-            key.getDomain(),
-            key.getName(),
-            key.getVersion(),
-            null,
-            null
-    ), null, null);
-    consumerRepository.findAll(example).forEach(this::delete);
   }
 
   public boolean exists(ConsumerKey key) {

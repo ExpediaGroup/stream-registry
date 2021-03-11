@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -46,8 +48,8 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
-  private final ProducerBindingService producerBindingService;
-  private final ConsumerBindingService consumerBindingService;
+  private final ProducerBindingRepository producerBindingRepository;
+  private final ConsumerBindingRepository consumerBindingRepository;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
@@ -110,7 +112,7 @@ public class StreamBindingService {
             key.getInfrastructureZone(),
             key.getInfrastructureName()
     );
-    producerBindingService.findAllAndDelete(producerKey);
+    producerBindingRepository.findAllAndDelete(producerKey);
     val consumerKey = new ConsumerKey(
             key.getStreamDomain(),
             key.getStreamName(),
@@ -118,21 +120,11 @@ public class StreamBindingService {
             key.getInfrastructureZone(),
             key.getInfrastructureName()
     );
-    consumerBindingService.findAllAndDelete(consumerKey);
+    consumerBindingRepository.findAllAndDelete(consumerKey);
   }
 
   @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
-  public void findAllAndDelete(StreamKey key) {
-    val example  = new StreamBinding(
-            new StreamBindingKey(
-                    key.getDomain(),
-                    key.getName(),
-                    key.getVersion(),
-                    null,
-                    null),
-            null, null);
-    streamBindingRepository.findAll(example).forEach(this::delete);
-  }
+
 
   public boolean exists(StreamBindingKey key) {
     return unsecuredGet(key).isPresent();

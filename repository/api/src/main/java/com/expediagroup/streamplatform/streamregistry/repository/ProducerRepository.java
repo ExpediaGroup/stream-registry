@@ -17,5 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.repository;
 
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
-public interface ProducerRepository extends Repository<Producer, ProducerKey> {}
+public interface ProducerRepository extends Repository<Producer, ProducerKey> {
+    void findAllAndDelete(StreamKey key);
+}

@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
@@ -44,5 +45,9 @@ public class ProducerBindingRepository
     return findAll().stream()
         .filter(pb -> pb.getKey().getProducerKey().equals(example.getKey().getProducerKey()))
         .collect(toList());
+  }
+
+  public void findAllAndDelete(ProducerKey key) {
+    findAll().stream().filter(pb -> pb.getKey().getProducerKey().equals(key)).forEach(this::delete);
   }
 }

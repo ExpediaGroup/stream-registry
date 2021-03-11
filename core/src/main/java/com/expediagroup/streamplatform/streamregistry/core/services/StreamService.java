@@ -20,8 +20,12 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -35,7 +39,6 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamVali
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
@@ -45,9 +48,9 @@ public class StreamService {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
-  private final StreamBindingService streamBindingService;
-  private final ConsumerService consumerService;
-  private final ProducerService producerService;
+  private final StreamBindingRepository streamBindingRepository;
+  private final ConsumerRepository consumerRepository;
+  private final ProducerRepository producerRepository;
   private final SchemaService schemaService;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
@@ -101,24 +104,15 @@ public class StreamService {
   public void delete(Stream stream) {
     handlerService.handleDelete(stream);
     Schema schema = new Schema(stream.getSchemaKey(), null,null);
-    consumerService.findAllAndDelete(stream.getKey());
-    producerService.findAllAndDelete(stream.getKey());
-    streamBindingService.findAllAndDelete(stream.getKey());
+    consumerRepository.findAllAndDelete(stream.getKey());
+    producerRepository.findAllAndDelete(stream.getKey());
+    streamBindingRepository.findAllAndDelete(stream.getKey());
     streamRepository.delete(stream);
-    List<Stream> streams = findAll(schema.getKey());
+    List<Stream> streams = streamRepository.findAll().stream().filter(s -> s.getSchemaKey()
+      .equals(stream.getSchemaKey())).collect(Collectors.toList());
     if(streams.isEmpty()) {
       schemaService.delete(schema);
     }
-  }
-
-  @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
-  public List<Stream> findAll(SchemaKey key) {
-    val example = new Stream(new StreamKey(
-            key.getDomain(),
-            key.getName(),
-            null
-    ), key, null, null);
-    return streamRepository.findAll(example);
   }
 
   public boolean exists(StreamKey key) {

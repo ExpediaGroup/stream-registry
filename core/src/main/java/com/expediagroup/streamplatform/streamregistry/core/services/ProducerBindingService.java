@@ -114,16 +114,4 @@ public class ProducerBindingService {
     return producerBindingRepository.findAll(example).stream().findFirst();
   }
 
-  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
-  public void findAllAndDelete(ProducerKey key) {
-    val example = new ProducerBinding(new ProducerBindingKey(
-            key.getStreamDomain(),
-            key.getStreamName(),
-            key.getStreamVersion(),
-            key.getZone(),
-            null,
-            key.getName()
-    ), null, null);
-    producerBindingRepository.findAll(example).forEach(this::delete);
-  }
 }
