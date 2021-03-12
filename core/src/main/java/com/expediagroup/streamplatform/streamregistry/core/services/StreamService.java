@@ -36,6 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Validation
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
@@ -52,6 +53,7 @@ public class StreamService {
   private final ConsumerRepository consumerRepository;
   private final ProducerRepository producerRepository;
   private final SchemaService schemaService;
+  private final UtilService utilService;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
@@ -104,13 +106,18 @@ public class StreamService {
   public void delete(Stream stream) {
     handlerService.handleDelete(stream);
     Schema schema = new Schema(stream.getSchemaKey(), null,null);
+    utilService.findAllAndDelete(
+      new StreamBindingKey(stream.getSchemaKey().getDomain(),
+        stream.getKey().getName(),
+        stream.getKey().getVersion(),
+        null, null));
     consumerRepository.findAllAndDelete(stream.getKey());
     producerRepository.findAllAndDelete(stream.getKey());
     streamBindingRepository.findAllAndDelete(stream.getKey());
     streamRepository.delete(stream);
     List<Stream> streams = streamRepository.findAll().stream().filter(s -> s.getSchemaKey()
       .equals(stream.getSchemaKey())).collect(Collectors.toList());
-    if(streams.isEmpty()) {
+    if(stream.equals(streams.get(0)) || streams.isEmpty()) {
       schemaService.delete(schema);
     }
   }

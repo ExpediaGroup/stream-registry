@@ -34,11 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBind
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 
 @Component
@@ -47,8 +43,7 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
-  private final ProducerBindingRepository producerBindingRepository;
-  private final ConsumerBindingRepository consumerBindingRepository;
+  private final UtilService utilService;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
@@ -99,31 +94,9 @@ public class StreamBindingService {
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
     handlerService.handleDelete(streamBinding);
-    findAllAndDelete(streamBinding.getKey());
+    utilService.findAllAndDelete(streamBinding.getKey());
     streamBindingRepository.delete(streamBinding);
   }
-
-  private void findAllAndDelete(StreamBindingKey key) {
-    val producerKey = new ProducerKey(
-            key.getStreamDomain(),
-            key.getStreamName(),
-            key.getStreamVersion(),
-            key.getInfrastructureZone(),
-            key.getInfrastructureName()
-    );
-    producerBindingRepository.findAllAndDelete(producerKey);
-    val consumerKey = new ConsumerKey(
-            key.getStreamDomain(),
-            key.getStreamName(),
-            key.getStreamVersion(),
-            key.getInfrastructureZone(),
-            key.getInfrastructureName()
-    );
-    consumerBindingRepository.findAllAndDelete(consumerKey);
-  }
-
-  @PreAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'DELETE') : true")
-
 
   public boolean exists(StreamBindingKey key) {
     return unsecuredGet(key).isPresent();

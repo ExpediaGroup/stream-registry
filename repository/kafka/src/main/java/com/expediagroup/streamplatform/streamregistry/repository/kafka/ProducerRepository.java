@@ -47,6 +47,7 @@ public class ProducerRepository
 
   public void findAllAndDelete(StreamKey key) {
     findAll().stream()
-      .filter(p -> p.getKey().getStreamKey().equals(key));
+      .filter(p -> p.getKey().getStreamKey().equals(key))
+      .forEach(this::delete);
   }
 }
