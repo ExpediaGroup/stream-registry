@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 @RequiredArgsConstructor
 public class ProducerBindingMutationImpl implements ProducerBindingMutation {
   private final ProducerBindingService producerBindingService;
+  private final ProducerBindingView producerBindingView;
 
   @Override
   public ProducerBinding insert(ProducerBindingKeyInput key, SpecificationInput specification) {
@@ -48,7 +50,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
   @Override
   public ProducerBinding upsert(ProducerBindingKeyInput key, SpecificationInput specification) {
     ProducerBinding producerBinding = asProducerBinding(key, specification);
-    if (!producerBindingService.unsecuredGet(producerBinding.getKey()).isPresent()) {
+    if (!producerBindingView.get(producerBinding.getKey()).isPresent()) {
       return producerBindingService.create(producerBinding).get();
     } else {
       return producerBindingService.update(producerBinding).get();
@@ -57,13 +59,13 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public Boolean delete(ProducerBindingKeyInput key) {
-    producerBindingService.unsecuredGet(key.asProducerBindingKey()).ifPresent(producerBindingService::delete);
+    producerBindingView.get(key.asProducerBindingKey()).ifPresent(producerBindingService::delete);
     return true;
   }
 
   @Override
   public ProducerBinding updateStatus(ProducerBindingKeyInput key, StatusInput status) {
-    ProducerBinding producerBinding = producerBindingService.unsecuredGet(key.asProducerBindingKey()).get();
+    ProducerBinding producerBinding = producerBindingView.get(key.asProducerBindingKey()).get();
     return producerBindingService.updateStatus(producerBinding, status.asStatus()).get();
   }
 
@@ -71,7 +73,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
     ProducerBinding producerBinding = new ProducerBinding();
     producerBinding.setKey(key.asProducerBindingKey());
     producerBinding.setSpecification(specification.asSpecification());
-    maintainState(producerBinding, producerBindingService.unsecuredGet(producerBinding.getKey()));
+    maintainState(producerBinding, producerBindingView.get(producerBinding.getKey()));
     return producerBinding;
   }
 }

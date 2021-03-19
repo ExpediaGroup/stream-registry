@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 @RequiredArgsConstructor
 public class InfrastructureMutationImpl implements InfrastructureMutation {
   private final InfrastructureService infrastructureService;
+  private final InfrastructureView infrastructureView;
 
   @Override
   public Infrastructure insert(InfrastructureKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
   @Override
   public Infrastructure upsert(InfrastructureKeyInput key, SpecificationInput specification) {
     Infrastructure infrastructure = asInfrastructure(key, specification);
-    if (!infrastructureService.unsecuredGet(infrastructure.getKey()).isPresent()) {
+    if (!infrastructureView.get(infrastructure.getKey()).isPresent()) {
       return infrastructureService.create(infrastructure).get();
     } else {
       return infrastructureService.update(infrastructure).get();
@@ -60,7 +62,7 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
 
   @Override
   public Infrastructure updateStatus(InfrastructureKeyInput key, StatusInput status) {
-    Infrastructure infrastructure = infrastructureService.unsecuredGet(key.asInfrastructureKey()).get();
+    Infrastructure infrastructure = infrastructureView.get(key.asInfrastructureKey()).get();
     return infrastructureService.updateStatus(infrastructure, status.asStatus()).get();
   }
 
@@ -68,7 +70,7 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
     Infrastructure out = new Infrastructure();
     out.setKey(key.asInfrastructureKey());
     out.setSpecification(specification.asSpecification());
-    maintainState(out, infrastructureService.unsecuredGet(out.getKey()));
+    maintainState(out, infrastructureView.get(out.getKey()));
     return out;
   }
 }

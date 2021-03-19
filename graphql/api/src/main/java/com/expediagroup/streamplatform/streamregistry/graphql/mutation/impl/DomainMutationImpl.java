@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 @RequiredArgsConstructor
 public class DomainMutationImpl implements DomainMutation {
   private final DomainService domainService;
+  private final DomainView domainView;
 
   @Override
   public Domain insert(DomainKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class DomainMutationImpl implements DomainMutation {
   @Override
   public Domain upsert(DomainKeyInput key, SpecificationInput specification) {
     Domain domain = asDomain(key, specification);
-    if (!domainService.unsecuredGet(domain.getKey()).isPresent()) {
+    if (!domainView.get(domain.getKey()).isPresent()) {
       return domainService.create(domain).get();
     } else {
       return domainService.update(domain).get();
@@ -60,7 +62,7 @@ public class DomainMutationImpl implements DomainMutation {
 
   @Override
   public Domain updateStatus(DomainKeyInput key, StatusInput status) {
-    Domain domain = domainService.unsecuredGet(key.asDomainKey()).get();
+    Domain domain = domainView.get(key.asDomainKey()).get();
     return domainService.updateStatus(domain, status.asStatus()).get();
   }
 
@@ -68,7 +70,7 @@ public class DomainMutationImpl implements DomainMutation {
     Domain domain = new Domain();
     domain.setKey(key.asDomainKey());
     domain.setSpecification(specification.asSpecification());
-    maintainState(domain, domainService.unsecuredGet(domain.getKey()));
+    maintainState(domain, domainView.get(domain.getKey()));
     return domain;
   }
 }

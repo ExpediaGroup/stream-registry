@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -33,6 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 @RequiredArgsConstructor
 public class SchemaMutationImpl implements SchemaMutation {
   private final SchemaService schemaService;
+  private final SchemaView schemaView;
 
   @Override
   public Schema insert(SchemaKeyInput key, SpecificationInput specification) {
@@ -47,7 +49,7 @@ public class SchemaMutationImpl implements SchemaMutation {
   @Override
   public Schema upsert(SchemaKeyInput key, SpecificationInput specification) {
     Schema schema = asSchema(key, specification);
-    if (!schemaService.unsecuredGet(schema.getKey()).isPresent()) {
+    if (!schemaView.get(schema.getKey()).isPresent()) {
       return schemaService.create(schema).get();
     } else {
       return schemaService.update(schema).get();
@@ -61,7 +63,7 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   @Override
   public Schema updateStatus(SchemaKeyInput key, StatusInput status) {
-    Schema schema = schemaService.unsecuredGet(key.asSchemaKey()).get();
+    Schema schema = schemaView.get(key.asSchemaKey()).get();
     return schemaService.updateStatus(schema, status.asStatus()).get();
   }
 
@@ -69,7 +71,7 @@ public class SchemaMutationImpl implements SchemaMutation {
     Schema schema = new Schema();
     schema.setKey(key.asSchemaKey());
     schema.setSpecification(specification.asSpecification());
-    maintainState(schema, schemaService.unsecuredGet(schema.getKey()));
+    maintainState(schema, schemaView.get(schema.getKey()));
     return schema;
   }
 }

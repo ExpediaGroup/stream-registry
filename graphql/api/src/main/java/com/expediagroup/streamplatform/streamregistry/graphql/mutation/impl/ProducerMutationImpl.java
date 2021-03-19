@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -35,6 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Producer;
 @RequiredArgsConstructor
 public class ProducerMutationImpl implements ProducerMutation {
   private final ProducerService producerService;
+  private final ProducerView producerView;
 
   @Override
   public Producer insert(ProducerKeyInput key, SpecificationInput specification) {
@@ -49,7 +51,7 @@ public class ProducerMutationImpl implements ProducerMutation {
   @Override
   public Producer upsert(ProducerKeyInput key, SpecificationInput specification) {
     Producer producer = asProducer(key, specification);
-    if (!producerService.unsecuredGet(producer.getKey()).isPresent()) {
+    if (!producerView.get(producer.getKey()).isPresent()) {
       return producerService.create(producer).get();
     } else {
       return producerService.update(producer).get();
@@ -58,13 +60,13 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Boolean delete(ProducerKeyInput key) {
-    producerService.unsecuredGet(key.asProducerKey()).ifPresent(producerService::delete);
+    producerView.get(key.asProducerKey()).ifPresent(producerService::delete);
     return true;
   }
 
   @Override
   public Producer updateStatus(ProducerKeyInput key, StatusInput status) {
-    Producer producer = producerService.unsecuredGet(key.asProducerKey()).get();
+    Producer producer = producerView.get(key.asProducerKey()).get();
     return producerService.updateStatus(producer, status.asStatus()).get();
   }
 
@@ -72,7 +74,7 @@ public class ProducerMutationImpl implements ProducerMutation {
     Producer producer = new Producer();
     producer.setKey(key.asProducerKey());
     producer.setSpecification(specification.asSpecification());
-    maintainState(producer, producerService.unsecuredGet(producer.getKey()));
+    maintainState(producer, producerView.get(producer.getKey()));
     return producer;
   }
 }
