@@ -15,17 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
 @Component
 @RequiredArgsConstructor
 public class SchemaValidator implements Validator<Schema> {
-  private final DomainService domainService;
+  private final DomainView domainView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -41,7 +41,7 @@ public class SchemaValidator implements Validator<Schema> {
   }
 
   public void validateForCreateAndUpdate(Schema schema) throws ValidationException {
-    if (!domainService.exists(schema.getKey().getDomainKey())) {
+    if (!domainView.exists(schema.getKey().getDomainKey())) {
       throw new ValidationException("Domain does not exist");
     }
   }

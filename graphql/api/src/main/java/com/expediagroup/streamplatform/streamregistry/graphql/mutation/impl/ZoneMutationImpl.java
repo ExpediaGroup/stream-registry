@@ -55,7 +55,7 @@ public class ZoneMutationImpl implements ZoneMutation {
 
   @Override
   public Boolean delete(ZoneKeyInput key) {
-    throw new UnsupportedOperationException("deleteZone");
+    throw new UnsupportedOperationException("Zone deletion is not currently supported.");
   }
 
   @Override

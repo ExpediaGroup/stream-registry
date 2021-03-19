@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +55,12 @@ public class InfrastructureServiceTest {
 
   @Before
   public void before() {
-    infrastructureService = new InfrastructureService(handlerService, infrastructureValidator, infrastructureRepository);
+    infrastructureService = new InfrastructureService(
+      new InfrastructureView(infrastructureRepository),
+      handlerService,
+      infrastructureValidator,
+      infrastructureRepository
+    );
   }
 
   @Test

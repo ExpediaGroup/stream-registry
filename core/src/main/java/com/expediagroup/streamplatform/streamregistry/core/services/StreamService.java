@@ -20,8 +20,13 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -33,14 +38,9 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
 @Component
@@ -49,16 +49,20 @@ public class StreamService {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
-  private final StreamBindingRepository streamBindingRepository;
-  private final ConsumerRepository consumerRepository;
-  private final ProducerRepository producerRepository;
+  private final StreamBindingService streamBindingService;
+  private final ProducerService producerService;
+  private final ConsumerService consumerService;
   private final SchemaService schemaService;
-  private final UtilService utilService;
+  private final StreamView streamView;
+  private final StreamBindingView streamBindingView;
+  private final ProducerView producerView;
+  private final ConsumerView consumerView;
+  private final SchemaView schemaView;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
-    if (unsecuredGet(stream.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (streamView.get(stream.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + stream.getKey() + " because it already exists");
     }
     streamValidator.validateForCreate(stream);
     stream.setSpecification(handlerService.handleInsert(stream));
@@ -67,7 +71,7 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
-    val existing = unsecuredGet(stream.getKey());
+    val existing = streamView.get(stream.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
@@ -90,39 +94,41 @@ public class StreamService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Stream> get(StreamKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Stream> unsecuredGet(StreamKey key) {
-    return streamRepository.findById(key);
+    return streamView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Stream> findAll(Predicate<Stream> filter) {
-    return streamRepository.findAll().stream().filter(filter).collect(toList());
+    return streamView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
   public void delete(Stream stream) {
     handlerService.handleDelete(stream);
-    utilService.findAllAndDelete(
-      new StreamBindingKey(stream.getSchemaKey().getDomain(),
-        stream.getKey().getName(),
-        stream.getKey().getVersion(),
-        null, null));
-    consumerRepository.findAllAndDelete(stream.getKey());
-    producerRepository.findAllAndDelete(stream.getKey());
-    streamBindingRepository.findAllAndDelete(stream.getKey());
-    streamRepository.delete(stream);
-    List<Stream> streams = streamRepository.findAll().stream().filter(s -> s.getSchemaKey()
-      .equals(stream.getSchemaKey())).collect(Collectors.toList());
-    if(stream.equals(streams.get(0)) || streams.isEmpty()) {
-      Optional<Schema> schema = schemaService.get(stream.getSchemaKey());
-      schema.ifPresent(schemaService::delete);
-    }
-  }
 
-  public boolean exists(StreamKey key) {
-    return unsecuredGet(key).isPresent();
+    // This will cascade to ConsumerBinding and ProducerBinding also
+    streamBindingView
+      .findAll(b -> b.getKey().getStreamKey().equals(stream.getKey()))
+      .forEach(streamBindingService::delete);
+
+    consumerView
+      .findAll(c -> c.getKey().getStreamKey().equals(stream.getKey()))
+      .forEach(consumerService::delete);
+
+    producerView
+      .findAll(p -> p.getKey().getStreamKey().equals(stream.getKey()))
+      .forEach(producerService::delete);
+
+    streamRepository.delete(stream);
+
+    SchemaKey schemaKey = stream.getSchemaKey();
+    boolean schemaReferencedByOtherStreams = streamView.findAll(s -> s.getSchemaKey().equals(schemaKey))
+      .filter(s -> s.equals(stream))
+      .findAny()
+      .isPresent();
+
+    if (!schemaReferencedByOtherStreams) {
+      schemaView.get(schemaKey).ifPresent(schemaService::delete);
+    }
   }
 }

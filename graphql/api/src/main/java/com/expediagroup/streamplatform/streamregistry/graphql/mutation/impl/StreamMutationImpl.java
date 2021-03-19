@@ -58,8 +58,7 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Boolean delete(StreamKeyInput key) {
-    Optional<Stream> stream = streamService.unsecuredGet(key.asStreamKey());
-    stream.ifPresent(streamService::delete);
+    streamService.unsecuredGet(key.asStreamKey()).ifPresent(streamService::delete);
     return true;
   }
 

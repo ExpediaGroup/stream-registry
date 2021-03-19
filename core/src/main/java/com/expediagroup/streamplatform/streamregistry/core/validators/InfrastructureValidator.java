@@ -15,17 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
-import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 
 @Component
 @RequiredArgsConstructor
 public class InfrastructureValidator implements Validator<Infrastructure> {
-  private final ZoneService zoneService;
+  private final ZoneView zoneView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -41,7 +40,7 @@ public class InfrastructureValidator implements Validator<Infrastructure> {
   }
 
   public void validateForCreateAndUpdate(Infrastructure infrastructure) throws ValidationException {
-    if (!zoneService.exists(infrastructure.getKey().getZoneKey())) {
+    if (!zoneView.exists(infrastructure.getKey().getZoneKey())) {
       throw new ValidationException("Zone does not exist");
     }
   }

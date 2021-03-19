@@ -55,7 +55,7 @@ public class DomainMutationImpl implements DomainMutation {
 
   @Override
   public Boolean delete(DomainKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    throw new UnsupportedOperationException("Domnain deletion is not currently supported.");
   }
 
   @Override

@@ -57,8 +57,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public Boolean delete(ProducerBindingKeyInput key) {
-    Optional<ProducerBinding> producerBinding = producerBindingService.unsecuredGet(key.asProducerBindingKey());
-    producerBinding.ifPresent(producerBindingService::delete);
+    producerBindingService.unsecuredGet(key.asProducerBindingKey()).ifPresent(producerBindingService::delete);
     return true;
   }
 

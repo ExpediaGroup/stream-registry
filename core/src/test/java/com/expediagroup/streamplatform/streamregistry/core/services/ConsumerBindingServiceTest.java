@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +53,12 @@ public class ConsumerBindingServiceTest {
 
   @Before
   public void before() {
-    consumerBindingService = new ConsumerBindingService(handlerService, consumerBindingValidator, consumerBindingRepository);
+    consumerBindingService = new ConsumerBindingService(
+      new ConsumerBindingView(consumerBindingRepository),
+      handlerService,
+      consumerBindingValidator,
+      consumerBindingRepository
+    );
   }
 
   @Test

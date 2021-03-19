@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -41,14 +42,15 @@ import com.expediagroup.streamplatform.streamregistry.repository.ProducerBinding
 @Component
 @RequiredArgsConstructor
 public class ProducerBindingService {
+  private final ProducerBindingView producerBindingView;
   private final HandlerService handlerService;
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
 
   @PreAuthorize("hasPermission(#producerBinding, 'CREATE')")
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
-    if (unsecuredGet(producerBinding.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (producerBindingView.get(producerBinding.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + producerBinding.getKey() + " because it already exists");
     }
     producerBindingValidator.validateForCreate(producerBinding);
     producerBinding.setSpecification(handlerService.handleInsert(producerBinding));
@@ -57,7 +59,7 @@ public class ProducerBindingService {
 
   @PreAuthorize("hasPermission(#producerBinding, 'UPDATE')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
-    val existing = unsecuredGet(producerBinding.getKey());
+    val existing = producerBindingView.get(producerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producerBinding.getKey() + " because it doesn't exist");
     }
@@ -73,32 +75,23 @@ public class ProducerBindingService {
   }
 
   private Optional<ProducerBinding> save(ProducerBinding producerBinding) {
-    producerBinding = producerBindingRepository.save(producerBinding);
-    return Optional.ofNullable(producerBinding);
+    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<ProducerBinding> get(ProducerBindingKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<ProducerBinding> unsecuredGet(ProducerBindingKey key) {
-    return producerBindingRepository.findById(key);
+    return producerBindingView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return producerBindingRepository.findAll().stream().filter(filter).collect(toList());
+    return producerBindingView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#producerBinding, 'DELETE')")
   public void delete(ProducerBinding producerBinding) {
     handlerService.handleDelete(producerBinding);
     producerBindingRepository.delete(producerBinding);
-  }
-
-  public boolean exists(ProducerBindingKey key) {
-    return unsecuredGet(key).isPresent();
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

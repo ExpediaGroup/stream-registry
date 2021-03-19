@@ -47,7 +47,4 @@ public class ProducerBindingRepository
         .collect(toList());
   }
 
-  public void findAllAndDelete(ProducerKey key) {
-    findAll().stream().filter(pb -> pb.getKey().getProducerKey().equals(key)).forEach(this::delete);
-  }
 }

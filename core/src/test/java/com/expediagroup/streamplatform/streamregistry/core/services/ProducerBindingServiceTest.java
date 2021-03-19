@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +53,12 @@ public class ProducerBindingServiceTest {
 
   @Before
   public void before() {
-    producerBindingService = new ProducerBindingService(handlerService, producerBindingValidator, producerBindingRepository);
+    producerBindingService = new ProducerBindingService(
+      new ProducerBindingView(producerBindingRepository),
+      handlerService,
+      producerBindingValidator,
+      producerBindingRepository
+    );
   }
 
   @Test

@@ -20,5 +20,4 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 public interface StreamBindingRepository extends Repository<StreamBinding, StreamBindingKey> {
-  void findAllAndDelete(StreamKey key);
 }

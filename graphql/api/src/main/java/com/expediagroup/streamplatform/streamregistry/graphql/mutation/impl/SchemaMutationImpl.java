@@ -56,7 +56,7 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   @Override
   public Boolean delete(SchemaKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    throw new UnsupportedOperationException("Please delete the stream associated with this schema instead.");
   }
 
   @Override

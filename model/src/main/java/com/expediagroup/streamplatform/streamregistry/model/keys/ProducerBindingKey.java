@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class ProducerBindingKey implements Serializable {
 
   private String streamDomain;

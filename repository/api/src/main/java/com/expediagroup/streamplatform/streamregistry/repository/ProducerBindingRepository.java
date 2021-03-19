@@ -20,5 +20,4 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBinding
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 
 public interface ProducerBindingRepository extends Repository<ProducerBinding, ProducerBindingKey> {
-  void findAllAndDelete(ProducerKey producerKey);
 }

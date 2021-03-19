@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +36,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,13 +51,22 @@ public class ConsumerServiceTest {
   private ConsumerRepository consumerRepository;
 
   @Mock
-  private ConsumerBindingRepository consumerBindingRepository;
+  private  ConsumerBindingService consumerBindingService;
+  @Mock
+  private ConsumerBindingView consumerBindingView;
 
   private ConsumerService consumerService;
 
   @Before
   public void before() {
-    consumerService = new ConsumerService(handlerService, consumerValidator, consumerRepository, consumerBindingRepository);
+    consumerService = new ConsumerService(
+      new ConsumerView(consumerRepository),
+      handlerService,
+      consumerValidator,
+      consumerRepository,
+      consumerBindingService,
+      consumerBindingView
+    );
   }
 
   @Test

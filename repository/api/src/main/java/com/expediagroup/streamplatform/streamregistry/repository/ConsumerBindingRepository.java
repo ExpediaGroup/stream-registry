@@ -20,5 +20,4 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBinding
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 
 public interface ConsumerBindingRepository extends Repository<ConsumerBinding, ConsumerBindingKey> {
-  void findAllAndDelete(ConsumerKey key);
 }

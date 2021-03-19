@@ -46,10 +46,4 @@ public class ConsumerBindingRepository
         .filter(cb -> cb.getKey().getConsumerKey().equals(example.getKey().getConsumerKey()))
         .collect(toList());
   }
-
-  public void findAllAndDelete(ConsumerKey key) {
-    findAll().stream()
-      .filter(cb -> cb.getKey().getConsumerKey().equals(key))
-      .forEach(this::delete);
-  }
 }
