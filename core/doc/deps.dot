@@ -1,0 +1,120 @@
+digraph mygraph {
+    "ConsumerBindingService" -> "ConsumerBindingView"
+    "ConsumerBindingService" -> "HandlerService"
+    "ConsumerBindingService" -> "ConsumerBindingValidator"
+    "ConsumerBindingService" -> "ConsumerBindingRepository"
+
+    "ConsumerService" -> "ConsumerView"
+    "ConsumerService" -> "HandlerService"
+    "ConsumerService" -> "ConsumerValidator"
+    "ConsumerService" -> "ConsumerRepository"
+    "ConsumerService" -> "ConsumerBindingService"
+    "ConsumerService" -> "ConsumerBindingView"
+
+    "DomainService" -> "DomainView"
+    "DomainService" -> "HandlerService"
+    "DomainService" -> "DomainValidator"
+    "DomainService" -> "DomainRepository"
+
+    "InfrastructureService" -> "InfrastructureView"
+    "InfrastructureService" -> "HandlerService"
+    "InfrastructureService" -> "InfrastructureValidator"
+    "InfrastructureService" -> "InfrastructureRepository"
+
+    "ProducerBindingService" -> "ProducerBindingView"
+    "ProducerBindingService" -> "HandlerService"
+    "ProducerBindingService" -> "ProducerBindingValidator"
+    "ProducerBindingService" -> "ProducerBindingRepository"
+
+    "ProducerService" -> "HandlerService"
+    "ProducerService" -> "ProducerValidator"
+    "ProducerService" -> "ProducerRepository"
+    "ProducerService" -> "ProducerBindingService"
+    "ProducerService" -> "ProducerBindingView"
+    "ProducerService" -> "ProducerView"
+
+    "SchemaService" -> "HandlerService"
+    "SchemaService" -> "SchemaValidator"
+    "SchemaService" -> "SchemaRepository"
+    "SchemaService" -> "SchemaView"
+
+    "StreamBindingService" -> "HandlerService"
+    "StreamBindingService" -> "StreamBindingValidator"
+    "StreamBindingService" -> "StreamBindingRepository"
+    "StreamBindingService" -> "ConsumerBindingService"
+    "StreamBindingService" -> "ProducerBindingService"
+    "StreamBindingService" -> "ConsumerBindingView"
+    "StreamBindingService" -> "ProducerBindingView"
+    "StreamBindingService" -> "StreamBindingView"
+
+    "StreamService" -> "HandlerService"
+    "StreamService" -> "StreamValidator"
+    "StreamService" -> "StreamRepository"
+    "StreamService" -> "StreamBindingService"
+    "StreamService" -> "ProducerService"
+    "StreamService" -> "ConsumerService"
+    "StreamService" -> "SchemaService"
+    "StreamService" -> "StreamView"
+    "StreamService" -> "StreamBindingView"
+    "StreamService" -> "ProducerView"
+    "StreamService" -> "ConsumerView"
+    "StreamService" -> "SchemaView"
+
+    "ZoneService" -> "HandlerService"
+    "ZoneService" -> "ZoneValidator"
+    "ZoneService" -> "ZoneRepository"
+    "ZoneService" -> "ZoneView"
+
+    "ConsumerBindingValidator" -> "ConsumerView"
+    "ConsumerBindingValidator" -> "StreamBindingView"
+    "ConsumerBindingValidator" -> "SpecificationValidator"
+
+    "ConsumerValidator" -> "StreamView"
+    "ConsumerValidator" -> "ZoneView"
+    "ConsumerValidator" -> "SpecificationValidator"
+
+    "DomainValidator" -> "SpecificationValidator"
+
+    "InfrastructureValidator" -> "ZoneView"
+    "InfrastructureValidator" -> "SpecificationValidator"
+
+    "ProducerBindingValidator" -> "ProducerView"
+    "ProducerBindingValidator" -> "SpecificationValidator"
+
+    "ProducerValidator" -> "StreamView"
+    "ProducerValidator" -> "ZoneView"
+    "ProducerValidator" -> "SpecificationValidator"
+
+    "SchemaValidator" -> "DomainView"
+    "SchemaValidator" -> "SpecificationValidator"
+
+    "StreamBindingValidator" -> "StreamView"
+    "StreamBindingValidator" -> "InfrastructureView"
+    "StreamBindingValidator" -> "SpecificationValidator"
+
+    "StreamValidator" -> "DomainView"
+    "StreamValidator" -> "SchemaView"
+    "StreamValidator" -> "SpecificationValidator"
+
+    "ZoneValidator" -> "SpecificationValidator"
+
+    "ConsumerBindingView" -> "ConsumerBindingRepository"
+
+    "ConsumerView" -> "ConsumerRepository"
+
+    "DomainView" -> "DomainRepository"
+
+    "InfrastructureView" -> "InfrastructureRepository"
+
+    "ProducerBindingView" -> "ProducerBindingRepository"
+
+    "ProducerView" -> "ProducerRepository"
+
+    "SchemaView" -> "SchemaRepository"
+
+    "StreamBindingView" -> "StreamBindingRepository"
+
+    "StreamView" -> "StreamRepository"
+
+    "ZoneView" -> "ZoneRepository"
+}
