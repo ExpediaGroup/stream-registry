@@ -123,9 +123,7 @@ public class StreamService {
 
     SchemaKey schemaKey = stream.getSchemaKey();
     boolean schemaReferencedByOtherStreams = streamView.findAll(s -> s.getSchemaKey().equals(schemaKey))
-      .filter(s -> s.equals(stream))
-      .findAny()
-      .isPresent();
+      .anyMatch(s -> !s.getKey().equals(stream.getKey()));
 
     if (!schemaReferencedByOtherStreams) {
       schemaView.get(schemaKey).ifPresent(schemaService::delete);
