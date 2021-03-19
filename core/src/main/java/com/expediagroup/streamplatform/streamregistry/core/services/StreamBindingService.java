@@ -15,27 +15,28 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
-
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredConsumerBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredProducerBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
@@ -43,12 +44,16 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
-  private final UtilService utilService;
+  private final ConsumerBindingService consumerBindingService;
+  private final ProducerBindingService producerBindingService;
+  private final UnsecuredConsumerBindingService unsecuredConsumerBindingService;
+  private final UnsecuredProducerBindingService unsecuredProducerBindingService;
+  private final UnsecuredStreamBindingService unsecuredStreamBindingService;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    if (unsecuredGet(streamBinding.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (unsecuredStreamBindingService.get(streamBinding.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + streamBinding.getKey() + " because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
     streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
@@ -57,7 +62,7 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    val existing = unsecuredGet(streamBinding.getKey());
+    val existing = unsecuredStreamBindingService.get(streamBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + streamBinding.getKey() + " because it doesn't exist");
     }
@@ -73,32 +78,29 @@ public class StreamBindingService {
   }
 
   private Optional<StreamBinding> save(StreamBinding streamBinding) {
-    streamBinding = streamBindingRepository.save(streamBinding);
-    return Optional.ofNullable(streamBinding);
+    return Optional.ofNullable(streamBindingRepository.save(streamBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<StreamBinding> get(StreamBindingKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<StreamBinding> unsecuredGet(StreamBindingKey key) {
-    return streamBindingRepository.findById(key);
+    return unsecuredStreamBindingService.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
+    return unsecuredStreamBindingService.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
     handlerService.handleDelete(streamBinding);
-    utilService.findAllAndDelete(streamBinding.getKey());
+    unsecuredConsumerBindingService
+      .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
+      .forEach(consumerBindingService::delete);
+    unsecuredProducerBindingService
+      .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
+      .forEach(producerBindingService::delete);
     streamBindingRepository.delete(streamBinding);
   }
 
-  public boolean exists(StreamBindingKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredZoneService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 @Component
 @RequiredArgsConstructor
 public class InfrastructureValidator implements Validator<Infrastructure> {
-  private final ZoneService zoneService;
+  private final UnsecuredZoneService zoneService;
   private final SpecificationValidator specificationValidator;
 
   @Override

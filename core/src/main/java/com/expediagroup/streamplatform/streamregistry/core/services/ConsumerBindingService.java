@@ -15,21 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
-
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -37,19 +24,31 @@ import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
 public class ConsumerBindingService {
-
+  private final UnsecuredConsumerBindingService unsecuredConsumerBindingService;
   private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
 
   @PreAuthorize("hasPermission(#consumerBinding, 'CREATE')")
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
-    if (unsecuredGet(consumerBinding.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (unsecuredConsumerBindingService.get(consumerBinding.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + consumerBinding.getKey() + " because it already exists");
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
     consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
@@ -58,7 +57,7 @@ public class ConsumerBindingService {
 
   @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
-    val existing = unsecuredGet(consumerBinding.getKey());
+    val existing = unsecuredConsumerBindingService.get(consumerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + consumerBinding.getKey() + " because it doesn't exist");
     }
@@ -74,32 +73,23 @@ public class ConsumerBindingService {
   }
 
   private Optional<ConsumerBinding> save(ConsumerBinding consumerBinding) {
-    consumerBinding = consumerBindingRepository.save(consumerBinding);
-    return Optional.ofNullable(consumerBinding);
+    return Optional.ofNullable(consumerBindingRepository.save(consumerBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<ConsumerBinding> get(ConsumerBindingKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<ConsumerBinding> unsecuredGet(ConsumerBindingKey key) {
-    return consumerBindingRepository.findById(key);
+    return unsecuredConsumerBindingService.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
-    return consumerBindingRepository.findAll().stream().filter(filter).collect(toList());
+    return unsecuredConsumerBindingService.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#consumerBinding, 'DELETE')")
   public void delete(ConsumerBinding consumerBinding) {
     handlerService.handleDelete(consumerBinding);
     consumerBindingRepository.delete(consumerBinding);
-  }
-
-  public boolean exists(ConsumerBindingKey key) {
-    return unsecuredGet(key).isPresent();
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

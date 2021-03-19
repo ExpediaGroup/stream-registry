@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -40,14 +41,15 @@ import com.expediagroup.streamplatform.streamregistry.repository.DomainRepositor
 @Component
 @RequiredArgsConstructor
 public class DomainService {
+  private final UnsecuredDomainService unsecuredDomainService;
   private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
 
   @PreAuthorize("hasPermission(#domain, 'CREATE')")
   public Optional<Domain> create(Domain domain) throws ValidationException {
-    if (unsecuredGet(domain.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (unsecuredDomainService.get(domain.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + domain.getKey() + " because it already exists");
     }
     domainValidator.validateForCreate(domain);
     domain.setSpecification(handlerService.handleInsert(domain));
@@ -56,7 +58,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'UPDATE')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
-    val existing = unsecuredGet(domain.getKey());
+    val existing = unsecuredDomainService.get(domain.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
@@ -72,17 +74,12 @@ public class DomainService {
   }
 
   private Optional<Domain> save(Domain domain) {
-    domain = domainRepository.save(domain);
-    return Optional.ofNullable(domain);
+    return Optional.ofNullable(domainRepository.save(domain));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Domain> get(DomainKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Domain> unsecuredGet(DomainKey key) {
-    return domainRepository.findById(key);
+    return unsecuredDomainService.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
@@ -95,7 +92,4 @@ public class DomainService {
     throw new UnsupportedOperationException("Domain deletion not currently supported.");
   }
 
-  public boolean exists(DomainKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

@@ -15,39 +15,39 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
-
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredInfrastructureService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
 public class InfrastructureService {
+  private final UnsecuredInfrastructureService unsecuredInfrastructureService;
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
 
   @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
-    if (unsecuredGet(infrastructure.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (unsecuredInfrastructureService.get(infrastructure.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + infrastructure.getKey() + " because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
     infrastructure.setSpecification(handlerService.handleInsert(infrastructure));
@@ -56,7 +56,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
-    val existing = unsecuredGet(infrastructure.getKey());
+    val existing = unsecuredInfrastructureService.get(infrastructure.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + infrastructure.getKey().getName() + " because it doesn't exist");
     }
@@ -72,18 +72,14 @@ public class InfrastructureService {
   }
 
   private Optional<Infrastructure> save(Infrastructure infrastructure) {
-    infrastructure = infrastructureRepository.save(infrastructure);
-    return Optional.ofNullable(infrastructure);
+    return Optional.ofNullable(infrastructureRepository.save(infrastructure));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Infrastructure> get(InfrastructureKey key) {
-    return unsecuredGet(key);
+    return unsecuredInfrastructureService.get(key);
   }
 
-  public Optional<Infrastructure> unsecuredGet(InfrastructureKey key) {
-    return infrastructureRepository.findById(key);
-  }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Infrastructure> findAll(Predicate<Infrastructure> filter) {
@@ -95,7 +91,4 @@ public class InfrastructureService {
     throw new UnsupportedOperationException("Infrastructure deletion not currently supported.");
   }
 
-  public boolean exists(InfrastructureKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

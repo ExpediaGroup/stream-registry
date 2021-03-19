@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredZoneService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -43,11 +44,12 @@ public class ZoneService {
   private final HandlerService handlerService;
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
+  private final UnsecuredZoneService unsecuredZoneService;
 
   @PreAuthorize("hasPermission(#zone, 'CREATE')")
   public Optional<Zone> create(Zone zone) throws ValidationException {
-    if (unsecuredGet(zone.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (unsecuredZoneService.get(zone.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + zone.getKey() + " because it already exists");
     }
     zoneValidator.validateForCreate(zone);
     zone.setSpecification(handlerService.handleInsert(zone));
@@ -56,7 +58,7 @@ public class ZoneService {
 
   @PreAuthorize("hasPermission(#zone, 'UPDATE')")
   public Optional<Zone> update(Zone zone) throws ValidationException {
-    val existing = unsecuredGet(zone.getKey());
+    val existing = unsecuredZoneService.get(zone.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + zone.getKey().getName() + " because it doesn't exist");
     }
@@ -78,11 +80,7 @@ public class ZoneService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Zone> get(ZoneKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Zone> unsecuredGet(ZoneKey key) {
-    return zoneRepository.findById(key);
+    return unsecuredZoneService.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
@@ -95,7 +93,4 @@ public class ZoneService {
     throw new UnsupportedOperationException("Zone deletion not currently supported.");
   }
 
-  public boolean exists(ZoneKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

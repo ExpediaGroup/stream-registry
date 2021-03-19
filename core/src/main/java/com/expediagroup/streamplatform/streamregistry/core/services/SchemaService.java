@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredSchemaService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -43,11 +44,12 @@ public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
+  private final UnsecuredSchemaService unsecuredSchemaService;
 
   @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
-    if (unsecuredGet(schema.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (unsecuredSchemaService.get(schema.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + schema.getKey() + " because it already exists");
     }
     schemaValidator.validateForCreate(schema);
     schema.setSpecification(handlerService.handleInsert(schema));
@@ -56,7 +58,7 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'UPDATE')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
-    val existing = unsecuredGet(schema.getKey());
+    val existing = unsecuredSchemaService.get(schema.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + schema.getKey().getName() + " because it doesn't exist");
     }
@@ -72,17 +74,12 @@ public class SchemaService {
   }
 
   private Optional<Schema> save(Schema schema) {
-    schema = schemaRepository.save(schema);
-    return Optional.ofNullable(schema);
+    return Optional.ofNullable(schemaRepository.save(schema));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Schema> get(SchemaKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Schema> unsecuredGet(SchemaKey key) {
-    return schemaRepository.findById(key);
+    return unsecuredSchemaService.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
@@ -96,7 +93,4 @@ public class SchemaService {
     schemaRepository.delete(schema);
   }
 
-  public boolean exists(SchemaKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

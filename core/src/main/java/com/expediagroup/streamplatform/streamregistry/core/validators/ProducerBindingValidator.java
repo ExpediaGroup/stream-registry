@@ -15,17 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredProducerService;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class ProducerBindingValidator implements Validator<ProducerBinding> {
-  private final ProducerService producerService;
+  private final UnsecuredProducerService producerService;
   private final SpecificationValidator specificationValidator;
 
   @Override

@@ -45,9 +45,4 @@ public class StreamBindingRepository
             .collect(toList());
   }
 
-  public void findAllAndDelete(StreamKey key) {
-    findAll().stream()
-      .filter(sb -> sb.getKey().getStreamKey().equals(key))
-      .forEach(this::delete);
-  }
 }

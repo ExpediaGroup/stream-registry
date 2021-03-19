@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredDomainService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 @Component
 @RequiredArgsConstructor
 public class SchemaValidator implements Validator<Schema> {
-  private final DomainService domainService;
+  private final UnsecuredDomainService domainService;
   private final SpecificationValidator specificationValidator;
 
   @Override

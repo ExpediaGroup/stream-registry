@@ -15,19 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredZoneService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @Component
 @RequiredArgsConstructor
 public class ProducerValidator implements Validator<Producer> {
-  private final StreamService streamService;
-  private final ZoneService zoneService;
+  private final UnsecuredStreamService streamService;
+  private final UnsecuredZoneService zoneService;
   private final SpecificationValidator specificationValidator;
 
   @Override

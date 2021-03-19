@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredDomainService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +55,12 @@ public class DomainServiceTest {
 
   @Before
   public void before() {
-    domainService = new DomainService(handlerService, domainValidator, domainRepository);
+    domainService = new DomainService(
+      new UnsecuredDomainService(domainRepository),
+      handlerService,
+      domainValidator,
+      domainRepository
+    );
   }
 
   @Test

@@ -15,19 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredConsumerService;
+import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamBindingService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 @Component
 @RequiredArgsConstructor
 public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
-  private final ConsumerService consumerService;
-  private final StreamBindingService streamBindingService;
+  private final UnsecuredConsumerService consumerService;
+  private final UnsecuredStreamBindingService streamBindingService;
   private final SpecificationValidator specificationValidator;
 
   @Override
