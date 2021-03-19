@@ -92,7 +92,7 @@ public class ZoneService {
 
   @PreAuthorize("hasPermission(#zone, 'DELETE')")
   public void delete(Zone zone) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Zone deletion not currently supported.");
   }
 
   public boolean exists(ZoneKey key) {

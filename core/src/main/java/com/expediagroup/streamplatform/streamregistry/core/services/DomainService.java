@@ -92,7 +92,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'DELETE')")
   public void delete(Domain domain) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Domain deletion not currently supported.");
   }
 
   public boolean exists(DomainKey key) {

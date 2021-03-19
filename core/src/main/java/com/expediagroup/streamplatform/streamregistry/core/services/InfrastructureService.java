@@ -92,7 +92,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'DELETE')")
   public void delete(Infrastructure infrastructure) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Infrastructure deletion not currently supported.");
   }
 
   public boolean exists(InfrastructureKey key) {
