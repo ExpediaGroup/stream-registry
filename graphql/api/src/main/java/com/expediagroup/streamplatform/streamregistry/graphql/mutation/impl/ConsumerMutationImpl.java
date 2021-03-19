@@ -17,12 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
-import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -56,14 +57,9 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Boolean delete(ConsumerKeyInput key) {
-    Consumer consumer = new Consumer();
-    consumer.setKey(key.asConsumerKey());
-    try {
-      consumerService.delete(consumer);
-      return true;
-    } catch (Exception e) {
-      throw new ValidationException(e);
-    }
+    Optional<Consumer> consumer = consumerService.unsecuredGet(key.asConsumerKey());
+    consumer.ifPresent(consumerService::delete);
+    return true;
   }
 
   @Override

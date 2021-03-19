@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
-import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -59,14 +58,9 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Boolean delete(StreamKeyInput key) {
-    Stream stream = new Stream();
-    stream.setKey(key.asStreamKey());
-    try {
-      streamService.delete(stream);
-      return true;
-    } catch (Exception e) {
-      throw new ValidationException(e);
-    }
+    Optional<Stream> stream = streamService.unsecuredGet(key.asStreamKey());
+    stream.ifPresent(streamService::delete);
+    return true;
   }
 
   @Override

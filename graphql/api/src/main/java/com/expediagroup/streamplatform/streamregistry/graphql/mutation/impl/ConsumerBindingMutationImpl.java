@@ -17,12 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -56,14 +57,9 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public Boolean delete(ConsumerBindingKeyInput key) {
-    ConsumerBinding consumerBinding = new ConsumerBinding();
-    consumerBinding.setKey(key.asConsumerBindingKey());
-    try {
-      consumerBindingService.delete(consumerBinding);
-      return true;
-    } catch (Exception e) {
-      throw new ValidationException(e);
-    }
+    Optional<ConsumerBinding> consumerBinding = consumerBindingService.unsecuredGet(key.asConsumerBindingKey());
+    consumerBinding.ifPresent(consumerBindingService::delete);
+    return true;
   }
 
   @Override

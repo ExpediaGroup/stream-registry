@@ -17,12 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
-import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -57,14 +58,9 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Boolean delete(ProducerKeyInput key) {
-    Producer producer = new Producer();
-    producer.setKey(key.asProducerKey());
-    try {
-      producerService.delete(producer);
-      return true;
-    } catch (Exception e) {
-      throw new ValidationException(e);
-    }
+    Optional<Producer> producer = producerService.unsecuredGet(key.asProducerKey());
+    producer.ifPresent(producerService::delete);
+    return true;
   }
 
   @Override

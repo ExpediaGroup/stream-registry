@@ -17,12 +17,13 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
@@ -56,14 +57,9 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public Boolean delete(StreamBindingKeyInput key) {
-    StreamBinding streamBinding = new StreamBinding();
-    streamBinding.setKey(key.asStreamBindingKey());
-    try {
-      streamBindingService.delete(streamBinding);
-      return true;
-    } catch (Exception e) {
-      throw new ValidationException(e);
-    }
+    Optional<StreamBinding> streamBinding = streamBindingService.unsecuredGet(key.asStreamBindingKey());
+    streamBinding.ifPresent(streamBindingService::delete);
+    return true;
   }
 
   @Override

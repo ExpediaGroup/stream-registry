@@ -105,7 +105,6 @@ public class StreamService {
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
   public void delete(Stream stream) {
     handlerService.handleDelete(stream);
-    Schema schema = new Schema(stream.getSchemaKey(), null,null);
     utilService.findAllAndDelete(
       new StreamBindingKey(stream.getSchemaKey().getDomain(),
         stream.getKey().getName(),
@@ -118,7 +117,8 @@ public class StreamService {
     List<Stream> streams = streamRepository.findAll().stream().filter(s -> s.getSchemaKey()
       .equals(stream.getSchemaKey())).collect(Collectors.toList());
     if(stream.equals(streams.get(0)) || streams.isEmpty()) {
-      schemaService.delete(schema);
+      Optional<Schema> schema = schemaService.get(stream.getSchemaKey());
+      schema.ifPresent(schemaService::delete);
     }
   }
 

@@ -27,5 +27,5 @@ public interface Handler<T extends Entity> {
 
   Specification handleUpdate(T entity, T existing);
 
-  void handleDelete(T entity);
+  default void handleDelete(T entity) {}
 }

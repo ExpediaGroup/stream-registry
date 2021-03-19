@@ -47,6 +47,4 @@ public class IdentityHandler<T extends Entity> implements Handler<T> {
     return entity.getSpecification();
   }
 
-  @Override
-  public void handleDelete(T entity) {}
 }
