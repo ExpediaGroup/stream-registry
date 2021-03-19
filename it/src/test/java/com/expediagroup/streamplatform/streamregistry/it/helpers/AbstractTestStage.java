@@ -77,7 +77,7 @@ public abstract class AbstractTestStage {
       client.invoke(m);
       TestCase.fail("Expected a ValidationException");
     } catch (RuntimeException e) {
-      assertTrue(e.getMessage().contains("Can't create because it already exists"));
+      assertTrue(e.getMessage().contains("because it already exists"));
     }
   }
 

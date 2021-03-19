@@ -15,13 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.views;
 
+import java.util.Optional;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.repository.DomainRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

@@ -17,7 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.repository;
 
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 public interface StreamBindingRepository extends Repository<StreamBinding, StreamBindingKey> {
 }
