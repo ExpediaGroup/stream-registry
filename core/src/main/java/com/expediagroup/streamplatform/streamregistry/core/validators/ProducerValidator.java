@@ -15,20 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredZoneService;
+import com.expediagroup.streamplatform.streamregistry.core.view.StreamView;
+import com.expediagroup.streamplatform.streamregistry.core.view.ZoneView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @Component
 @RequiredArgsConstructor
 public class ProducerValidator implements Validator<Producer> {
-  private final UnsecuredStreamService streamService;
-  private final UnsecuredZoneService zoneService;
+  private final StreamView streamView;
+  private final ZoneView zoneView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -44,10 +43,10 @@ public class ProducerValidator implements Validator<Producer> {
   }
 
   public void validateForCreateAndUpdate(Producer producer) throws ValidationException {
-    if (!streamService.exists(producer.getKey().getStreamKey())) {
+    if (!streamView.exists(producer.getKey().getStreamKey())) {
       throw new ValidationException("Stream does not exist");
     }
-    if (!zoneService.exists(producer.getKey().getZoneKey())) {
+    if (!zoneView.exists(producer.getKey().getZoneKey())) {
       throw new ValidationException("Zone does not exist");
     }
   }

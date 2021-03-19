@@ -15,20 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredZoneService;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
+import com.expediagroup.streamplatform.streamregistry.core.view.StreamView;
+import com.expediagroup.streamplatform.streamregistry.core.view.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class ConsumerValidator implements Validator<Consumer> {
-  private final UnsecuredStreamService streamService;
-  private final UnsecuredZoneService zoneService;
+  private final StreamView streamView;
+  private final ZoneView zoneView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -44,10 +41,10 @@ public class ConsumerValidator implements Validator<Consumer> {
   }
 
   public void validateForCreateAndUpdate(Consumer consumer) throws ValidationException {
-    if (!streamService.exists(consumer.getKey().getStreamKey())) {
+    if (!streamView.exists(consumer.getKey().getStreamKey())) {
       throw new ValidationException("Stream does not exist");
     }
-    if (!zoneService.exists(consumer.getKey().getZoneKey())) {
+    if (!zoneView.exists(consumer.getKey().getZoneKey())) {
       throw new ValidationException("Zone does not exist");
     }
   }

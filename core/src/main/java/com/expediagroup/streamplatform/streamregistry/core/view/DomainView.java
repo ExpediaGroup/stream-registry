@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class DomainServiceView {
+public class DomainView {
   private final DomainRepository domainRepository;
 
   public Optional<Domain> get(DomainKey key) {

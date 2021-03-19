@@ -16,7 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredInfrastructureService;
+import com.expediagroup.streamplatform.streamregistry.core.view.InfrastructureView;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
@@ -39,14 +39,14 @@ import static java.util.stream.Collectors.toList;
 @Component
 @RequiredArgsConstructor
 public class InfrastructureService {
-  private final UnsecuredInfrastructureService unsecuredInfrastructureService;
+  private final InfrastructureView infrastructureView;
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
 
   @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
-    if (unsecuredInfrastructureService.get(infrastructure.getKey()).isPresent()) {
+    if (infrastructureView.get(infrastructure.getKey()).isPresent()) {
       throw new ValidationException("Can't create " + infrastructure.getKey() + " because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
@@ -56,7 +56,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
-    val existing = unsecuredInfrastructureService.get(infrastructure.getKey());
+    val existing = infrastructureView.get(infrastructure.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + infrastructure.getKey().getName() + " because it doesn't exist");
     }
@@ -77,7 +77,7 @@ public class InfrastructureService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Infrastructure> get(InfrastructureKey key) {
-    return unsecuredInfrastructureService.get(key);
+    return infrastructureView.get(key);
   }
 
 

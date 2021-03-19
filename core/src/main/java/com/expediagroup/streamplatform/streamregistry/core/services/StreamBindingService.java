@@ -16,9 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredConsumerBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredProducerBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.view.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.view.ProducerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.view.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -46,13 +46,13 @@ public class StreamBindingService {
   private final StreamBindingRepository streamBindingRepository;
   private final ConsumerBindingService consumerBindingService;
   private final ProducerBindingService producerBindingService;
-  private final UnsecuredConsumerBindingService unsecuredConsumerBindingService;
-  private final UnsecuredProducerBindingService unsecuredProducerBindingService;
-  private final UnsecuredStreamBindingService unsecuredStreamBindingService;
+  private final ConsumerBindingView consumerBindingView;
+  private final ProducerBindingView producerBindingView;
+  private final StreamBindingView streamBindingView;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    if (unsecuredStreamBindingService.get(streamBinding.getKey()).isPresent()) {
+    if (streamBindingView.get(streamBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create " + streamBinding.getKey() + " because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
@@ -62,7 +62,7 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    val existing = unsecuredStreamBindingService.get(streamBinding.getKey());
+    val existing = streamBindingView.get(streamBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + streamBinding.getKey() + " because it doesn't exist");
     }
@@ -83,21 +83,21 @@ public class StreamBindingService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<StreamBinding> get(StreamBindingKey key) {
-    return unsecuredStreamBindingService.get(key);
+    return streamBindingView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return unsecuredStreamBindingService.findAll(filter).collect(toList());
+    return streamBindingView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
     handlerService.handleDelete(streamBinding);
-    unsecuredConsumerBindingService
+    consumerBindingView
       .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
       .forEach(consumerBindingService::delete);
-    unsecuredProducerBindingService
+    producerBindingView
       .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
       .forEach(producerBindingService::delete);
     streamBindingRepository.delete(streamBinding);

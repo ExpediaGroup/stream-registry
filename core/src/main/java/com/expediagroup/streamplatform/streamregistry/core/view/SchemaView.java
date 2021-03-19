@@ -13,31 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.services.unsecured;
+package com.expediagroup.streamplatform.streamregistry.core.view;
 
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
-import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-
-import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
-public class UnsecuredSchemaService {
+public class SchemaView {
   private final SchemaRepository schemaRepository;
 
   public Optional<Schema> get(SchemaKey key) {

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredDomainService;
+import com.expediagroup.streamplatform.streamregistry.core.view.DomainView;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -41,14 +41,14 @@ import com.expediagroup.streamplatform.streamregistry.repository.DomainRepositor
 @Component
 @RequiredArgsConstructor
 public class DomainService {
-  private final UnsecuredDomainService unsecuredDomainService;
+  private final DomainView domainView;
   private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
 
   @PreAuthorize("hasPermission(#domain, 'CREATE')")
   public Optional<Domain> create(Domain domain) throws ValidationException {
-    if (unsecuredDomainService.get(domain.getKey()).isPresent()) {
+    if (domainView.get(domain.getKey()).isPresent()) {
       throw new ValidationException("Can't create " + domain.getKey() + " because it already exists");
     }
     domainValidator.validateForCreate(domain);
@@ -58,7 +58,7 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'UPDATE')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
-    val existing = unsecuredDomainService.get(domain.getKey());
+    val existing = domainView.get(domain.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
@@ -79,7 +79,7 @@ public class DomainService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Domain> get(DomainKey key) {
-    return unsecuredDomainService.get(key);
+    return domainView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")

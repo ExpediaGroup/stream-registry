@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.services.unsecured;
+package com.expediagroup.streamplatform.streamregistry.core.view;
 
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class UnsecuredStreamBindingService {
+public class StreamBindingView {
   private final StreamBindingRepository streamBindingRepository;
 
   public Optional<StreamBinding> get(StreamBindingKey key) {

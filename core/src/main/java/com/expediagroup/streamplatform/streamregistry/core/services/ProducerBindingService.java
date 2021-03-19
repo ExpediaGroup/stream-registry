@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredProducerBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.view.ProducerBindingView;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -42,14 +42,14 @@ import com.expediagroup.streamplatform.streamregistry.repository.ProducerBinding
 @Component
 @RequiredArgsConstructor
 public class ProducerBindingService {
-  private final UnsecuredProducerBindingService unsecuredProducerBindingService;
+  private final ProducerBindingView producerBindingView;
   private final HandlerService handlerService;
   private final ProducerBindingValidator producerBindingValidator;
   private final ProducerBindingRepository producerBindingRepository;
 
   @PreAuthorize("hasPermission(#producerBinding, 'CREATE')")
   public Optional<ProducerBinding> create(ProducerBinding producerBinding) throws ValidationException {
-    if (unsecuredProducerBindingService.get(producerBinding.getKey()).isPresent()) {
+    if (producerBindingView.get(producerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create " + producerBinding.getKey() + " because it already exists");
     }
     producerBindingValidator.validateForCreate(producerBinding);
@@ -59,7 +59,7 @@ public class ProducerBindingService {
 
   @PreAuthorize("hasPermission(#producerBinding, 'UPDATE')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
-    val existing = unsecuredProducerBindingService.get(producerBinding.getKey());
+    val existing = producerBindingView.get(producerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producerBinding.getKey() + " because it doesn't exist");
     }
@@ -80,12 +80,12 @@ public class ProducerBindingService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<ProducerBinding> get(ProducerBindingKey key) {
-    return unsecuredProducerBindingService.get(key);
+    return producerBindingView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return unsecuredProducerBindingService.findAll(filter).collect(toList());
+    return producerBindingView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#producerBinding, 'DELETE')")

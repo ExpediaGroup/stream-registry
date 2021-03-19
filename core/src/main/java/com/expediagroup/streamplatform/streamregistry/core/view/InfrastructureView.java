@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.services.unsecured;
+package com.expediagroup.streamplatform.streamregistry.core.view;
 
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UnsecuredInfrastructureService {
+public class InfrastructureView {
   private final InfrastructureRepository infrastructureRepository;
 
   public Optional<Infrastructure> get(InfrastructureKey key) {

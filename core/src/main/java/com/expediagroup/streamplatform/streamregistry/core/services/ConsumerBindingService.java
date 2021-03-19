@@ -16,7 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredConsumerBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.view.ConsumerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -40,14 +40,14 @@ import static java.util.stream.Collectors.toList;
 @Component
 @RequiredArgsConstructor
 public class ConsumerBindingService {
-  private final UnsecuredConsumerBindingService unsecuredConsumerBindingService;
+  private final ConsumerBindingView consumerBindingView;
   private final HandlerService handlerService;
   private final ConsumerBindingValidator consumerBindingValidator;
   private final ConsumerBindingRepository consumerBindingRepository;
 
   @PreAuthorize("hasPermission(#consumerBinding, 'CREATE')")
   public Optional<ConsumerBinding> create(ConsumerBinding consumerBinding) throws ValidationException {
-    if (unsecuredConsumerBindingService.get(consumerBinding.getKey()).isPresent()) {
+    if (consumerBindingView.get(consumerBinding.getKey()).isPresent()) {
       throw new ValidationException("Can't create " + consumerBinding.getKey() + " because it already exists");
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
@@ -57,7 +57,7 @@ public class ConsumerBindingService {
 
   @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
-    val existing = unsecuredConsumerBindingService.get(consumerBinding.getKey());
+    val existing = consumerBindingView.get(consumerBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + consumerBinding.getKey() + " because it doesn't exist");
     }
@@ -78,12 +78,12 @@ public class ConsumerBindingService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<ConsumerBinding> get(ConsumerBindingKey key) {
-    return unsecuredConsumerBindingService.get(key);
+    return consumerBindingView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
-    return unsecuredConsumerBindingService.findAll(filter).collect(toList());
+    return consumerBindingView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#consumerBinding, 'DELETE')")

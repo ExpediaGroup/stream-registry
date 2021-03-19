@@ -15,9 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredDomainService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredSchemaService;
+import com.expediagroup.streamplatform.streamregistry.core.view.DomainView;
+import com.expediagroup.streamplatform.streamregistry.core.view.SchemaView;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,8 +24,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class StreamValidator implements Validator<Stream> {
-  private final UnsecuredDomainService domainService;
-  private final UnsecuredSchemaService schemaService;
+  private final DomainView domainView;
+  private final SchemaView schemaView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -47,7 +46,7 @@ public class StreamValidator implements Validator<Stream> {
   }
 
   private void requireExistingDomain(Stream stream) {
-    if (!domainService.exists(stream.getKey().getDomainKey())) {
+    if (!domainView.exists(stream.getKey().getDomainKey())) {
       throw new ValidationException("Domain does not exist");
     }
   }
@@ -56,7 +55,7 @@ public class StreamValidator implements Validator<Stream> {
     if (stream.getSchemaKey() == null) {
       throw new ValidationException("Schema must be specified");
     }
-    if (!schemaService.exists(stream.getSchemaKey())) {
+    if (!schemaView.exists(stream.getSchemaKey())) {
       throw new ValidationException("Schema does not exist");
     }
   }

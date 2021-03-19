@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredSchemaService;
+import com.expediagroup.streamplatform.streamregistry.core.view.SchemaView;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -44,11 +44,11 @@ public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
-  private final UnsecuredSchemaService unsecuredSchemaService;
+  private final SchemaView schemaView;
 
   @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
-    if (unsecuredSchemaService.get(schema.getKey()).isPresent()) {
+    if (schemaView.get(schema.getKey()).isPresent()) {
       throw new ValidationException("Can't create " + schema.getKey() + " because it already exists");
     }
     schemaValidator.validateForCreate(schema);
@@ -58,7 +58,7 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'UPDATE')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
-    val existing = unsecuredSchemaService.get(schema.getKey());
+    val existing = schemaView.get(schema.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + schema.getKey().getName() + " because it doesn't exist");
     }
@@ -79,7 +79,7 @@ public class SchemaService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Schema> get(SchemaKey key) {
-    return unsecuredSchemaService.get(key);
+    return schemaView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")

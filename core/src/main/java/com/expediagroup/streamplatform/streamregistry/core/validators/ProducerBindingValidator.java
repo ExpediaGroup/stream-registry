@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredProducerService;
+import com.expediagroup.streamplatform.streamregistry.core.view.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ProducerBindingValidator implements Validator<ProducerBinding> {
-  private final UnsecuredProducerService producerService;
+  private final ProducerView producerView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -39,7 +39,7 @@ public class ProducerBindingValidator implements Validator<ProducerBinding> {
   }
 
   public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
-    if (!producerService.exists(producerbinding.getKey().getProducerKey())) {
+    if (!producerView.exists(producerbinding.getKey().getProducerKey())) {
       throw new ValidationException("Producer does not exist");
     }
   }

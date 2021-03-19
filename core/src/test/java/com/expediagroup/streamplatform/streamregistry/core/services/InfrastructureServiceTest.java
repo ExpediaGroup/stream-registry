@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredInfrastructureService;
+import com.expediagroup.streamplatform.streamregistry.core.view.InfrastructureView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +56,7 @@ public class InfrastructureServiceTest {
   @Before
   public void before() {
     infrastructureService = new InfrastructureService(
-      new UnsecuredInfrastructureService(infrastructureRepository),
+      new InfrastructureView(infrastructureRepository),
       handlerService,
       infrastructureValidator,
       infrastructureRepository

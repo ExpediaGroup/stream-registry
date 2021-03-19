@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.services.unsecured;
+package com.expediagroup.streamplatform.streamregistry.core.view;
 
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class UnsecuredProducerBindingService {
+public class ProducerBindingView {
   private final ProducerBindingRepository producerBindingRepository;
 
   public Optional<ProducerBinding> get(ProducerBindingKey key) {

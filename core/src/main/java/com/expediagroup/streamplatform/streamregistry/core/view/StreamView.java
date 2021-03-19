@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.services.unsecured;
+package com.expediagroup.streamplatform.streamregistry.core.view;
 
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
-public class UnsecuredStreamService {
+public class StreamView {
   private final StreamRepository streamRepository;
 
   public Optional<Stream> get(StreamKey key) {

@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredConsumerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredProducerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredSchemaService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.services.unsecured.UnsecuredStreamService;
+import com.expediagroup.streamplatform.streamregistry.core.view.ConsumerView;
+import com.expediagroup.streamplatform.streamregistry.core.view.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.view.SchemaView;
+import com.expediagroup.streamplatform.streamregistry.core.view.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.view.StreamView;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -53,15 +53,15 @@ public class StreamService {
   private final ProducerService producerService;
   private final ConsumerService consumerService;
   private final SchemaService schemaService;
-  private final UnsecuredStreamService unsecuredStreamService;
-  private final UnsecuredStreamBindingService unsecuredStreamBindingService;
-  private final UnsecuredProducerService unsecuredProducerService;
-  private final UnsecuredConsumerService unsecuredConsumerService;
-  private final UnsecuredSchemaService unsecuredSchemaService;
+  private final StreamView streamView;
+  private final StreamBindingView streamBindingView;
+  private final ProducerView producerView;
+  private final ConsumerView consumerView;
+  private final SchemaView schemaView;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
-    if (unsecuredStreamService.get(stream.getKey()).isPresent()) {
+    if (streamView.get(stream.getKey()).isPresent()) {
       throw new ValidationException("Can't create " + stream.getKey() + " because it already exists");
     }
     streamValidator.validateForCreate(stream);
@@ -71,7 +71,7 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
-    val existing = unsecuredStreamService.get(stream.getKey());
+    val existing = streamView.get(stream.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
@@ -94,12 +94,12 @@ public class StreamService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Stream> get(StreamKey key) {
-    return unsecuredStreamService.get(key);
+    return streamView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Stream> findAll(Predicate<Stream> filter) {
-    return unsecuredStreamService.findAll(filter).collect(toList());
+    return streamView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
@@ -107,28 +107,28 @@ public class StreamService {
     handlerService.handleDelete(stream);
 
     // This will cascade to ConsumerBinding and ProducerBinding also
-    unsecuredStreamBindingService
+    streamBindingView
       .findAll(b -> b.getKey().getStreamKey().equals(stream.getKey()))
       .forEach(streamBindingService::delete);
 
-    unsecuredConsumerService
+    consumerView
       .findAll(c -> c.getKey().getStreamKey().equals(stream.getKey()))
       .forEach(consumerService::delete);
 
-    unsecuredProducerService
+    producerView
       .findAll(p -> p.getKey().getStreamKey().equals(stream.getKey()))
       .forEach(producerService::delete);
 
     streamRepository.delete(stream);
 
     SchemaKey schemaKey = stream.getSchemaKey();
-    boolean schemaReferencedByOtherStreams = unsecuredStreamService.findAll(s -> s.getSchemaKey().equals(schemaKey))
+    boolean schemaReferencedByOtherStreams = streamView.findAll(s -> s.getSchemaKey().equals(schemaKey))
       .filter(s -> s.equals(stream))
       .findAny()
       .isPresent();
 
     if (!schemaReferencedByOtherStreams) {
-      unsecuredSchemaService.get(schemaKey).ifPresent(schemaService::delete);
+      schemaView.get(schemaKey).ifPresent(schemaService::delete);
     }
   }
 }
