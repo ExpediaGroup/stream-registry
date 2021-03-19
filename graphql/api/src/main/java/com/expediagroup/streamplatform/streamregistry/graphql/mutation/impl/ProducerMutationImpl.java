@@ -58,8 +58,7 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Boolean delete(ProducerKeyInput key) {
-    Optional<Producer> producer = producerService.unsecuredGet(key.asProducerKey());
-    producer.ifPresent(producerService::delete);
+    producerService.unsecuredGet(key.asProducerKey()).ifPresent(producerService::delete);
     return true;
   }
 

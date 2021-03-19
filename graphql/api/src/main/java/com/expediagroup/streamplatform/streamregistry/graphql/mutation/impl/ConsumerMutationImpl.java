@@ -57,8 +57,7 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Boolean delete(ConsumerKeyInput key) {
-    Optional<Consumer> consumer = consumerService.unsecuredGet(key.asConsumerKey());
-    consumer.ifPresent(consumerService::delete);
+    consumerService.unsecuredGet(key.asConsumerKey()).ifPresent(consumerService::delete);
     return true;
   }
 

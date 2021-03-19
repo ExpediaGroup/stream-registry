@@ -57,8 +57,7 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public Boolean delete(ConsumerBindingKeyInput key) {
-    Optional<ConsumerBinding> consumerBinding = consumerBindingService.unsecuredGet(key.asConsumerBindingKey());
-    consumerBinding.ifPresent(consumerBindingService::delete);
+    consumerBindingService.unsecuredGet(key.asConsumerBindingKey()).ifPresent(consumerBindingService::delete);
     return true;
   }
 

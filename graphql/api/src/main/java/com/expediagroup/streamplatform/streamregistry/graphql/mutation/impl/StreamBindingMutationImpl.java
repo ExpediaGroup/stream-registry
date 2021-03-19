@@ -57,8 +57,7 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public Boolean delete(StreamBindingKeyInput key) {
-    Optional<StreamBinding> streamBinding = streamBindingService.unsecuredGet(key.asStreamBindingKey());
-    streamBinding.ifPresent(streamBindingService::delete);
+    streamBindingService.unsecuredGet(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
     return true;
   }
 
