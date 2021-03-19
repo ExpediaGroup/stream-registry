@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.view;
+package com.expediagroup.streamplatform.streamregistry.core.views;
 
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,18 +27,18 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class ProducerView {
-  private final ProducerRepository producerRepository;
+public class StreamBindingView {
+  private final StreamBindingRepository streamBindingRepository;
 
-  public Optional<Producer> get(ProducerKey key) {
-    return producerRepository.findById(key);
+  public Optional<StreamBinding> get(StreamBindingKey key) {
+    return streamBindingRepository.findById(key);
   }
 
-  public Stream<Producer> findAll(Predicate<Producer> filter) {
-    return producerRepository.findAll().stream().filter(filter);
+  public Stream<StreamBinding> findAll(Predicate<StreamBinding> filter) {
+    return streamBindingRepository.findAll().stream().filter(filter);
   }
 
-  public boolean exists(ProducerKey key) {
+  public boolean exists(StreamBindingKey key) {
     return get(key).isPresent();
   }
 }

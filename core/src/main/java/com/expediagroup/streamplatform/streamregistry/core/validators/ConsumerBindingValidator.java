@@ -15,8 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import com.expediagroup.streamplatform.streamregistry.core.view.ConsumerView;
-import com.expediagroup.streamplatform.streamregistry.core.view.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;

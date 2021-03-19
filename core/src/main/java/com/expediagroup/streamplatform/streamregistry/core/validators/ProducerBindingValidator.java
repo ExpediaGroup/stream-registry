@@ -15,7 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import com.expediagroup.streamplatform.streamregistry.core.view.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

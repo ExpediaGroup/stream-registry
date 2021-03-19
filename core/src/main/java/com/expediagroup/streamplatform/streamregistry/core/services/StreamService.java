@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.core.view.ConsumerView;
-import com.expediagroup.streamplatform.streamregistry.core.view.ProducerView;
-import com.expediagroup.streamplatform.streamregistry.core.view.SchemaView;
-import com.expediagroup.streamplatform.streamregistry.core.view.StreamBindingView;
-import com.expediagroup.streamplatform.streamregistry.core.view.StreamView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

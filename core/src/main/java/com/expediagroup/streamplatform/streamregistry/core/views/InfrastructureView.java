@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.view;
+package com.expediagroup.streamplatform.streamregistry.core.views;
 
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,14 +25,14 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ZoneView {
-  private final ZoneRepository zoneRepository;
+public class InfrastructureView {
+  private final InfrastructureRepository infrastructureRepository;
 
-  public Optional<Zone> get(ZoneKey key) {
-    return zoneRepository.findById(key);
+  public Optional<Infrastructure> get(InfrastructureKey key) {
+    return infrastructureRepository.findById(key);
   }
 
-  public boolean exists(ZoneKey key) {
+  public boolean exists(InfrastructureKey key) {
     return get(key).isPresent();
   }
 }

@@ -13,31 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.view;
+package com.expediagroup.streamplatform.streamregistry.core.views;
 
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
-import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
-public class StreamView {
-  private final StreamRepository streamRepository;
+public class ZoneView {
+  private final ZoneRepository zoneRepository;
 
-  public Optional<Stream> get(StreamKey key) {
-    return streamRepository.findById(key);
+  public Optional<Zone> get(ZoneKey key) {
+    return zoneRepository.findById(key);
   }
 
-  public java.util.stream.Stream<Stream> findAll(Predicate<Stream> filter) {
-    return streamRepository.findAll().stream().filter(filter);
-  }
-
-  public boolean exists(StreamKey key) {
+  public boolean exists(ZoneKey key) {
     return get(key).isPresent();
   }
 }

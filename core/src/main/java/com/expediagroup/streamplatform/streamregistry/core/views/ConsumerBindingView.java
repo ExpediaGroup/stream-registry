@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.core.view;
+package com.expediagroup.streamplatform.streamregistry.core.views;
 
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,18 +27,18 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class ProducerBindingView {
-  private final ProducerBindingRepository producerBindingRepository;
+public class ConsumerBindingView {
+  private final ConsumerBindingRepository consumerBindingRepository;
 
-  public Optional<ProducerBinding> get(ProducerBindingKey key) {
-    return producerBindingRepository.findById(key);
+  public Optional<ConsumerBinding> get(ConsumerBindingKey key) {
+    return consumerBindingRepository.findById(key);
   }
 
-  public Stream<ProducerBinding> findAll(Predicate<ProducerBinding> filter) {
-    return producerBindingRepository.findAll().stream().filter(filter);
+  public Stream<ConsumerBinding> findAll(Predicate<ConsumerBinding> filter) {
+    return consumerBindingRepository.findAll().stream().filter(filter);
   }
 
-  public boolean exists(ProducerBindingKey key) {
+  public boolean exists(ConsumerBindingKey key) {
     return get(key).isPresent();
   }
 }

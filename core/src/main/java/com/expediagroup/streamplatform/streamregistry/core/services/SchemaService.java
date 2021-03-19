@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.core.view.SchemaView;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
