@@ -17,6 +17,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 @RequiredArgsConstructor
 public class ZoneMutationImpl implements ZoneMutation {
   private final ZoneService zoneService;
+  private final ZoneView zoneView;
 
   @Override
   public Zone insert(ZoneKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class ZoneMutationImpl implements ZoneMutation {
   @Override
   public Zone upsert(ZoneKeyInput key, SpecificationInput specification) {
     Zone zone = asZone(key, specification);
-    if (!zoneService.unsecuredGet(zone.getKey()).isPresent()) {
+    if (!zoneView.get(zone.getKey()).isPresent()) {
       return zoneService.create(zone).get();
     } else {
       return zoneService.update(zone).get();
@@ -60,7 +62,7 @@ public class ZoneMutationImpl implements ZoneMutation {
 
   @Override
   public Zone updateStatus(ZoneKeyInput key, StatusInput status) {
-    Zone zone = zoneService.unsecuredGet(key.asZoneKey()).get();
+    Zone zone = zoneView.get(key.asZoneKey()).get();
     return zoneService.updateStatus(zone, status.asStatus()).get();
   }
 
@@ -68,7 +70,7 @@ public class ZoneMutationImpl implements ZoneMutation {
     Zone zone = new Zone();
     zone.setKey(key.asZoneKey());
     zone.setSpecification(specification.asSpecification());
-    maintainState(zone, zoneService.unsecuredGet(zone.getKey()));
+    maintainState(zone, zoneView.get(zone.getKey()));
     return zone;
   }
 }

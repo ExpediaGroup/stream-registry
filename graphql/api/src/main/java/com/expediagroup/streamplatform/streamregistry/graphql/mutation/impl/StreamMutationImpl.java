@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -35,6 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 @RequiredArgsConstructor
 public class StreamMutationImpl implements StreamMutation {
   private final StreamService streamService;
+  private final StreamView streamView;
 
   @Override
   public Stream insert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
@@ -49,7 +51,7 @@ public class StreamMutationImpl implements StreamMutation {
   @Override
   public Stream upsert(StreamKeyInput key, SpecificationInput specification, SchemaKeyInput schema) {
     Stream stream = asStream(key, specification, Optional.ofNullable(schema));
-    if (!streamService.unsecuredGet(stream.getKey()).isPresent()) {
+    if (!streamView.get(stream.getKey()).isPresent()) {
       return streamService.create(stream).get();
     } else {
       return streamService.update(stream).get();
@@ -58,13 +60,13 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Boolean delete(StreamKeyInput key) {
-    streamService.unsecuredGet(key.asStreamKey()).ifPresent(streamService::delete);
+    streamView.get(key.asStreamKey()).ifPresent(streamService::delete);
     return true;
   }
 
   @Override
   public Stream updateStatus(StreamKeyInput key, StatusInput status) {
-    Stream stream = streamService.unsecuredGet(key.asStreamKey()).get();
+    Stream stream = streamView.get(key.asStreamKey()).get();
     return streamService.updateStatus(stream, status.asStatus()).get();
   }
 
@@ -75,7 +77,7 @@ public class StreamMutationImpl implements StreamMutation {
     if(schema.isPresent()) {
       stream.setSchemaKey(schema.get().asSchemaKey());
     }
-    maintainState(stream, streamService.unsecuredGet(stream.getKey()));
+    maintainState(stream, streamView.get(stream.getKey()));
     return stream;
   }
 }

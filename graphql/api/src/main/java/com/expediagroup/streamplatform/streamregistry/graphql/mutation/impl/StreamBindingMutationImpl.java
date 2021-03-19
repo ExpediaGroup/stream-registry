@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 @RequiredArgsConstructor
 public class StreamBindingMutationImpl implements StreamBindingMutation {
   private final StreamBindingService streamBindingService;
+  private final StreamBindingView streamBindingView;
 
   @Override
   public StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification) {
@@ -48,7 +50,7 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
   @Override
   public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification) {
     StreamBinding streamBinding = asStreamBinding(key, specification);
-    if (!streamBindingService.unsecuredGet(streamBinding.getKey()).isPresent()) {
+    if (!streamBindingView.get(streamBinding.getKey()).isPresent()) {
       return streamBindingService.create(streamBinding).get();
     } else {
       return streamBindingService.update(streamBinding).get();
@@ -57,13 +59,13 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public Boolean delete(StreamBindingKeyInput key) {
-    streamBindingService.unsecuredGet(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
+    streamBindingView.get(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
     return true;
   }
 
   @Override
   public StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status) {
-    StreamBinding streamBinding = streamBindingService.unsecuredGet(key.asStreamBindingKey()).get();
+    StreamBinding streamBinding = streamBindingView.get(key.asStreamBindingKey()).get();
     return streamBindingService.updateStatus(streamBinding, status.asStatus()).get();
   }
 
@@ -71,7 +73,7 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
     StreamBinding streamBinding = new StreamBinding();
     streamBinding.setKey(key.asStreamBindingKey());
     streamBinding.setSpecification(specification.asSpecification());
-    maintainState(streamBinding, streamBindingService.unsecuredGet(streamBinding.getKey()));
+    maintainState(streamBinding, streamBindingView.get(streamBinding.getKey()));
     return streamBinding;
   }
 }

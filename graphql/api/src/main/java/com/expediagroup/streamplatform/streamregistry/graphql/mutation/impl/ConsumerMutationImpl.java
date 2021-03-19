@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 @RequiredArgsConstructor
 public class ConsumerMutationImpl implements ConsumerMutation {
   private final ConsumerService consumerService;
+  private final ConsumerView consumerView;
 
   @Override
   public Consumer insert(ConsumerKeyInput key, SpecificationInput specification) {
@@ -48,7 +50,7 @@ public class ConsumerMutationImpl implements ConsumerMutation {
   @Override
   public Consumer upsert(ConsumerKeyInput key, SpecificationInput specification) {
     Consumer consumer = asConsumer(key, specification);
-    if (!consumerService.unsecuredGet(consumer.getKey()).isPresent()) {
+    if (!consumerView.get(consumer.getKey()).isPresent()) {
       return consumerService.create(consumer).get();
     } else {
       return consumerService.update(consumer).get();
@@ -57,13 +59,13 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Boolean delete(ConsumerKeyInput key) {
-    consumerService.unsecuredGet(key.asConsumerKey()).ifPresent(consumerService::delete);
+    consumerView.get(key.asConsumerKey()).ifPresent(consumerService::delete);
     return true;
   }
 
   @Override
   public Consumer updateStatus(ConsumerKeyInput key, StatusInput status) {
-    Consumer consumer = consumerService.unsecuredGet(key.asConsumerKey()).get();
+    Consumer consumer = consumerView.get(key.asConsumerKey()).get();
     return consumerService.updateStatus(consumer, status.asStatus()).get();
   }
 
@@ -71,7 +73,7 @@ public class ConsumerMutationImpl implements ConsumerMutation {
     Consumer consumer = new Consumer();
     consumer.setKey(key.asConsumerKey());
     consumer.setSpecification(specification.asSpecification());
-    maintainState(consumer, consumerService.unsecuredGet(consumer.getKey()));
+    maintainState(consumer, consumerView.get(consumer.getKey()));
     return consumer;
   }
 }
