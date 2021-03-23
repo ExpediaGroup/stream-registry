@@ -120,4 +120,11 @@ public class ProducerBindingServiceTest {
 
     verify(producerBindingRepository).save(entity);
   }
+
+  @Test
+  public void delete() {
+    final ProducerBinding entity = mock(ProducerBinding.class);
+    producerBindingService.delete(entity);
+    verify(producerBindingRepository).delete(entity);
+  }
 }

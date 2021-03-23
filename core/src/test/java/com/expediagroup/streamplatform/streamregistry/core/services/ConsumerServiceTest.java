@@ -52,6 +52,7 @@ public class ConsumerServiceTest {
 
   @Mock
   private  ConsumerBindingService consumerBindingService;
+
   @Mock
   private ConsumerBindingView consumerBindingView;
 
@@ -127,5 +128,12 @@ public class ConsumerServiceTest {
     consumerService.updateStatus(entity, status);
 
     verify(consumerRepository).save(entity);
+  }
+
+  @Test
+  public void delete() {
+    final Consumer entity = mock(Consumer.class);
+    consumerService.delete(entity);
+    verify(consumerRepository).delete(entity);
   }
 }

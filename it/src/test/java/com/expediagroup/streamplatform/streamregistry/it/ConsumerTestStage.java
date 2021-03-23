@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
@@ -27,6 +28,7 @@ import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumersQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
@@ -100,6 +102,11 @@ public class ConsumerTestStage extends AbstractTestStage {
   @Override
   public void delete() {
     setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteConsumerMutationBuilder().build()).get();
+    boolean result = ((DeleteConsumerMutation.Data) data).getConsumer().isDelete();
+
+    assertTrue(result);
   }
 
   @Test

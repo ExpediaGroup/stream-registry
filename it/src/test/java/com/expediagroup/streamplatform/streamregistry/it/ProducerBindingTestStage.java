@@ -19,9 +19,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerBindingsQuery;
@@ -97,6 +99,11 @@ public class ProducerBindingTestStage extends AbstractTestStage {
   @Override
   public void delete() {
     setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteProducerBindingMutationBuilder().build()).get();
+    boolean result = ((DeleteProducerBindingMutation.Data) data).getProducerBinding().isDelete();
+
+    assertTrue(result);
   }
 
   @Override

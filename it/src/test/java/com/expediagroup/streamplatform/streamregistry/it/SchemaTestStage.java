@@ -81,7 +81,7 @@ public class SchemaTestStage extends AbstractTestStage {
 
   @Override
   public void delete() {
-    setFactorySuffix("delete");
+    // deletion of schema directly from mutation not supported
   }
 
   @Override

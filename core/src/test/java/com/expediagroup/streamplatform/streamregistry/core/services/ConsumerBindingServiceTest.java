@@ -120,4 +120,11 @@ public class ConsumerBindingServiceTest {
 
     verify(consumerBindingRepository).save(entity);
   }
+
+  @Test
+  public void delete() {
+    final ConsumerBinding entity = mock(ConsumerBinding.class);
+    consumerBindingService.delete(entity);
+    verify(consumerBindingRepository).delete(entity);
+  }
 }

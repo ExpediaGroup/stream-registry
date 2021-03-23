@@ -20,9 +20,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducersQuery;
@@ -96,6 +98,11 @@ public class ProducerTestStage extends AbstractTestStage {
   @Override
   public void delete() {
     setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteProducerMutationBuilder().build()).get();
+    boolean result = ((DeleteProducerMutation.Data) data).getProducer().isDelete();
+
+    assertTrue(result);
   }
 
   @Override

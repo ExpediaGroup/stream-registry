@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
@@ -26,6 +27,7 @@ import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerBindingQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerBindingsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingStatusMutation;
@@ -97,6 +99,11 @@ public class ConsumerBindingTestStage extends AbstractTestStage {
   @Override
   public void delete() {
     setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteConsumerBindingMutationBuilder().build()).get();
+    boolean result = ((DeleteConsumerBindingMutation.Data) data).getConsumerBinding().isDelete();
+
+    assertTrue(result);
   }
 
   @Override
