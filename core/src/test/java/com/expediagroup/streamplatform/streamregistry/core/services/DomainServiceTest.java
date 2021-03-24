@@ -22,7 +22,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,5 +118,11 @@ public class DomainServiceTest {
     domainService.updateStatus(entity, status);
 
     verify(domainRepository).save(entity);
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void delete() {
+    final Domain entity = mock(Domain.class);
+    domainService.delete(entity);
   }
 }

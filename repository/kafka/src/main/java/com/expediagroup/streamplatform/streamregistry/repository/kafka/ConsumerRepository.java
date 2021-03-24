@@ -15,20 +15,18 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ConsumerConverter;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class ConsumerRepository
@@ -43,11 +41,5 @@ public class ConsumerRepository
     return findAll().stream()
             .filter(pb -> pb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
             .collect(toList());
-  }
-
-  public void findAllAndDelete(StreamKey key) {
-    findAll().stream()
-      .filter(c -> c.getKey().getStreamKey().equals(key))
-      .forEach(this::delete);
   }
 }

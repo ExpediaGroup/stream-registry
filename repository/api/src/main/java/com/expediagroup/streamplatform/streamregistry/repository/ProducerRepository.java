@@ -20,5 +20,4 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 public interface ProducerRepository extends Repository<Producer, ProducerKey> {
-    void findAllAndDelete(StreamKey key);
 }
