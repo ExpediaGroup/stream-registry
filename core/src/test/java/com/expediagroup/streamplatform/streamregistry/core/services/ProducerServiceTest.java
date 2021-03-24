@@ -15,16 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +57,7 @@ public class ProducerServiceTest {
   private  ProducerBindingService producerBindingService;
 
   @Mock
-  private ProducerBindingView producerBindingView;
+  private ProducerBindingRepository producerBindingRepository;
 
   private ProducerService producerService;
 
@@ -68,7 +68,7 @@ public class ProducerServiceTest {
       producerValidator,
       producerRepository,
       producerBindingService,
-      producerBindingView,
+      new ProducerBindingView(producerBindingRepository),
       new ProducerView(producerRepository)
     );
   }
@@ -135,9 +135,16 @@ public class ProducerServiceTest {
 
   @Test
   public void delete() {
+    final ProducerKey key = mock(ProducerKey.class);
     final Producer entity = mock(Producer.class);
+    when(entity.getKey()).thenReturn(key);
+
+    final ProducerBindingKey bindingKey = mock(ProducerBindingKey.class);
     final ProducerBinding binding = mock(ProducerBinding.class);
-    when(producerBindingView.findAll(any())).thenReturn(Stream.of(binding));
+    when(bindingKey.getProducerKey()).thenReturn(key);
+    when(binding.getKey()).thenReturn(bindingKey);
+
+    when(producerBindingRepository.findAll()).thenReturn(asList(binding));
 
     producerService.delete(entity);
 
@@ -147,22 +154,34 @@ public class ProducerServiceTest {
 
   @Test
   public void delete_noChildren() {
+    final ProducerKey key = mock(ProducerKey.class);
     final Producer entity = mock(Producer.class);
-    final ProducerBinding binding = mock(ProducerBinding.class);
-    when(producerBindingView.findAll(any())).thenReturn(Stream.of(binding));
+
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
 
     producerService.delete(entity);
 
-    verify(producerBindingService).delete(binding);
+    verify(producerBindingService, never()).delete(any());
     verify(producerRepository).delete(entity);
   }
 
   @Test
   public void delete_multi() {
+    final ProducerKey key = mock(ProducerKey.class);
     final Producer entity = mock(Producer.class);
+    when(entity.getKey()).thenReturn(key);
+
+    final ProducerBindingKey bindingKey1 = mock(ProducerBindingKey.class);
     final ProducerBinding binding1 = mock(ProducerBinding.class);
+    when(bindingKey1.getProducerKey()).thenReturn(key);
+    when(binding1.getKey()).thenReturn(bindingKey1);
+
+    final ProducerBindingKey bindingKey2 = mock(ProducerBindingKey.class);
     final ProducerBinding binding2 = mock(ProducerBinding.class);
-    when(producerBindingView.findAll(any())).thenReturn(Stream.of(binding1, binding2));
+    when(bindingKey2.getProducerKey()).thenReturn(key);
+    when(binding2.getKey()).thenReturn(bindingKey2);
+
+    when(producerBindingRepository.findAll()).thenReturn(asList(binding1, binding2));
 
     producerService.delete(entity);
 
