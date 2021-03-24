@@ -15,13 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -133,7 +136,39 @@ public class ProducerServiceTest {
   @Test
   public void delete() {
     final Producer entity = mock(Producer.class);
+    final ProducerBinding binding = mock(ProducerBinding.class);
+    when(producerBindingView.findAll(any())).thenReturn(Stream.of(binding));
+
     producerService.delete(entity);
+
+    verify(producerBindingService).delete(binding);
     verify(producerRepository).delete(entity);
   }
+
+  @Test
+  public void delete_noChildren() {
+    final Producer entity = mock(Producer.class);
+    final ProducerBinding binding = mock(ProducerBinding.class);
+    when(producerBindingView.findAll(any())).thenReturn(Stream.of(binding));
+
+    producerService.delete(entity);
+
+    verify(producerBindingService).delete(binding);
+    verify(producerRepository).delete(entity);
+  }
+
+  @Test
+  public void delete_multi() {
+    final Producer entity = mock(Producer.class);
+    final ProducerBinding binding1 = mock(ProducerBinding.class);
+    final ProducerBinding binding2 = mock(ProducerBinding.class);
+    when(producerBindingView.findAll(any())).thenReturn(Stream.of(binding1, binding2));
+
+    producerService.delete(entity);
+
+    verify(producerBindingService).delete(binding1);
+    verify(producerBindingService).delete(binding2);
+    verify(producerRepository).delete(entity);
+  }
+
 }

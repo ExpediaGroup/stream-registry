@@ -120,4 +120,10 @@ public class InfrastructureServiceTest {
 
     verify(infrastructureRepository).save(entity);
   }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void delete() {
+    final Infrastructure entity = mock(Infrastructure.class);
+    infrastructureService.delete(entity);
+  }
 }

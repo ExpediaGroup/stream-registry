@@ -15,13 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -133,7 +133,37 @@ public class ConsumerServiceTest {
   @Test
   public void delete() {
     final Consumer entity = mock(Consumer.class);
+    final ConsumerBinding binding = mock(ConsumerBinding.class);
+    when(consumerBindingView.findAll(any())).thenReturn(Stream.of(binding));
+
     consumerService.delete(entity);
+
+    verify(consumerBindingService).delete(binding);
+    verify(consumerRepository).delete(entity);
+  }
+
+  @Test
+  public void delete_noChildren() {
+    final Consumer entity = mock(Consumer.class);
+    when(consumerBindingView.findAll(any())).thenReturn(Stream.of());
+
+    consumerService.delete(entity);
+
+    verify(consumerBindingService, never()).delete(any());
+    verify(consumerRepository).delete(entity);
+  }
+
+  @Test
+  public void delete_multi() {
+    final Consumer entity = mock(Consumer.class);
+    final ConsumerBinding binding1 = mock(ConsumerBinding.class);
+    final ConsumerBinding binding2 = mock(ConsumerBinding.class);
+    when(consumerBindingView.findAll(any())).thenReturn(Stream.of(binding1, binding2));
+
+    consumerService.delete(entity);
+
+    verify(consumerBindingService).delete(binding1);
+    verify(consumerBindingService).delete(binding2);
     verify(consumerRepository).delete(entity);
   }
 }

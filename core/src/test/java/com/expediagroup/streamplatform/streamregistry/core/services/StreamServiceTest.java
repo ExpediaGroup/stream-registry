@@ -15,16 +15,24 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -39,11 +47,12 @@ import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StreamServiceTest {
@@ -109,7 +118,7 @@ public class StreamServiceTest {
 
     final Stream entity = mock(Stream.class);
     when(entity.getKey()).thenReturn(key);
-    when(streamRepository.findById(key)).thenReturn(Optional.empty());
+    when(streamRepository.findById(key)).thenReturn(empty());
 
     doNothing().when(streamValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
@@ -164,8 +173,170 @@ public class StreamServiceTest {
 
   @Test
   public void delete() {
+    final SchemaKey schemaKey = mock(SchemaKey.class);
+    final Schema schema = mock(Schema.class);
+
+    final StreamKey key = mock(StreamKey.class);
     final Stream entity = mock(Stream.class);
+    when(entity.getSchemaKey()).thenReturn(schemaKey);
+    when(entity.getKey()).thenReturn(key);
+
+    final StreamBindingKey bindingKey = mock(StreamBindingKey.class);
+    final StreamBinding binding = mock(StreamBinding.class);
+    when(bindingKey.getStreamKey()).thenReturn(key);
+    when(binding.getKey()).thenReturn(bindingKey);
+
+    final ConsumerKey consumerKey = mock(ConsumerKey.class);
+    final Consumer consumer = mock(Consumer.class);
+    when(consumerKey.getStreamKey()).thenReturn(key);
+    when(consumer.getKey()).thenReturn(consumerKey);
+
+    final ProducerKey producerKey = mock(ProducerKey.class);
+    final Producer producer = mock(Producer.class);
+    when(producerKey.getStreamKey()).thenReturn(key);
+    when(producer.getKey()).thenReturn(producerKey);
+
+    when(streamBindingRepository.findAll()).thenReturn(asList(binding));
+    when(producerRepository.findAll()).thenReturn(asList(producer));
+    when(consumerRepository.findAll()).thenReturn(asList(consumer));
+    when(schemaRepository.findById(any())).thenReturn(Optional.of(schema));
+    when(streamRepository.findAll()).thenReturn(asList(entity));
+
     streamService.delete(entity);
-    verify(streamRepository).delete(entity);
+
+    InOrder inOrder = inOrder(schemaService, producerService, consumerService, streamBindingService, streamRepository);
+    inOrder.verify(streamBindingService).delete(binding);
+    inOrder.verify(consumerService).delete(consumer);
+    inOrder.verify(producerService).delete(producer);
+    inOrder.verify(streamRepository).delete(entity);
+    inOrder.verify(schemaService).delete(schema);
   }
+
+  @Test
+  public void delete_preserveSharedSchema() {
+    final SchemaKey schemaKey = mock(SchemaKey.class);
+    final Schema schema = mock(Schema.class);
+
+    final StreamKey key = mock(StreamKey.class);
+    final Stream entity = mock(Stream.class);
+    when(entity.getSchemaKey()).thenReturn(schemaKey);
+    when(entity.getKey()).thenReturn(key);
+
+    final StreamKey otherKey = mock(StreamKey.class);
+    final Stream otherStream = mock(Stream.class);
+    when(otherStream.getSchemaKey()).thenReturn(schemaKey);
+    when(otherStream.getKey()).thenReturn(otherKey);
+
+    final StreamBindingKey bindingKey = mock(StreamBindingKey.class);
+    final StreamBinding binding = mock(StreamBinding.class);
+    when(bindingKey.getStreamKey()).thenReturn(key);
+    when(binding.getKey()).thenReturn(bindingKey);
+
+    final ConsumerKey consumerKey = mock(ConsumerKey.class);
+    final Consumer consumer = mock(Consumer.class);
+    when(consumerKey.getStreamKey()).thenReturn(key);
+    when(consumer.getKey()).thenReturn(consumerKey);
+
+    final ProducerKey producerKey = mock(ProducerKey.class);
+    final Producer producer = mock(Producer.class);
+    when(producerKey.getStreamKey()).thenReturn(key);
+    when(producer.getKey()).thenReturn(producerKey);
+
+
+
+    when(streamBindingRepository.findAll()).thenReturn(asList(binding));
+    when(producerRepository.findAll()).thenReturn(asList(producer));
+    when(consumerRepository.findAll()).thenReturn(asList(consumer));
+    when(streamRepository.findAll()).thenReturn(asList(entity, otherStream));
+
+    streamService.delete(entity);
+
+    InOrder inOrder = inOrder(schemaService, producerService, consumerService, streamBindingService, streamRepository);
+    inOrder.verify(streamBindingService).delete(binding);
+    inOrder.verify(consumerService).delete(consumer);
+    inOrder.verify(producerService).delete(producer);
+    inOrder.verify(streamRepository).delete(entity);
+    inOrder.verify(schemaService, never()).delete(schema);
+  }
+
+  @Test
+  public void delete_noChildren() {
+    final Stream entity = mock(Stream.class);
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerRepository.findAll()).thenReturn(emptyList());
+    when(consumerRepository.findAll()).thenReturn(emptyList());
+    when(schemaRepository.findById(any())).thenReturn(empty());
+    when(streamRepository.findAll()).thenReturn(emptyList());
+
+    streamService.delete(entity);
+
+    InOrder inOrder = inOrder(schemaService, producerService, consumerService, streamBindingService, streamRepository);
+    inOrder.verify(streamBindingService, never()).delete(any());
+    inOrder.verify(consumerService, never()).delete(any());
+    inOrder.verify(producerService, never()).delete(any());
+    inOrder.verify(streamRepository).delete(entity);
+    inOrder.verify(schemaService, never()).delete(any());
+  }
+
+
+  @Test
+  public void delete_multi() {
+    final SchemaKey schemaKey = mock(SchemaKey.class);
+    final Schema schema = mock(Schema.class);
+
+    final StreamKey key = mock(StreamKey.class);
+    final Stream entity = mock(Stream.class);
+    when(entity.getSchemaKey()).thenReturn(schemaKey);
+    when(entity.getKey()).thenReturn(key);
+
+    final StreamBindingKey bindingKey1 = mock(StreamBindingKey.class);
+    final StreamBinding binding1 = mock(StreamBinding.class);
+    when(bindingKey1.getStreamKey()).thenReturn(key);
+    when(binding1.getKey()).thenReturn(bindingKey1);
+
+    final StreamBindingKey bindingKey2 = mock(StreamBindingKey.class);
+    final StreamBinding binding2 = mock(StreamBinding.class);
+    when(bindingKey2.getStreamKey()).thenReturn(key);
+    when(binding2.getKey()).thenReturn(bindingKey2);
+
+    final ConsumerKey consumerKey1 = mock(ConsumerKey.class);
+    final Consumer consumer1 = mock(Consumer.class);
+    when(consumerKey1.getStreamKey()).thenReturn(key);
+    when(consumer1.getKey()).thenReturn(consumerKey1);
+
+    final ConsumerKey consumerKey2 = mock(ConsumerKey.class);
+    final Consumer consumer2 = mock(Consumer.class);
+    when(consumerKey2.getStreamKey()).thenReturn(key);
+    when(consumer2.getKey()).thenReturn(consumerKey2);
+
+    final ProducerKey producerKey1 = mock(ProducerKey.class);
+    final Producer producer1 = mock(Producer.class);
+    when(producerKey1.getStreamKey()).thenReturn(key);
+    when(producer1.getKey()).thenReturn(producerKey1);
+
+    final ProducerKey producerKey2 = mock(ProducerKey.class);
+    final Producer producer2 = mock(Producer.class);
+    when(producerKey2.getStreamKey()).thenReturn(key);
+    when(producer2.getKey()).thenReturn(producerKey2);
+
+    when(streamBindingRepository.findAll()).thenReturn(asList(binding1, binding2));
+    when(producerRepository.findAll()).thenReturn(asList(producer1, producer2));
+    when(consumerRepository.findAll()).thenReturn(asList(consumer1, consumer2));
+    when(schemaRepository.findById(any())).thenReturn(Optional.of(schema));
+    when(streamRepository.findAll()).thenReturn(asList(entity));
+
+    streamService.delete(entity);
+
+    InOrder inOrder = inOrder(schemaService, producerService, consumerService, streamBindingService, streamRepository);
+    inOrder.verify(streamBindingService).delete(binding1);
+    inOrder.verify(streamBindingService).delete(binding2);
+    inOrder.verify(consumerService).delete(consumer1);
+    inOrder.verify(consumerService).delete(consumer2);
+    inOrder.verify(producerService).delete(producer1);
+    inOrder.verify(producerService).delete(producer2);
+    inOrder.verify(streamRepository).delete(entity);
+    inOrder.verify(schemaService).delete(schema);
+  }
+
 }
