@@ -111,10 +111,12 @@ public class StreamService {
       .findAll(b -> b.getKey().getStreamKey().equals(stream.getKey()))
       .forEach(streamBindingService::delete);
 
+    // Remove producers AFTER consumers - a consumer is nothing without a producer
     consumerView
       .findAll(c -> c.getKey().getStreamKey().equals(stream.getKey()))
       .forEach(consumerService::delete);
 
+    // We have no consumers so we can now remove the producers
     producerView
       .findAll(p -> p.getKey().getStreamKey().equals(stream.getKey()))
       .forEach(producerService::delete);
