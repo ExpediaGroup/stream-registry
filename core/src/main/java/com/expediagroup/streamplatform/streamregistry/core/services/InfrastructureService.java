@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
@@ -40,14 +41,15 @@ import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureR
 @Component
 @RequiredArgsConstructor
 public class InfrastructureService {
+  private final InfrastructureView infrastructureView;
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
 
   @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
-    if (unsecuredGet(infrastructure.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (infrastructureView.get(infrastructure.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + infrastructure.getKey() + " because it already exists");
     }
     infrastructureValidator.validateForCreate(infrastructure);
     infrastructure.setSpecification(handlerService.handleInsert(infrastructure));
@@ -56,7 +58,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
-    val existing = unsecuredGet(infrastructure.getKey());
+    val existing = infrastructureView.get(infrastructure.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + infrastructure.getKey().getName() + " because it doesn't exist");
     }
@@ -72,18 +74,14 @@ public class InfrastructureService {
   }
 
   private Optional<Infrastructure> save(Infrastructure infrastructure) {
-    infrastructure = infrastructureRepository.save(infrastructure);
-    return Optional.ofNullable(infrastructure);
+    return Optional.ofNullable(infrastructureRepository.save(infrastructure));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Infrastructure> get(InfrastructureKey key) {
-    return unsecuredGet(key);
+    return infrastructureView.get(key);
   }
 
-  public Optional<Infrastructure> unsecuredGet(InfrastructureKey key) {
-    return infrastructureRepository.findById(key);
-  }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Infrastructure> findAll(Predicate<Infrastructure> filter) {
@@ -92,10 +90,7 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'DELETE')")
   public void delete(Infrastructure infrastructure) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Infrastructure deletion not currently supported.");
   }
 
-  public boolean exists(InfrastructureKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

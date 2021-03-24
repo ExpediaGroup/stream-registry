@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
+
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -32,4 +36,12 @@ public class StreamBindingRepository
   StreamBindingRepository(EntityView view, EventSender sender, StreamBindingConverter converter) {
     super(view, sender, converter, Entity.StreamBindingKey.class);
   }
+
+  @Override
+  public List<StreamBinding> findAll(StreamBinding example) {
+    return findAll().stream()
+            .filter(sb -> sb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
+            .collect(toList());
+  }
+
 }

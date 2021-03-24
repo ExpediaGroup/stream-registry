@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 @RequiredArgsConstructor
 public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
   private final ConsumerBindingService consumerBindingService;
+  private final ConsumerBindingView consumerBindingView;
 
   @Override
   public ConsumerBinding insert(ConsumerBindingKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
   @Override
   public ConsumerBinding upsert(ConsumerBindingKeyInput key, SpecificationInput specification) {
     ConsumerBinding consumerBinding = asConsumerBinding(key, specification);
-    if (!consumerBindingService.unsecuredGet(consumerBinding.getKey()).isPresent()) {
+    if (!consumerBindingView.get(consumerBinding.getKey()).isPresent()) {
       return consumerBindingService.create(consumerBinding).get();
     } else {
       return consumerBindingService.update(consumerBinding).get();
@@ -55,12 +57,13 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public Boolean delete(ConsumerBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    consumerBindingView.get(key.asConsumerBindingKey()).ifPresent(consumerBindingService::delete);
+    return true;
   }
 
   @Override
   public ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status) {
-    ConsumerBinding consumerBinding = consumerBindingService.unsecuredGet(key.asConsumerBindingKey()).get();
+    ConsumerBinding consumerBinding = consumerBindingView.get(key.asConsumerBindingKey()).get();
     return consumerBindingService.updateStatus(consumerBinding, status.asStatus()).get();
   }
 
@@ -68,7 +71,7 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
     ConsumerBinding consumerBinding = new ConsumerBinding();
     consumerBinding.setKey(key.asConsumerBindingKey());
     consumerBinding.setSpecification(specification.asSpecification());
-    maintainState(consumerBinding, consumerBindingService.unsecuredGet(key.asConsumerBindingKey()));
+    maintainState(consumerBinding, consumerBindingView.get(key.asConsumerBindingKey()));
     return consumerBinding;
   }
 }

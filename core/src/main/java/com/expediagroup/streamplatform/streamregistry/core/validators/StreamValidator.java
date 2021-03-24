@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
-import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
 @Component
 @RequiredArgsConstructor
 public class StreamValidator implements Validator<Stream> {
-  private final DomainService domainService;
-  private final SchemaService schemaService;
+  private final DomainView domainView;
+  private final SchemaView schemaView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -48,7 +48,7 @@ public class StreamValidator implements Validator<Stream> {
   }
 
   private void requireExistingDomain(Stream stream) {
-    if (!domainService.exists(stream.getKey().getDomainKey())) {
+    if (!domainView.exists(stream.getKey().getDomainKey())) {
       throw new ValidationException("Domain does not exist");
     }
   }
@@ -57,7 +57,7 @@ public class StreamValidator implements Validator<Stream> {
     if (stream.getSchemaKey() == null) {
       throw new ValidationException("Schema must be specified");
     }
-    if (!schemaService.exists(stream.getSchemaKey())) {
+    if (!schemaView.exists(stream.getSchemaKey())) {
       throw new ValidationException("Schema does not exist");
     }
   }

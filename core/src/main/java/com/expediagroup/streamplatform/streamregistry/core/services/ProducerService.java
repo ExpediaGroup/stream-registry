@@ -32,6 +32,8 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
@@ -43,11 +45,14 @@ public class ProducerService {
   private final HandlerService handlerService;
   private final ProducerValidator producerValidator;
   private final ProducerRepository producerRepository;
+  private final ProducerBindingService producerBindingService;
+  private final ProducerBindingView producerBindingView;
+  private final ProducerView producerView;
 
   @PreAuthorize("hasPermission(#producer, 'CREATE')")
   public Optional<Producer> create(Producer producer) throws ValidationException {
-    if (unsecuredGet(producer.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (producerView.get(producer.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + producer.getKey() + " because it already exists");
     }
     producerValidator.validateForCreate(producer);
     producer.setSpecification(handlerService.handleInsert(producer));
@@ -56,7 +61,7 @@ public class ProducerService {
 
   @PreAuthorize("hasPermission(#producer, 'UPDATE')")
   public Optional<Producer> update(Producer producer) throws ValidationException {
-    val existing = unsecuredGet(producer.getKey());
+    val existing = producerView.get(producer.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + producer.getKey().getName() + " because it doesn't exist");
     }
@@ -72,30 +77,26 @@ public class ProducerService {
   }
 
   private Optional<Producer> save(Producer producer) {
-    producer = producerRepository.save(producer);
-    return Optional.ofNullable(producer);
+    return Optional.ofNullable(producerRepository.save(producer));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Producer> get(ProducerKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Producer> unsecuredGet(ProducerKey key) {
-    return producerRepository.findById(key);
+    return producerView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Producer> findAll(Predicate<Producer> filter) {
-    return producerRepository.findAll().stream().filter(filter).collect(toList());
+    return producerView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#producer, 'DELETE')")
   public void delete(Producer producer) {
-    throw new UnsupportedOperationException();
+    handlerService.handleDelete(producer);
+    producerBindingView
+      .findAll(b -> b.getKey().getProducerKey().equals(producer.getKey()))
+      .forEach(producerBindingService::delete);
+    producerRepository.delete(producer);
   }
 
-  public boolean exists(ProducerKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

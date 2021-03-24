@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 @RequiredArgsConstructor
 public class StreamBindingMutationImpl implements StreamBindingMutation {
   private final StreamBindingService streamBindingService;
+  private final StreamBindingView streamBindingView;
 
   @Override
   public StreamBinding insert(StreamBindingKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
   @Override
   public StreamBinding upsert(StreamBindingKeyInput key, SpecificationInput specification) {
     StreamBinding streamBinding = asStreamBinding(key, specification);
-    if (!streamBindingService.unsecuredGet(streamBinding.getKey()).isPresent()) {
+    if (!streamBindingView.get(streamBinding.getKey()).isPresent()) {
       return streamBindingService.create(streamBinding).get();
     } else {
       return streamBindingService.update(streamBinding).get();
@@ -55,12 +57,13 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public Boolean delete(StreamBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    streamBindingView.get(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
+    return true;
   }
 
   @Override
   public StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status) {
-    StreamBinding streamBinding = streamBindingService.unsecuredGet(key.asStreamBindingKey()).get();
+    StreamBinding streamBinding = streamBindingView.get(key.asStreamBindingKey()).get();
     return streamBindingService.updateStatus(streamBinding, status.asStatus()).get();
   }
 
@@ -68,7 +71,7 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
     StreamBinding streamBinding = new StreamBinding();
     streamBinding.setKey(key.asStreamBindingKey());
     streamBinding.setSpecification(specification.asSpecification());
-    maintainState(streamBinding, streamBindingService.unsecuredGet(streamBinding.getKey()));
+    maintainState(streamBinding, streamBindingView.get(streamBinding.getKey()));
     return streamBinding;
   }
 }

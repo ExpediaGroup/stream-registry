@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 @RequiredArgsConstructor
 public class DomainMutationImpl implements DomainMutation {
   private final DomainService domainService;
+  private final DomainView domainView;
 
   @Override
   public Domain insert(DomainKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class DomainMutationImpl implements DomainMutation {
   @Override
   public Domain upsert(DomainKeyInput key, SpecificationInput specification) {
     Domain domain = asDomain(key, specification);
-    if (!domainService.unsecuredGet(domain.getKey()).isPresent()) {
+    if (!domainView.get(domain.getKey()).isPresent()) {
       return domainService.create(domain).get();
     } else {
       return domainService.update(domain).get();
@@ -55,12 +57,12 @@ public class DomainMutationImpl implements DomainMutation {
 
   @Override
   public Boolean delete(DomainKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    throw new UnsupportedOperationException("Domnain deletion is not currently supported.");
   }
 
   @Override
   public Domain updateStatus(DomainKeyInput key, StatusInput status) {
-    Domain domain = domainService.unsecuredGet(key.asDomainKey()).get();
+    Domain domain = domainView.get(key.asDomainKey()).get();
     return domainService.updateStatus(domain, status.asStatus()).get();
   }
 
@@ -68,7 +70,7 @@ public class DomainMutationImpl implements DomainMutation {
     Domain domain = new Domain();
     domain.setKey(key.asDomainKey());
     domain.setSpecification(specification.asSpecification());
-    maintainState(domain, domainService.unsecuredGet(domain.getKey()));
+    maintainState(domain, domainView.get(domain.getKey()));
     return domain;
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -48,11 +50,24 @@ public class ConsumerServiceTest {
   @Mock
   private ConsumerRepository consumerRepository;
 
+  @Mock
+  private  ConsumerBindingService consumerBindingService;
+
+  @Mock
+  private ConsumerBindingView consumerBindingView;
+
   private ConsumerService consumerService;
 
   @Before
   public void before() {
-    consumerService = new ConsumerService(handlerService, consumerValidator, consumerRepository);
+    consumerService = new ConsumerService(
+      new ConsumerView(consumerRepository),
+      handlerService,
+      consumerValidator,
+      consumerRepository,
+      consumerBindingService,
+      consumerBindingView
+    );
   }
 
   @Test
@@ -113,5 +128,12 @@ public class ConsumerServiceTest {
     consumerService.updateStatus(entity, status);
 
     verify(consumerRepository).save(entity);
+  }
+
+  @Test
+  public void delete() {
+    final Consumer entity = mock(Consumer.class);
+    consumerService.delete(entity);
+    verify(consumerRepository).delete(entity);
   }
 }

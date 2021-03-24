@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ProducerConverter;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
@@ -31,5 +36,18 @@ public class ProducerRepository
     implements com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository {
   ProducerRepository(EntityView view, EventSender sender, ProducerConverter converter) {
     super(view, sender, converter, Entity.ProducerKey.class);
+  }
+
+  @Override
+  public List<Producer> findAll(Producer example) {
+    return findAll().stream()
+            .filter(pb -> pb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
+            .collect(toList());
+  }
+
+  public void findAllAndDelete(StreamKey key) {
+    findAll().stream()
+      .filter(p -> p.getKey().getStreamKey().equals(key))
+      .forEach(this::delete);
   }
 }

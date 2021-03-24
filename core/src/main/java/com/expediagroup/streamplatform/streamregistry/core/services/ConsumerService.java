@@ -32,6 +32,8 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
@@ -40,14 +42,17 @@ import com.expediagroup.streamplatform.streamregistry.repository.ConsumerReposit
 @Component
 @RequiredArgsConstructor
 public class ConsumerService {
+  private final ConsumerView consumerView;
   private final HandlerService handlerService;
   private final ConsumerValidator consumerValidator;
   private final ConsumerRepository consumerRepository;
+  private final ConsumerBindingService consumerBindingService;
+  private final ConsumerBindingView consumerBindingView;
 
   @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Optional<Consumer> create(Consumer consumer) throws ValidationException {
-    if (unsecuredGet(consumer.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (consumerView.get(consumer.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + consumer.getKey() + " because it already exists");
     }
     consumerValidator.validateForCreate(consumer);
     consumer.setSpecification(handlerService.handleInsert(consumer));
@@ -56,7 +61,7 @@ public class ConsumerService {
 
   @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
-    val existing = unsecuredGet(consumer.getKey());
+    val existing = consumerView.get(consumer.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + consumer.getKey().getName() + " because it doesn't exist");
     }
@@ -72,30 +77,26 @@ public class ConsumerService {
   }
 
   private Optional<Consumer> save(Consumer consumer) {
-    consumer = consumerRepository.save(consumer);
-    return Optional.ofNullable(consumer);
+    return Optional.ofNullable(consumerRepository.save(consumer));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Consumer> get(ConsumerKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Consumer> unsecuredGet(ConsumerKey key) {
-    return consumerRepository.findById(key);
+    return consumerView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Consumer> findAll(Predicate<Consumer> filter) {
-    return consumerRepository.findAll().stream().filter(filter).collect(toList());
+    return consumerView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#consumer, 'DELETE')")
   public void delete(Consumer consumer) {
-    throw new UnsupportedOperationException();
+    handlerService.handleDelete(consumer);
+    consumerBindingView
+      .findAll(b -> b.getKey().getConsumerKey().equals(consumer.getKey()))
+      .forEach(consumerBindingService::delete);
+    consumerRepository.delete(consumer);
   }
 
-  public boolean exists(ConsumerKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

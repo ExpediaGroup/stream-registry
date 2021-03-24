@@ -78,6 +78,11 @@ public class ZoneTestStage extends AbstractTestStage {
   }
 
   @Override
+  public void delete() {
+    //not implemented for zone
+  }
+
+  @Override
   public void updateStatus() {
     client.getOptionalData(factory.upsertZoneMutationBuilder().build()).get();
     Object data = client.getOptionalData(factory.updateZoneStatusBuilder().build()).get();

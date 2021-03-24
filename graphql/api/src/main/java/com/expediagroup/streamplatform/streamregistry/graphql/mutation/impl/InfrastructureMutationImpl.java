@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
+import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 @RequiredArgsConstructor
 public class InfrastructureMutationImpl implements InfrastructureMutation {
   private final InfrastructureService infrastructureService;
+  private final InfrastructureView infrastructureView;
 
   @Override
   public Infrastructure insert(InfrastructureKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
   @Override
   public Infrastructure upsert(InfrastructureKeyInput key, SpecificationInput specification) {
     Infrastructure infrastructure = asInfrastructure(key, specification);
-    if (!infrastructureService.unsecuredGet(infrastructure.getKey()).isPresent()) {
+    if (!infrastructureView.get(infrastructure.getKey()).isPresent()) {
       return infrastructureService.create(infrastructure).get();
     } else {
       return infrastructureService.update(infrastructure).get();
@@ -55,12 +57,12 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
 
   @Override
   public Boolean delete(InfrastructureKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    throw new UnsupportedOperationException("Infrastructure deletion is not currently supported.");
   }
 
   @Override
   public Infrastructure updateStatus(InfrastructureKeyInput key, StatusInput status) {
-    Infrastructure infrastructure = infrastructureService.unsecuredGet(key.asInfrastructureKey()).get();
+    Infrastructure infrastructure = infrastructureView.get(key.asInfrastructureKey()).get();
     return infrastructureService.updateStatus(infrastructure, status.asStatus()).get();
   }
 
@@ -68,7 +70,7 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
     Infrastructure out = new Infrastructure();
     out.setKey(key.asInfrastructureKey());
     out.setSpecification(specification.asSpecification());
-    maintainState(out, infrastructureService.unsecuredGet(out.getKey()));
+    maintainState(out, infrastructureView.get(out.getKey()));
     return out;
   }
 }

@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.SchemaValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
@@ -43,11 +44,12 @@ public class SchemaService {
   private final HandlerService handlerService;
   private final SchemaValidator schemaValidator;
   private final SchemaRepository schemaRepository;
+  private final SchemaView schemaView;
 
   @PreAuthorize("hasPermission(#schema, 'CREATE')")
   public Optional<Schema> create(Schema schema) throws ValidationException {
-    if (unsecuredGet(schema.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (schemaView.get(schema.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + schema.getKey() + " because it already exists");
     }
     schemaValidator.validateForCreate(schema);
     schema.setSpecification(handlerService.handleInsert(schema));
@@ -56,7 +58,7 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'UPDATE')")
   public Optional<Schema> update(Schema schema) throws ValidationException {
-    val existing = unsecuredGet(schema.getKey());
+    val existing = schemaView.get(schema.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + schema.getKey().getName() + " because it doesn't exist");
     }
@@ -72,17 +74,12 @@ public class SchemaService {
   }
 
   private Optional<Schema> save(Schema schema) {
-    schema = schemaRepository.save(schema);
-    return Optional.ofNullable(schema);
+    return Optional.ofNullable(schemaRepository.save(schema));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Schema> get(SchemaKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Schema> unsecuredGet(SchemaKey key) {
-    return schemaRepository.findById(key);
+    return schemaView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
@@ -92,10 +89,8 @@ public class SchemaService {
 
   @PreAuthorize("hasPermission(#schema, 'DELETE')")
   public void delete(Schema schema) {
-    throw new UnsupportedOperationException();
+    handlerService.handleDelete(schema);
+    schemaRepository.delete(schema);
   }
 
-  public boolean exists(SchemaKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

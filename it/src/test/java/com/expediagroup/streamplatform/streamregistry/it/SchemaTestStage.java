@@ -80,6 +80,11 @@ public class SchemaTestStage extends AbstractTestStage {
   }
 
   @Override
+  public void delete() {
+    // deletion of schema directly from mutation not supported
+  }
+
+  @Override
   public void updateStatus() {
     client.getOptionalData(factory.upsertSchemaMutationBuilder().build()).get();
     Object data = client.getOptionalData(factory.updateSchemaStatusBuilder().build()).get();

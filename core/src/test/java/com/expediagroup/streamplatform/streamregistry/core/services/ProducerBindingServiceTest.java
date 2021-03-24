@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerBindingValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -52,7 +53,12 @@ public class ProducerBindingServiceTest {
 
   @Before
   public void before() {
-    producerBindingService = new ProducerBindingService(handlerService, producerBindingValidator, producerBindingRepository);
+    producerBindingService = new ProducerBindingService(
+      new ProducerBindingView(producerBindingRepository),
+      handlerService,
+      producerBindingValidator,
+      producerBindingRepository
+    );
   }
 
   @Test
@@ -113,5 +119,12 @@ public class ProducerBindingServiceTest {
     producerBindingService.updateStatus(entity, status);
 
     verify(producerBindingRepository).save(entity);
+  }
+
+  @Test
+  public void delete() {
+    final ProducerBinding entity = mock(ProducerBinding.class);
+    producerBindingService.delete(entity);
+    verify(producerBindingRepository).delete(entity);
   }
 }

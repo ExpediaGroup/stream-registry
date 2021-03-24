@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ConsumerConverter;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
@@ -31,5 +36,18 @@ public class ConsumerRepository
     implements com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository {
   ConsumerRepository(EntityView view, EventSender sender, ConsumerConverter converter) {
     super(view, sender, converter, Entity.ConsumerKey.class);
+  }
+
+  @Override
+  public List<Consumer> findAll(Consumer example) {
+    return findAll().stream()
+            .filter(pb -> pb.getKey().getStreamKey().equals(example.getKey().getStreamKey()))
+            .collect(toList());
+  }
+
+  public void findAllAndDelete(StreamKey key) {
+    findAll().stream()
+      .filter(c -> c.getKey().getStreamKey().equals(key))
+      .forEach(this::delete);
   }
 }

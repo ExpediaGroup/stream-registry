@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -54,7 +55,12 @@ public class InfrastructureServiceTest {
 
   @Before
   public void before() {
-    infrastructureService = new InfrastructureService(handlerService, infrastructureValidator, infrastructureRepository);
+    infrastructureService = new InfrastructureService(
+      new InfrastructureView(infrastructureRepository),
+      handlerService,
+      infrastructureValidator,
+      infrastructureRepository
+    );
   }
 
   @Test

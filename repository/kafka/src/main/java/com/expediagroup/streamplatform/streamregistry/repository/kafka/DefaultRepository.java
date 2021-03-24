@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,4 +98,15 @@ abstract class DefaultRepository<
     //This is only used by ProducerBinding and ConsumerBinding
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  public void delete(ME entity) {
+    List<CompletableFuture<Void>> futures = new ArrayList<>();
+    Entity<SK, SS> stateEntity = converter.convertEntity(entity);
+    stateEntity.getStatus().getEntries().stream().forEach( e -> {
+      send(Event.statusDeletion(stateEntity.getKey(), e.getName()), futures);
+    });
+    send(Event.specificationDeletion(stateEntity.getKey()), futures);
+  }
+
 }

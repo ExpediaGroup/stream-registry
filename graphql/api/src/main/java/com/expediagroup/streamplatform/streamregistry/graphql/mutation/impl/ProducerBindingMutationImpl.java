@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 @RequiredArgsConstructor
 public class ProducerBindingMutationImpl implements ProducerBindingMutation {
   private final ProducerBindingService producerBindingService;
+  private final ProducerBindingView producerBindingView;
 
   @Override
   public ProducerBinding insert(ProducerBindingKeyInput key, SpecificationInput specification) {
@@ -46,7 +48,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
   @Override
   public ProducerBinding upsert(ProducerBindingKeyInput key, SpecificationInput specification) {
     ProducerBinding producerBinding = asProducerBinding(key, specification);
-    if (!producerBindingService.unsecuredGet(producerBinding.getKey()).isPresent()) {
+    if (!producerBindingView.get(producerBinding.getKey()).isPresent()) {
       return producerBindingService.create(producerBinding).get();
     } else {
       return producerBindingService.update(producerBinding).get();
@@ -55,12 +57,13 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public Boolean delete(ProducerBindingKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    producerBindingView.get(key.asProducerBindingKey()).ifPresent(producerBindingService::delete);
+    return true;
   }
 
   @Override
   public ProducerBinding updateStatus(ProducerBindingKeyInput key, StatusInput status) {
-    ProducerBinding producerBinding = producerBindingService.unsecuredGet(key.asProducerBindingKey()).get();
+    ProducerBinding producerBinding = producerBindingView.get(key.asProducerBindingKey()).get();
     return producerBindingService.updateStatus(producerBinding, status.asStatus()).get();
   }
 
@@ -68,7 +71,7 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
     ProducerBinding producerBinding = new ProducerBinding();
     producerBinding.setKey(key.asProducerBindingKey());
     producerBinding.setSpecification(specification.asSpecification());
-    maintainState(producerBinding, producerBindingService.unsecuredGet(producerBinding.getKey()));
+    maintainState(producerBinding, producerBindingView.get(producerBinding.getKey()));
     return producerBinding;
   }
 }

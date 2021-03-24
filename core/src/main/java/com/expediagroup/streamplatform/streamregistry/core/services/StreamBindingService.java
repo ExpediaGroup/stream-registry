@@ -32,6 +32,9 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
@@ -43,11 +46,16 @@ public class StreamBindingService {
   private final HandlerService handlerService;
   private final StreamBindingValidator streamBindingValidator;
   private final StreamBindingRepository streamBindingRepository;
+  private final ConsumerBindingService consumerBindingService;
+  private final ProducerBindingService producerBindingService;
+  private final ConsumerBindingView consumerBindingView;
+  private final ProducerBindingView producerBindingView;
+  private final StreamBindingView streamBindingView;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
-    if (unsecuredGet(streamBinding.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (streamBindingView.get(streamBinding.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + streamBinding.getKey() + " because it already exists");
     }
     streamBindingValidator.validateForCreate(streamBinding);
     streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
@@ -56,7 +64,7 @@ public class StreamBindingService {
 
   @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
-    val existing = unsecuredGet(streamBinding.getKey());
+    val existing = streamBindingView.get(streamBinding.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + streamBinding.getKey() + " because it doesn't exist");
     }
@@ -72,30 +80,34 @@ public class StreamBindingService {
   }
 
   private Optional<StreamBinding> save(StreamBinding streamBinding) {
-    streamBinding = streamBindingRepository.save(streamBinding);
-    return Optional.ofNullable(streamBinding);
+    return Optional.ofNullable(streamBindingRepository.save(streamBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<StreamBinding> get(StreamBindingKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<StreamBinding> unsecuredGet(StreamBindingKey key) {
-    return streamBindingRepository.findById(key);
+    return streamBindingView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<StreamBinding> findAll(Predicate<StreamBinding> filter) {
-    return streamBindingRepository.findAll().stream().filter(filter).collect(toList());
+    return streamBindingView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
-    throw new UnsupportedOperationException();
+    handlerService.handleDelete(streamBinding);
+
+    // Remove producers AFTER consumers - a consumer is nothing without a producer
+    consumerBindingView
+      .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
+      .forEach(consumerBindingService::delete);
+
+    // We have no consumers so we can now remove the producers
+    producerBindingView
+      .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
+      .forEach(producerBindingService::delete);
+
+    streamBindingRepository.delete(streamBinding);
   }
 
-  public boolean exists(StreamBindingKey key) {
-    return unsecuredGet(key).isPresent();
-  }
 }

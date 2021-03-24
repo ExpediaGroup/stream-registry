@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.ProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
+
 @Component
 @RequiredArgsConstructor
 public class ProducerMutationImpl implements ProducerMutation {
   private final ProducerService producerService;
+  private final ProducerView producerView;
 
   @Override
   public Producer insert(ProducerKeyInput key, SpecificationInput specification) {
@@ -46,7 +49,7 @@ public class ProducerMutationImpl implements ProducerMutation {
   @Override
   public Producer upsert(ProducerKeyInput key, SpecificationInput specification) {
     Producer producer = asProducer(key, specification);
-    if (!producerService.unsecuredGet(producer.getKey()).isPresent()) {
+    if (!producerView.get(producer.getKey()).isPresent()) {
       return producerService.create(producer).get();
     } else {
       return producerService.update(producer).get();
@@ -55,12 +58,13 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Boolean delete(ProducerKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    producerView.get(key.asProducerKey()).ifPresent(producerService::delete);
+    return true;
   }
 
   @Override
   public Producer updateStatus(ProducerKeyInput key, StatusInput status) {
-    Producer producer = producerService.unsecuredGet(key.asProducerKey()).get();
+    Producer producer = producerView.get(key.asProducerKey()).get();
     return producerService.updateStatus(producer, status.asStatus()).get();
   }
 
@@ -68,7 +72,7 @@ public class ProducerMutationImpl implements ProducerMutation {
     Producer producer = new Producer();
     producer.setKey(key.asProducerKey());
     producer.setSpecification(specification.asSpecification());
-    maintainState(producer, producerService.unsecuredGet(producer.getKey()));
+    maintainState(producer, producerView.get(producer.getKey()));
     return producer;
   }
 }

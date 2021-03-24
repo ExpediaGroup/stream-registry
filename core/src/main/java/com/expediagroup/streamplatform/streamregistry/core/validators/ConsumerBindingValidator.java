@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 @Component
 @RequiredArgsConstructor
 public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
-  private final ConsumerService consumerService;
-  private final StreamBindingService streamBindingService;
+  private final ConsumerView consumerView;
+  private final StreamBindingView streamBindingView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -43,10 +43,10 @@ public class ConsumerBindingValidator implements Validator<ConsumerBinding> {
   }
 
   private void validateForCreateAndUpdate(ConsumerBinding consumerbinding) {
-    if (!consumerService.exists(consumerbinding.getKey().getConsumerKey())) {
+    if (!consumerView.exists(consumerbinding.getKey().getConsumerKey())) {
       throw new ValidationException("Consumer does not exist");
     }
-    if (!streamBindingService.exists(consumerbinding.getKey().getStreamBindingKey())) {
+    if (!streamBindingView.exists(consumerbinding.getKey().getStreamBindingKey())) {
       throw new ValidationException("StreamBinding does not exist");
     }
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.SchemaMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
+
 @Component
 @RequiredArgsConstructor
 public class SchemaMutationImpl implements SchemaMutation {
   private final SchemaService schemaService;
+  private final SchemaView schemaView;
 
   @Override
   public Schema insert(SchemaKeyInput key, SpecificationInput specification) {
@@ -46,7 +49,7 @@ public class SchemaMutationImpl implements SchemaMutation {
   @Override
   public Schema upsert(SchemaKeyInput key, SpecificationInput specification) {
     Schema schema = asSchema(key, specification);
-    if (!schemaService.unsecuredGet(schema.getKey()).isPresent()) {
+    if (!schemaView.get(schema.getKey()).isPresent()) {
       return schemaService.create(schema).get();
     } else {
       return schemaService.update(schema).get();
@@ -55,12 +58,12 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   @Override
   public Boolean delete(SchemaKeyInput key) {
-    throw new UnsupportedOperationException("delete");
+    throw new UnsupportedOperationException("Please delete the stream associated with this schema instead.");
   }
 
   @Override
   public Schema updateStatus(SchemaKeyInput key, StatusInput status) {
-    Schema schema = schemaService.unsecuredGet(key.asSchemaKey()).get();
+    Schema schema = schemaView.get(key.asSchemaKey()).get();
     return schemaService.updateStatus(schema, status.asStatus()).get();
   }
 
@@ -68,7 +71,7 @@ public class SchemaMutationImpl implements SchemaMutation {
     Schema schema = new Schema();
     schema.setKey(key.asSchemaKey());
     schema.setSpecification(specification.asSpecification());
-    maintainState(schema, schemaService.unsecuredGet(schema.getKey()));
+    maintainState(schema, schemaView.get(schema.getKey()));
     return schema;
   }
 }

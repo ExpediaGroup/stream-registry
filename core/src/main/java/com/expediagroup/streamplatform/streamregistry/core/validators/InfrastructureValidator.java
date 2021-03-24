@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
+import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+
 
 @Component
 @RequiredArgsConstructor
 public class InfrastructureValidator implements Validator<Infrastructure> {
-  private final ZoneService zoneService;
+  private final ZoneView zoneView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -41,7 +42,7 @@ public class InfrastructureValidator implements Validator<Infrastructure> {
   }
 
   public void validateForCreateAndUpdate(Infrastructure infrastructure) throws ValidationException {
-    if (!zoneService.exists(infrastructure.getKey().getZoneKey())) {
+    if (!zoneView.exists(infrastructure.getKey().getZoneKey())) {
       throw new ValidationException("Zone does not exist");
     }
   }

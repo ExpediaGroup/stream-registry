@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,13 @@ import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteSchemaMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteStreamBindingMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertDomainMutation;
@@ -440,5 +447,33 @@ public class ITestDataFactory {
     return UpdateDomainMutation.builder()
         .key(domainKeyInputBuilder().build())
         .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public DeleteConsumerBindingMutation.Builder deleteConsumerBindingMutationBuilder() {
+    return DeleteConsumerBindingMutation.builder().key(consumerBindingKeyInputBuilder().build());
+  }
+
+  public DeleteConsumerMutation.Builder deleteConsumerMutationBuilder() {
+    return DeleteConsumerMutation.builder().key(consumerKeyInputBuilder().build());
+  }
+
+  public DeleteProducerBindingMutation.Builder deleteProducerBindingMutationBuilder() {
+    return DeleteProducerBindingMutation.builder().key(producerBindingKeyInputBuilder().build());
+  }
+
+  public DeleteProducerMutation.Builder deleteProducerMutationBuilder() {
+    return DeleteProducerMutation.builder().key(producerKeyInputBuilder().build());
+  }
+
+  public DeleteSchemaMutation.Builder deleteSchemaMutationBuilder() {
+    return DeleteSchemaMutation.builder().key(schemaKeyInputBuilder().build());
+  }
+
+  public DeleteStreamMutation.Builder deleteStreamMutationBuilder() {
+    return DeleteStreamMutation.builder().key(streamKeyInputBuilder().build());
+  }
+
+  public DeleteStreamBindingMutation.Builder deleteStreamBindingMutationBuilder() {
+    return DeleteStreamBindingMutation.builder().key(streamBindingKeyInputBuilder().build());
   }
 }

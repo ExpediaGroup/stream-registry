@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @Component
 @RequiredArgsConstructor
 public class ProducerValidator implements Validator<Producer> {
-  private final StreamService streamService;
-  private final ZoneService zoneService;
+  private final StreamView streamView;
+  private final ZoneView zoneView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -43,10 +43,10 @@ public class ProducerValidator implements Validator<Producer> {
   }
 
   public void validateForCreateAndUpdate(Producer producer) throws ValidationException {
-    if (!streamService.exists(producer.getKey().getStreamKey())) {
+    if (!streamView.exists(producer.getKey().getStreamKey())) {
       throw new ValidationException("Stream does not exist");
     }
-    if (!zoneService.exists(producer.getKey().getZoneKey())) {
+    if (!zoneView.exists(producer.getKey().getZoneKey())) {
       throw new ValidationException("Zone does not exist");
     }
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerBindingValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -52,7 +53,12 @@ public class ConsumerBindingServiceTest {
 
   @Before
   public void before() {
-    consumerBindingService = new ConsumerBindingService(handlerService, consumerBindingValidator, consumerBindingRepository);
+    consumerBindingService = new ConsumerBindingService(
+      new ConsumerBindingView(consumerBindingRepository),
+      handlerService,
+      consumerBindingValidator,
+      consumerBindingRepository
+    );
   }
 
   @Test
@@ -113,5 +119,12 @@ public class ConsumerBindingServiceTest {
     consumerBindingService.updateStatus(entity, status);
 
     verify(consumerBindingRepository).save(entity);
+  }
+
+  @Test
+  public void delete() {
+    final ConsumerBinding entity = mock(ConsumerBinding.class);
+    consumerBindingService.delete(entity);
+    verify(consumerBindingRepository).delete(entity);
   }
 }

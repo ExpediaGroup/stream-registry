@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
 
 @Component
 @RequiredArgsConstructor
 public class SchemaValidator implements Validator<Schema> {
-  private final DomainService domainService;
+  private final DomainView domainView;
   private final SpecificationValidator specificationValidator;
 
   @Override
@@ -41,7 +41,7 @@ public class SchemaValidator implements Validator<Schema> {
   }
 
   public void validateForCreateAndUpdate(Schema schema) throws ValidationException {
-    if (!domainService.exists(schema.getKey().getDomainKey())) {
+    if (!domainView.exists(schema.getKey().getDomainKey())) {
       throw new ValidationException("Domain does not exist");
     }
   }

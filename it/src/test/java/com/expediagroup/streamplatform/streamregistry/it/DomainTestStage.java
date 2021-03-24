@@ -96,6 +96,11 @@ public class DomainTestStage extends AbstractTestStage {
   }
 
   @Override
+  public void delete() {
+    //not implemented for domain
+  }
+
+  @Override
   public void updateStatus() {
     client.getOptionalData(factory.upsertDomainMutationBuilder().build()).get();
     Object data = client.getOptionalData(factory.updateDomainStatusMutation().build()).get();

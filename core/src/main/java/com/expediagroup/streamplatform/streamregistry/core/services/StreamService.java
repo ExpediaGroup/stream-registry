@@ -32,8 +32,14 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
@@ -43,11 +49,20 @@ public class StreamService {
   private final HandlerService handlerService;
   private final StreamValidator streamValidator;
   private final StreamRepository streamRepository;
+  private final StreamBindingService streamBindingService;
+  private final ProducerService producerService;
+  private final ConsumerService consumerService;
+  private final SchemaService schemaService;
+  private final StreamView streamView;
+  private final StreamBindingView streamBindingView;
+  private final ProducerView producerView;
+  private final ConsumerView consumerView;
+  private final SchemaView schemaView;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
-    if (unsecuredGet(stream.getKey()).isPresent()) {
-      throw new ValidationException("Can't create because it already exists");
+    if (streamView.get(stream.getKey()).isPresent()) {
+      throw new ValidationException("Can't create " + stream.getKey() + " because it already exists");
     }
     streamValidator.validateForCreate(stream);
     stream.setSpecification(handlerService.handleInsert(stream));
@@ -56,7 +71,7 @@ public class StreamService {
 
   @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
-    val existing = unsecuredGet(stream.getKey());
+    val existing = streamView.get(stream.getKey());
     if (!existing.isPresent()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
@@ -79,24 +94,41 @@ public class StreamService {
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Stream> get(StreamKey key) {
-    return unsecuredGet(key);
-  }
-
-  public Optional<Stream> unsecuredGet(StreamKey key) {
-    return streamRepository.findById(key);
+    return streamView.get(key);
   }
 
   @PostFilter("hasPermission(filterObject, 'READ')")
   public List<Stream> findAll(Predicate<Stream> filter) {
-    return streamRepository.findAll().stream().filter(filter).collect(toList());
+    return streamView.findAll(filter).collect(toList());
   }
 
   @PreAuthorize("hasPermission(#stream, 'DELETE')")
   public void delete(Stream stream) {
-    throw new UnsupportedOperationException();
-  }
+    handlerService.handleDelete(stream);
 
-  public boolean exists(StreamKey key) {
-    return unsecuredGet(key).isPresent();
+    // This will cascade to ConsumerBinding and ProducerBinding also
+    streamBindingView
+      .findAll(b -> b.getKey().getStreamKey().equals(stream.getKey()))
+      .forEach(streamBindingService::delete);
+
+    // Remove producers AFTER consumers - a consumer is nothing without a producer
+    consumerView
+      .findAll(c -> c.getKey().getStreamKey().equals(stream.getKey()))
+      .forEach(consumerService::delete);
+
+    // We have no consumers so we can now remove the producers
+    producerView
+      .findAll(p -> p.getKey().getStreamKey().equals(stream.getKey()))
+      .forEach(producerService::delete);
+
+    streamRepository.delete(stream);
+
+    SchemaKey schemaKey = stream.getSchemaKey();
+    boolean schemaReferencedByOtherStreams = streamView.findAll(s -> s.getSchemaKey().equals(schemaKey))
+      .anyMatch(s -> !s.getKey().equals(stream.getKey()));
+
+    if (!schemaReferencedByOtherStreams) {
+      schemaView.get(schemaKey).ifPresent(schemaService::delete);
+    }
   }
 }
