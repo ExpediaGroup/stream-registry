@@ -96,12 +96,17 @@ public class StreamBindingService {
   @PreAuthorize("hasPermission(#streamBinding, 'DELETE')")
   public void delete(StreamBinding streamBinding) {
     handlerService.handleDelete(streamBinding);
+
+    // Remove producers AFTER consumers - a consumer is nothing without a producer
     consumerBindingView
       .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
       .forEach(consumerBindingService::delete);
+
+    // We have no consumers so we can now remove the producers
     producerBindingView
       .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
       .forEach(producerBindingService::delete);
+
     streamBindingRepository.delete(streamBinding);
   }
 
