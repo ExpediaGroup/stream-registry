@@ -18,18 +18,19 @@ package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerBindingKeyQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.TagQuery;
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.*;
+import com.expediagroup.streamplatform.streamregistry.model.*;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
 public class ProducerBindingFilterTest {
@@ -47,7 +48,11 @@ public class ProducerBindingFilterTest {
           "description",
           Collections.singletonList(new Tag("name", "value")),
           "type",
-          new ObjectMapper().createObjectNode()
+          new ObjectMapper().createObjectNode(),
+        Stream.of(
+          new AbstractMap.SimpleEntry<>(new Role("admin"), Arrays.asList(new Principal("user1"))),
+          new AbstractMap.SimpleEntry<>(new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3")))
+        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
       ),
       null
   );
@@ -69,6 +74,10 @@ public class ProducerBindingFilterTest {
             .valueRegex("value")
             .build()))
         .typeRegex("type")
+        .securities(Collections.singletonList(SecurityQuery.builder()
+          .roleRegex("admin")
+          .principalRegex("user1")
+          .build()))
         .build();
 
     assertTrue(new ProducerBindingFilter(keyQuery, specQuery).test(ProducerBinding));
@@ -172,6 +181,20 @@ public class ProducerBindingFilterTest {
     SpecificationQuery specQuery = SpecificationQuery.builder()
         .typeRegex("x")
         .build();
+
+    assertFalse(new ProducerBindingFilter(keyQuery, specQuery).test(ProducerBinding));
+  }
+
+  @Test
+  public void securityDoesNotMatch() {
+    ProducerBindingKeyQuery keyQuery = ProducerBindingKeyQuery.builder()
+      .build();
+    SpecificationQuery specQuery = SpecificationQuery.builder()
+      .securities(Collections.singletonList(SecurityQuery.builder()
+        .roleRegex("x")
+        .principalRegex("x")
+        .build()))
+      .build();
 
     assertFalse(new ProducerBindingFilter(keyQuery, specQuery).test(ProducerBinding));
   }

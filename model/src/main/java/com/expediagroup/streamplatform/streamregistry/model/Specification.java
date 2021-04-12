@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,12 +33,14 @@ public class Specification {
   private List<Tag> tags = new ArrayList<>();
   private String type;
   private ObjectNode configuration;
+  private Map<Role, List<Principal>> security;
 
-  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration) {
+  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration, Map<Role, List<Principal>> security) {
     this.description = description;
     this.tags = tags;
     this.type = type;
     this.configuration = configuration;
+    this.security = security;
   }
 
   public List<Tag> getTags() {

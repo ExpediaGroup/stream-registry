@@ -20,8 +20,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.val;
 
@@ -42,6 +43,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
@@ -52,7 +54,11 @@ public class StateIT {
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode();
   private final DomainKey key = new DomainKey("domain");
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration);
+  private final Map<String, List<Principal>> security = Stream.of(
+    new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
+    new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+  ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, security);
   private final ObjectNode statusValue = mapper.createObjectNode();
   private final StatusEntry statusEntry = new StatusEntry("statusName", statusValue);
   private final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);

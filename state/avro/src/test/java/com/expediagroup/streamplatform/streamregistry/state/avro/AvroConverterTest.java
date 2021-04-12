@@ -20,7 +20,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.val;
 
@@ -32,9 +37,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.*;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 public class AvroConverterTest {
@@ -50,13 +53,21 @@ public class AvroConverterTest {
       "description",
       Collections.singletonList(new AvroTag("name", "value")),
       "type",
-      new AvroObject(Collections.singletonMap("foo", "bar"))
+      new AvroObject(Collections.singletonMap("foo", "bar")),
+      Stream.of(
+        new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new AvroPrincipal("user1"))),
+        new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")))
+      ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
   );
   private final AvroStreamSpecification avroStreamSpecification = new AvroStreamSpecification(
       "description",
       Collections.singletonList(new AvroTag("name", "value")),
       "type",
       new AvroObject(Collections.singletonMap("foo", "bar")),
+      Stream.of(
+        new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new AvroPrincipal("user1"))),
+        new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")))
+      ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
       new AvroSchemaKey(avroDomainKey, "schema")
   );
 
@@ -75,7 +86,11 @@ public class AvroConverterTest {
       "description",
       Collections.singletonList(new Tag("name", "value")),
       "type",
-      mapper.createObjectNode().put("foo", "bar")
+      mapper.createObjectNode().put("foo", "bar"),
+      Stream.of(
+        new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
+        new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+      ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
   );
   private final StatusEntry statusEntry = new StatusEntry("statusName", mapper.createObjectNode().put("foo", "baz"));
   private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
@@ -84,6 +99,10 @@ public class AvroConverterTest {
       Collections.singletonList(new Tag("name", "value")),
       "type",
       mapper.createObjectNode().put("foo", "bar"),
+      Stream.of(
+        new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
+        new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+      ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
       new Entity.SchemaKey(domainKey, "schema")
   );
 

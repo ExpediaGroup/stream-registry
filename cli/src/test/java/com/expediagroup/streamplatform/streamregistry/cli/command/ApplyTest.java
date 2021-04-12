@@ -19,8 +19,9 @@ import static com.google.common.collect.ObjectArrays.concat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -44,6 +45,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationEvent;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 
@@ -51,11 +53,15 @@ public class ApplyTest {
   private final CommandLine underTest = new CommandLine(new Apply());
 
   private final String[] graphqlOptions = {"--streamRegistryUrl=streamRegistryUrl", "--streamRegistryUsername=streamRegistryUsername", "--streamRegistryPassword=streamRegistryPassword"};
-  private final String[] configurationOptions = {"--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}"};
+  private final String[] configurationOptions = {"--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}", "--security={\"admin\":[\"user1\"],\"creator\":[\"user2\",\"user3\"]}"};
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode()
       .put("e", "f");
+  private final Map<String, List<Principal>> security = Stream.of(
+    new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
+    new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+  ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
   private final DomainKey domainKey = new DomainKey("domain");
   private final SchemaKey schemaKey = new SchemaKey(domainKey, "schema");
@@ -97,6 +103,7 @@ public class ApplyTest {
         "--streamRegistryUsername=streamRegistryUsername",
         "--streamRegistryPassword=streamRegistryPassword",
         "--description=description", "--tag=a:b", "--tag=c:d", "--type=type", "--configuration={\"e\":\"f\"}",
+        "--security={\"admin\":[\"user1\"],\"creator\":[\"user2\",\"user3\"]}",
         "--zone=zone");
     assertEvent(result, zoneKey);
   }
@@ -173,7 +180,7 @@ public class ApplyTest {
     }}));
     assertThat(specification.getType(), is("type"));
     assertThat(specification.getConfiguration(), is(configuration));
-
+    assertThat(specification.getSecurity(), is(security));
   }
 
   private void assertGraphQLOptions(GraphQLEventSenderAction action) {

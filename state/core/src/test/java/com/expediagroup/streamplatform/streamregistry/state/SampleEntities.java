@@ -34,7 +34,7 @@ final class SampleEntities {
   static final ObjectMapper mapper = new ObjectMapper();
   static final ObjectNode configuration = mapper.createObjectNode();
   static final DomainKey key = new DomainKey("domain");
-  static final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration);
+  static final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, Collections.emptyMap());
   static final ObjectNode statusValue = mapper.createObjectNode();
   static final StatusEntry statusEntry = new StatusEntry("name", statusValue);
   static final DefaultStatus status = new DefaultStatus().with(statusEntry);

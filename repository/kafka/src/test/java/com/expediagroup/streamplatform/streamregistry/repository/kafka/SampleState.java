@@ -16,7 +16,12 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +38,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -48,7 +54,11 @@ final class SampleState {
       "description",
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
-      mapper.createObjectNode()
+      mapper.createObjectNode(),
+      Stream.of(
+        new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
+        new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+      ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
     );
   }
 
@@ -58,6 +68,10 @@ final class SampleState {
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
       mapper.createObjectNode(),
+      Stream.of(
+        new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
+        new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+      ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
       schemaKey()
     );
   }

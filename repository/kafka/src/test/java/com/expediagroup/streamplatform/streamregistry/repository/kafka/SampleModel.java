@@ -16,23 +16,15 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.*;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
@@ -55,6 +47,10 @@ final class SampleModel {
     specification.setTags(Collections.singletonList(new Tag("name", "value")));
     specification.setType("type");
     specification.setConfiguration(mapper.createObjectNode());
+    specification.setSecurity(java.util.stream.Stream.of(
+      new AbstractMap.SimpleEntry<>(new Role("admin"), Arrays.asList(new Principal("user1"))),
+      new AbstractMap.SimpleEntry<>(new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3")))
+    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     return specification;
   }
 

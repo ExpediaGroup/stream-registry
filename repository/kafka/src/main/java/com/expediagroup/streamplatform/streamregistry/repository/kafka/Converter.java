@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,19 +28,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Tag;
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.*;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
@@ -87,7 +77,13 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
               .map(tag -> new com.expediagroup.streamplatform.streamregistry.model.Tag(tag.getName(), tag.getValue()))
               .collect(toList()),
           specification.getType(),
-          specification.getConfiguration()
+          specification.getConfiguration(),
+          specification.getSecurity().entrySet().stream().collect(
+              Collectors.toMap(
+                  role -> new com.expediagroup.streamplatform.streamregistry.model.Role(role.getKey()),
+                  role -> role.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.model.Principal(principal.getName())).collect(toList())
+              )
+          )
       );
     }
 
@@ -120,6 +116,15 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           .map(tag -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag(tag.getName(), tag.getValue()))
           .collect(toList());
     }
+
+    protected Map<String, List<com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal>> convertSecurity(Map<Role, List<Principal>> security) {
+      return security.entrySet().stream()
+        .collect(Collectors.toMap(
+            role -> role.getKey().getName(),
+            role -> role.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal(principal.getName())).collect(toList())
+          )
+        );
+    }
   }
 
   @RequiredArgsConstructor
@@ -146,7 +151,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           specification.getDescription(),
           convertTags(specification.getTags()),
           specification.getType(),
-          specification.getConfiguration()
+          specification.getConfiguration(),
+          convertSecurity(specification.getSecurity())
       );
     }
   }
@@ -230,6 +236,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           convertTags(specification.getTags()),
           specification.getType(),
           specification.getConfiguration(),
+          convertSecurity(specification.getSecurity()),
           schemaConverter.convertKey(entity.getSchemaKey())
       );
     }

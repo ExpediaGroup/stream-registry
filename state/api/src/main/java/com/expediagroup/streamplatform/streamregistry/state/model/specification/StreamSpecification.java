@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.state.model.specification;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.NonNull;
 import lombok.Value;
@@ -30,5 +31,6 @@ public class StreamSpecification implements Specification {
   @NonNull List<Tag> tags;
   @NonNull String type;
   @NonNull ObjectNode configuration;
+  @NonNull Map<String, List<Principal>> security;
   @NonNull SchemaKey schemaKey;
 }

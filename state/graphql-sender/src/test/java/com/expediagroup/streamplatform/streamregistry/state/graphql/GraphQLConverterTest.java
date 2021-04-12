@@ -19,7 +19,9 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.val;
 
@@ -33,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -55,8 +58,12 @@ public class GraphQLConverterTest {
   private final ObjectMapper mapper = new ObjectMapper();
   private final Tag tag = new Tag("name", "value");
   private final ObjectNode configuration = mapper.createObjectNode();
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration);
-  private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, schemaKey);
+  private final Map<String, List<Principal>> security = Stream.of(
+    new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
+    new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+  ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security);
+  private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());
 
   @Test(expected = IllegalArgumentException.class)
