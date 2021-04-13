@@ -33,7 +33,11 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Cons
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SecurityQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.TagQuery;
-import com.expediagroup.streamplatform.streamregistry.model.*;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Principal;
+import com.expediagroup.streamplatform.streamregistry.model.Role;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 
 public class ConsumerBindingFilterTest {

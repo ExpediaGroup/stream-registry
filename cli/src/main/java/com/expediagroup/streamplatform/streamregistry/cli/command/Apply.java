@@ -17,12 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.cli.command;
 
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.specification;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import lombok.Getter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -46,7 +48,11 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamB
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.*;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 
 @Command(name = "apply", subcommands = {
     Apply.Domain.class,
@@ -79,14 +85,11 @@ public class Apply {
     }
 
     public Map<String, List<Principal>> convertSecurityMap(ObjectNode security) {
-      return StreamSupport.stream(Spliterators.spliteratorUnknownSize(security.fields(), Spliterator.ORDERED), false)
+      return new ObjectMapper().convertValue(security, new TypeReference<Map<String, List<String>>>(){})
+        .entrySet().stream()
         .collect(Collectors.toMap(
           Map.Entry::getKey,
-          entry -> {
-            ArrayList<Principal> principals = new ArrayList<>();
-            entry.getValue().elements().forEachRemaining(p -> principals.add(new Principal(p.asText())));
-            return principals;
-          }
+          entry -> entry.getValue().stream().map(Principal::new).collect(Collectors.toList())
         ));
     }
 

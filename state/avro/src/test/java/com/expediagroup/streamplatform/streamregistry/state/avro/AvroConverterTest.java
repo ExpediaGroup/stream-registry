@@ -37,7 +37,10 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.*;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 public class AvroConverterTest {
