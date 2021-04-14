@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.val;
 
@@ -31,6 +32,7 @@ import com.expediagroup.streamplatform.streamregistry.state.graphql.type.DomainK
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.RoleInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.StatusInput;
@@ -55,6 +57,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Specific
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -116,6 +119,11 @@ class GraphQLConverter {
               .collect(toList()))
           .type(specification.getType())
           .configuration(specification.getConfiguration())
+          .security(specification.getSecurity().entrySet().stream().map(
+            role -> RoleInput.builder().role(role.getKey()).principals(
+              role.getValue().stream().map(Principal::getName).collect(Collectors.toList())
+            ).build()
+          ).collect(Collectors.toList()))
           .build();
     }
 

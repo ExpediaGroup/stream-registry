@@ -49,7 +49,7 @@ public class FilterUtility {
     if (!matches(specification.getType(), specQuery.getTypeRegex())) {
       return false;
     }
-    if (!matchesAllSecurityQueries(specification, specQuery.getSecurities())) {
+    if (!matchesAllSecurityQueries(specification, specQuery.getSecurity())) {
       return false;
     }
     return matchesAllTagQueries(specification, specQuery.getTags());

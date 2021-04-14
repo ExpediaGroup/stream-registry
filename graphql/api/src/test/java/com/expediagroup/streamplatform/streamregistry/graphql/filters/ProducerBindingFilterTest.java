@@ -82,7 +82,7 @@ public class ProducerBindingFilterTest {
             .valueRegex("value")
             .build()))
         .typeRegex("type")
-        .securities(Collections.singletonList(SecurityQuery.builder()
+        .security(Collections.singletonList(SecurityQuery.builder()
           .roleRegex("admin")
           .principalRegex("user1")
           .build()))
@@ -198,7 +198,7 @@ public class ProducerBindingFilterTest {
     ProducerBindingKeyQuery keyQuery = ProducerBindingKeyQuery.builder()
       .build();
     SpecificationQuery specQuery = SpecificationQuery.builder()
-      .securities(Collections.singletonList(SecurityQuery.builder()
+      .security(Collections.singletonList(SecurityQuery.builder()
         .roleRegex("x")
         .principalRegex("x")
         .build()))
