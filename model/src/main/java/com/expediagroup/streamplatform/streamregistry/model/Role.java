@@ -15,11 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 
-@Data
-@AllArgsConstructor
+@Value
 public class Role {
-  private String name;
+  String name;
 }

@@ -68,6 +68,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 })
 public class Apply {
   static abstract class Base<K extends Key<S>, S extends Specification> extends GraphQLEventSenderAction {
+    static final ObjectMapper mapper = new ObjectMapper();
+
     @Option(names = "--description", required = true)
     protected String description;
     @Option(names = "--tag", converter = TagConverter.class)
@@ -77,7 +79,7 @@ public class Apply {
     @Option(names = "--configuration", required = true, converter = ObjectNodeConverter.class)
     protected ObjectNode configuration;
     @Option(names = "--security", converter = ObjectNodeConverter.class)
-    protected ObjectNode security = new ObjectMapper().createObjectNode();
+    protected ObjectNode security = mapper.createObjectNode();
 
     @Override
     public List<Event<?, ?>> events() {
@@ -85,7 +87,7 @@ public class Apply {
     }
 
     public Map<String, List<Principal>> convertSecurityMap(ObjectNode security) {
-      return new ObjectMapper().convertValue(security, new TypeReference<Map<String, List<String>>>(){})
+      return mapper.convertValue(security, new TypeReference<Map<String, List<String>>>(){})
         .entrySet().stream()
         .collect(Collectors.toMap(
           Map.Entry::getKey,

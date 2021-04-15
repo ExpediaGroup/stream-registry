@@ -18,14 +18,11 @@ package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
 
@@ -57,10 +54,10 @@ public class ProducerBindingFilterTest {
           Collections.singletonList(new Tag("name", "value")),
           "type",
           new ObjectMapper().createObjectNode(),
-        Stream.of(
-          new AbstractMap.SimpleEntry<>(new Role("admin"), Arrays.asList(new Principal("user1"))),
-          new AbstractMap.SimpleEntry<>(new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3")))
-        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+        ImmutableMap.of(
+          new Role("admin"), Arrays.asList(new Principal("user1")),
+          new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3"))
+        )
       ),
       null
   );

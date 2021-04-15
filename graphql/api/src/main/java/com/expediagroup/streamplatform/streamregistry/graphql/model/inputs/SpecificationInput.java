@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.Builder;
 import lombok.Value;
@@ -36,7 +37,7 @@ public class SpecificationInput {
   List<TagInput> tags;
   String type;
   ObjectNode configuration;
-  Map<Role, List<Principal>> security;
+  List<RoleInput> security;
 
   private static List<Tag> getTags(List<TagInput> input) {
     List<Tag> out = new ArrayList<>();
@@ -48,13 +49,20 @@ public class SpecificationInput {
     return out;
   }
 
+  private static Map<Role, List<Principal>> getSecurity(List<RoleInput> input) {
+    return input.stream().collect(Collectors.toMap(
+      role -> new Role(role.getRole()),
+      role -> role.getPrincipals().stream().map(Principal::new).collect(Collectors.toList())
+    ));
+  }
+
   public Specification asSpecification() {
     return new Specification(
         description,
         getTags(tags),
         type,
         configuration,
-        security
+        getSecurity(security)
     );
   }
 }

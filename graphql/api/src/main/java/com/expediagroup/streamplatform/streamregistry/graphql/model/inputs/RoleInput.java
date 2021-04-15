@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
+import java.util.List;
+
+import lombok.Builder;
 import lombok.Value;
 
 @Value
-public class Principal {
-  String name;
+@Builder
+public class RoleInput {
+  String role;
+  List<String> principals;
 }

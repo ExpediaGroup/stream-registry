@@ -16,13 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -61,10 +58,10 @@ final class SampleModel {
     specification.setTags(Collections.singletonList(new Tag("name", "value")));
     specification.setType("type");
     specification.setConfiguration(mapper.createObjectNode());
-    specification.setSecurity(java.util.stream.Stream.of(
-      new AbstractMap.SimpleEntry<>(new Role("admin"), Arrays.asList(new Principal("user1"))),
-      new AbstractMap.SimpleEntry<>(new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3")))
-    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+    specification.setSecurity(ImmutableMap.of(
+      new Role("admin"), Arrays.asList(new Principal("user1")),
+      new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3"))
+    ));
     return specification;
   }
 

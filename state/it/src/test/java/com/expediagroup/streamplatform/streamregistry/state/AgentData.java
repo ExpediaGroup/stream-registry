@@ -18,19 +18,18 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static java.util.UUID.randomUUID;
 import static lombok.AccessLevel.PRIVATE;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
@@ -71,10 +70,10 @@ public final class AgentData {
   }
 
   private static Map<String, List<Principal>> security() {
-    return Stream.of(
-      new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
-      new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
-    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    return ImmutableMap.of(
+      "admin", Arrays.asList(new Principal("user1")),
+      "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
+    );
   }
 
   private static <K extends Key<DefaultSpecification>> Entity<K, DefaultSpecification> entity(

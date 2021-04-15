@@ -19,16 +19,14 @@ import static com.google.common.collect.ObjectArrays.concat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
 
@@ -62,10 +60,10 @@ public class ApplyTest {
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode()
       .put("e", "f");
-  private final Map<String, List<Principal>> security = Stream.of(
-    new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
-    new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
-  ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  private final Map<String, List<Principal>> security = ImmutableMap.of(
+    "admin", Arrays.asList(new Principal("user1")),
+    "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
+  );
 
   private final DomainKey domainKey = new DomainKey("domain");
   private final SchemaKey schemaKey = new SchemaKey(domainKey, "schema");

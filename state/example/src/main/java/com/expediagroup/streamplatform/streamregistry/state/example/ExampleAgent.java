@@ -15,13 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.example;
 
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +26,7 @@ import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -80,10 +78,10 @@ public class ExampleAgent implements EntityViewListener {
             Collections.singletonList(new Tag("name", "value")),
             "type",
             mapper.createObjectNode(),
-            Stream.of(
-              new AbstractMap.SimpleEntry<>("admin", Arrays.asList(new Principal("user1"))),
-              new AbstractMap.SimpleEntry<>("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
-            ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+            ImmutableMap.of(
+              "admin", Arrays.asList(new Principal("user1")),
+              "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
+            )
         )
     ));
 
