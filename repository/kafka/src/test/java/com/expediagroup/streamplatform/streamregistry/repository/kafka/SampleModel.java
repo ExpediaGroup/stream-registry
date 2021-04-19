@@ -19,7 +19,6 @@ package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
@@ -28,8 +27,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Principal;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Role;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Security;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
@@ -58,9 +57,8 @@ final class SampleModel {
     specification.setTags(Collections.singletonList(new Tag("name", "value")));
     specification.setType("type");
     specification.setConfiguration(mapper.createObjectNode());
-    specification.setSecurity(ImmutableMap.of(
-      new Role("admin"), Arrays.asList(new Principal("user1")),
-      new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3"))
+    specification.setSecurity(Arrays.asList(
+      new Security("admin", Arrays.asList(new Principal("user1")))
     ));
     return specification;
   }

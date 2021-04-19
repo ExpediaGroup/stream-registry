@@ -23,13 +23,12 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SecurityQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Principal;
-import com.expediagroup.streamplatform.streamregistry.model.Role;
+import com.expediagroup.streamplatform.streamregistry.model.Security;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 public class SecurityMatchUtilityTest {
@@ -38,9 +37,9 @@ public class SecurityMatchUtilityTest {
     Collections.emptyList(),
     "type",
     new ObjectMapper().createObjectNode(),
-    ImmutableMap.of(
-      new Role("admin"), Arrays.asList(new Principal("user1")),
-      new Role("creator"), Arrays.asList(new Principal("user2"), new Principal("user3"))
+    Arrays.asList(
+      new Security("admin", Arrays.asList(new Principal("user1"))),
+      new Security("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
     )
   );
 

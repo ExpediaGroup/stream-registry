@@ -20,9 +20,11 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Value;
 
+import com.expediagroup.streamplatform.streamregistry.model.Principal;
+
 @Value
 @Builder
-public class RoleInput {
+public class SecurityInput {
   String role;
-  List<String> principals;
+  List<Principal> principals;
 }

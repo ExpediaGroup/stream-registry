@@ -18,9 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
@@ -52,10 +53,9 @@ final class SampleState {
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
       mapper.createObjectNode(),
-      ImmutableMap.of(
-        "admin", Arrays.asList(new Principal("user1")),
-        "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
-      )
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Arrays.asList(new Principal("user1")));
+      }}
     );
   }
 
@@ -65,10 +65,9 @@ final class SampleState {
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
       mapper.createObjectNode(),
-      ImmutableMap.of(
-        "admin", Arrays.asList(new Principal("user1")),
-        "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
-      ),
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Arrays.asList(new Principal("user1")));
+      }},
       schemaKey()
     );
   }

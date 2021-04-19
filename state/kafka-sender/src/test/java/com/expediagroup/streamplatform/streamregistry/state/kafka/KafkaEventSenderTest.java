@@ -24,13 +24,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -65,10 +65,10 @@ public class KafkaEventSenderTest {
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final DomainKey key = new DomainKey("domain");
-  private final Map<String, List<Principal>> security = ImmutableMap.of(
-    "admin", Arrays.asList(new Principal("user1")),
-    "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
-  );
+  private final Map<String, List<Principal>> security = new HashMap<String, List<Principal>>() {{
+    put("admin", Arrays.asList(new Principal("user1")));
+    put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+  }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode(), security);
   private final Event<DomainKey, DefaultSpecification> event = Event.specification(key, specification);
 

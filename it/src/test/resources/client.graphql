@@ -8,7 +8,9 @@ fragment specificationPart on Specification {
   configuration
   security{
     role
-    principals
+    principals{
+      name
+    }
   }
 }
 

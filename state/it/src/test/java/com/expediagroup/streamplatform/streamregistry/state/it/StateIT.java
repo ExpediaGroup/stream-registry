@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +35,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEventCorrelator;
@@ -57,10 +57,10 @@ public class StateIT {
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode();
   private final DomainKey key = new DomainKey("domain");
-  private final Map<String, List<Principal>> security = ImmutableMap.of(
-    "admin", Arrays.asList(new Principal("user1")),
-    "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
-  );
+  private final Map<String, List<Principal>> security = new HashMap<String, List<Principal>>() {{
+    put("admin", Arrays.asList(new Principal("user1")));
+    put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+  }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, security);
   private final ObjectNode statusValue = mapper.createObjectNode();
   private final StatusEntry statusEntry = new StatusEntry("statusName", statusValue);

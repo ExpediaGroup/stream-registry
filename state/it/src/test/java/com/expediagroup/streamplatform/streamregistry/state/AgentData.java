@@ -20,6 +20,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,6 @@ import lombok.Getter;
 import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
@@ -70,10 +69,10 @@ public final class AgentData {
   }
 
   private static Map<String, List<Principal>> security() {
-    return ImmutableMap.of(
-      "admin", Arrays.asList(new Principal("user1")),
-      "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
-    );
+    return new HashMap<String, List<Principal>>() {{
+      put("admin", Arrays.asList(new Principal("user1")));
+      put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+    }};
   }
 
   private static <K extends Key<DefaultSpecification>> Entity<K, DefaultSpecification> entity(

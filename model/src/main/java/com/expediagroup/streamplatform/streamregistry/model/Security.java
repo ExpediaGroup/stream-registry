@@ -15,9 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import java.util.List;
+
 import lombok.Value;
 
 @Value
-public class Role {
-  String name;
+public class Security {
+  String role;
+  List<Principal> principals;
 }

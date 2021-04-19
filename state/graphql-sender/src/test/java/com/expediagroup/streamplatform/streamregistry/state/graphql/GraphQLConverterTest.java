@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,6 @@ import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
 
@@ -60,10 +60,10 @@ public class GraphQLConverterTest {
   private final ObjectMapper mapper = new ObjectMapper();
   private final Tag tag = new Tag("name", "value");
   private final ObjectNode configuration = mapper.createObjectNode();
-  private final Map<String, List<Principal>> security = ImmutableMap.of(
-    "admin", Arrays.asList(new Principal("user1")),
-    "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
-  );
+  private final Map<String, List<Principal>> security = new HashMap<String, List<Principal>>() {{
+    put("admin", Arrays.asList(new Principal("user1")));
+    put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+  }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security);
   private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());

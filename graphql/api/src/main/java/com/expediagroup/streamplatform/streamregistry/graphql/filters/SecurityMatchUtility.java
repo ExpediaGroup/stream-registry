@@ -18,11 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 
 import java.util.List;
-import java.util.Map;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SecurityQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Principal;
-import com.expediagroup.streamplatform.streamregistry.model.Role;
+import com.expediagroup.streamplatform.streamregistry.model.Security;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 public class SecurityMatchUtility {
@@ -31,7 +30,7 @@ public class SecurityMatchUtility {
     return matchesAllSecurityQueries(specification == null ? null : specification.getSecurity(), securityQueries);
   }
 
-  private static boolean matchesAllSecurityQueries(Map<Role, List<Principal>> security, List<SecurityQuery> securityQueries) {
+  private static boolean matchesAllSecurityQueries(List<Security> security, List<SecurityQuery> securityQueries) {
     if (securityQueries == null || securityQueries.isEmpty()) {
       return true;
     }
@@ -46,13 +45,13 @@ public class SecurityMatchUtility {
     return true;
   }
 
-  private static boolean matchesAnyRole(Map<Role, List<Principal>> security, SecurityQuery securityQuery) {
+  private static boolean matchesAnyRole(List<Security> security, SecurityQuery securityQuery) {
     if (securityQuery == null) {
       return true;
     }
-    for (Map.Entry<Role, List<Principal>> role: security.entrySet()) {
-      if (matches(role.getKey().getName(), securityQuery.getRoleRegex())) {
-        for (Principal principal: role.getValue()) {
+    for (Security sec: security) {
+      if (matches(sec.getRole(), securityQuery.getRoleRegex())) {
+        for (Principal principal: sec.getPrincipals()) {
           if (matchesPrincipal(principal, securityQuery)) {
             return true;
           }

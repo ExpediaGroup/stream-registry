@@ -32,11 +32,10 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.Principal;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Role;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Security;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
@@ -92,12 +91,12 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
               .collect(toList()),
           specification.getType(),
           specification.getConfiguration(),
-          specification.getSecurity().entrySet().stream().collect(
-              Collectors.toMap(
-                  role -> new com.expediagroup.streamplatform.streamregistry.model.Role(role.getKey()),
-                  role -> role.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.model.Principal(principal.getName())).collect(toList())
+          specification.getSecurity().entrySet().stream().map(entry ->
+              new Security(
+                  entry.getKey(),
+                  entry.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.model.Principal(principal.getName())).collect(toList())
               )
-          )
+          ).collect(Collectors.toList())
       );
     }
 
@@ -131,13 +130,12 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           .collect(toList());
     }
 
-    protected Map<String, List<com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal>> convertSecurity(Map<Role, List<Principal>> security) {
-      return security.entrySet().stream()
+    protected Map<String, List<com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal>> convertSecurity(List<Security> security) {
+      return security.stream()
         .collect(Collectors.toMap(
-            role -> role.getKey().getName(),
-            role -> role.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal(principal.getName())).collect(toList())
-          )
-        );
+          Security::getRole,
+          sec -> sec.getPrincipals().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal(principal.getName())).collect(toList())
+        ));
     }
   }
 

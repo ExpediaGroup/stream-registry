@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,9 +32,9 @@ public class Specification {
   private List<Tag> tags = new ArrayList<>();
   private String type;
   private ObjectNode configuration;
-  private Map<Role, List<Principal>> security;
+  private List<Security> security = new ArrayList<>();
 
-  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration, Map<Role, List<Principal>> security) {
+  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration, List<Security> security) {
     this.description = description;
     this.tags = tags;
     this.type = type;

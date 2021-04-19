@@ -21,12 +21,12 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
 
@@ -60,10 +60,10 @@ public class ApplyTest {
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode()
       .put("e", "f");
-  private final Map<String, List<Principal>> security = ImmutableMap.of(
-    "admin", Arrays.asList(new Principal("user1")),
-    "creator", Arrays.asList(new Principal("user2"), new Principal("user3"))
-  );
+  private final Map<String, List<Principal>> security = new HashMap<String, List<Principal>>() {{
+    put("admin", Arrays.asList(new Principal("user1")));
+    put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+  }};
 
   private final DomainKey domainKey = new DomainKey("domain");
   private final SchemaKey schemaKey = new SchemaKey(domainKey, "schema");
