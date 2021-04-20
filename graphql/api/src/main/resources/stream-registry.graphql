@@ -33,13 +33,9 @@ type Tag {
 
 ############ Specification ############
 
-input PrincipalInput {
-    name: String
-}
-
 input SecurityInput {
-    role: String
-    principals: [PrincipalInput!]!
+    role: String!
+    principals: [String!]!
 }
 
 input SecurityQuery {
@@ -48,12 +44,12 @@ input SecurityQuery {
 }
 
 type Security {
-    role: String
+    role: String!
     principals: [Principal!]!
 }
 
 type Principal {
-    name: String
+    name: String!
 }
 
 ############ Specification ############

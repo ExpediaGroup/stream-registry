@@ -118,8 +118,8 @@ public class ITestDataFactory {
         .description(description)
         .tags(Collections.emptyList())
         .type(type)
-        .security(Collections.singletonList(SecurityInput.builder().role("admin").principals(
-          Collections.singletonList(PrincipalInput.builder().name("user1").build())
+        .security(Collections.singletonList(
+          SecurityInput.builder().role("admin").principals(Collections.singletonList("user1")
         ).build()));
   }
 

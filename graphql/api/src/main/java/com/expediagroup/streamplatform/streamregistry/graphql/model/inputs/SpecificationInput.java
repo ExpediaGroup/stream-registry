@@ -51,7 +51,7 @@ public class SpecificationInput {
   private static List<Security> getSecurity(List<SecurityInput> input) {
     return input.stream().map(si -> new Security(
       si.getRole(),
-      si.getPrincipals().stream().map(p -> new Principal(p.getName())).collect(Collectors.toList())
+      si.getPrincipals().stream().map(Principal::new).collect(Collectors.toList())
     )).collect(Collectors.toList());
   }
 
