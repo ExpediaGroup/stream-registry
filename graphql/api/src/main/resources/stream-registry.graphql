@@ -33,17 +33,44 @@ type Tag {
 
 ############ Specification ############
 
+input SecurityInput {
+    role: String!
+    principals: [PrincipalInput!]!
+}
+
+input PrincipalInput {
+    name: String!
+}
+
+input SecurityQuery {
+    roleRegex: String
+    principalRegex: String
+}
+
+type Security {
+    role: String!
+    principals: [Principal!]!
+}
+
+type Principal {
+    name: String!
+}
+
+############ Specification ############
+
 input SpecificationInput {
     description: String!
     tags: [TagInput!]!
     type: String!
     configuration: ObjectNode!
+    security: [SecurityInput!]!
 }
 
 input SpecificationQuery {
     descriptionRegex: String
     tags: [TagQuery!]
     typeRegex: String
+    security: [SecurityQuery!]
 }
 
 type Specification {
@@ -51,6 +78,7 @@ type Specification {
     tags: [Tag!]!
     type: String!
     configuration: ObjectNode!
+    security: [Security!]!
 }
 
 ############ Domain ############

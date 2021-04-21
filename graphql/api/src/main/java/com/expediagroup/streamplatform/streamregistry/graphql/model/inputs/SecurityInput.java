@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.model.specification;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import java.util.List;
-import java.util.Map;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.Builder;
+import lombok.Value;
 
-public interface Specification {
-  String getDescription();
-
-  List<Tag> getTags();
-
-  String getType();
-
-  ObjectNode getConfiguration();
-
-  Map<String, List<Principal>> getSecurity();
+@Value
+@Builder
+public class SecurityInput {
+  String role;
+  List<PrincipalInput> principals;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,14 @@ public class Specification {
   private List<Tag> tags = new ArrayList<>();
   private String type;
   private ObjectNode configuration;
+  private List<Security> security = new ArrayList<>();
 
-  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration) {
+  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration, List<Security> security) {
     this.description = description;
     this.tags = tags;
     this.type = type;
     this.configuration = configuration;
+    this.security = security;
   }
 
   public List<Tag> getTags() {

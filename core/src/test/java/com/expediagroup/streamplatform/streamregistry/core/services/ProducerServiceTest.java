@@ -22,9 +22,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,9 +33,12 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ProducerVa
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
 
 @RunWith(MockitoJUnitRunner.class)

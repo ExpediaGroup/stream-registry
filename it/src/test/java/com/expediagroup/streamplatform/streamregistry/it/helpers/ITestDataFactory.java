@@ -68,18 +68,7 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.Upsert
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.InfrastructureKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SpecificationInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StatusInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ZoneKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.*;
 
 
 public class ITestDataFactory {
@@ -128,7 +117,12 @@ public class ITestDataFactory {
         .configuration(mapper.createObjectNode().put(key, value))
         .description(description)
         .tags(Collections.emptyList())
-        .type(type);
+        .type(type)
+        .security(Collections.singletonList(
+          SecurityInput.builder().role("admin").principals(
+            Collections.singletonList(PrincipalInput.builder().name("user1").build())
+          ).build())
+        );
   }
 
   public UpsertDomainMutation.Builder upsertDomainMutationBuilder() {

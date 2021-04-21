@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [unreleased]
 ### Added
 - Implemented entity delete functionality.
+- Added `security` to Specification models.
+
+### Changed
+- Added `security` to AvroSpecification and AvroStreamSpecification schemas, defaulting to empty map.
 
 ## [0.17.0] - 2021-01-29
 ### Changed

@@ -22,9 +22,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,9 +33,12 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ConsumerVa
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 
 @RunWith(MockitoJUnitRunner.class)

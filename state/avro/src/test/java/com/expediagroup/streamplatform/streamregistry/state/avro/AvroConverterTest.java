@@ -20,7 +20,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import lombok.val;
 
@@ -33,6 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -50,13 +54,21 @@ public class AvroConverterTest {
       "description",
       Collections.singletonList(new AvroTag("name", "value")),
       "type",
-      new AvroObject(Collections.singletonMap("foo", "bar"))
+      new AvroObject(Collections.singletonMap("foo", "bar")),
+      new HashMap<String, List<AvroPrincipal>>() {{
+        put("admin", Arrays.asList(new AvroPrincipal("user1")));
+        put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+      }}
   );
   private final AvroStreamSpecification avroStreamSpecification = new AvroStreamSpecification(
       "description",
       Collections.singletonList(new AvroTag("name", "value")),
       "type",
       new AvroObject(Collections.singletonMap("foo", "bar")),
+      new HashMap<String, List<AvroPrincipal>>() {{
+        put("admin", Arrays.asList(new AvroPrincipal("user1")));
+        put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+      }},
       new AvroSchemaKey(avroDomainKey, "schema")
   );
 
@@ -75,7 +87,11 @@ public class AvroConverterTest {
       "description",
       Collections.singletonList(new Tag("name", "value")),
       "type",
-      mapper.createObjectNode().put("foo", "bar")
+      mapper.createObjectNode().put("foo", "bar"),
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Arrays.asList(new Principal("user1")));
+        put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+      }}
   );
   private final StatusEntry statusEntry = new StatusEntry("statusName", mapper.createObjectNode().put("foo", "baz"));
   private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
@@ -84,6 +100,10 @@ public class AvroConverterTest {
       Collections.singletonList(new Tag("name", "value")),
       "type",
       mapper.createObjectNode().put("foo", "bar"),
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Arrays.asList(new Principal("user1")));
+        put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+      }},
       new Entity.SchemaKey(domainKey, "schema")
   );
 

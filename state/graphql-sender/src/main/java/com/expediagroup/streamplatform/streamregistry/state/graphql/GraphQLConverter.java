@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.val;
 
@@ -29,9 +30,11 @@ import com.expediagroup.streamplatform.streamregistry.state.graphql.type.Consume
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.PrincipalInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SecurityInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.StreamBindingKeyInput;
@@ -116,6 +119,15 @@ class GraphQLConverter {
               .collect(toList()))
           .type(specification.getType())
           .configuration(specification.getConfiguration())
+          .security(specification.getSecurity().entrySet().stream().map(
+            role -> SecurityInput.builder()
+              .role(role.getKey())
+              .principals(
+                role.getValue().stream().map(
+                  pi -> PrincipalInput.builder().name(pi.getName()).build()
+                ).collect(Collectors.toList())
+              ).build()
+          ).collect(Collectors.toList()))
           .build();
     }
 

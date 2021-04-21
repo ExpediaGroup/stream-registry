@@ -18,6 +18,7 @@ package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,12 +26,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SecurityQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.TagQuery;
+import com.expediagroup.streamplatform.streamregistry.model.Principal;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Security;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
+
 
 public class ProducerBindingFilterTest {
 
@@ -47,7 +52,11 @@ public class ProducerBindingFilterTest {
           "description",
           Collections.singletonList(new Tag("name", "value")),
           "type",
-          new ObjectMapper().createObjectNode()
+          new ObjectMapper().createObjectNode(),
+          Arrays.asList(
+            new Security("admin", Arrays.asList(new Principal("user1"))),
+            new Security("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
+          )
       ),
       null
   );
@@ -69,6 +78,10 @@ public class ProducerBindingFilterTest {
             .valueRegex("value")
             .build()))
         .typeRegex("type")
+        .security(Collections.singletonList(SecurityQuery.builder()
+          .roleRegex("admin")
+          .principalRegex("user1")
+          .build()))
         .build();
 
     assertTrue(new ProducerBindingFilter(keyQuery, specQuery).test(ProducerBinding));
@@ -172,6 +185,20 @@ public class ProducerBindingFilterTest {
     SpecificationQuery specQuery = SpecificationQuery.builder()
         .typeRegex("x")
         .build();
+
+    assertFalse(new ProducerBindingFilter(keyQuery, specQuery).test(ProducerBinding));
+  }
+
+  @Test
+  public void securityDoesNotMatch() {
+    ProducerBindingKeyQuery keyQuery = ProducerBindingKeyQuery.builder()
+      .build();
+    SpecificationQuery specQuery = SpecificationQuery.builder()
+      .security(Collections.singletonList(SecurityQuery.builder()
+        .roleRegex("x")
+        .principalRegex("x")
+        .build()))
+      .build();
 
     assertFalse(new ProducerBindingFilter(keyQuery, specQuery).test(ProducerBinding));
   }

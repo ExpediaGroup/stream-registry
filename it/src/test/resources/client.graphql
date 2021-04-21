@@ -6,6 +6,12 @@ fragment specificationPart on Specification {
   }
   type
   configuration
+  security{
+    role
+    principals{
+      name
+    }
+  }
 }
 
 fragment StatusPart on Status{

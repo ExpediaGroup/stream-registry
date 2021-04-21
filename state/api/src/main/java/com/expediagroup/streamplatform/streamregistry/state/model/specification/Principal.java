@@ -15,19 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.model.specification;
 
-import java.util.List;
-import java.util.Map;
+import lombok.NonNull;
+import lombok.Value;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-public interface Specification {
-  String getDescription();
-
-  List<Tag> getTags();
-
-  String getType();
-
-  ObjectNode getConfiguration();
-
-  Map<String, List<Principal>> getSecurity();
+@Value
+public class Principal {
+  @NonNull String name;
 }

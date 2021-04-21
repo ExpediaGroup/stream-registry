@@ -19,9 +19,13 @@ import static com.expediagroup.streamplatform.streamregistry.state.model.event.E
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import picocli.CommandLine.Command;
@@ -45,6 +49,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
@@ -63,6 +68,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 })
 public class Apply {
   static abstract class Base<K extends Key<S>, S extends Specification> extends GraphQLEventSenderAction {
+    static final ObjectMapper mapper = new ObjectMapper();
+
     @Option(names = "--description", required = true)
     protected String description;
     @Option(names = "--tag", converter = TagConverter.class)
@@ -71,10 +78,21 @@ public class Apply {
     protected String type;
     @Option(names = "--configuration", required = true, converter = ObjectNodeConverter.class)
     protected ObjectNode configuration;
+    @Option(names = "--security", converter = ObjectNodeConverter.class)
+    protected ObjectNode security = mapper.createObjectNode();
 
     @Override
     public List<Event<?, ?>> events() {
       return Collections.singletonList(specification(getEntityOptions().key(), getSpecification()));
+    }
+
+    public Map<String, List<Principal>> convertSecurityMap(ObjectNode security) {
+      return mapper.convertValue(security, new TypeReference<Map<String, List<String>>>(){})
+        .entrySet().stream()
+        .collect(Collectors.toMap(
+          Map.Entry::getKey,
+          entry -> entry.getValue().stream().map(Principal::new).collect(Collectors.toList())
+        ));
     }
 
     protected abstract EntityOptions<K, S> getEntityOptions();
@@ -85,7 +103,7 @@ public class Apply {
   static abstract class Default<K extends Key<DefaultSpecification>> extends Base<K, DefaultSpecification> {
     @Override
     protected DefaultSpecification getSpecification() {
-      return new DefaultSpecification(description, tags, type, configuration);
+      return new DefaultSpecification(description, tags, type, configuration, convertSecurityMap(security));
     }
   }
 
@@ -105,7 +123,7 @@ public class Apply {
 
     @Override
     protected StreamSpecification getSpecification() {
-      return new StreamSpecification(description, tags, type, configuration, entityOptions.schemaKey());
+      return new StreamSpecification(description, tags, type, configuration, convertSecurityMap(security), entityOptions.schemaKey());
     }
   }
 

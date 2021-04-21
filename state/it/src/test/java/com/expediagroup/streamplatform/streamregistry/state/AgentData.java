@@ -19,7 +19,10 @@ import static java.util.UUID.randomUUID;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 
@@ -45,7 +49,8 @@ public final class AgentData {
   private final SpecificationEvent<DomainKey, DefaultSpecification> specificationEvent;
 
   public AgentData withTags(List<Tag> tags) {
-    val specification = new DefaultSpecification(randomUUID().toString(), tags, "type", new ObjectMapper().createObjectNode());
+
+    val specification = new DefaultSpecification(randomUUID().toString(), tags, "type", new ObjectMapper().createObjectNode(), security());
     return new AgentData(key, specification, entity(key, specification), specificationEvent(key, specification));
   }
 
@@ -60,7 +65,14 @@ public final class AgentData {
   }
 
   private static DefaultSpecification defaultSpecification() {
-    return new DefaultSpecification(randomUUID().toString(), new ArrayList<>(), "type", new ObjectMapper().createObjectNode());
+    return new DefaultSpecification(randomUUID().toString(), new ArrayList<>(), "type", new ObjectMapper().createObjectNode(), security());
+  }
+
+  private static Map<String, List<Principal>> security() {
+    return new HashMap<String, List<Principal>>() {{
+      put("admin", Arrays.asList(new Principal("user1")));
+      put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+    }};
   }
 
   private static <K extends Key<DefaultSpecification>> Entity<K, DefaultSpecification> entity(

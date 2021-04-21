@@ -15,20 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
-import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,16 +42,23 @@ import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Optional.empty;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StreamServiceTest {

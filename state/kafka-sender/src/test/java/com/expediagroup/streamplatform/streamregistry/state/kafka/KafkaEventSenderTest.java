@@ -22,7 +22,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lombok.val;
 
@@ -51,6 +55,7 @@ import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSend
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KafkaEventSenderTest {
@@ -60,7 +65,11 @@ public class KafkaEventSenderTest {
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final DomainKey key = new DomainKey("domain");
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode());
+  private final Map<String, List<Principal>> security = new HashMap<String, List<Principal>>() {{
+    put("admin", Arrays.asList(new Principal("user1")));
+    put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+  }};
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode(), security);
   private final Event<DomainKey, DefaultSpecification> event = Event.specification(key, specification);
 
   @Mock private AvroEvent avroEvent;

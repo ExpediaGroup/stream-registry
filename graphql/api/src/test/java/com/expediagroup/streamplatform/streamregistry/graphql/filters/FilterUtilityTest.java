@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,10 +79,10 @@ public class FilterUtilityTest {
     query = SpecificationQuery.builder().typeRegex(REGEX).build();
     assertFalse(FilterUtility.matchesSpecification(specification, query));
 
-    specification = new Specification(MATCH, null, FAIL, null);
+    specification = new Specification(MATCH, null, FAIL, null, null);
     assertFalse(FilterUtility.matchesSpecification(specification, query));
 
-    specification = new Specification(MATCH, null, MATCH, null);
+    specification = new Specification(MATCH, null, MATCH, null, null);
     assertTrue(FilterUtility.matchesSpecification(specification, query));
   }
 }

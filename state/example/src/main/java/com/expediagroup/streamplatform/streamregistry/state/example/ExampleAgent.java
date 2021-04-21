@@ -15,7 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.example;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -37,6 +40,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 
@@ -74,7 +78,11 @@ public class ExampleAgent implements EntityViewListener {
             "description",
             Collections.singletonList(new Tag("name", "value")),
             "type",
-            mapper.createObjectNode()
+            mapper.createObjectNode(),
+            new HashMap<String, List<Principal>>() {{
+              put("admin", Arrays.asList(new Principal("user1")));
+              put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+            }}
         )
     ));
 

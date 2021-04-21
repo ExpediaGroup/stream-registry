@@ -16,7 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
-import java.util.Collections;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,9 +24,11 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Principal;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
+import com.expediagroup.streamplatform.streamregistry.model.Security;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
@@ -55,6 +57,9 @@ final class SampleModel {
     specification.setTags(Collections.singletonList(new Tag("name", "value")));
     specification.setType("type");
     specification.setConfiguration(mapper.createObjectNode());
+    specification.setSecurity(Arrays.asList(
+      new Security("admin", Arrays.asList(new Principal("user1")))
+    ));
     return specification;
   }
 

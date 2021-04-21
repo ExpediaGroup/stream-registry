@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.SecurityMatchUtility.matchesAllSecurityQueries;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.TagMatchUtility.matchesAllTagQueries;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SchemaKeyQuery;
@@ -46,6 +47,9 @@ public class FilterUtility {
       return false;
     }
     if (!matches(specification.getType(), specQuery.getTypeRegex())) {
+      return false;
+    }
+    if (!matchesAllSecurityQueries(specification, specQuery.getSecurity())) {
       return false;
     }
     return matchesAllTagQueries(specification, specQuery.getTags());

@@ -16,7 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +36,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamK
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -48,7 +52,10 @@ final class SampleState {
       "description",
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
-      mapper.createObjectNode()
+      mapper.createObjectNode(),
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Arrays.asList(new Principal("user1")));
+      }}
     );
   }
 
@@ -58,6 +65,9 @@ final class SampleState {
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
       mapper.createObjectNode(),
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Arrays.asList(new Principal("user1")));
+      }},
       schemaKey()
     );
   }

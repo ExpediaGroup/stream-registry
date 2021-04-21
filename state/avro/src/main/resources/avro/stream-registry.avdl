@@ -56,6 +56,10 @@ protocol StreamRegistry {
     union { null, string } value = null;
   }
 
+  record AvroPrincipal {
+    string name;
+  }
+
   record AvroObject {
     map<union{ AvroObject, AvroArray, string, long, double, boolean, null }> value;
   }
@@ -69,6 +73,7 @@ protocol StreamRegistry {
     array<AvroTag> tags;
     string type;
     AvroObject configuration;
+    map<array<AvroPrincipal>> security = {};
   }
 
   record AvroStreamSpecification {
@@ -76,6 +81,7 @@ protocol StreamRegistry {
     array<AvroTag> tags;
     string type;
     AvroObject configuration;
+    map<array<AvroPrincipal>> security = {};
     AvroSchemaKey schemaKey;
   }
 
