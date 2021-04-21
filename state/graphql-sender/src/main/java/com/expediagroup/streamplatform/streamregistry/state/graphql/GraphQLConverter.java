@@ -30,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.state.graphql.type.Consume
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.PrincipalInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SchemaKeyInput;
@@ -57,7 +58,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Specific
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -120,9 +120,13 @@ class GraphQLConverter {
           .type(specification.getType())
           .configuration(specification.getConfiguration())
           .security(specification.getSecurity().entrySet().stream().map(
-            role -> SecurityInput.builder().role(role.getKey()).principals(
-              role.getValue().stream().map(Principal::getName).collect(Collectors.toList())
-            ).build()
+            role -> SecurityInput.builder()
+              .role(role.getKey())
+              .principals(
+                role.getValue().stream().map(
+                  pi -> PrincipalInput.builder().name(pi.getName()).build()
+                ).collect(Collectors.toList())
+              ).build()
           ).collect(Collectors.toList()))
           .build();
     }

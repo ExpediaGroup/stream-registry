@@ -119,8 +119,10 @@ public class ITestDataFactory {
         .tags(Collections.emptyList())
         .type(type)
         .security(Collections.singletonList(
-          SecurityInput.builder().role("admin").principals(Collections.singletonList("user1")
-        ).build()));
+          SecurityInput.builder().role("admin").principals(
+            Collections.singletonList(PrincipalInput.builder().name("user1").build())
+          ).build())
+        );
   }
 
   public UpsertDomainMutation.Builder upsertDomainMutationBuilder() {

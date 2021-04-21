@@ -15,14 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
-import java.util.List;
-
 import lombok.Builder;
 import lombok.Value;
 
 @Value
 @Builder
-public class SecurityInput {
-  String role;
-  List<PrincipalInput> principals;
+public class PrincipalInput {
+  String name;
 }

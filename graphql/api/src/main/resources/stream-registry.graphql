@@ -35,12 +35,16 @@ type Tag {
 
 input SecurityInput {
     role: String!
-    principals: [String!]!
+    principals: [PrincipalInput!]!
+}
+
+input PrincipalInput {
+    name: String!
 }
 
 input SecurityQuery {
-    roleRegex: String!
-    principalRegex: String!
+    roleRegex: String
+    principalRegex: String
 }
 
 type Security {
