@@ -63,7 +63,7 @@ input SpecificationInput {
     tags: [TagInput!]!
     type: String!
     configuration: ObjectNode!
-    security: [SecurityInput!]!
+    security: [SecurityInput!]
 }
 
 input SpecificationQuery {
