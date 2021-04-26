@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,9 @@ public class SpecificationInput {
   }
 
   private static List<Security> getSecurity(List<SecurityInput> input) {
+    if (null == input)
+      return Collections.emptyList();
+
     return input.stream().map(si -> new Security(
       si.getRole(),
       si.getPrincipals().stream().map(pi -> new Principal(pi.getName())).collect(Collectors.toList())
