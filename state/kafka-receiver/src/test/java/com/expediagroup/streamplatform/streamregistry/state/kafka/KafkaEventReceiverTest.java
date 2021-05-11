@@ -16,7 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
 import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
-import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.CLOSED;
+import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.NOT_RUNNING;
 import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.ERROR;
 import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.RUNNING;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
@@ -117,7 +117,7 @@ public class KafkaEventReceiverTest {
     assertThat(underTest.getState(), is(RUNNING));
     latch.await(1, SECONDS);
     underTest.close();
-    assertThat(underTest.getState(), is(CLOSED));
+    assertThat(underTest.getState(), is(NOT_RUNNING));
 
     val inOrder = Mockito.inOrder(consumer, listener, correlator);
     inOrder.verify(consumer).assign(topicPartitions);
@@ -149,7 +149,7 @@ public class KafkaEventReceiverTest {
     latch.await(1, SECONDS);
     assertThat(underTest.getState(), is(RUNNING));
     underTest.close();
-    assertThat(underTest.getState(), is(CLOSED));
+    assertThat(underTest.getState(), is(NOT_RUNNING));
 
     val inOrder = Mockito.inOrder(consumer, listener, correlator);
     inOrder.verify(consumer).assign(topicPartitions);
@@ -172,7 +172,7 @@ public class KafkaEventReceiverTest {
     await.untilAsserted(() -> assertThat(underTest.getState(), is(ERROR)));
 
     underTest.close();
-    assertThat(underTest.getState(), is(CLOSED));
+    assertThat(underTest.getState(), is(NOT_RUNNING));
   }
 
   @Test
@@ -212,7 +212,7 @@ public class KafkaEventReceiverTest {
     await.untilAsserted(() -> assertThat(underTest.getState(), is(ERROR)));
     verify(consumer, times(11)).poll(any());
     underTest.close();
-    assertThat(underTest.getState(), is(CLOSED));
+    assertThat(underTest.getState(), is(NOT_RUNNING));
   }
 
   @Test(expected = IllegalStateException.class)

@@ -16,9 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
 import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
-import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.CLOSED;
+import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.NOT_RUNNING;
 import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.ERROR;
 import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.CREATED;
+import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.PENDING_SHUTDOWN;
 import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.RUNNING;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG;
@@ -163,9 +164,10 @@ public class KafkaEventReceiver implements EventReceiver {
 
   @Override
   public void close() {
-    state.set(CLOSED);
+    state.set(PENDING_SHUTDOWN);
     executorService.shutdown();
     consumer.close();
+    state.set(NOT_RUNNING);
   }
 
   public State getState() {
@@ -198,6 +200,7 @@ public class KafkaEventReceiver implements EventReceiver {
     CREATED,
     RUNNING,
     ERROR,
-    CLOSED
+    PENDING_SHUTDOWN,
+    NOT_RUNNING
   }
 }
