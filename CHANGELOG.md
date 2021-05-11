@@ -5,12 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
+### Added 
+- Added `State` property to `KafkaEventReceiver`
+
+## [0.19.1] - 2021-04-26
+### Changed
+- Made the SecurityInput list nullable
+
+## [0.19.0] - 2021-04-21 
 ### Added
-- Implemented entity delete functionality.
 - Added `security` to Specification models.
 
 ### Changed
 - Added `security` to AvroSpecification and AvroStreamSpecification schemas, defaulting to empty map.
+
+## [0.18.0] - 2021-03-24
+### Added
+- Implemented entity delete functionality.
 
 ## [0.17.0] - 2021-01-29
 ### Changed
