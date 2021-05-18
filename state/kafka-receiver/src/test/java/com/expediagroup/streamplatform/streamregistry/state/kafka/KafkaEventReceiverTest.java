@@ -160,12 +160,13 @@ public class KafkaEventReceiverTest {
   }
 
   @Test
-  public void errorWhenWrongPartitionCount() {
+  public void errorWhenMoreThanOnePartition() {
     when(config.getTopic()).thenReturn(topic);
-    val topicPartitionsList = new ArrayList<PartitionInfo>();
-    topicPartitionsList.add(partitionInfo);
-    topicPartitionsList.add(partitionInfo);
-    when(consumer.partitionsFor(topic)).thenReturn(topicPartitionsList);
+    val multiplePartitions = new ArrayList<PartitionInfo>() {{
+      add(partitionInfo);
+      add(partitionInfo);
+    }};
+    when(consumer.partitionsFor(topic)).thenReturn(multiplePartitions);
 
     underTest.receive(listener);
     verify(consumer, timeout(100)).partitionsFor(topic);
