@@ -5,12 +5,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
+### Changed
+- Exposed multi-status repo model out to GQL endpoint, keeping backwards compatibility.
+  It should now be possible to provide multiple status for a single entity.
+
+## [0.19.1] - 2021-04-26
+### Changed
+- SecurityInput list in SpecificationInput nullable (#284)
+
+## [0.19.0] - 2021-02-21
 ### Added
-- Implemented entity delete functionality.
 - Added `security` to Specification models.
 
 ### Changed
 - Added `security` to AvroSpecification and AvroStreamSpecification schemas, defaulting to empty map.
+
+## [0.18.0] - 2021-03-24
+### Added
+- add graphql delete functionality (#273)
+
+## [0.17.1] - 2021-03-01
+### Changed
+-  resolving kotlin-stdlib versions in graphql-sender (#275)
 
 ## [0.17.0] - 2021-01-29
 ### Changed
