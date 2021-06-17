@@ -15,25 +15,34 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
+import java.time.Instant;
 
-import java.util.Map;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
-public class Status {
+public class StatusEntry {
+  private String name;
+  private ObjectNode value;
+  private Instant timestamp;
+  private StatusEntry.State state;
 
-  private Map<String, StatusEntry> entries;
-
-  public Status(Map<String, StatusEntry> entries) {
-    this.entries = unmodifiableMap(entries);
+  public ObjectNode getValue() {
+    return value == null ? new ObjectMapper().createObjectNode() : value;
   }
 
-  public Map<String, StatusEntry> getEntries() {
-    return entries == null ? emptyMap() : entries;
+  public enum State {
+    PENDING,
+    OK,
+    ERROR,
+    UNDEFINED
   }
 }
