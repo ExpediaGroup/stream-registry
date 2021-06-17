@@ -16,8 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
+import static java.util.Collections.singletonList;
+
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,7 +52,7 @@ final class SampleState {
   private static DefaultSpecification specification() {
     return new DefaultSpecification(
       "description",
-      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
       mapper.createObjectNode(),
       new HashMap<String, List<Principal>>() {{
@@ -62,7 +64,7 @@ final class SampleState {
   static StreamSpecification streamSpecification() {
     return new StreamSpecification(
       "description",
-      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
       "type",
       mapper.createObjectNode(),
       new HashMap<String, List<Principal>>() {{
@@ -73,7 +75,9 @@ final class SampleState {
   }
 
   static DefaultStatus status() {
-    return new DefaultStatus().with(new StatusEntry("agentStatus", mapper.createObjectNode()));
+    return new DefaultStatus().with(
+      new StatusEntry("agentStatus", mapper.createObjectNode(), Instant.EPOCH, StatusEntry.State.UNDEFINED)
+    );
   }
 
   static DomainKey domainKey() {
@@ -169,6 +173,9 @@ final class SampleState {
   }
 
   static Event<DomainKey, DefaultSpecification> domainStatusEvent() {
-    return Event.status(domainKey(), new StatusEntry("agentStatus", mapper.createObjectNode()));
+    return Event.status(
+      domainKey(),
+      new StatusEntry("agentStatus", mapper.createObjectNode(), Instant.EPOCH, StatusEntry.State.UNDEFINED)
+    );
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -66,8 +67,12 @@ public class DefaultRepositoryTest {
   public void saveExistingSpecificationAndStatus() {
     Entity<Entity.DomainKey, DefaultSpecification> domain = SampleState.domain();
     domain = domain.withSpecification(domain.getSpecification().withDescription("old description"));
-    domain = domain.withStatus(new DefaultStatus().with(new StatusEntry("agentStatus", mapper
-        .createObjectNode().put("foo", "bar"))));
+    domain = domain.withStatus(new DefaultStatus().with(new StatusEntry(
+      "agentStatus",
+      mapper.createObjectNode().put("foo", "bar"),
+      Instant.EPOCH,
+      StatusEntry.State.UNDEFINED
+    )));
 
     when(view.get(SampleState.domainKey())).thenReturn(Optional.of(domain));
 
@@ -81,7 +86,12 @@ public class DefaultRepositoryTest {
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
     verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
-    verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender).send(Event.status(expected.getKey(), new StatusEntry(
+      "agentStatus",
+      mapper.createObjectNode(),
+      Instant.EPOCH,
+      StatusEntry.State.UNDEFINED
+    )));
   }
 
   @Test
@@ -100,14 +110,23 @@ public class DefaultRepositoryTest {
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
     verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
-    verify(sender, never()).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender, never()).send(Event.status(expected.getKey(), new StatusEntry(
+      "agentStatus",
+      mapper.createObjectNode(),
+      Instant.EPOCH,
+      StatusEntry.State.UNDEFINED
+    )));
   }
 
   @Test
   public void saveExistingStatusOnly() {
     Entity<Entity.DomainKey, DefaultSpecification> domain = SampleState.domain();
-    domain = domain.withStatus(new DefaultStatus().with(new StatusEntry("agentStatus", mapper
-        .createObjectNode().put("foo", "bar"))));
+    domain = domain.withStatus(new DefaultStatus().with(new StatusEntry(
+      "agentStatus",
+      mapper.createObjectNode().put("foo", "bar"),
+      Instant.EPOCH,
+      StatusEntry.State.UNDEFINED
+    )));
 
     when(view.get(SampleState.domainKey())).thenReturn(Optional.of(domain));
 
@@ -120,7 +139,12 @@ public class DefaultRepositoryTest {
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
     verify(sender, never()).send(Event.specification(expected.getKey(), expected.getSpecification()));
-    verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender).send(Event.status(expected.getKey(), new StatusEntry(
+      "agentStatus",
+      mapper.createObjectNode(),
+      Instant.EPOCH,
+      StatusEntry.State.UNDEFINED
+    )));
   }
 
   @Test
@@ -137,7 +161,12 @@ public class DefaultRepositoryTest {
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
     verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
-    verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+    verify(sender).send(Event.status(expected.getKey(), new StatusEntry(
+      "agentStatus",
+      mapper.createObjectNode().put("foo", "bar"),
+      Instant.EPOCH,
+      StatusEntry.State.UNDEFINED
+    )));
   }
 
   @Test

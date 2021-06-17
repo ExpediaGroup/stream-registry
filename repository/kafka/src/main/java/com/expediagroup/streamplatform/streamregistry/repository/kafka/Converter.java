@@ -16,15 +16,13 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.stereotype.Component;
 
@@ -76,58 +74,69 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
   }
 
   abstract class BaseConverter<
-      ME extends com.expediagroup.streamplatform.streamregistry.model.Entity<MK>,
-      MK,
-      SK extends Entity.Key<SS>,
-      SS extends com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification>
-      implements Converter<ME, MK, SK, SS> {
+    ME extends com.expediagroup.streamplatform.streamregistry.model.Entity<MK>,
+    MK,
+    SK extends Entity.Key<SS>,
+    SS extends com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification>
+    implements Converter<ME, MK, SK, SS> {
 
     @Override
     public Specification convertSpecification(SS specification) {
       return new Specification(
-          specification.getDescription(),
-          specification.getTags().stream()
-              .map(tag -> new com.expediagroup.streamplatform.streamregistry.model.Tag(tag.getName(), tag.getValue()))
-              .collect(toList()),
-          specification.getType(),
-          specification.getConfiguration(),
-          specification.getSecurity().entrySet().stream().map(entry ->
-              new Security(
-                  entry.getKey(),
-                  entry.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.model.Principal(principal.getName())).collect(toList())
-              )
-          ).collect(Collectors.toList())
+        specification.getDescription(),
+        specification.getTags().stream()
+          .map(tag -> new com.expediagroup.streamplatform.streamregistry.model.Tag(tag.getName(), tag.getValue()))
+          .collect(toList()),
+        specification.getType(),
+        specification.getConfiguration(),
+        specification.getSecurity().entrySet().stream().map(entry ->
+          new Security(
+            entry.getKey(),
+            entry.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.model.Principal(principal.getName())).collect(toList())
+          )
+        ).collect(Collectors.toList())
       );
     }
 
     @Override
     public Entity<SK, SS> convertEntity(ME entity) {
       return new Entity<>(
-          convertKey(entity.getKey()),
-          convertSpecification(entity),
-          convert(entity.getStatus())
+        convertKey(entity.getKey()),
+        convertSpecification(entity),
+        convert(entity.getStatus())
       );
     }
 
     protected Status convertStatus(com.expediagroup.streamplatform.streamregistry.state.model.status.Status status) {
       return new Status(
-          status.getValue("agentStatus")
+        status.getEntries().stream().collect(toMap(
+          e -> e.getName(),
+          e -> new com.expediagroup.streamplatform.streamregistry.model.StatusEntry(
+            e.getName(),
+            e.getValue(),
+            e.getTimestamp(),
+            com.expediagroup.streamplatform.streamregistry.model.StatusEntry.State.valueOf(e.getState().name())
+          )
+        ))
       );
     }
 
     protected com.expediagroup.streamplatform.streamregistry.state.model.status.Status convert(Status status) {
-      DefaultStatus defaultStatus = new DefaultStatus();
-      ObjectNode value = Optional.ofNullable(status).map(Status::getObjectNode).orElse(null);
-      if (value != null) {
-        defaultStatus = (DefaultStatus) defaultStatus.with(new StatusEntry("agentStatus", value));
-      }
-      return defaultStatus;
+      List<StatusEntry> entries = status.getEntries().values().stream().map(
+          e -> new StatusEntry(
+            e.getName(),
+            e.getValue(),
+            e.getTimestamp(),
+            StatusEntry.State.valueOf(e.getState().name())
+          )
+        ).collect(toList());
+      return new DefaultStatus().withAll(entries);
     }
 
     protected List<com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag> convertTags(List<Tag> tags) {
       return tags.stream()
-          .map(tag -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag(tag.getName(), tag.getValue()))
-          .collect(toList());
+        .map(tag -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag(tag.getName(), tag.getValue()))
+        .collect(toList());
     }
 
     protected Map<String, List<com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal>> convertSecurity(List<Security> security) {
@@ -141,18 +150,18 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
 
   @RequiredArgsConstructor
   abstract class DefaultConverter<
-      ME extends com.expediagroup.streamplatform.streamregistry.model.Entity<MK>,
-      MK,
-      SK extends Entity.Key<DefaultSpecification>>
-      extends BaseConverter<ME, MK, SK, DefaultSpecification> {
+    ME extends com.expediagroup.streamplatform.streamregistry.model.Entity<MK>,
+    MK,
+    SK extends Entity.Key<DefaultSpecification>>
+    extends BaseConverter<ME, MK, SK, DefaultSpecification> {
     private final EntityFactory<ME, MK> entityFactory;
 
     @Override
     public ME convertEntity(Entity<SK, DefaultSpecification> entity) {
       return entityFactory.create(
-          convertKey(entity.getKey()),
-          convertSpecification(entity.getSpecification()),
-          convertStatus(entity.getStatus())
+        convertKey(entity.getKey()),
+        convertSpecification(entity.getSpecification()),
+        convertStatus(entity.getStatus())
       );
     }
 
@@ -160,11 +169,11 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     public DefaultSpecification convertSpecification(ME entity) {
       Specification specification = entity.getSpecification();
       return new DefaultSpecification(
-          specification.getDescription(),
-          convertTags(specification.getTags()),
-          specification.getType(),
-          specification.getConfiguration(),
-          convertSecurity(specification.getSecurity())
+        specification.getDescription(),
+        convertTags(specification.getTags()),
+        specification.getType(),
+        specification.getConfiguration(),
+        convertSecurity(specification.getSecurity())
       );
     }
   }
@@ -178,14 +187,14 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public DomainKey convertKey(Entity.DomainKey key) {
       return new DomainKey(
-          key.getName()
+        key.getName()
       );
     }
 
     @Override
     public Entity.DomainKey convertKey(DomainKey key) {
       return new Entity.DomainKey(
-          key.getName()
+        key.getName()
       );
     }
   }
@@ -202,16 +211,16 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public SchemaKey convertKey(Entity.SchemaKey key) {
       return new SchemaKey(
-          key.getDomainKey().getName(),
-          key.getName()
+        key.getDomainKey().getName(),
+        key.getName()
       );
     }
 
     @Override
     public Entity.SchemaKey convertKey(SchemaKey key) {
       return new Entity.SchemaKey(
-          domainConverter.convertKey(key.getDomainKey()),
-          key.getName()
+        domainConverter.convertKey(key.getDomainKey()),
+        key.getName()
       );
     }
   }
@@ -225,18 +234,18 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public StreamKey convertKey(Entity.StreamKey key) {
       return new StreamKey(
-          key.getDomainKey().getName(),
-          key.getName(),
-          key.getVersion()
+        key.getDomainKey().getName(),
+        key.getName(),
+        key.getVersion()
       );
     }
 
     @Override
     public Entity.StreamKey convertKey(StreamKey key) {
       return new Entity.StreamKey(
-          domainConverter.convertKey(key.getDomainKey()),
-          key.getName(),
-          key.getVersion()
+        domainConverter.convertKey(key.getDomainKey()),
+        key.getName(),
+        key.getVersion()
       );
     }
 
@@ -244,22 +253,22 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     public StreamSpecification convertSpecification(Stream entity) {
       Specification specification = entity.getSpecification();
       return new StreamSpecification(
-          specification.getDescription(),
-          convertTags(specification.getTags()),
-          specification.getType(),
-          specification.getConfiguration(),
-          convertSecurity(specification.getSecurity()),
-          schemaConverter.convertKey(entity.getSchemaKey())
+        specification.getDescription(),
+        convertTags(specification.getTags()),
+        specification.getType(),
+        specification.getConfiguration(),
+        convertSecurity(specification.getSecurity()),
+        schemaConverter.convertKey(entity.getSchemaKey())
       );
     }
 
     @Override
     public Stream convertEntity(Entity<Entity.StreamKey, StreamSpecification> entity) {
       return new Stream(
-          convertKey(entity.getKey()),
-          schemaConverter.convertKey(entity.getSpecification().getSchemaKey()),
-          convertSpecification(entity.getSpecification()),
-          convertStatus(entity.getStatus())
+        convertKey(entity.getKey()),
+        schemaConverter.convertKey(entity.getSpecification().getSchemaKey()),
+        convertSpecification(entity.getSpecification()),
+        convertStatus(entity.getStatus())
       );
     }
   }
@@ -273,14 +282,14 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public ZoneKey convertKey(Entity.ZoneKey key) {
       return new ZoneKey(
-          key.getName()
+        key.getName()
       );
     }
 
     @Override
     public Entity.ZoneKey convertKey(ZoneKey key) {
       return new Entity.ZoneKey(
-          key.getName()
+        key.getName()
       );
     }
   }
@@ -297,16 +306,16 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public InfrastructureKey convertKey(Entity.InfrastructureKey key) {
       return new InfrastructureKey(
-          key.getZoneKey().getName(),
-          key.getName()
+        key.getZoneKey().getName(),
+        key.getName()
       );
     }
 
     @Override
     public Entity.InfrastructureKey convertKey(InfrastructureKey key) {
       return new Entity.InfrastructureKey(
-          zoneConverter.convertKey(key.getZoneKey()),
-          key.getName()
+        zoneConverter.convertKey(key.getZoneKey()),
+        key.getName()
       );
     }
   }
@@ -325,20 +334,20 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public ProducerKey convertKey(Entity.ProducerKey key) {
       return new ProducerKey(
-          key.getStreamKey().getDomainKey().getName(),
-          key.getStreamKey().getName(),
-          key.getStreamKey().getVersion(),
-          key.getZoneKey().getName(),
-          key.getName()
+        key.getStreamKey().getDomainKey().getName(),
+        key.getStreamKey().getName(),
+        key.getStreamKey().getVersion(),
+        key.getZoneKey().getName(),
+        key.getName()
       );
     }
 
     @Override
     public Entity.ProducerKey convertKey(ProducerKey key) {
       return new Entity.ProducerKey(
-          streamConverter.convertKey(key.getStreamKey()),
-          zoneConverter.convertKey(key.getZoneKey()),
-          key.getName()
+        streamConverter.convertKey(key.getStreamKey()),
+        zoneConverter.convertKey(key.getZoneKey()),
+        key.getName()
       );
     }
   }
@@ -357,20 +366,20 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public ConsumerKey convertKey(Entity.ConsumerKey key) {
       return new ConsumerKey(
-          key.getStreamKey().getDomainKey().getName(),
-          key.getStreamKey().getName(),
-          key.getStreamKey().getVersion(),
-          key.getZoneKey().getName(),
-          key.getName()
+        key.getStreamKey().getDomainKey().getName(),
+        key.getStreamKey().getName(),
+        key.getStreamKey().getVersion(),
+        key.getZoneKey().getName(),
+        key.getName()
       );
     }
 
     @Override
     public Entity.ConsumerKey convertKey(ConsumerKey key) {
       return new Entity.ConsumerKey(
-          streamConverter.convertKey(key.getStreamKey()),
-          zoneConverter.convertKey(key.getZoneKey()),
-          key.getName()
+        streamConverter.convertKey(key.getStreamKey()),
+        zoneConverter.convertKey(key.getZoneKey()),
+        key.getName()
       );
     }
   }
@@ -389,19 +398,19 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public StreamBindingKey convertKey(Entity.StreamBindingKey key) {
       return new StreamBindingKey(
-          key.getStreamKey().getDomainKey().getName(),
-          key.getStreamKey().getName(),
-          key.getStreamKey().getVersion(),
-          key.getInfrastructureKey().getZoneKey().getName(),
-          key.getInfrastructureKey().getName()
+        key.getStreamKey().getDomainKey().getName(),
+        key.getStreamKey().getName(),
+        key.getStreamKey().getVersion(),
+        key.getInfrastructureKey().getZoneKey().getName(),
+        key.getInfrastructureKey().getName()
       );
     }
 
     @Override
     public Entity.StreamBindingKey convertKey(StreamBindingKey key) {
       return new Entity.StreamBindingKey(
-          streamConverter.convertKey(key.getStreamKey()),
-          infrastructureConverter.convertKey(key.getInfrastructureKey())
+        streamConverter.convertKey(key.getStreamKey()),
+        infrastructureConverter.convertKey(key.getInfrastructureKey())
 
       );
     }
@@ -421,20 +430,20 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public ProducerBindingKey convertKey(Entity.ProducerBindingKey key) {
       return new ProducerBindingKey(
-          key.getProducerKey().getStreamKey().getDomainKey().getName(),
-          key.getProducerKey().getStreamKey().getName(),
-          key.getProducerKey().getStreamKey().getVersion(),
-          key.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName(),
-          key.getStreamBindingKey().getInfrastructureKey().getName(),
-          key.getProducerKey().getName()
+        key.getProducerKey().getStreamKey().getDomainKey().getName(),
+        key.getProducerKey().getStreamKey().getName(),
+        key.getProducerKey().getStreamKey().getVersion(),
+        key.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName(),
+        key.getStreamBindingKey().getInfrastructureKey().getName(),
+        key.getProducerKey().getName()
       );
     }
 
     @Override
     public Entity.ProducerBindingKey convertKey(ProducerBindingKey key) {
       return new Entity.ProducerBindingKey(
-          producerConverter.convertKey(key.getProducerKey()),
-          streamBindingConverter.convertKey(key.getStreamBindingKey())
+        producerConverter.convertKey(key.getProducerKey()),
+        streamBindingConverter.convertKey(key.getStreamBindingKey())
       );
     }
   }
@@ -453,20 +462,20 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     @Override
     public ConsumerBindingKey convertKey(Entity.ConsumerBindingKey key) {
       return new ConsumerBindingKey(
-          key.getConsumerKey().getStreamKey().getDomainKey().getName(),
-          key.getConsumerKey().getStreamKey().getName(),
-          key.getConsumerKey().getStreamKey().getVersion(),
-          key.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName(),
-          key.getStreamBindingKey().getInfrastructureKey().getName(),
-          key.getConsumerKey().getName()
+        key.getConsumerKey().getStreamKey().getDomainKey().getName(),
+        key.getConsumerKey().getStreamKey().getName(),
+        key.getConsumerKey().getStreamKey().getVersion(),
+        key.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName(),
+        key.getStreamBindingKey().getInfrastructureKey().getName(),
+        key.getConsumerKey().getName()
       );
     }
 
     @Override
     public Entity.ConsumerBindingKey convertKey(ConsumerBindingKey key) {
       return new Entity.ConsumerBindingKey(
-          consumerConverter.convertKey(key.getConsumerKey()),
-          streamBindingConverter.convertKey(key.getStreamBindingKey())
+        consumerConverter.convertKey(key.getConsumerKey()),
+        streamBindingConverter.convertKey(key.getStreamBindingKey())
       );
     }
   }

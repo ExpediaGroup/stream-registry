@@ -16,7 +16,11 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
-import java.util.*;
+import static java.util.Collections.singletonMap;
+
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,6 +35,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Security;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.StatusEntry;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Tag;
@@ -64,7 +69,15 @@ final class SampleModel {
   }
 
   static Status status() {
-    return new Status(mapper.createObjectNode());
+    return new Status(singletonMap(
+      "agentStatus",
+      new StatusEntry(
+        "agentStatus",
+        new ObjectMapper().createObjectNode(),
+        Instant.EPOCH,
+        StatusEntry.State.UNDEFINED
+      )
+    ));
   }
 
   static DomainKey domainKey() {
