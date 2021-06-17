@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,9 +52,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.Default
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 public class StateIT {
-  @Rule
-  public KafkaContainer kafka = new KafkaContainer();
-
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode();
   private final DomainKey key = new DomainKey("domain");
@@ -63,11 +61,18 @@ public class StateIT {
   }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, security);
   private final ObjectNode statusValue = mapper.createObjectNode();
-  private final StatusEntry statusEntry = new StatusEntry("statusName", statusValue);
+  private final StatusEntry statusEntry = new StatusEntry(
+    "statusName",
+    statusValue,
+    Instant.ofEpochMilli(1L),
+    StatusEntry.State.OK
+  );
   private final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);
   private final Event<DomainKey, DefaultSpecification> statusEvent = Event.status(key, statusEntry);
   private final Event<DomainKey, DefaultSpecification> statusDeletionEvent = Event.statusDeletion(key, "statusName");
   private final Event<DomainKey, DefaultSpecification> specificationDeletionEvent = Event.specificationDeletion(key);
+  @Rule
+  public KafkaContainer kafka = new KafkaContainer();
 
   @Test
   public void test() throws Exception {
@@ -77,17 +82,17 @@ public class StateIT {
     val correlator = new DefaultEventCorrelator();
 
     val receiver = new KafkaEventReceiver(KafkaEventReceiver.Config.builder()
-        .bootstrapServers(kafka.getBootstrapServers())
-        .schemaRegistryUrl(schemaRegistryUrl)
-        .topic(topic)
-        .groupId("groupId")
-        .build(), correlator);
+      .bootstrapServers(kafka.getBootstrapServers())
+      .schemaRegistryUrl(schemaRegistryUrl)
+      .topic(topic)
+      .groupId("groupId")
+      .build(), correlator);
 
     val kafkaSender = new KafkaEventSender(KafkaEventSender.Config.builder()
-        .bootstrapServers(kafka.getBootstrapServers())
-        .schemaRegistryUrl(schemaRegistryUrl)
-        .topic(topic)
-        .build(), correlator);
+      .bootstrapServers(kafka.getBootstrapServers())
+      .schemaRegistryUrl(schemaRegistryUrl)
+      .topic(topic)
+      .build(), correlator);
 
     EntityView view = new DefaultEntityView(receiver);
     val listener = mock(EntityViewListener.class);
