@@ -4,14 +4,37 @@ scalar ObjectNode
 
 input StatusInput {
     agentStatus: ObjectNode!
+    entries: [StatusEntryInput!]
+}
+
+input StatusEntryInput {
+    name: String!
+    state: StatusState!
+    context: ObjectNode!
 }
 
 input StatusQuery {
     descriptionRegex: String
+    nameRegex: String
 }
 
 type Status {
     agentStatus: ObjectNode!
+    entries: [StatusEntry!]
+}
+
+type StatusEntry {
+    name: String!
+    timestamp: String!
+    state: StatusState!
+    context: ObjectNode!
+}
+
+enum StatusState {
+    PENDING
+    OK
+    ERROR
+    UNDEFINED
 }
 
 ############ Tag ############
