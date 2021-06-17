@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
+package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
+
+import lombok.Builder;
+import lombok.Value;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.springframework.stereotype.Component;
+import com.expediagroup.streamplatform.streamregistry.model.StatusEntry;
 
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-
-@Component
-public class StatusResolver implements Resolvers.StatusResolver {
-  public ObjectNode getAgentStatus(Status status) {
-    return status.getObjectNode();
-  }
+@Value
+@Builder
+public class StatusEntryInput {
+  String name;
+  ObjectNode value;
+  StatusEntry.State state;
 }

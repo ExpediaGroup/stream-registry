@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
 import java.util.List;
 import java.util.Optional;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
@@ -88,10 +86,6 @@ interface Resolvers {
     Producer producer(ProducerBinding producerBinding);
 
     StreamBinding binding(ProducerBinding producerBinding);
-  }
-
-  interface StatusResolver extends GraphQLResolver<Status>, GraphQLApiType {
-    ObjectNode getAgentStatus(com.expediagroup.streamplatform.streamregistry.model.Status status);
   }
 
   interface EntityResolver<E extends Entity> {
