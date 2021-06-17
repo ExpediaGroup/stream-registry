@@ -16,6 +16,9 @@
 package com.expediagroup.streamplatform.streamregistry.state;
 
 
+import static com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry.State.OK;
+
+import java.time.Instant;
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +39,7 @@ final class SampleEntities {
   static final DomainKey key = new DomainKey("domain");
   static final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, Collections.emptyMap());
   static final ObjectNode statusValue = mapper.createObjectNode();
-  static final StatusEntry statusEntry = new StatusEntry("name", statusValue);
+  static final StatusEntry statusEntry = new StatusEntry("name", statusValue, Instant.ofEpochMilli(0L), OK);
   static final DefaultStatus status = new DefaultStatus().with(statusEntry);
   static final Entity<DomainKey, DefaultSpecification> entity = new Entity<>(key, specification, status);
   static final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);

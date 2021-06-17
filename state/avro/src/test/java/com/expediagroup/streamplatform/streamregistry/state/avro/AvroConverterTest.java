@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ public class AvroConverterTest {
 
   private final AvroStatusKey avroStatusKey = new AvroStatusKey(avroDomainKey, "statusName");
   private final AvroObject avroObjectStatus = new AvroObject(Collections.singletonMap("foo", "baz"));
-  private final AvroStatus avroStatus = new AvroStatus(avroObjectStatus);
+  private final AvroStatus avroStatus = new AvroStatus(avroObjectStatus, 1L, AvroStatusState.OK);
 
   private final AvroEvent avroSpecificationEvent = new AvroEvent(new AvroKey(avroSpecificationKey), new AvroValue(avroSpecification));
   private final AvroEvent avroStreamSpecificationEvent = new AvroEvent(new AvroKey(new AvroSpecificationKey(avroStreamKey)), new AvroValue(avroStreamSpecification));
@@ -93,7 +94,12 @@ public class AvroConverterTest {
         put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
       }}
   );
-  private final StatusEntry statusEntry = new StatusEntry("statusName", mapper.createObjectNode().put("foo", "baz"));
+  private final StatusEntry statusEntry = new StatusEntry(
+    "statusName",
+    mapper.createObjectNode().put("foo", "baz"),
+    Instant.ofEpochMilli(1L),
+    StatusEntry.State.OK
+  );
   private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
   private final StreamSpecification streamSpecification = new StreamSpecification(
       "description",

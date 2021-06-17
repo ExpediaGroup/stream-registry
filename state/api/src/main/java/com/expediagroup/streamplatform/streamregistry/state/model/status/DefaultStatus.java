@@ -15,13 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.model.status;
 
+import static java.util.Collections.unmodifiableList;
 import static lombok.AccessLevel.PACKAGE;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -36,7 +37,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultStatus implements Status {
   @NonNull
-  private final Map<String, ObjectNode> statusMap;
+  private final Map<String, StatusEntry> statusMap;
 
   public DefaultStatus() {
     this(new HashMap<>());
@@ -47,23 +48,35 @@ public class DefaultStatus implements Status {
     return statusMap.keySet();
   }
 
+  @Deprecated
   @Override
   public ObjectNode getValue(@NonNull String name) {
+    StatusEntry entry = getStatusEntryByName(name);
+    if (entry != null) return entry.getValue();
+    return null;
+  }
+
+  @Override
+  public StatusEntry getStatusEntryByName(@NonNull String name) {
     return statusMap.get(name);
   }
 
   @Override
   public List<StatusEntry> getEntries() {
-    return statusMap
-        .entrySet().stream()
-        .map(e -> new StatusEntry(e.getKey(), e.getValue()))
-        .collect(Collectors.toList());
+    return unmodifiableList(new ArrayList<>(statusMap.values()));
+  }
+
+  @Override
+  public DefaultStatus withAll(@NonNull List<StatusEntry> entries) {
+    val statusMap = new HashMap<>(this.statusMap);
+    entries.forEach(e -> statusMap.put(e.getName(), e));
+    return new DefaultStatus(statusMap);
   }
 
   @Override
   public DefaultStatus with(@NonNull StatusEntry entry) {
     val statusMap = new HashMap<>(this.statusMap);
-    statusMap.put(entry.getName(), entry.getValue());
+    statusMap.put(entry.getName(), entry);
     return new DefaultStatus(statusMap);
   }
 

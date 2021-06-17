@@ -20,6 +20,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,104 +60,37 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusE
 @RequiredArgsConstructor
 public class AvroConverter {
   private final ObjectMapper mapper = new ObjectMapper()
-      .setVisibility(new Std(NONE).withFieldVisibility(ANY))
-      .registerModule(new AvroObjectModule());
+    .setVisibility(new Std(NONE).withFieldVisibility(ANY))
+    .registerModule(new AvroObjectModule());
 
   private final List<EntityConverter<?, ?>> entityConverters = new ArrayList<EntityConverter<?, ?>>() {{
     add(new EntityConverter<>(DomainKey.class, DefaultSpecification.class,
-        AvroDomainKey.class, AvroSpecification.class));
+      AvroDomainKey.class, AvroSpecification.class));
     add(new EntityConverter<>(SchemaKey.class, DefaultSpecification.class,
-        AvroSchemaKey.class, AvroSpecification.class));
+      AvroSchemaKey.class, AvroSpecification.class));
     add(new EntityConverter<>(StreamKey.class, StreamSpecification.class,
-        AvroStreamKey.class, AvroStreamSpecification.class));
+      AvroStreamKey.class, AvroStreamSpecification.class));
     add(new EntityConverter<>(ZoneKey.class, DefaultSpecification.class,
-        AvroZoneKey.class, AvroSpecification.class));
+      AvroZoneKey.class, AvroSpecification.class));
     add(new EntityConverter<>(InfrastructureKey.class, DefaultSpecification.class,
-        AvroInfrastructureKey.class, AvroSpecification.class));
+      AvroInfrastructureKey.class, AvroSpecification.class));
     add(new EntityConverter<>(ProducerKey.class, DefaultSpecification.class,
-        AvroProducerKey.class, AvroSpecification.class));
+      AvroProducerKey.class, AvroSpecification.class));
     add(new EntityConverter<>(ConsumerKey.class, DefaultSpecification.class,
-        AvroConsumerKey.class, AvroSpecification.class));
+      AvroConsumerKey.class, AvroSpecification.class));
     add(new EntityConverter<>(StreamBindingKey.class, DefaultSpecification.class,
-        AvroStreamBindingKey.class, AvroSpecification.class));
+      AvroStreamBindingKey.class, AvroSpecification.class));
     add(new EntityConverter<>(ProducerBindingKey.class, DefaultSpecification.class,
-        AvroProducerBindingKey.class, AvroSpecification.class));
+      AvroProducerBindingKey.class, AvroSpecification.class));
     add(new EntityConverter<>(ConsumerBindingKey.class, DefaultSpecification.class,
-        AvroConsumerBindingKey.class, AvroSpecification.class));
+      AvroConsumerBindingKey.class, AvroSpecification.class));
   }};
 
   private final Map<Class<? extends SpecificRecord>, ? extends EntityConverter<?, ?>> modelConverters = entityConverters
-      .stream().collect(toMap(EntityConverter::getAvroKeyClass, c -> c));
+    .stream().collect(toMap(EntityConverter::getAvroKeyClass, c -> c));
 
   private final Map<Class<? extends Entity.Key<?>>, ? extends EntityConverter<?, ?>> avroConverters = entityConverters
-      .stream().collect(toMap(EntityConverter::getModelKeyClass, c -> c));
-
-  @RequiredArgsConstructor
-  class EntityConverter<K extends Entity.Key<S>, S extends Specification> {
-    @Getter
-    @NonNull
-    private final Class<K> modelKeyClass;
-    @NonNull private final Class<S> modelSpecificationClass;
-    @Getter
-    @NonNull
-    private final Class<? extends SpecificRecord> avroKeyClass;
-    @NonNull private final Class<? extends SpecificRecord> avroSpecificationClass;
-
-    private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, Object avroSpecification) {
-      val key = convertObject(avroSpecificationKey.getKey(), modelKeyClass);
-      val specification = convertObject(avroSpecification, modelSpecificationClass);
-      if (specification == null) {
-        return Event.specificationDeletion(key);
-      }
-      return Event.specification(key, specification);
-    }
-
-    private Event<?, ?> toModel(AvroStatusKey avroStatusKey, AvroStatus avroStatus) {
-      val key = convertObject(avroStatusKey.getKey(), modelKeyClass);
-      val statusName = avroStatusKey.getStatusName();
-      if (avroStatus == null) {
-        return Event.statusDeletion(key, statusName);
-      }
-      val statusValue = convertObject(avroStatus.getValue(), ObjectNode.class);
-      return Event.status(key, new StatusEntry(statusName, statusValue));
-    }
-
-    private AvroEvent toAvro(SpecificationEvent<?, ?> event) {
-      val key = convertObject(event.getKey(), avroKeyClass);
-      val specification = convertObject(event.getSpecification(), avroSpecificationClass);
-      return new AvroEvent(
-          new AvroKey(new AvroSpecificationKey(key)),
-          new AvroValue(specification)
-      );
-    }
-
-    private AvroEvent toAvro(StatusEvent<?, ?> event) {
-      val key = convertObject(event.getKey(), avroKeyClass);
-      val statusName = event.getStatusEntry().getName();
-      val statusValue = convertObject(event.getStatusEntry().getValue(), AvroObject.class);
-      return new AvroEvent(
-          new AvroKey(new AvroStatusKey(key, statusName)),
-          new AvroValue(new AvroStatus(statusValue))
-      );
-    }
-
-    private AvroEvent toAvro(SpecificationDeletionEvent<?, ?> event) {
-      val key = convertObject(event.getKey(), avroKeyClass);
-      return new AvroEvent(
-          new AvroKey(new AvroSpecificationKey(key)),
-          null
-      );
-    }
-
-    private AvroEvent toAvro(StatusDeletionEvent<?, ?> event) {
-      val key = convertObject(event.getKey(), avroKeyClass);
-      val statusName = event.getStatusName();
-      return new AvroEvent(
-          new AvroKey(new AvroStatusKey(key, statusName)),
-          null
-      );
-    }
-  }
+    .stream().collect(toMap(EntityConverter::getModelKeyClass, c -> c));
 
   public Event<?, ?> toModel(AvroKey avroKey, AvroValue avroValue) {
     if (avroKey.getKey() instanceof AvroSpecificationKey) {
@@ -209,5 +143,78 @@ public class AvroConverter {
 
   protected <T> T convertObject(Object object, Class<T> tClass) {
     return mapper.convertValue(object, tClass);
+  }
+
+  @RequiredArgsConstructor
+  class EntityConverter<K extends Entity.Key<S>, S extends Specification> {
+    @Getter
+    @NonNull
+    private final Class<K> modelKeyClass;
+    @NonNull
+    private final Class<S> modelSpecificationClass;
+    @Getter
+    @NonNull
+    private final Class<? extends SpecificRecord> avroKeyClass;
+    @NonNull
+    private final Class<? extends SpecificRecord> avroSpecificationClass;
+
+    private Event<?, ?> toModel(AvroSpecificationKey avroSpecificationKey, Object avroSpecification) {
+      val key = convertObject(avroSpecificationKey.getKey(), modelKeyClass);
+      val specification = convertObject(avroSpecification, modelSpecificationClass);
+      if (specification == null) {
+        return Event.specificationDeletion(key);
+      }
+      return Event.specification(key, specification);
+    }
+
+    private Event<?, ?> toModel(AvroStatusKey avroStatusKey, AvroStatus avroStatus) {
+      val key = convertObject(avroStatusKey.getKey(), modelKeyClass);
+      val statusName = avroStatusKey.getStatusName();
+      if (avroStatus == null) {
+        return Event.statusDeletion(key, statusName);
+      }
+      val statusValue = convertObject(avroStatus.getValue(), ObjectNode.class);
+      val statusTimestamp = Instant.ofEpochMilli(avroStatus.getTimestamp());
+      val statusState = StatusEntry.State.valueOf(avroStatus.getState().name());
+      return Event.status(key, new StatusEntry(statusName, statusValue, statusTimestamp, statusState));
+    }
+
+    private AvroEvent toAvro(SpecificationEvent<?, ?> event) {
+      val key = convertObject(event.getKey(), avroKeyClass);
+      val specification = convertObject(event.getSpecification(), avroSpecificationClass);
+      return new AvroEvent(
+        new AvroKey(new AvroSpecificationKey(key)),
+        new AvroValue(specification)
+      );
+    }
+
+    private AvroEvent toAvro(StatusEvent<?, ?> event) {
+      val key = convertObject(event.getKey(), avroKeyClass);
+      val statusName = event.getStatusEntry().getName();
+      val statusValue = convertObject(event.getStatusEntry().getValue(), AvroObject.class);
+      val statusTimestamp = event.getStatusEntry().getTimestamp().toEpochMilli();
+      val statusState = AvroStatusState.valueOf(event.getStatusEntry().getState().name());
+      return new AvroEvent(
+        new AvroKey(new AvroStatusKey(key, statusName)),
+        new AvroValue(new AvroStatus(statusValue, statusTimestamp, statusState))
+      );
+    }
+
+    private AvroEvent toAvro(SpecificationDeletionEvent<?, ?> event) {
+      val key = convertObject(event.getKey(), avroKeyClass);
+      return new AvroEvent(
+        new AvroKey(new AvroSpecificationKey(key)),
+        null
+      );
+    }
+
+    private AvroEvent toAvro(StatusDeletionEvent<?, ?> event) {
+      val key = convertObject(event.getKey(), avroKeyClass);
+      val statusName = event.getStatusName();
+      return new AvroEvent(
+        new AvroKey(new AvroStatusKey(key, statusName)),
+        null
+      );
+    }
   }
 }

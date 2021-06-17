@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.model.status;
 
+import java.time.Instant;
+
 import lombok.NonNull;
 import lombok.Value;
 
@@ -24,4 +26,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class StatusEntry {
   @NonNull String name;
   @NonNull ObjectNode value;
+  @NonNull Instant timestamp;
+  @NonNull State state;
+
+  public enum State {
+    PENDING, OK, ERROR, UNDEFINED
+  }
 }

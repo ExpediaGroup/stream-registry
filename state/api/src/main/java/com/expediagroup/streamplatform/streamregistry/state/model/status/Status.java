@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public interface Status {
   Set<String> getNames();
 
+  @Deprecated
   ObjectNode getValue(@NonNull String name);
 
+  StatusEntry getStatusEntryByName(@NonNull String name);
+
   List<StatusEntry> getEntries();
+
+  DefaultStatus withAll(@NonNull List<StatusEntry> entries);
 
   Status with(@NonNull StatusEntry entry);
 
