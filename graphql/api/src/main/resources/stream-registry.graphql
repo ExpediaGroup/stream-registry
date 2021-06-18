@@ -25,7 +25,8 @@ type Status {
 
 type StatusEntry {
     name: String!
-    timestamp: String!
+    createdTs: String!
+    updatedTs: String!
     state: StatusState!
     context: ObjectNode!
 }
@@ -102,6 +103,8 @@ type Specification {
     type: String!
     configuration: ObjectNode!
     security: [Security!]!
+    createdTs: String!
+    updatedTs: String!
 }
 
 ############ Domain ############

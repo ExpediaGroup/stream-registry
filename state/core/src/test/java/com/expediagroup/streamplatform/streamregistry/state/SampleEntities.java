@@ -37,9 +37,21 @@ final class SampleEntities {
   static final ObjectMapper mapper = new ObjectMapper();
   static final ObjectNode configuration = mapper.createObjectNode();
   static final DomainKey key = new DomainKey("domain");
-  static final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, Collections.emptyMap());
+  static final DefaultSpecification specification = new DefaultSpecification(
+    "description",
+    Collections.emptyList(),
+    "type",
+    configuration,
+    Collections.emptyMap()
+  );
   static final ObjectNode statusValue = mapper.createObjectNode();
-  static final StatusEntry statusEntry = new StatusEntry("name", statusValue, Instant.ofEpochMilli(0L), OK);
+  static final StatusEntry statusEntry = new StatusEntry(
+    "name",
+    statusValue,
+    Instant.ofEpochMilli(0L),
+    Instant.ofEpochMilli(0L),
+    OK
+  );
   static final DefaultStatus status = new DefaultStatus().with(statusEntry);
   static final Entity<DomainKey, DefaultSpecification> entity = new Entity<>(key, specification, status);
   static final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);

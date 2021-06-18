@@ -65,11 +65,25 @@ public class GraphQLConverterTest {
     put("admin", Arrays.asList(new Principal("user1")));
     put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
   }};
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security);
-  private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);
+  private final DefaultSpecification specification = new DefaultSpecification(
+    "description",
+    Collections.singletonList(tag),
+    "type",
+    configuration,
+    security
+  );
+  private final StreamSpecification streamSpecification = new StreamSpecification(
+    "description",
+    Collections.singletonList(tag),
+    "type",
+    configuration,
+    security,
+    schemaKey
+  );
   private final StatusEntry statusEntry = new StatusEntry(
     "agentStatus",
     mapper.createObjectNode(),
+    Instant.EPOCH,
     Instant.EPOCH,
     StatusEntry.State.UNDEFINED
   );
@@ -95,6 +109,7 @@ public class GraphQLConverterTest {
     underTest.convert(Event.status(domainKey, new StatusEntry(
       "foo",
       mapper.createObjectNode(),
+      Instant.EPOCH,
       Instant.EPOCH,
       StatusEntry.State.UNDEFINED
     )));

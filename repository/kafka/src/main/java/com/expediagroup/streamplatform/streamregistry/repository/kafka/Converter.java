@@ -114,7 +114,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           e -> new com.expediagroup.streamplatform.streamregistry.model.StatusEntry(
             e.getName(),
             e.getValue(),
-            e.getTimestamp(),
+            e.getCreatedTs(),
+            e.getUpdatedTs(),
             com.expediagroup.streamplatform.streamregistry.model.StatusEntry.State.valueOf(e.getState().name())
           )
         ))
@@ -126,7 +127,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           e -> new StatusEntry(
             e.getName(),
             e.getValue(),
-            e.getTimestamp(),
+            e.getCreatedTs(),
+            e.getUpdatedTs(),
             StatusEntry.State.valueOf(e.getState().name())
           )
         ).collect(toList());

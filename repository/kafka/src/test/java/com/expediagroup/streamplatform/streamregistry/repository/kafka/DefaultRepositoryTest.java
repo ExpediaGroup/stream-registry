@@ -71,6 +71,7 @@ public class DefaultRepositoryTest {
       "agentStatus",
       mapper.createObjectNode().put("foo", "bar"),
       Instant.EPOCH,
+      Instant.EPOCH,
       StatusEntry.State.UNDEFINED
     )));
 
@@ -89,6 +90,7 @@ public class DefaultRepositoryTest {
     verify(sender).send(Event.status(expected.getKey(), new StatusEntry(
       "agentStatus",
       mapper.createObjectNode(),
+      Instant.EPOCH,
       Instant.EPOCH,
       StatusEntry.State.UNDEFINED
     )));
@@ -114,6 +116,7 @@ public class DefaultRepositoryTest {
       "agentStatus",
       mapper.createObjectNode(),
       Instant.EPOCH,
+      Instant.EPOCH,
       StatusEntry.State.UNDEFINED
     )));
   }
@@ -124,6 +127,7 @@ public class DefaultRepositoryTest {
     domain = domain.withStatus(new DefaultStatus().with(new StatusEntry(
       "agentStatus",
       mapper.createObjectNode().put("foo", "bar"),
+      Instant.EPOCH,
       Instant.EPOCH,
       StatusEntry.State.UNDEFINED
     )));
@@ -142,6 +146,7 @@ public class DefaultRepositoryTest {
     verify(sender).send(Event.status(expected.getKey(), new StatusEntry(
       "agentStatus",
       mapper.createObjectNode(),
+      Instant.EPOCH,
       Instant.EPOCH,
       StatusEntry.State.UNDEFINED
     )));
@@ -164,6 +169,7 @@ public class DefaultRepositoryTest {
     verify(sender).send(Event.status(expected.getKey(), new StatusEntry(
       "agentStatus",
       mapper.createObjectNode().put("foo", "bar"),
+      Instant.EPOCH,
       Instant.EPOCH,
       StatusEntry.State.UNDEFINED
     )));

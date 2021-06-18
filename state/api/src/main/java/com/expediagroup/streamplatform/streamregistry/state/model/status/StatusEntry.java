@@ -26,7 +26,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class StatusEntry {
   @NonNull String name;
   @NonNull ObjectNode value;
-  @NonNull Instant timestamp;
+  @NonNull Instant createdTs;
+  @NonNull Instant updatedTs;
   @NonNull State state;
 
   public enum State {

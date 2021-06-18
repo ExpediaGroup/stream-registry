@@ -18,7 +18,6 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 import static com.expediagroup.streamplatform.streamregistry.model.StatusEntry.State.UNDEFINED;
 import static java.util.Collections.unmodifiableMap;
 
-import java.time.Clock;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,6 @@ public class StatusInput {
         new StatusEntry(
           "agentStatus",
           agentStatus,
-          Clock.systemUTC().instant(),
           UNDEFINED
         )
       );
@@ -54,7 +52,7 @@ public class StatusInput {
     if (entries != null) {
       for (StatusEntryInput i : entries) {
         String k = i.getName();
-        StatusEntry e = new StatusEntry(i.getName(), i.getValue(), Clock.systemUTC().instant(), i.getState());
+        StatusEntry e = new StatusEntry(i.getName(), i.getValue(), i.getState());
         m.put(k, e);
       }
     }

@@ -76,7 +76,7 @@ final class SampleState {
 
   static DefaultStatus status() {
     return new DefaultStatus().with(
-      new StatusEntry("agentStatus", mapper.createObjectNode(), Instant.EPOCH, StatusEntry.State.UNDEFINED)
+      new StatusEntry("agentStatus", mapper.createObjectNode(), Instant.EPOCH, Instant.EPOCH, StatusEntry.State.UNDEFINED)
     );
   }
 
@@ -175,7 +175,7 @@ final class SampleState {
   static Event<DomainKey, DefaultSpecification> domainStatusEvent() {
     return Event.status(
       domainKey(),
-      new StatusEntry("agentStatus", mapper.createObjectNode(), Instant.EPOCH, StatusEntry.State.UNDEFINED)
+      new StatusEntry("agentStatus", mapper.createObjectNode(), Instant.EPOCH, Instant.EPOCH, StatusEntry.State.UNDEFINED)
     );
   }
 }

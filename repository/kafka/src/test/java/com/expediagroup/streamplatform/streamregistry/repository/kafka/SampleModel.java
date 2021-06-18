@@ -75,6 +75,7 @@ final class SampleModel {
         "agentStatus",
         new ObjectMapper().createObjectNode(),
         Instant.EPOCH,
+        Instant.EPOCH,
         StatusEntry.State.UNDEFINED
       )
     ));

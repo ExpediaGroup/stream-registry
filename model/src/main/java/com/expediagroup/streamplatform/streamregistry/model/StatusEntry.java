@@ -32,8 +32,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class StatusEntry {
   private String name;
   private ObjectNode value;
-  private Instant timestamp;
+  private Instant createdTs;
+  private Instant updatedTs;
   private StatusEntry.State state;
+
+  public StatusEntry(
+    String name,
+    ObjectNode value,
+    StatusEntry.State state
+  ) {
+    this(name, value, null, null, state);
+  }
 
   public ObjectNode getValue() {
     return value == null ? new ObjectMapper().createObjectNode() : value;

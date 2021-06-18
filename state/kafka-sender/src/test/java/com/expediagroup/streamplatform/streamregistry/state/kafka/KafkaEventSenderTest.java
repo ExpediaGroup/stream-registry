@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,7 +70,13 @@ public class KafkaEventSenderTest {
     put("admin", Arrays.asList(new Principal("user1")));
     put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
   }};
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode(), security);
+  private final DefaultSpecification specification = new DefaultSpecification(
+    "description",
+    Collections.emptyList(),
+    "type",
+    mapper.createObjectNode(),
+    security
+  );
   private final Event<DomainKey, DefaultSpecification> event = Event.specification(key, specification);
 
   @Mock private AvroEvent avroEvent;

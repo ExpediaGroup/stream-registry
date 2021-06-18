@@ -65,6 +65,7 @@ public class StateIT {
     "statusName",
     statusValue,
     Instant.ofEpochMilli(1L),
+    Instant.ofEpochMilli(1L),
     StatusEntry.State.OK
   );
   private final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);
