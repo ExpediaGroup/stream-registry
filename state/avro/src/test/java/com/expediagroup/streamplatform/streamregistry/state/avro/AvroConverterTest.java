@@ -59,9 +59,7 @@ public class AvroConverterTest {
       new HashMap<String, List<AvroPrincipal>>() {{
         put("admin", Arrays.asList(new AvroPrincipal("user1")));
         put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
-      }},
-    0L,
-    0L
+      }}
   );
   private final AvroStreamSpecification avroStreamSpecification = new AvroStreamSpecification(
       "description",
@@ -72,9 +70,7 @@ public class AvroConverterTest {
         put("admin", Arrays.asList(new AvroPrincipal("user1")));
         put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
       }},
-      new AvroSchemaKey(avroDomainKey, "schema"),
-    0L,
-    0L
+      new AvroSchemaKey(avroDomainKey, "schema")
   );
 
   private final AvroStatusKey avroStatusKey = new AvroStatusKey(avroDomainKey, "statusName");
@@ -96,9 +92,7 @@ public class AvroConverterTest {
       new HashMap<String, List<Principal>>() {{
         put("admin", Arrays.asList(new Principal("user1")));
         put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
-      }},
-    Instant.ofEpochMilli(1L),
-    Instant.ofEpochMilli(1L)
+      }}
   );
   private final StatusEntry statusEntry = new StatusEntry(
     "statusName",
@@ -117,9 +111,7 @@ public class AvroConverterTest {
         put("admin", Arrays.asList(new Principal("user1")));
         put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
       }},
-      new Entity.SchemaKey(domainKey, "schema"),
-    Instant.ofEpochMilli(1L),
-    Instant.ofEpochMilli(1L)
+      new Entity.SchemaKey(domainKey, "schema")
   );
 
   @Test
