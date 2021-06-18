@@ -74,6 +74,8 @@ protocol StreamRegistry {
     string type;
     AvroObject configuration;
     map<array<AvroPrincipal>> security = {};
+    long createdTs = 0;
+    long updatedTs = 0;
   }
 
   record AvroStreamSpecification {
@@ -83,6 +85,8 @@ protocol StreamRegistry {
     AvroObject configuration;
     map<array<AvroPrincipal>> security = {};
     AvroSchemaKey schemaKey;
+    long createdTs = 0;
+    long updatedTs = 0;
   }
 
   record AvroSpecificationKey {
@@ -96,7 +100,8 @@ protocol StreamRegistry {
 
   record AvroStatus {
     AvroObject value;
-    long timestamp = 0;
+    long createdTs = 0;
+    long updatedTs = 0;
     AvroStatusState state = "UNDEFINED";
   }
 

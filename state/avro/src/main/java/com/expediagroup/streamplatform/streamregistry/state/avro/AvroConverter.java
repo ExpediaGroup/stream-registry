@@ -174,9 +174,10 @@ public class AvroConverter {
         return Event.statusDeletion(key, statusName);
       }
       val statusValue = convertObject(avroStatus.getValue(), ObjectNode.class);
-      val statusTimestamp = Instant.ofEpochMilli(avroStatus.getTimestamp());
+      val statusCreatedTs = Instant.ofEpochMilli(avroStatus.getCreatedTs());
+      val statusUpdatedTs = Instant.ofEpochMilli(avroStatus.getUpdatedTs());
       val statusState = StatusEntry.State.valueOf(avroStatus.getState().name());
-      return Event.status(key, new StatusEntry(statusName, statusValue, statusTimestamp, statusState));
+      return Event.status(key, new StatusEntry(statusName, statusValue, statusCreatedTs, statusUpdatedTs, statusState));
     }
 
     private AvroEvent toAvro(SpecificationEvent<?, ?> event) {
@@ -192,11 +193,12 @@ public class AvroConverter {
       val key = convertObject(event.getKey(), avroKeyClass);
       val statusName = event.getStatusEntry().getName();
       val statusValue = convertObject(event.getStatusEntry().getValue(), AvroObject.class);
-      val statusTimestamp = event.getStatusEntry().getTimestamp().toEpochMilli();
+      val statusCreatedTs = event.getStatusEntry().getCreatedTs().toEpochMilli();
+      val statusUpdatedTs = event.getStatusEntry().getUpdatedTs().toEpochMilli();
       val statusState = AvroStatusState.valueOf(event.getStatusEntry().getState().name());
       return new AvroEvent(
         new AvroKey(new AvroStatusKey(key, statusName)),
-        new AvroValue(new AvroStatus(statusValue, statusTimestamp, statusState))
+        new AvroValue(new AvroStatus(statusValue, statusCreatedTs, statusUpdatedTs, statusState))
       );
     }
 
