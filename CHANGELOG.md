@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [unreleased]
 ### Changed
 - Exposed multi-status repo model out to GQL endpoint, keeping backwards compatibility.
-  It should now be possible to provide multiple status for a single entity.
+- Status now also includes created/updated timestamp.
 
 ## [0.19.1] - 2021-04-26
 ### Changed
