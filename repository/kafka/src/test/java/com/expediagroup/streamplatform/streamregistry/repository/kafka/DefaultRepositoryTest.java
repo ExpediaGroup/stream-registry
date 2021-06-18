@@ -168,7 +168,7 @@ public class DefaultRepositoryTest {
     verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
     verify(sender).send(Event.status(expected.getKey(), new StatusEntry(
       "agentStatus",
-      mapper.createObjectNode().put("foo", "bar"),
+      mapper.createObjectNode(),
       Instant.EPOCH,
       Instant.EPOCH,
       StatusEntry.State.UNDEFINED
