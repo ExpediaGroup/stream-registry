@@ -32,13 +32,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.*;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 public class AvroConverterTest {
@@ -48,6 +54,15 @@ public class AvroConverterTest {
 
   private final AvroDomainKey avroDomainKey = new AvroDomainKey("domain");
   private final AvroStreamKey avroStreamKey = new AvroStreamKey(avroDomainKey, "stream", 1);
+  private final AvroZoneKey avroZoneKey = new AvroZoneKey("zone");
+  private final AvroInfrastructureKey avroInfrastructureKey = new AvroInfrastructureKey(avroZoneKey, "infrastructure");
+  private final AvroConsumerKey avroConsumerKey = new AvroConsumerKey(avroStreamKey, avroZoneKey, "consumer");
+  private final AvroProducerKey avroProducerKey = new AvroProducerKey(avroStreamKey, avroZoneKey, "producer");
+  private final AvroProcessKey avroProcessKey = new AvroProcessKey(avroDomainKey, "process");
+  private final AvroStreamBindingKey avroStreamBindingKey = new AvroStreamBindingKey(avroStreamKey, avroInfrastructureKey);
+  private final AvroConsumerBindingKey avroConsumerBindingKey = new AvroConsumerBindingKey(avroConsumerKey, avroStreamBindingKey);
+  private final AvroProducerBindingKey avroProducerBindingKey = new AvroProducerBindingKey(avroProducerKey, avroStreamBindingKey);
+  private final AvroProcessBindingKey avroProcessBindingKey = new AvroProcessBindingKey(avroProcessKey, avroZoneKey);
 
   private final AvroSpecificationKey avroSpecificationKey = new AvroSpecificationKey(avroDomainKey);
   private final AvroSpecification avroSpecification = new AvroSpecification(
@@ -71,6 +86,32 @@ public class AvroConverterTest {
       }},
       new AvroSchemaKey(avroDomainKey, "schema")
   );
+  private final AvroProcessSpecification avroProcessSpecification = new AvroProcessSpecification(
+    Collections.singletonList(avroZoneKey),
+    "description",
+    Collections.singletonList(new AvroTag("name", "value")),
+    "type",
+    new AvroObject(Collections.singletonMap("foo", "bar")),
+    new HashMap<String, List<AvroPrincipal>>() {{
+      put("admin", Arrays.asList(new AvroPrincipal("user1")));
+      put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+    }},
+    Collections.singletonList(new AvroProcessInput(avroStreamKey, "locality")),
+    Collections.singletonList(new AvroProcessOutput(avroStreamKey))
+  );
+  private final AvroProcessBindingSpecification avroProcessBindingSpecification = new AvroProcessBindingSpecification(
+    avroZoneKey,
+    "description",
+    Collections.singletonList(new AvroTag("name", "value")),
+    "type",
+    new AvroObject(Collections.singletonMap("foo", "bar")),
+    new HashMap<String, List<AvroPrincipal>>() {{
+      put("admin", Arrays.asList(new AvroPrincipal("user1")));
+      put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+    }},
+    Collections.singletonList(avroConsumerBindingKey),
+    Collections.singletonList(avroProducerBindingKey)
+  );
 
   private final AvroStatusKey avroStatusKey = new AvroStatusKey(avroDomainKey, "statusName");
   private final AvroObject avroObjectStatus = new AvroObject(Collections.singletonMap("foo", "baz"));
@@ -78,11 +119,15 @@ public class AvroConverterTest {
 
   private final AvroEvent avroSpecificationEvent = new AvroEvent(new AvroKey(avroSpecificationKey), new AvroValue(avroSpecification));
   private final AvroEvent avroStreamSpecificationEvent = new AvroEvent(new AvroKey(new AvroSpecificationKey(avroStreamKey)), new AvroValue(avroStreamSpecification));
+  private final AvroEvent avroProcessSpecificationEvent = new AvroEvent(new AvroKey(new AvroSpecificationKey(avroProcessKey)), new AvroValue(avroProcessSpecification));
+  private final AvroEvent avroProcessBindingSpecificationEvent = new AvroEvent(new AvroKey(new AvroSpecificationKey(avroProcessBindingKey)), new AvroValue(avroProcessBindingSpecification));
   private final AvroEvent avroStatusEvent = new AvroEvent(new AvroKey(avroStatusKey), new AvroValue(avroStatus));
   private final AvroEvent avroSpecificationDeletionEvent = new AvroEvent(new AvroKey(avroSpecificationKey), null);
   private final AvroEvent avroStatusDeletionEvent = new AvroEvent(new AvroKey(avroStatusKey), null);
 
   private final DomainKey domainKey = new DomainKey("domain");
+  private final ZoneKey zoneKey = new ZoneKey("zone");
+  private final InfrastructureKey infrastructureKey = new InfrastructureKey(zoneKey, "infrastructure");
   private final DefaultSpecification specification = new DefaultSpecification(
       "description",
       Collections.singletonList(new Tag("name", "value")),
@@ -95,6 +140,7 @@ public class AvroConverterTest {
   );
   private final StatusEntry statusEntry = new StatusEntry("statusName", mapper.createObjectNode().put("foo", "baz"));
   private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
+  private final StreamBindingKey streamBindingKey = new StreamBindingKey(streamKey, infrastructureKey);
   private final StreamSpecification streamSpecification = new StreamSpecification(
       "description",
       Collections.singletonList(new Tag("name", "value")),
@@ -105,6 +151,38 @@ public class AvroConverterTest {
         put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
       }},
       new Entity.SchemaKey(domainKey, "schema")
+  );
+  private final ConsumerKey consumerKey = new ConsumerKey(streamKey, zoneKey, "consumer");
+  private final ConsumerBindingKey consumerBindingKey = new ConsumerBindingKey(consumerKey, streamBindingKey);
+  private final ProducerKey producerKey = new ProducerKey(streamKey, zoneKey, "producer");
+  private final ProducerBindingKey producerBindingKey = new ProducerBindingKey(producerKey, streamBindingKey);
+  private final ProcessKey processKey = new ProcessKey(domainKey, "process");
+  private final ProcessSpecification processSpecification = new ProcessSpecification(
+    Collections.singletonList(zoneKey),
+    "description",
+    Collections.singletonList(new Tag("name", "value")),
+    "type",
+    mapper.createObjectNode().put("foo", "bar"),
+    new HashMap<String, List<Principal>>() {{
+      put("admin", Arrays.asList(new Principal("user1")));
+      put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+    }},
+    Collections.singletonList(new ProcessInput(streamKey, "locality")),
+    Collections.singletonList(new ProcessOutput(streamKey))
+  );
+  private final ProcessBindingKey processBindingKey = new ProcessBindingKey(processKey, zoneKey);
+  private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(
+    zoneKey,
+    "description",
+    Collections.singletonList(new Tag("name", "value")),
+    "type",
+    mapper.createObjectNode().put("foo", "bar"),
+    new HashMap<String, List<Principal>>() {{
+      put("admin", Arrays.asList(new Principal("user1")));
+      put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+    }},
+    Collections.singletonList(consumerBindingKey),
+    Collections.singletonList(producerBindingKey)
   );
 
   @Test
@@ -165,5 +243,29 @@ public class AvroConverterTest {
   public void streamSpecificationToAvro() throws IOException {
     val result = underTest.toAvro(Event.specification(streamKey, streamSpecification));
     assertEquals(avroStreamSpecificationEvent.toByteBuffer(), result.toByteBuffer());
+  }
+
+  @Test
+  public void processSpecificationToModel() {
+    val result = underTest.toModel(avroProcessSpecificationEvent.getKey(), avroProcessSpecificationEvent.getValue());
+    assertThat(result, is(Event.specification(processKey, processSpecification)));
+  }
+
+  @Test
+  public void processSpecificationToAvro() throws IOException {
+    val result = underTest.toAvro(Event.specification(processKey, processSpecification));
+    assertEquals(avroProcessSpecificationEvent.toByteBuffer(), result.toByteBuffer());
+  }
+
+  @Test
+  public void processBindingSpecificationToModel() {
+    val result = underTest.toModel(avroProcessBindingSpecificationEvent.getKey(), avroProcessBindingSpecificationEvent.getValue());
+    assertThat(result, is(Event.specification(processBindingKey, processBindingSpecification)));
+  }
+
+  @Test
+  public void processBindingSpecificationToAvro() throws IOException {
+    val result = underTest.toAvro(Event.specification(processBindingKey, processBindingSpecification));
+    assertEquals(avroProcessBindingSpecificationEvent.toByteBuffer(), result.toByteBuffer());
   }
 }

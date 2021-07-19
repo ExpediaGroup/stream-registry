@@ -36,6 +36,11 @@ protocol StreamRegistry {
     string name;
   }
 
+  record AvroProcessKey {
+    AvroDomainKey domainKey;
+    string name;
+  }
+
   record AvroStreamBindingKey {
     AvroStreamKey streamKey;
     AvroInfrastructureKey infrastructureKey;
@@ -51,6 +56,11 @@ protocol StreamRegistry {
     AvroStreamBindingKey streamBindingKey;
   }
 
+  record AvroProcessBindingKey {
+    AvroProcessKey processKey;
+    AvroZoneKey zoneKey;
+  }
+
   record AvroTag {
     string name;
     union { null, string } value = null;
@@ -58,6 +68,15 @@ protocol StreamRegistry {
 
   record AvroPrincipal {
     string name;
+  }
+
+  record AvroProcessInput {
+    AvroStreamKey stream;
+    string locality;
+  }
+
+  record AvroProcessOutput {
+    AvroStreamKey stream;
   }
 
   record AvroObject {
@@ -85,12 +104,34 @@ protocol StreamRegistry {
     AvroSchemaKey schemaKey;
   }
 
+  record AvroProcessSpecification {
+    array<AvroZoneKey> zones;
+    string description;
+    array<AvroTag> tags;
+    string type;
+    AvroObject configuration;
+    map<array<AvroPrincipal>> security;
+    array<AvroProcessInput> inputs;
+    array<AvroProcessOutput> outputs;
+  }
+
+  record AvroProcessBindingSpecification {
+    AvroZoneKey zone;
+    string description;
+    array<AvroTag> tags;
+    string type;
+    AvroObject configuration;
+    map<array<AvroPrincipal>> security;
+    array<AvroConsumerBindingKey> inputs;
+    array<AvroProducerBindingKey> outputs;
+  }
+
   record AvroSpecificationKey {
-    union { AvroDomainKey, AvroSchemaKey, AvroStreamKey, AvroZoneKey, AvroInfrastructureKey, AvroProducerKey, AvroConsumerKey, AvroStreamBindingKey, AvroProducerBindingKey, AvroConsumerBindingKey } key;
+    union { AvroDomainKey, AvroSchemaKey, AvroStreamKey, AvroZoneKey, AvroInfrastructureKey, AvroProducerKey, AvroConsumerKey, AvroProcessKey, AvroStreamBindingKey, AvroProducerBindingKey, AvroConsumerBindingKey, AvroProcessBindingKey } key;
   }
 
   record AvroStatusKey {
-    union { AvroDomainKey, AvroSchemaKey, AvroStreamKey, AvroZoneKey, AvroInfrastructureKey, AvroProducerKey, AvroConsumerKey, AvroStreamBindingKey, AvroProducerBindingKey, AvroConsumerBindingKey } key;
+    union { AvroDomainKey, AvroSchemaKey, AvroStreamKey, AvroZoneKey, AvroInfrastructureKey, AvroProducerKey, AvroConsumerKey, AvroProcessKey, AvroStreamBindingKey, AvroProducerBindingKey, AvroConsumerBindingKey, AvroProcessBindingKey } key;
     string statusName;
   }
 
@@ -103,7 +144,7 @@ protocol StreamRegistry {
   }
 
   record AvroValue {
-    union { AvroSpecification, AvroStreamSpecification, AvroStatus } value;
+    union { AvroSpecification, AvroStreamSpecification, AvroProcessSpecification, AvroProcessBindingSpecification, AvroStatus } value;
   }
 
   record AvroEvent {
