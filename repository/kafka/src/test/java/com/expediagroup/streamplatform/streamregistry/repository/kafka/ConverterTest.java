@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ConsumerConverter;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.DomainConverter;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.InfrastructureConverter;
+import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ProcessBindingConverter;
+import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ProcessConverter;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ProducerBindingConverter;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.ProducerConverter;
 import com.expediagroup.streamplatform.streamregistry.repository.kafka.Converter.SchemaConverter;
@@ -37,12 +39,14 @@ public class ConverterTest {
   private final SchemaConverter schemaConverter = new SchemaConverter(domainConverter);
   private final StreamConverter streamConverter = new StreamConverter(domainConverter, schemaConverter);
   private final ZoneConverter zoneConverter = new ZoneConverter();
+  private final ProcessConverter processConverter = new ProcessConverter(domainConverter, zoneConverter, streamConverter);
   private final InfrastructureConverter infrastructureConverter = new InfrastructureConverter(zoneConverter);
   private final ProducerConverter producerConverter = new ProducerConverter(streamConverter, zoneConverter);
   private final ConsumerConverter consumerConverter = new ConsumerConverter(streamConverter, zoneConverter);
   private final StreamBindingConverter streamBindingConverter = new StreamBindingConverter(streamConverter, infrastructureConverter);
   private final ProducerBindingConverter producerBindingConverter = new ProducerBindingConverter(producerConverter, streamBindingConverter);
   private final ConsumerBindingConverter consumerBindingConverter = new ConsumerBindingConverter(consumerConverter, streamBindingConverter);
+  private final ProcessBindingConverter processBindingConverter = new ProcessBindingConverter(domainConverter, zoneConverter, consumerBindingConverter, producerBindingConverter);
 
   @Test
   public void domain() {
@@ -60,6 +64,12 @@ public class ConverterTest {
   public void stream() {
     assertThat(streamConverter.convertEntity(SampleModel.stream()), is(SampleState.stream()));
     assertThat(streamConverter.convertEntity(SampleState.stream()), is(SampleModel.stream()));
+  }
+
+  @Test
+  public void process() {
+    assertThat(processConverter.convertEntity(SampleModel.process()), is(SampleState.process()));
+    assertThat(processConverter.convertEntity(SampleState.process()), is(SampleModel.process()));
   }
 
   @Test
@@ -102,5 +112,11 @@ public class ConverterTest {
   public void consumerBinding() {
     assertThat(consumerBindingConverter.convertEntity(SampleModel.consumerBinding()), is(SampleState.consumerBinding()));
     assertThat(consumerBindingConverter.convertEntity(SampleState.consumerBinding()), is(SampleModel.consumerBinding()));
+  }
+
+  @Test
+  public void processBinding() {
+    assertThat(processBindingConverter.convertEntity(SampleModel.processBinding()), is(SampleState.processBinding()));
+    assertThat(processBindingConverter.convertEntity(SampleState.processBinding()), is(SampleModel.processBinding()));
   }
 }

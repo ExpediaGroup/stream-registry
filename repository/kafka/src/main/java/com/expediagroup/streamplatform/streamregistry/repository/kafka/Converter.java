@@ -32,6 +32,10 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInput;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutput;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -46,6 +50,8 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBinding
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
@@ -54,6 +60,8 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -265,6 +273,76 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
   }
 
   @Component
+  @RequiredArgsConstructor
+  class ProcessConverter extends BaseConverter<Process, ProcessKey, Entity.ProcessKey, ProcessSpecification> {
+    private final DomainConverter domainConverter;
+    private final ZoneConverter zoneConverter;
+    private final StreamConverter streamConverter;
+
+    @Override
+    public ProcessKey convertKey(Entity.ProcessKey key) {
+      return new ProcessKey(
+        key.getDomainKey().getName(),
+        key.getName()
+      );
+    }
+
+    @Override
+    public Entity.ProcessKey convertKey(ProcessKey key) {
+      return new Entity.ProcessKey(
+        domainConverter.convertKey(key.getDomainKey()),
+        key.getName()
+      );
+    }
+
+    @Override
+    public ProcessSpecification convertSpecification(Process entity) {
+      Specification specification = entity.getSpecification();
+      return new ProcessSpecification(
+        entity.getZones().stream().map(zoneConverter::convertKey).collect(Collectors.toList()),
+        specification.getDescription(),
+        convertTags(specification.getTags()),
+        specification.getType(),
+        specification.getConfiguration(),
+        convertSecurity(specification.getSecurity()),
+        entity.getInputs().stream().map(input ->
+          new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInput(
+            streamConverter.convertKey(input.getStream()),
+            input.getLocality()
+          )
+        ).collect(Collectors.toList()),
+        entity.getOutputs().stream().map(output ->
+          new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutput(
+            streamConverter.convertKey(output.getStream())
+          )
+        ).collect(Collectors.toList())
+      );
+    }
+
+    @Override
+    public Process convertEntity(Entity<Entity.ProcessKey, ProcessSpecification> entity) {
+      return new Process(
+        convertKey(entity.getKey()),
+        convertSpecification(entity.getSpecification()),
+        entity.getSpecification().getZones().stream().map(zone ->
+          new ZoneKey(zone.getName())).collect(Collectors.toList()),
+        entity.getSpecification().getInputs().stream().map(input ->
+          new ProcessInput(
+            streamConverter.convertKey(input.getStream()),
+            input.getLocality()
+          )
+        ).collect(Collectors.toList()),
+        entity.getSpecification().getOutputs().stream().map(output ->
+          new ProcessOutput(
+            streamConverter.convertKey(output.getStream())
+          )
+        ).collect(Collectors.toList()),
+        convertStatus(entity.getStatus())
+      );
+    }
+  }
+
+  @Component
   class ZoneConverter extends DefaultConverter<Zone, ZoneKey, Entity.ZoneKey> {
     ZoneConverter() {
       super(Zone::new);
@@ -403,6 +481,59 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           streamConverter.convertKey(key.getStreamKey()),
           infrastructureConverter.convertKey(key.getInfrastructureKey())
 
+      );
+    }
+  }
+
+  @Component
+  @RequiredArgsConstructor
+  class ProcessBindingConverter extends BaseConverter<ProcessBinding, ProcessBindingKey, Entity.ProcessBindingKey, ProcessBindingSpecification> {
+    private final DomainConverter domainConverter;
+    private final ZoneConverter zoneConverter;
+    private final ConsumerBindingConverter consumerBindingConverter;
+    private final ProducerBindingConverter producerBindingConverter;
+
+    @Override
+    public ProcessBindingKey convertKey(Entity.ProcessBindingKey key) {
+      return new ProcessBindingKey(
+        key.getProcessKey().getDomainKey().getName(),
+        key.getZoneKey().getName(),
+        key.getProcessKey().getName()
+      );
+    }
+
+    @Override
+    public Entity.ProcessBindingKey convertKey(ProcessBindingKey key) {
+      return new Entity.ProcessBindingKey(
+        new Entity.ProcessKey(domainConverter.convertKey(key.getDomainKey()), key.getProcessName()),
+        zoneConverter.convertKey(key.getZoneKey())
+      );
+    }
+
+    @Override
+    public ProcessBindingSpecification convertSpecification(ProcessBinding entity) {
+      Specification specification = entity.getSpecification();
+      return new ProcessBindingSpecification(
+        zoneConverter.convertKey(entity.getZone()),
+        specification.getDescription(),
+        convertTags(specification.getTags()),
+        specification.getType(),
+        specification.getConfiguration(),
+        convertSecurity(specification.getSecurity()),
+        entity.getInputs().stream().map(consumerBindingConverter::convertKey).collect(Collectors.toList()),
+        entity.getOutputs().stream().map(producerBindingConverter::convertKey).collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public ProcessBinding convertEntity(Entity<Entity.ProcessBindingKey, ProcessBindingSpecification> entity) {
+      return new ProcessBinding(
+        convertKey(entity.getKey()),
+        convertSpecification(entity.getSpecification()),
+        zoneConverter.convertKey(entity.getKey().getZoneKey()),
+        entity.getSpecification().getInputs().stream().map(consumerBindingConverter::convertKey).collect(Collectors.toList()),
+        entity.getSpecification().getOutputs().stream().map(producerBindingConverter::convertKey).collect(Collectors.toList()),
+        convertStatus(entity.getStatus())
       );
     }
   }

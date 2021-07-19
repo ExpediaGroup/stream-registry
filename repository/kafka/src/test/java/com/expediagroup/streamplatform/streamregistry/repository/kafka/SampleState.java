@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +27,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Consume
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaKey;
@@ -37,6 +38,10 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInput;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutput;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -54,7 +59,7 @@ final class SampleState {
       "type",
       mapper.createObjectNode(),
       new HashMap<String, List<Principal>>() {{
-        put("admin", Arrays.asList(new Principal("user1")));
+        put("admin", Collections.singletonList(new Principal("user1")));
       }}
     );
   }
@@ -66,9 +71,39 @@ final class SampleState {
       "type",
       mapper.createObjectNode(),
       new HashMap<String, List<Principal>>() {{
-        put("admin", Arrays.asList(new Principal("user1")));
+        put("admin", Collections.singletonList(new Principal("user1")));
       }},
       schemaKey()
+    );
+  }
+
+  static ProcessSpecification processSpecification() {
+    return new ProcessSpecification(
+      Collections.singletonList(zoneKey()),
+      "description",
+      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      "type",
+      mapper.createObjectNode(),
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Collections.singletonList(new Principal("user1")));
+      }},
+      Collections.singletonList(new ProcessInput(streamKey(), "locality")),
+      Collections.singletonList(new ProcessOutput(streamKey()))
+    );
+  }
+
+  static ProcessBindingSpecification processBindingSpecification() {
+    return new ProcessBindingSpecification(
+      zoneKey(),
+      "description",
+      Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
+      "type",
+      mapper.createObjectNode(),
+      new HashMap<String, List<Principal>>() {{
+        put("admin", Collections.singletonList(new Principal("user1")));
+      }},
+      Collections.singletonList(consumerBindingKey()),
+      Collections.singletonList(producerBindingKey())
     );
   }
 
@@ -104,6 +139,10 @@ final class SampleState {
     return new ConsumerKey(streamKey(), zoneKey(), "consumer");
   }
 
+  static ProcessKey processKey() {
+    return new ProcessKey(domainKey(), "process");
+  }
+
   static StreamBindingKey streamBindingKey() {
     return new StreamBindingKey(streamKey(), infrastructureKey());
   }
@@ -114,6 +153,10 @@ final class SampleState {
 
   static ConsumerBindingKey consumerBindingKey() {
     return new ConsumerBindingKey(consumerKey(), streamBindingKey());
+  }
+
+  static ProcessBindingKey processBindingKey() {
+    return new ProcessBindingKey(processKey(), zoneKey());
   }
 
   static Entity<DomainKey, DefaultSpecification> domain() {
@@ -144,6 +187,10 @@ final class SampleState {
     return new Entity<>(consumerKey(), specification(), status());
   }
 
+  static Entity<ProcessKey, ProcessSpecification> process() {
+    return new Entity<>(processKey(), processSpecification(), status());
+  }
+
   static Entity<StreamBindingKey, DefaultSpecification> streamBinding() {
     return new Entity<>(streamBindingKey(), specification(), status());
   }
@@ -154,6 +201,10 @@ final class SampleState {
 
   static Entity<ConsumerBindingKey, DefaultSpecification> consumerBinding() {
     return new Entity<>(consumerBindingKey(), specification(), status());
+  }
+
+  static Entity<ProcessBindingKey, ProcessBindingSpecification> processBinding() {
+    return new Entity<>(processBindingKey(), processBindingSpecification(), status());
   }
 
   static Event<DomainKey, DefaultSpecification> domainSpecificationDeletionEvent() {
