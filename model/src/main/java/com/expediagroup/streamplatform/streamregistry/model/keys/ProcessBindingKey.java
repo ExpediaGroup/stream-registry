@@ -38,4 +38,7 @@ public class ProcessBindingKey implements Serializable {
     return new ZoneKey(zoneName);
   }
 
+  public ProcessKey getProcessKey() {
+    return new ProcessKey(domainName, processName);
+  }
 }
