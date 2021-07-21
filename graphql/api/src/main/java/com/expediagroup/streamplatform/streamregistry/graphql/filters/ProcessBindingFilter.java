@@ -94,7 +94,7 @@ public class ProcessBindingFilter implements Predicate<ProcessBinding> {
 
     ProcessBindingKey safeKey = (key == null) ? new ProcessBindingKey() : key;
     return matches(safeKey.getDomainName(), processBindingKeyQuery.getDomainNameRegex())
-        && matches(safeKey.getZoneName(), processBindingKeyQuery.getInfrastructureZoneRegex())
+        && matches(safeKey.getInfrastructureZone(), processBindingKeyQuery.getInfrastructureZoneRegex())
         && matches(safeKey.getProcessName(), processBindingKeyQuery.getProcessNameRegex());
   }
 }

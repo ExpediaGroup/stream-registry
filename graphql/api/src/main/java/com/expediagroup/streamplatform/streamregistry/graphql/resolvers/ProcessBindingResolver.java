@@ -21,25 +21,23 @@ import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
 import com.expediagroup.streamplatform.streamregistry.core.services.ProcessService;
-import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Component
 @RequiredArgsConstructor
 public class ProcessBindingResolver implements Resolvers.ProcessBindingResolver {
   private final DomainService domainService;
-  private final ZoneService zoneService;
   private final ProcessService processService;
 
   public Domain domain(ProcessBinding processBinding) {
     return domainService.get(processBinding.getKey().getDomainKey()).orElse(null);
   }
 
-  public Zone zone(ProcessBinding processBinding) {
-    return zoneService.get(processBinding.getKey().getZoneKey()).orElse(null);
+  public ZoneKey zone(ProcessBinding processBinding) {
+    return processBinding.getZone();
   }
 
   public Process process(ProcessBinding processBinding) {

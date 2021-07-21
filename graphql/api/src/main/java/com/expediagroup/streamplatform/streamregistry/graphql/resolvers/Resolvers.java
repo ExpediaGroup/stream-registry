@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
 import com.expediagroup.streamplatform.streamregistry.model.*;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import graphql.kickstart.tools.GraphQLResolver;
 
 interface Resolvers {
@@ -89,7 +90,7 @@ interface Resolvers {
 
     Domain domain(ProcessBinding processBinding);
 
-    Zone zone(ProcessBinding processBinding);
+    ZoneKey zone(ProcessBinding processBinding);
   }
 
   interface StatusResolver extends GraphQLResolver<Status>, GraphQLApiType {

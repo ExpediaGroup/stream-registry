@@ -438,19 +438,43 @@ public class ITestDataFactory {
   public UpsertProcessMutation.Builder upsertProcessMutationBuilder() {
     return UpsertProcessMutation.builder()
       .key(processKeyInputBuilder().build())
-      .specification(specificationInputBuilder(DEFAULT).build());
+      .specification(specificationInputBuilder(DEFAULT).build())
+      .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
+      .inputs(Collections.singletonList(ProcessInInput.builder()
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .locality("locality")
+        .build()))
+      .outputs(Collections.singletonList(ProcessOutInput.builder()
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .build()));
   }
 
   public InsertProcessMutation.Builder insertProcessMutationBuilder() {
     return InsertProcessMutation.builder()
       .key(processKeyInputBuilder().build())
-      .specification(specificationInputBuilder(DEFAULT).build());
+      .specification(specificationInputBuilder(DEFAULT).build())
+      .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
+      .inputs(Collections.singletonList(ProcessInInput.builder()
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .locality("locality")
+        .build()))
+      .outputs(Collections.singletonList(ProcessOutInput.builder()
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .build()));
   }
 
   public UpdateProcessMutation.Builder updateProcessMutationBuilder() {
     return UpdateProcessMutation.builder()
       .key(processKeyInputBuilder().build())
-      .specification(specificationInputBuilder(DEFAULT).build());
+      .specification(specificationInputBuilder(DEFAULT).build())
+      .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
+      .inputs(Collections.singletonList(ProcessInInput.builder()
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .locality("locality")
+        .build()))
+      .outputs(Collections.singletonList(ProcessOutInput.builder()
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .build()));
   }
 
   public UpdateProcessStatusMutation.Builder updateProcessStatusBuilder() {
@@ -476,19 +500,28 @@ public class ITestDataFactory {
   public UpsertProcessBindingMutation.Builder upsertProcessBindingMutationBuilder() {
     return UpsertProcessBindingMutation.builder()
       .key(processBindingKeyInputBuilder().build())
-      .specification(specificationInputBuilder(DEFAULT).build());
+      .specification(specificationInputBuilder(DEFAULT).build())
+      .zone(zoneKeyInputBuilder().build())
+      .inputs(Collections.singletonList(consumerBindingKeyInputBuilder().build()))
+      .outputs(Collections.singletonList(producerBindingKeyInputBuilder().build()));
   }
 
   public InsertProcessBindingMutation.Builder insertProcessBindingMutationBuilder() {
     return InsertProcessBindingMutation.builder()
       .key(processBindingKeyInputBuilder().build())
-      .specification(specificationInputBuilder(DEFAULT).build());
+      .specification(specificationInputBuilder(DEFAULT).build())
+      .zone(zoneKeyInputBuilder().build())
+      .inputs(Collections.singletonList(consumerBindingKeyInputBuilder().build()))
+      .outputs(Collections.singletonList(producerBindingKeyInputBuilder().build()));
   }
 
   public UpdateProcessBindingMutation.Builder updateProcessBindingMutationBuilder() {
     return UpdateProcessBindingMutation.builder()
       .key(processBindingKeyInputBuilder().build())
-      .specification(specificationInputBuilder(DEFAULT).build());
+      .specification(specificationInputBuilder(DEFAULT).build())
+      .zone(zoneKeyInputBuilder().build())
+      .inputs(Collections.singletonList(consumerBindingKeyInputBuilder().build()))
+      .outputs(Collections.singletonList(producerBindingKeyInputBuilder().build()));
   }
 
   public UpdateProcessBindingStatusMutation.Builder updateProcessBindingStatusBuilder() {

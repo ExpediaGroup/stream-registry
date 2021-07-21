@@ -40,10 +40,10 @@ import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
     ConsumerTestStage.class,
     ZoneTestStage.class,
     InfrastructureTestStage.class,
-    ProcessTestStage.class,
     StreamBindingTestStage.class,
     ProducerBindingTestStage.class,
     ConsumerBindingTestStage.class,
+    ProcessTestStage.class,
     ProcessBindingTestStage.class
 })
 @Slf4j

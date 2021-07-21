@@ -245,7 +245,7 @@ public class ProcessBindingFilterTest {
     ProcessBindingKey processBindingKey = new ProcessBindingKey();
     processBindingKey.setDomainName(MATCH);
     processBindingKey.setProcessName(MATCH);
-    processBindingKey.setZoneName(MATCH);
+    processBindingKey.setInfrastructureZone(MATCH);
     return processBindingKey;
   }
 

@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 public class ProcessBindingKey implements Serializable {
 
   private String domainName;
-  private String zoneName;
+  private String infrastructureZone;
   private String processName;
 
   public DomainKey getDomainKey() {
@@ -35,7 +35,7 @@ public class ProcessBindingKey implements Serializable {
   }
 
   public ZoneKey getZoneKey() {
-    return new ZoneKey(zoneName);
+    return new ZoneKey(infrastructureZone);
   }
 
   public ProcessKey getProcessKey() {

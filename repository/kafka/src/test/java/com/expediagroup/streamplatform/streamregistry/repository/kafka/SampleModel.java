@@ -169,7 +169,7 @@ final class SampleModel {
   static ProcessBindingKey processBindingKey() {
     ProcessBindingKey key = new ProcessBindingKey();
     key.setDomainName("domain");
-    key.setZoneName("zone");
+    key.setInfrastructureZone("zone");
     key.setProcessName("process");
     return key;
   }
