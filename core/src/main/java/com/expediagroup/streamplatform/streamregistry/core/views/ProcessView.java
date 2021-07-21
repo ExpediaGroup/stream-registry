@@ -15,15 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.views;
 
-import com.expediagroup.streamplatform.streamregistry.model.Process;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
 
 @Component
 @RequiredArgsConstructor

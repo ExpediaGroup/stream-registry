@@ -15,15 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.views;
 
-import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
-import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 
 @Component
 @RequiredArgsConstructor

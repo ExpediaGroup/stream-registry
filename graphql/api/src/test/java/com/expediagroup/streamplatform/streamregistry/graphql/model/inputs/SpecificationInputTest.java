@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 
-import com.expediagroup.streamplatform.streamregistry.model.Principal;
-import com.expediagroup.streamplatform.streamregistry.model.Security;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.Test;
+
+import com.expediagroup.streamplatform.streamregistry.model.Principal;
+import com.expediagroup.streamplatform.streamregistry.model.Security;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
 
 public class SpecificationInputTest {
   private final ObjectMapper mapper = new ObjectMapper();

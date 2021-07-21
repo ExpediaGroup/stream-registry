@@ -13,29 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.query;
+package com.expediagroup.streamplatform.streamregistry.graphql.resolvers;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import graphql.kickstart.tools.GraphQLQueryResolver;
+import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
 
 @Component
 @RequiredArgsConstructor
-@Getter
-public class Query implements GraphQLQueryResolver {
-  private final DomainQuery domain;
-  private final SchemaQuery schema;
-  private final StreamQuery stream;
-  private final ProducerQuery producer;
-  private final ConsumerQuery consumer;
-  private final ProcessQuery process;
-  private final ZoneQuery zone;
-  private final InfrastructureQuery infrastructure;
-  private final StreamBindingQuery streamBinding;
-  private final ProducerBindingQuery producerBinding;
-  private final ConsumerBindingQuery consumerBinding;
-  private final ProcessBindingQuery processBinding;
+public class ProcessResolver implements Resolvers.ProcessResolver {
+  private final DomainService domainService;
+
+  public Domain domain(Process process) {
+    return domainService.get(process.getKey().getDomainKey()).orElse(null);
+  }
 }

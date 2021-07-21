@@ -21,53 +21,7 @@ import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateConsumerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateInfrastructureStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateProducerStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateSchemaStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamBindingStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateStreamStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneStatusMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertConsumerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertDomainMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertInfrastructureMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertProducerMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertSchemaMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamBindingMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertStreamMutation;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertZoneMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.*;
 
 
@@ -84,6 +38,8 @@ public class ITestDataFactory {
   public String description;
   public String infrastructureName;
   public String producerName;
+  public String processName;
+
 
   public ITestDataFactory(String suffix) {
     zoneName = "zone_name_" + suffix;
@@ -93,6 +49,7 @@ public class ITestDataFactory {
     streamName = "stream_name_" + suffix;
     infrastructureName = "infrastructure_name_" + suffix;
     producerName = "producer_name_" + suffix;
+    processName = "process_name_" + suffix;
 
     key = "key_" + suffix;
     value = "value_" + suffix;
@@ -469,5 +426,80 @@ public class ITestDataFactory {
 
   public DeleteStreamBindingMutation.Builder deleteStreamBindingMutationBuilder() {
     return DeleteStreamBindingMutation.builder().key(streamBindingKeyInputBuilder().build());
+  }
+
+  // Process
+  public final ProcessKeyInput.Builder processKeyInputBuilder() {
+    return ProcessKeyInput.builder()
+      .domain(domainName)
+      .name(processName);
+  }
+
+  public UpsertProcessMutation.Builder upsertProcessMutationBuilder() {
+    return UpsertProcessMutation.builder()
+      .key(processKeyInputBuilder().build())
+      .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public InsertProcessMutation.Builder insertProcessMutationBuilder() {
+    return InsertProcessMutation.builder()
+      .key(processKeyInputBuilder().build())
+      .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public UpdateProcessMutation.Builder updateProcessMutationBuilder() {
+    return UpdateProcessMutation.builder()
+      .key(processKeyInputBuilder().build())
+      .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public UpdateProcessStatusMutation.Builder updateProcessStatusBuilder() {
+    return UpdateProcessStatusMutation.builder()
+      .key(processKeyInputBuilder().build())
+      .status(StatusInput.builder().agentStatus(
+        mapper.createObjectNode().put("skey", "svalue")
+      ).build());
+  }
+
+  public DeleteProcessMutation.Builder deleteProcessMutationBuilder() {
+    return DeleteProcessMutation.builder().key(processKeyInputBuilder().build());
+  }
+
+  // ProcessBinding
+  public final ProcessBindingKeyInput.Builder processBindingKeyInputBuilder() {
+    return ProcessBindingKeyInput.builder()
+      .domainName(domainName)
+      .infrastructureZone(zoneName)
+      .processName(processName);
+  }
+
+  public UpsertProcessBindingMutation.Builder upsertProcessBindingMutationBuilder() {
+    return UpsertProcessBindingMutation.builder()
+      .key(processBindingKeyInputBuilder().build())
+      .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public InsertProcessBindingMutation.Builder insertProcessBindingMutationBuilder() {
+    return InsertProcessBindingMutation.builder()
+      .key(processBindingKeyInputBuilder().build())
+      .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public UpdateProcessBindingMutation.Builder updateProcessBindingMutationBuilder() {
+    return UpdateProcessBindingMutation.builder()
+      .key(processBindingKeyInputBuilder().build())
+      .specification(specificationInputBuilder(DEFAULT).build());
+  }
+
+  public UpdateProcessBindingStatusMutation.Builder updateProcessBindingStatusBuilder() {
+    return UpdateProcessBindingStatusMutation.builder()
+      .key(processBindingKeyInputBuilder().build())
+      .status(StatusInput.builder().agentStatus(
+        mapper.createObjectNode().put("skey", "svalue")
+      ).build());
+  }
+
+  public DeleteProcessBindingMutation.Builder deleteProcessBindingMutationBuilder() {
+    return DeleteProcessBindingMutation.builder().key(processBindingKeyInputBuilder().build());
   }
 }

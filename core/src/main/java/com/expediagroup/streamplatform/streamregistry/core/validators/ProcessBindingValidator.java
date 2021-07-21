@@ -15,12 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

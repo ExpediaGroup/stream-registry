@@ -15,6 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static org.mockito.Mockito.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProcessBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
@@ -25,18 +38,6 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.*;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProcessBindingServiceTest {
