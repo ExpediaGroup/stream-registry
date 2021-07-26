@@ -96,8 +96,8 @@ public class AvroConverterTest {
       put("admin", Arrays.asList(new AvroPrincipal("user1")));
       put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
     }},
-    Collections.singletonList(new AvroProcessInput(avroStreamKey, "locality")),
-    Collections.singletonList(new AvroProcessOutput(avroStreamKey))
+    Collections.singletonList(new AvroProcessInputStream(avroStreamKey, "locality")),
+    Collections.singletonList(new AvroProcessOutputStream(avroStreamKey))
   );
   private final AvroProcessBindingSpecification avroProcessBindingSpecification = new AvroProcessBindingSpecification(
     avroZoneKey,
@@ -167,8 +167,8 @@ public class AvroConverterTest {
       put("admin", Arrays.asList(new Principal("user1")));
       put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
     }},
-    Collections.singletonList(new ProcessInput(streamKey, "locality")),
-    Collections.singletonList(new ProcessOutput(streamKey))
+    Collections.singletonList(new ProcessInputStream(streamKey, "locality")),
+    Collections.singletonList(new ProcessOutputStream(streamKey))
   );
   private final ProcessBindingKey processBindingKey = new ProcessBindingKey(processKey, zoneKey);
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(

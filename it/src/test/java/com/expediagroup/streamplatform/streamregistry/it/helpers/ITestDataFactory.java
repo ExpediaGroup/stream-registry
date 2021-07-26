@@ -440,11 +440,11 @@ public class ITestDataFactory {
       .key(processKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
-      .inputs(Collections.singletonList(ProcessInInput.builder()
+      .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .locality("locality")
         .build()))
-      .outputs(Collections.singletonList(ProcessOutInput.builder()
+      .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .build()));
   }
@@ -454,11 +454,11 @@ public class ITestDataFactory {
       .key(processKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
-      .inputs(Collections.singletonList(ProcessInInput.builder()
+      .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .locality("locality")
         .build()))
-      .outputs(Collections.singletonList(ProcessOutInput.builder()
+      .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .build()));
   }
@@ -468,11 +468,11 @@ public class ITestDataFactory {
       .key(processKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
-      .inputs(Collections.singletonList(ProcessInInput.builder()
+      .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .locality("locality")
         .build()))
-      .outputs(Collections.singletonList(ProcessOutInput.builder()
+      .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .build()));
   }

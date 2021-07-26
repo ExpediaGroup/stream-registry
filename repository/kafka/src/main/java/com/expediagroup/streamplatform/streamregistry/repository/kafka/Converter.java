@@ -34,8 +34,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
-import com.expediagroup.streamplatform.streamregistry.model.ProcessInput;
-import com.expediagroup.streamplatform.streamregistry.model.ProcessOutput;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -306,13 +306,13 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         specification.getConfiguration(),
         convertSecurity(specification.getSecurity()),
         entity.getInputs().stream().map(input ->
-          new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInput(
+          new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
             streamConverter.convertKey(input.getStream()),
             input.getLocality()
           )
         ).collect(Collectors.toList()),
         entity.getOutputs().stream().map(output ->
-          new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutput(
+          new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream(
             streamConverter.convertKey(output.getStream())
           )
         ).collect(Collectors.toList())
@@ -327,13 +327,13 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         entity.getSpecification().getZones().stream().map(zone ->
           new ZoneKey(zone.getName())).collect(Collectors.toList()),
         entity.getSpecification().getInputs().stream().map(input ->
-          new ProcessInput(
+          new ProcessInputStream(
             streamConverter.convertKey(input.getStream()),
             input.getLocality()
           )
         ).collect(Collectors.toList()),
         entity.getSpecification().getOutputs().stream().map(output ->
-          new ProcessOutput(
+          new ProcessOutputStream(
             streamConverter.convertKey(output.getStream())
           )
         ).collect(Collectors.toList()),

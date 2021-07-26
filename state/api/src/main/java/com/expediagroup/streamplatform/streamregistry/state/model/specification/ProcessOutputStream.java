@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.state.model.specification;
 
+import lombok.NonNull;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 
 @Value
-public class ProcessOutput {
-  StreamKey stream;
+public class ProcessOutputStream {
+  @NonNull Entity.StreamKey stream;
 }

@@ -276,21 +276,21 @@ type Consumer {
 
 ############ Process ############
 
-type ProcessIn {
+type ProcessInputStream {
     stream: StreamKey!
     locality: String!
 }
 
-input ProcessInInput {
+input ProcessInputStreamInput {
     stream: StreamKeyInput!
     locality: String!
 }
 
-type ProcessOut {
+type ProcessOutputStream {
     stream: StreamKey!
 }
 
-input ProcessOutInput {
+input ProcessOutputStreamInput {
     stream: StreamKeyInput!
 }
 
@@ -314,8 +314,8 @@ type Process {
     zones: [ZoneKey!]!
     specification: Specification!
     status: Status
-    inputs: [ProcessIn!]!
-    outputs: [ProcessOut!]!
+    inputs: [ProcessInputStream!]!
+    outputs: [ProcessOutputStream!]!
 }
 
 type ProcessBindingKey {
@@ -515,9 +515,9 @@ type ProducerMutation{
 }
 
 type ProcessMutation{
-    insert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInInput!]!, outputs: [ProcessOutInput!]!): Process!
-    update(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInInput!]!, outputs: [ProcessOutInput!]!): Process!
-    upsert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInInput!]!, outputs: [ProcessOutInput!]!): Process!
+    insert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    update(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    upsert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
     delete(key: ProcessKeyInput!): Boolean!
     updateStatus(key: ProcessKeyInput!, status: StatusInput!): Process!
 }

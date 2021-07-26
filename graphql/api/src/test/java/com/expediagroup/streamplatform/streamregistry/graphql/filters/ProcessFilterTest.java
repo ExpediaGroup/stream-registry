@@ -255,12 +255,12 @@ public class ProcessFilterTest {
     assertFalse(processFilter.test(process));
   }
 
-  private List<ProcessInput> inputList(List<String> names) {
-    return names.stream().map(name -> new ProcessInput(new StreamKey("domain", name, 1), "locality")).collect(Collectors.toList());
+  private List<ProcessInputStream> inputList(List<String> names) {
+    return names.stream().map(name -> new ProcessInputStream(new StreamKey("domain", name, 1), "locality")).collect(Collectors.toList());
   }
 
-  private List<ProcessOutput> outputList(List<String> names) {
-    return names.stream().map(name -> new ProcessOutput(new StreamKey("domain", name, 1))).collect(Collectors.toList());
+  private List<ProcessOutputStream> outputList(List<String> names) {
+    return names.stream().map(name -> new ProcessOutputStream(new StreamKey("domain", name, 1))).collect(Collectors.toList());
   }
 
   private List<ZoneKey> zoneKeyList(List<String> zones) {

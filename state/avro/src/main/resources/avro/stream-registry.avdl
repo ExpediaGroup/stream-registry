@@ -70,12 +70,12 @@ protocol StreamRegistry {
     string name;
   }
 
-  record AvroProcessInput {
+  record AvroProcessInputStream {
     AvroStreamKey stream;
     string locality;
   }
 
-  record AvroProcessOutput {
+  record AvroProcessOutputStream {
     AvroStreamKey stream;
   }
 
@@ -111,8 +111,8 @@ protocol StreamRegistry {
     string type;
     AvroObject configuration;
     map<array<AvroPrincipal>> security;
-    array<AvroProcessInput> inputs;
-    array<AvroProcessOutput> outputs;
+    array<AvroProcessInputStream> inputs;
+    array<AvroProcessOutputStream> outputs;
   }
 
   record AvroProcessBindingSpecification {

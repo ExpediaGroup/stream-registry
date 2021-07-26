@@ -31,7 +31,7 @@ public class Process implements Entity<ProcessKey> {
   private ProcessKey key;
   private Specification specification;
   private List<ZoneKey> zones;
-  private List<ProcessInput> inputs;
-  private List<ProcessOutput> outputs;
+  private List<ProcessInputStream> inputs;
+  private List<ProcessOutputStream> outputs;
   private Status status;
 }

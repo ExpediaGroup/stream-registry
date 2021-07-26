@@ -138,7 +138,7 @@ mutation ConsumerDeletion($key: ConsumerKeyInput!) {
   }
 }
 
-mutation ProcessSpecification($key: ProcessKeyInput!, $specification: SpecificationInput!, $zones: [ZoneKeyInput!]!, $inputs: [ProcessInInput!]!, $outputs: [ProcessOutInput!]!) {
+mutation ProcessSpecification($key: ProcessKeyInput!, $specification: SpecificationInput!, $zones: [ZoneKeyInput!]!, $inputs: [ProcessInputStreamInput!]!, $outputs: [ProcessOutputStreamInput!]!) {
   process {
     upsert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs) {
       __typename

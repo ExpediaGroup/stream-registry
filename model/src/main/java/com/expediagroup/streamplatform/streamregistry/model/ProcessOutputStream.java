@@ -20,7 +20,6 @@ import lombok.Value;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Value
-public class ProcessInput {
+public class ProcessOutputStream {
   StreamKey stream;
-  String locality;
 }

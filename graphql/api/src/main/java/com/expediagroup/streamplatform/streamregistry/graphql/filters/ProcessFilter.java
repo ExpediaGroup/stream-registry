@@ -28,8 +28,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
-import com.expediagroup.streamplatform.streamregistry.model.ProcessInput;
-import com.expediagroup.streamplatform.streamregistry.model.ProcessOutput;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
@@ -70,23 +70,23 @@ public class ProcessFilter implements Predicate<Process> {
     );
   }
 
-  public static boolean matchesInput(List<ProcessInput> inputs, List<StreamKeyQuery> streamKeyQueries) {
+  public static boolean matchesInput(List<ProcessInputStream> inputs, List<StreamKeyQuery> streamKeyQueries) {
     if (streamKeyQueries == null || streamKeyQueries.isEmpty()) {
       return true;
     }
 
-    List<ProcessInput> safeInputs = (inputs == null) ? Collections.emptyList() : inputs;
+    List<ProcessInputStream> safeInputs = (inputs == null) ? Collections.emptyList() : inputs;
     return streamKeyQueries.stream().allMatch(streamKeyQuery ->
       safeInputs.stream().anyMatch(input -> matchesStreamKey(input.getStream(), streamKeyQuery))
     );
   }
 
-  public static boolean matchesOutput(List<ProcessOutput> outputs, List<StreamKeyQuery> streamKeyQueries) {
+  public static boolean matchesOutput(List<ProcessOutputStream> outputs, List<StreamKeyQuery> streamKeyQueries) {
     if (streamKeyQueries == null || streamKeyQueries.isEmpty()) {
       return true;
     }
 
-    List<ProcessOutput> safeOutputs = (outputs == null) ? Collections.emptyList() : outputs;
+    List<ProcessOutputStream> safeOutputs = (outputs == null) ? Collections.emptyList() : outputs;
     return streamKeyQueries.stream().allMatch(streamKeyQuery ->
       safeOutputs.stream().anyMatch(output -> matchesStreamKey(output.getStream(), streamKeyQuery))
     );

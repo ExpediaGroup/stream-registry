@@ -38,19 +38,19 @@ public class ProcessMutationImpl implements ProcessMutation {
 
   @Override
   public Process insert(ProcessKeyInput key, SpecificationInput specification,
-                        List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs) {
+                        List<ZoneKeyInput> zones, List<ProcessInputStreamInput> inputs, List<ProcessOutputStreamInput> outputs) {
     return processService.create(asProcess(key, specification, zones, inputs, outputs)).get();
   }
 
   @Override
   public Process update(ProcessKeyInput key, SpecificationInput specification,
-                        List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs) {
+                        List<ZoneKeyInput> zones, List<ProcessInputStreamInput> inputs, List<ProcessOutputStreamInput> outputs) {
     return processService.update(asProcess(key, specification, zones, inputs, outputs)).get();
   }
 
   @Override
   public Process upsert(ProcessKeyInput key, SpecificationInput specification,
-                        List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs) {
+                        List<ZoneKeyInput> zones, List<ProcessInputStreamInput> inputs, List<ProcessOutputStreamInput> outputs) {
     Process stream = asProcess(key, specification, zones, inputs, outputs);
     if (!processView.exists(stream.getKey())) {
       return processService.create(stream).get();
@@ -72,13 +72,13 @@ public class ProcessMutationImpl implements ProcessMutation {
   }
 
   private Process asProcess(ProcessKeyInput key, SpecificationInput specification,
-                            List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs) {
+                            List<ZoneKeyInput> zones, List<ProcessInputStreamInput> inputs, List<ProcessOutputStreamInput> outputs) {
     Process process = new Process();
     process.setKey(key.asProcessKey());
     process.setSpecification(specification.asSpecification());
     process.setZones(zones.stream().map(ZoneKeyInput::asZoneKey).collect(Collectors.toList()));
-    process.setInputs(inputs.stream().map(ProcessInInput::asProcessInput).collect(Collectors.toList()));
-    process.setOutputs(outputs.stream().map(ProcessOutInput::asProcessOutput).collect(Collectors.toList()));
+    process.setInputs(inputs.stream().map(ProcessInputStreamInput::asProcessInputStream).collect(Collectors.toList()));
+    process.setOutputs(outputs.stream().map(ProcessOutputStreamInput::asProcessOutputStream).collect(Collectors.toList()));
     maintainState(process, processView.get(process.getKey()));
     return process;
   }

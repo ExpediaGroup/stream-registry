@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
+package com.expediagroup.streamplatform.streamregistry.model;
 
-import lombok.Builder;
 import lombok.Value;
 
-import com.expediagroup.streamplatform.streamregistry.model.ProcessInput;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Value
-@Builder
-public class ProcessInInput {
-  StreamKeyInput stream;
+public class ProcessInputStream {
+  StreamKey stream;
   String locality;
-
-  public ProcessInput asProcessInput() {
-    return new ProcessInput(stream.asStreamKey(), locality);
-  }
 }

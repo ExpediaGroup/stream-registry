@@ -39,8 +39,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInput;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutput;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
@@ -87,8 +87,8 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      Collections.singletonList(new ProcessInput(streamKey(), "locality")),
-      Collections.singletonList(new ProcessOutput(streamKey()))
+      Collections.singletonList(new ProcessInputStream(streamKey(), "locality")),
+      Collections.singletonList(new ProcessOutputStream(streamKey()))
     );
   }
 

@@ -23,13 +23,13 @@ import com.expediagroup.streamplatform.streamregistry.model.Process;
 
 public interface ProcessMutation extends GraphQLApiType {
   Process insert(ProcessKeyInput key, SpecificationInput specification,
-                 List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs);
+                 List<ZoneKeyInput> zones, List<ProcessInputStreamInput> inputs, List<ProcessOutputStreamInput> outputs);
 
   Process update(ProcessKeyInput key, SpecificationInput specification,
-                 List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs);
+                 List<ZoneKeyInput> zones, List<ProcessInputStreamInput> inputs, List<ProcessOutputStreamInput> outputs);
 
   Process upsert(ProcessKeyInput key, SpecificationInput specification,
-                 List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs);
+                 List<ZoneKeyInput> zones, List<ProcessInputStreamInput> inputs, List<ProcessOutputStreamInput> outputs);
 
   Boolean delete(ProcessKeyInput key);
 

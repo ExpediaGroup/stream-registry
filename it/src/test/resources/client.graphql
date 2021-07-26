@@ -149,8 +149,8 @@ mutation InsertProcess(
   $key: ProcessKeyInput!
   $specification: SpecificationInput!
   $zones: [ZoneKeyInput!]!
-  $inputs: [ProcessInInput!]!
-  $outputs: [ProcessOutInput!]!
+  $inputs: [ProcessInputStreamInput!]!
+  $outputs: [ProcessOutputStreamInput!]!
 ) {
   process{
     insert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
@@ -164,8 +164,8 @@ mutation UpdateProcess(
   $key: ProcessKeyInput!
   $specification: SpecificationInput!
   $zones: [ZoneKeyInput!]!
-  $inputs: [ProcessInInput!]!
-  $outputs: [ProcessOutInput!]!
+  $inputs: [ProcessInputStreamInput!]!
+  $outputs: [ProcessOutputStreamInput!]!
 ) {
   process{
     update(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
@@ -179,8 +179,8 @@ mutation UpsertProcess(
   $key: ProcessKeyInput!
   $specification: SpecificationInput!
   $zones: [ZoneKeyInput!]!
-  $inputs: [ProcessInInput!]!
-  $outputs: [ProcessOutInput!]!
+  $inputs: [ProcessInputStreamInput!]!
+  $outputs: [ProcessOutputStreamInput!]!
 ) {
   process{
     upsert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){

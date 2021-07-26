@@ -65,7 +65,7 @@ public class GraphQLConverterTest {
   }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security);
   private final ProcessSpecification processSpecification = new ProcessSpecification(Collections.singletonList(zoneKey), "description", Collections.singletonList(tag),
-    "type", configuration, security, Collections.singletonList(new ProcessInput(streamkey, "locality")), Collections.singletonList(new ProcessOutput(streamkey)));
+    "type", configuration, security, Collections.singletonList(new ProcessInputStream(streamkey, "locality")), Collections.singletonList(new ProcessOutputStream(streamkey)));
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(zoneKey, "description", Collections.singletonList(tag),
     "type", configuration, security, Collections.singletonList(consumerBindingKey), Collections.singletonList(producerBindingKey));
   private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);
