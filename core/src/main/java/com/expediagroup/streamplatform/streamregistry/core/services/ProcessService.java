@@ -51,7 +51,7 @@ public class ProcessService {
 
   @PreAuthorize("hasPermission(#process, 'CREATE')")
   public Optional<Process> create(Process process) throws ValidationException {
-    if (processView.get(process.getKey()).isPresent()) {
+    if (processView.exists(process.getKey())) {
       throw new ValidationException("Can't create " + process.getKey() + " because it already exists");
     }
     processValidator.validateForCreate(process);

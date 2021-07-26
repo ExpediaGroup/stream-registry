@@ -15,10 +15,14 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -33,8 +37,16 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ProcessBin
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
-import com.expediagroup.streamplatform.streamregistry.model.*;
-import com.expediagroup.streamplatform.streamregistry.model.keys.*;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
@@ -140,34 +152,6 @@ public class ProcessBindingServiceTest {
   }
 
   @Test
-  public void delete() {
-    final ProcessBinding entity = mock(ProcessBinding.class);
-
-    final ConsumerKey consumerKey = mock(ConsumerKey.class);
-    final Consumer consumer = mock(Consumer.class);
-    final ConsumerBindingKey consumerBindingKey = mock(ConsumerBindingKey.class);
-    when(consumer.getKey()).thenReturn(consumerKey);
-    when(consumerBindingKey.getConsumerKey()).thenReturn(consumerKey);
-
-    final ProducerKey producerKey = mock(ProducerKey.class);
-    final Producer producer = mock(Producer.class);
-    final ProducerBindingKey producerBindingKey = mock(ProducerBindingKey.class);
-    when(producer.getKey()).thenReturn(producerKey);
-    when(producerBindingKey.getProducerKey()).thenReturn(producerKey);
-
-    when(entity.getInputs()).thenReturn(Collections.singletonList(consumerBindingKey));
-    when(entity.getOutputs()).thenReturn(Collections.singletonList(producerBindingKey));
-    when(producerRepository.findAll()).thenReturn(Collections.singletonList(producer));
-    when(consumerRepository.findAll()).thenReturn(Collections.singletonList(consumer));
-
-    processBindingService.delete(entity);
-
-    InOrder inOrder = inOrder(producerService, consumerService);
-    inOrder.verify(consumerService).delete(consumer);
-    inOrder.verify(producerService).delete(producer);
-  }
-
-  @Test
   public void delete_multipleEntities() {
     final ProcessBinding entity = mock(ProcessBinding.class);
 
@@ -202,10 +186,13 @@ public class ProcessBindingServiceTest {
 
     processBindingService.delete(entity);
 
-    InOrder inOrder = inOrder(producerService, consumerService);
+    InOrder inOrder = inOrder(handlerService, producerService, consumerService, processBindingRepository);
+    inOrder.verify(handlerService).handleDelete(entity);
     inOrder.verify(consumerService).delete(consumer);
     inOrder.verify(consumerService).delete(consumer2);
     inOrder.verify(producerService).delete(producer);
     inOrder.verify(producerService).delete(producer2);
+    inOrder.verify(processBindingRepository).delete(entity);
+
   }
 }

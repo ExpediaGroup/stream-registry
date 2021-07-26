@@ -18,7 +18,13 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -32,13 +38,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ProcessValidator;
-import com.expediagroup.streamplatform.streamregistry.core.views.*;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.keys.*;
-import com.expediagroup.streamplatform.streamregistry.repository.*;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProcessServiceTest {
@@ -186,7 +195,8 @@ public class ProcessServiceTest {
 
     processService.delete(entity);
 
-    InOrder inOrder = inOrder(processBindingService, processRepository);
+    InOrder inOrder = inOrder(handlerService, processBindingService, processRepository);
+    inOrder.verify(handlerService).handleDelete(entity);
     inOrder.verify(processBindingService).delete(binding1);
     inOrder.verify(processBindingService).delete(binding2);
     inOrder.verify(processRepository).delete(entity);

@@ -42,7 +42,7 @@ public class ProcessValidator implements Validator<Process> {
     specificationValidator.validateForUpdate(process.getSpecification(), existing.getSpecification());
   }
 
-  public void validateForCreateAndUpdate(Process process) throws ValidationException {
+  private void validateForCreateAndUpdate(Process process) throws ValidationException {
     process.getZones().forEach(zone -> {
       if (!zoneView.exists(zone)) {
         throw new ValidationException("Zone [" + zone + "] does not exist");

@@ -52,7 +52,7 @@ public class ProcessBindingMutationImpl implements ProcessBindingMutation {
   public ProcessBinding upsert(ProcessBindingKeyInput key, SpecificationInput specification,
                         ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs) {
     ProcessBinding stream = asProcessBinding(key, specification, zone, inputs, outputs);
-    if (!processBindingView.get(stream.getKey()).isPresent()) {
+    if (!processBindingView.exists(stream.getKey())) {
       return processBindingService.create(stream).get();
     } else {
       return processBindingService.update(stream).get();

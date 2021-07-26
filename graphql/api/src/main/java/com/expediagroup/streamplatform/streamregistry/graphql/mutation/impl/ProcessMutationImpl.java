@@ -52,7 +52,7 @@ public class ProcessMutationImpl implements ProcessMutation {
   public Process upsert(ProcessKeyInput key, SpecificationInput specification,
                         List<ZoneKeyInput> zones, List<ProcessInInput> inputs, List<ProcessOutInput> outputs) {
     Process stream = asProcess(key, specification, zones, inputs, outputs);
-    if (!processView.get(stream.getKey()).isPresent()) {
+    if (!processView.exists(stream.getKey())) {
       return processService.create(stream).get();
     } else {
       return processService.update(stream).get();

@@ -54,7 +54,7 @@ public class ProcessBindingService {
 
   @PreAuthorize("hasPermission(#processBinding, 'CREATE')")
   public Optional<ProcessBinding> create(ProcessBinding processBinding) throws ValidationException {
-    if (processBindingView.get(processBinding.getKey()).isPresent()) {
+    if (processBindingView.exists(processBinding.getKey())) {
       throw new ValidationException("Can't create " + processBinding.getKey() + " because it already exists");
     }
     processBindingValidator.validateForCreate(processBinding);
