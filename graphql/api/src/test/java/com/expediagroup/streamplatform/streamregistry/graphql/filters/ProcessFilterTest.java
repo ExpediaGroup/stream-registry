@@ -256,7 +256,7 @@ public class ProcessFilterTest {
   }
 
   private List<ProcessInputStream> inputList(List<String> names) {
-    return names.stream().map(name -> new ProcessInputStream(new StreamKey("domain", name, 1), "locality")).collect(Collectors.toList());
+    return names.stream().map(name -> new ProcessInputStream(new StreamKey("domain", name, 1))).collect(Collectors.toList());
   }
 
   private List<ProcessOutputStream> outputList(List<String> names) {

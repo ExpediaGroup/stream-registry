@@ -24,9 +24,8 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
 @Builder
 public class ProcessInputStreamInput {
   StreamKeyInput stream;
-  String locality;
 
   public ProcessInputStream asProcessInputStream() {
-    return new ProcessInputStream(stream.asStreamKey(), locality);
+    return new ProcessInputStream(stream.asStreamKey());
   }
 }

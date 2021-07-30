@@ -278,12 +278,10 @@ type Consumer {
 
 type ProcessInputStream {
     stream: StreamKey!
-    locality: String!
 }
 
 input ProcessInputStreamInput {
     stream: StreamKeyInput!
-    locality: String!
 }
 
 type ProcessOutputStream {

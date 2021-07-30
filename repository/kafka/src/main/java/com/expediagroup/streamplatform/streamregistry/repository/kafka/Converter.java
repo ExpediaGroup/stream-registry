@@ -307,8 +307,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         convertSecurity(specification.getSecurity()),
         entity.getInputs().stream().map(input ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
-            streamConverter.convertKey(input.getStream()),
-            input.getLocality()
+            streamConverter.convertKey(input.getStream())
           )
         ).collect(Collectors.toList()),
         entity.getOutputs().stream().map(output ->
@@ -328,8 +327,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           new ZoneKey(zone.getName())).collect(Collectors.toList()),
         entity.getSpecification().getInputs().stream().map(input ->
           new ProcessInputStream(
-            streamConverter.convertKey(input.getStream()),
-            input.getLocality()
+            streamConverter.convertKey(input.getStream())
           )
         ).collect(Collectors.toList()),
         entity.getSpecification().getOutputs().stream().map(output ->

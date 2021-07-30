@@ -23,5 +23,4 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 @Value
 public class ProcessInputStream {
   @NonNull Entity.StreamKey stream;
-  @NonNull String locality;
 }

@@ -15,12 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.avro;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -67,50 +68,50 @@ public class AvroConverterTest {
   private final AvroSpecificationKey avroSpecificationKey = new AvroSpecificationKey(avroDomainKey);
   private final AvroSpecification avroSpecification = new AvroSpecification(
       "description",
-      Collections.singletonList(new AvroTag("name", "value")),
+      singletonList(new AvroTag("name", "value")),
       "type",
       new AvroObject(Collections.singletonMap("foo", "bar")),
       new HashMap<String, List<AvroPrincipal>>() {{
-        put("admin", Arrays.asList(new AvroPrincipal("user1")));
-        put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+        put("admin", singletonList(new AvroPrincipal("user1")));
+        put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
       }}
   );
   private final AvroStreamSpecification avroStreamSpecification = new AvroStreamSpecification(
       "description",
-      Collections.singletonList(new AvroTag("name", "value")),
+      singletonList(new AvroTag("name", "value")),
       "type",
       new AvroObject(Collections.singletonMap("foo", "bar")),
       new HashMap<String, List<AvroPrincipal>>() {{
-        put("admin", Arrays.asList(new AvroPrincipal("user1")));
-        put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+        put("admin", singletonList(new AvroPrincipal("user1")));
+        put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
       }},
       new AvroSchemaKey(avroDomainKey, "schema")
   );
   private final AvroProcessSpecification avroProcessSpecification = new AvroProcessSpecification(
-    Collections.singletonList(avroZoneKey),
+    singletonList(avroZoneKey),
     "description",
-    Collections.singletonList(new AvroTag("name", "value")),
+    singletonList(new AvroTag("name", "value")),
     "type",
     new AvroObject(Collections.singletonMap("foo", "bar")),
     new HashMap<String, List<AvroPrincipal>>() {{
-      put("admin", Arrays.asList(new AvroPrincipal("user1")));
-      put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+      put("admin", singletonList(new AvroPrincipal("user1")));
+      put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
     }},
-    Collections.singletonList(new AvroProcessInputStream(avroStreamKey, "locality")),
-    Collections.singletonList(new AvroProcessOutputStream(avroStreamKey))
+    singletonList(new AvroProcessInputStream(avroStreamKey)),
+    singletonList(new AvroProcessOutputStream(avroStreamKey))
   );
   private final AvroProcessBindingSpecification avroProcessBindingSpecification = new AvroProcessBindingSpecification(
     avroZoneKey,
     "description",
-    Collections.singletonList(new AvroTag("name", "value")),
+    singletonList(new AvroTag("name", "value")),
     "type",
     new AvroObject(Collections.singletonMap("foo", "bar")),
     new HashMap<String, List<AvroPrincipal>>() {{
-      put("admin", Arrays.asList(new AvroPrincipal("user1")));
-      put("creator", Arrays.asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
+      put("admin", singletonList(new AvroPrincipal("user1")));
+      put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
     }},
-    Collections.singletonList(avroConsumerBindingKey),
-    Collections.singletonList(avroProducerBindingKey)
+    singletonList(avroConsumerBindingKey),
+    singletonList(avroProducerBindingKey)
   );
 
   private final AvroStatusKey avroStatusKey = new AvroStatusKey(avroDomainKey, "statusName");
@@ -130,12 +131,12 @@ public class AvroConverterTest {
   private final InfrastructureKey infrastructureKey = new InfrastructureKey(zoneKey, "infrastructure");
   private final DefaultSpecification specification = new DefaultSpecification(
       "description",
-      Collections.singletonList(new Tag("name", "value")),
+      singletonList(new Tag("name", "value")),
       "type",
       mapper.createObjectNode().put("foo", "bar"),
       new HashMap<String, List<Principal>>() {{
-        put("admin", Arrays.asList(new Principal("user1")));
-        put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+        put("admin", singletonList(new Principal("user1")));
+        put("creator", asList(new Principal("user2"), new Principal("user3")));
       }}
   );
   private final StatusEntry statusEntry = new StatusEntry("statusName", mapper.createObjectNode().put("foo", "baz"));
@@ -143,12 +144,12 @@ public class AvroConverterTest {
   private final StreamBindingKey streamBindingKey = new StreamBindingKey(streamKey, infrastructureKey);
   private final StreamSpecification streamSpecification = new StreamSpecification(
       "description",
-      Collections.singletonList(new Tag("name", "value")),
+      singletonList(new Tag("name", "value")),
       "type",
       mapper.createObjectNode().put("foo", "bar"),
       new HashMap<String, List<Principal>>() {{
-        put("admin", Arrays.asList(new Principal("user1")));
-        put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+        put("admin", singletonList(new Principal("user1")));
+        put("creator", asList(new Principal("user2"), new Principal("user3")));
       }},
       new Entity.SchemaKey(domainKey, "schema")
   );
@@ -158,31 +159,31 @@ public class AvroConverterTest {
   private final ProducerBindingKey producerBindingKey = new ProducerBindingKey(producerKey, streamBindingKey);
   private final ProcessKey processKey = new ProcessKey(domainKey, "process");
   private final ProcessSpecification processSpecification = new ProcessSpecification(
-    Collections.singletonList(zoneKey),
+    singletonList(zoneKey),
     "description",
-    Collections.singletonList(new Tag("name", "value")),
+    singletonList(new Tag("name", "value")),
     "type",
     mapper.createObjectNode().put("foo", "bar"),
     new HashMap<String, List<Principal>>() {{
-      put("admin", Arrays.asList(new Principal("user1")));
-      put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+      put("admin", singletonList(new Principal("user1")));
+      put("creator", asList(new Principal("user2"), new Principal("user3")));
     }},
-    Collections.singletonList(new ProcessInputStream(streamKey, "locality")),
-    Collections.singletonList(new ProcessOutputStream(streamKey))
+    singletonList(new ProcessInputStream(streamKey)),
+    singletonList(new ProcessOutputStream(streamKey))
   );
   private final ProcessBindingKey processBindingKey = new ProcessBindingKey(processKey, zoneKey);
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(
     zoneKey,
     "description",
-    Collections.singletonList(new Tag("name", "value")),
+    singletonList(new Tag("name", "value")),
     "type",
     mapper.createObjectNode().put("foo", "bar"),
     new HashMap<String, List<Principal>>() {{
-      put("admin", Arrays.asList(new Principal("user1")));
-      put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
+      put("admin", singletonList(new Principal("user1")));
+      put("creator", asList(new Principal("user2"), new Principal("user3")));
     }},
-    Collections.singletonList(consumerBindingKey),
-    Collections.singletonList(producerBindingKey)
+    singletonList(consumerBindingKey),
+    singletonList(producerBindingKey)
   );
 
   @Test

@@ -87,7 +87,7 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      Collections.singletonList(new ProcessInputStream(streamKey(), "locality")),
+      Collections.singletonList(new ProcessInputStream(streamKey())),
       Collections.singletonList(new ProcessOutputStream(streamKey()))
     );
   }

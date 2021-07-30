@@ -72,7 +72,6 @@ protocol StreamRegistry {
 
   record AvroProcessInputStream {
     AvroStreamKey stream;
-    string locality;
   }
 
   record AvroProcessOutputStream {

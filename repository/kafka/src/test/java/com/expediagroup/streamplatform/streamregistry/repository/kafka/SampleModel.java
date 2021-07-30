@@ -236,7 +236,7 @@ final class SampleModel {
     entity.setKey(processKey());
     entity.setSpecification(specification());
     entity.setZones(Collections.singletonList(zoneKey()));
-    entity.setInputs(Collections.singletonList(new ProcessInputStream(streamKey(), "locality")));
+    entity.setInputs(Collections.singletonList(new ProcessInputStream(streamKey())));
     entity.setOutputs(Collections.singletonList(new ProcessOutputStream(streamKey())));
     entity.setStatus(status());
     return entity;

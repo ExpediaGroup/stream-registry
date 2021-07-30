@@ -401,7 +401,6 @@ class GraphQLConverter {
               .name(input.getStream().getName())
               .version(input.getStream().getVersion())
               .build())
-            .locality(input.getLocality())
             .build()
         ).collect(toList()))
         .outputs(event.getSpecification().getOutputs().stream().map(output ->
