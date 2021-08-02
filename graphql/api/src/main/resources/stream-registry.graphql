@@ -284,12 +284,36 @@ input ProcessInputStreamInput {
     stream: StreamKeyInput!
 }
 
+type ProcessInputStreamBinding {
+    streamBindingKey: StreamBindingKey!
+    type: String!
+    configuration: ObjectNode!
+}
+
+input ProcessInputStreamBindingInput {
+    streamBindingKey: StreamBindingKeyInput!
+    type: String!
+    configuration: ObjectNode!
+}
+
 type ProcessOutputStream {
     stream: StreamKey!
 }
 
 input ProcessOutputStreamInput {
     stream: StreamKeyInput!
+}
+
+type ProcessOutputStreamBinding {
+    streamBindingKey: StreamBindingKey!
+    type: String!
+    configuration: ObjectNode!
+}
+
+input ProcessOutputStreamBindingInput {
+    streamBindingKey: StreamBindingKeyInput!
+    type: String!
+    configuration: ObjectNode!
 }
 
 type ProcessKey {
@@ -333,8 +357,8 @@ type ProcessBinding {
     zone: ZoneKey!
     specification: Specification!
     status: Status
-    inputs: [ConsumerBindingKey!]!
-    outputs: [ProducerBindingKey!]!
+    inputs: [ProcessInputStreamBinding!]!
+    outputs: [ProcessOutputStreamBinding!]!
 }
 
 input ProcessBindingKeyQuery {
@@ -545,9 +569,9 @@ type ConsumerBindingMutation{
 }
 
 type ProcessBindingMutation{
-    insert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ConsumerBindingKeyInput!]!, outputs: [ProducerBindingKeyInput!]!): ProcessBinding!
-    update(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ConsumerBindingKeyInput!]!, outputs: [ProducerBindingKeyInput!]!): ProcessBinding!
-    upsert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ConsumerBindingKeyInput!]!, outputs: [ProducerBindingKeyInput!]!): ProcessBinding!
+    insert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    update(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    upsert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
     delete(key: ProcessBindingKeyInput!): Boolean!
     updateStatus(key: ProcessBindingKeyInput!, status: StatusInput!): ProcessBinding!
 }
@@ -624,7 +648,7 @@ type ConsumerBindingQuery{
 
 type ProcessBindingQuery{
     byKey(key: ProcessBindingKeyInput!): ProcessBinding
-    byQuery(key: ProcessBindingKeyQuery, specification: SpecificationQuery, zone: ZoneKeyQuery, inputs: [ConsumerBindingKeyQuery!], outputs: [ProducerBindingKeyQuery!]): [ProcessBinding!]!
+    byQuery(key: ProcessBindingKeyQuery, specification: SpecificationQuery, zone: ZoneKeyQuery, inputs: [StreamBindingKeyQuery!], outputs: [StreamBindingKeyQuery!]): [ProcessBinding!]!
 }
 
 ############ Queries ############

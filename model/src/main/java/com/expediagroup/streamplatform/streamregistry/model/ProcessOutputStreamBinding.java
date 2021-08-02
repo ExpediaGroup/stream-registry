@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state.model.specification;
+package com.expediagroup.streamplatform.streamregistry.model;
 
-import java.util.List;
-import java.util.Map;
-
-import lombok.NonNull;
 import lombok.Value;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 
 @Value
-public class ProcessBindingSpecification implements Specification {
-  @NonNull ZoneKey zone;
-  @NonNull String description;
-  @NonNull List<Tag> tags;
-  @NonNull String type;
-  @NonNull ObjectNode configuration;
-  @NonNull Map<String, List<Principal>> security;
-  @NonNull List<ProcessInputStreamBinding> inputs;
-  @NonNull List<ProcessOutputStreamBinding> outputs;
+public class ProcessOutputStreamBinding {
+  StreamBindingKey streamBindingKey;
+  String type;
+  ObjectNode configuration;
 }

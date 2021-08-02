@@ -57,8 +57,4 @@ public class ITestClient extends StreamRegistryClient {
   public void createProcess(ITestDataFactory factory) {
     invoke(factory.upsertProcessMutationBuilder().build());
   }
-
-  public void createProcessBinding(ITestDataFactory factory) {
-    invoke(factory.upsertProcessBindingMutationBuilder().build());
-  }
 }

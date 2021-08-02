@@ -41,7 +41,7 @@ public class ProcessBindingQueryImpl implements ProcessBindingQuery {
 
   @Override
   public Iterable<ProcessBinding> byQuery(ProcessBindingKeyQuery key, SpecificationQuery specification,
-                                          ZoneKeyQuery zone, List<ConsumerBindingKeyQuery> inputs, List<ProducerBindingKeyQuery> outputs) {
+                                          ZoneKeyQuery zone, List<StreamBindingKeyQuery> inputs, List<StreamBindingKeyQuery> outputs) {
     return processBindingService.findAll(new ProcessBindingFilter(key, specification, zone, inputs, outputs));
   }
 }

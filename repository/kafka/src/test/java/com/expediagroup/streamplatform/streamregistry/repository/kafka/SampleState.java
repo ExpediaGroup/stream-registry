@@ -40,7 +40,9 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
@@ -102,8 +104,8 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      Collections.singletonList(consumerBindingKey()),
-      Collections.singletonList(producerBindingKey())
+      Collections.singletonList(processInputStreamBinding()),
+      Collections.singletonList(processOutputStreamBinding())
     );
   }
 
@@ -157,6 +159,14 @@ final class SampleState {
 
   static ProcessBindingKey processBindingKey() {
     return new ProcessBindingKey(processKey(), zoneKey());
+  }
+
+  static ProcessInputStreamBinding processInputStreamBinding() {
+    return new ProcessInputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
+  }
+
+  static ProcessOutputStreamBinding processOutputStreamBinding() {
+    return new ProcessOutputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
   }
 
   static Entity<DomainKey, DefaultSpecification> domain() {

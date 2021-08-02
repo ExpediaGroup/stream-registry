@@ -218,7 +218,7 @@ mutation ConsumerBindingDeletion($key: ConsumerBindingKeyInput!) {
   }
 }
 
-mutation ProcessBindingSpecification($key: ProcessBindingKeyInput!, $specification: SpecificationInput!, $zone: ZoneKeyInput!, $inputs: [ConsumerBindingKeyInput!]!, $outputs: [ProducerBindingKeyInput!]!) {
+mutation ProcessBindingSpecification($key: ProcessBindingKeyInput!, $specification: SpecificationInput!, $zone: ZoneKeyInput!, $inputs: [ProcessInputStreamBindingInput!]!, $outputs: [ProcessOutputStreamBindingInput!]!) {
   processBinding {
     upsert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs) {
       __typename

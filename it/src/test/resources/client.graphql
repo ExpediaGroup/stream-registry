@@ -267,8 +267,8 @@ mutation InsertProcessBinding(
   $key: ProcessBindingKeyInput!
   $specification: SpecificationInput!
   $zone: ZoneKeyInput!
-  $inputs: [ConsumerBindingKeyInput!]!
-  $outputs: [ProducerBindingKeyInput!]!
+  $inputs: [ProcessInputStreamBindingInput!]!
+  $outputs: [ProcessOutputStreamBindingInput!]!
 ) {
   processBinding{
     insert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
@@ -282,8 +282,8 @@ mutation UpdateProcessBinding(
   $key: ProcessBindingKeyInput!
   $specification: SpecificationInput!
   $zone: ZoneKeyInput!
-  $inputs: [ConsumerBindingKeyInput!]!
-  $outputs: [ProducerBindingKeyInput!]!
+  $inputs: [ProcessInputStreamBindingInput!]!
+  $outputs: [ProcessOutputStreamBindingInput!]!
 ) {
   processBinding{
     update(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
@@ -297,8 +297,8 @@ mutation UpsertProcessBinding(
   $key: ProcessBindingKeyInput!
   $specification: SpecificationInput!
   $zone: ZoneKeyInput!
-  $inputs: [ConsumerBindingKeyInput!]!
-  $outputs: [ProducerBindingKeyInput!]!
+  $inputs: [ProcessInputStreamBindingInput!]!
+  $outputs: [ProcessOutputStreamBindingInput!]!
 ) {
   processBinding{
     upsert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
@@ -345,8 +345,8 @@ query ProcessBindings(
   $key: ProcessBindingKeyQuery
   $specification: SpecificationQuery
   $zone: ZoneKeyQuery
-  $inputs: [ConsumerBindingKeyQuery!]
-  $outputs: [ProducerBindingKeyQuery!]
+  $inputs: [StreamBindingKeyQuery!]
+  $outputs: [StreamBindingKeyQuery!]
 ) {
   processBinding{
     byQuery(

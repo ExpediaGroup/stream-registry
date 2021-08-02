@@ -21,9 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 @Data
@@ -33,7 +31,7 @@ public class ProcessBinding implements Entity<ProcessBindingKey> {
   private ProcessBindingKey key;
   private Specification specification;
   private ZoneKey zone;
-  private List<ConsumerBindingKey> inputs;
-  private List<ProducerBindingKey> outputs;
+  private List<ProcessInputStreamBinding> inputs;
+  private List<ProcessOutputStreamBinding> outputs;
   private Status status;
 }

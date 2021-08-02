@@ -494,13 +494,27 @@ public class ITestDataFactory {
       .processName(processName);
   }
 
+  public final ProcessInputStreamBindingInput.Builder processInputStreamBindingInputBuilder() {
+    return ProcessInputStreamBindingInput.builder()
+      .streamBindingKey(streamBindingKeyInputBuilder().build())
+      .configuration(mapper.createObjectNode())
+      .type("type");
+  }
+
+  public final ProcessOutputStreamBindingInput.Builder processOutputStreamBindingInputBuilder() {
+    return ProcessOutputStreamBindingInput.builder()
+      .streamBindingKey(streamBindingKeyInputBuilder().build())
+      .configuration(mapper.createObjectNode())
+      .type("type");
+  }
+
   public UpsertProcessBindingMutation.Builder upsertProcessBindingMutationBuilder() {
     return UpsertProcessBindingMutation.builder()
       .key(processBindingKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
       .zone(zoneKeyInputBuilder().build())
-      .inputs(Collections.singletonList(consumerBindingKeyInputBuilder().build()))
-      .outputs(Collections.singletonList(producerBindingKeyInputBuilder().build()));
+      .inputs(Collections.singletonList(processInputStreamBindingInputBuilder().build()))
+      .outputs(Collections.singletonList(processOutputStreamBindingInputBuilder().build()));
   }
 
   public InsertProcessBindingMutation.Builder insertProcessBindingMutationBuilder() {
@@ -508,8 +522,8 @@ public class ITestDataFactory {
       .key(processBindingKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
       .zone(zoneKeyInputBuilder().build())
-      .inputs(Collections.singletonList(consumerBindingKeyInputBuilder().build()))
-      .outputs(Collections.singletonList(producerBindingKeyInputBuilder().build()));
+      .inputs(Collections.singletonList(processInputStreamBindingInputBuilder().build()))
+      .outputs(Collections.singletonList(processOutputStreamBindingInputBuilder().build()));
   }
 
   public UpdateProcessBindingMutation.Builder updateProcessBindingMutationBuilder() {
@@ -517,8 +531,8 @@ public class ITestDataFactory {
       .key(processBindingKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
       .zone(zoneKeyInputBuilder().build())
-      .inputs(Collections.singletonList(consumerBindingKeyInputBuilder().build()))
-      .outputs(Collections.singletonList(producerBindingKeyInputBuilder().build()));
+      .inputs(Collections.singletonList(processInputStreamBindingInputBuilder().build()))
+      .outputs(Collections.singletonList(processOutputStreamBindingInputBuilder().build()));
   }
 
   public UpdateProcessBindingStatusMutation.Builder updateProcessBindingStatusBuilder() {

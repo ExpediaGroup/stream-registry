@@ -43,6 +43,7 @@ public class GraphQLConverterTest {
 
   private final GraphQLConverter underTest = new GraphQLConverter();
 
+  private final ObjectMapper mapper = new ObjectMapper();
   private final DomainKey domainKey = new DomainKey("domain");
   private final SchemaKey schemaKey = new SchemaKey(domainKey, "schema");
   private final Entity.StreamKey streamkey = new Entity.StreamKey(domainKey, "stream", 1);
@@ -52,11 +53,12 @@ public class GraphQLConverterTest {
   private final Entity.ConsumerKey consumerKey = new Entity.ConsumerKey(streamkey, zoneKey, "consumer");
   private final Entity.ProcessKey processKey = new Entity.ProcessKey(domainKey, "process");
   private final Entity.StreamBindingKey streamBindingKey = new Entity.StreamBindingKey(streamkey, infrastructureKey);
+  private final ProcessInputStreamBinding processInputStreamBinding = new ProcessInputStreamBinding(streamBindingKey, "type", mapper.createObjectNode());
+  private final ProcessOutputStreamBinding processOutputStreamBinding = new ProcessOutputStreamBinding(streamBindingKey, "type", mapper.createObjectNode());
   private final Entity.ProducerBindingKey producerBindingKey = new Entity.ProducerBindingKey(producerKey, streamBindingKey);
   private final Entity.ConsumerBindingKey consumerBindingKey = new Entity.ConsumerBindingKey(consumerKey, streamBindingKey);
   private final Entity.ProcessBindingKey processBindingKey = new Entity.ProcessBindingKey(processKey, zoneKey);
 
-  private final ObjectMapper mapper = new ObjectMapper();
   private final Tag tag = new Tag("name", "value");
   private final ObjectNode configuration = mapper.createObjectNode();
   private final Map<String, List<Principal>> security = new HashMap<String, List<Principal>>() {{
@@ -67,7 +69,7 @@ public class GraphQLConverterTest {
   private final ProcessSpecification processSpecification = new ProcessSpecification(Collections.singletonList(zoneKey), "description", Collections.singletonList(tag),
     "type", configuration, security, Collections.singletonList(new ProcessInputStream(streamkey)), Collections.singletonList(new ProcessOutputStream(streamkey)));
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(zoneKey, "description", Collections.singletonList(tag),
-    "type", configuration, security, Collections.singletonList(consumerBindingKey), Collections.singletonList(producerBindingKey));
+    "type", configuration, security, Collections.singletonList(processInputStreamBinding), Collections.singletonList(processOutputStreamBinding));
   private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());
 

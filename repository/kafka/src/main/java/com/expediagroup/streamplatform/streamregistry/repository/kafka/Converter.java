@@ -61,6 +61,8 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
@@ -488,8 +490,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
   class ProcessBindingConverter extends BaseConverter<ProcessBinding, ProcessBindingKey, Entity.ProcessBindingKey, ProcessBindingSpecification> {
     private final DomainConverter domainConverter;
     private final ZoneConverter zoneConverter;
-    private final ConsumerBindingConverter consumerBindingConverter;
-    private final ProducerBindingConverter producerBindingConverter;
+    private final StreamBindingConverter streamBindingConverter;
 
     @Override
     public ProcessBindingKey convertKey(Entity.ProcessBindingKey key) {
@@ -518,8 +519,12 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         specification.getType(),
         specification.getConfiguration(),
         convertSecurity(specification.getSecurity()),
-        entity.getInputs().stream().map(consumerBindingConverter::convertKey).collect(Collectors.toList()),
-        entity.getOutputs().stream().map(producerBindingConverter::convertKey).collect(Collectors.toList())
+        entity.getInputs().stream().map(input -> new ProcessInputStreamBinding(
+          streamBindingConverter.convertKey(input.getStreamBindingKey()),
+          input.getType(), input.getConfiguration())).collect(Collectors.toList()),
+        entity.getOutputs().stream().map(output -> new ProcessOutputStreamBinding(
+          streamBindingConverter.convertKey(output.getStreamBindingKey()),
+          output.getType(), output.getConfiguration())).collect(Collectors.toList())
         );
     }
 
@@ -529,8 +534,14 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         convertKey(entity.getKey()),
         convertSpecification(entity.getSpecification()),
         zoneConverter.convertKey(entity.getKey().getZoneKey()),
-        entity.getSpecification().getInputs().stream().map(consumerBindingConverter::convertKey).collect(Collectors.toList()),
-        entity.getSpecification().getOutputs().stream().map(producerBindingConverter::convertKey).collect(Collectors.toList()),
+        entity.getSpecification().getInputs().stream().map(input -> new com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding(
+          streamBindingConverter.convertKey(input.getStreamBindingKey()),
+          input.getType(), input.getConfiguration()
+        )).collect(Collectors.toList()),
+        entity.getSpecification().getOutputs().stream().map(output -> new com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding(
+          streamBindingConverter.convertKey(output.getStreamBindingKey()),
+          output.getType(), output.getConfiguration()
+        )).collect(Collectors.toList()),
         convertStatus(entity.getStatus())
       );
     }

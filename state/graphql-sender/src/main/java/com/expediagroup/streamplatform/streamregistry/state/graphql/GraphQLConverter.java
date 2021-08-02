@@ -26,7 +26,27 @@ import lombok.val;
 import com.apollographql.apollo.api.InputType;
 import com.apollographql.apollo.api.Mutation;
 
-import com.expediagroup.streamplatform.streamregistry.state.graphql.type.*;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ConsumerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ConsumerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.DomainKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.PrincipalInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessInputStreamBindingInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessInputStreamInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessOutputStreamBindingInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessOutputStreamInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SchemaKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SecurityInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SpecificationInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.StatusInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.StreamBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.StreamKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.TagInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
@@ -558,25 +578,27 @@ class GraphQLConverter {
         .specification(convertSpecification(event.getSpecification()))
         .zone(ZoneKeyInput.builder().name(event.getSpecification().getZone().getName()).build())
         .inputs(event.getSpecification().getInputs().stream().map(input ->
-          ConsumerBindingKeyInput.builder()
-            .streamDomain(input.getStreamBindingKey().getStreamKey().getDomainKey().getName())
-            .streamName(input.getStreamBindingKey().getStreamKey().getName())
-            .streamVersion(input.getStreamBindingKey().getStreamKey().getVersion())
-            .infrastructureName(input.getStreamBindingKey().getInfrastructureKey().getName())
-            .infrastructureZone(input.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
-            .consumerName(input.getConsumerKey().getName())
-            .build()
+          ProcessInputStreamBindingInput.builder()
+            .streamBindingKey(StreamBindingKeyInput.builder()
+              .streamName(input.getStreamBindingKey().getStreamKey().getName())
+              .streamDomain(input.getStreamBindingKey().getStreamKey().getDomainKey().getName())
+              .streamVersion(input.getStreamBindingKey().getStreamKey().getVersion())
+              .infrastructureZone(input.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
+              .infrastructureName(input.getStreamBindingKey().getInfrastructureKey().getName())
+              .build()
+            ).configuration(input.getConfiguration()).type(input.getType()).build()
           ).collect(toList()))
         .outputs(event.getSpecification().getOutputs().stream().map(output ->
-          ProducerBindingKeyInput.builder()
-            .streamDomain(output.getStreamBindingKey().getStreamKey().getDomainKey().getName())
-            .streamName(output.getStreamBindingKey().getStreamKey().getName())
-            .streamVersion(output.getStreamBindingKey().getStreamKey().getVersion())
-            .infrastructureName(output.getStreamBindingKey().getInfrastructureKey().getName())
-            .infrastructureZone(output.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
-            .producerName(output.getProducerKey().getName())
-            .build()
-        ).collect(toList()))
+          ProcessOutputStreamBindingInput.builder()
+            .streamBindingKey(StreamBindingKeyInput.builder()
+              .streamName(output.getStreamBindingKey().getStreamKey().getName())
+              .streamDomain(output.getStreamBindingKey().getStreamKey().getDomainKey().getName())
+              .streamVersion(output.getStreamBindingKey().getStreamKey().getVersion())
+              .infrastructureZone(output.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
+              .infrastructureName(output.getStreamBindingKey().getInfrastructureKey().getName())
+              .build()
+            ).configuration(output.getConfiguration()).type(output.getType()).build()
+          ).collect(toList()))
         .build();
     }
 

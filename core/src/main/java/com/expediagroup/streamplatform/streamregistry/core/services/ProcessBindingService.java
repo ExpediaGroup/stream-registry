@@ -37,7 +37,9 @@ import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingV
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 
 @Component
@@ -100,14 +102,26 @@ public class ProcessBindingService {
     // Remove producers AFTER consumers - a consumer is nothing without a producer
     processBinding.getInputs().forEach(input ->
       consumerView
-        .findAll(c -> c.getKey().equals(input.getConsumerKey()))
+        .findAll(c -> c.getKey().equals(new ConsumerKey(
+          input.getStreamBindingKey().getStreamDomain(),
+          input.getStreamBindingKey().getStreamName(),
+          input.getStreamBindingKey().getStreamVersion(),
+          input.getStreamBindingKey().getInfrastructureZone(),
+          processBinding.getKey().getProcessName()
+        )))
         .forEach(consumerService::delete)
     );
 
     // We have no consumers so we can now remove the producers
     processBinding.getOutputs().forEach(output ->
       producerView
-        .findAll(c -> c.getKey().equals(output.getProducerKey()))
+        .findAll(c -> c.getKey().equals(new ProducerKey(
+          output.getStreamBindingKey().getStreamDomain(),
+          output.getStreamBindingKey().getStreamName(),
+          output.getStreamBindingKey().getStreamVersion(),
+          output.getStreamBindingKey().getInfrastructureZone(),
+          processBinding.getKey().getProcessName()
+        )))
         .forEach(producerService::delete)
     );
 

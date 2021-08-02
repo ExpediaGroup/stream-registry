@@ -38,24 +38,24 @@ public class ProcessBindingMutationImpl implements ProcessBindingMutation {
 
   @Override
   public ProcessBinding insert(ProcessBindingKeyInput key, SpecificationInput specification,
-                        ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs) {
+                        ZoneKeyInput zone, List<ProcessInputStreamBindingInput> inputs, List<ProcessOutputStreamBindingInput> outputs) {
     return processBindingService.create(asProcessBinding(key, specification, zone, inputs, outputs)).get();
   }
 
   @Override
   public ProcessBinding update(ProcessBindingKeyInput key, SpecificationInput specification,
-                        ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs) {
+                        ZoneKeyInput zone, List<ProcessInputStreamBindingInput> inputs, List<ProcessOutputStreamBindingInput> outputs) {
     return processBindingService.update(asProcessBinding(key, specification, zone, inputs, outputs)).get();
   }
 
   @Override
   public ProcessBinding upsert(ProcessBindingKeyInput key, SpecificationInput specification,
-                        ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs) {
-    ProcessBinding stream = asProcessBinding(key, specification, zone, inputs, outputs);
-    if (!processBindingView.exists(stream.getKey())) {
-      return processBindingService.create(stream).get();
+                        ZoneKeyInput zone, List<ProcessInputStreamBindingInput> inputs, List<ProcessOutputStreamBindingInput> outputs) {
+    ProcessBinding processBinding = asProcessBinding(key, specification, zone, inputs, outputs);
+    if (!processBindingView.exists(processBinding.getKey())) {
+      return processBindingService.create(processBinding).get();
     } else {
-      return processBindingService.update(stream).get();
+      return processBindingService.update(processBinding).get();
     }
   }
 
@@ -67,18 +67,18 @@ public class ProcessBindingMutationImpl implements ProcessBindingMutation {
 
   @Override
   public ProcessBinding updateStatus(ProcessBindingKeyInput key, StatusInput status) {
-    ProcessBinding stream = processBindingView.get(key.asProcessBindingKey()).get();
-    return processBindingService.updateStatus(stream, status.asStatus()).get();
+    ProcessBinding processBinding = processBindingView.get(key.asProcessBindingKey()).get();
+    return processBindingService.updateStatus(processBinding, status.asStatus()).get();
   }
 
   private ProcessBinding asProcessBinding(ProcessBindingKeyInput key, SpecificationInput specification,
-                            ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs) {
+                            ZoneKeyInput zone, List<ProcessInputStreamBindingInput> inputs, List<ProcessOutputStreamBindingInput> outputs) {
     ProcessBinding processBinding = new ProcessBinding();
     processBinding.setKey(key.asProcessBindingKey());
     processBinding.setSpecification(specification.asSpecification());
     processBinding.setZone(zone.asZoneKey());
-    processBinding.setInputs(inputs.stream().map(ConsumerBindingKeyInput::asConsumerBindingKey).collect(Collectors.toList()));
-    processBinding.setOutputs(outputs.stream().map(ProducerBindingKeyInput::asProducerBindingKey).collect(Collectors.toList()));
+    processBinding.setInputs(inputs.stream().map(ProcessInputStreamBindingInput::asProcessInputStreamBinding).collect(Collectors.toList()));
+    processBinding.setOutputs(outputs.stream().map(ProcessOutputStreamBindingInput::asProcessOutputStreamBinding).collect(Collectors.toList()));
     maintainState(processBinding, processBindingView.get(processBinding.getKey()));
     return processBinding;
   }

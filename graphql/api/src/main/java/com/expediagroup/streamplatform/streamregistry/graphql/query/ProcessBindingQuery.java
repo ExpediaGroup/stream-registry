@@ -27,5 +27,5 @@ public interface ProcessBindingQuery extends GraphQLApiType {
   Optional<ProcessBinding> byKey(ProcessBindingKeyInput key);
 
   Iterable<ProcessBinding> byQuery(ProcessBindingKeyQuery key, SpecificationQuery specification,
-                           ZoneKeyQuery zone, List<ConsumerBindingKeyQuery> inputs, List<ProducerBindingKeyQuery> outputs);
+                           ZoneKeyQuery zone, List<StreamBindingKeyQuery> inputs, List<StreamBindingKeyQuery> outputs);
 }

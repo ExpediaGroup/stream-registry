@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,14 +41,15 @@ import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingV
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
@@ -76,6 +79,8 @@ public class ProcessBindingServiceTest {
   private ProducerRepository producerRepository;
 
   private ProcessBindingService processBindingService;
+
+  private ObjectMapper objectMapper = new ObjectMapper();
 
   @Before
   public void before() {
@@ -154,33 +159,36 @@ public class ProcessBindingServiceTest {
   @Test
   public void delete_multipleEntities() {
     final ProcessBinding entity = mock(ProcessBinding.class);
+    final ProcessBindingKey processBindingKey = mock(ProcessBindingKey.class);
+    when(entity.getKey()).thenReturn(processBindingKey);
+    when(processBindingKey.getProcessName()).thenReturn("process");
 
-    final ConsumerKey consumerKey = mock(ConsumerKey.class);
+    final ProcessInputStreamBinding inputStreamBinding = new ProcessInputStreamBinding(
+      new StreamBindingKey("domain", "stream", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+    );
     final Consumer consumer = mock(Consumer.class);
-    final ConsumerBindingKey consumerBindingKey = mock(ConsumerBindingKey.class);
-    when(consumer.getKey()).thenReturn(consumerKey);
-    when(consumerBindingKey.getConsumerKey()).thenReturn(consumerKey);
+    when(consumer.getKey()).thenReturn(new ConsumerKey("domain", "stream", 1, "zone", "process"));
 
-    final ConsumerKey consumerKey2 = mock(ConsumerKey.class);
+    final ProcessInputStreamBinding inputStreamBinding2 = new ProcessInputStreamBinding(
+      new StreamBindingKey("domain", "stream2", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+    );
     final Consumer consumer2 = mock(Consumer.class);
-    final ConsumerBindingKey consumerBindingKey2 = mock(ConsumerBindingKey.class);
-    when(consumer2.getKey()).thenReturn(consumerKey2);
-    when(consumerBindingKey2.getConsumerKey()).thenReturn(consumerKey2);
+    when(consumer2.getKey()).thenReturn(new ConsumerKey("domain", "stream2", 1, "zone", "process"));
 
-    final ProducerKey producerKey = mock(ProducerKey.class);
+    final ProcessOutputStreamBinding outputStreamBinding = new ProcessOutputStreamBinding(
+      new StreamBindingKey("domain", "stream3", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+    );
     final Producer producer = mock(Producer.class);
-    final ProducerBindingKey producerBindingKey = mock(ProducerBindingKey.class);
-    when(producer.getKey()).thenReturn(producerKey);
-    when(producerBindingKey.getProducerKey()).thenReturn(producerKey);
+    when(producer.getKey()).thenReturn(new ProducerKey("domain", "stream3", 1, "zone", "process"));
 
-    final ProducerKey producerKey2 = mock(ProducerKey.class);
+    final ProcessOutputStreamBinding outputStreamBinding2 = new ProcessOutputStreamBinding(
+      new StreamBindingKey("domain", "stream4", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+    );
     final Producer producer2 = mock(Producer.class);
-    final ProducerBindingKey producerBindingKey2 = mock(ProducerBindingKey.class);
-    when(producer2.getKey()).thenReturn(producerKey2);
-    when(producerBindingKey2.getProducerKey()).thenReturn(producerKey2);
+    when(producer2.getKey()).thenReturn(new ProducerKey("domain", "stream4", 1, "zone", "process"));
 
-    when(entity.getInputs()).thenReturn(Arrays.asList(consumerBindingKey, consumerBindingKey2));
-    when(entity.getOutputs()).thenReturn(Arrays.asList(producerBindingKey, producerBindingKey2));
+    when(entity.getInputs()).thenReturn(Arrays.asList(inputStreamBinding, inputStreamBinding2));
+    when(entity.getOutputs()).thenReturn(Arrays.asList(outputStreamBinding, outputStreamBinding2));
     when(consumerRepository.findAll()).thenReturn(Arrays.asList(consumer, consumer2));
     when(producerRepository.findAll()).thenReturn(Arrays.asList(producer, producer2));
 

@@ -46,7 +46,7 @@ public class ConverterTest {
   private final StreamBindingConverter streamBindingConverter = new StreamBindingConverter(streamConverter, infrastructureConverter);
   private final ProducerBindingConverter producerBindingConverter = new ProducerBindingConverter(producerConverter, streamBindingConverter);
   private final ConsumerBindingConverter consumerBindingConverter = new ConsumerBindingConverter(consumerConverter, streamBindingConverter);
-  private final ProcessBindingConverter processBindingConverter = new ProcessBindingConverter(domainConverter, zoneConverter, consumerBindingConverter, producerBindingConverter);
+  private final ProcessBindingConverter processBindingConverter = new ProcessBindingConverter(domainConverter, zoneConverter, streamBindingConverter);
 
   @Test
   public void domain() {

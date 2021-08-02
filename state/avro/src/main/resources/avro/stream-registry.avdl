@@ -74,8 +74,20 @@ protocol StreamRegistry {
     AvroStreamKey stream;
   }
 
+  record AvroProcessInputStreamBinding {
+    AvroStreamBindingKey streamBindingKey;
+    string type;
+    AvroObject configuration;
+  }
+
   record AvroProcessOutputStream {
     AvroStreamKey stream;
+  }
+
+  record AvroProcessOutputStreamBinding {
+    AvroStreamBindingKey streamBindingKey;
+    string type;
+    AvroObject configuration;
   }
 
   record AvroObject {
@@ -121,8 +133,8 @@ protocol StreamRegistry {
     string type;
     AvroObject configuration;
     map<array<AvroPrincipal>> security;
-    array<AvroConsumerBindingKey> inputs;
-    array<AvroProducerBindingKey> outputs;
+    array<AvroProcessInputStreamBinding> inputs;
+    array<AvroProcessOutputStreamBinding> outputs;
   }
 
   record AvroSpecificationKey {

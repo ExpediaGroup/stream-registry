@@ -15,20 +15,22 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
-import static com.expediagroup.streamplatform.streamregistry.graphql.filters.ConsumerBindingFilter.matchesConsumerBindingKey;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesSpecification;
-import static com.expediagroup.streamplatform.streamregistry.graphql.filters.ProducerBindingFilter.matchesProducerBindingKey;
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.StreamBindingFilter.matchesStreamBindingKey;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.*;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProcessBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamBindingKeyQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ZoneKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 
 public class ProcessBindingFilter implements Predicate<ProcessBinding> {
@@ -36,11 +38,11 @@ public class ProcessBindingFilter implements Predicate<ProcessBinding> {
   private final ProcessBindingKeyQuery keyQuery;
   private final SpecificationQuery specQuery;
   private final ZoneKeyQuery zoneKeyQuery;
-  private final List<ConsumerBindingKeyQuery> inputQueries;
-  private final List<ProducerBindingKeyQuery> outputQueries;
+  private final List<StreamBindingKeyQuery> inputQueries;
+  private final List<StreamBindingKeyQuery> outputQueries;
 
   public ProcessBindingFilter(ProcessBindingKeyQuery keyQuery, SpecificationQuery specQuery, ZoneKeyQuery zoneKeyQuery,
-                              List<ConsumerBindingKeyQuery> inputQueries, List<ProducerBindingKeyQuery> outputQueries) {
+                              List<StreamBindingKeyQuery> inputQueries, List<StreamBindingKeyQuery> outputQueries) {
     this.keyQuery = keyQuery;
     this.specQuery = specQuery;
     this.zoneKeyQuery = zoneKeyQuery;
@@ -65,25 +67,25 @@ public class ProcessBindingFilter implements Predicate<ProcessBinding> {
     return matches(safeZone.getName(), zoneKeyQuery.getNameRegex());
   }
 
-  public static boolean matchesInput(List<ConsumerBindingKey> inputs, List<ConsumerBindingKeyQuery> inputQueries) {
+  public static boolean matchesInput(List<ProcessInputStreamBinding> inputs, List<StreamBindingKeyQuery> inputQueries) {
     if (inputQueries == null || inputQueries.isEmpty()) {
       return true;
     }
 
-    List<ConsumerBindingKey> safeInputs = (inputs == null) ? Collections.emptyList() : inputs;
+    List<ProcessInputStreamBinding> safeInputs = (inputs == null) ? Collections.emptyList() : inputs;
     return inputQueries.stream().allMatch(inputQuery ->
-      safeInputs.stream().anyMatch(input -> matchesConsumerBindingKey(input, inputQuery))
+      safeInputs.stream().anyMatch(input -> matchesStreamBindingKey(input.getStreamBindingKey(), inputQuery))
     );
   }
 
-  public static boolean matchesOutput(List<ProducerBindingKey> outputs, List<ProducerBindingKeyQuery> outputQueries) {
+  public static boolean matchesOutput(List<ProcessOutputStreamBinding> outputs, List<StreamBindingKeyQuery> outputQueries) {
     if (outputQueries == null || outputQueries.isEmpty()) {
       return true;
     }
 
-    List<ProducerBindingKey> safeOutputs = (outputs == null) ? Collections.emptyList() : outputs;
+    List<ProcessOutputStreamBinding> safeOutputs = (outputs == null) ? Collections.emptyList() : outputs;
     return outputQueries.stream().allMatch(outputQuery ->
-      safeOutputs.stream().anyMatch(output -> matchesProducerBindingKey(output, outputQuery))
+      safeOutputs.stream().anyMatch(output -> matchesStreamBindingKey(output.getStreamBindingKey(), outputQuery))
     );
   }
 

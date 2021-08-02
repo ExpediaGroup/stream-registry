@@ -28,7 +28,9 @@ import com.expediagroup.streamplatform.streamregistry.model.Principal;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -271,9 +273,17 @@ final class SampleModel {
     entity.setKey(processBindingKey());
     entity.setSpecification(specification());
     entity.setZone(zoneKey());
-    entity.setInputs(Collections.singletonList(consumerBindingKey()));
-    entity.setOutputs(Collections.singletonList(producerBindingKey()));
+    entity.setInputs(Collections.singletonList(processInputStreamBinding()));
+    entity.setOutputs(Collections.singletonList(processOutputStreamBinding()));
     entity.setStatus(status());
     return entity;
+  }
+
+  static ProcessInputStreamBinding processInputStreamBinding() {
+    return new ProcessInputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
+  }
+
+  static ProcessOutputStreamBinding processOutputStreamBinding() {
+    return new ProcessOutputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
   }
 }

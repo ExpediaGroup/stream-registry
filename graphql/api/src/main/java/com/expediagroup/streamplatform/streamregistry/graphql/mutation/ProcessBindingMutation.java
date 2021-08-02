@@ -23,13 +23,13 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 
 public interface ProcessBindingMutation extends GraphQLApiType {
   ProcessBinding insert(ProcessBindingKeyInput key, SpecificationInput specification,
-                 ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs);
+                 ZoneKeyInput zone, List<ProcessInputStreamBindingInput> inputs, List<ProcessOutputStreamBindingInput> outputs);
 
   ProcessBinding update(ProcessBindingKeyInput key, SpecificationInput specification,
-                 ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs);
+                 ZoneKeyInput zone, List<ProcessInputStreamBindingInput> inputs, List<ProcessOutputStreamBindingInput> outputs);
 
   ProcessBinding upsert(ProcessBindingKeyInput key, SpecificationInput specification,
-                        ZoneKeyInput zone, List<ConsumerBindingKeyInput> inputs, List<ProducerBindingKeyInput> outputs);
+                        ZoneKeyInput zone, List<ProcessInputStreamBindingInput> inputs, List<ProcessOutputStreamBindingInput> outputs);
 
   Boolean delete(ProcessBindingKeyInput key);
 

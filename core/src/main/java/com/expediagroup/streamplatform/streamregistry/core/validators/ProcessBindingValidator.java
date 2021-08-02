@@ -19,16 +19,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
-import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 
 @Component
 @RequiredArgsConstructor
 public class ProcessBindingValidator implements Validator<ProcessBinding> {
-  private final ConsumerView consumerView;
-  private final ProducerView producerView;
+  private final StreamBindingView streamBindingView;
   private final ZoneView zoneView;
   private final SpecificationValidator specificationValidator;
 
@@ -50,14 +48,14 @@ public class ProcessBindingValidator implements Validator<ProcessBinding> {
     }
 
     processBinding.getInputs().forEach(input -> {
-      if (!consumerView.exists(input.getConsumerKey())) {
-        throw new ValidationException("Input Consumer Key [" + input.getConsumerKey() + "] does not exist");
+      if (!streamBindingView.exists(input.getStreamBindingKey())) {
+        throw new ValidationException("Input StreamBinding Key [" + input.getStreamBindingKey() + "] does not exist");
       }
     });
 
     processBinding.getOutputs().forEach(output -> {
-      if (!producerView.exists(output.getProducerKey())) {
-        throw new ValidationException("Output Producer Key [" + output.getProducerKey() + "] does not exist");
+      if (!streamBindingView.exists(output.getStreamBindingKey())) {
+        throw new ValidationException("Output StreamBinding Key [" + output.getStreamBindingKey() + "] does not exist");
       }
     });
   }

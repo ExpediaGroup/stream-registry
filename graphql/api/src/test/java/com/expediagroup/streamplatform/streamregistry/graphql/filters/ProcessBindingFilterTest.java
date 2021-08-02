@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.*;
@@ -39,6 +41,8 @@ public class ProcessBindingFilterTest {
   private static final String FAIL = "fail_this";
 
   private ProcessBindingFilter processBindingFilter;
+
+  private ObjectMapper objectMapper = new ObjectMapper();
 
   @Test
   public void noFilters() {
@@ -161,10 +165,10 @@ public class ProcessBindingFilterTest {
 
   @Test
   public void filterByInputs() {
-    ConsumerBindingKeyQuery consumerBindingKeyQuery1 = ConsumerBindingKeyQuery.builder().consumerNameRegex(REGEX).build();
-    ConsumerBindingKeyQuery consumerBindingKeyQuery2 = ConsumerBindingKeyQuery.builder().consumerNameRegex(REGEX2).build();
+    StreamBindingKeyQuery streamBindingKeyQuery1 = StreamBindingKeyQuery.builder().streamNameRegex(REGEX).build();
+    StreamBindingKeyQuery streamBindingKeyQuery2 = StreamBindingKeyQuery.builder().streamNameRegex(REGEX2).build();
 
-    processBindingFilter = new ProcessBindingFilter(null, null, null, Collections.singletonList(consumerBindingKeyQuery1), null);
+    processBindingFilter = new ProcessBindingFilter(null, null, null, Collections.singletonList(streamBindingKeyQuery1), null);
 
     ProcessBinding processBinding = new ProcessBinding();
     assertFalse(processBindingFilter.test(processBinding));
@@ -181,7 +185,7 @@ public class ProcessBindingFilterTest {
     processBinding.setInputs(inputList(Collections.singletonList(FAIL)));
     assertFalse(processBindingFilter.test(processBinding));
 
-    processBindingFilter = new ProcessBindingFilter(null, null, null, Arrays.asList(consumerBindingKeyQuery1, consumerBindingKeyQuery2), null);
+    processBindingFilter = new ProcessBindingFilter(null, null, null, Arrays.asList(streamBindingKeyQuery1, streamBindingKeyQuery2), null);
 
     processBinding.setInputs(inputList(Collections.singletonList(MATCH)));
     assertFalse(processBindingFilter.test(processBinding));
@@ -198,10 +202,10 @@ public class ProcessBindingFilterTest {
 
   @Test
   public void filterByOutputs() {
-    ProducerBindingKeyQuery producerBindingKeyQuery1 = ProducerBindingKeyQuery.builder().producerNameRegex(REGEX).build();
-    ProducerBindingKeyQuery producerBindingKeyQuery2 = ProducerBindingKeyQuery.builder().producerNameRegex(REGEX2).build();
+    StreamBindingKeyQuery streamBindingKeyQuery1 = StreamBindingKeyQuery.builder().streamNameRegex(REGEX).build();
+    StreamBindingKeyQuery streamBindingKeyQuery2 = StreamBindingKeyQuery.builder().streamNameRegex(REGEX2).build();
 
-    processBindingFilter = new ProcessBindingFilter(null, null, null, null, Collections.singletonList(producerBindingKeyQuery1));
+    processBindingFilter = new ProcessBindingFilter(null, null, null, null, Collections.singletonList(streamBindingKeyQuery1));
 
     ProcessBinding processBinding = new ProcessBinding();
     assertFalse(processBindingFilter.test(processBinding));
@@ -218,7 +222,7 @@ public class ProcessBindingFilterTest {
     processBinding.setOutputs(outputList(Collections.singletonList(FAIL)));
     assertFalse(processBindingFilter.test(processBinding));
 
-    processBindingFilter = new ProcessBindingFilter(null, null, null, null, Arrays.asList(producerBindingKeyQuery1, producerBindingKeyQuery2));
+    processBindingFilter = new ProcessBindingFilter(null, null, null, null, Arrays.asList(streamBindingKeyQuery1, streamBindingKeyQuery2));
 
     processBinding.setOutputs(outputList(Collections.singletonList(MATCH)));
     assertFalse(processBindingFilter.test(processBinding));
@@ -233,12 +237,18 @@ public class ProcessBindingFilterTest {
     assertFalse(processBindingFilter.test(processBinding));
   }
 
-  private List<ConsumerBindingKey> inputList(List<String> names) {
-    return names.stream().map(name -> new ConsumerBindingKey("domain", "stream", 1, "zone", "infrastructure", name)).collect(Collectors.toList());
+  private List<ProcessInputStreamBinding> inputList(List<String> names) {
+    return names.stream().map(name -> new ProcessInputStreamBinding(
+      new StreamBindingKey("domain", name, 1, "zone", "infrastructure"),
+      "type", objectMapper.createObjectNode())
+    ).collect(Collectors.toList());
   }
 
-  private List<ProducerBindingKey> outputList(List<String> names) {
-    return names.stream().map(name -> new ProducerBindingKey("domain", "stream", 1, "zone", "infrastructure", name)).collect(Collectors.toList());
+  private List<ProcessOutputStreamBinding> outputList(List<String> names) {
+    return names.stream().map(name -> new ProcessOutputStreamBinding(
+      new StreamBindingKey("domain", name, 1, "zone", "infrastructure"),
+      "type", objectMapper.createObjectNode()
+    )).collect(Collectors.toList());
   }
 
   private ProcessBindingKey matchingProcessBindingKey() {

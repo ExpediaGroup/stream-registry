@@ -15,24 +15,16 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.model.specification;
 
-import java.util.List;
-import java.util.Map;
-
 import lombok.NonNull;
 import lombok.Value;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamBindingKey;
 
 @Value
-public class ProcessBindingSpecification implements Specification {
-  @NonNull ZoneKey zone;
-  @NonNull String description;
-  @NonNull List<Tag> tags;
+public class ProcessInputStreamBinding {
+  @NonNull StreamBindingKey streamBindingKey;
   @NonNull String type;
   @NonNull ObjectNode configuration;
-  @NonNull Map<String, List<Principal>> security;
-  @NonNull List<ProcessInputStreamBinding> inputs;
-  @NonNull List<ProcessOutputStreamBinding> outputs;
 }
