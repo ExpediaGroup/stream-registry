@@ -278,41 +278,41 @@ type Consumer {
 
 type ProcessInputStream {
     stream: StreamKey!
+    configuration: ObjectNode!
 }
 
 input ProcessInputStreamInput {
     stream: StreamKeyInput!
+    configuration: ObjectNode!
 }
 
 type ProcessInputStreamBinding {
     streamBindingKey: StreamBindingKey!
-    type: String!
     configuration: ObjectNode!
 }
 
 input ProcessInputStreamBindingInput {
     streamBindingKey: StreamBindingKeyInput!
-    type: String!
     configuration: ObjectNode!
 }
 
 type ProcessOutputStream {
     stream: StreamKey!
+    configuration: ObjectNode!
 }
 
 input ProcessOutputStreamInput {
     stream: StreamKeyInput!
+    configuration: ObjectNode!
 }
 
 type ProcessOutputStreamBinding {
     streamBindingKey: StreamBindingKey!
-    type: String!
     configuration: ObjectNode!
 }
 
 input ProcessOutputStreamBindingInput {
     streamBindingKey: StreamBindingKeyInput!
-    type: String!
     configuration: ObjectNode!
 }
 

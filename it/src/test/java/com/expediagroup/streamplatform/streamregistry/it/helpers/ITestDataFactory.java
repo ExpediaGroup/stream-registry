@@ -442,9 +442,11 @@ public class ITestDataFactory {
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .configuration(mapper.createObjectNode())
         .build()));
   }
 
@@ -455,9 +457,11 @@ public class ITestDataFactory {
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .configuration(mapper.createObjectNode())
         .build()));
   }
 
@@ -468,9 +472,11 @@ public class ITestDataFactory {
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .configuration(mapper.createObjectNode())
         .build()));
   }
 
@@ -497,15 +503,13 @@ public class ITestDataFactory {
   public final ProcessInputStreamBindingInput.Builder processInputStreamBindingInputBuilder() {
     return ProcessInputStreamBindingInput.builder()
       .streamBindingKey(streamBindingKeyInputBuilder().build())
-      .configuration(mapper.createObjectNode())
-      .type("type");
+      .configuration(mapper.createObjectNode());
   }
 
   public final ProcessOutputStreamBindingInput.Builder processOutputStreamBindingInputBuilder() {
     return ProcessOutputStreamBindingInput.builder()
       .streamBindingKey(streamBindingKeyInputBuilder().build())
-      .configuration(mapper.createObjectNode())
-      .type("type");
+      .configuration(mapper.createObjectNode());
   }
 
   public UpsertProcessBindingMutation.Builder upsertProcessBindingMutationBuilder() {

@@ -89,8 +89,8 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      Collections.singletonList(new ProcessInputStream(streamKey())),
-      Collections.singletonList(new ProcessOutputStream(streamKey()))
+      Collections.singletonList(new ProcessInputStream(streamKey(), mapper.createObjectNode())),
+      Collections.singletonList(new ProcessOutputStream(streamKey(), mapper.createObjectNode()))
     );
   }
 
@@ -162,11 +162,11 @@ final class SampleState {
   }
 
   static ProcessInputStreamBinding processInputStreamBinding() {
-    return new ProcessInputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
+    return new ProcessInputStreamBinding(streamBindingKey(), mapper.createObjectNode());
   }
 
   static ProcessOutputStreamBinding processOutputStreamBinding() {
-    return new ProcessOutputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
+    return new ProcessOutputStreamBinding(streamBindingKey(), mapper.createObjectNode());
   }
 
   static Entity<DomainKey, DefaultSpecification> domain() {

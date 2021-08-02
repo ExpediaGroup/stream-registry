@@ -239,15 +239,13 @@ public class ProcessBindingFilterTest {
 
   private List<ProcessInputStreamBinding> inputList(List<String> names) {
     return names.stream().map(name -> new ProcessInputStreamBinding(
-      new StreamBindingKey("domain", name, 1, "zone", "infrastructure"),
-      "type", objectMapper.createObjectNode())
+      new StreamBindingKey("domain", name, 1, "zone", "infrastructure"), objectMapper.createObjectNode())
     ).collect(Collectors.toList());
   }
 
   private List<ProcessOutputStreamBinding> outputList(List<String> names) {
     return names.stream().map(name -> new ProcessOutputStreamBinding(
-      new StreamBindingKey("domain", name, 1, "zone", "infrastructure"),
-      "type", objectMapper.createObjectNode()
+      new StreamBindingKey("domain", name, 1, "zone", "infrastructure"), objectMapper.createObjectNode()
     )).collect(Collectors.toList());
   }
 

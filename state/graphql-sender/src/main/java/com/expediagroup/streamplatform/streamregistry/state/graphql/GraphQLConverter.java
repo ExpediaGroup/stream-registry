@@ -421,6 +421,7 @@ class GraphQLConverter {
               .name(input.getStream().getName())
               .version(input.getStream().getVersion())
               .build())
+            .configuration(input.getConfiguration())
             .build()
         ).collect(toList()))
         .outputs(event.getSpecification().getOutputs().stream().map(output ->
@@ -430,6 +431,7 @@ class GraphQLConverter {
               .name(output.getStream().getName())
               .version(output.getStream().getVersion())
               .build())
+            .configuration(output.getConfiguration())
             .build()
         ).collect(toList()))
         .build();
@@ -586,7 +588,7 @@ class GraphQLConverter {
               .infrastructureZone(input.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
               .infrastructureName(input.getStreamBindingKey().getInfrastructureKey().getName())
               .build()
-            ).configuration(input.getConfiguration()).type(input.getType()).build()
+            ).configuration(input.getConfiguration()).build()
           ).collect(toList()))
         .outputs(event.getSpecification().getOutputs().stream().map(output ->
           ProcessOutputStreamBindingInput.builder()
@@ -597,7 +599,7 @@ class GraphQLConverter {
               .infrastructureZone(output.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
               .infrastructureName(output.getStreamBindingKey().getInfrastructureKey().getName())
               .build()
-            ).configuration(output.getConfiguration()).type(output.getType()).build()
+            ).configuration(output.getConfiguration()).build()
           ).collect(toList()))
         .build();
     }

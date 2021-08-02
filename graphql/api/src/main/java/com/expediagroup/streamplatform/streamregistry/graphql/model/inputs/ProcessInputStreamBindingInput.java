@@ -26,10 +26,9 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBi
 @Builder
 public class ProcessInputStreamBindingInput {
   StreamBindingKeyInput streamBindingKey;
-  String type;
   ObjectNode configuration;
 
   public ProcessInputStreamBinding asProcessInputStreamBinding() {
-    return new ProcessInputStreamBinding(streamBindingKey.asStreamBindingKey(), type, configuration);
+    return new ProcessInputStreamBinding(streamBindingKey.asStreamBindingKey(), configuration);
   }
 }

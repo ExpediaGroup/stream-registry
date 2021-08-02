@@ -309,12 +309,14 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         convertSecurity(specification.getSecurity()),
         entity.getInputs().stream().map(input ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
-            streamConverter.convertKey(input.getStream())
+            streamConverter.convertKey(input.getStream()),
+            input.getConfiguration()
           )
         ).collect(Collectors.toList()),
         entity.getOutputs().stream().map(output ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream(
-            streamConverter.convertKey(output.getStream())
+            streamConverter.convertKey(output.getStream()),
+            output.getConfiguration()
           )
         ).collect(Collectors.toList())
       );
@@ -329,12 +331,14 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           new ZoneKey(zone.getName())).collect(Collectors.toList()),
         entity.getSpecification().getInputs().stream().map(input ->
           new ProcessInputStream(
-            streamConverter.convertKey(input.getStream())
+            streamConverter.convertKey(input.getStream()),
+            input.getConfiguration()
           )
         ).collect(Collectors.toList()),
         entity.getSpecification().getOutputs().stream().map(output ->
           new ProcessOutputStream(
-            streamConverter.convertKey(output.getStream())
+            streamConverter.convertKey(output.getStream()),
+            output.getConfiguration()
           )
         ).collect(Collectors.toList()),
         convertStatus(entity.getStatus())
@@ -521,10 +525,10 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         convertSecurity(specification.getSecurity()),
         entity.getInputs().stream().map(input -> new ProcessInputStreamBinding(
           streamBindingConverter.convertKey(input.getStreamBindingKey()),
-          input.getType(), input.getConfiguration())).collect(Collectors.toList()),
+          input.getConfiguration())).collect(Collectors.toList()),
         entity.getOutputs().stream().map(output -> new ProcessOutputStreamBinding(
           streamBindingConverter.convertKey(output.getStreamBindingKey()),
-          output.getType(), output.getConfiguration())).collect(Collectors.toList())
+          output.getConfiguration())).collect(Collectors.toList())
         );
     }
 
@@ -535,12 +539,10 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         convertSpecification(entity.getSpecification()),
         zoneConverter.convertKey(entity.getKey().getZoneKey()),
         entity.getSpecification().getInputs().stream().map(input -> new com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding(
-          streamBindingConverter.convertKey(input.getStreamBindingKey()),
-          input.getType(), input.getConfiguration()
+          streamBindingConverter.convertKey(input.getStreamBindingKey()), input.getConfiguration()
         )).collect(Collectors.toList()),
         entity.getSpecification().getOutputs().stream().map(output -> new com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding(
-          streamBindingConverter.convertKey(output.getStreamBindingKey()),
-          output.getType(), output.getConfiguration()
+          streamBindingConverter.convertKey(output.getStreamBindingKey()), output.getConfiguration()
         )).collect(Collectors.toList()),
         convertStatus(entity.getStatus())
       );

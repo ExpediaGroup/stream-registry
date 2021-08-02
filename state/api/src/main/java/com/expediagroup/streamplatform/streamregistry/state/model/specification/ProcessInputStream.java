@@ -18,9 +18,12 @@ package com.expediagroup.streamplatform.streamregistry.state.model.specification
 import lombok.NonNull;
 import lombok.Value;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 
 @Value
 public class ProcessInputStream {
   @NonNull Entity.StreamKey stream;
+  @NonNull ObjectNode configuration;
 }

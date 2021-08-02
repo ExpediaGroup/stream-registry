@@ -24,6 +24,5 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKe
 @Value
 public class ProcessInputStreamBinding {
   StreamBindingKey streamBindingKey;
-  String type;
   ObjectNode configuration;
 }

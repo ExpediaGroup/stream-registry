@@ -72,21 +72,21 @@ protocol StreamRegistry {
 
   record AvroProcessInputStream {
     AvroStreamKey stream;
+    AvroObject configuration;
   }
 
   record AvroProcessInputStreamBinding {
     AvroStreamBindingKey streamBindingKey;
-    string type;
     AvroObject configuration;
   }
 
   record AvroProcessOutputStream {
     AvroStreamKey stream;
+    AvroObject configuration;
   }
 
   record AvroProcessOutputStreamBinding {
     AvroStreamBindingKey streamBindingKey;
-    string type;
     AvroObject configuration;
   }
 

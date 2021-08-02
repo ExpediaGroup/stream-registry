@@ -17,9 +17,12 @@ package com.expediagroup.streamplatform.streamregistry.model;
 
 import lombok.Value;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Value
 public class ProcessInputStream {
   StreamKey stream;
+  ObjectNode configuration;
 }

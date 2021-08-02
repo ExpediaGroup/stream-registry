@@ -238,8 +238,8 @@ final class SampleModel {
     entity.setKey(processKey());
     entity.setSpecification(specification());
     entity.setZones(Collections.singletonList(zoneKey()));
-    entity.setInputs(Collections.singletonList(new ProcessInputStream(streamKey())));
-    entity.setOutputs(Collections.singletonList(new ProcessOutputStream(streamKey())));
+    entity.setInputs(Collections.singletonList(new ProcessInputStream(streamKey(), mapper.createObjectNode())));
+    entity.setOutputs(Collections.singletonList(new ProcessOutputStream(streamKey(), mapper.createObjectNode())));
     entity.setStatus(status());
     return entity;
   }
@@ -280,10 +280,10 @@ final class SampleModel {
   }
 
   static ProcessInputStreamBinding processInputStreamBinding() {
-    return new ProcessInputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
+    return new ProcessInputStreamBinding(streamBindingKey(), mapper.createObjectNode());
   }
 
   static ProcessOutputStreamBinding processOutputStreamBinding() {
-    return new ProcessOutputStreamBinding(streamBindingKey(), "type", mapper.createObjectNode());
+    return new ProcessOutputStreamBinding(streamBindingKey(), mapper.createObjectNode());
   }
 }

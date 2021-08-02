@@ -53,8 +53,8 @@ public class GraphQLConverterTest {
   private final Entity.ConsumerKey consumerKey = new Entity.ConsumerKey(streamkey, zoneKey, "consumer");
   private final Entity.ProcessKey processKey = new Entity.ProcessKey(domainKey, "process");
   private final Entity.StreamBindingKey streamBindingKey = new Entity.StreamBindingKey(streamkey, infrastructureKey);
-  private final ProcessInputStreamBinding processInputStreamBinding = new ProcessInputStreamBinding(streamBindingKey, "type", mapper.createObjectNode());
-  private final ProcessOutputStreamBinding processOutputStreamBinding = new ProcessOutputStreamBinding(streamBindingKey, "type", mapper.createObjectNode());
+  private final ProcessInputStreamBinding processInputStreamBinding = new ProcessInputStreamBinding(streamBindingKey, mapper.createObjectNode());
+  private final ProcessOutputStreamBinding processOutputStreamBinding = new ProcessOutputStreamBinding(streamBindingKey, mapper.createObjectNode());
   private final Entity.ProducerBindingKey producerBindingKey = new Entity.ProducerBindingKey(producerKey, streamBindingKey);
   private final Entity.ConsumerBindingKey consumerBindingKey = new Entity.ConsumerBindingKey(consumerKey, streamBindingKey);
   private final Entity.ProcessBindingKey processBindingKey = new Entity.ProcessBindingKey(processKey, zoneKey);
@@ -67,7 +67,8 @@ public class GraphQLConverterTest {
   }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security);
   private final ProcessSpecification processSpecification = new ProcessSpecification(Collections.singletonList(zoneKey), "description", Collections.singletonList(tag),
-    "type", configuration, security, Collections.singletonList(new ProcessInputStream(streamkey)), Collections.singletonList(new ProcessOutputStream(streamkey)));
+    "type", configuration, security, Collections.singletonList(new ProcessInputStream(streamkey, mapper.createObjectNode())),
+    Collections.singletonList(new ProcessOutputStream(streamkey, mapper.createObjectNode())));
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(zoneKey, "description", Collections.singletonList(tag),
     "type", configuration, security, Collections.singletonList(processInputStreamBinding), Collections.singletonList(processOutputStreamBinding));
   private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);

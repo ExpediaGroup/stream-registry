@@ -164,25 +164,25 @@ public class ProcessBindingServiceTest {
     when(processBindingKey.getProcessName()).thenReturn("process");
 
     final ProcessInputStreamBinding inputStreamBinding = new ProcessInputStreamBinding(
-      new StreamBindingKey("domain", "stream", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+      new StreamBindingKey("domain", "stream", 1, "zone", "infra"), objectMapper.createObjectNode()
     );
     final Consumer consumer = mock(Consumer.class);
     when(consumer.getKey()).thenReturn(new ConsumerKey("domain", "stream", 1, "zone", "process"));
 
     final ProcessInputStreamBinding inputStreamBinding2 = new ProcessInputStreamBinding(
-      new StreamBindingKey("domain", "stream2", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+      new StreamBindingKey("domain", "stream2", 1, "zone", "infra"), objectMapper.createObjectNode()
     );
     final Consumer consumer2 = mock(Consumer.class);
     when(consumer2.getKey()).thenReturn(new ConsumerKey("domain", "stream2", 1, "zone", "process"));
 
     final ProcessOutputStreamBinding outputStreamBinding = new ProcessOutputStreamBinding(
-      new StreamBindingKey("domain", "stream3", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+      new StreamBindingKey("domain", "stream3", 1, "zone", "infra"), objectMapper.createObjectNode()
     );
     final Producer producer = mock(Producer.class);
     when(producer.getKey()).thenReturn(new ProducerKey("domain", "stream3", 1, "zone", "process"));
 
     final ProcessOutputStreamBinding outputStreamBinding2 = new ProcessOutputStreamBinding(
-      new StreamBindingKey("domain", "stream4", 1, "zone", "infra"), "type", objectMapper.createObjectNode()
+      new StreamBindingKey("domain", "stream4", 1, "zone", "infra"), objectMapper.createObjectNode()
     );
     final Producer producer2 = mock(Producer.class);
     when(producer2.getKey()).thenReturn(new ProducerKey("domain", "stream4", 1, "zone", "process"));

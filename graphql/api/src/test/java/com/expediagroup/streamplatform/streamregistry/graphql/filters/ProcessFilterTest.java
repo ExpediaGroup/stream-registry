@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.*;
@@ -41,6 +43,7 @@ public class ProcessFilterTest {
   private static final String FAIL = "fail_this";
 
   private ProcessFilter processFilter;
+  private ObjectMapper mapper = new ObjectMapper();
 
   @Test
   public void noFilters() {
@@ -256,11 +259,11 @@ public class ProcessFilterTest {
   }
 
   private List<ProcessInputStream> inputList(List<String> names) {
-    return names.stream().map(name -> new ProcessInputStream(new StreamKey("domain", name, 1))).collect(Collectors.toList());
+    return names.stream().map(name -> new ProcessInputStream(new StreamKey("domain", name, 1), mapper.createObjectNode())).collect(Collectors.toList());
   }
 
   private List<ProcessOutputStream> outputList(List<String> names) {
-    return names.stream().map(name -> new ProcessOutputStream(new StreamKey("domain", name, 1))).collect(Collectors.toList());
+    return names.stream().map(name -> new ProcessOutputStream(new StreamKey("domain", name, 1), mapper.createObjectNode())).collect(Collectors.toList());
   }
 
   private List<ZoneKey> zoneKeyList(List<String> zones) {

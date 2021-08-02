@@ -57,9 +57,9 @@ public class AvroConverterTest {
   private final AvroProcessKey avroProcessKey = new AvroProcessKey(avroDomainKey, "process");
   private final AvroStreamBindingKey avroStreamBindingKey = new AvroStreamBindingKey(avroStreamKey, avroInfrastructureKey);
   private final AvroProcessInputStreamBinding avroProcessInputStreamBinding =
-    new AvroProcessInputStreamBinding(avroStreamBindingKey, "type", avroObject);
+    new AvroProcessInputStreamBinding(avroStreamBindingKey, avroObject);
   private final AvroProcessOutputStreamBinding avroProcessOutputStreamBinding =
-    new AvroProcessOutputStreamBinding(avroStreamBindingKey, "type", avroObject);
+    new AvroProcessOutputStreamBinding(avroStreamBindingKey, avroObject);
   private final AvroProcessBindingKey avroProcessBindingKey = new AvroProcessBindingKey(avroProcessKey, avroZoneKey);
 
   private final AvroSpecificationKey avroSpecificationKey = new AvroSpecificationKey(avroDomainKey);
@@ -94,8 +94,8 @@ public class AvroConverterTest {
       put("admin", singletonList(new AvroPrincipal("user1")));
       put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
     }},
-    singletonList(new AvroProcessInputStream(avroStreamKey)),
-    singletonList(new AvroProcessOutputStream(avroStreamKey))
+    singletonList(new AvroProcessInputStream(avroStreamKey, avroObject)),
+    singletonList(new AvroProcessOutputStream(avroStreamKey, avroObject))
   );
   private final AvroProcessBindingSpecification avroProcessBindingSpecification = new AvroProcessBindingSpecification(
     avroZoneKey,
@@ -151,9 +151,9 @@ public class AvroConverterTest {
       new Entity.SchemaKey(domainKey, "schema")
   );
   private final ProcessInputStreamBinding processInputStreamBinding =
-    new ProcessInputStreamBinding(streamBindingKey, "type", mapper.createObjectNode());
+    new ProcessInputStreamBinding(streamBindingKey, mapper.createObjectNode());
   private final ProcessOutputStreamBinding processOutputStreamBinding =
-    new ProcessOutputStreamBinding(streamBindingKey, "type", mapper.createObjectNode());
+    new ProcessOutputStreamBinding(streamBindingKey, mapper.createObjectNode());
   private final ProcessKey processKey = new ProcessKey(domainKey, "process");
   private final ProcessSpecification processSpecification = new ProcessSpecification(
     singletonList(zoneKey),
@@ -165,8 +165,8 @@ public class AvroConverterTest {
       put("admin", singletonList(new Principal("user1")));
       put("creator", asList(new Principal("user2"), new Principal("user3")));
     }},
-    singletonList(new ProcessInputStream(streamKey)),
-    singletonList(new ProcessOutputStream(streamKey))
+    singletonList(new ProcessInputStream(streamKey, mapper.createObjectNode())),
+    singletonList(new ProcessOutputStream(streamKey, mapper.createObjectNode()))
   );
   private final ProcessBindingKey processBindingKey = new ProcessBindingKey(processKey, zoneKey);
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(

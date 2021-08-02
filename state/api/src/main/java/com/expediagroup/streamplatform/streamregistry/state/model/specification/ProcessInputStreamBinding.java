@@ -25,6 +25,5 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamB
 @Value
 public class ProcessInputStreamBinding {
   @NonNull StreamBindingKey streamBindingKey;
-  @NonNull String type;
   @NonNull ObjectNode configuration;
 }

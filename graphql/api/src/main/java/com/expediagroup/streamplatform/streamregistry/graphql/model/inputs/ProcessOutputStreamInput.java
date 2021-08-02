@@ -18,14 +18,17 @@ package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
 import lombok.Builder;
 import lombok.Value;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
 
 @Value
 @Builder
 public class ProcessOutputStreamInput {
   StreamKeyInput stream;
+  ObjectNode configuration;
 
   public ProcessOutputStream asProcessOutputStream() {
-    return new ProcessOutputStream(stream.asStreamKey());
+    return new ProcessOutputStream(stream.asStreamKey(), configuration);
   }
 }
