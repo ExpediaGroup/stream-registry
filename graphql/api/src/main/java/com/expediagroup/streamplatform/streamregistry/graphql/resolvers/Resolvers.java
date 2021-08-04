@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,9 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.expediagroup.streamplatform.streamregistry.graphql.GraphQLApiType;
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Domain;
-import com.expediagroup.streamplatform.streamregistry.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Schema;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.Stream;
-import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.*;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import graphql.kickstart.tools.GraphQLResolver;
 
 interface Resolvers {
@@ -78,6 +69,10 @@ interface Resolvers {
     ConsumerBinding binding(Consumer consumer);
   }
 
+  interface ProcessResolver extends EntityResolver<Process>, GraphQLResolver<Process>, GraphQLApiType {
+    Domain domain(Process process);
+  }
+
   interface ConsumerBindingResolver extends EntityResolver<ConsumerBinding>, GraphQLResolver<ConsumerBinding>, GraphQLApiType {
     Consumer consumer(ConsumerBinding consumerBinding);
 
@@ -88,6 +83,14 @@ interface Resolvers {
     Producer producer(ProducerBinding producerBinding);
 
     StreamBinding binding(ProducerBinding producerBinding);
+  }
+
+  interface ProcessBindingResolver extends EntityResolver<ProcessBinding>, GraphQLResolver<ProcessBinding>, GraphQLApiType {
+    Process process(ProcessBinding processBinding);
+
+    Domain domain(ProcessBinding processBinding);
+
+    ZoneKey zone(ProcessBinding processBinding);
   }
 
   interface StatusResolver extends GraphQLResolver<Status>, GraphQLApiType {

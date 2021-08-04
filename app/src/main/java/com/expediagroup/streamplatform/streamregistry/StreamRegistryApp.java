@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -77,6 +79,11 @@ public class StreamRegistryApp {
   }
 
   @Bean
+  Handler<Process> defaultProcessHandler() {
+    return new IdentityHandler<>(DEFAULT, Process.class);
+  }
+
+  @Bean
   Handler<StreamBinding> defaultStreamBindingHandler() {
     return new IdentityHandler<>(DEFAULT, StreamBinding.class);
   }
@@ -89,5 +96,10 @@ public class StreamRegistryApp {
   @Bean
   Handler<ConsumerBinding> defaultConsumerBindingHandler() {
     return new IdentityHandler<>(DEFAULT, ConsumerBinding.class);
+  }
+
+  @Bean
+  Handler<ProcessBinding> defaultProcessBindingHandler() {
+    return new IdentityHandler<>(DEFAULT, ProcessBinding.class);
   }
 }

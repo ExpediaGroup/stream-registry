@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [0.20.0] - 2021-08-04
+### Added
+- Added Model/State/Services for new Process and ProcessBinding Entities
+
+## [0.19.1] - 2021-04-26
 ### Added
 - Implemented entity delete functionality.
 - Added `security` to Specification models.

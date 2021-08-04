@@ -40,6 +40,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Consume
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaKey;
@@ -52,6 +54,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Specific
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -77,12 +81,16 @@ public class AvroConverter {
         AvroProducerKey.class, AvroSpecification.class));
     add(new EntityConverter<>(ConsumerKey.class, DefaultSpecification.class,
         AvroConsumerKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(ProcessKey.class, ProcessSpecification.class,
+      AvroProcessKey.class, AvroProcessSpecification.class));
     add(new EntityConverter<>(StreamBindingKey.class, DefaultSpecification.class,
         AvroStreamBindingKey.class, AvroSpecification.class));
     add(new EntityConverter<>(ProducerBindingKey.class, DefaultSpecification.class,
         AvroProducerBindingKey.class, AvroSpecification.class));
     add(new EntityConverter<>(ConsumerBindingKey.class, DefaultSpecification.class,
         AvroConsumerBindingKey.class, AvroSpecification.class));
+    add(new EntityConverter<>(ProcessBindingKey.class, ProcessBindingSpecification.class,
+      AvroProcessBindingKey.class, AvroProcessBindingSpecification.class));
   }};
 
   private final Map<Class<? extends SpecificRecord>, ? extends EntityConverter<?, ?>> modelConverters = entityConverters

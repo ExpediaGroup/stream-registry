@@ -138,6 +138,26 @@ mutation ConsumerDeletion($key: ConsumerKeyInput!) {
   }
 }
 
+mutation ProcessSpecification($key: ProcessKeyInput!, $specification: SpecificationInput!, $zones: [ZoneKeyInput!]!, $inputs: [ProcessInputStreamInput!]!, $outputs: [ProcessOutputStreamInput!]!) {
+  process {
+    upsert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs) {
+      __typename
+    }
+  }
+}
+mutation ProcessStatus($key: ProcessKeyInput!, $status: StatusInput!) {
+  process {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+mutation ProcessDeletion($key: ProcessKeyInput!) {
+  process {
+    delete(key: $key)
+  }
+}
+
 mutation StreamBindingSpecification($key: StreamBindingKeyInput!, $specification: SpecificationInput!) {
   streamBinding {
     upsert(key: $key, specification: $specification) {
@@ -194,6 +214,26 @@ mutation ConsumerBindingStatus($key: ConsumerBindingKeyInput!, $status: StatusIn
 }
 mutation ConsumerBindingDeletion($key: ConsumerBindingKeyInput!) {
   consumerBinding {
+    delete(key: $key)
+  }
+}
+
+mutation ProcessBindingSpecification($key: ProcessBindingKeyInput!, $specification: SpecificationInput!, $zone: ZoneKeyInput!, $inputs: [ProcessInputStreamBindingInput!]!, $outputs: [ProcessOutputStreamBindingInput!]!) {
+  processBinding {
+    upsert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs) {
+      __typename
+    }
+  }
+}
+mutation ProcessBindingStatus($key: ProcessBindingKeyInput!, $status: StatusInput!) {
+  processBinding {
+    updateStatus(key: $key, status: $status) {
+      __typename
+    }
+  }
+}
+mutation ProcessBindingDeletion($key: ProcessBindingKeyInput!) {
+  processBinding {
     delete(key: $key)
   }
 }

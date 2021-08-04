@@ -36,16 +36,14 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.*;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 public class GraphQLConverterTest {
 
   private final GraphQLConverter underTest = new GraphQLConverter();
 
+  private final ObjectMapper mapper = new ObjectMapper();
   private final DomainKey domainKey = new DomainKey("domain");
   private final SchemaKey schemaKey = new SchemaKey(domainKey, "schema");
   private final Entity.StreamKey streamkey = new Entity.StreamKey(domainKey, "stream", 1);
@@ -53,11 +51,14 @@ public class GraphQLConverterTest {
   private final Entity.InfrastructureKey infrastructureKey = new Entity.InfrastructureKey(zoneKey, "zone");
   private final Entity.ProducerKey producerKey = new Entity.ProducerKey(streamkey, zoneKey, "producer");
   private final Entity.ConsumerKey consumerKey = new Entity.ConsumerKey(streamkey, zoneKey, "consumer");
+  private final Entity.ProcessKey processKey = new Entity.ProcessKey(domainKey, "process");
   private final Entity.StreamBindingKey streamBindingKey = new Entity.StreamBindingKey(streamkey, infrastructureKey);
+  private final ProcessInputStreamBinding processInputStreamBinding = new ProcessInputStreamBinding(streamBindingKey, mapper.createObjectNode());
+  private final ProcessOutputStreamBinding processOutputStreamBinding = new ProcessOutputStreamBinding(streamBindingKey, mapper.createObjectNode());
   private final Entity.ProducerBindingKey producerBindingKey = new Entity.ProducerBindingKey(producerKey, streamBindingKey);
   private final Entity.ConsumerBindingKey consumerBindingKey = new Entity.ConsumerBindingKey(consumerKey, streamBindingKey);
+  private final Entity.ProcessBindingKey processBindingKey = new Entity.ProcessBindingKey(processKey, zoneKey);
 
-  private final ObjectMapper mapper = new ObjectMapper();
   private final Tag tag = new Tag("name", "value");
   private final ObjectNode configuration = mapper.createObjectNode();
   private final Map<String, List<Principal>> security = new HashMap<String, List<Principal>>() {{
@@ -65,6 +66,11 @@ public class GraphQLConverterTest {
     put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
   }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security);
+  private final ProcessSpecification processSpecification = new ProcessSpecification(Collections.singletonList(zoneKey), "description", Collections.singletonList(tag),
+    "type", configuration, security, Collections.singletonList(new ProcessInputStream(streamkey, mapper.createObjectNode())),
+    Collections.singletonList(new ProcessOutputStream(streamkey, mapper.createObjectNode())));
+  private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(zoneKey, "description", Collections.singletonList(tag),
+    "type", configuration, security, Collections.singletonList(processInputStreamBinding), Collections.singletonList(processOutputStreamBinding));
   private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());
 
@@ -216,6 +222,24 @@ public class GraphQLConverterTest {
   }
 
   @Test
+  public void processSpecification() {
+    val mutation = underTest.convert(Event.specification(processKey, processSpecification));
+    assertThat(mutation, is(instanceOf(ProcessSpecificationMutation.class)));
+  }
+
+  @Test
+  public void processStatus() {
+    val mutation = underTest.convert(Event.status(processKey, statusEntry));
+    assertThat(mutation, is(instanceOf(ProcessStatusMutation.class)));
+  }
+
+  @Test
+  public void processDeletion() {
+    val mutation = underTest.convert(Event.specificationDeletion(processKey));
+    assertThat(mutation, is(instanceOf(ProcessDeletionMutation.class)));
+  }
+
+  @Test
   public void streamBindingSpecification() {
     val mutation = underTest.convert(Event.specification(streamBindingKey, specification));
     assertThat(mutation, is(instanceOf(StreamBindingSpecificationMutation.class)));
@@ -267,5 +291,23 @@ public class GraphQLConverterTest {
   public void consumerBindingDeletion() {
     val mutation = underTest.convert(Event.specificationDeletion(consumerBindingKey));
     assertThat(mutation, is(instanceOf(ConsumerBindingDeletionMutation.class)));
+  }
+
+  @Test
+  public void processBindingSpecification() {
+    val mutation = underTest.convert(Event.specification(processBindingKey, processBindingSpecification));
+    assertThat(mutation, is(instanceOf(ProcessBindingSpecificationMutation.class)));
+  }
+
+  @Test
+  public void processBindingStatus() {
+    val mutation = underTest.convert(Event.status(processBindingKey, statusEntry));
+    assertThat(mutation, is(instanceOf(ProcessBindingStatusMutation.class)));
+  }
+
+  @Test
+  public void processBindingDeletion() {
+    val mutation = underTest.convert(Event.specificationDeletion(processBindingKey));
+    assertThat(mutation, is(instanceOf(ProcessBindingDeletionMutation.class)));
   }
 }

@@ -40,7 +40,7 @@ public class ProducerBindingValidator implements Validator<ProducerBinding> {
     specificationValidator.validateForUpdate(producerbinding.getSpecification(), existing.getSpecification());
   }
 
-  public void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
+  private void validateForCreateAndUpdate(ProducerBinding producerbinding) throws ValidationException {
     if (!producerView.exists(producerbinding.getKey().getProducerKey())) {
       throw new ValidationException("Producer does not exist");
     }

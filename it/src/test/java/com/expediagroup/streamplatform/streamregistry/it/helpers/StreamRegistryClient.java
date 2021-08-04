@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,20 +25,13 @@ import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ConsumerQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DomainQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InfrastructureQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ProducerQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.SchemaQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamBindingQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.StreamQuery;
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.ZoneQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ConsumerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.InfrastructureKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProcessBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProcessKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.SchemaKeyInput;
@@ -102,6 +95,11 @@ public class StreamRegistryClient {
     return response.getConsumer().getByKey();
   }
 
+  public Optional<ProcessQuery.ByKey> getProcess(ProcessKeyInput processKeyInput) {
+    ProcessQuery.Data response = (ProcessQuery.Data) getOptionalData(ProcessQuery.builder().key(processKeyInput).build()).get();
+    return response.getProcess().getByKey();
+  }
+
   public Optional<ConsumerBindingQuery.ByKey> getConsumerBinding(ConsumerBindingKeyInput zoneKeyInput) {
     ConsumerBindingQuery.Data response = (ConsumerBindingQuery.Data) getOptionalData(ConsumerBindingQuery.builder().key(zoneKeyInput).build()).get();
     return response.getConsumerBinding().getByKey();
@@ -115,6 +113,11 @@ public class StreamRegistryClient {
   public Optional<ProducerBindingQuery.ByKey> getProducerBinding(ProducerBindingKeyInput zoneKeyInput) {
     ProducerBindingQuery.Data response = (ProducerBindingQuery.Data) getOptionalData(ProducerBindingQuery.builder().key(zoneKeyInput).build()).get();
     return response.getProducerBinding().getByKey();
+  }
+
+  public Optional<ProcessBindingQuery.ByKey> getProcessBinding(ProcessBindingKeyInput processBindingKeyInput) {
+    ProcessBindingQuery.Data response = (ProcessBindingQuery.Data) getOptionalData(ProcessBindingQuery.builder().key(processBindingKeyInput).build()).get();
+    return response.getProcessBinding().getByKey();
   }
 
   public Optional<ProducerQuery.ByKey> getProducer(ProducerKeyInput zoneKeyInput) {

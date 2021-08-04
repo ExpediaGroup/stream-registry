@@ -274,6 +274,99 @@ type Consumer {
     binding: ConsumerBinding
 }
 
+############ Process ############
+
+type ProcessInputStream {
+    stream: StreamKey!
+    configuration: ObjectNode!
+}
+
+input ProcessInputStreamInput {
+    stream: StreamKeyInput!
+    configuration: ObjectNode!
+}
+
+type ProcessInputStreamBinding {
+    streamBindingKey: StreamBindingKey!
+    configuration: ObjectNode!
+}
+
+input ProcessInputStreamBindingInput {
+    streamBindingKey: StreamBindingKeyInput!
+    configuration: ObjectNode!
+}
+
+type ProcessOutputStream {
+    stream: StreamKey!
+    configuration: ObjectNode!
+}
+
+input ProcessOutputStreamInput {
+    stream: StreamKeyInput!
+    configuration: ObjectNode!
+}
+
+type ProcessOutputStreamBinding {
+    streamBindingKey: StreamBindingKey!
+    configuration: ObjectNode!
+}
+
+input ProcessOutputStreamBindingInput {
+    streamBindingKey: StreamBindingKeyInput!
+    configuration: ObjectNode!
+}
+
+type ProcessKey {
+    domain: String!
+    name: String!
+}
+
+input ProcessKeyInput {
+    domain: String!
+    name: String!
+}
+
+input ProcessKeyQuery {
+    domainRegex: String
+    nameRegex: String
+}
+
+type Process {
+    key: ProcessKey!
+    zones: [ZoneKey!]!
+    specification: Specification!
+    status: Status
+    inputs: [ProcessInputStream!]!
+    outputs: [ProcessOutputStream!]!
+}
+
+type ProcessBindingKey {
+    domainName: String!
+    infrastructureZone: String!
+    processName: String!
+}
+
+input ProcessBindingKeyInput {
+    domainName: String!
+    infrastructureZone: String!
+    processName: String!
+}
+
+type ProcessBinding {
+    key: ProcessBindingKey!
+    zone: ZoneKey!
+    specification: Specification!
+    status: Status
+    inputs: [ProcessInputStreamBinding!]!
+    outputs: [ProcessOutputStreamBinding!]!
+}
+
+input ProcessBindingKeyQuery {
+    domainNameRegex: String
+    infrastructureZoneRegex: String
+    processNameRegex: String
+}
+
 ############ StreamBinding ############
 
 type StreamBindingKey {
@@ -443,6 +536,14 @@ type ProducerMutation{
     updateStatus(key: ProducerKeyInput!, status: StatusInput!): Producer!
 }
 
+type ProcessMutation{
+    insert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    update(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    upsert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    delete(key: ProcessKeyInput!): Boolean!
+    updateStatus(key: ProcessKeyInput!, status: StatusInput!): Process!
+}
+
 type StreamBindingMutation{
     insert(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
     update(key: StreamBindingKeyInput!, specification: SpecificationInput!): StreamBinding!
@@ -467,6 +568,14 @@ type ConsumerBindingMutation{
     updateStatus(key: ConsumerBindingKeyInput!, status: StatusInput!): ConsumerBinding!
 }
 
+type ProcessBindingMutation{
+    insert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    update(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    upsert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    delete(key: ProcessBindingKeyInput!): Boolean!
+    updateStatus(key: ProcessBindingKeyInput!, status: StatusInput!): ProcessBinding!
+}
+
 type Mutation {
     consumer: ConsumerMutation!
     domain: DomainMutation!
@@ -475,9 +584,11 @@ type Mutation {
     zone: ZoneMutation!
     infrastructure: InfrastructureMutation!
     producer: ProducerMutation!
+    process: ProcessMutation!
     streamBinding: StreamBindingMutation!
     producerBinding: ProducerBindingMutation!
     consumerBinding: ConsumerBindingMutation!
+    processBinding: ProcessBindingMutation!
 }
 
 type DomainQuery{
@@ -515,6 +626,11 @@ type ConsumerQuery{
     byQuery(key: ConsumerKeyQuery, specification: SpecificationQuery): [Consumer!]!
 }
 
+type ProcessQuery{
+    byKey(key: ProcessKeyInput!): Process
+    byQuery(key: ProcessKeyQuery, specification: SpecificationQuery, zones: [ZoneKeyQuery!], inputs: [StreamKeyQuery!], outputs: [StreamKeyQuery!]): [Process!]!
+}
+
 type StreamBindingQuery{
     byKey(key: StreamBindingKeyInput!): StreamBinding
     byQuery(key: StreamBindingKeyQuery, specification: SpecificationQuery): [StreamBinding!]!
@@ -530,6 +646,11 @@ type ConsumerBindingQuery{
     byQuery(key: ConsumerBindingKeyQuery, specification: SpecificationQuery): [ConsumerBinding!]!
 }
 
+type ProcessBindingQuery{
+    byKey(key: ProcessBindingKeyInput!): ProcessBinding
+    byQuery(key: ProcessBindingKeyQuery, specification: SpecificationQuery, zone: ZoneKeyQuery, inputs: [StreamBindingKeyQuery!], outputs: [StreamBindingKeyQuery!]): [ProcessBinding!]!
+}
+
 ############ Queries ############
 
 type Query {
@@ -541,8 +662,9 @@ type Query {
     infrastructure: InfrastructureQuery!
     producer: ProducerQuery!
     consumer: ConsumerQuery!
+    process: ProcessQuery!
     streamBinding: StreamBindingQuery!
     producerBinding: ProducerBindingQuery!
-    consumerBinding: ConsumerBindingQuery !
-
+    consumerBinding: ConsumerBindingQuery!
+    processBinding: ProcessBindingQuery!
 }

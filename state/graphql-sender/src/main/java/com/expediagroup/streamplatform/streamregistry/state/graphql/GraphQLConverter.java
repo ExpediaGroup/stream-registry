@@ -31,6 +31,12 @@ import com.expediagroup.streamplatform.streamregistry.state.graphql.type.Consume
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.DomainKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.InfrastructureKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.PrincipalInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessInputStreamBindingInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessInputStreamInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessKeyInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessOutputStreamBindingInput;
+import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProcessOutputStreamInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.type.SchemaKeyInput;
@@ -46,6 +52,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Consume
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProcessKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerBindingKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.SchemaKey;
@@ -58,6 +66,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Specific
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
@@ -72,9 +82,11 @@ class GraphQLConverter {
     put(InfrastructureKey.class, new InfrastructureConverter());
     put(ProducerKey.class, new ProducerConverter());
     put(ConsumerKey.class, new ConsumerConverter());
+    put(ProcessKey.class, new ProcessConverter());
     put(StreamBindingKey.class, new StreamBindingConverter());
     put(ProducerBindingKey.class, new ProducerBindingConverter());
     put(ConsumerBindingKey.class, new ConsumerBindingConverter());
+    put(ProcessBindingKey.class, new ProcessBindingConverter());
   }};
 
   <K extends Entity.Key<S>, S extends Specification> Mutation<?, ?, ?> convert(Event<K, S> event) {
@@ -385,6 +397,62 @@ class GraphQLConverter {
     }
   }
 
+  static class ProcessConverter implements Converter<ProcessKeyInput, ProcessSpecificationMutation, ProcessStatusMutation, ProcessDeletionMutation, ProcessKey, ProcessSpecification> {
+    @Override
+    public ProcessKeyInput convertKey(ProcessKey key) {
+      return ProcessKeyInput.builder()
+        .domain(key.getDomainKey().getName())
+        .name(key.getName())
+        .build();
+    }
+
+    @Override
+    public ProcessSpecificationMutation convertSpecificationEvent(SpecificationEvent<ProcessKey, ProcessSpecification> event) {
+      return ProcessSpecificationMutation.builder()
+        .key(convertKey(event.getKey()))
+        .specification(convertSpecification(event.getSpecification()))
+        .zones(event.getSpecification().getZones().stream().map(zoneKey ->
+          ZoneKeyInput.builder().name(zoneKey.getName()).build()
+        ).collect(toList()))
+        .inputs(event.getSpecification().getInputs().stream().map(input ->
+          ProcessInputStreamInput.builder()
+            .stream(StreamKeyInput.builder()
+              .domain(input.getStream().getDomainKey().getName())
+              .name(input.getStream().getName())
+              .version(input.getStream().getVersion())
+              .build())
+            .configuration(input.getConfiguration())
+            .build()
+        ).collect(toList()))
+        .outputs(event.getSpecification().getOutputs().stream().map(output ->
+          ProcessOutputStreamInput.builder()
+            .stream(StreamKeyInput.builder()
+              .domain(output.getStream().getDomainKey().getName())
+              .name(output.getStream().getName())
+              .version(output.getStream().getVersion())
+              .build())
+            .configuration(output.getConfiguration())
+            .build()
+        ).collect(toList()))
+        .build();
+    }
+
+    @Override
+    public ProcessStatusMutation convertStatusEvent(StatusEvent<ProcessKey, ProcessSpecification> event) {
+      return ProcessStatusMutation.builder()
+        .key(convertKey(event.getKey()))
+        .status(convertStatus(event.getStatusEntry()))
+        .build();
+    }
+
+    @Override
+    public ProcessDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<ProcessKey, ProcessSpecification> event) {
+      return ProcessDeletionMutation.builder()
+        .key(convertKey(event.getKey()))
+        .build();
+    }
+  }
+
   static class StreamBindingConverter implements Converter<StreamBindingKeyInput, StreamBindingSpecificationMutation, StreamBindingStatusMutation, StreamBindingDeletionMutation, StreamBindingKey, DefaultSpecification> {
     @Override
     public StreamBindingKeyInput convertKey(StreamBindingKey key) {
@@ -492,6 +560,63 @@ class GraphQLConverter {
       return ConsumerBindingDeletionMutation.builder()
           .key(convertKey(event.getKey()))
           .build();
+    }
+  }
+
+  static class ProcessBindingConverter implements Converter<ProcessBindingKeyInput, ProcessBindingSpecificationMutation, ProcessBindingStatusMutation, ProcessBindingDeletionMutation, ProcessBindingKey, ProcessBindingSpecification> {
+    @Override
+    public ProcessBindingKeyInput convertKey(ProcessBindingKey key) {
+      return ProcessBindingKeyInput.builder()
+        .domainName(key.getProcessKey().getDomainKey().getName())
+        .processName(key.getProcessKey().getName())
+        .infrastructureZone(key.getZoneKey().getName())
+        .build();
+    }
+
+    @Override
+    public ProcessBindingSpecificationMutation convertSpecificationEvent(SpecificationEvent<ProcessBindingKey, ProcessBindingSpecification> event) {
+      return ProcessBindingSpecificationMutation.builder()
+        .key(convertKey(event.getKey()))
+        .specification(convertSpecification(event.getSpecification()))
+        .zone(ZoneKeyInput.builder().name(event.getSpecification().getZone().getName()).build())
+        .inputs(event.getSpecification().getInputs().stream().map(input ->
+          ProcessInputStreamBindingInput.builder()
+            .streamBindingKey(StreamBindingKeyInput.builder()
+              .streamName(input.getStreamBindingKey().getStreamKey().getName())
+              .streamDomain(input.getStreamBindingKey().getStreamKey().getDomainKey().getName())
+              .streamVersion(input.getStreamBindingKey().getStreamKey().getVersion())
+              .infrastructureZone(input.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
+              .infrastructureName(input.getStreamBindingKey().getInfrastructureKey().getName())
+              .build()
+            ).configuration(input.getConfiguration()).build()
+          ).collect(toList()))
+        .outputs(event.getSpecification().getOutputs().stream().map(output ->
+          ProcessOutputStreamBindingInput.builder()
+            .streamBindingKey(StreamBindingKeyInput.builder()
+              .streamName(output.getStreamBindingKey().getStreamKey().getName())
+              .streamDomain(output.getStreamBindingKey().getStreamKey().getDomainKey().getName())
+              .streamVersion(output.getStreamBindingKey().getStreamKey().getVersion())
+              .infrastructureZone(output.getStreamBindingKey().getInfrastructureKey().getZoneKey().getName())
+              .infrastructureName(output.getStreamBindingKey().getInfrastructureKey().getName())
+              .build()
+            ).configuration(output.getConfiguration()).build()
+          ).collect(toList()))
+        .build();
+    }
+
+    @Override
+    public ProcessBindingStatusMutation convertStatusEvent(StatusEvent<ProcessBindingKey, ProcessBindingSpecification> event) {
+      return ProcessBindingStatusMutation.builder()
+        .key(convertKey(event.getKey()))
+        .status(convertStatus(event.getStatusEntry()))
+        .build();
+    }
+
+    @Override
+    public ProcessBindingDeletionMutation convertSpecificationDeletionEvent(SpecificationDeletionEvent<ProcessBindingKey, ProcessBindingSpecification> event) {
+      return ProcessBindingDeletionMutation.builder()
+        .key(convertKey(event.getKey()))
+        .build();
     }
   }
 }

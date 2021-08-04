@@ -127,6 +127,241 @@ query Consumers(
   }
 }
 
+############ Process ############
+
+fragment ProcessPart on Process{
+  __typename
+  key{
+    domain
+    name
+  }
+  specification{
+    __typename
+    ...specificationPart
+  }
+  status{
+    __typename
+    ...StatusPart
+  }
+}
+
+mutation InsertProcess(
+  $key: ProcessKeyInput!
+  $specification: SpecificationInput!
+  $zones: [ZoneKeyInput!]!
+  $inputs: [ProcessInputStreamInput!]!
+  $outputs: [ProcessOutputStreamInput!]!
+) {
+  process{
+    insert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
+      __typename
+      ...ProcessPart
+    }
+  }
+}
+
+mutation UpdateProcess(
+  $key: ProcessKeyInput!
+  $specification: SpecificationInput!
+  $zones: [ZoneKeyInput!]!
+  $inputs: [ProcessInputStreamInput!]!
+  $outputs: [ProcessOutputStreamInput!]!
+) {
+  process{
+    update(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
+      __typename
+      ...ProcessPart
+    }
+  }
+}
+
+mutation UpsertProcess(
+  $key: ProcessKeyInput!
+  $specification: SpecificationInput!
+  $zones: [ZoneKeyInput!]!
+  $inputs: [ProcessInputStreamInput!]!
+  $outputs: [ProcessOutputStreamInput!]!
+) {
+  process{
+    upsert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
+      __typename
+      ...ProcessPart
+    }
+  }
+}
+
+mutation DeleteProcess(
+  $key: ProcessKeyInput!
+) {
+  process{
+    delete(key: $key)
+  }
+}
+
+mutation UpdateProcessStatus(
+  $key: ProcessKeyInput!
+  $status: StatusInput!
+){
+  process{
+    updateStatus(key: $key,status: $status){
+      __typename
+      ...ProcessPart
+    }
+  }
+}
+
+query Process(
+  $key: ProcessKeyInput!
+) {
+  process{
+    byKey(
+      key: $key
+    ) {
+      __typename
+      ...ProcessPart
+    }
+  }
+}
+
+query Processs(
+  $key: ProcessKeyQuery
+  $specification: SpecificationQuery
+  $zones: [ZoneKeyQuery!]
+  $inputs: [StreamKeyQuery!]
+  $outputs: [StreamKeyQuery!]
+) {
+  process{
+    byQuery(
+      key: $key
+      specification: $specification
+      zones: $zones
+      inputs: $inputs
+      outputs: $outputs
+    ) {
+      __typename
+      ...ProcessPart
+    }
+  }
+}
+
+############ ProcessBinding ############
+
+fragment ProcessBindingPart on ProcessBinding{
+  __typename
+  key{
+    domainName
+    infrastructureZone
+    processName
+  }
+  specification{
+    __typename
+    ...specificationPart
+  }
+  status{
+    __typename
+    ...StatusPart
+  }
+}
+
+mutation InsertProcessBinding(
+  $key: ProcessBindingKeyInput!
+  $specification: SpecificationInput!
+  $zone: ZoneKeyInput!
+  $inputs: [ProcessInputStreamBindingInput!]!
+  $outputs: [ProcessOutputStreamBindingInput!]!
+) {
+  processBinding{
+    insert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
+      __typename
+      ...ProcessBindingPart
+    }
+  }
+}
+
+mutation UpdateProcessBinding(
+  $key: ProcessBindingKeyInput!
+  $specification: SpecificationInput!
+  $zone: ZoneKeyInput!
+  $inputs: [ProcessInputStreamBindingInput!]!
+  $outputs: [ProcessOutputStreamBindingInput!]!
+) {
+  processBinding{
+    update(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
+      __typename
+      ...ProcessBindingPart
+    }
+  }
+}
+
+mutation UpsertProcessBinding(
+  $key: ProcessBindingKeyInput!
+  $specification: SpecificationInput!
+  $zone: ZoneKeyInput!
+  $inputs: [ProcessInputStreamBindingInput!]!
+  $outputs: [ProcessOutputStreamBindingInput!]!
+) {
+  processBinding{
+    upsert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
+      __typename
+      ...ProcessBindingPart
+    }
+  }
+}
+
+mutation DeleteProcessBinding(
+  $key: ProcessBindingKeyInput!
+) {
+  processBinding{
+    delete(key: $key)
+  }
+}
+
+mutation UpdateProcessBindingStatus(
+  $key: ProcessBindingKeyInput!
+  $status: StatusInput!
+){
+  processBinding{
+    updateStatus(key: $key,status: $status){
+      __typename
+      ...ProcessBindingPart
+    }
+  }
+}
+
+query ProcessBinding(
+  $key: ProcessBindingKeyInput!
+) {
+  processBinding{
+    byKey(
+      key: $key
+    ) {
+      __typename
+      ...ProcessBindingPart
+    }
+  }
+}
+
+query ProcessBindings(
+  $key: ProcessBindingKeyQuery
+  $specification: SpecificationQuery
+  $zone: ZoneKeyQuery
+  $inputs: [StreamBindingKeyQuery!]
+  $outputs: [StreamBindingKeyQuery!]
+) {
+  processBinding{
+    byQuery(
+      key: $key
+      specification: $specification
+      zone: $zone
+      inputs: $inputs
+      outputs: $outputs
+    ) {
+      __typename
+      ...ProcessBindingPart
+    }
+  }
+}
+
 ############ ConsumerBinding ############
 
 fragment ConsumerBindingPart on ConsumerBinding{

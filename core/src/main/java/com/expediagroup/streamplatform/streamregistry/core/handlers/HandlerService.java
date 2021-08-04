@@ -36,6 +36,8 @@ import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Schema;
@@ -68,11 +70,13 @@ public class HandlerService {
     check(handlerTargets, Stream.class);
     check(handlerTargets, Producer.class);
     check(handlerTargets, Consumer.class);
+    check(handlerTargets, Process.class);
     check(handlerTargets, Zone.class);
     check(handlerTargets, Infrastructure.class);
     check(handlerTargets, StreamBinding.class);
     check(handlerTargets, ProducerBinding.class);
     check(handlerTargets, ConsumerBinding.class);
+    check(handlerTargets, ProcessBinding.class);
   }
 
   private static void check(Set<Class> handlerTargets, Class target) {

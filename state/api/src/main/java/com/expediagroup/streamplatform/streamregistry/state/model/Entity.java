@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import lombok.Value;
 import lombok.With;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.Status;
@@ -78,6 +80,12 @@ public class Entity<K extends Entity.Key<S>, S extends Specification> {
   }
 
   @Value
+  public static class ProcessKey implements Entity.Key<ProcessSpecification> {
+    @NonNull DomainKey domainKey;
+    @NonNull String name;
+  }
+
+  @Value
   public static class StreamBindingKey implements Entity.Key<DefaultSpecification> {
     @NonNull StreamKey streamKey;
     @NonNull InfrastructureKey infrastructureKey;
@@ -93,5 +101,11 @@ public class Entity<K extends Entity.Key<S>, S extends Specification> {
   public static class ConsumerBindingKey implements Entity.Key<DefaultSpecification> {
     @NonNull ConsumerKey consumerKey;
     @NonNull StreamBindingKey streamBindingKey;
+  }
+
+  @Value
+  public static class ProcessBindingKey implements Entity.Key<ProcessBindingSpecification> {
+    @NonNull ProcessKey processKey;
+    @NonNull ZoneKey zoneKey;
   }
 }

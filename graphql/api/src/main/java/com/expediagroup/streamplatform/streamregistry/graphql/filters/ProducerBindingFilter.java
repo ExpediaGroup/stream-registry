@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.ProducerBindingKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.SpecificationQuery;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
 public class ProducerBindingFilter implements Predicate<ProducerBinding> {
 
@@ -36,26 +37,31 @@ public class ProducerBindingFilter implements Predicate<ProducerBinding> {
 
   @Override
   public boolean test(ProducerBinding d) {
+    return matchesProducerBindingKey(d.getKey(), keyQuery)
+      && matchesSpecification(d.getSpecification(), specQuery);
+  }
+
+  public static Boolean matchesProducerBindingKey(ProducerBindingKey key, ProducerBindingKeyQuery keyQuery) {
     if (keyQuery != null) {
-      if (!matches(d.getKey().getInfrastructureName(), keyQuery.getInfrastructureNameRegex())) {
+      if (!matches(key.getInfrastructureName(), keyQuery.getInfrastructureNameRegex())) {
         return false;
       }
-      if (!matches(d.getKey().getInfrastructureZone(), keyQuery.getInfrastructureZoneRegex())) {
+      if (!matches(key.getInfrastructureZone(), keyQuery.getInfrastructureZoneRegex())) {
         return false;
       }
-      if (!matches(d.getKey().getStreamDomain(), keyQuery.getStreamDomainRegex())) {
+      if (!matches(key.getStreamDomain(), keyQuery.getStreamDomainRegex())) {
         return false;
       }
-      if (!matches(d.getKey().getStreamName(), keyQuery.getStreamNameRegex())) {
+      if (!matches(key.getStreamName(), keyQuery.getStreamNameRegex())) {
         return false;
       }
-      if (keyQuery.getStreamVersion() != null && d.getKey().getStreamVersion() != keyQuery.getStreamVersion()) {
+      if (keyQuery.getStreamVersion() != null && key.getStreamVersion() != keyQuery.getStreamVersion()) {
         return false;
       }
-      if (!matches(d.getKey().getProducerName(), keyQuery.getProducerNameRegex())) {
+      if (!matches(key.getProducerName(), keyQuery.getProducerNameRegex())) {
         return false;
       }
     }
-    return matchesSpecification(d.getSpecification(), specQuery);
+    return true;
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,11 @@ public class Query implements GraphQLQueryResolver {
   private final StreamQuery stream;
   private final ProducerQuery producer;
   private final ConsumerQuery consumer;
+  private final ProcessQuery process;
   private final ZoneQuery zone;
   private final InfrastructureQuery infrastructure;
   private final StreamBindingQuery streamBinding;
   private final ProducerBindingQuery producerBinding;
   private final ConsumerBindingQuery consumerBinding;
+  private final ProcessBindingQuery processBinding;
 }

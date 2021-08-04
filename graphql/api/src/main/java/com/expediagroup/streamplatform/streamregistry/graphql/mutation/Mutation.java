@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,12 @@ public class Mutation implements GraphQLMutationResolver {
   private final StreamMutation stream;
   private final ConsumerMutation consumer;
   private final ProducerMutation producer;
+  private final ProcessMutation process;
   private final ZoneMutation zone;
   private final InfrastructureMutation infrastructure;
   private final StreamBindingMutation streamBinding;
   private final ProducerBindingMutation producerBinding;
   private final ConsumerBindingMutation consumerBinding;
+  private final ProcessBindingMutation processBinding;
 
 }
