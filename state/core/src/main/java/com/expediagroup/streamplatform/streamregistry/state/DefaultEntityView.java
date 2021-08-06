@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2021 Expedia, Inc.
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -74,8 +74,8 @@ public class DefaultEntityView implements EntityView {
       .filter(it -> it.getValue().deleted)
       .filter(it -> it.getKey().getClass().equals(keyClass))
       .collect(Collectors.toMap(
-        entry -> (K) entry.getKey(),
-        entry -> Optional.ofNullable((Entity<K, S>) entry.getValue().entity))
+        entry -> (K)entry.getKey(),
+        entry -> Optional.ofNullable((Entity<K, S>)entry.getValue().entity))
       );
   }
 
