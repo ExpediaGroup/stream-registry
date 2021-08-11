@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2021 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,38 +14,6 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.state.it;
-
-import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.specificationDeletion;
-import static java.util.UUID.randomUUID;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.aMapWithSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.hamcrest.core.IsIterableContaining.hasItem;
-import static org.hamcrest.core.IsIterableContaining.hasItems;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.val;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.testcontainers.containers.KafkaContainer;
 
 import com.expediagroup.streamplatform.streamregistry.state.AgentData;
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
@@ -60,6 +28,38 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionFactory;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.testcontainers.containers.KafkaContainer;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static com.expediagroup.streamplatform.streamregistry.state.AgentData.generateData;
+import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.specificationDeletion;
+import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
+import static org.hamcrest.core.IsIterableContaining.hasItems;
 
 public class AgentIT {
 
@@ -84,7 +84,29 @@ public class AgentIT {
     kafkaEventSender = kafkaEventSender(topicName);
     entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
     dummyAgent = new StoringEntityViewListener();
-    data = AgentData.generateData();
+    data = generateData();
+  }
+
+  @Test
+  public void concurrentModification() {
+    sendSync(kafkaEventSender, data.getSpecificationEvent());
+    startAgent(entityView, dummyAgent);
+
+    val stream = entityView.all(Entity.DomainKey.class);
+    AtomicInteger size = new AtomicInteger(1);
+
+    stream.forEach((it) -> {
+      if (size.get() < 10) {
+        // receiving an event in the middle of processing should not blow anything up
+        sendSync(kafkaEventSender, generateData().getSpecificationEvent());
+        size.incrementAndGet();
+        await.untilAsserted(() -> {
+          val list = entityView.all(Entity.DomainKey.class)
+            .collect(Collectors.toList());
+          assertThat(list, hasSize(size.get()));
+        });
+      }
+    });
   }
 
   @Test
@@ -101,7 +123,7 @@ public class AgentIT {
     assertThat(dummyAgent.events, hasSize(0));
 
     // new events start after bootstrapping
-    val dataTwo = AgentData.generateData();
+    val dataTwo = generateData();
     sendSync(kafkaEventSender, dataTwo.getSpecificationEvent());
 
     // after bootstrapping the state continues to be updated
@@ -128,7 +150,7 @@ public class AgentIT {
   public void testDeletedEntities() {
     startAgent(entityView, dummyAgent);
 
-    val data = AgentData.generateData();
+    val data = generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
 
     await.untilAsserted(() -> {
@@ -163,7 +185,7 @@ public class AgentIT {
 
   @Test
   public void testOfflineDeletes() {
-    val data = AgentData.generateData();
+    val data = generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
     sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
 
@@ -198,7 +220,7 @@ public class AgentIT {
   }
 
   @Test
-  public void testDeleteWithMissingEntity()  {
+  public void testDeleteWithMissingEntity() {
     startAgent(entityView, dummyAgent);
 
     // backing topic will contain only the deletion and not the original updated entity
