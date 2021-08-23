@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.it;
 
+import static com.expediagroup.streamplatform.streamregistry.state.AgentData.generateData;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.specificationDeletion;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -31,6 +32,7 @@ import static org.hamcrest.core.IsIterableContaining.hasItems;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -84,7 +86,29 @@ public class AgentIT {
     kafkaEventSender = kafkaEventSender(topicName);
     entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
     dummyAgent = new StoringEntityViewListener();
-    data = AgentData.generateData();
+    data = generateData();
+  }
+
+  @Test
+  public void concurrentModification() {
+    sendSync(kafkaEventSender, data.getSpecificationEvent());
+    startAgent(entityView, dummyAgent);
+
+    val stream = entityView.all(Entity.DomainKey.class);
+    AtomicInteger size = new AtomicInteger(1);
+
+    stream.forEach((it) -> {
+      if (size.get() < 10) {
+        // receiving an event in the middle of processing should not blow anything up
+        sendSync(kafkaEventSender, generateData().getSpecificationEvent());
+        size.incrementAndGet();
+        await.untilAsserted(() -> {
+          val list = entityView.all(Entity.DomainKey.class)
+            .collect(Collectors.toList());
+          assertThat(list, hasSize(size.get()));
+        });
+      }
+    });
   }
 
   @Test
@@ -101,7 +125,7 @@ public class AgentIT {
     assertThat(dummyAgent.events, hasSize(0));
 
     // new events start after bootstrapping
-    val dataTwo = AgentData.generateData();
+    val dataTwo = generateData();
     sendSync(kafkaEventSender, dataTwo.getSpecificationEvent());
 
     // after bootstrapping the state continues to be updated
@@ -128,7 +152,7 @@ public class AgentIT {
   public void testDeletedEntities() {
     startAgent(entityView, dummyAgent);
 
-    val data = AgentData.generateData();
+    val data = generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
 
     await.untilAsserted(() -> {
@@ -163,7 +187,7 @@ public class AgentIT {
 
   @Test
   public void testOfflineDeletes() {
-    val data = AgentData.generateData();
+    val data = generateData();
     sendSync(kafkaEventSender, data.getSpecificationEvent());
     sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
 
@@ -198,7 +222,7 @@ public class AgentIT {
   }
 
   @Test
-  public void testDeleteWithMissingEntity()  {
+  public void testDeleteWithMissingEntity() {
     startAgent(entityView, dummyAgent);
 
     // backing topic will contain only the deletion and not the original updated entity

@@ -18,10 +18,10 @@ package com.expediagroup.streamplatform.streamregistry.state;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static lombok.AccessLevel.PACKAGE;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,7 +45,7 @@ public class DefaultEntityView implements EntityView {
   }
 
   public DefaultEntityView(EventReceiver receiver) {
-    this(receiver, new HashMap<>());
+    this(receiver, new ConcurrentHashMap<>());
   }
 
   @Override
