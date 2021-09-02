@@ -39,13 +39,13 @@ public class SpecificationInputTest {
   );
   private final Specification emptySecurity = new Specification(
     "description", Collections.emptyList(), "type",
-    mapper.createObjectNode(), Collections.emptyList()
+    mapper.createObjectNode(), Collections.emptyList(), null
   );
   private final Specification withSecurity = new Specification(
     "description", Collections.emptyList(), "type", mapper.createObjectNode(),
     Collections.singletonList(
       new Security("admin", Collections.singletonList(new Principal("user")))
-    )
+    ), null
   );
 
   @Test
@@ -61,7 +61,6 @@ public class SpecificationInputTest {
   @Test
   public void validSecurityList() {
     assertThat(getSpecificationInputWithSecurity(securityInputs).asSpecification(), is(withSecurity));
-
   }
 
   private SpecificationInput getSpecificationInputWithSecurity(List<SecurityInput> security) {

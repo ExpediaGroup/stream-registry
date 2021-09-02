@@ -62,7 +62,8 @@ final class SampleState {
       mapper.createObjectNode(),
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
-      }}
+      }},
+      "function"
     );
   }
 
@@ -75,6 +76,7 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
+      "function",
       schemaKey()
     );
   }
@@ -89,6 +91,7 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
+      "function",
       Collections.singletonList(new ProcessInputStream(streamKey(), mapper.createObjectNode())),
       Collections.singletonList(new ProcessOutputStream(streamKey(), mapper.createObjectNode()))
     );
@@ -104,6 +107,7 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
+      "function",
       Collections.singletonList(processInputStreamBinding()),
       Collections.singletonList(processOutputStreamBinding())
     );

@@ -64,6 +64,7 @@ input SpecificationInput {
     type: String!
     configuration: ObjectNode!
     security: [SecurityInput!]
+    function: String
 }
 
 input SpecificationQuery {
@@ -71,6 +72,7 @@ input SpecificationQuery {
     tags: [TagQuery!]
     typeRegex: String
     security: [SecurityQuery!]
+    functionRegex: String
 }
 
 type Specification {
@@ -79,6 +81,7 @@ type Specification {
     type: String!
     configuration: ObjectNode!
     security: [Security!]!
+    function: String
 }
 
 ############ Domain ############

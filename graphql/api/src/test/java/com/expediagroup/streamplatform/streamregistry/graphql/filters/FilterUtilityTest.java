@@ -65,7 +65,6 @@ public class FilterUtilityTest {
 
   @Test
   public void matchesSpecification() {
-
     Specification specification = new Specification();
     SpecificationQuery query = null;
     assertTrue(FilterUtility.matchesSpecification(specification, query));
@@ -79,10 +78,23 @@ public class FilterUtilityTest {
     query = SpecificationQuery.builder().typeRegex(REGEX).build();
     assertFalse(FilterUtility.matchesSpecification(specification, query));
 
-    specification = new Specification(MATCH, null, FAIL, null, null);
+    specification = new Specification(MATCH, null, FAIL, null, null, null);
     assertFalse(FilterUtility.matchesSpecification(specification, query));
 
-    specification = new Specification(MATCH, null, MATCH, null, null);
+    specification = new Specification(MATCH, null, MATCH, null, null, null);
     assertTrue(FilterUtility.matchesSpecification(specification, query));
+  }
+
+  @Test
+  public void matchesFunction() {
+    Specification specification = new Specification(null, null, null, null, null, MATCH);
+    SpecificationQuery query = null;
+    assertTrue(FilterUtility.matchesSpecification(specification, query));
+
+    query = SpecificationQuery.builder().functionRegex(REGEX).build();
+    assertTrue(FilterUtility.matchesSpecification(specification, query));
+
+    specification = new Specification(null, null, null, null, null, FAIL);
+    assertFalse(FilterUtility.matchesSpecification(specification, query));
   }
 }

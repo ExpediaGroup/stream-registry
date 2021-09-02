@@ -80,6 +80,8 @@ public class Apply {
     protected ObjectNode configuration;
     @Option(names = "--security", converter = ObjectNodeConverter.class)
     protected ObjectNode security = mapper.createObjectNode();
+    @Option(names = "--function", defaultValue = "")
+    protected String function;
 
     @Override
     public List<Event<?, ?>> events() {
@@ -103,7 +105,7 @@ public class Apply {
   static abstract class Default<K extends Key<DefaultSpecification>> extends Base<K, DefaultSpecification> {
     @Override
     protected DefaultSpecification getSpecification() {
-      return new DefaultSpecification(description, tags, type, configuration, convertSecurityMap(security));
+      return new DefaultSpecification(description, tags, type, configuration, convertSecurityMap(security), function);
     }
   }
 
@@ -123,7 +125,7 @@ public class Apply {
 
     @Override
     protected StreamSpecification getSpecification() {
-      return new StreamSpecification(description, tags, type, configuration, convertSecurityMap(security), entityOptions.schemaKey());
+      return new StreamSpecification(description, tags, type, configuration, convertSecurityMap(security), function, entityOptions.schemaKey());
     }
   }
 

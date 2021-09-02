@@ -106,7 +106,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
                   entry.getKey(),
                   entry.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.model.Principal(principal.getName())).collect(toList())
               )
-          ).collect(Collectors.toList())
+          ).collect(Collectors.toList()),
+        specification.getFunction()
       );
     }
 
@@ -174,7 +175,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           convertTags(specification.getTags()),
           specification.getType(),
           specification.getConfiguration(),
-          convertSecurity(specification.getSecurity())
+          convertSecurity(specification.getSecurity()),
+          specification.getFunction()
       );
     }
   }
@@ -259,6 +261,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           specification.getType(),
           specification.getConfiguration(),
           convertSecurity(specification.getSecurity()),
+          specification.getFunction(),
           schemaConverter.convertKey(entity.getSchemaKey())
       );
     }
@@ -307,6 +310,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         specification.getType(),
         specification.getConfiguration(),
         convertSecurity(specification.getSecurity()),
+        specification.getFunction(),
         entity.getInputs().stream().map(input ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
             streamConverter.convertKey(input.getStream()),
@@ -523,6 +527,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         specification.getType(),
         specification.getConfiguration(),
         convertSecurity(specification.getSecurity()),
+        specification.getFunction(),
         entity.getInputs().stream().map(input -> new ProcessInputStreamBinding(
           streamBindingConverter.convertKey(input.getStreamBindingKey()),
           input.getConfiguration())).collect(Collectors.toList()),

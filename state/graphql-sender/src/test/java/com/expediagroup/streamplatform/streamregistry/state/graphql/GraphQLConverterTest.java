@@ -65,13 +65,13 @@ public class GraphQLConverterTest {
     put("admin", Arrays.asList(new Principal("user1")));
     put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
   }};
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security);
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.singletonList(tag), "type", configuration, security, "function");
   private final ProcessSpecification processSpecification = new ProcessSpecification(Collections.singletonList(zoneKey), "description", Collections.singletonList(tag),
-    "type", configuration, security, Collections.singletonList(new ProcessInputStream(streamkey, mapper.createObjectNode())),
+    "type", configuration, security, "function", Collections.singletonList(new ProcessInputStream(streamkey, mapper.createObjectNode())),
     Collections.singletonList(new ProcessOutputStream(streamkey, mapper.createObjectNode())));
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(zoneKey, "description", Collections.singletonList(tag),
-    "type", configuration, security, Collections.singletonList(processInputStreamBinding), Collections.singletonList(processOutputStreamBinding));
-  private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, schemaKey);
+    "type", configuration, security, "function", Collections.singletonList(processInputStreamBinding), Collections.singletonList(processOutputStreamBinding));
+  private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, "function", schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());
 
   @Test(expected = IllegalArgumentException.class)

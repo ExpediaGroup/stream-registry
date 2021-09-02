@@ -71,7 +71,8 @@ public class AvroConverterTest {
       new HashMap<String, List<AvroPrincipal>>() {{
         put("admin", singletonList(new AvroPrincipal("user1")));
         put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
-      }}
+      }},
+      "function"
   );
   private final AvroStreamSpecification avroStreamSpecification = new AvroStreamSpecification(
       "description",
@@ -82,6 +83,7 @@ public class AvroConverterTest {
         put("admin", singletonList(new AvroPrincipal("user1")));
         put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
       }},
+      "function",
       new AvroSchemaKey(avroDomainKey, "schema")
   );
   private final AvroProcessSpecification avroProcessSpecification = new AvroProcessSpecification(
@@ -94,6 +96,7 @@ public class AvroConverterTest {
       put("admin", singletonList(new AvroPrincipal("user1")));
       put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
     }},
+    "function",
     singletonList(new AvroProcessInputStream(avroStreamKey, avroObject)),
     singletonList(new AvroProcessOutputStream(avroStreamKey, avroObject))
   );
@@ -107,6 +110,7 @@ public class AvroConverterTest {
       put("admin", singletonList(new AvroPrincipal("user1")));
       put("creator", asList(new AvroPrincipal("user2"), new AvroPrincipal("user3")));
     }},
+    "function",
     singletonList(avroProcessInputStreamBinding),
     singletonList(avroProcessOutputStreamBinding)
   );
@@ -134,7 +138,8 @@ public class AvroConverterTest {
       new HashMap<String, List<Principal>>() {{
         put("admin", singletonList(new Principal("user1")));
         put("creator", asList(new Principal("user2"), new Principal("user3")));
-      }}
+      }},
+      "function"
   );
   private final StatusEntry statusEntry = new StatusEntry("statusName", mapper.createObjectNode().put("foo", "baz"));
   private final StreamKey streamKey = new StreamKey(domainKey, "stream", 1);
@@ -148,6 +153,7 @@ public class AvroConverterTest {
         put("admin", singletonList(new Principal("user1")));
         put("creator", asList(new Principal("user2"), new Principal("user3")));
       }},
+      "function",
       new Entity.SchemaKey(domainKey, "schema")
   );
   private final ProcessInputStreamBinding processInputStreamBinding =
@@ -165,6 +171,7 @@ public class AvroConverterTest {
       put("admin", singletonList(new Principal("user1")));
       put("creator", asList(new Principal("user2"), new Principal("user3")));
     }},
+    "function",
     singletonList(new ProcessInputStream(streamKey, mapper.createObjectNode())),
     singletonList(new ProcessOutputStream(streamKey, mapper.createObjectNode()))
   );
@@ -179,6 +186,7 @@ public class AvroConverterTest {
       put("admin", singletonList(new Principal("user1")));
       put("creator", asList(new Principal("user2"), new Principal("user3")));
     }},
+    "function",
     singletonList(processInputStreamBinding),
     singletonList(processOutputStreamBinding)
   );

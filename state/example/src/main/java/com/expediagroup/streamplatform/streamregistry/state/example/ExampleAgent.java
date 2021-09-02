@@ -82,7 +82,8 @@ public class ExampleAgent implements EntityViewListener {
             new HashMap<String, List<Principal>>() {{
               put("admin", Arrays.asList(new Principal("user1")));
               put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
-            }}
+            }},
+            "function"
         )
     ));
 

@@ -33,6 +33,7 @@ public class ProcessSpecification implements Specification {
   @NonNull String type;
   @NonNull ObjectNode configuration;
   @NonNull Map<String, List<Principal>> security;
+  @NonNull String function;
   @NonNull List<ProcessInputStream> inputs;
   @NonNull List<ProcessOutputStream> outputs;
 }

@@ -55,7 +55,8 @@ public class ConsumerBindingFilterTest {
           Arrays.asList(
             new Security("admin", Arrays.asList(new Principal("user1"))),
             new Security("creator", Arrays.asList(new Principal("user2"), new Principal("user3")))
-          )
+          ),
+        "function"
       ),
       null
   );
