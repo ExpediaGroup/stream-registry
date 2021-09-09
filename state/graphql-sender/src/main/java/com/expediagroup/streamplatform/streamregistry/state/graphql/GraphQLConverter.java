@@ -140,6 +140,7 @@ class GraphQLConverter {
                 ).collect(Collectors.toList())
               ).build()
           ).collect(Collectors.toList()))
+          .function(specification.getFunction())
           .build();
     }
 
