@@ -33,13 +33,15 @@ public class Specification {
   private String type;
   private ObjectNode configuration;
   private List<Security> security = new ArrayList<>();
+  private String function = "";
 
-  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration, List<Security> security) {
+  public Specification(String description, List<Tag> tags, String type, ObjectNode configuration, List<Security> security, String function) {
     this.description = description;
     this.tags = tags;
     this.type = type;
     this.configuration = configuration;
     this.security = security;
+    this.function = function;
   }
 
   public List<Tag> getTags() {

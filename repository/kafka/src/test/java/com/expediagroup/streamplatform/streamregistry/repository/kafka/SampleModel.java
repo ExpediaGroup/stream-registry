@@ -68,6 +68,7 @@ final class SampleModel {
     specification.setSecurity(Arrays.asList(
       new Security("admin", Arrays.asList(new Principal("user1")))
     ));
+    specification.setFunction("function");
     return specification;
   }
 

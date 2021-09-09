@@ -79,7 +79,8 @@ public class ITestDataFactory {
           SecurityInput.builder().role("admin").principals(
             Collections.singletonList(PrincipalInput.builder().name("user1").build())
           ).build())
-        );
+        )
+      .function("function");
   }
 
   public UpsertDomainMutation.Builder upsertDomainMutationBuilder() {

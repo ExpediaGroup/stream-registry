@@ -61,7 +61,7 @@ public class StateIT {
     put("admin", Arrays.asList(new Principal("user1")));
     put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
   }};
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, security);
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", configuration, security, "function");
   private final ObjectNode statusValue = mapper.createObjectNode();
   private final StatusEntry statusEntry = new StatusEntry("statusName", statusValue);
   private final Event<DomainKey, DefaultSpecification> specificationEvent = Event.specification(key, specification);

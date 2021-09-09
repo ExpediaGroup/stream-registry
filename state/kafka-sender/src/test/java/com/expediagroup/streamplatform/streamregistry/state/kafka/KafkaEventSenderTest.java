@@ -69,7 +69,7 @@ public class KafkaEventSenderTest {
     put("admin", Arrays.asList(new Principal("user1")));
     put("creator", Arrays.asList(new Principal("user2"), new Principal("user3")));
   }};
-  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode(), security);
+  private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode(), security, "function");
   private final Event<DomainKey, DefaultSpecification> event = Event.specification(key, specification);
 
   @Mock private AvroEvent avroEvent;

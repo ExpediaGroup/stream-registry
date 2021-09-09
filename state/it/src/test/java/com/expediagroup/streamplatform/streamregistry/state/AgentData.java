@@ -50,7 +50,7 @@ public final class AgentData {
 
   public AgentData withTags(List<Tag> tags) {
 
-    val specification = new DefaultSpecification(randomUUID().toString(), tags, "type", new ObjectMapper().createObjectNode(), security());
+    val specification = new DefaultSpecification(randomUUID().toString(), tags, "type", new ObjectMapper().createObjectNode(), security(), "function");
     return new AgentData(key, specification, entity(key, specification), specificationEvent(key, specification));
   }
 
@@ -65,7 +65,7 @@ public final class AgentData {
   }
 
   private static DefaultSpecification defaultSpecification() {
-    return new DefaultSpecification(randomUUID().toString(), new ArrayList<>(), "type", new ObjectMapper().createObjectNode(), security());
+    return new DefaultSpecification(randomUUID().toString(), new ArrayList<>(), "type", new ObjectMapper().createObjectNode(), security(), "function");
   }
 
   private static Map<String, List<Principal>> security() {

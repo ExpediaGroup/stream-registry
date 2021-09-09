@@ -32,4 +32,5 @@ public class DefaultSpecification implements Specification {
   @NonNull String type;
   @NonNull ObjectNode configuration;
   @NonNull Map<String, List<Principal>> security;
+  @NonNull String function;
 }

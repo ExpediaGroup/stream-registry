@@ -27,4 +27,5 @@ public class SpecificationQuery {
   List<TagQuery> tags;
   String typeRegex;
   List<SecurityQuery> security;
+  String functionRegex;
 }

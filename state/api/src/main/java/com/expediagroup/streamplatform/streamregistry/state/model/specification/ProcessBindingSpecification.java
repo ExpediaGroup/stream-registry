@@ -33,6 +33,7 @@ public class ProcessBindingSpecification implements Specification {
   @NonNull String type;
   @NonNull ObjectNode configuration;
   @NonNull Map<String, List<Principal>> security;
+  @NonNull String function;
   @NonNull List<ProcessInputStreamBinding> inputs;
   @NonNull List<ProcessOutputStreamBinding> outputs;
 }

@@ -30,4 +30,6 @@ public interface Specification {
   ObjectNode getConfiguration();
 
   Map<String, List<Principal>> getSecurity();
+
+  String getFunction();
 }

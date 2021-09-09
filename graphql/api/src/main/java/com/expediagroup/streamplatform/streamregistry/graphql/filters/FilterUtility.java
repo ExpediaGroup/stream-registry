@@ -52,6 +52,9 @@ public class FilterUtility {
     if (!matchesAllSecurityQueries(specification, specQuery.getSecurity())) {
       return false;
     }
+    if (!matches(specification.getFunction(), specQuery.getFunctionRegex())) {
+      return false;
+    }
     return matchesAllTagQueries(specification, specQuery.getTags());
   }
 

@@ -38,6 +38,7 @@ public class SpecificationInput {
   String type;
   ObjectNode configuration;
   List<SecurityInput> security;
+  String function;
 
   private static List<Tag> getTags(List<TagInput> input) {
     List<Tag> out = new ArrayList<>();
@@ -65,7 +66,8 @@ public class SpecificationInput {
         getTags(tags),
         type,
         configuration,
-        getSecurity(security)
+        getSecurity(security),
+        function
     );
   }
 }

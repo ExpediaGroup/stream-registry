@@ -104,6 +104,7 @@ protocol StreamRegistry {
     string type;
     AvroObject configuration;
     map<array<AvroPrincipal>> security = {};
+    string function = "";
   }
 
   record AvroStreamSpecification {
@@ -112,6 +113,7 @@ protocol StreamRegistry {
     string type;
     AvroObject configuration;
     map<array<AvroPrincipal>> security = {};
+    string function = "";
     AvroSchemaKey schemaKey;
   }
 
@@ -122,6 +124,7 @@ protocol StreamRegistry {
     string type;
     AvroObject configuration;
     map<array<AvroPrincipal>> security;
+    string function = "";
     array<AvroProcessInputStream> inputs;
     array<AvroProcessOutputStream> outputs;
   }
@@ -133,6 +136,7 @@ protocol StreamRegistry {
     string type;
     AvroObject configuration;
     map<array<AvroPrincipal>> security;
+    string function = "";
     array<AvroProcessInputStreamBinding> inputs;
     array<AvroProcessOutputStreamBinding> outputs;
   }
