@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 ### Fixed
+- Now properly defaulting function field to empty string when converting from 
+  model to state model to preserve backwards compatibility.
+
+## [0.20.2] - 2021-09-09
+### Fixed
 - Added function to kafka -> graphql conversion
 
 ## [0.20.1] - 2021-09-09
