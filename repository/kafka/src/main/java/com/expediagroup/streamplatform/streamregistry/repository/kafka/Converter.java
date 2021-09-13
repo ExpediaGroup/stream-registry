@@ -107,7 +107,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
                   entry.getValue().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.model.Principal(principal.getName())).collect(toList())
               )
           ).collect(Collectors.toList()),
-        specification.getFunction()
+          convertFunction(specification.getFunction())
       );
     }
 
@@ -148,6 +148,13 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           sec -> sec.getPrincipals().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal(principal.getName())).collect(toList())
         ));
     }
+
+    protected String convertFunction(String function) {
+      if (function == null)
+        return "";
+
+      return function;
+    }
   }
 
   @RequiredArgsConstructor
@@ -176,7 +183,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           specification.getType(),
           specification.getConfiguration(),
           convertSecurity(specification.getSecurity()),
-          specification.getFunction()
+          convertFunction(specification.getFunction())
       );
     }
   }
@@ -261,7 +268,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           specification.getType(),
           specification.getConfiguration(),
           convertSecurity(specification.getSecurity()),
-          specification.getFunction(),
+          convertFunction(specification.getFunction()),
           schemaConverter.convertKey(entity.getSchemaKey())
       );
     }
@@ -310,7 +317,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         specification.getType(),
         specification.getConfiguration(),
         convertSecurity(specification.getSecurity()),
-        specification.getFunction(),
+        convertFunction(specification.getFunction()),
         entity.getInputs().stream().map(input ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
             streamConverter.convertKey(input.getStream()),
@@ -527,7 +534,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         specification.getType(),
         specification.getConfiguration(),
         convertSecurity(specification.getSecurity()),
-        specification.getFunction(),
+        convertFunction(specification.getFunction()),
         entity.getInputs().stream().map(input -> new ProcessInputStreamBinding(
           streamBindingConverter.convertKey(input.getStreamBindingKey()),
           input.getConfiguration())).collect(Collectors.toList()),

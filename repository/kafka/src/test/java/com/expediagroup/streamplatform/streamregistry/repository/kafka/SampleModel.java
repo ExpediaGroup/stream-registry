@@ -60,6 +60,10 @@ final class SampleModel {
   private SampleModel() {}
 
   static Specification specification() {
+    return specificationWith("function");
+  }
+
+  static Specification specificationWith(String function) {
     Specification specification = new Specification();
     specification.setDescription("description");
     specification.setTags(Collections.singletonList(new Tag("name", "value")));
@@ -68,7 +72,7 @@ final class SampleModel {
     specification.setSecurity(Arrays.asList(
       new Security("admin", Arrays.asList(new Principal("user1")))
     ));
-    specification.setFunction("function");
+    specification.setFunction(function);
     return specification;
   }
 
@@ -193,10 +197,27 @@ final class SampleModel {
     return entity;
   }
 
+  static Schema schemaWithoutFunction() {
+    Schema entity = new Schema();
+    entity.setKey(schemaKey());
+    entity.setSpecification(specificationWith(null));
+    entity.setStatus(status());
+    return entity;
+  }
+
   static Stream stream() {
     Stream entity = new Stream();
     entity.setKey(streamKey());
     entity.setSpecification(specification());
+    entity.setStatus(status());
+    entity.setSchemaKey(schemaKey());
+    return entity;
+  }
+
+  static Stream streamWithoutFunction() {
+    Stream entity = new Stream();
+    entity.setKey(streamKey());
+    entity.setSpecification(specificationWith(null));
     entity.setStatus(status());
     entity.setSchemaKey(schemaKey());
     return entity;
@@ -245,6 +266,17 @@ final class SampleModel {
     return entity;
   }
 
+  static Process processWithoutFunction() {
+    Process entity = new Process();
+    entity.setKey(processKey());
+    entity.setSpecification(specificationWith(null));
+    entity.setZones(Collections.singletonList(zoneKey()));
+    entity.setInputs(Collections.singletonList(new ProcessInputStream(streamKey(), mapper.createObjectNode())));
+    entity.setOutputs(Collections.singletonList(new ProcessOutputStream(streamKey(), mapper.createObjectNode())));
+    entity.setStatus(status());
+    return entity;
+  }
+
   static StreamBinding streamBinding() {
     StreamBinding entity = new StreamBinding();
     entity.setKey(streamBindingKey());
@@ -273,6 +305,17 @@ final class SampleModel {
     ProcessBinding entity = new ProcessBinding();
     entity.setKey(processBindingKey());
     entity.setSpecification(specification());
+    entity.setZone(zoneKey());
+    entity.setInputs(Collections.singletonList(processInputStreamBinding()));
+    entity.setOutputs(Collections.singletonList(processOutputStreamBinding()));
+    entity.setStatus(status());
+    return entity;
+  }
+
+  static ProcessBinding processBindingWithoutFunction() {
+    ProcessBinding entity = new ProcessBinding();
+    entity.setKey(processBindingKey());
+    entity.setSpecification(specificationWith(null));
     entity.setZone(zoneKey());
     entity.setInputs(Collections.singletonList(processInputStreamBinding()));
     entity.setOutputs(Collections.singletonList(processOutputStreamBinding()));

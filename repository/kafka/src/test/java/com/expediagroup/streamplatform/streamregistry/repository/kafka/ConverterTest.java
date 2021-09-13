@@ -119,4 +119,12 @@ public class ConverterTest {
     assertThat(processBindingConverter.convertEntity(SampleModel.processBinding()), is(SampleState.processBinding()));
     assertThat(processBindingConverter.convertEntity(SampleState.processBinding()), is(SampleModel.processBinding()));
   }
+
+  @Test
+  public void allSpecificationTypesDefaultNullFunctionValues() {
+    assertThat(schemaConverter.convertEntity(SampleModel.schemaWithoutFunction()), is(SampleState.schemaWithoutFunction()));
+    assertThat(streamConverter.convertEntity(SampleModel.streamWithoutFunction()), is(SampleState.streamWithoutFunction()));
+    assertThat(processConverter.convertEntity(SampleModel.processWithoutFunction()), is(SampleState.processWithoutFunction()));
+    assertThat(processBindingConverter.convertEntity(SampleModel.processBindingWithoutFunction()), is(SampleState.processBindingWithoutFunction()));
+  }
 }

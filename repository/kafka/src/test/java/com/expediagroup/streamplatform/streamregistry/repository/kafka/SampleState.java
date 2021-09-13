@@ -55,6 +55,10 @@ final class SampleState {
   }
 
   private static DefaultSpecification specification() {
+    return specificationWith("function");
+  }
+
+  private static DefaultSpecification specificationWith(String function) {
     return new DefaultSpecification(
       "description",
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
@@ -63,11 +67,15 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      "function"
+      function
     );
   }
 
   static StreamSpecification streamSpecification() {
+    return streamSpecificationWith("function");
+  }
+
+  static StreamSpecification streamSpecificationWith(String function) {
     return new StreamSpecification(
       "description",
       Collections.singletonList(new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag("name", "value")),
@@ -76,12 +84,16 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      "function",
+      function,
       schemaKey()
     );
   }
 
   static ProcessSpecification processSpecification() {
+    return processSpecificationWith("function");
+  }
+
+  static ProcessSpecification processSpecificationWith(String function) {
     return new ProcessSpecification(
       Collections.singletonList(zoneKey()),
       "description",
@@ -91,13 +103,17 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      "function",
+      function,
       Collections.singletonList(new ProcessInputStream(streamKey(), mapper.createObjectNode())),
       Collections.singletonList(new ProcessOutputStream(streamKey(), mapper.createObjectNode()))
     );
   }
 
   static ProcessBindingSpecification processBindingSpecification() {
+    return processBindingSpecificationWith("function");
+  }
+
+  static ProcessBindingSpecification processBindingSpecificationWith(String function) {
     return new ProcessBindingSpecification(
       zoneKey(),
       "description",
@@ -107,7 +123,7 @@ final class SampleState {
       new HashMap<String, List<Principal>>() {{
         put("admin", Collections.singletonList(new Principal("user1")));
       }},
-      "function",
+      function,
       Collections.singletonList(processInputStreamBinding()),
       Collections.singletonList(processOutputStreamBinding())
     );
@@ -181,8 +197,16 @@ final class SampleState {
     return new Entity<>(schemaKey(), specification(), status());
   }
 
+  static Entity<SchemaKey, DefaultSpecification> schemaWithoutFunction() {
+    return new Entity<>(schemaKey(), specificationWith(""), status());
+  }
+
   static Entity<StreamKey, StreamSpecification> stream() {
     return new Entity<>(streamKey(), streamSpecification(), status());
+  }
+
+  static Entity<StreamKey, StreamSpecification> streamWithoutFunction() {
+    return new Entity<>(streamKey(), streamSpecificationWith(""), status());
   }
 
   static Entity<ZoneKey, DefaultSpecification> zone() {
@@ -205,6 +229,10 @@ final class SampleState {
     return new Entity<>(processKey(), processSpecification(), status());
   }
 
+  static Entity<ProcessKey, ProcessSpecification> processWithoutFunction() {
+    return new Entity<>(processKey(), processSpecificationWith(""), status());
+  }
+
   static Entity<StreamBindingKey, DefaultSpecification> streamBinding() {
     return new Entity<>(streamBindingKey(), specification(), status());
   }
@@ -219,6 +247,10 @@ final class SampleState {
 
   static Entity<ProcessBindingKey, ProcessBindingSpecification> processBinding() {
     return new Entity<>(processBindingKey(), processBindingSpecification(), status());
+  }
+
+  static Entity<ProcessBindingKey, ProcessBindingSpecification> processBindingWithoutFunction() {
+    return new Entity<>(processBindingKey(), processBindingSpecificationWith(""), status());
   }
 
   static Event<DomainKey, DefaultSpecification> domainSpecificationDeletionEvent() {
