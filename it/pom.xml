@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.expediagroup.streamplatform</groupId>
     <artifactId>stream-registry</artifactId>
-    <version>0.20.3</version>
+    <version>0.20.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>stream-registry-it</artifactId>
