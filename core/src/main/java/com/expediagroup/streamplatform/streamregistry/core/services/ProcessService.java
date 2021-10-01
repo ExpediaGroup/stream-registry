@@ -34,9 +34,13 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ProcessVal
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
 
 @Component
@@ -56,7 +60,46 @@ public class ProcessService {
     }
     processValidator.validateForCreate(process);
     process.setSpecification(handlerService.handleInsert(process));
+    process.getZones().forEach(zoneKey ->
+      process.getInputs().forEach(input -> createConsumer(
+        new Consumer(
+          new ConsumerKey(
+            input.getStream().getDomainKey().getName(),
+            input.getStream().getName(),
+            input.getStream().getVersion(),
+            zoneKey.getName(),
+            process.getKey().getName()
+          ),
+          process.getSpecification(),
+          process.getStatus()
+        )
+      )));
+
+    process.getZones().forEach(zoneKey ->
+      process.getOutputs().forEach(output -> createProducer(
+        new Producer(
+          new ProducerKey(
+            output.getStream().getDomainKey().getName(),
+            output.getStream().getName(),
+            output.getStream().getVersion(),
+            zoneKey.getName(),
+            process.getKey().getName()
+          ),
+          process.getSpecification(),
+          process.getStatus()
+        )
+      )));
     return save(process);
+  }
+
+  @PreAuthorize("hasPermission(#consumer, 'CREATE')")
+  public void createConsumer(Consumer consumer) {
+
+  }
+
+  @PreAuthorize("hasPermission(#producer, 'CREATE')")
+  public void createProducer(Producer producer) {
+
   }
 
   @PreAuthorize("hasPermission(#process, 'UPDATE')")
@@ -67,7 +110,48 @@ public class ProcessService {
     }
     processValidator.validateForUpdate(process, existing.get());
     process.setSpecification(handlerService.handleUpdate(process, existing.get()));
+
+    process.getZones().forEach(zoneKey ->
+      process.getInputs().forEach(input -> updateConsumer(
+        new Consumer(
+          new ConsumerKey(
+            input.getStream().getDomainKey().getName(),
+            input.getStream().getName(),
+            input.getStream().getVersion(),
+            zoneKey.getName(),
+            process.getKey().getName()
+          ),
+          process.getSpecification(),
+          process.getStatus()
+        )
+      )));
+
+    process.getZones().forEach(zoneKey ->
+      process.getOutputs().forEach(output -> updateProducer(
+        new Producer(
+          new ProducerKey(
+            output.getStream().getDomainKey().getName(),
+            output.getStream().getName(),
+            output.getStream().getVersion(),
+            zoneKey.getName(),
+            process.getKey().getName()
+          ),
+          process.getSpecification(),
+          process.getStatus()
+        )
+      )));
+
     return save(process);
+  }
+
+  @PreAuthorize("hasPermission(#producer, 'UPDATE')")
+  private void updateProducer(Producer producer) {
+
+  }
+
+  @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
+  private void updateConsumer(Consumer consumer) {
+
   }
 
   @PreAuthorize("hasPermission(#process, 'UPDATE_STATUS')")

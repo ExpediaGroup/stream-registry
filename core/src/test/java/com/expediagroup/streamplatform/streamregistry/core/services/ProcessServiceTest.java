@@ -23,11 +23,16 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,10 +47,14 @@ import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingV
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
 
@@ -85,9 +94,13 @@ public class ProcessServiceTest {
   public void create() {
     final ProcessKey key = mock(ProcessKey.class);
     final Specification specification = mock(Specification.class);
+    Process p = createTestProcess();
 
     final Process entity = mock(Process.class);
     when(entity.getKey()).thenReturn(key);
+    when(entity.getZones()).thenReturn(p.getZones());
+    when(entity.getInputs()).thenReturn(p.getInputs());
+    when(entity.getOutputs()).thenReturn(p.getOutputs());
     when(processRepository.findById(key)).thenReturn(empty());
 
     doNothing().when(processValidator).validateForCreate(entity);
@@ -97,7 +110,7 @@ public class ProcessServiceTest {
 
     processService.create(entity);
 
-    verify(entity).getKey();
+    verify(entity, times(3)).getKey();
     verify(processRepository).findById(key);
     verify(processValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
@@ -112,8 +125,12 @@ public class ProcessServiceTest {
     final Process entity = mock(Process.class);
     final Process existingEntity = mock(Process.class);
 
-    when(entity.getKey()).thenReturn(key);
+    Process p = createTestProcess();
 
+    when(entity.getKey()).thenReturn(key);
+    when(entity.getZones()).thenReturn(p.getZones());
+    when(entity.getInputs()).thenReturn(p.getInputs());
+    when(entity.getOutputs()).thenReturn(p.getOutputs());
     when(processRepository.findById(key)).thenReturn(Optional.of(existingEntity));
     doNothing().when(processValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
@@ -122,7 +139,7 @@ public class ProcessServiceTest {
 
     processService.update(entity);
 
-    verify(entity).getKey();
+    verify(entity, times(3)).getKey();
     verify(processRepository).findById(key);
     verify(processValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
@@ -201,4 +218,22 @@ public class ProcessServiceTest {
     inOrder.verify(processBindingService).delete(binding2);
     inOrder.verify(processRepository).delete(entity);
   }
+
+  private Process createTestProcess() {
+    Process p = new Process();
+    List<ProcessInputStream> inputs = new ArrayList<>();
+    ProcessInputStream pis = new ProcessInputStream(new StreamKey("inputDomain","streamInputName",1), new ObjectMapper().createObjectNode());
+    inputs.add(pis);
+    p.setInputs(inputs);
+    List<ProcessOutputStream> outputs = new ArrayList<>();
+    ProcessOutputStream pos = new ProcessOutputStream(new StreamKey("outputDomain","streamOutputName",1), new ObjectMapper().createObjectNode());
+    outputs.add(pos);
+    p.setOutputs(outputs);
+    p.setKey(new ProcessKey("domain","name"));
+    List<ZoneKey> zones = new ArrayList<>();
+    zones.add(new ZoneKey("aws_us_east_1"));
+    p.setZones(zones);
+    return p;
+  }
+
 }
