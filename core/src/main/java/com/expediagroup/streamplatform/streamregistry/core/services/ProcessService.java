@@ -52,6 +52,8 @@ public class ProcessService {
   private final ProcessBindingService processBindingService;
   private final ProcessBindingView processBindingView;
   private final ProcessView processView;
+  private final ConsumerService consumerService;
+  private final ProducerService producerService;
 
   @PreAuthorize("hasPermission(#process, 'CREATE')")
   public Optional<Process> create(Process process) throws ValidationException {
@@ -61,7 +63,7 @@ public class ProcessService {
     processValidator.validateForCreate(process);
     process.setSpecification(handlerService.handleInsert(process));
     process.getZones().forEach(zoneKey ->
-      process.getInputs().forEach(input -> createConsumer(
+      process.getInputs().forEach(input -> consumerService.testCreateConsumer(
         new Consumer(
           new ConsumerKey(
             input.getStream().getDomainKey().getName(),
@@ -76,7 +78,7 @@ public class ProcessService {
       )));
 
     process.getZones().forEach(zoneKey ->
-      process.getOutputs().forEach(output -> createProducer(
+      process.getOutputs().forEach(output -> producerService.testCreateProducer(
         new Producer(
           new ProducerKey(
             output.getStream().getDomainKey().getName(),
@@ -90,16 +92,6 @@ public class ProcessService {
         )
       )));
     return save(process);
-  }
-
-  @PreAuthorize("hasPermission(#consumer, 'CREATE')")
-  public void createConsumer(Consumer consumer) {
-
-  }
-
-  @PreAuthorize("hasPermission(#producer, 'CREATE')")
-  public void createProducer(Producer producer) {
-
   }
 
   @PreAuthorize("hasPermission(#process, 'UPDATE')")
@@ -112,7 +104,7 @@ public class ProcessService {
     process.setSpecification(handlerService.handleUpdate(process, existing.get()));
 
     process.getZones().forEach(zoneKey ->
-      process.getInputs().forEach(input -> updateConsumer(
+      process.getInputs().forEach(input -> consumerService.testUpdateConsumer(
         new Consumer(
           new ConsumerKey(
             input.getStream().getDomainKey().getName(),
@@ -127,7 +119,7 @@ public class ProcessService {
       )));
 
     process.getZones().forEach(zoneKey ->
-      process.getOutputs().forEach(output -> updateProducer(
+      process.getOutputs().forEach(output -> producerService.testUpdateProducer(
         new Producer(
           new ProducerKey(
             output.getStream().getDomainKey().getName(),
@@ -142,16 +134,6 @@ public class ProcessService {
       )));
 
     return save(process);
-  }
-
-  @PreAuthorize("hasPermission(#producer, 'UPDATE')")
-  private void updateProducer(Producer producer) {
-
-  }
-
-  @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
-  private void updateConsumer(Consumer consumer) {
-
   }
 
   @PreAuthorize("hasPermission(#process, 'UPDATE_STATUS')")

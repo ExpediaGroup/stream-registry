@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
@@ -57,6 +59,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
+import org.springframework.security.access.AccessDeniedException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProcessServiceTest {
@@ -74,6 +77,12 @@ public class ProcessServiceTest {
   private ProcessBindingService processBindingService;
 
   @Mock
+  private ProducerService producerService;
+
+  @Mock
+  private ConsumerService consumerService;
+
+  @Mock
   private ProcessBindingRepository processBindingRepository;
 
   private ProcessService processService;
@@ -86,7 +95,9 @@ public class ProcessServiceTest {
       processRepository,
       processBindingService,
       new ProcessBindingView(processBindingRepository),
-      new ProcessView(processRepository)
+      new ProcessView(processRepository),
+      consumerService,
+      producerService
       );
   }
 
@@ -101,6 +112,7 @@ public class ProcessServiceTest {
     when(entity.getZones()).thenReturn(p.getZones());
     when(entity.getInputs()).thenReturn(p.getInputs());
     when(entity.getOutputs()).thenReturn(p.getOutputs());
+
     when(processRepository.findById(key)).thenReturn(empty());
 
     doNothing().when(processValidator).validateForCreate(entity);
@@ -117,6 +129,37 @@ public class ProcessServiceTest {
     verify(processRepository).save(entity);
   }
 
+  @Test(expected = AccessDeniedException.class)
+  public void createFailAuthConsumer() {
+    final ProcessKey key = mock(ProcessKey.class);
+    Process p = createTestProcess();
+
+    final Process entity = mock(Process.class);
+    when(entity.getKey()).thenReturn(key);
+    when(entity.getZones()).thenReturn(p.getZones());
+    when(entity.getInputs()).thenReturn(p.getInputs());
+
+    when(consumerService.testCreateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.create(entity);
+  }
+
+  @Test(expected = AccessDeniedException.class)
+  public void createFailAuthProducer() {
+    final ProcessKey key = mock(ProcessKey.class);
+    Process p = createTestProcess();
+
+    final Process entity = mock(Process.class);
+    when(entity.getKey()).thenReturn(key);
+    when(entity.getZones()).thenReturn(p.getZones());
+    when(entity.getInputs()).thenReturn(p.getInputs());
+    when(entity.getOutputs()).thenReturn(p.getOutputs());
+
+    when(producerService.testCreateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.create(entity);
+  }
+
   @Test
   public void update() {
     final ProcessKey key = mock(ProcessKey.class);
@@ -131,6 +174,7 @@ public class ProcessServiceTest {
     when(entity.getZones()).thenReturn(p.getZones());
     when(entity.getInputs()).thenReturn(p.getInputs());
     when(entity.getOutputs()).thenReturn(p.getOutputs());
+
     when(processRepository.findById(key)).thenReturn(Optional.of(existingEntity));
     doNothing().when(processValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
@@ -144,6 +188,41 @@ public class ProcessServiceTest {
     verify(processValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
     verify(processRepository).save(entity);
+  }
+
+  @Test(expected = AccessDeniedException.class)
+  public void updateFailAuthConsumer() {
+    final ProcessKey key = mock(ProcessKey.class);
+    Process p = createTestProcess();
+
+    final Process entity = mock(Process.class);
+    final Process existingEntity = mock(Process.class);
+    when(entity.getKey()).thenReturn(key);
+    when(entity.getZones()).thenReturn(p.getZones());
+    when(entity.getInputs()).thenReturn(p.getInputs());
+
+    when(processRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    when(consumerService.testUpdateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.update(entity);
+  }
+
+  @Test(expected = AccessDeniedException.class)
+  public void updateFailAuthProducer() {
+    final ProcessKey key = mock(ProcessKey.class);
+    Process p = createTestProcess();
+
+    final Process entity = mock(Process.class);
+    final Process existingEntity = mock(Process.class);
+    when(entity.getKey()).thenReturn(key);
+    when(entity.getZones()).thenReturn(p.getZones());
+    when(entity.getInputs()).thenReturn(p.getInputs());
+    when(entity.getOutputs()).thenReturn(p.getOutputs());
+
+    when(processRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    when(producerService.testUpdateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.update(entity);
   }
 
   @Test

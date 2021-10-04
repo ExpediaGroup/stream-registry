@@ -99,4 +99,14 @@ public class ProducerService {
     producerRepository.delete(producer);
   }
 
+  @PreAuthorize("hasPermission(#producer, 'CREATE')")
+  public Producer testCreateProducer(Producer producer) {
+    return producer;
+  }
+
+  @PreAuthorize("hasPermission(#producer, 'UPDATE')")
+  public Producer testUpdateProducer(Producer producer) {
+    return producer;
+  }
+
 }

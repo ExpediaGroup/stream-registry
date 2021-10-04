@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
+### Added
+- Added CRUD Security for Process
+
+## [0.20.3]
 ### Fixed
 - Now properly defaulting function field to empty string when converting from 
   model to state model to preserve backwards compatibility.
-### Added
-- Added CRUD Security for Process
 
 ## [0.20.2] - 2021-09-09
 ### Fixed

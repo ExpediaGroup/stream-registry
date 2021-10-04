@@ -99,4 +99,14 @@ public class ConsumerService {
     consumerRepository.delete(consumer);
   }
 
+  @PreAuthorize("hasPermission(#consumer, 'CREATE')")
+  public Consumer testCreateConsumer(Consumer consumer) {
+    return consumer;
+  }
+
+  @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
+  public Consumer testUpdateConsumer(Consumer consumer) {
+    return consumer;
+  }
+
 }
