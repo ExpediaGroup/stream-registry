@@ -100,12 +100,12 @@ public class ProducerService {
   }
 
   @PreAuthorize("hasPermission(#producer, 'CREATE')")
-  public Producer testCreateProducer(Producer producer) {
+  public Producer canCreateProducer(Producer producer) {
     return producer;
   }
 
   @PreAuthorize("hasPermission(#producer, 'UPDATE')")
-  public Producer testUpdateProducer(Producer producer) {
+  public Producer canUpdateProducer(Producer producer) {
     return producer;
   }
 

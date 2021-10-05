@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added CRUD Security for Process
 
-## [0.20.3]
+## [0.20.3] 2021-09-13
 ### Fixed
 - Now properly defaulting function field to empty string when converting from 
   model to state model to preserve backwards compatibility.

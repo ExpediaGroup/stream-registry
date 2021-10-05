@@ -139,7 +139,7 @@ public class ProcessServiceTest {
     when(entity.getZones()).thenReturn(p.getZones());
     when(entity.getInputs()).thenReturn(p.getInputs());
 
-    when(consumerService.testCreateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+    when(consumerService.canCreateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
 
     processService.create(entity);
   }
@@ -155,7 +155,7 @@ public class ProcessServiceTest {
     when(entity.getInputs()).thenReturn(p.getInputs());
     when(entity.getOutputs()).thenReturn(p.getOutputs());
 
-    when(producerService.testCreateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+    when(producerService.canCreateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
 
     processService.create(entity);
   }
@@ -202,7 +202,7 @@ public class ProcessServiceTest {
     when(entity.getInputs()).thenReturn(p.getInputs());
 
     when(processRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    when(consumerService.testUpdateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+    when(consumerService.canUpdateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
 
     processService.update(entity);
   }
@@ -220,7 +220,7 @@ public class ProcessServiceTest {
     when(entity.getOutputs()).thenReturn(p.getOutputs());
 
     when(processRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    when(producerService.testUpdateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+    when(producerService.canUpdateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
 
     processService.update(entity);
   }

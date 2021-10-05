@@ -100,12 +100,12 @@ public class ConsumerService {
   }
 
   @PreAuthorize("hasPermission(#consumer, 'CREATE')")
-  public Consumer testCreateConsumer(Consumer consumer) {
+  public Consumer canCreateConsumer(Consumer consumer) {
     return consumer;
   }
 
   @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
-  public Consumer testUpdateConsumer(Consumer consumer) {
+  public Consumer canUpdateConsumer(Consumer consumer) {
     return consumer;
   }
 

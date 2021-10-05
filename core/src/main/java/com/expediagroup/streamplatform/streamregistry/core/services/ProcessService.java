@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -63,35 +66,29 @@ public class ProcessService {
     processValidator.validateForCreate(process);
     process.setSpecification(handlerService.handleInsert(process));
     process.getZones().forEach(zoneKey ->
-      process.getInputs().forEach(input -> consumerService.testCreateConsumer(
-        new Consumer(
-          new ConsumerKey(
-            input.getStream().getDomainKey().getName(),
-            input.getStream().getName(),
-            input.getStream().getVersion(),
-            zoneKey.getName(),
-            process.getKey().getName()
-          ),
-          process.getSpecification(),
-          process.getStatus()
-        )
+      process.getInputs().forEach(input -> consumerService.canCreateConsumer(
+        buildConsumer(process, zoneKey, input)
       )));
 
     process.getZones().forEach(zoneKey ->
-      process.getOutputs().forEach(output -> producerService.testCreateProducer(
-        new Producer(
-          new ProducerKey(
-            output.getStream().getDomainKey().getName(),
-            output.getStream().getName(),
-            output.getStream().getVersion(),
-            zoneKey.getName(),
-            process.getKey().getName()
-          ),
-          process.getSpecification(),
-          process.getStatus()
-        )
+      process.getOutputs().forEach(output -> producerService.canCreateProducer(
+        buildProducer(process, zoneKey, output)
       )));
     return save(process);
+  }
+
+  private Producer buildProducer(Process process, ZoneKey zoneKey, ProcessOutputStream output) {
+    return new Producer(
+      new ProducerKey(
+        output.getStream().getDomainKey().getName(),
+        output.getStream().getName(),
+        output.getStream().getVersion(),
+        zoneKey.getName(),
+        process.getKey().getName()
+      ),
+      process.getSpecification(),
+      process.getStatus()
+    );
   }
 
   @PreAuthorize("hasPermission(#process, 'UPDATE')")
@@ -104,36 +101,30 @@ public class ProcessService {
     process.setSpecification(handlerService.handleUpdate(process, existing.get()));
 
     process.getZones().forEach(zoneKey ->
-      process.getInputs().forEach(input -> consumerService.testUpdateConsumer(
-        new Consumer(
-          new ConsumerKey(
-            input.getStream().getDomainKey().getName(),
-            input.getStream().getName(),
-            input.getStream().getVersion(),
-            zoneKey.getName(),
-            process.getKey().getName()
-          ),
-          process.getSpecification(),
-          process.getStatus()
-        )
+      process.getInputs().forEach(input -> consumerService.canUpdateConsumer(
+        buildConsumer(process, zoneKey, input)
       )));
 
     process.getZones().forEach(zoneKey ->
-      process.getOutputs().forEach(output -> producerService.testUpdateProducer(
-        new Producer(
-          new ProducerKey(
-            output.getStream().getDomainKey().getName(),
-            output.getStream().getName(),
-            output.getStream().getVersion(),
-            zoneKey.getName(),
-            process.getKey().getName()
-          ),
-          process.getSpecification(),
-          process.getStatus()
-        )
+      process.getOutputs().forEach(output -> producerService.canUpdateProducer(
+        buildProducer(process, zoneKey, output)
       )));
 
     return save(process);
+  }
+
+  private Consumer buildConsumer(Process process, ZoneKey zoneKey, ProcessInputStream input) {
+    return new Consumer(
+      new ConsumerKey(
+        input.getStream().getDomainKey().getName(),
+        input.getStream().getName(),
+        input.getStream().getVersion(),
+        zoneKey.getName(),
+        process.getKey().getName()
+      ),
+      process.getSpecification(),
+      process.getStatus()
+    );
   }
 
   @PreAuthorize("hasPermission(#process, 'UPDATE_STATUS')")
