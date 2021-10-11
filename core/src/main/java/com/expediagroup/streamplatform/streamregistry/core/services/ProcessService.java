@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2021 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,12 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
@@ -100,15 +103,44 @@ public class ProcessService {
     processValidator.validateForUpdate(process, existing.get());
     process.setSpecification(handlerService.handleUpdate(process, existing.get()));
 
-    process.getZones().forEach(zoneKey ->
-      process.getInputs().forEach(input -> consumerService.canUpdateConsumer(
-        buildConsumer(process, zoneKey, input)
-      )));
-
-    process.getZones().forEach(zoneKey ->
-      process.getOutputs().forEach(output -> producerService.canUpdateProducer(
-        buildProducer(process, zoneKey, output)
-      )));
+    process.getZones().forEach(zoneKey -> {
+      process.getInputs().forEach(input -> {
+          // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS AND IF IT DOES UPDATE EXISTING
+          if (existing.get().getInputs().stream().anyMatch(i -> i.getStream().equals(input.getStream()))) {
+            consumerService.canUpdateConsumer(buildConsumer(process, zoneKey, input));
+          }
+          // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS AND IF IT DOES NOT ADD NEW ONE
+          if (existing.get().getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
+            consumerService.canCreateConsumer(buildConsumer(process, zoneKey, input));
+          }
+        }
+      );
+      // FOR EACH PROCESS INPUT IN THE EXISTING INPUTS, CHECK IF IT STILL EXISTS IN THE NEW ONE, IF NOT DELETE
+      existing.get().getInputs().forEach(input -> {
+        if (process.getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
+          consumerService.canDeleteConsumer(buildConsumer(process, zoneKey, input));
+        }
+      });
+    });
+    process.getZones().forEach(zoneKey -> {
+      process.getOutputs().forEach(output -> {
+          // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS AND IF IT DOES UPDATE EXISTING
+          if (existing.get().getOutputs().stream().anyMatch(o -> o.getStream().equals(output.getStream()))) {
+            producerService.canUpdateProducer(buildProducer(process, zoneKey, output));
+          }
+          // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS AND IF IT DOES NOT ADD NEW ONE
+          if (existing.get().getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
+            producerService.canCreateProducer(buildProducer(process, zoneKey, output));
+          }
+        }
+      );
+      // FOR EACH PROCESS INPUT IN THE EXISTING INPUTS, CHECK IF IT STILL EXISTS IN THE NEW ONE, IF NOT DELETE
+      existing.get().getOutputs().forEach(output -> {
+        if (process.getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
+          producerService.canDeleteProducer(buildProducer(process, zoneKey, output));
+        }
+      });
+    });
 
     return save(process);
   }

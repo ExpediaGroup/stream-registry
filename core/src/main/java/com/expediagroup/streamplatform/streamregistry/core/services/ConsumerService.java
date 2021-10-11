@@ -109,4 +109,8 @@ public class ConsumerService {
     return consumer;
   }
 
+  @PreAuthorize("hasPermission(#consumer, 'DELETE')")
+  public Consumer canDeleteConsumer(Consumer consumer) {
+    return consumer;
+  }
 }
