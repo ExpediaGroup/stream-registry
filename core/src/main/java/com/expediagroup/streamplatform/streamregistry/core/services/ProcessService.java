@@ -108,9 +108,8 @@ public class ProcessService {
           // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS AND IF IT DOES UPDATE EXISTING
           if (existing.get().getInputs().stream().anyMatch(i -> i.getStream().equals(input.getStream()))) {
             consumerService.canUpdateConsumer(buildConsumer(process, zoneKey, input));
-          }
-          // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS AND IF IT DOES NOT ADD NEW ONE
-          if (existing.get().getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
+            // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS AND IF IT DOES NOT ADD NEW ONE
+          } else if (existing.get().getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
             consumerService.canCreateConsumer(buildConsumer(process, zoneKey, input));
           }
         }
@@ -127,9 +126,8 @@ public class ProcessService {
           // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS AND IF IT DOES UPDATE EXISTING
           if (existing.get().getOutputs().stream().anyMatch(o -> o.getStream().equals(output.getStream()))) {
             producerService.canUpdateProducer(buildProducer(process, zoneKey, output));
-          }
-          // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS AND IF IT DOES NOT ADD NEW ONE
-          if (existing.get().getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
+            // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS AND IF IT DOES NOT ADD NEW ONE
+          } else if (existing.get().getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
             producerService.canCreateProducer(buildProducer(process, zoneKey, output));
           }
         }
