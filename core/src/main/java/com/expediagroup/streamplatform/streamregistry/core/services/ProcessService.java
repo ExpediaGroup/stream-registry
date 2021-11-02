@@ -129,7 +129,7 @@ public class ProcessService {
           }
         }
       );
-      // FOR EACH PROCESS INPUT IN THE EXISTING INPUTS, CHECK IF IT STILL EXISTS IN THE NEW ONE, IF NOT DELETE
+      // FOR EACH PROCESS OUTPUT IN THE EXISTING OUTPUTS, CHECK IF IT STILL EXISTS IN THE NEW ONE, IF NOT DELETE
       existing.get().getOutputs().forEach(output -> {
         if (process.getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
           producerService.canDeleteProducer(buildProducer(process, zoneKey, output));
