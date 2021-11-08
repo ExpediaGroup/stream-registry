@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [unreleased]
 ### Added
 - Added CRUD Security for Process
+### Updated
+- Updating versions of Confluent/Avro to align with downstream implementation
 
 ## [0.20.3] 2021-09-13
 ### Fixed
