@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -97,6 +98,21 @@ public class ProducerService {
       .findAll(b -> b.getKey().getProducerKey().equals(producer.getKey()))
       .forEach(producerBindingService::delete);
     producerRepository.delete(producer);
+  }
+
+  @PreAuthorize("hasPermission(#producer, 'CREATE')")
+  public Producer canCreateProducer(Producer producer) {
+    return producer;
+  }
+
+  @PreAuthorize("hasPermission(#producer, 'UPDATE')")
+  public Producer canUpdateProducer(Producer producer) {
+    return producer;
+  }
+
+  @PreAuthorize("hasPermission(#producer, 'DELETE')")
+  public Producer canDeleteProducer(Producer producer) {
+    return producer;
   }
 
 }

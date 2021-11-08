@@ -26,8 +26,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,12 +49,17 @@ import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingV
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
+import org.springframework.security.access.AccessDeniedException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProcessServiceTest {
@@ -65,6 +77,12 @@ public class ProcessServiceTest {
   private ProcessBindingService processBindingService;
 
   @Mock
+  private ProducerService producerService;
+
+  @Mock
+  private ConsumerService consumerService;
+
+  @Mock
   private ProcessBindingRepository processBindingRepository;
 
   private ProcessService processService;
@@ -77,56 +95,142 @@ public class ProcessServiceTest {
       processRepository,
       processBindingService,
       new ProcessBindingView(processBindingRepository),
-      new ProcessView(processRepository)
+      new ProcessView(processRepository),
+      consumerService,
+      producerService
       );
   }
 
   @Test
   public void create() {
-    final ProcessKey key = mock(ProcessKey.class);
     final Specification specification = mock(Specification.class);
+    Process entity = createTestProcess();
 
-    final Process entity = mock(Process.class);
-    when(entity.getKey()).thenReturn(key);
-    when(processRepository.findById(key)).thenReturn(empty());
-
+    when(processRepository.findById(entity.getKey())).thenReturn(empty());
     doNothing().when(processValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
-
     when(processRepository.save(entity)).thenReturn(entity);
 
     processService.create(entity);
 
-    verify(entity).getKey();
-    verify(processRepository).findById(key);
+    verify(processRepository).findById(entity.getKey());
     verify(processValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
     verify(processRepository).save(entity);
   }
 
+  @Test(expected = AccessDeniedException.class)
+  public void createFailAuthConsumer() {
+    Process p = createTestProcess();
+    when(consumerService.canCreateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+    processService.create(p);
+  }
+
+  @Test(expected = AccessDeniedException.class)
+  public void createFailAuthProducer() {
+    Process p = createTestProcess();
+    when(producerService.canCreateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+    processService.create(p);
+  }
+
   @Test
   public void update() {
-    final ProcessKey key = mock(ProcessKey.class);
     final Specification specification = mock(Specification.class);
 
-    final Process entity = mock(Process.class);
-    final Process existingEntity = mock(Process.class);
+    Process existing = createTestProcess();
+    Process newEntity = createTestProcess();
 
-    when(entity.getKey()).thenReturn(key);
+    when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
+    doNothing().when(processValidator).validateForUpdate(newEntity, existing);
+    when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
+    when(processRepository.save(newEntity)).thenReturn(newEntity);
 
-    when(processRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    doNothing().when(processValidator).validateForUpdate(entity, existingEntity);
-    when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
+    processService.update(newEntity);
 
-    when(processRepository.save(entity)).thenReturn(entity);
+    verify(processRepository).findById(existing.getKey());
+    verify(processValidator).validateForUpdate(newEntity, existing);
+    verify(handlerService).handleUpdate(newEntity, existing);
+    verify(consumerService).canUpdateConsumer(any(Consumer.class));
+    verify(producerService).canUpdateProducer(any(Producer.class));
+    verify(processRepository).save(newEntity);
+  }
 
-    processService.update(entity);
+  @Test
+  public void updateCreate() {
+    final Specification specification = mock(Specification.class);
 
-    verify(entity).getKey();
-    verify(processRepository).findById(key);
-    verify(processValidator).validateForUpdate(entity, existingEntity);
-    verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(processRepository).save(entity);
+    Process existing = createTestProcess();
+    Process newEntity = createTestProcess();
+    ProcessInputStream pis = new ProcessInputStream(new StreamKey("inputDomain","streamInputName2",1), new ObjectMapper().createObjectNode());
+    newEntity.getInputs().add(pis);
+    ProcessOutputStream pos = new ProcessOutputStream(new StreamKey("outputDomain","streamOutputName2",1), new ObjectMapper().createObjectNode());
+    newEntity.getOutputs().add(pos);
+
+    when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
+    doNothing().when(processValidator).validateForUpdate(newEntity, existing);
+    when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
+    when(processRepository.save(newEntity)).thenReturn(newEntity);
+
+    processService.update(newEntity);
+
+    verify(processRepository).findById(existing.getKey());
+    verify(processValidator).validateForUpdate(newEntity, existing);
+    verify(handlerService).handleUpdate(newEntity, existing);
+    verify(consumerService).canCreateConsumer(any(Consumer.class));
+    verify(producerService).canCreateProducer(any(Producer.class));
+    verify(processRepository).save(newEntity);
+  }
+
+  @Test
+  public void updateDelete() {
+    final Specification specification = mock(Specification.class);
+
+    Process existing = createTestProcess();
+    Process newEntity = createTestProcess();
+    ProcessInputStream pis = new ProcessInputStream(new StreamKey("inputDomain","streamInputName2",1), new ObjectMapper().createObjectNode());
+    existing.getInputs().add(pis);
+    ProcessOutputStream pos = new ProcessOutputStream(new StreamKey("outputDomain","streamOutputName2",1), new ObjectMapper().createObjectNode());
+    existing.getOutputs().add(pos);
+
+    when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
+    doNothing().when(processValidator).validateForUpdate(newEntity, existing);
+    when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
+    when(processRepository.save(newEntity)).thenReturn(newEntity);
+
+    processService.update(newEntity);
+
+    verify(processRepository).findById(existing.getKey());
+    verify(processValidator).validateForUpdate(newEntity, existing);
+    verify(handlerService).handleUpdate(newEntity, existing);
+    verify(consumerService).canDeleteConsumer(any(Consumer.class));
+    verify(producerService).canDeleteProducer(any(Producer.class));
+    verify(processRepository).save(newEntity);
+  }
+
+  @Test(expected = ValidationException.class)
+  public void updateValidationException() {
+    Process p = createTestProcess();
+    processService.update(p);
+  }
+
+  @Test(expected = AccessDeniedException.class)
+  public void updateFailAuthConsumer() {
+    Process p = createTestProcess();
+
+    when(processRepository.findById(p.getKey())).thenReturn(Optional.of(p));
+    when(consumerService.canUpdateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.update(p);
+  }
+
+  @Test(expected = AccessDeniedException.class)
+  public void updateFailAuthProducer() {
+    Process p = createTestProcess();
+
+    when(processRepository.findById(p.getKey())).thenReturn(Optional.of(p));
+    when(producerService.canUpdateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.update(p);
   }
 
   @Test
@@ -201,4 +305,22 @@ public class ProcessServiceTest {
     inOrder.verify(processBindingService).delete(binding2);
     inOrder.verify(processRepository).delete(entity);
   }
+
+  private Process createTestProcess() {
+    Process p = new Process();
+    List<ProcessInputStream> inputs = new ArrayList<>();
+    ProcessInputStream pis = new ProcessInputStream(new StreamKey("inputDomain","streamInputName",1), new ObjectMapper().createObjectNode());
+    inputs.add(pis);
+    p.setInputs(inputs);
+    List<ProcessOutputStream> outputs = new ArrayList<>();
+    ProcessOutputStream pos = new ProcessOutputStream(new StreamKey("outputDomain","streamOutputName",1), new ObjectMapper().createObjectNode());
+    outputs.add(pos);
+    p.setOutputs(outputs);
+    p.setKey(new ProcessKey("domain","name"));
+    List<ZoneKey> zones = new ArrayList<>();
+    zones.add(new ZoneKey("aws_us_east_1"));
+    p.setZones(zones);
+    return p;
+  }
+
 }
