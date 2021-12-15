@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>0.20.4-SNAPSHOT</version>
+  <version>0.20.5-SNAPSHOT</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
 
@@ -72,8 +72,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jdk.version>8</jdk.version>
 
-    <confluent.version>5.3.1</confluent.version>
-    <avro.version>1.9.2</avro.version>
+    <confluent.version>6.2.0</confluent.version>
+    <avro.version>1.10.2</avro.version>
     <apollo.version>2.1.0</apollo.version>
     <awaitility.version>3.1.6</awaitility.version>
     <bull.version>1.4.7.3</bull.version>
