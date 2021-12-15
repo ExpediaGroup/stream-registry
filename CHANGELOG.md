@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
+### Updated
+- updated all log4j dependencies to mitigate log4shell vulnerability
+
+## [0.20.4] 2021-11-12
 ### Added
 - Added CRUD Security for Process
 

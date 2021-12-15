@@ -16,7 +16,9 @@
   <inceptionYear>2018</inceptionYear>
 
   <scm>
+    <!--suppress UnresolvedMavenProperty -->
     <connection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</connection>
+    <!--suppress UnresolvedMavenProperty -->
     <developerConnection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</developerConnection>
     <url>https://github.com/ExpediaGroup/stream-registry</url>
     <tag>HEAD</tag>
@@ -78,10 +80,11 @@
     <guava.version>29.0-jre</guava.version>
     <graphql.version>5.8.1</graphql.version>
     <graphql-java.version>14.0</graphql-java.version>
-    <kotlin.version>1.3.72</kotlin.version>
+    <kotlin.version>1.5.31</kotlin.version>
     <slf4j.version>1.7.26</slf4j.version>
     <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
-    <testcontainers.version>1.15.2</testcontainers.version>
+    <testcontainers.version>1.15.3</testcontainers.version>
+    <log4j.version>2.15.0</log4j.version>
 
     <!-- Plugins -->
     <spotless-maven-plugin.version>1.24.0</spotless-maven-plugin.version>
@@ -96,11 +99,24 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${log4j.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-*</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -187,6 +203,7 @@
                 <goal>idl-protocol</goal>
               </goals>
               <configuration>
+                <!--suppress UnresolvedMavenProperty -->
                 <sourceDirectory>${project.build.resources[0].directory}/avro</sourceDirectory>
                 <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
                 <fieldVisibility>PRIVATE</fieldVisibility>
