@@ -84,7 +84,7 @@
     <slf4j.version>1.7.26</slf4j.version>
     <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
     <testcontainers.version>1.15.3</testcontainers.version>
-    <log4j.version>2.15.0</log4j.version>
+    <log4j.version>2.16.0</log4j.version>
 
     <!-- Plugins -->
     <spotless-maven-plugin.version>1.24.0</spotless-maven-plugin.version>
