@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
