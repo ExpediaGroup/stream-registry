@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,14 @@ public class KafkaConfiguration {
       @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
       @Value("${repository.kafka.topic:_streamregistry}") String topic,
       @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+      @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
       EventCorrelator eventCorrelator
   ) {
     KafkaEventSender.Config config = KafkaEventSender.Config.builder()
         .bootstrapServers(bootstrapServers)
         .topic(topic)
         .schemaRegistryUrl(schemaRegistryUrl)
+        .propertiesPath(propertiesPath)
         .build();
     return new KafkaEventSender(config, eventCorrelator);
   }
@@ -56,6 +58,7 @@ public class KafkaConfiguration {
       @Value("${repository.kafka.topic:_streamregistry}") String topic,
       @Value("${repository.kafka.groupId:stream-registry}") String groupId,
       @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+      @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
       EventCorrelator eventCorrelator
   ) {
     KafkaEventReceiver.Config receiverConfig = KafkaEventReceiver.Config.builder()
@@ -63,6 +66,7 @@ public class KafkaConfiguration {
         .topic(topic)
         .groupId(groupId)
         .schemaRegistryUrl(schemaRegistryUrl)
+        .propertiesPath(propertiesPath)
         .build();
     return new KafkaEventReceiver(receiverConfig, eventCorrelator);
   }

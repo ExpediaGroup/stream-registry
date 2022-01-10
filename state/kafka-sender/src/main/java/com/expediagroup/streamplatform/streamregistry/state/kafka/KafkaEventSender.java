@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,15 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 import lombok.Builder;
@@ -158,13 +163,32 @@ public class KafkaEventSender implements EventSender {
   }
 
   static Map<String, Object> producerConfig(Config config) {
-    return new HashMap<String, Object>() {{
-      put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
-      put(ACKS_CONFIG, "all");
-      put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-      put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-      put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
-    }};
+    Map<String, Object> kafkaConfigs = new HashMap<>();
+
+    if (config.getPropertiesPath() != null && !config.getPropertiesPath().isEmpty()) {
+      Properties properties = new Properties();
+
+      try {
+        File propertiesFile = new File(config.getPropertiesPath());
+        properties.load(new FileReader(propertiesFile));
+      } catch (FileNotFoundException e) {
+        throw new IllegalArgumentException("Could not find properties file: [" + config.getPropertiesPath() + "].");
+      } catch (IOException e) {
+        throw new IllegalArgumentException("Could not read properties file: [" + config.getPropertiesPath() + "].");
+      }
+
+      for (Map.Entry<Object, Object> property: properties.entrySet()) {
+        kafkaConfigs.put(property.getKey().toString(), property.getValue());
+      }
+    }
+
+    kafkaConfigs.put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
+    kafkaConfigs.put(ACKS_CONFIG, "all");
+    kafkaConfigs.put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+    kafkaConfigs.put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+    kafkaConfigs.put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
+
+    return kafkaConfigs;
   }
 
   @Value
@@ -173,5 +197,6 @@ public class KafkaEventSender implements EventSender {
     @NonNull String bootstrapServers;
     @NonNull String topic;
     @NonNull String schemaRegistryUrl;
+    String propertiesPath;
   }
 }

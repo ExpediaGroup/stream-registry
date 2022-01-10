@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,15 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -66,6 +71,7 @@ public class KafkaEventReceiver implements EventReceiver {
   @NonNull private final AvroConverter converter;
   @NonNull private final KafkaConsumer<AvroKey, AvroValue> consumer;
   @NonNull private final ScheduledExecutorService executorService;
+
   private volatile boolean shuttingDown = false;
   private final AtomicBoolean started = new AtomicBoolean(false);
 
@@ -165,16 +171,35 @@ public class KafkaEventReceiver implements EventReceiver {
   }
 
   static Map<String, Object> consumerConfig(Config config) {
-    return new HashMap<String, Object>() {{
-      put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
-      put(GROUP_ID_CONFIG, config.getGroupId());
-      put(AUTO_OFFSET_RESET_CONFIG, "earliest");
-      put(ENABLE_AUTO_COMMIT_CONFIG, false);
-      put(KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
-      put(VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
-      put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
-      put(SPECIFIC_AVRO_READER_CONFIG, true);
-    }};
+    Map<String, Object> kafkaConfigs = new HashMap<>();
+
+    if (config.getPropertiesPath() != null && !config.getPropertiesPath().isEmpty()) {
+      Properties properties = new Properties();
+
+      try {
+        File propertiesFile = new File(config.getPropertiesPath());
+        properties.load(new FileReader(propertiesFile));
+      } catch (FileNotFoundException e) {
+        throw new IllegalArgumentException("Could not find properties file: [" + config.getPropertiesPath() + "].");
+      } catch (IOException e) {
+        throw new IllegalArgumentException("Could not read properties file: [" + config.getPropertiesPath() + "].");
+      }
+
+      for (Map.Entry<Object, Object> property: properties.entrySet()) {
+        kafkaConfigs.put(property.getKey().toString(), property.getValue());
+      }
+    }
+
+    kafkaConfigs.put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
+    kafkaConfigs.put(GROUP_ID_CONFIG, config.getGroupId());
+    kafkaConfigs.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
+    kafkaConfigs.put(ENABLE_AUTO_COMMIT_CONFIG, false);
+    kafkaConfigs.put(KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+    kafkaConfigs.put(VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+    kafkaConfigs.put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
+    kafkaConfigs.put(SPECIFIC_AVRO_READER_CONFIG, true);
+
+    return kafkaConfigs;
   }
 
   @Value
@@ -184,5 +209,6 @@ public class KafkaEventReceiver implements EventReceiver {
     @NonNull String topic;
     @NonNull String schemaRegistryUrl;
     @NonNull String groupId;
+    String propertiesPath;
   }
 }
