@@ -17,9 +17,19 @@ package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
 import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
+import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
+import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -27,11 +37,15 @@ import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 
 import lombok.val;
+
+import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -52,6 +66,7 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.Config;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
@@ -156,5 +171,36 @@ public class KafkaEventReceiverTest {
     };
     underTest.receive(doNothingListener);
     underTest.receive(doNothingListener);
+  }
+
+  @Test
+  public void propertiesToConfigMapping() {
+    Map<String, Object> properties = new HashMap<String, Object>() {{
+      put("ssl.keystore.location", "/path/to/cert.jks");
+      put("security.protocol", "SSL");
+      put("ssl.truststore.location", "/path/to/cert.jks");
+      put("ssl.keystore.password", "password");
+      put("ssl.key.password", "password");
+      put("ssl.truststore.password", "password");
+      put("ssl.endpoint.identification.algorithm", "");
+    }};
+    Config config = new Config("bootstrap", "topic", "schemaRegistry", "groupId", properties);
+
+    Map<String, Object> expected = new HashMap<String, Object>() {{
+      put(BOOTSTRAP_SERVERS_CONFIG, "bootstrap");
+      put(GROUP_ID_CONFIG, "groupId");
+      put(AUTO_OFFSET_RESET_CONFIG, "earliest");
+      put(ENABLE_AUTO_COMMIT_CONFIG, false);
+      put(KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+      put(VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+      put(SCHEMA_REGISTRY_URL_CONFIG, "schemaRegistry");
+      put(SPECIFIC_AVRO_READER_CONFIG, true);
+    }};
+    expected.putAll(properties);
+
+    assertThat(
+      KafkaEventReceiver.consumerConfig(config).entrySet(),
+      containsInAnyOrder(expected.entrySet().toArray(new Map.Entry[0]))
+    );
   }
 }

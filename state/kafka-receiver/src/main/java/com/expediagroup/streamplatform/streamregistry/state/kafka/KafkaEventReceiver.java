@@ -30,15 +30,10 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -173,21 +168,8 @@ public class KafkaEventReceiver implements EventReceiver {
   static Map<String, Object> consumerConfig(Config config) {
     Map<String, Object> kafkaConfigs = new HashMap<>();
 
-    if (config.getPropertiesPath() != null && !config.getPropertiesPath().isEmpty()) {
-      Properties properties = new Properties();
-
-      try {
-        File propertiesFile = new File(config.getPropertiesPath());
-        properties.load(new FileReader(propertiesFile));
-      } catch (FileNotFoundException e) {
-        throw new IllegalArgumentException("Could not find properties file: [" + config.getPropertiesPath() + "].");
-      } catch (IOException e) {
-        throw new IllegalArgumentException("Could not read properties file: [" + config.getPropertiesPath() + "].");
-      }
-
-      for (Map.Entry<Object, Object> property: properties.entrySet()) {
-        kafkaConfigs.put(property.getKey().toString(), property.getValue());
-      }
+    if (config.getProperties() != null) {
+      kafkaConfigs.putAll(config.getProperties());
     }
 
     kafkaConfigs.put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
@@ -209,6 +191,6 @@ public class KafkaEventReceiver implements EventReceiver {
     @NonNull String topic;
     @NonNull String schemaRegistryUrl;
     @NonNull String groupId;
-    String propertiesPath;
+    Map<String, Object> properties;
   }
 }

@@ -24,15 +24,10 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 import lombok.Builder;
@@ -165,21 +160,8 @@ public class KafkaEventSender implements EventSender {
   static Map<String, Object> producerConfig(Config config) {
     Map<String, Object> kafkaConfigs = new HashMap<>();
 
-    if (config.getPropertiesPath() != null && !config.getPropertiesPath().isEmpty()) {
-      Properties properties = new Properties();
-
-      try {
-        File propertiesFile = new File(config.getPropertiesPath());
-        properties.load(new FileReader(propertiesFile));
-      } catch (FileNotFoundException e) {
-        throw new IllegalArgumentException("Could not find properties file: [" + config.getPropertiesPath() + "].");
-      } catch (IOException e) {
-        throw new IllegalArgumentException("Could not read properties file: [" + config.getPropertiesPath() + "].");
-      }
-
-      for (Map.Entry<Object, Object> property: properties.entrySet()) {
-        kafkaConfigs.put(property.getKey().toString(), property.getValue());
-      }
+    if (config.getProperties() != null) {
+      kafkaConfigs.putAll(config.getProperties());
     }
 
     kafkaConfigs.put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
@@ -197,6 +179,6 @@ public class KafkaEventSender implements EventSender {
     @NonNull String bootstrapServers;
     @NonNull String topic;
     @NonNull String schemaRegistryUrl;
-    String propertiesPath;
+    Map<String, Object> properties;
   }
 }

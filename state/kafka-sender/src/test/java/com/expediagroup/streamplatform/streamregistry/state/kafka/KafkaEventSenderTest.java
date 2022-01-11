@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
+import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +37,8 @@ import java.util.Map;
 import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -180,5 +188,33 @@ public class KafkaEventSenderTest {
     callback.onCompletion(null, e);
     assertThat(result.isCompletedExceptionally(), is(false));
     verify(correlator).failed("correlationId", e);
+  }
+
+  @Test
+  public void propertiesToConfigMapping() {
+    Map<String, Object> properties = new HashMap<String, Object>() {{
+      put("ssl.keystore.location", "/path/to/cert.jks");
+      put("security.protocol", "SSL");
+      put("ssl.truststore.location", "/path/to/cert.jks");
+      put("ssl.keystore.password", "password");
+      put("ssl.key.password", "password");
+      put("ssl.truststore.password", "password");
+      put("ssl.endpoint.identification.algorithm", "");
+    }};
+    Config config = new Config("bootstrap", "topic", "schemaRegistry", properties);
+
+    Map<String, Object> expected = new HashMap<String, Object>() {{
+      put(BOOTSTRAP_SERVERS_CONFIG, "bootstrap");
+      put(ACKS_CONFIG, "all");
+      put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+      put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+      put(SCHEMA_REGISTRY_URL_CONFIG, "schemaRegistry");
+    }};
+    expected.putAll(properties);
+
+    assertThat(
+      KafkaEventSender.producerConfig(config).entrySet(),
+      containsInAnyOrder(expected.entrySet().toArray(new Map.Entry[0]))
+    );
   }
 }
