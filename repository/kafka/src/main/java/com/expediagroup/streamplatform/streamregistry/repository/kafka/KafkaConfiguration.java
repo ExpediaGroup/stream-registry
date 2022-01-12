@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -40,12 +48,14 @@ public class KafkaConfiguration {
       @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
       @Value("${repository.kafka.topic:_streamregistry}") String topic,
       @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+      @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
       EventCorrelator eventCorrelator
   ) {
     KafkaEventSender.Config config = KafkaEventSender.Config.builder()
         .bootstrapServers(bootstrapServers)
         .topic(topic)
         .schemaRegistryUrl(schemaRegistryUrl)
+        .properties(readPropertiesFile(propertiesPath))
         .build();
     return new KafkaEventSender(config, eventCorrelator);
   }
@@ -56,6 +66,7 @@ public class KafkaConfiguration {
       @Value("${repository.kafka.topic:_streamregistry}") String topic,
       @Value("${repository.kafka.groupId:stream-registry}") String groupId,
       @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+      @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
       EventCorrelator eventCorrelator
   ) {
     KafkaEventReceiver.Config receiverConfig = KafkaEventReceiver.Config.builder()
@@ -63,6 +74,7 @@ public class KafkaConfiguration {
         .topic(topic)
         .groupId(groupId)
         .schemaRegistryUrl(schemaRegistryUrl)
+        .properties(readPropertiesFile(propertiesPath))
         .build();
     return new KafkaEventReceiver(receiverConfig, eventCorrelator);
   }
@@ -75,5 +87,28 @@ public class KafkaConfiguration {
       .thenAccept(s -> entityViewListener.purgeAll())
       .join();
     return entityView;
+  }
+
+  private Map<String, Object> readPropertiesFile(String propertiesPath) {
+    Map<String, Object> kafkaConfigs = new HashMap<>();
+
+    if (propertiesPath != null && !propertiesPath.isEmpty()) {
+      Properties properties = new Properties();
+
+      try {
+        File propertiesFile = new File(propertiesPath);
+        properties.load(new FileReader(propertiesFile));
+      } catch (FileNotFoundException e) {
+        throw new IllegalArgumentException("Could not find properties file: [" + propertiesPath + "].");
+      } catch (IOException e) {
+        throw new IllegalArgumentException("Could not read properties file: [" + propertiesPath + "].");
+      }
+
+      for (Map.Entry<Object, Object> property: properties.entrySet()) {
+        kafkaConfigs.put(property.getKey().toString(), property.getValue());
+      }
+    }
+
+    return kafkaConfigs;
   }
 }

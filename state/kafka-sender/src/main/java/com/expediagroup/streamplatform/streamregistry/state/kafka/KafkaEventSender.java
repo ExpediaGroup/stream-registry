@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,13 +158,19 @@ public class KafkaEventSender implements EventSender {
   }
 
   static Map<String, Object> producerConfig(Config config) {
-    return new HashMap<String, Object>() {{
-      put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
-      put(ACKS_CONFIG, "all");
-      put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-      put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-      put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
-    }};
+    Map<String, Object> kafkaConfigs = new HashMap<>();
+
+    if (config.getProperties() != null) {
+      kafkaConfigs.putAll(config.getProperties());
+    }
+
+    kafkaConfigs.put(BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
+    kafkaConfigs.put(ACKS_CONFIG, "all");
+    kafkaConfigs.put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+    kafkaConfigs.put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+    kafkaConfigs.put(SCHEMA_REGISTRY_URL_CONFIG, config.getSchemaRegistryUrl());
+
+    return kafkaConfigs;
   }
 
   @Value
@@ -173,5 +179,6 @@ public class KafkaEventSender implements EventSender {
     @NonNull String bootstrapServers;
     @NonNull String topic;
     @NonNull String schemaRegistryUrl;
+    Map<String, Object> properties;
   }
 }
