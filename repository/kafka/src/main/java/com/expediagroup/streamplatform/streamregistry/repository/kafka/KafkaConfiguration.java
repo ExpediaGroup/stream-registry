@@ -15,6 +15,18 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
+import com.expediagroup.streamplatform.streamregistry.state.DefaultEventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.EntityView;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
+import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
+import com.expediagroup.streamplatform.streamregistry.state.EventSender;
+import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
+import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -22,19 +34,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
-import com.expediagroup.streamplatform.streamregistry.state.DefaultEventCorrelator;
-import com.expediagroup.streamplatform.streamregistry.state.EntityView;
-import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
-import com.expediagroup.streamplatform.streamregistry.state.EventSender;
-import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
-import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
-import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
 
 @Configuration
 public class KafkaConfiguration {
@@ -45,43 +44,43 @@ public class KafkaConfiguration {
 
   @Bean
   EventSender eventSender(
-      @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
-      @Value("${repository.kafka.topic:_streamregistry}") String topic,
-      @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
-      @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
-      EventCorrelator eventCorrelator
+    @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
+    @Value("${repository.kafka.topic:_streamregistry}") String topic,
+    @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+    @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
+    EventCorrelator eventCorrelator
   ) {
     KafkaEventSender.Config config = KafkaEventSender.Config.builder()
-        .bootstrapServers(bootstrapServers)
-        .topic(topic)
-        .schemaRegistryUrl(schemaRegistryUrl)
-        .properties(readPropertiesFile(propertiesPath))
-        .build();
+      .bootstrapServers(bootstrapServers)
+      .topic(topic)
+      .schemaRegistryUrl(schemaRegistryUrl)
+      .properties(readPropertiesFile(propertiesPath))
+      .build();
     return new KafkaEventSender(config, eventCorrelator);
   }
 
   @Bean
   EventReceiver eventReceiver(
-      @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
-      @Value("${repository.kafka.topic:_streamregistry}") String topic,
-      @Value("${repository.kafka.groupId:stream-registry}") String groupId,
-      @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
-      @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
-      EventCorrelator eventCorrelator
+    @Value("${repository.kafka.bootstrapServers}") String bootstrapServers,
+    @Value("${repository.kafka.topic:_streamregistry}") String topic,
+    @Value("${repository.kafka.groupId:stream-registry}") String groupId,
+    @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
+    @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
+    EventCorrelator eventCorrelator
   ) {
     KafkaEventReceiver.Config receiverConfig = KafkaEventReceiver.Config.builder()
-        .bootstrapServers(bootstrapServers)
-        .topic(topic)
-        .groupId(groupId)
-        .schemaRegistryUrl(schemaRegistryUrl)
-        .properties(readPropertiesFile(propertiesPath))
-        .build();
+      .bootstrapServers(bootstrapServers)
+      .topic(topic)
+      .groupId(groupId)
+      .schemaRegistryUrl(schemaRegistryUrl)
+      .properties(readPropertiesFile(propertiesPath))
+      .build();
     return new KafkaEventReceiver(receiverConfig, eventCorrelator);
   }
 
   @Bean
   EntityView entityView(EventReceiver eventReceiver) {
-    EntityView entityView = new DefaultEntityView(eventReceiver);
+    EntityView entityView = EntityViews.defaultEntityView(eventReceiver);
     PurgingEntityViewListener entityViewListener = new PurgingEntityViewListener(entityView);
     entityView.load(entityViewListener)
       .thenAccept(s -> entityViewListener.purgeAll())
