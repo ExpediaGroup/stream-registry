@@ -52,14 +52,22 @@ public final class EntityViews {
 
     @Override
     public <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(Event<K, S> event) {
-      meterRegistry.counter("stream_registry_state.receiver.update", event.getClass().getSimpleName().toLowerCase()).increment();
+      meterRegistry.counter("stream_registry_state.receiver.update", Tags.of("type", simpleName(event))).increment();
       return delegate.update(event);
     }
 
     @Override
     public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> purge(K key) {
-      meterRegistry.counter("stream_registry_state.receiver.purge", key.getClass().getSimpleName().toLowerCase()).increment();
+      meterRegistry.counter("stream_registry_state.receiver.purge", Tags.of("type", simpleName(key))).increment();
       return delegate.purge(key);
+    }
+
+    private static String simpleName(Object obj) {
+      if (obj == null) {
+        return "null";
+      } else {
+        return obj.getClass().getSimpleName().toLowerCase();
+      }
     }
   }
 }
