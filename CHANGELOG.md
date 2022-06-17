@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 ### Added
+- Added option to add metrics to `EntityView`
+
+## [0.20.6] 2022-01-12
+### Added
 - added arbitrary property support for repostiry kafka event receiver/sender
 
 ## [0.20.5] 2022-01-07
