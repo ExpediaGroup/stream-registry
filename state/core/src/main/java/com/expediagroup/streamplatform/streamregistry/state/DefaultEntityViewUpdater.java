@@ -55,6 +55,7 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
     }
   }
 
+  @Override
   public <K extends Entity.Key<S>, S extends Specification> Optional<Entity<K, S>> purge(K key) {
     val stateEntity = Optional.ofNullable(entities.get(key))
       .filter(it -> it.deleted);
