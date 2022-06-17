@@ -49,13 +49,14 @@ public abstract class EntityViewUpdaterTest {
 
   private final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
 
-  private final EntityViewUpdater underTest = entityViewUpdater(entities);
-
   private final DefaultSpecification oldSpecification = specification.withDescription("old-description");
   private final DefaultStatus oldStatus = new DefaultStatus();
   private final Entity<DomainKey, DefaultSpecification> oldEntity = entity
     .withSpecification(oldSpecification)
     .withStatus(oldStatus);
+
+
+  final EntityViewUpdater underTest = entityViewUpdater(entities);
 
 
   public abstract EntityViewUpdater entityViewUpdater(Map<Entity.Key<?>, StateValue> entities);

@@ -47,12 +47,14 @@ public final class EntityViews {
 
   @RequiredArgsConstructor(access = PACKAGE)
   static final class MeteredEntityViewUpdater implements EntityViewUpdater {
+    @NonNull
     private final EntityViewUpdater delegate;
+    @NonNull
     private final MeterRegistry meterRegistry;
 
     @Override
     public <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(Event<K, S> event) {
-      meterRegistry.counter("stream_registry_state.receiver.update", Tags.of("type", simpleName(event))).increment();
+      meterRegistry.counter("stream_registry_state.receiver.update", Tags.of("event", simpleName(event))).increment();
       return delegate.update(event);
     }
 
