@@ -594,6 +594,8 @@ type Mutation {
     processBinding: ProcessBindingMutation!
 }
 
+############ Queries ############
+
 type DomainQuery{
     byKey(key: DomainKeyInput!): Domain
     byQuery(key: DomainKeyQuery, specification: SpecificationQuery): [Domain!]!
@@ -653,8 +655,6 @@ type ProcessBindingQuery{
     byKey(key: ProcessBindingKeyInput!): ProcessBinding
     byQuery(key: ProcessBindingKeyQuery, specification: SpecificationQuery, zone: ZoneKeyQuery, inputs: [StreamBindingKeyQuery!], outputs: [StreamBindingKeyQuery!]): [ProcessBinding!]!
 }
-
-############ Queries ############
 
 type Query {
 

@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
+package com.expediagroup.streamplatform.streamregistry.core.validators.key;
 
-import lombok.Builder;
-import lombok.Value;
+import static com.expediagroup.streamplatform.streamregistry.core.validators.SnakeCaseValidator.validate;
 
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
-@Value
-@Builder
-public class DomainKeyInput {
-  String name;
-
-  public DomainKey asDomainKey() {
-    return new DomainKey(name);
+public class DomainKeyValidator implements KeyValidator<Domain> {
+  @Override
+  public void validateKey(Domain entity) throws ValidationException {
+    DomainKey key = entity.getKey();
+    validate(key.getName());
   }
 }

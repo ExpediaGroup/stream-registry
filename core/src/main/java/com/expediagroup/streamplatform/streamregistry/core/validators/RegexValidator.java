@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
+package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import java.util.regex.Pattern;
 
-import org.springframework.stereotype.Component;
+public class RegexValidator {
 
-@Component
-public class NameNormaliser {
-  private static final Pattern pattern = Pattern.compile("^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$");
-
-  public static String normalise(String name) {
-    name = name.trim().toLowerCase();
+  public static void validate(String name, Pattern pattern) throws ValidationException {
     if (!pattern.matcher(name).matches()) {
-      throw new IllegalArgumentException(String.format("Invalid name '%s' must be conform to pattern %s", name, pattern.pattern()));
+      throw new ValidationException(String.format("Invalid name '%s'. Names must conform to pattern %s", name, pattern.pattern()));
     }
-    return name;
   }
 }

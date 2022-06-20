@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Objects;
 
@@ -36,12 +33,17 @@ public class SpecificationValidator implements Validator<Specification> {
   @Override
   public void validateForUpdate(Specification specification, Specification existing) throws ValidationException {
     validateForCreateAndUpdate(specification);
-    checkArgument(Objects.equals(specification.getType(), existing.getType()),
-        "Configuration must be of the same type as the existing.");
+    if (!Objects.equals(specification.getType(), existing.getType())) {
+      throw new ValidationException("Configuration must be of the same type as the existing.");
+    }
   }
 
   private void validateForCreateAndUpdate(Specification specification) {
-    checkNotNull(specification.getConfiguration(), "Configuration must not be null.");
-    checkNotNull(specification.getType(), "Type must not be null.");
+    if (specification.getConfiguration() == null) {
+      throw new ValidationException("Configuration must not be null.");
+    }
+    if (specification.getType() == null) {
+      throw new ValidationException("Type must not be null.");
+    }
   }
 }
