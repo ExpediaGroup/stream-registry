@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
 
@@ -21,7 +21,7 @@
     <!--suppress UnresolvedMavenProperty -->
     <developerConnection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</developerConnection>
     <url>https://github.com/ExpediaGroup/stream-registry</url>
-    <tag>HEAD</tag>
+    <tag>stream-registry-1.0.0</tag>
   </scm>
 
   <developers>
