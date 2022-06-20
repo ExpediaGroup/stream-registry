@@ -18,9 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.core.validators;
 import java.util.regex.Pattern;
 
 public class SnakeCaseValidator {
-  private static final Pattern snake_case_pattern = Pattern.compile("^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$");
+  private static final Pattern snakeCasePattern = Pattern.compile("^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$");
 
   public static void validate(String name) throws ValidationException {
-    RegexValidator.validate(name, snake_case_pattern);
+    RegexValidator.validate(name, snakeCasePattern);
   }
 }
