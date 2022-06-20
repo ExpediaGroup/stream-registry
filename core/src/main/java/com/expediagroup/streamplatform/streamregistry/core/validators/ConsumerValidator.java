@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.validators.key.KeyValidator;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
@@ -28,10 +29,12 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 public class ConsumerValidator implements Validator<Consumer> {
   private final StreamView streamView;
   private final ZoneView zoneView;
+  private final KeyValidator<Consumer> consumerKeyValidator;
   private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(Consumer consumer) throws ValidationException {
+    consumerKeyValidator.validateKey(consumer);
     validateForCreateAndUpdate(consumer);
     specificationValidator.validateForCreate(consumer.getSpecification());
   }

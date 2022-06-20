@@ -13,30 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model.keys;
+package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import java.io.Serializable;
+public class VersionValidator {
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ProducerKey implements Serializable {
-
-  private String streamDomain;
-  private String streamName;
-  private Integer streamVersion;
-  private String zone;
-  private String name;
-
-  public StreamKey getStreamKey() {
-    return new StreamKey(streamDomain, streamName, streamVersion);
-  }
-
-  public ZoneKey getZoneKey() {
-    return new ZoneKey(zone);
+  public static void validate(Integer version, int min, int max) throws ValidationException {
+    if (version >= min && version <= max) {
+      return;
+    }
+    throw new ValidationException(String.format("Invalid version '%d'. Please ensure version >= %d and version <= %d.", version, min, max));
   }
 }

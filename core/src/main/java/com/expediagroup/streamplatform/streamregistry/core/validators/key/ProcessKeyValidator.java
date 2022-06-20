@@ -1,0 +1,32 @@
+/**
+ * Copyright (C) 2018-2022 Expedia, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.expediagroup.streamplatform.streamregistry.core.validators.key;
+
+import static com.expediagroup.streamplatform.streamregistry.core.validators.SnakeCaseValidator.validate;
+
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
+
+public class ProcessKeyValidator implements KeyValidator<Process> {
+
+  @Override
+  public void validateKey(Process entity) throws ValidationException {
+    ProcessKey key = entity.getKey();
+    validate(key.getDomain());
+    validate(key.getName());
+  }
+}

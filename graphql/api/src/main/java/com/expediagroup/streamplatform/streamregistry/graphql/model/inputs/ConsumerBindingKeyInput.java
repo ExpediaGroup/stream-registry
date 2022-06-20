@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
-
-import static com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.NameNormaliser.normalise;
 
 import lombok.Builder;
 import lombok.Value;
@@ -34,12 +32,12 @@ public class ConsumerBindingKeyInput {
 
   public ConsumerBindingKey asConsumerBindingKey() {
     return new ConsumerBindingKey(
-        normalise(streamDomain),
-        normalise(streamName),
-        streamVersion,
-        normalise(infrastructureZone),
-        normalise(infrastructureName),
-        normalise(consumerName)
+      streamDomain,
+      streamName,
+      streamVersion,
+      infrastructureZone,
+      infrastructureName,
+      consumerName
     );
   }
 }
