@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Entity key values are no longer normalised by trimming whitespace and converting to lowercase. Entity key values are
   now case-sensitive and by default are validated as being in snake case (lowercase) when an entity is created. If you
   wish to customise entity key value validation please implement a `KeyValidator` component for each key type that 
-  requires a different validation algorithm. 
+  requires a different validation algorithm.
+### Updated
+- Now using Spring Boot version 2.7.0.
 
 ## [0.20.6] 2022-01-12
 ### Added

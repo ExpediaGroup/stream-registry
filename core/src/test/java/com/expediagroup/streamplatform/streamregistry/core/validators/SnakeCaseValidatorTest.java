@@ -33,11 +33,11 @@ public class SnakeCaseValidatorTest {
 
   @Test
   public void validNameWithUnderscore() {
-    validate("a_bc_1");
+    validate("abc_1");
   }
 
   @Test
-  public void validNameWithUnderscores() {
+  public void validNameWithMultipleUnderscores() {
     validate("abc_def_1");
   }
 
@@ -82,7 +82,7 @@ public class SnakeCaseValidatorTest {
   }
 
   @Test(expected = ValidationException.class)
-  public void invalidCapitals() {
+  public void invalidUppercase() {
     validate("aBc");
   }
 
