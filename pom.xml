@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>0.20.7-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
 
@@ -82,7 +82,7 @@
     <graphql-java.version>14.0</graphql-java.version>
     <kotlin.version>1.5.31</kotlin.version>
     <slf4j.version>1.7.26</slf4j.version>
-    <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
+    <spring-boot.version>2.7.0</spring-boot.version>
     <testcontainers.version>1.15.3</testcontainers.version>
     <log4j.version>2.17.1</log4j.version>
 

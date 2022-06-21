@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,10 +38,6 @@ public class ConsumerKey implements Serializable {
 
   public StreamKey getStreamKey() {
     return new StreamKey(streamDomain, streamName, streamVersion);
-  }
-
-  public InfrastructureKey getInfrastructureKey() {
-    return new InfrastructureKey(zone, name);
   }
 
   public ZoneKey getZoneKey() {

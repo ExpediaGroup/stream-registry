@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.graphql.model.inputs;
+package com.expediagroup.streamplatform.streamregistry.core.validators.key;
 
-import lombok.Builder;
-import lombok.Value;
+import static com.expediagroup.streamplatform.streamregistry.core.validators.SnakeCaseValidator.validate;
 
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 
-@Value
-@Builder
-public class InfrastructureKeyInput {
-  String zone;
-  String name;
-
-  public InfrastructureKey asInfrastructureKey() {
-    return new InfrastructureKey(
-      zone,
-      name
-    );
+public class InfrastructureKeyValidator implements KeyValidator<Infrastructure>{
+  @Override
+  public void validateKey(Infrastructure entity) throws ValidationException {
+    InfrastructureKey key = entity.getKey();
+    validate(key.getZone());
+    validate(key.getName());
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,18 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.expediagroup.streamplatform.streamregistry.core.validators.key.KeyValidator;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 
 @Component
 @RequiredArgsConstructor
 public class DomainValidator implements Validator<Domain> {
+  private final KeyValidator<Domain> domainKeyValidator;
   private final SpecificationValidator specificationValidator;
 
   @Override
   public void validateForCreate(Domain domain) throws ValidationException {
+    domainKeyValidator.validateKey(domain);
     validateForCreateAndUpdate(domain);
     specificationValidator.validateForCreate(domain.getSpecification());
   }
