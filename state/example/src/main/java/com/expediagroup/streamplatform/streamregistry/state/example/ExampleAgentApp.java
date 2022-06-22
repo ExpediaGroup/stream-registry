@@ -65,8 +65,14 @@ public class ExampleAgentApp {
     return new KafkaEventReceiver(receiverConfig);
   }
 
+  // if you have micrometer configured for metrics, you can replace this method with the one commented out below.
   @Bean
   EntityView entityView(EventReceiver eventReceiver) {
     return EntityViews.defaultEntityView(eventReceiver);
   }
+
+//  @Bean
+//  EntityView entityViews(EventReceiver eventReceiver, MeterRegistry meterRegistry) {
+//    return EntityViews.meteredEntityView(eventReceiver, meterRegistry);
+//  }
 }
