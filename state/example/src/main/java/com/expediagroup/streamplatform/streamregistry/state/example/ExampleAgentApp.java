@@ -16,20 +16,18 @@
 package com.expediagroup.streamplatform.streamregistry.state.example;
 
 import com.apollographql.apollo.ApolloClient;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.Credentials;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApolloClientFactory;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.GraphQLEventSender;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class ExampleAgentApp {
@@ -39,9 +37,9 @@ public class ExampleAgentApp {
 
   @Bean
   ApolloClient apolloClient(
-      @Value("${streamRegistryUrl}") String streamRegistryUrl,
-      @Value("${streamRegistryUsername}") String streamRegistryUsername,
-      @Value("${streamRegistryPassword}") String streamRegistryPassword
+    @Value("${streamRegistryUrl}") String streamRegistryUrl,
+    @Value("${streamRegistryUsername}") String streamRegistryUsername,
+    @Value("${streamRegistryPassword}") String streamRegistryPassword
   ) {
     return new DefaultApolloClientFactory(streamRegistryUrl, new Credentials(streamRegistryUsername, streamRegistryPassword)).create();
   }
@@ -53,22 +51,28 @@ public class ExampleAgentApp {
 
   @Bean
   EventReceiver eventReceiver(
-      @Value("${bootstrapServers}") String bootstrapServers,
-      @Value("${topic}") String topic,
-      @Value("${groupId}") String groupId,
-      @Value("${schemaRegistryUrl}") String schemaRegistryUrl
+    @Value("${bootstrapServers}") String bootstrapServers,
+    @Value("${topic}") String topic,
+    @Value("${groupId}") String groupId,
+    @Value("${schemaRegistryUrl}") String schemaRegistryUrl
   ) {
     KafkaEventReceiver.Config receiverConfig = KafkaEventReceiver.Config.builder()
-        .bootstrapServers(bootstrapServers)
-        .topic(topic)
-        .groupId(groupId)
-        .schemaRegistryUrl(schemaRegistryUrl)
-        .build();
+      .bootstrapServers(bootstrapServers)
+      .topic(topic)
+      .groupId(groupId)
+      .schemaRegistryUrl(schemaRegistryUrl)
+      .build();
     return new KafkaEventReceiver(receiverConfig);
   }
 
+  // if you have micrometer configured for metrics, you can replace this method with the one commented out below.
   @Bean
   EntityView entityView(EventReceiver eventReceiver) {
-    return new DefaultEntityView(eventReceiver);
+    return EntityViews.defaultEntityView(eventReceiver);
   }
+
+//  @Bean
+//  EntityView entityViews(EventReceiver eventReceiver, MeterRegistry meterRegistry) {
+//    return EntityViews.meteredEntityView(eventReceiver, meterRegistry);
+//  }
 }

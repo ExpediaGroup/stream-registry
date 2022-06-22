@@ -15,8 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
-import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
-import static lombok.AccessLevel.PACKAGE;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,23 +30,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
+import static lombok.AccessLevel.PACKAGE;
 
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultEntityView implements EntityView {
-  @NonNull private final EventReceiver receiver;
-  @NonNull private final Map<Entity.Key<?>, StateValue> entities;
-  @NonNull private final EntityViewUpdater updater;
+  @NonNull
+  private final EventReceiver receiver;
+  @NonNull
+  private final Map<Entity.Key<?>, StateValue> entities;
+  @NonNull
+  private final EntityViewUpdater updater;
 
   DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, StateValue> entities) {
-    this(receiver, entities, new EntityViewUpdater(entities));
+    this(receiver, entities, new DefaultEntityViewUpdater(entities));
   }
 
   public DefaultEntityView(EventReceiver receiver) {
@@ -74,8 +76,8 @@ public class DefaultEntityView implements EntityView {
       .filter(it -> it.getValue().deleted)
       .filter(it -> it.getKey().getClass().equals(keyClass))
       .collect(Collectors.toMap(
-        entry -> (K)entry.getKey(),
-        entry -> Optional.ofNullable((Entity<K, S>)entry.getValue().entity))
+        entry -> (K) entry.getKey(),
+        entry -> Optional.ofNullable((Entity<K, S>) entry.getValue().entity))
       );
   }
 

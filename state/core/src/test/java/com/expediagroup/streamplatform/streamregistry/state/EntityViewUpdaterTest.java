@@ -15,6 +15,19 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
+import lombok.val;
+import org.junit.After;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.entity;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.key;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specification;
@@ -32,32 +45,21 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.Assert.assertThat;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import lombok.val;
-
-import org.junit.After;
-import org.junit.Test;
-
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
-
-public class EntityViewUpdaterTest {
+public abstract class EntityViewUpdaterTest {
 
   private final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
-
-  private final EntityViewUpdater underTest = new EntityViewUpdater(entities);
 
   private final DefaultSpecification oldSpecification = specification.withDescription("old-description");
   private final DefaultStatus oldStatus = new DefaultStatus();
   private final Entity<DomainKey, DefaultSpecification> oldEntity = entity
     .withSpecification(oldSpecification)
     .withStatus(oldStatus);
+
+
+  final EntityViewUpdater underTest = entityViewUpdater(entities);
+
+
+  public abstract EntityViewUpdater entityViewUpdater(Map<Entity.Key<?>, StateValue> entities);
 
   @After
   public void clean() {

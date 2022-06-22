@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
 import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -89,7 +90,7 @@ public class StateIT {
         .topic(topic)
         .build(), correlator);
 
-    EntityView view = new DefaultEntityView(receiver);
+    EntityView view = EntityViews.defaultEntityView(receiver);
     val listener = mock(EntityViewListener.class);
     view.load(listener).join();
 
