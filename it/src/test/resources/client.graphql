@@ -534,6 +534,15 @@ mutation UpdateDomainStatus(
   }
 }
 
+mutation DeleteDomain(
+  $key: DomainKeyInput!
+) {
+  delete{
+    delete(key: $key)
+  }
+}
+
+
 query Domain(
   $key: DomainKeyInput!
 ) {
