@@ -537,7 +537,7 @@ mutation UpdateDomainStatus(
 mutation DeleteDomain(
   $key: DomainKeyInput!
 ) {
-  delete{
+  domain{
     delete(key: $key)
   }
 }
