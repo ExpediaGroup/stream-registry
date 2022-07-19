@@ -15,13 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
-import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specificationEvent;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 
-import java.util.Map;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -30,8 +26,13 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.After;
 import org.junit.Test;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import java.util.Map;
+
+import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specificationEvent;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 public class MeteredEntityViewUpdaterTest extends EntityViewUpdaterTest {
 
