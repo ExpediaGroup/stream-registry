@@ -16,11 +16,21 @@
 package com.expediagroup.streamplatform.streamregistry.it;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
-import com.expediagroup.streamplatform.streamregistry.graphql.client.test.*;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DomainQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DomainsQuery;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateDomainStatusMutation;
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpsertDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.DomainPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.fragment.SpecificationPart;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.DomainKeyInput;
