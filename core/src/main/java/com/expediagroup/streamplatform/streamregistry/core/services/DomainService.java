@@ -109,32 +109,32 @@ public class DomainService {
     processView
       .findAll(p -> p.getKey().getDomainKey().equals(domain.getKey()))
       .findAny()
-      .ifPresent(ex -> { throw errorHandler(); });
+      .ifPresent(ex -> { throw errorHandler("process"); });
 
     streamView
       .findAll(s -> s.getKey().getDomainKey().equals(domain.getKey()))
       .findAny()
-      .ifPresent(ex -> { throw errorHandler(); });
+      .ifPresent(ex -> { throw errorHandler("stream"); });
 
     schemaView
       .findAll(sc -> sc.getKey().getDomainKey().equals(domain.getKey()))
       .findAny()
-      .ifPresent(ex -> { throw errorHandler(); });
+      .ifPresent(ex -> { throw errorHandler("schema"); });
 
     producerView
       .findAll(p -> p.getKey().getStreamKey().getDomainKey().equals(domain.getKey()))
       .findAny()
-      .ifPresent(ex -> { throw errorHandler(); });
+      .ifPresent(ex -> { throw errorHandler("producer"); });
 
     consumerView
       .findAll(c -> c.getKey().getStreamKey().getDomainKey().equals(domain.getKey()))
       .findAny()
-      .ifPresent(ex -> { throw errorHandler(); });
+      .ifPresent(ex -> { throw errorHandler("consumer"); });
 
     domainRepository.delete(domain);
   }
 
-  private static IllegalStateException errorHandler() {
-    return new IllegalStateException("Domain in use.");
+  private static IllegalStateException errorHandler(String type) {
+    return new IllegalStateException("Domain used in " + type);
   }
 }

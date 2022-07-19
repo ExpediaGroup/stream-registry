@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -178,7 +179,7 @@ public class DomainServiceTest {
     verify(domainRepository).delete(entity);
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void deleteDomainUsedInProcess() {
 
     final DomainKey key = mock(DomainKey.class);
@@ -190,10 +191,13 @@ public class DomainServiceTest {
     when(processKey.getDomainKey()).thenReturn(key);
     when(process.getKey()).thenReturn(processKey);
     when(processRepository.findAll()).thenReturn(asList(process));
-    domainService.delete(entity);
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
+      domainService.delete(entity);
+    });
+    Assertions.assertEquals(ex.getMessage(), "Domain used in process");
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void deleteDomainUsedInStream() {
     final DomainKey key = mock(DomainKey.class);
     final Domain entity = mock(Domain.class);
@@ -206,10 +210,13 @@ public class DomainServiceTest {
 
     when(processRepository.findAll()).thenReturn(emptyList());
     when(streamRepository.findAll()).thenReturn(asList(stream));
-    domainService.delete(entity);
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
+      domainService.delete(entity);
+    });
+    Assertions.assertEquals(ex.getMessage(), "Domain used in stream");
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void deleteDomainUsedInSchema() {
     final DomainKey key = mock(DomainKey.class);
     final Domain entity = mock(Domain.class);
@@ -223,10 +230,13 @@ public class DomainServiceTest {
     when(processRepository.findAll()).thenReturn(emptyList());
     when(streamRepository.findAll()).thenReturn(emptyList());
     when(schemaRepository.findAll()).thenReturn(asList(schema));
-    domainService.delete(entity);
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
+      domainService.delete(entity);
+    });
+    Assertions.assertEquals(ex.getMessage(), "Domain used in schema");
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void deleteDomainUsedInConsumer() {
     final DomainKey key = mock(DomainKey.class);
     final Domain entity = mock(Domain.class);
@@ -243,10 +253,13 @@ public class DomainServiceTest {
     when(streamRepository.findAll()).thenReturn(emptyList());
     when(producerRepository.findAll()).thenReturn(emptyList());
     when(consumerRepository.findAll()).thenReturn(asList(consumer));
-    domainService.delete(entity);
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
+      domainService.delete(entity);
+    });
+    Assertions.assertEquals(ex.getMessage(), "Domain used in consumer");
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void deleteDomainUsedInProducer() {
     final DomainKey key = mock(DomainKey.class);
     final Domain entity = mock(Domain.class);
@@ -262,6 +275,9 @@ public class DomainServiceTest {
     when(processRepository.findAll()).thenReturn(emptyList());
     when(streamRepository.findAll()).thenReturn(emptyList());
     when(producerRepository.findAll()).thenReturn(asList(producer));
-    domainService.delete(entity);
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
+      domainService.delete(entity);
+    });
+    Assertions.assertEquals(ex.getMessage(), "Domain used in producer");
   }
 }
