@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2022 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,13 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.state;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-
 import org.junit.After;
 import org.junit.Test;
 
