@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -32,12 +35,32 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.Producer;
+import com.expediagroup.streamplatform.streamregistry.model.Schema;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.Stream;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.DomainRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.SchemaRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DomainServiceTest {
@@ -53,13 +76,33 @@ public class DomainServiceTest {
 
   private DomainService domainService;
 
+  @Mock
+  private SchemaRepository schemaRepository;
+
+  @Mock
+  private ProducerRepository producerRepository;
+
+  @Mock
+  private ConsumerRepository consumerRepository;
+
+  @Mock
+  private ProcessRepository processRepository;
+
+  @Mock
+  private StreamRepository streamRepository;
+
   @Before
   public void before() {
     domainService = new DomainService(
       new DomainView(domainRepository),
       handlerService,
       domainValidator,
-      domainRepository
+      domainRepository,
+      new StreamView(streamRepository),
+      new ProducerView(producerRepository),
+      new ConsumerView(consumerRepository),
+      new SchemaView(schemaRepository),
+      new ProcessView(processRepository)
     );
   }
 
@@ -121,9 +164,104 @@ public class DomainServiceTest {
     verify(domainRepository).save(entity);
   }
 
-  public void delete() {
+  @Test
+  public void deleteWithNoError() {
     final Domain entity = mock(Domain.class);
+
+    when(producerRepository.findAll()).thenReturn(emptyList());
+    when(consumerRepository.findAll()).thenReturn(emptyList());
+    when(schemaRepository.findAll()).thenReturn(emptyList());
+    when(streamRepository.findAll()).thenReturn(emptyList());
+    when(processRepository.findAll()).thenReturn(emptyList());
+
     domainService.delete(entity);
     verify(domainRepository).delete(entity);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void deleteDomainUsedInProcess() {
+
+    final DomainKey key = mock(DomainKey.class);
+    final Domain entity = mock(Domain.class);
+    when(entity.getKey()).thenReturn(key);
+
+    final ProcessKey processKey = mock(ProcessKey.class);
+    final Process process = mock(Process.class);
+    when(processKey.getDomainKey()).thenReturn(key);
+    when(process.getKey()).thenReturn(processKey);
+    when(processRepository.findAll()).thenReturn(asList(process));
+    domainService.delete(entity);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void deleteDomainUsedInStream() {
+    final DomainKey key = mock(DomainKey.class);
+    final Domain entity = mock(Domain.class);
+    when(entity.getKey()).thenReturn(key);
+
+    final StreamKey streamkey = mock(StreamKey.class);
+    final Stream stream = mock(Stream.class);
+    when(streamkey.getDomainKey()).thenReturn(key);
+    when(stream.getKey()).thenReturn(streamkey);
+
+    when(processRepository.findAll()).thenReturn(emptyList());
+    when(streamRepository.findAll()).thenReturn(asList(stream));
+    domainService.delete(entity);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void deleteDomainUsedInSchema() {
+    final DomainKey key = mock(DomainKey.class);
+    final Domain entity = mock(Domain.class);
+    when(entity.getKey()).thenReturn(key);
+
+    final SchemaKey schemaKey = mock(SchemaKey.class);
+    final Schema schema = mock(Schema.class);
+    when(schemaKey.getDomainKey()).thenReturn(key);
+    when(schema.getKey()).thenReturn(schemaKey);
+
+    when(processRepository.findAll()).thenReturn(emptyList());
+    when(streamRepository.findAll()).thenReturn(emptyList());
+    when(schemaRepository.findAll()).thenReturn(asList(schema));
+    domainService.delete(entity);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void deleteDomainUsedInConsumer() {
+    final DomainKey key = mock(DomainKey.class);
+    final Domain entity = mock(Domain.class);
+    final StreamKey streamkey = mock(StreamKey.class);
+    when(entity.getKey()).thenReturn(key);
+
+    final ConsumerKey consumerKey = mock(ConsumerKey.class);
+    final Consumer consumer = mock(Consumer.class);
+    when(consumerKey.getStreamKey()).thenReturn(streamkey);
+    when(consumerKey.getStreamKey().getDomainKey()).thenReturn(key);
+    when(consumer.getKey()).thenReturn(consumerKey);
+
+    when(processRepository.findAll()).thenReturn(emptyList());
+    when(streamRepository.findAll()).thenReturn(emptyList());
+    when(producerRepository.findAll()).thenReturn(emptyList());
+    when(consumerRepository.findAll()).thenReturn(asList(consumer));
+    domainService.delete(entity);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void deleteDomainUsedInProducer() {
+    final DomainKey key = mock(DomainKey.class);
+    final Domain entity = mock(Domain.class);
+    final StreamKey streamkey = mock(StreamKey.class);
+    when(entity.getKey()).thenReturn(key);
+
+    final ProducerKey producerKey = mock(ProducerKey.class);
+    final Producer producer = mock(Producer.class);
+    when(producerKey.getStreamKey()).thenReturn(streamkey);
+    when(producerKey.getStreamKey().getDomainKey()).thenReturn(key);
+    when(producer.getKey()).thenReturn(producerKey);
+
+    when(processRepository.findAll()).thenReturn(emptyList());
+    when(streamRepository.findAll()).thenReturn(emptyList());
+    when(producerRepository.findAll()).thenReturn(asList(producer));
+    domainService.delete(entity);
   }
 }
