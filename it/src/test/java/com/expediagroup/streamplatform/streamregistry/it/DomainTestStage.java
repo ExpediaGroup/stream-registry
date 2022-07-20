@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.apollographql.apollo.api.Mutation;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteDomainMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DomainQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DomainsQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertDomainMutation;
@@ -97,7 +99,12 @@ public class DomainTestStage extends AbstractTestStage {
 
   @Override
   public void delete() {
-    //not implemented for domain
+    setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteDomainMutationBuilder().build()).get();
+    boolean result = ((DeleteDomainMutation.Data) data).getDomain().isDelete();
+
+    assertTrue(result);
   }
 
   @Override

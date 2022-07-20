@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,12 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.DomainValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
@@ -45,6 +50,16 @@ public class DomainService {
   private final HandlerService handlerService;
   private final DomainValidator domainValidator;
   private final DomainRepository domainRepository;
+
+  private final StreamView streamView;
+
+  private final ProducerView producerView;
+
+  private final ConsumerView consumerView;
+
+  private final SchemaView schemaView;
+
+  private final ProcessView processView;
 
   @PreAuthorize("hasPermission(#domain, 'CREATE')")
   public Optional<Domain> create(Domain domain) throws ValidationException {
@@ -89,7 +104,37 @@ public class DomainService {
 
   @PreAuthorize("hasPermission(#domain, 'DELETE')")
   public void delete(Domain domain) {
-    throw new UnsupportedOperationException("Domain deletion not currently supported.");
+    handlerService.handleDelete(domain);
+
+    processView
+      .findAll(p -> p.getKey().getDomainKey().equals(domain.getKey()))
+      .findAny()
+      .ifPresent(ex -> { throw errorHandler("process"); });
+
+    streamView
+      .findAll(s -> s.getKey().getDomainKey().equals(domain.getKey()))
+      .findAny()
+      .ifPresent(ex -> { throw errorHandler("stream"); });
+
+    schemaView
+      .findAll(sc -> sc.getKey().getDomainKey().equals(domain.getKey()))
+      .findAny()
+      .ifPresent(ex -> { throw errorHandler("schema"); });
+
+    producerView
+      .findAll(p -> p.getKey().getStreamKey().getDomainKey().equals(domain.getKey()))
+      .findAny()
+      .ifPresent(ex -> { throw errorHandler("producer"); });
+
+    consumerView
+      .findAll(c -> c.getKey().getStreamKey().getDomainKey().equals(domain.getKey()))
+      .findAny()
+      .ifPresent(ex -> { throw errorHandler("consumer"); });
+
+    domainRepository.delete(domain);
   }
 
+  private static IllegalStateException errorHandler(String type) {
+    return new IllegalStateException("Domain used in " + type);
+  }
 }
