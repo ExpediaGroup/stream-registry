@@ -115,24 +115,20 @@ public class StreamService {
 
     // Find all Processes that have multiple different stream inputs/outputs which also have this Stream as an input or output.
     // These processes would be left invalid if the stream was deleted, so block the delete of this Stream.
-    processView.findAll(process ->
-      process.getInputs().stream().anyMatch(input -> input.getStream().equals(stream.getKey())) ||
-        process.getOutputs().stream().anyMatch(output -> output.getStream().equals(stream.getKey()))
-    ).filter(process ->
-      processInputOutputStreamKeySet(process).size() > 1
-    ).findAny().ifPresent(process -> {
-      throw new IllegalStateException("Cannot delete Stream, Processes depend on it including: " + processKeyString(process));
-    });
+
+    allProcessesForStream(stream)
+      .filter(process -> processInputOutputStreamKeySet(process).size() > 1)
+      .findAny()
+      .ifPresent(process -> {
+        throw new IllegalStateException("Cannot delete Stream, Processes depend on it including: " + processKeyString(process));
+      });
 
     // Assuming the above check passed, then cascade deletes to Processes which have ONLY this stream as input/output.
     // These types of Processes would be entirely useless without the Stream and so can be safely deleted.
     // This will cascade to ProcessBinding also.
-    processView.findAll(process ->
-      process.getInputs().stream().anyMatch(input -> input.getStream().equals(stream.getKey())) ||
-        process.getOutputs().stream().anyMatch(output -> output.getStream().equals(stream.getKey()))
-    ).filter(process ->
-      processInputOutputStreamKeySet(process).size() == 1
-    ).forEach(processService::delete);
+    allProcessesForStream(stream)
+      .filter(process -> processInputOutputStreamKeySet(process).size() == 1)
+      .forEach(processService::delete);
 
     // This will cascade to ConsumerBinding and ProducerBinding also
     streamBindingView
@@ -169,5 +165,12 @@ public class StreamService {
       process.getInputs().stream().map(ProcessInputStream::getStream),
       process.getOutputs().stream().map(ProcessOutputStream::getStream)
     ).collect(java.util.stream.Collectors.toSet());
+  }
+
+  private java.util.stream.Stream<Process> allProcessesForStream(Stream stream) {
+    return processView.findAll(process ->
+      process.getInputs().stream().anyMatch(input -> input.getStream().equals(stream.getKey())) ||
+        process.getOutputs().stream().anyMatch(output -> output.getStream().equals(stream.getKey()))
+    );
   }
 }
