@@ -50,7 +50,7 @@
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
         <artifactId>jib-maven-plugin</artifactId>
-        <version>${jib-maven-plugin.version}</version>
+        <version>${jib.maven.plugin.version}</version>
         <configuration>
           <to>
             <image>${docker.to.repo}${docker.image.name}</image>
