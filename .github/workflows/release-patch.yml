@@ -1,6 +1,12 @@
 name: Release Patch
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "The branch to use to release from."
+        required: true
+        default: "master"
 
 jobs:
   build:
@@ -10,7 +16,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.branch }}
           # We need a personal access token to be able to push to a protected branch
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
       - name: Setup JDK
