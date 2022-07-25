@@ -32,6 +32,10 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Configure Git User
+        run: |
+          git config user.email "oss@expediagroup.com"
+          git config user.name "eg-oss-ci"
       - name: Release artifacts
         run: |
           mvn -Dresume=false release:prepare release:perform \
@@ -40,4 +44,3 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
