@@ -28,6 +28,7 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           # We need a personal access token to be able to push to a protected branch
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
@@ -43,16 +44,12 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }} # Value of the GPG private key to import
           gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
           settings-path: ${{ github.workspace }}
-      - name: Cache local Maven repository
-        uses: actions/cache@v2.1.6
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+
       - name: Configure Git User
         run: |
           git config user.email "oss@expediagroup.com"
           git config user.name "eg-oss-ci"
+
       - name: Release artifacts
         run: |
           mvn -e -DdevelopmentVersion=${{ inputs.developmentVersion }} -DreleaseVersion=${{ inputs.releaseVersion }} \
