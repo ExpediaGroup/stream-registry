@@ -17,9 +17,9 @@
 
   <scm>
     <!--suppress UnresolvedMavenProperty -->
-    <connection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</connection>
+    <connection>scm:git:git@github.com/ExpediaGroup/stream-registry.git</connection>
     <!--suppress UnresolvedMavenProperty -->
-    <developerConnection>scm:git:https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ExpediaGroup/stream-registry.git</developerConnection>
+    <developerConnection>scm:git:git@github.com/ExpediaGroup/stream-registry.git</developerConnection>
     <url>https://github.com/ExpediaGroup/stream-registry</url>
     <tag>HEAD</tag>
   </scm>
