@@ -1,16 +1,6 @@
-name: Release
+name: Release Patch
 
-on:
-  workflow_dispatch:
-    inputs:
-      releaseVersion:
-        description: 'Version to release. Ex. 1.0.1'
-        required: true
-        type: string
-      developmentVersion:
-        description: 'Next SNAPSHOT Version. Ex. 1.0.2-SNAPSHOT'
-        required: true
-        type: string
+on: [workflow_dispatch]
 
 jobs:
   build:
@@ -44,9 +34,8 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Release artifacts
         run: |
-          mvn -DdevelopmentVersion=${{ inputs.developmentVersion }} -DreleaseVersion=${{ inputs.releaseVersion }} \
-            -Dresume=false release:prepare release:perform \
-            -Djib.skip -DskipTests -Darguments="-s $GITHUB_WORKSPACE/settings.xml"
+          mvn -Dresume=false release:prepare release:perform \
+          -Djib.skip -DskipTests -Darguments="-s $GITHUB_WORKSPACE/settings.xml"
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
