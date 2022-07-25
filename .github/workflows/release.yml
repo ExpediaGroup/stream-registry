@@ -1,9 +1,6 @@
 name: Release
 
-on:
-  push:
-    branches:
-      - master
+on: [workflow_dispatch]
 
 jobs:
   build:
@@ -36,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Release artifacts
-        run: mvn -Dresume=false release:prepare release:perform -Djib.skip -Darguments="-s $GITHUB_WORKSPACE/settings.xml"
+        run: mvn -Dresume=false release:prepare release:perform -Djib.skip -DskipTests -Darguments="-s $GITHUB_WORKSPACE/settings.xml"
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
