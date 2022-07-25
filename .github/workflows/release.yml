@@ -50,7 +50,7 @@ jobs:
           git config user.name "eg-oss-ci"
       - name: Release artifacts
         run: |
-          mvn -DdevelopmentVersion=${{ inputs.developmentVersion }} -DreleaseVersion=${{ inputs.releaseVersion }} \
+          mvn -e -DdevelopmentVersion=${{ inputs.developmentVersion }} -DreleaseVersion=${{ inputs.releaseVersion }} \
             -Dresume=false release:prepare release:perform --settings $GITHUB_WORKSPACE/settings.xml \
             -Djib.skip -DskipTests -Darguments=-DskipTests --activate-profiles sonatype-oss-release-github-actions \
             --batch-mode --show-version --no-transfer-progress
