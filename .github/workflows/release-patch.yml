@@ -35,17 +35,6 @@ jobs:
           git config user.email "oss@expediagroup.com"
           git config user.name "eg-oss-ci"
 
-      - name: Configure Docker
-        run: |
-          docker login public-docker-virtual.artylab.expedia.biz -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-          echo "
-          ryuk.container.image=public-docker-virtual.artylab.expedia.biz/testcontainers/ryuk:0.3.0
-          kafka.container.image=public-docker-virtual.artylab.expedia.biz/confluentinc/cp-kafka
-          " > ~/.testcontainers.properties
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
       - name: Release artifacts
         run: |
           mvn -e -Dresume=false release:prepare release:perform --settings $GITHUB_WORKSPACE/settings.xml \
@@ -54,6 +43,4 @@ jobs:
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
