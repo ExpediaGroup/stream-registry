@@ -102,37 +102,19 @@ public class ProcessService {
 
     process.getZones().forEach(zoneKey -> {
       process.getInputs().forEach(input -> {
-          // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS AND IF IT DOES UPDATE EXISTING
-          if (existing.get().getInputs().stream().anyMatch(i -> i.getStream().equals(input.getStream()))) {
-            consumerService.canUpdateConsumer(buildConsumer(process, zoneKey, input));
-            // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS AND IF IT DOES NOT ADD NEW ONE
-          } else {
-            consumerService.canCreateConsumer(buildConsumer(process, zoneKey, input));
-          }
-        }
-      );
-      // FOR EACH PROCESS INPUT IN THE EXISTING INPUTS, CHECK IF IT STILL EXISTS IN THE NEW ONE, IF NOT DELETE
-      existing.get().getInputs().forEach(input -> {
-        if (process.getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
-          consumerService.canDeleteConsumer(buildConsumer(process, zoneKey, input));
+        // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS
+        // IF IT DOES NOT, THEN CHECK THAT THE USER CAN CREATE IT.
+        if (existing.get().getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
+          consumerService.canCreateConsumer(buildConsumer(process, zoneKey, input));
         }
       });
     });
     process.getZones().forEach(zoneKey -> {
       process.getOutputs().forEach(output -> {
-          // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS AND IF IT DOES UPDATE EXISTING
-          if (existing.get().getOutputs().stream().anyMatch(o -> o.getStream().equals(output.getStream()))) {
-            producerService.canUpdateProducer(buildProducer(process, zoneKey, output));
-            // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS AND IF IT DOES NOT ADD NEW ONE
-          } else {
-            producerService.canCreateProducer(buildProducer(process, zoneKey, output));
-          }
-        }
-      );
-      // FOR EACH PROCESS OUTPUT IN THE EXISTING OUTPUTS, CHECK IF IT STILL EXISTS IN THE NEW ONE, IF NOT DELETE
-      existing.get().getOutputs().forEach(output -> {
-        if (process.getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
-          producerService.canDeleteProducer(buildProducer(process, zoneKey, output));
+        // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS
+        // IF IT DOES NOT, THEN CHECK THAT THE USER CAN CREATE IT.
+        if (existing.get().getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
+          producerService.canCreateProducer(buildProducer(process, zoneKey, output));
         }
       });
     });
