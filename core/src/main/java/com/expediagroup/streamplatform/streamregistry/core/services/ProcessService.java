@@ -102,8 +102,8 @@ public class ProcessService {
 
     process.getZones().forEach(zoneKey -> {
       process.getInputs().forEach(input -> {
-        // FOR EACH PROCESS INPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS INPUTS
-        // IF IT DOES NOT, THEN CHECK THAT THE USER CAN CREATE IT.
+        // For each process input check if it exists in the existing process inputs
+        // if it does not, then check that the user can create it.
         if (existing.get().getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
           consumerService.canCreateConsumer(buildConsumer(process, zoneKey, input));
         }
@@ -111,8 +111,8 @@ public class ProcessService {
     });
     process.getZones().forEach(zoneKey -> {
       process.getOutputs().forEach(output -> {
-        // FOR EACH PROCESS OUTPUT CHECK IF IT EXISTS IN THE EXISTING PROCESS OUTPUTS
-        // IF IT DOES NOT, THEN CHECK THAT THE USER CAN CREATE IT.
+        // For each process output check if it exists in the existing process outputs
+        // if it does not, then check that the user can create it.
         if (existing.get().getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
           producerService.canCreateProducer(buildProducer(process, zoneKey, output));
         }
