@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,16 +101,6 @@ public class ConsumerService {
 
   @PreAuthorize("hasPermission(#consumer, 'CREATE')")
   public Consumer canCreateConsumer(Consumer consumer) {
-    return consumer;
-  }
-
-  @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
-  public Consumer canUpdateConsumer(Consumer consumer) {
-    return consumer;
-  }
-
-  @PreAuthorize("hasPermission(#consumer, 'DELETE')")
-  public Consumer canDeleteConsumer(Consumer consumer) {
     return consumer;
   }
 }

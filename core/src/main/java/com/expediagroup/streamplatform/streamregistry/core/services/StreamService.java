@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import lombok.RequiredArgsConstructor;
@@ -33,10 +34,14 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.SchemaView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
@@ -53,11 +58,13 @@ public class StreamService {
   private final ProducerService producerService;
   private final ConsumerService consumerService;
   private final SchemaService schemaService;
+  private final ProcessService processService;
   private final StreamView streamView;
   private final StreamBindingView streamBindingView;
   private final ProducerView producerView;
   private final ConsumerView consumerView;
   private final SchemaView schemaView;
+  private final ProcessView processView;
 
   @PreAuthorize("hasPermission(#stream, 'CREATE')")
   public Optional<Stream> create(Stream stream) throws ValidationException {
@@ -106,6 +113,23 @@ public class StreamService {
   public void delete(Stream stream) {
     handlerService.handleDelete(stream);
 
+    // Find all Processes that have multiple different stream inputs/outputs which also have this Stream as an input or output.
+    // These processes would be left invalid if the stream was deleted, so block the delete of this Stream.
+
+    allProcessesForStream(stream)
+      .filter(process -> processInputOutputStreamKeySet(process).size() > 1)
+      .findAny()
+      .ifPresent(process -> {
+        throw new IllegalStateException("Cannot delete Stream, Processes depend on it including: " + processKeyString(process));
+      });
+
+    // Assuming the above check passed, then cascade deletes to Processes which have ONLY this stream as input/output.
+    // These types of Processes would be entirely useless without the Stream and so can be safely deleted.
+    // This will cascade to ProcessBinding also.
+    allProcessesForStream(stream)
+      .filter(process -> processInputOutputStreamKeySet(process).size() == 1)
+      .forEach(processService::delete);
+
     // This will cascade to ConsumerBinding and ProducerBinding also
     streamBindingView
       .findAll(b -> b.getKey().getStreamKey().equals(stream.getKey()))
@@ -130,5 +154,23 @@ public class StreamService {
     if (!schemaReferencedByOtherStreams) {
       schemaView.get(schemaKey).ifPresent(schemaService::delete);
     }
+  }
+
+  private String processKeyString(Process process) {
+    return process.getKey().getDomain() + ":" + process.getKey().getName();
+  }
+
+  private Set<StreamKey> processInputOutputStreamKeySet(Process process) {
+    return java.util.stream.Stream.concat(
+      process.getInputs().stream().map(ProcessInputStream::getStream),
+      process.getOutputs().stream().map(ProcessOutputStream::getStream)
+    ).collect(java.util.stream.Collectors.toSet());
+  }
+
+  private java.util.stream.Stream<Process> allProcessesForStream(Stream stream) {
+    return processView.findAll(process ->
+      process.getInputs().stream().anyMatch(input -> input.getStream().equals(stream.getKey())) ||
+        process.getOutputs().stream().anyMatch(output -> output.getStream().equals(stream.getKey()))
+    );
   }
 }

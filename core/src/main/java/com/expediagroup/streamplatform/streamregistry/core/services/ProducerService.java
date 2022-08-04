@@ -103,15 +103,4 @@ public class ProducerService {
   public Producer canCreateProducer(Producer producer) {
     return producer;
   }
-
-  @PreAuthorize("hasPermission(#producer, 'UPDATE')")
-  public Producer canUpdateProducer(Producer producer) {
-    return producer;
-  }
-
-  @PreAuthorize("hasPermission(#producer, 'DELETE')")
-  public Producer canDeleteProducer(Producer producer) {
-    return producer;
-  }
-
 }

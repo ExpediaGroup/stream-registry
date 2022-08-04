@@ -23,6 +23,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -134,7 +135,7 @@ public class ProcessServiceTest {
   }
 
   @Test
-  public void update() {
+  public void updateNoInputOutputChanges() {
     final Specification specification = mock(Specification.class);
 
     Process existing = createTestProcess();
@@ -150,13 +151,13 @@ public class ProcessServiceTest {
     verify(processRepository).findById(existing.getKey());
     verify(processValidator).validateForUpdate(newEntity, existing);
     verify(handlerService).handleUpdate(newEntity, existing);
-    verify(consumerService).canUpdateConsumer(any(Consumer.class));
-    verify(producerService).canUpdateProducer(any(Producer.class));
+    verify(consumerService, never()).canCreateConsumer(any(Consumer.class));
+    verify(producerService, never()).canCreateProducer(any(Producer.class));
     verify(processRepository).save(newEntity);
   }
 
   @Test
-  public void updateCreate() {
+  public void updateWithInputOutputChanges() {
     final Specification specification = mock(Specification.class);
 
     Process existing = createTestProcess();
@@ -176,34 +177,8 @@ public class ProcessServiceTest {
     verify(processRepository).findById(existing.getKey());
     verify(processValidator).validateForUpdate(newEntity, existing);
     verify(handlerService).handleUpdate(newEntity, existing);
-    verify(consumerService).canCreateConsumer(any(Consumer.class));
-    verify(producerService).canCreateProducer(any(Producer.class));
-    verify(processRepository).save(newEntity);
-  }
-
-  @Test
-  public void updateDelete() {
-    final Specification specification = mock(Specification.class);
-
-    Process existing = createTestProcess();
-    Process newEntity = createTestProcess();
-    ProcessInputStream pis = new ProcessInputStream(new StreamKey("inputDomain","streamInputName2",1), new ObjectMapper().createObjectNode());
-    existing.getInputs().add(pis);
-    ProcessOutputStream pos = new ProcessOutputStream(new StreamKey("outputDomain","streamOutputName2",1), new ObjectMapper().createObjectNode());
-    existing.getOutputs().add(pos);
-
-    when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
-    doNothing().when(processValidator).validateForUpdate(newEntity, existing);
-    when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
-    when(processRepository.save(newEntity)).thenReturn(newEntity);
-
-    processService.update(newEntity);
-
-    verify(processRepository).findById(existing.getKey());
-    verify(processValidator).validateForUpdate(newEntity, existing);
-    verify(handlerService).handleUpdate(newEntity, existing);
-    verify(consumerService).canDeleteConsumer(any(Consumer.class));
-    verify(producerService).canDeleteProducer(any(Producer.class));
+    verify(consumerService, times(1)).canCreateConsumer(any(Consumer.class));
+    verify(producerService, times(1)).canCreateProducer(any(Producer.class));
     verify(processRepository).save(newEntity);
   }
 
@@ -215,22 +190,37 @@ public class ProcessServiceTest {
 
   @Test(expected = AccessDeniedException.class)
   public void updateFailAuthConsumer() {
-    Process p = createTestProcess();
+    final Specification specification = mock(Specification.class);
 
-    when(processRepository.findById(p.getKey())).thenReturn(Optional.of(p));
-    when(consumerService.canUpdateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+    Process existing = createTestProcess();
+    Process newEntity = createTestProcess();
 
-    processService.update(p);
+    ProcessInputStream pis = new ProcessInputStream(new StreamKey("inputDomain","streamInputName2",1), new ObjectMapper().createObjectNode());
+    newEntity.getInputs().add(pis);
+
+    when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
+    doNothing().when(processValidator).validateForUpdate(newEntity, existing);
+    when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
+    when(consumerService.canCreateConsumer(any(Consumer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.update(newEntity);
   }
 
   @Test(expected = AccessDeniedException.class)
   public void updateFailAuthProducer() {
-    Process p = createTestProcess();
+    final Specification specification = mock(Specification.class);
 
-    when(processRepository.findById(p.getKey())).thenReturn(Optional.of(p));
-    when(producerService.canUpdateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+    Process existing = createTestProcess();
+    Process newEntity = createTestProcess();
+    ProcessOutputStream pos = new ProcessOutputStream(new StreamKey("outputDomain","streamOutputName2",1), new ObjectMapper().createObjectNode());
+    newEntity.getOutputs().add(pos);
 
-    processService.update(p);
+    when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
+    doNothing().when(processValidator).validateForUpdate(newEntity, existing);
+    when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
+    when(producerService.canCreateProducer(any(Producer.class))).thenThrow(AccessDeniedException.class);
+
+    processService.update(newEntity);
   }
 
   @Test
@@ -322,5 +312,4 @@ public class ProcessServiceTest {
     p.setZones(zones);
     return p;
   }
-
 }
