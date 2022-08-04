@@ -15,12 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
-import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.validators.key.KeyValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
