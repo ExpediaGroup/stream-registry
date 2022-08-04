@@ -19,13 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,6 +114,14 @@ public class ProcessServiceTest {
     verify(processRepository).save(entity);
   }
 
+  @Test(expected = ValidationException.class)
+  public void createFailedWhenDomainNotExists() {
+    Process entity = createTestProcess();
+    when(processRepository.findById(entity.getKey())).thenReturn(empty());
+    doThrow(ValidationException.class).when(processValidator).validateForCreate(entity);
+    processService.create(entity);
+  }
+
   @Test(expected = AccessDeniedException.class)
   public void createFailAuthConsumer() {
     Process p = createTestProcess();
@@ -186,6 +188,15 @@ public class ProcessServiceTest {
   public void updateValidationException() {
     Process p = createTestProcess();
     processService.update(p);
+  }
+
+  @Test(expected = ValidationException.class)
+  public void updateFailedWhenDomainNotExists() {
+    Process entity = createTestProcess();
+    Process existing = createTestProcess();
+    when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
+    doThrow(ValidationException.class).when(processValidator).validateForUpdate(entity, existing);
+    processService.update(entity);
   }
 
   @Test(expected = AccessDeniedException.class)
