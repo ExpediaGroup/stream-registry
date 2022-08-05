@@ -74,5 +74,4 @@ public class ProcessValidator implements Validator<Process> {
       throw new ValidationException("Domain [" + process.getKey().getDomain() + "] does not exist");
     }
   }
-
 }
