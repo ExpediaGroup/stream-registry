@@ -66,7 +66,7 @@ public class ProcessValidatorTest {
   @Mock
   private ZoneRepository zoneRepository;
 
-  ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = new ObjectMapper();
 
   private ProcessValidator processValidator;
 
