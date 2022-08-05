@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.validators.key.KeyValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
@@ -29,6 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 public class ProcessBindingValidator implements Validator<ProcessBinding> {
   private final StreamBindingView streamBindingView;
   private final ZoneView zoneView;
+  private final DomainView domainView;
   private final KeyValidator<ProcessBinding> processBindingKeyValidator;
   private final SpecificationValidator specificationValidator;
 
@@ -46,6 +48,7 @@ public class ProcessBindingValidator implements Validator<ProcessBinding> {
   }
 
   public void validateForCreateAndUpdate(ProcessBinding processBinding) throws ValidationException {
+    requireExistingDomain(processBinding);
     if (!zoneView.exists(processBinding.getZone())) {
       throw new ValidationException("Zone [" + processBinding.getZone() + "] does not exist");
     }
@@ -63,4 +66,9 @@ public class ProcessBindingValidator implements Validator<ProcessBinding> {
     });
   }
 
+  private void requireExistingDomain(ProcessBinding processBinding) {
+    if (!domainView.exists(processBinding.getKey().getDomainKey())) {
+      throw new ValidationException("Domain [" + processBinding.getKey().getDomainName() + "] does not exist");
+    }
+  }
 }
