@@ -16,7 +16,10 @@
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -80,16 +85,16 @@ public class ProcessValidatorTest {
   public void processNameIsInvalid() {
     Process p = new Process();
     p.setKey(new ProcessKey("domain","1_name"));
-    ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
-    Assertions.assertEquals(ex.getMessage(), "Invalid name '1_name'. Names must conform to pattern ^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$");
+    ValidationException ex = assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
+    assertEquals(ex.getMessage(), "Invalid name '1_name'. Names must conform to pattern ^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$");
   }
 
   @Test
   public void domainIsNotExist() {
     Process p = createTestProcess();
     when(domainRepository.findById(any())).thenReturn(Optional.empty());
-    ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
-    Assertions.assertEquals(ex.getMessage(), "Domain [domain] does not exist");
+    ValidationException ex = assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
+    assertEquals(ex.getMessage(), "Domain [domain] does not exist");
   }
 
   @Test
@@ -98,8 +103,8 @@ public class ProcessValidatorTest {
     final Domain entity = mock(Domain.class);
     when(domainRepository.findById(any())).thenReturn(Optional.of(entity));
     when(zoneRepository.findById(any())).thenReturn(Optional.empty());
-    ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
-    Assertions.assertEquals(ex.getMessage(), "Zone [ZoneKey(name=aws_us_east_1)] does not exist");
+    ValidationException ex = assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
+    assertEquals(ex.getMessage(), "Zone [ZoneKey(name=aws_us_east_1)] does not exist");
   }
 
   @Test
@@ -110,8 +115,8 @@ public class ProcessValidatorTest {
     when(domainRepository.findById(any())).thenReturn(Optional.of(domainEntity));
     when(zoneRepository.findById(any())).thenReturn(Optional.of(zoneEntity));
     when(streamRepository.findById(any())).thenReturn(Optional.empty());
-    ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
-    Assertions.assertEquals(ex.getMessage(), "Input stream [StreamKey(domain=inputDomain, name=streamInputName, version=1)] does not exist");
+    ValidationException ex = assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
+    assertEquals(ex.getMessage(), "Input stream [StreamKey(domain=inputDomain, name=streamInputName, version=1)] does not exist");
   }
 
   @Test
@@ -123,8 +128,8 @@ public class ProcessValidatorTest {
     when(domainRepository.findById(any())).thenReturn(Optional.of(domainEntity));
     when(zoneRepository.findById(any())).thenReturn(Optional.of(zoneEntity));
     when(streamRepository.findById(any())).thenReturn(Optional.of(streamEntity)).thenReturn(Optional.empty());
-    ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
-    Assertions.assertEquals(ex.getMessage(), "Output stream [StreamKey(domain=outputDomain, name=streamOutputName, version=1)] does not exist");
+    ValidationException ex = assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
+    assertEquals(ex.getMessage(), "Output stream [StreamKey(domain=outputDomain, name=streamOutputName, version=1)] does not exist");
   }
 
   @Test
@@ -137,8 +142,8 @@ public class ProcessValidatorTest {
     when(domainRepository.findById(any())).thenReturn(Optional.of(domainEntity));
     when(zoneRepository.findById(any())).thenReturn(Optional.of(zoneEntity));
     when(streamRepository.findById(any())).thenReturn(Optional.of(streamEntity)).thenReturn(Optional.of(streamEntity));
-    ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
-    Assertions.assertEquals(ex.getMessage(), "Configuration must not be null.");
+    ValidationException ex = assertThrows(ValidationException.class, () -> processValidator.validateForCreate(p));
+    assertEquals(ex.getMessage(), "Configuration must not be null.");
   }
 
   @Test
@@ -153,8 +158,8 @@ public class ProcessValidatorTest {
     when(streamRepository.findById(any())).thenReturn(Optional.of(streamEntity)).thenReturn(Optional.of(streamEntity));
     Process existingProcess = createTestProcess();
     existingProcess.getSpecification().setType("egsp.kstream");
-    ValidationException ex = Assertions.assertThrows(ValidationException.class, () -> processValidator.validateForUpdate(p, existingProcess));
-    Assertions.assertEquals(ex.getMessage(), "Configuration must be of the same type as the existing.");
+    ValidationException ex = assertThrows(ValidationException.class, () -> processValidator.validateForUpdate(p, existingProcess));
+    assertEquals(ex.getMessage(), "Configuration must be of the same type as the existing.");
   }
 
   @Test
@@ -166,7 +171,7 @@ public class ProcessValidatorTest {
     when(domainRepository.findById(any())).thenReturn(Optional.of(domainEntity));
     when(zoneRepository.findById(any())).thenReturn(Optional.of(zoneEntity));
     when(streamRepository.findById(any())).thenReturn(Optional.of(streamEntity)).thenReturn(Optional.of(streamEntity));
-    Assertions.assertDoesNotThrow(() -> processValidator.validateForCreate(p));
+    assertDoesNotThrow(() -> processValidator.validateForCreate(p));
     verify(domainRepository, times(1)).findById(any());
     verify(zoneRepository, times(1)).findById(any());
     verify(streamRepository, times(2)).findById(any());
