@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+### Changed
+- producer & consumer creation not allowed when domain is not available
+- Fixed `streamKey` field name in `ProcessInputStream` and `ProcessOutputStream`
+- Fixed `streamKey` field name in `ProcessInputStreamInput` and `ProcessOutputStreamInput`
+- Fixed `zoneKeys` field in `Process`
+- Fixed `zoneKey` field in `ProcessBinding`
+
+## [1.1.2] 2022-08-05
+### Updated
+- Process creation not allowed when domain is not available
+
+## [1.1.1] 2022-07-27
+### Updated
+- Removed unnecessary producer/consumer auth checks on Process Update and Delete
+
+## [1.1.0] 2022-07-26
+### Updated
+- Now blocking Stream deletes if there are Processes that depend on it.
+
+## [1.0.2] 2022-07-26
+### Added
+- Domain delete functionality
+- Github actions for release
+### Updated
+- eg-oss-parent version updated to `2.4.0`
+- now inheriting jib plugin version from eg-oss-parent
+
+## [1.0.1] 2022-06-22
+### Added
+- Added option to add metrics to `EntityView`
+
 ## [1.0.0] 2022-06-20
 ### Changed
 - Entity key values are no longer normalised by trimming whitespace and converting to lowercase. Entity key values are

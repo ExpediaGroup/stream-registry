@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.validators.key.KeyValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
@@ -29,6 +30,8 @@ import com.expediagroup.streamplatform.streamregistry.model.Process;
 public class ProcessValidator implements Validator<Process> {
   private final StreamView streamView;
   private final ZoneView zoneView;
+
+  private final DomainView domainView;
   private final KeyValidator<Process> processKeyValidator;
   private final SpecificationValidator specificationValidator;
 
@@ -46,23 +49,29 @@ public class ProcessValidator implements Validator<Process> {
   }
 
   private void validateForCreateAndUpdate(Process process) throws ValidationException {
-    process.getZones().forEach(zone -> {
+    requireExistingDomain(process);
+    process.getZoneKeys().forEach(zone -> {
       if (!zoneView.exists(zone)) {
         throw new ValidationException("Zone [" + zone + "] does not exist");
       }
     });
 
     process.getInputs().forEach(input -> {
-      if (!streamView.exists(input.getStream())) {
-        throw new ValidationException("Input stream [" + input.getStream() + "] does not exist");
+      if (!streamView.exists(input.getStreamKey())) {
+        throw new ValidationException("Input stream [" + input.getStreamKey() + "] does not exist");
       }
     });
 
     process.getOutputs().forEach(output -> {
-      if (!streamView.exists(output.getStream())) {
-        throw new ValidationException("Output stream [" + output.getStream() + "] does not exist");
+      if (!streamView.exists(output.getStreamKey())) {
+        throw new ValidationException("Output stream [" + output.getStreamKey() + "] does not exist");
       }
     });
   }
 
+  private void requireExistingDomain(Process process) {
+    if (!domainView.exists(process.getKey().getDomainKey())) {
+      throw new ValidationException("Domain [" + process.getKey().getDomain() + "] does not exist");
+    }
+  }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,8 @@ public class DomainMutationImpl implements DomainMutation {
 
   @Override
   public Boolean delete(DomainKeyInput key) {
-    throw new UnsupportedOperationException("Domnain deletion is not currently supported.");
+    domainView.get(key.asDomainKey()).ifPresent(domainService::delete);
+    return true;
   }
 
   @Override

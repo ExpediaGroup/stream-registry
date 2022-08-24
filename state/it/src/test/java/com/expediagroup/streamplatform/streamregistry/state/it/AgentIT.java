@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,40 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.it;
 
+import com.expediagroup.streamplatform.streamregistry.state.AgentData;
+import com.expediagroup.streamplatform.streamregistry.state.EntityView;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
+import com.expediagroup.streamplatform.streamregistry.state.EventSender;
+import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
+import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionFactory;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.testcontainers.containers.KafkaContainer;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import static com.expediagroup.streamplatform.streamregistry.state.AgentData.generateData;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.specificationDeletion;
 import static java.util.UUID.randomUUID;
@@ -29,41 +63,9 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.hamcrest.core.IsIterableContaining.hasItems;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.val;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.testcontainers.containers.KafkaContainer;
-
-import com.expediagroup.streamplatform.streamregistry.state.AgentData;
-import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
-import com.expediagroup.streamplatform.streamregistry.state.EntityView;
-import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
-import com.expediagroup.streamplatform.streamregistry.state.EventSender;
-import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
-import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
-
 public class AgentIT {
+
+  private final MeterRegistry meterRegistry = new SimpleMeterRegistry();
 
   private final String schemaRegistryUrl = "mock://schemas";
 
@@ -76,7 +78,7 @@ public class AgentIT {
 
   private String topicName;
   private KafkaEventSender kafkaEventSender;
-  private DefaultEntityView entityView;
+  private EntityView entityView;
   private StoringEntityViewListener dummyAgent;
   private AgentData data;
 
@@ -84,7 +86,7 @@ public class AgentIT {
   public void setUp() {
     topicName = topicName();
     kafkaEventSender = kafkaEventSender(topicName);
-    entityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    entityView = EntityViews.meteredEntityView(kafkaEventReceiver(topicName, "groupId"), meterRegistry);
     dummyAgent = new StoringEntityViewListener();
     data = generateData();
   }
@@ -205,7 +207,7 @@ public class AgentIT {
     assertThat(deletedDomainEvents(entityView), is(aMapWithSize(0)));
 
     // simulate the restart of an Agent
-    val restartedEntityView = new DefaultEntityView(kafkaEventReceiver(topicName, "groupId"));
+    val restartedEntityView = EntityViews.meteredEntityView(kafkaEventReceiver(topicName, "groupId"), meterRegistry);
     val restartedAgent = new StoringEntityViewListener();
     startAgent(restartedEntityView, restartedAgent);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package com.expediagroup.streamplatform.streamregistry.core.views;
 
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +34,10 @@ public class SchemaView {
 
   public Optional<Schema> get(SchemaKey key) {
     return schemaRepository.findById(key);
+  }
+
+  public Stream<Schema> findAll(Predicate<Schema> filter) {
+    return schemaRepository.findAll().stream().filter(filter);
   }
 
   public boolean exists(SchemaKey key) {
