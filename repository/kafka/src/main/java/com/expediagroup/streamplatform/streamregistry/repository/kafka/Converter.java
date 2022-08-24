@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -311,7 +311,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     public ProcessSpecification convertSpecification(Process entity) {
       Specification specification = entity.getSpecification();
       return new ProcessSpecification(
-        entity.getZones().stream().map(zoneConverter::convertKey).collect(Collectors.toList()),
+        entity.getZoneKeys().stream().map(zoneConverter::convertKey).collect(Collectors.toList()),
         specification.getDescription(),
         convertTags(specification.getTags()),
         specification.getType(),
@@ -320,13 +320,13 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         convertFunction(specification.getFunction()),
         entity.getInputs().stream().map(input ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
-            streamConverter.convertKey(input.getStream()),
+            streamConverter.convertKey(input.getStreamKey()),
             input.getConfiguration()
           )
         ).collect(Collectors.toList()),
         entity.getOutputs().stream().map(output ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream(
-            streamConverter.convertKey(output.getStream()),
+            streamConverter.convertKey(output.getStreamKey()),
             output.getConfiguration()
           )
         ).collect(Collectors.toList())
@@ -528,7 +528,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
     public ProcessBindingSpecification convertSpecification(ProcessBinding entity) {
       Specification specification = entity.getSpecification();
       return new ProcessBindingSpecification(
-        zoneConverter.convertKey(entity.getZone()),
+        zoneConverter.convertKey(entity.getZoneKey()),
         specification.getDescription(),
         convertTags(specification.getTags()),
         specification.getType(),

@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -28,9 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -180,7 +180,7 @@ public class ProcessBindingValidatorTest {
     ProcessBinding pb = new ProcessBinding();
     pb.setKey(new ProcessBindingKey("domain", "aws_us_east_1", "process"));
     pb.setStatus(new Status(mapper.createObjectNode()));
-    pb.setZone(new ZoneKey("aws_us_east_1"));
+    pb.setZoneKey(new ZoneKey("aws_us_east_1"));
     pb.setSpecification(
       new Specification(
         "description",

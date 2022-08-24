@@ -162,15 +162,15 @@ public class StreamService {
 
   private Set<StreamKey> processInputOutputStreamKeySet(Process process) {
     return java.util.stream.Stream.concat(
-      process.getInputs().stream().map(ProcessInputStream::getStream),
-      process.getOutputs().stream().map(ProcessOutputStream::getStream)
+      process.getInputs().stream().map(ProcessInputStream::getStreamKey),
+      process.getOutputs().stream().map(ProcessOutputStream::getStreamKey)
     ).collect(java.util.stream.Collectors.toSet());
   }
 
   private java.util.stream.Stream<Process> allProcessesForStream(Stream stream) {
     return processView.findAll(process ->
-      process.getInputs().stream().anyMatch(input -> input.getStream().equals(stream.getKey())) ||
-        process.getOutputs().stream().anyMatch(output -> output.getStream().equals(stream.getKey()))
+      process.getInputs().stream().anyMatch(input -> input.getStreamKey().equals(stream.getKey())) ||
+        process.getOutputs().stream().anyMatch(output -> output.getStreamKey().equals(stream.getKey()))
     );
   }
 }
