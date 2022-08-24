@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - producer & consumer creation not allowed when domain is not available
 - Fixed `streamKey` field name in `ProcessInputStream` and `ProcessOutputStream`
 - Fixed `streamKey` field name in `ProcessInputStreamInput` and `ProcessOutputStreamInput`
+- Fixed `zoneKeys` field in `Process`
+- Fixed `zoneKey` field in `ProcessBinding`
 
 ## [1.1.2] 2022-08-05
 ### Updated
