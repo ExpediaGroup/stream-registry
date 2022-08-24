@@ -280,12 +280,12 @@ type Consumer {
 ############ Process ############
 
 type ProcessInputStream {
-    stream: StreamKey!
+    streamKey: StreamKey!
     configuration: ObjectNode!
 }
 
 input ProcessInputStreamInput {
-    stream: StreamKeyInput!
+    streamKeyInput: StreamKeyInput!
     configuration: ObjectNode!
 }
 
@@ -300,12 +300,12 @@ input ProcessInputStreamBindingInput {
 }
 
 type ProcessOutputStream {
-    stream: StreamKey!
+    streamKey: StreamKey!
     configuration: ObjectNode!
 }
 
 input ProcessOutputStreamInput {
-    stream: StreamKeyInput!
+    streamKeyInput: StreamKeyInput!
     configuration: ObjectNode!
 }
 

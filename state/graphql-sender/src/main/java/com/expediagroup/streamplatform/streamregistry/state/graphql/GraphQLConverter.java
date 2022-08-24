@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -417,7 +417,7 @@ class GraphQLConverter {
         ).collect(toList()))
         .inputs(event.getSpecification().getInputs().stream().map(input ->
           ProcessInputStreamInput.builder()
-            .stream(StreamKeyInput.builder()
+            .streamKeyInput(StreamKeyInput.builder()
               .domain(input.getStream().getDomainKey().getName())
               .name(input.getStream().getName())
               .version(input.getStream().getVersion())
@@ -427,7 +427,7 @@ class GraphQLConverter {
         ).collect(toList()))
         .outputs(event.getSpecification().getOutputs().stream().map(output ->
           ProcessOutputStreamInput.builder()
-            .stream(StreamKeyInput.builder()
+            .streamKeyInput(StreamKeyInput.builder()
               .domain(output.getStream().getDomainKey().getName())
               .name(output.getStream().getName())
               .version(output.getStream().getVersion())
