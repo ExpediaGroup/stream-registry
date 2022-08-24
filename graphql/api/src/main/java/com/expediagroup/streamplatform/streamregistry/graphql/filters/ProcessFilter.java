@@ -77,7 +77,7 @@ public class ProcessFilter implements Predicate<Process> {
 
     List<ProcessInputStream> safeInputs = (inputs == null) ? Collections.emptyList() : inputs;
     return streamKeyQueries.stream().allMatch(streamKeyQuery ->
-      safeInputs.stream().anyMatch(input -> matchesStreamKey(input.getStream(), streamKeyQuery))
+      safeInputs.stream().anyMatch(input -> matchesStreamKey(input.getStreamKey(), streamKeyQuery))
     );
   }
 
@@ -88,7 +88,7 @@ public class ProcessFilter implements Predicate<Process> {
 
     List<ProcessOutputStream> safeOutputs = (outputs == null) ? Collections.emptyList() : outputs;
     return streamKeyQueries.stream().allMatch(streamKeyQuery ->
-      safeOutputs.stream().anyMatch(output -> matchesStreamKey(output.getStream(), streamKeyQuery))
+      safeOutputs.stream().anyMatch(output -> matchesStreamKey(output.getStreamKey(), streamKeyQuery))
     );
   }
 
