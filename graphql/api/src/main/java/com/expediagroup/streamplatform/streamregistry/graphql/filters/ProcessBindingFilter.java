@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class ProcessBindingFilter implements Predicate<ProcessBinding> {
   @Override
   public boolean test(ProcessBinding processBinding) {
     return matchesProcessBindingKey(processBinding.getKey(), keyQuery)
-      && matchesZone(processBinding.getZone(), zoneKeyQuery)
+      && matchesZone(processBinding.getZoneKey(), zoneKeyQuery)
       && matchesInput(processBinding.getInputs(), inputQueries)
       && matchesOutput(processBinding.getOutputs(), outputQueries)
       && matchesSpecification(processBinding.getSpecification(), specQuery);

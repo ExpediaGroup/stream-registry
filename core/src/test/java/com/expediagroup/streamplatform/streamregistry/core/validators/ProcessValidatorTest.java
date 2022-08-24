@@ -193,7 +193,7 @@ public class ProcessValidatorTest {
     p.setKey(new ProcessKey("domain","name"));
     List<ZoneKey> zones = new ArrayList<>();
     zones.add(new ZoneKey("aws_us_east_1"));
-    p.setZones(zones);
+    p.setZoneKeys(zones);
     return p;
   }
 }

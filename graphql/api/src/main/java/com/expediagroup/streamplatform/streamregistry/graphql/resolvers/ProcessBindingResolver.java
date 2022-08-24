@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class ProcessBindingResolver implements Resolvers.ProcessBindingResolver 
   }
 
   public ZoneKey zone(ProcessBinding processBinding) {
-    return processBinding.getZone();
+    return processBinding.getZoneKey();
   }
 
   public Process process(ProcessBinding processBinding) {

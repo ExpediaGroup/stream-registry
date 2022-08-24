@@ -50,7 +50,7 @@ public class ProcessValidator implements Validator<Process> {
 
   private void validateForCreateAndUpdate(Process process) throws ValidationException {
     requireExistingDomain(process);
-    process.getZones().forEach(zone -> {
+    process.getZoneKeys().forEach(zone -> {
       if (!zoneView.exists(zone)) {
         throw new ValidationException("Zone [" + zone + "] does not exist");
       }

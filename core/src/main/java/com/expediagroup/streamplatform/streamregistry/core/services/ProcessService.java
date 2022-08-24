@@ -65,12 +65,12 @@ public class ProcessService {
     }
     processValidator.validateForCreate(process);
     process.setSpecification(handlerService.handleInsert(process));
-    process.getZones().forEach(zoneKey ->
+    process.getZoneKeys().forEach(zoneKey ->
       process.getInputs().forEach(input -> consumerService.canCreateConsumer(
         buildConsumer(process, zoneKey, input)
       )));
 
-    process.getZones().forEach(zoneKey ->
+    process.getZoneKeys().forEach(zoneKey ->
       process.getOutputs().forEach(output -> producerService.canCreateProducer(
         buildProducer(process, zoneKey, output)
       )));
@@ -100,7 +100,7 @@ public class ProcessService {
     processValidator.validateForUpdate(process, existing.get());
     process.setSpecification(handlerService.handleUpdate(process, existing.get()));
 
-    process.getZones().forEach(zoneKey -> {
+    process.getZoneKeys().forEach(zoneKey -> {
       process.getInputs().forEach(input -> {
         // For each process input check if it exists in the existing process inputs
         // if it does not, then check that the user can create it.
@@ -109,7 +109,7 @@ public class ProcessService {
         }
       });
     });
-    process.getZones().forEach(zoneKey -> {
+    process.getZoneKeys().forEach(zoneKey -> {
       process.getOutputs().forEach(output -> {
         // For each process output check if it exists in the existing process outputs
         // if it does not, then check that the user can create it.

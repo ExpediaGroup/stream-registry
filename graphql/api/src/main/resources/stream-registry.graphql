@@ -285,7 +285,7 @@ type ProcessInputStream {
 }
 
 input ProcessInputStreamInput {
-    streamKeyInput: StreamKeyInput!
+    streamKey: StreamKeyInput!
     configuration: ObjectNode!
 }
 
@@ -305,7 +305,7 @@ type ProcessOutputStream {
 }
 
 input ProcessOutputStreamInput {
-    streamKeyInput: StreamKeyInput!
+    streamKey: StreamKeyInput!
     configuration: ObjectNode!
 }
 
@@ -336,7 +336,7 @@ input ProcessKeyQuery {
 
 type Process {
     key: ProcessKey!
-    zones: [ZoneKey!]!
+    zoneKeys: [ZoneKey!]!
     specification: Specification!
     status: Status
     inputs: [ProcessInputStream!]!
@@ -357,7 +357,7 @@ input ProcessBindingKeyInput {
 
 type ProcessBinding {
     key: ProcessBindingKey!
-    zone: ZoneKey!
+    zoneKey: ZoneKey!
     specification: Specification!
     status: Status
     inputs: [ProcessInputStreamBinding!]!

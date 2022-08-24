@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class ProcessBindingMutationImpl implements ProcessBindingMutation {
     ProcessBinding processBinding = new ProcessBinding();
     processBinding.setKey(key.asProcessBindingKey());
     processBinding.setSpecification(specification.asSpecification());
-    processBinding.setZone(zone.asZoneKey());
+    processBinding.setZoneKey(zone.asZoneKey());
     processBinding.setInputs(inputs.stream().map(ProcessInputStreamBindingInput::asProcessInputStreamBinding).collect(Collectors.toList()));
     processBinding.setOutputs(outputs.stream().map(ProcessOutputStreamBindingInput::asProcessOutputStreamBinding).collect(Collectors.toList()));
     maintainState(processBinding, processBindingView.get(processBinding.getKey()));

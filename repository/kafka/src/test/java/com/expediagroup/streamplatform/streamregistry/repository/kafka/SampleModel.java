@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -259,7 +259,7 @@ final class SampleModel {
     Process entity = new Process();
     entity.setKey(processKey());
     entity.setSpecification(specification());
-    entity.setZones(Collections.singletonList(zoneKey()));
+    entity.setZoneKeys(Collections.singletonList(zoneKey()));
     entity.setInputs(Collections.singletonList(new ProcessInputStream(streamKey(), mapper.createObjectNode())));
     entity.setOutputs(Collections.singletonList(new ProcessOutputStream(streamKey(), mapper.createObjectNode())));
     entity.setStatus(status());
@@ -270,7 +270,7 @@ final class SampleModel {
     Process entity = new Process();
     entity.setKey(processKey());
     entity.setSpecification(specificationWith(null));
-    entity.setZones(Collections.singletonList(zoneKey()));
+    entity.setZoneKeys(Collections.singletonList(zoneKey()));
     entity.setInputs(Collections.singletonList(new ProcessInputStream(streamKey(), mapper.createObjectNode())));
     entity.setOutputs(Collections.singletonList(new ProcessOutputStream(streamKey(), mapper.createObjectNode())));
     entity.setStatus(status());
@@ -305,7 +305,7 @@ final class SampleModel {
     ProcessBinding entity = new ProcessBinding();
     entity.setKey(processBindingKey());
     entity.setSpecification(specification());
-    entity.setZone(zoneKey());
+    entity.setZoneKey(zoneKey());
     entity.setInputs(Collections.singletonList(processInputStreamBinding()));
     entity.setOutputs(Collections.singletonList(processOutputStreamBinding()));
     entity.setStatus(status());
@@ -316,7 +316,7 @@ final class SampleModel {
     ProcessBinding entity = new ProcessBinding();
     entity.setKey(processBindingKey());
     entity.setSpecification(specificationWith(null));
-    entity.setZone(zoneKey());
+    entity.setZoneKey(zoneKey());
     entity.setInputs(Collections.singletonList(processInputStreamBinding()));
     entity.setOutputs(Collections.singletonList(processOutputStreamBinding()));
     entity.setStatus(status());

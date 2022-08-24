@@ -180,7 +180,7 @@ public class ProcessBindingValidatorTest {
     ProcessBinding pb = new ProcessBinding();
     pb.setKey(new ProcessBindingKey("domain", "aws_us_east_1", "process"));
     pb.setStatus(new Status(mapper.createObjectNode()));
-    pb.setZone(new ZoneKey("aws_us_east_1"));
+    pb.setZoneKey(new ZoneKey("aws_us_east_1"));
     pb.setSpecification(
       new Specification(
         "description",

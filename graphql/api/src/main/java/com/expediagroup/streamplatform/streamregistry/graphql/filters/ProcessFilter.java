@@ -53,7 +53,7 @@ public class ProcessFilter implements Predicate<Process> {
   @Override
   public boolean test(Process process) {
     return matchesProcessKey(process.getKey(), keyQuery)
-      && matchesZone(process.getZones(), zoneKeyQueries)
+      && matchesZone(process.getZoneKeys(), zoneKeyQueries)
       && matchesInput(process.getInputs(), inputQueries)
       && matchesOutput(process.getOutputs(), outputQueries)
       && matchesSpecification(process.getSpecification(), specQuery);

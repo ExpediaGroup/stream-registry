@@ -442,11 +442,11 @@ public class ITestDataFactory {
       .specification(specificationInputBuilder(DEFAULT).build())
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
-        .streamKeyInput(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
-        .streamKeyInput(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()));
   }
@@ -457,11 +457,11 @@ public class ITestDataFactory {
       .specification(specificationInputBuilder(DEFAULT).build())
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
-        .streamKeyInput(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
-        .streamKeyInput(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()));
   }
@@ -472,11 +472,11 @@ public class ITestDataFactory {
       .specification(specificationInputBuilder(DEFAULT).build())
       .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
-        .streamKeyInput(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
-        .streamKeyInput(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()));
   }
