@@ -38,6 +38,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.expediagroup.streamplatform.streamregistry.state.Configurator;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -70,18 +71,28 @@ public class KafkaEventReceiver implements EventReceiver {
   private volatile boolean shuttingDown = false;
   private final AtomicBoolean started = new AtomicBoolean(false);
 
-  public KafkaEventReceiver(Config config, EventCorrelator correlator) {
+  public KafkaEventReceiver(Config config, EventCorrelator correlator, Configurator<KafkaConsumer<AvroKey, AvroValue>> consumerConfigurator) {
     this(
         config,
         correlator,
         new AvroConverter(),
-        new KafkaConsumer<>(consumerConfig(config)),
+        getKafkaConsumer(config, consumerConfigurator),
         newScheduledThreadPool(1)
     );
   }
 
+  public KafkaEventReceiver(Config config, EventCorrelator correlator) {
+    this(config, correlator, kafkaConsumer -> {});
+  }
+
   public KafkaEventReceiver(Config config) {
     this(config, null);
+  }
+
+  private static KafkaConsumer<AvroKey, AvroValue> getKafkaConsumer(Config config, Configurator<KafkaConsumer<AvroKey, AvroValue>> consumerConfigurator) {
+    KafkaConsumer<AvroKey, AvroValue> kafkaConsumer = new KafkaConsumer<>(consumerConfig(config));
+    consumerConfigurator.configure(kafkaConsumer);
+    return kafkaConsumer;
   }
 
   @Override

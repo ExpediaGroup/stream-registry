@@ -82,13 +82,13 @@ public class StateIT {
         .schemaRegistryUrl(schemaRegistryUrl)
         .topic(topic)
         .groupId("groupId")
-        .build(), correlator);
+        .build(), correlator, kafkaConsumer -> {});
 
     val kafkaSender = new KafkaEventSender(KafkaEventSender.Config.builder()
         .bootstrapServers(kafka.getBootstrapServers())
         .schemaRegistryUrl(schemaRegistryUrl)
         .topic(topic)
-        .build(), correlator);
+        .build(), correlator, kafkaProducer -> {});
 
     EntityView view = EntityViews.defaultEntityView(receiver);
     val listener = mock(EntityViewListener.class);

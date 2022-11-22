@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import com.expediagroup.streamplatform.streamregistry.state.Configurator;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -62,17 +63,27 @@ public class KafkaEventSender implements EventSender {
   @NonNull private final AvroConverter converter;
   @NonNull private final KafkaProducer<AvroKey, AvroValue> producer;
 
-  public KafkaEventSender(Config config, EventCorrelator correlator) {
+  public KafkaEventSender(Config config, EventCorrelator correlator, Configurator<KafkaProducer<AvroKey, AvroValue>> producerConfigurator) {
     this(
         config,
         correlator == null ? new NullCorrelationStrategy() : new CorrelationStrategyImpl(correlator),
         new AvroConverter(),
-        new KafkaProducer<>(producerConfig(config))
+        getKafkaProducer(config, producerConfigurator)
     );
+  }
+
+  public KafkaEventSender(Config config, EventCorrelator correlator) {
+    this(config, correlator, kafkaProducer -> {});
   }
 
   public KafkaEventSender(Config config) {
     this(config, null);
+  }
+
+  private static KafkaProducer<AvroKey, AvroValue> getKafkaProducer(Config config, Configurator<KafkaProducer<AvroKey, AvroValue>> producerConfigurator) {
+    KafkaProducer<AvroKey, AvroValue> kafkaProducer = new KafkaProducer<>(producerConfig(config));
+    producerConfigurator.configure(kafkaProducer);
+    return kafkaProducer;
   }
 
   @Override
@@ -150,7 +161,6 @@ public class KafkaEventSender implements EventSender {
       };
     }
   }
-
 
   @Override
   public void close() {
