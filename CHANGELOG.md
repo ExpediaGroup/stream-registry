@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [1.2.0]
-### Changed
+### Added
 - Support for configuring the KafkaProducer and KafkaConsumer that is used in KafkaEventSender and KafkaEventReceiver
   for example to attach KafkaClientMetrics.
 
