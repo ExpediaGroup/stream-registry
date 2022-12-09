@@ -148,12 +148,12 @@ fragment ProcessPart on Process{
 mutation InsertProcess(
   $key: ProcessKeyInput!
   $specification: SpecificationInput!
-  $zones: [ZoneKeyInput!]!
+  $zoneKeys: [ZoneKeyInput!]!
   $inputs: [ProcessInputStreamInput!]!
   $outputs: [ProcessOutputStreamInput!]!
 ) {
   process{
-    insert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
+    insert(key: $key, specification: $specification, zoneKeys: $zoneKeys, inputs: $inputs, outputs: $outputs){
       __typename
       ...ProcessPart
     }
@@ -163,12 +163,12 @@ mutation InsertProcess(
 mutation UpdateProcess(
   $key: ProcessKeyInput!
   $specification: SpecificationInput!
-  $zones: [ZoneKeyInput!]!
+  $zoneKeys: [ZoneKeyInput!]!
   $inputs: [ProcessInputStreamInput!]!
   $outputs: [ProcessOutputStreamInput!]!
 ) {
   process{
-    update(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
+    update(key: $key, specification: $specification, zoneKeys: $zoneKeys, inputs: $inputs, outputs: $outputs){
       __typename
       ...ProcessPart
     }
@@ -178,12 +178,12 @@ mutation UpdateProcess(
 mutation UpsertProcess(
   $key: ProcessKeyInput!
   $specification: SpecificationInput!
-  $zones: [ZoneKeyInput!]!
+  $zoneKeys: [ZoneKeyInput!]!
   $inputs: [ProcessInputStreamInput!]!
   $outputs: [ProcessOutputStreamInput!]!
 ) {
   process{
-    upsert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs){
+    upsert(key: $key, specification: $specification, zoneKeys: $zoneKeys, inputs: $inputs, outputs: $outputs){
       __typename
       ...ProcessPart
     }
@@ -266,12 +266,12 @@ fragment ProcessBindingPart on ProcessBinding{
 mutation InsertProcessBinding(
   $key: ProcessBindingKeyInput!
   $specification: SpecificationInput!
-  $zone: ZoneKeyInput!
+  $zoneKey: ZoneKeyInput!
   $inputs: [ProcessInputStreamBindingInput!]!
   $outputs: [ProcessOutputStreamBindingInput!]!
 ) {
   processBinding{
-    insert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
+    insert(key: $key, specification: $specification, zoneKey: $zoneKey, inputs: $inputs, outputs: $outputs){
       __typename
       ...ProcessBindingPart
     }
@@ -281,12 +281,12 @@ mutation InsertProcessBinding(
 mutation UpdateProcessBinding(
   $key: ProcessBindingKeyInput!
   $specification: SpecificationInput!
-  $zone: ZoneKeyInput!
+  $zoneKey: ZoneKeyInput!
   $inputs: [ProcessInputStreamBindingInput!]!
   $outputs: [ProcessOutputStreamBindingInput!]!
 ) {
   processBinding{
-    update(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
+    update(key: $key, specification: $specification, zoneKey: $zoneKey, inputs: $inputs, outputs: $outputs){
       __typename
       ...ProcessBindingPart
     }
@@ -296,12 +296,12 @@ mutation UpdateProcessBinding(
 mutation UpsertProcessBinding(
   $key: ProcessBindingKeyInput!
   $specification: SpecificationInput!
-  $zone: ZoneKeyInput!
+  $zoneKey: ZoneKeyInput!
   $inputs: [ProcessInputStreamBindingInput!]!
   $outputs: [ProcessOutputStreamBindingInput!]!
 ) {
   processBinding{
-    upsert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs){
+    upsert(key: $key, specification: $specification, zoneKey: $zoneKey, inputs: $inputs, outputs: $outputs){
       __typename
       ...ProcessBindingPart
     }
