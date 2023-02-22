@@ -125,7 +125,6 @@ public class ProcessBindingTestStage extends AbstractTestStage {
     Response r = client.invoke(factory.upsertProcessBindingMutationBuilder().build());
 
     ProcessBindingsQuery.Data after = (ProcessBindingsQuery.Data) client.getOptionalData(ProcessBindingsQuery.builder().key(query).build()).get();
-
     assertNotNull(after.getProcessBinding().getByQuery().get(0)
         .getFragments().getProcessBindingPart().getStatus().get()
         .getFragments().getStatusPart().getAgentStatus());

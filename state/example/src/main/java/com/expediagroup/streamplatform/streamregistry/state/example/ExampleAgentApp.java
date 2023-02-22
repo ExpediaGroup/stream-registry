@@ -16,6 +16,12 @@
 package com.expediagroup.streamplatform.streamregistry.state.example;
 
 import com.apollographql.apollo.ApolloClient;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
 import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
@@ -24,10 +30,6 @@ import com.expediagroup.streamplatform.streamregistry.state.graphql.Credentials;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApolloClientFactory;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.GraphQLEventSender;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class ExampleAgentApp {

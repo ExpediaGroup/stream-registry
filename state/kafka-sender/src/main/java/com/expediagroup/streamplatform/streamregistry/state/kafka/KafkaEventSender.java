@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import com.expediagroup.streamplatform.streamregistry.state.Configurator;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +45,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 
+import com.expediagroup.streamplatform.streamregistry.state.Configurator;
 import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;

@@ -33,5 +33,6 @@ public class ProcessBinding implements Entity<ProcessBindingKey> {
   private ZoneKey zoneKey;
   private List<ProcessInputStreamBinding> inputs;
   private List<ProcessOutputStreamBinding> outputs;
+  private Process process;
   private Status status;
 }
