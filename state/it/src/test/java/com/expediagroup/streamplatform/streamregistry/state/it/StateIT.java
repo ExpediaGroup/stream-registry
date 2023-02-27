@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
 import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,10 +36,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.KafkaContainer;
 
-import com.expediagroup.streamplatform.streamregistry.state.DefaultEntityView;
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;

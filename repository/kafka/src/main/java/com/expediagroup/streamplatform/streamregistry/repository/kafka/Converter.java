@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Principal;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
@@ -111,6 +113,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
       );
     }
 
+
+
     @Override
     public Entity<SK, SS> convertEntity(ME entity) {
       return new Entity<>(
@@ -147,6 +151,80 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           Security::getRole,
           sec -> sec.getPrincipals().stream().map(principal -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal(principal.getName())).collect(toList())
         ));
+    }
+
+    protected Process convertProcess(Entity.ProcessBindingKey processBindingKey, ProcessSpecification processSpecification) {
+      return new Process(
+        new ProcessKey(processBindingKey.getProcessKey().getDomainKey().getName(), processBindingKey.getProcessKey().getName()),
+        new Specification(
+          processSpecification.getDescription(),
+          processSpecification.getTags().stream().map(tag -> new Tag(tag.getName(), tag.getValue())).collect(toList()),
+          processSpecification.getType(),
+          processSpecification.getConfiguration(),
+          processSpecification.getSecurity().entrySet().stream().map(
+            security ->
+              new Security(security.getKey(), security.getValue().stream().map(
+                principal -> new Principal(principal.getName())
+                ).collect(toList())
+              )
+          ).collect(toList()),
+          processSpecification.getFunction()
+        ),
+        processSpecification.getZones().stream().map(zoneKey -> new ZoneKey(zoneKey.getName())).collect(toList()),
+        processSpecification.getInputs().stream().map(
+          input -> new ProcessInputStream(
+            new StreamKey(input.getStream().getDomainKey().getName(), input.getStream().getName(), input.getStream().getVersion()),
+            input.getConfiguration()
+          )
+        ).collect(toList()),
+        processSpecification.getOutputs().stream().map(
+          output -> new ProcessOutputStream(
+            new StreamKey(output.getStream().getDomainKey().getName(), output.getStream().getName(), output.getStream().getVersion()),
+            output.getConfiguration()
+          )
+        ).collect(toList()),
+        new Status()
+      );
+    }
+
+    protected ProcessSpecification convertProcessSpecification(Process process) {
+      return new ProcessSpecification(
+        process.getZoneKeys().stream().map(zoneKey -> new Entity.ZoneKey(zoneKey.getName())).collect(toList()),
+        process.getSpecification().getDescription(),
+        process.getSpecification().getTags().stream().map(tag ->
+          new com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag(tag.getName(), tag.getValue())
+          ).collect(toList()),
+        process.getSpecification().getType(),
+        process.getSpecification().getConfiguration(),
+        process.getSpecification().getSecurity().stream().collect(
+          toMap(
+            Security::getRole,
+            security ->
+              security.getPrincipals().stream().map(
+                principal -> new com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal(principal.getName())
+              ).collect(toList())
+          )
+        ),
+        convertFunction(process.getSpecification().getFunction()),
+        process.getInputs().stream().map(
+          input ->
+            new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
+              new Entity.StreamKey(
+                new Entity.DomainKey(input.getStreamKey().getDomainKey().getName()), input.getStreamKey().getName(), input.getStreamKey().getVersion()
+              ),
+              input.getConfiguration()
+            )
+          ).collect(toList()),
+        process.getOutputs().stream().map(
+          input ->
+            new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream(
+              new Entity.StreamKey(
+                new Entity.DomainKey(input.getStreamKey().getDomainKey().getName()), input.getStreamKey().getName(), input.getStreamKey().getVersion()
+              ),
+              input.getConfiguration()
+            )
+        ).collect(toList())
+      );
     }
 
     protected String convertFunction(String function) {
@@ -524,6 +602,7 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
       );
     }
 
+
     @Override
     public ProcessBindingSpecification convertSpecification(ProcessBinding entity) {
       Specification specification = entity.getSpecification();
@@ -540,7 +619,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
           input.getConfiguration())).collect(Collectors.toList()),
         entity.getOutputs().stream().map(output -> new ProcessOutputStreamBinding(
           streamBindingConverter.convertKey(output.getStreamBindingKey()),
-          output.getConfiguration())).collect(Collectors.toList())
+          output.getConfiguration())).collect(Collectors.toList()),
+        convertProcessSpecification(entity.getProcess())
         );
     }
 
@@ -556,7 +636,8 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         entity.getSpecification().getOutputs().stream().map(output -> new com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding(
           streamBindingConverter.convertKey(output.getStreamBindingKey()), output.getConfiguration()
         )).collect(Collectors.toList()),
-        convertStatus(entity.getStatus())
+        convertStatus(entity.getStatus()),
+        convertProcess(entity.getKey(), entity.getSpecification().getProcessSpecification())
       );
     }
   }

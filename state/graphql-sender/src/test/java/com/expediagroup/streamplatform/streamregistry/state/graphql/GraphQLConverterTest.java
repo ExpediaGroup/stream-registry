@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,8 @@ public class GraphQLConverterTest {
     "type", configuration, security, "function", Collections.singletonList(new ProcessInputStream(streamkey, mapper.createObjectNode())),
     Collections.singletonList(new ProcessOutputStream(streamkey, mapper.createObjectNode())));
   private final ProcessBindingSpecification processBindingSpecification = new ProcessBindingSpecification(zoneKey, "description", Collections.singletonList(tag),
-    "type", configuration, security, "function", Collections.singletonList(processInputStreamBinding), Collections.singletonList(processOutputStreamBinding));
+    "type", configuration, security, "function", Collections.singletonList(processInputStreamBinding), Collections.singletonList(processOutputStreamBinding),
+    processSpecification);
   private final StreamSpecification streamSpecification = new StreamSpecification("description", Collections.singletonList(tag), "type", configuration, security, "function", schemaKey);
   private final StatusEntry statusEntry = new StatusEntry("agentStatus", mapper.createObjectNode());
 

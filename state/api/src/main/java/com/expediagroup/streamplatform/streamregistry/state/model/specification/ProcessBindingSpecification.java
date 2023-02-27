@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,4 +36,5 @@ public class ProcessBindingSpecification implements Specification {
   @NonNull String function;
   @NonNull List<ProcessInputStreamBinding> inputs;
   @NonNull List<ProcessOutputStreamBinding> outputs;
+  @NonNull ProcessSpecification processSpecification;
 }

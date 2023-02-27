@@ -139,6 +139,7 @@ protocol StreamRegistry {
     string function = "";
     array<AvroProcessInputStreamBinding> inputs;
     array<AvroProcessOutputStreamBinding> outputs;
+    AvroProcessSpecification processSpecification;
   }
 
   record AvroSpecificationKey {

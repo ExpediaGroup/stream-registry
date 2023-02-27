@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,16 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamB
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.StreamKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.*;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Tag;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 public class AvroConverterTest {
@@ -112,7 +121,8 @@ public class AvroConverterTest {
     }},
     "function",
     singletonList(avroProcessInputStreamBinding),
-    singletonList(avroProcessOutputStreamBinding)
+    singletonList(avroProcessOutputStreamBinding),
+    avroProcessSpecification
   );
 
   private final AvroStatusKey avroStatusKey = new AvroStatusKey(avroDomainKey, "statusName");
@@ -188,7 +198,8 @@ public class AvroConverterTest {
     }},
     "function",
     singletonList(processInputStreamBinding),
-    singletonList(processOutputStreamBinding)
+    singletonList(processOutputStreamBinding),
+    processSpecification
   );
 
   @Test

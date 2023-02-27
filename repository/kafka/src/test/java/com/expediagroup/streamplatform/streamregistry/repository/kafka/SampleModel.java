@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -309,6 +309,7 @@ final class SampleModel {
     entity.setInputs(Collections.singletonList(processInputStreamBinding()));
     entity.setOutputs(Collections.singletonList(processOutputStreamBinding()));
     entity.setStatus(status());
+    entity.setProcess(process());
     return entity;
   }
 
@@ -320,6 +321,7 @@ final class SampleModel {
     entity.setInputs(Collections.singletonList(processInputStreamBinding()));
     entity.setOutputs(Collections.singletonList(processOutputStreamBinding()));
     entity.setStatus(status());
+    entity.setProcess(processWithoutFunction());
     return entity;
   }
 
