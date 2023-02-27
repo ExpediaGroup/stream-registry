@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
@@ -35,6 +23,17 @@ import com.expediagroup.streamplatform.streamregistry.state.EventSender;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 @Configuration
 public class KafkaConfiguration {

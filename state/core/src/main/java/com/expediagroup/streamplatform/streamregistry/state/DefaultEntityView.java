@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,13 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
-import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
-import static lombok.AccessLevel.PACKAGE;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,14 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
+import static lombok.AccessLevel.PACKAGE;
 
 @RequiredArgsConstructor(access = PACKAGE)
 public class DefaultEntityView implements EntityView {
