@@ -360,6 +360,7 @@ type ProcessBinding {
     zoneKey: ZoneKey!
     specification: Specification!
     status: Status
+    process: Process!
     inputs: [ProcessInputStreamBinding!]!
     outputs: [ProcessOutputStreamBinding!]!
 }
