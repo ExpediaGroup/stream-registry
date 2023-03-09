@@ -261,6 +261,10 @@ fragment ProcessBindingPart on ProcessBinding{
     __typename
     ...StatusPart
   }
+  process{
+    __typename
+    ...ProcessPart
+  }
 }
 
 mutation InsertProcessBinding(

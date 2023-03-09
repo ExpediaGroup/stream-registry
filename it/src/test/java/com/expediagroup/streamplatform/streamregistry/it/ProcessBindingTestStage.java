@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,11 @@ public class ProcessBindingTestStage extends AbstractTestStage {
     ProcessBindingQuery.Data after = (ProcessBindingQuery.Data) client.getOptionalData(ProcessBindingQuery.builder().key(input).build()).get();
 
     assertEquals(after.getProcessBinding().getByKey().get().getFragments().getProcessBindingPart().getKey().getProcessName(), input.processName());
+    assertNotNull(
+      after.getProcessBinding().getByKey().get()
+        .getFragments().getProcessBindingPart().getProcess()
+        .getFragments().getProcessPart()
+    );
   }
 
   @Override
@@ -125,10 +130,13 @@ public class ProcessBindingTestStage extends AbstractTestStage {
     Response r = client.invoke(factory.upsertProcessBindingMutationBuilder().build());
 
     ProcessBindingsQuery.Data after = (ProcessBindingsQuery.Data) client.getOptionalData(ProcessBindingsQuery.builder().key(query).build()).get();
-
     assertNotNull(after.getProcessBinding().getByQuery().get(0)
         .getFragments().getProcessBindingPart().getStatus().get()
         .getFragments().getStatusPart().getAgentStatus());
+    assertNotNull(after.getProcessBinding().getByQuery().get(0)
+      .getFragments().getProcessBindingPart().getProcess()
+      .getFragments().getProcessPart()
+    );
   }
 
   @Override
