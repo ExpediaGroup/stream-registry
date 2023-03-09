@@ -111,6 +111,11 @@ public class ProcessBindingTestStage extends AbstractTestStage {
     ProcessBindingQuery.Data after = (ProcessBindingQuery.Data) client.getOptionalData(ProcessBindingQuery.builder().key(input).build()).get();
 
     assertEquals(after.getProcessBinding().getByKey().get().getFragments().getProcessBindingPart().getKey().getProcessName(), input.processName());
+    assertNotNull(
+      after.getProcessBinding().getByKey().get()
+        .getFragments().getProcessBindingPart().getProcess()
+        .getFragments().getProcessPart()
+    );
   }
 
   @Override
@@ -132,9 +137,6 @@ public class ProcessBindingTestStage extends AbstractTestStage {
       .getFragments().getProcessBindingPart().getProcess()
       .getFragments().getProcessPart()
     );
-    System.out.println(after.getProcessBinding().getByQuery().get(0)
-      .getFragments().getProcessBindingPart().getProcess()
-      .getFragments().getProcessPart().getSpecification().getFragments().getSpecificationPart().getConfiguration());
   }
 
   @Override
