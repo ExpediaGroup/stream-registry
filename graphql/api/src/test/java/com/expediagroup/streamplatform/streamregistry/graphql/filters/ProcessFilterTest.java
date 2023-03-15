@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class ProcessFilterTest {
     process.setSpecification(matchingSpecification());
     assertTrue(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Collections.singletonList(MATCH)));
+    process.setZones(zoneKeyList(Collections.singletonList(MATCH)));
     assertTrue(processFilter.test(process));
 
     process.setInputs(inputList(Collections.singletonList(MATCH)));
@@ -157,30 +157,30 @@ public class ProcessFilterTest {
     Process process = new Process();
     assertFalse(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Collections.singletonList(MATCH)));
+    process.setZones(zoneKeyList(Collections.singletonList(MATCH)));
     assertTrue(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Arrays.asList(MATCH, MATCH2)));
+    process.setZones(zoneKeyList(Arrays.asList(MATCH, MATCH2)));
     assertTrue(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Arrays.asList(MATCH, FAIL)));
+    process.setZones(zoneKeyList(Arrays.asList(MATCH, FAIL)));
     assertTrue(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Collections.singletonList(FAIL)));
+    process.setZones(zoneKeyList(Collections.singletonList(FAIL)));
     assertFalse(processFilter.test(process));
 
     processFilter = new ProcessFilter(null, null, Arrays.asList(zoneKeyQuery1, zoneKeyQuery2), null, null);
 
-    process.setZoneKeys(zoneKeyList(Collections.singletonList(MATCH)));
+    process.setZones(zoneKeyList(Collections.singletonList(MATCH)));
     assertFalse(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Arrays.asList(MATCH, MATCH2)));
+    process.setZones(zoneKeyList(Arrays.asList(MATCH, MATCH2)));
     assertTrue(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Arrays.asList(MATCH, FAIL)));
+    process.setZones(zoneKeyList(Arrays.asList(MATCH, FAIL)));
     assertFalse(processFilter.test(process));
 
-    process.setZoneKeys(zoneKeyList(Collections.singletonList(FAIL)));
+    process.setZones(zoneKeyList(Collections.singletonList(FAIL)));
     assertFalse(processFilter.test(process));
   }
 

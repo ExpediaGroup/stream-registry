@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,21 +50,21 @@ public class ProcessValidator implements Validator<Process> {
 
   private void validateForCreateAndUpdate(Process process) throws ValidationException {
     requireExistingDomain(process);
-    process.getZoneKeys().forEach(zone -> {
+    process.getZones().forEach(zone -> {
       if (!zoneView.exists(zone)) {
         throw new ValidationException("Zone [" + zone + "] does not exist");
       }
     });
 
     process.getInputs().forEach(input -> {
-      if (!streamView.exists(input.getStreamKey())) {
-        throw new ValidationException("Input stream [" + input.getStreamKey() + "] does not exist");
+      if (!streamView.exists(input.getStream())) {
+        throw new ValidationException("Input stream [" + input.getStream() + "] does not exist");
       }
     });
 
     process.getOutputs().forEach(output -> {
-      if (!streamView.exists(output.getStreamKey())) {
-        throw new ValidationException("Output stream [" + output.getStreamKey() + "] does not exist");
+      if (!streamView.exists(output.getStream())) {
+        throw new ValidationException("Output stream [" + output.getStream() + "] does not exist");
       }
     });
   }

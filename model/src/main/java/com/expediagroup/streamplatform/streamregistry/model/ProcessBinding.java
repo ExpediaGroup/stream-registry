@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 public class ProcessBinding implements Entity<ProcessBindingKey> {
   private ProcessBindingKey key;
   private Specification specification;
-  private ZoneKey zoneKey;
+  private ZoneKey zone;
   private List<ProcessInputStreamBinding> inputs;
   private List<ProcessOutputStreamBinding> outputs;
   private Status status;

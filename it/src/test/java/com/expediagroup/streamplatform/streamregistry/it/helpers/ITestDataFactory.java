@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -442,11 +442,11 @@ public class ITestDataFactory {
       .specification(specificationInputBuilder(DEFAULT).build())
       .zoneKeys(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
-        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
-        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()));
   }
@@ -457,11 +457,11 @@ public class ITestDataFactory {
       .specification(specificationInputBuilder(DEFAULT).build())
       .zoneKeys(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
-        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
-        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()));
   }
@@ -472,11 +472,11 @@ public class ITestDataFactory {
       .specification(specificationInputBuilder(DEFAULT).build())
       .zoneKeys(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
-        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()))
       .outputs(Collections.singletonList(ProcessOutputStreamInput.builder()
-        .streamKey(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
+        .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
         .build()));
   }

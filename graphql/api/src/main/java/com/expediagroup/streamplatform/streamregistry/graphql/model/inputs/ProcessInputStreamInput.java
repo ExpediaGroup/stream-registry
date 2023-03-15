@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
 @Value
 @Builder
 public class ProcessInputStreamInput {
-  StreamKeyInput streamKey;
+  StreamKeyInput stream;
   ObjectNode configuration;
 
   public ProcessInputStream asProcessInputStream() {
-    return new ProcessInputStream(streamKey.asStreamKey(), configuration);
+    return new ProcessInputStream(stream.asStreamKey(), configuration);
   }
 }

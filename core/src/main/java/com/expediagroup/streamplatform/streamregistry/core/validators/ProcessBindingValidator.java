@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ public class ProcessBindingValidator implements Validator<ProcessBinding> {
 
   public void validateForCreateAndUpdate(ProcessBinding processBinding) throws ValidationException {
     requireExistingDomain(processBinding);
-    if (!zoneView.exists(processBinding.getZoneKey())) {
-      throw new ValidationException("Zone [" + processBinding.getZoneKey() + "] does not exist");
+    if (!zoneView.exists(processBinding.getZone())) {
+      throw new ValidationException("Zone [" + processBinding.getZone() + "] does not exist");
     }
 
     processBinding.getInputs().forEach(input -> {

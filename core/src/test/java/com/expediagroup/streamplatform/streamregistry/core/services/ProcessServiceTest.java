@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -327,7 +327,7 @@ public class ProcessServiceTest {
     p.setKey(new ProcessKey("domain","name"));
     List<ZoneKey> zones = new ArrayList<>();
     zones.add(new ZoneKey("aws_us_east_1"));
-    p.setZoneKeys(zones);
+    p.setZones(zones);
     return p;
   }
 }

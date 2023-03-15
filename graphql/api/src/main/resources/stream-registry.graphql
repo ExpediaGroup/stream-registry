@@ -280,12 +280,12 @@ type Consumer {
 ############ Process ############
 
 type ProcessInputStream {
-    streamKey: StreamKey!
+    stream: StreamKey!
     configuration: ObjectNode!
 }
 
 input ProcessInputStreamInput {
-    streamKey: StreamKeyInput!
+    stream: StreamKeyInput!
     configuration: ObjectNode!
 }
 
@@ -300,12 +300,12 @@ input ProcessInputStreamBindingInput {
 }
 
 type ProcessOutputStream {
-    streamKey: StreamKey!
+    stream: StreamKey!
     configuration: ObjectNode!
 }
 
 input ProcessOutputStreamInput {
-    streamKey: StreamKeyInput!
+    stream: StreamKeyInput!
     configuration: ObjectNode!
 }
 
@@ -336,7 +336,7 @@ input ProcessKeyQuery {
 
 type Process {
     key: ProcessKey!
-    zoneKeys: [ZoneKey!]!
+    zones: [ZoneKey!]!
     specification: Specification!
     status: Status
     inputs: [ProcessInputStream!]!
@@ -357,7 +357,7 @@ input ProcessBindingKeyInput {
 
 type ProcessBinding {
     key: ProcessBindingKey!
-    zoneKey: ZoneKey!
+    zone: ZoneKey!
     specification: Specification!
     status: Status
     process: Process!
