@@ -23,6 +23,6 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 @Value
 public class ProcessInputStream {
-  StreamKey streamKey;
+  StreamKey stream;
   ObjectNode configuration;
 }

@@ -417,7 +417,7 @@ class GraphQLConverter {
         ).collect(toList()))
         .inputs(event.getSpecification().getInputs().stream().map(input ->
           ProcessInputStreamInput.builder()
-            .streamKey(StreamKeyInput.builder()
+            .stream(StreamKeyInput.builder()
               .domain(input.getStream().getDomainKey().getName())
               .name(input.getStream().getName())
               .version(input.getStream().getVersion())
@@ -427,7 +427,7 @@ class GraphQLConverter {
         ).collect(toList()))
         .outputs(event.getSpecification().getOutputs().stream().map(output ->
           ProcessOutputStreamInput.builder()
-            .streamKey(StreamKeyInput.builder()
+            .stream(StreamKeyInput.builder()
               .domain(output.getStream().getDomainKey().getName())
               .name(output.getStream().getName())
               .version(output.getStream().getVersion())

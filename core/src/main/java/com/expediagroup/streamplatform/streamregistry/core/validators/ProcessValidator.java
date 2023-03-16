@@ -57,14 +57,14 @@ public class ProcessValidator implements Validator<Process> {
     });
 
     process.getInputs().forEach(input -> {
-      if (!streamView.exists(input.getStreamKey())) {
-        throw new ValidationException("Input stream [" + input.getStreamKey() + "] does not exist");
+      if (!streamView.exists(input.getStream())) {
+        throw new ValidationException("Input stream [" + input.getStream() + "] does not exist");
       }
     });
 
     process.getOutputs().forEach(output -> {
-      if (!streamView.exists(output.getStreamKey())) {
-        throw new ValidationException("Output stream [" + output.getStreamKey() + "] does not exist");
+      if (!streamView.exists(output.getStream())) {
+        throw new ValidationException("Output stream [" + output.getStream() + "] does not exist");
       }
     });
   }

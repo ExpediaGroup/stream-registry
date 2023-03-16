@@ -25,10 +25,10 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
 @Value
 @Builder
 public class ProcessInputStreamInput {
-  StreamKeyInput streamKey;
+  StreamKeyInput stream;
   ObjectNode configuration;
 
   public ProcessInputStream asProcessInputStream() {
-    return new ProcessInputStream(streamKey.asStreamKey(), configuration);
+    return new ProcessInputStream(stream.asStreamKey(), configuration);
   }
 }
