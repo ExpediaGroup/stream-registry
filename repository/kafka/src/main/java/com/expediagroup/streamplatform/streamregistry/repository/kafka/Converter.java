@@ -320,13 +320,13 @@ interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.mo
         convertFunction(specification.getFunction()),
         entity.getInputs().stream().map(input ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessInputStream(
-            streamConverter.convertKey(input.getStream()),
+            streamConverter.convertKey(input.getStreamKey()),
             input.getConfiguration()
           )
         ).collect(Collectors.toList()),
         entity.getOutputs().stream().map(output ->
           new com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessOutputStream(
-            streamConverter.convertKey(output.getStream()),
+            streamConverter.convertKey(output.getStreamKey()),
             output.getConfiguration()
           )
         ).collect(Collectors.toList())
