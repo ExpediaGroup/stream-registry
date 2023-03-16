@@ -19,8 +19,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 
 import java.util.Map;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-
 public class DefaultEntityViewUpdaterTest extends EntityViewUpdaterTest {
   @Override
   public EntityViewUpdater entityViewUpdater(Map<Entity.Key<?>, StateValue> entities) {
