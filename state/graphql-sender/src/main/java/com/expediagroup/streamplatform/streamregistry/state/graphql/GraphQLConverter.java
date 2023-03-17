@@ -412,7 +412,7 @@ class GraphQLConverter {
       return ProcessSpecificationMutation.builder()
         .key(convertKey(event.getKey()))
         .specification(convertSpecification(event.getSpecification()))
-        .zoneKeys(event.getSpecification().getZones().stream().map(zoneKey ->
+        .zones(event.getSpecification().getZones().stream().map(zoneKey ->
           ZoneKeyInput.builder().name(zoneKey.getName()).build()
         ).collect(toList()))
         .inputs(event.getSpecification().getInputs().stream().map(input ->
@@ -579,7 +579,7 @@ class GraphQLConverter {
       return ProcessBindingSpecificationMutation.builder()
         .key(convertKey(event.getKey()))
         .specification(convertSpecification(event.getSpecification()))
-        .zoneKey(ZoneKeyInput.builder().name(event.getSpecification().getZone().getName()).build())
+        .zone(ZoneKeyInput.builder().name(event.getSpecification().getZone().getName()).build())
         .inputs(event.getSpecification().getInputs().stream().map(input ->
           ProcessInputStreamBindingInput.builder()
             .streamBindingKey(StreamBindingKeyInput.builder()

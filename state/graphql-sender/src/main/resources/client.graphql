@@ -138,9 +138,9 @@ mutation ConsumerDeletion($key: ConsumerKeyInput!) {
   }
 }
 
-mutation ProcessSpecification($key: ProcessKeyInput!, $specification: SpecificationInput!, $zoneKeys: [ZoneKeyInput!]!, $inputs: [ProcessInputStreamInput!]!, $outputs: [ProcessOutputStreamInput!]!) {
+mutation ProcessSpecification($key: ProcessKeyInput!, $specification: SpecificationInput!, $zones: [ZoneKeyInput!]!, $inputs: [ProcessInputStreamInput!]!, $outputs: [ProcessOutputStreamInput!]!) {
   process {
-    upsert(key: $key, specification: $specification, zoneKeys: $zoneKeys, inputs: $inputs, outputs: $outputs) {
+    upsert(key: $key, specification: $specification, zones: $zones, inputs: $inputs, outputs: $outputs) {
       __typename
     }
   }
@@ -218,9 +218,9 @@ mutation ConsumerBindingDeletion($key: ConsumerBindingKeyInput!) {
   }
 }
 
-mutation ProcessBindingSpecification($key: ProcessBindingKeyInput!, $specification: SpecificationInput!, $zoneKey: ZoneKeyInput!, $inputs: [ProcessInputStreamBindingInput!]!, $outputs: [ProcessOutputStreamBindingInput!]!) {
+mutation ProcessBindingSpecification($key: ProcessBindingKeyInput!, $specification: SpecificationInput!, $zone: ZoneKeyInput!, $inputs: [ProcessInputStreamBindingInput!]!, $outputs: [ProcessOutputStreamBindingInput!]!) {
   processBinding {
-    upsert(key: $key, specification: $specification, zoneKey: $zoneKey, inputs: $inputs, outputs: $outputs) {
+    upsert(key: $key, specification: $specification, zone: $zone, inputs: $inputs, outputs: $outputs) {
       __typename
     }
   }

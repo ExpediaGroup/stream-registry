@@ -541,9 +541,9 @@ type ProducerMutation{
 }
 
 type ProcessMutation{
-    insert(key: ProcessKeyInput!, specification: SpecificationInput!, zoneKeys: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
-    update(key: ProcessKeyInput!, specification: SpecificationInput!, zoneKeys: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
-    upsert(key: ProcessKeyInput!, specification: SpecificationInput!, zoneKeys: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    insert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    update(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
+    upsert(key: ProcessKeyInput!, specification: SpecificationInput!, zones: [ZoneKeyInput!]!, inputs: [ProcessInputStreamInput!]!, outputs: [ProcessOutputStreamInput!]!): Process!
     delete(key: ProcessKeyInput!): Boolean!
     updateStatus(key: ProcessKeyInput!, status: StatusInput!): Process!
 }
@@ -573,9 +573,9 @@ type ConsumerBindingMutation{
 }
 
 type ProcessBindingMutation{
-    insert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zoneKey: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
-    update(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zoneKey: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
-    upsert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zoneKey: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    insert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    update(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
+    upsert(key: ProcessBindingKeyInput!, specification: SpecificationInput!, zone: ZoneKeyInput!, inputs: [ProcessInputStreamBindingInput!]!, outputs: [ProcessOutputStreamBindingInput!]!): ProcessBinding!
     delete(key: ProcessBindingKeyInput!): Boolean!
     updateStatus(key: ProcessBindingKeyInput!, status: StatusInput!): ProcessBinding!
 }

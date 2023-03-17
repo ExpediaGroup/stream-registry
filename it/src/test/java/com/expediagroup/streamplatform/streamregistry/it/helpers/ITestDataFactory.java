@@ -440,7 +440,7 @@ public class ITestDataFactory {
     return UpsertProcessMutation.builder()
       .key(processKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
-      .zoneKeys(Collections.singletonList(zoneKeyInputBuilder().build()))
+      .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
@@ -455,7 +455,7 @@ public class ITestDataFactory {
     return InsertProcessMutation.builder()
       .key(processKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
-      .zoneKeys(Collections.singletonList(zoneKeyInputBuilder().build()))
+      .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
@@ -470,7 +470,7 @@ public class ITestDataFactory {
     return UpdateProcessMutation.builder()
       .key(processKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
-      .zoneKeys(Collections.singletonList(zoneKeyInputBuilder().build()))
+      .zones(Collections.singletonList(zoneKeyInputBuilder().build()))
       .inputs(Collections.singletonList(ProcessInputStreamInput.builder()
         .stream(streamKeyInputBuilder().name(streamName).domain(domainName).version(1).build())
         .configuration(mapper.createObjectNode())
@@ -521,7 +521,7 @@ public class ITestDataFactory {
     return UpsertProcessBindingMutation.builder()
       .key(processBindingKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
-      .zoneKey(zoneKeyInputBuilder().build())
+      .zone(zoneKeyInputBuilder().build())
       .inputs(Collections.singletonList(processInputStreamBindingInputBuilder().build()))
       .outputs(Collections.singletonList(processOutputStreamBindingInputBuilder().build()));
   }
@@ -530,7 +530,7 @@ public class ITestDataFactory {
     return InsertProcessBindingMutation.builder()
       .key(processBindingKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
-      .zoneKey(zoneKeyInputBuilder().build())
+      .zone(zoneKeyInputBuilder().build())
       .inputs(Collections.singletonList(processInputStreamBindingInputBuilder().build()))
       .outputs(Collections.singletonList(processOutputStreamBindingInputBuilder().build()));
   }
@@ -539,7 +539,7 @@ public class ITestDataFactory {
     return UpdateProcessBindingMutation.builder()
       .key(processBindingKeyInputBuilder().build())
       .specification(specificationInputBuilder(DEFAULT).build())
-      .zoneKey(zoneKeyInputBuilder().build())
+      .zone(zoneKeyInputBuilder().build())
       .inputs(Collections.singletonList(processInputStreamBindingInputBuilder().build()))
       .outputs(Collections.singletonList(processOutputStreamBindingInputBuilder().build()));
   }
