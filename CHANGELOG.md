@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed 
 - removing all code which is related to renaming and was added in version `1.1.3` and `1.3.0`
 
-## [Unreleased]
+## [1.3.1]
 ### Updated
 - Adding process in ProcessBinding Query.
 
