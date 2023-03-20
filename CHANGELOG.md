@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Use Kotlin 1.7.10
 
-## [1.1.3] 2022-08-24
+## [1.1.3] 2022-08-24 [NEVER OFFICIALLY RELEASED]
 ### Changed
 - producer & consumer creation not allowed when domain is not available
 - Fixed `streamKey` field name in `ProcessInputStream` and `ProcessOutputStream`
