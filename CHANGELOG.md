@@ -4,32 +4,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [1.4.0] 2023-03-20
 ### Removed 
 - removing all code which is related to renaming and was added in version `1.1.3` and `1.3.0`
 
-## [1.3.1]
+## [1.3.1] 2023-03-09
 ### Updated
 - Adding process in ProcessBinding Query.
 
-## [1.3.0]
+## [1.3.0] 2022-12-09
 ### Changed
 - Fixing some property names related to zone keys 
 
-## [1.2.1]
+## [1.2.1] 2022-11-23
 ### No change
 - The release deployment for 1.2.0 failed (502 Bad Gateway) so releasing it again as 1.2.1
 
-## [1.2.0]
+## [1.2.0] 2022-11-23
 ### Added
 - Support for configuring the KafkaProducer and KafkaConsumer that is used in KafkaEventSender and KafkaEventReceiver
   for example to attach KafkaClientMetrics.
 
-## [1.1.4]
+## [1.1.4] 2022-08-25
 ### Changed
 - Use Kotlin 1.7.10
 
-## [1.1.3]
+## [1.1.3] 2022-08-24
 ### Changed
 - producer & consumer creation not allowed when domain is not available
 - Fixed `streamKey` field name in `ProcessInputStream` and `ProcessOutputStream`
