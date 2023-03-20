@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,12 +65,12 @@ public class ProcessService {
     }
     processValidator.validateForCreate(process);
     process.setSpecification(handlerService.handleInsert(process));
-    process.getZoneKeys().forEach(zoneKey ->
+    process.getZones().forEach(zoneKey ->
       process.getInputs().forEach(input -> consumerService.canCreateConsumer(
         buildConsumer(process, zoneKey, input)
       )));
 
-    process.getZoneKeys().forEach(zoneKey ->
+    process.getZones().forEach(zoneKey ->
       process.getOutputs().forEach(output -> producerService.canCreateProducer(
         buildProducer(process, zoneKey, output)
       )));
@@ -80,9 +80,9 @@ public class ProcessService {
   private Producer buildProducer(Process process, ZoneKey zoneKey, ProcessOutputStream output) {
     return new Producer(
       new ProducerKey(
-        output.getStreamKey().getDomainKey().getName(),
-        output.getStreamKey().getName(),
-        output.getStreamKey().getVersion(),
+        output.getStream().getDomainKey().getName(),
+        output.getStream().getName(),
+        output.getStream().getVersion(),
         zoneKey.getName(),
         process.getKey().getName()
       ),
@@ -100,20 +100,20 @@ public class ProcessService {
     processValidator.validateForUpdate(process, existing.get());
     process.setSpecification(handlerService.handleUpdate(process, existing.get()));
 
-    process.getZoneKeys().forEach(zoneKey -> {
+    process.getZones().forEach(zoneKey -> {
       process.getInputs().forEach(input -> {
         // For each process input check if it exists in the existing process inputs
         // if it does not, then check that the user can create it.
-        if (existing.get().getInputs().stream().noneMatch(i -> i.getStreamKey().equals(input.getStreamKey()))) {
+        if (existing.get().getInputs().stream().noneMatch(i -> i.getStream().equals(input.getStream()))) {
           consumerService.canCreateConsumer(buildConsumer(process, zoneKey, input));
         }
       });
     });
-    process.getZoneKeys().forEach(zoneKey -> {
+    process.getZones().forEach(zoneKey -> {
       process.getOutputs().forEach(output -> {
         // For each process output check if it exists in the existing process outputs
         // if it does not, then check that the user can create it.
-        if (existing.get().getOutputs().stream().noneMatch(o -> o.getStreamKey().equals(output.getStreamKey()))) {
+        if (existing.get().getOutputs().stream().noneMatch(o -> o.getStream().equals(output.getStream()))) {
           producerService.canCreateProducer(buildProducer(process, zoneKey, output));
         }
       });
@@ -125,9 +125,9 @@ public class ProcessService {
   private Consumer buildConsumer(Process process, ZoneKey zoneKey, ProcessInputStream input) {
     return new Consumer(
       new ConsumerKey(
-        input.getStreamKey().getDomainKey().getName(),
-        input.getStreamKey().getName(),
-        input.getStreamKey().getVersion(),
+        input.getStream().getDomainKey().getName(),
+        input.getStream().getName(),
+        input.getStream().getVersion(),
         zoneKey.getName(),
         process.getKey().getName()
       ),

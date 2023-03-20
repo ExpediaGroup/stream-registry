@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -412,12 +412,12 @@ class GraphQLConverter {
       return ProcessSpecificationMutation.builder()
         .key(convertKey(event.getKey()))
         .specification(convertSpecification(event.getSpecification()))
-        .zoneKeys(event.getSpecification().getZones().stream().map(zoneKey ->
+        .zones(event.getSpecification().getZones().stream().map(zoneKey ->
           ZoneKeyInput.builder().name(zoneKey.getName()).build()
         ).collect(toList()))
         .inputs(event.getSpecification().getInputs().stream().map(input ->
           ProcessInputStreamInput.builder()
-            .streamKey(StreamKeyInput.builder()
+            .stream(StreamKeyInput.builder()
               .domain(input.getStream().getDomainKey().getName())
               .name(input.getStream().getName())
               .version(input.getStream().getVersion())
@@ -427,7 +427,7 @@ class GraphQLConverter {
         ).collect(toList()))
         .outputs(event.getSpecification().getOutputs().stream().map(output ->
           ProcessOutputStreamInput.builder()
-            .streamKey(StreamKeyInput.builder()
+            .stream(StreamKeyInput.builder()
               .domain(output.getStream().getDomainKey().getName())
               .name(output.getStream().getName())
               .version(output.getStream().getVersion())
@@ -579,7 +579,7 @@ class GraphQLConverter {
       return ProcessBindingSpecificationMutation.builder()
         .key(convertKey(event.getKey()))
         .specification(convertSpecification(event.getSpecification()))
-        .zoneKey(ZoneKeyInput.builder().name(event.getSpecification().getZone().getName()).build())
+        .zone(ZoneKeyInput.builder().name(event.getSpecification().getZone().getName()).build())
         .inputs(event.getSpecification().getInputs().stream().map(input ->
           ProcessInputStreamBindingInput.builder()
             .streamBindingKey(StreamBindingKeyInput.builder()

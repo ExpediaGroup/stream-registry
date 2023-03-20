@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class ProcessBindingFilterTest {
     processBinding.setSpecification(matchingSpecification());
     assertTrue(processBindingFilter.test(processBinding));
 
-    processBinding.setZoneKey(new ZoneKey(MATCH));
+    processBinding.setZone(new ZoneKey(MATCH));
     assertTrue(processBindingFilter.test(processBinding));
 
     processBinding.setInputs(inputList(Collections.singletonList(MATCH)));
@@ -156,10 +156,10 @@ public class ProcessBindingFilterTest {
     ProcessBinding processBinding = new ProcessBinding();
     assertFalse(processBindingFilter.test(processBinding));
 
-    processBinding.setZoneKey(new ZoneKey(MATCH));
+    processBinding.setZone(new ZoneKey(MATCH));
     assertTrue(processBindingFilter.test(processBinding));
 
-    processBinding.setZoneKey(new ZoneKey(FAIL));
+    processBinding.setZone(new ZoneKey(FAIL));
     assertFalse(processBindingFilter.test(processBinding));
   }
 

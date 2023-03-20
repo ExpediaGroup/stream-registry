@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class ProcessFilter implements Predicate<Process> {
   @Override
   public boolean test(Process process) {
     return matchesProcessKey(process.getKey(), keyQuery)
-      && matchesZone(process.getZoneKeys(), zoneKeyQueries)
+      && matchesZone(process.getZones(), zoneKeyQueries)
       && matchesInput(process.getInputs(), inputQueries)
       && matchesOutput(process.getOutputs(), outputQueries)
       && matchesSpecification(process.getSpecification(), specQuery);
@@ -77,7 +77,7 @@ public class ProcessFilter implements Predicate<Process> {
 
     List<ProcessInputStream> safeInputs = (inputs == null) ? Collections.emptyList() : inputs;
     return streamKeyQueries.stream().allMatch(streamKeyQuery ->
-      safeInputs.stream().anyMatch(input -> matchesStreamKey(input.getStreamKey(), streamKeyQuery))
+      safeInputs.stream().anyMatch(input -> matchesStreamKey(input.getStream(), streamKeyQuery))
     );
   }
 
@@ -88,7 +88,7 @@ public class ProcessFilter implements Predicate<Process> {
 
     List<ProcessOutputStream> safeOutputs = (outputs == null) ? Collections.emptyList() : outputs;
     return streamKeyQueries.stream().allMatch(streamKeyQuery ->
-      safeOutputs.stream().anyMatch(output -> matchesStreamKey(output.getStreamKey(), streamKeyQuery))
+      safeOutputs.stream().anyMatch(output -> matchesStreamKey(output.getStream(), streamKeyQuery))
     );
   }
 
