@@ -80,7 +80,7 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(StatusEvent<K, S> event) {
     val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
     if (oldEntity == null) {
-      log.warn("Received status {} non existent entity {}", event.getStatusEntry().getName(), event.getKey());
+      log.info("Received status {} non existent entity {}", event.getStatusEntry().getName(), event.getKey());
       return null;
     }
     val entity = new Entity<>(event.getKey(), oldEntity.getSpecification(), oldEntity.getStatus().with(event.getStatusEntry()));
@@ -99,7 +99,7 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(StatusDeletionEvent<K, S> event) {
     val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
     if (oldEntity == null) {
-      log.warn("Received status deletion {} for non existent entity {}", event.getStatusName(), event.getKey());
+      log.info("Received status deletion {} for non existent entity {}", event.getStatusName(), event.getKey());
       return null;
     }
     val entity = oldEntity.withStatus(oldEntity.getStatus().without(event.getStatusName()));
