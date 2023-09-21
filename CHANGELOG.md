@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [1.4.2] 2023-09-21
+### No change
+- The release deployment for 1.4.1 failed (502 Bad Gateway) so releasing it again as 1.4.2
+
+## [1.4.1] 2023-09-21
 ### Bugfix
 - Ensure that deletes are handled correctly in `DefaultRepository` before returning control to the caller.
 
