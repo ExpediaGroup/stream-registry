@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 import org.testcontainers.containers.KafkaContainer;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
@@ -56,7 +56,7 @@ public class StreamRegistryIT {
 
   @BeforeClass
   public static void before() {
-    int port = SocketUtils.findAvailableTcpPort();
+    int port = TestSocketUtils.findAvailableTcpPort();
 
     log.info("Starting to run embedded spring app in port {}", port);
 

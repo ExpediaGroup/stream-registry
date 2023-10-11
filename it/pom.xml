@@ -11,6 +11,7 @@
   <artifactId>stream-registry-it</artifactId>
 
   <properties>
+    <spring-test.version>6.0.12</spring-test.version>
     <introspectionFile>${project.build.directory}/graphql-schema/schema.json</introspectionFile>
     <clientPackage>com.expediagroup.streamplatform.streamregistry.graphql.client.test</clientPackage>
   </properties>
@@ -69,6 +70,12 @@
       <artifactId>annotations</artifactId>
       <version>19.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring-test.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -100,7 +107,7 @@
       <plugin>
         <groupId>com.github.sparow199</groupId>
         <artifactId>apollo-client-maven-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>graphql-generate-sources</id>
