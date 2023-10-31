@@ -62,6 +62,14 @@ import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrel
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
 public class KafkaEventReceiver implements EventReceiver {
+
+  /**
+   * Most of the time, there will only ever be a single process running on the ExecutorService. However, we need this to be two during
+   * application bootstrapping. 1 thread for the consumer, 1 thread for the progress logger.
+   */
+  private static final int THREAD_POOL_SIZE = 2;
+
+
   @NonNull private final Config config;
   private final EventCorrelator correlator;
   @NonNull private final AvroConverter converter;
@@ -77,7 +85,7 @@ public class KafkaEventReceiver implements EventReceiver {
         correlator,
         new AvroConverter(),
         getKafkaConsumer(config, consumerConfigurator),
-        newScheduledThreadPool(1)
+        newScheduledThreadPool(THREAD_POOL_SIZE)
     );
   }
 

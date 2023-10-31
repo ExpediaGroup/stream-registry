@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [unreleased]
 ### Changed
 - Upgrade to Spring Boot 3.
+- 
+### Fixed
+- KafkaEventReceiver progress logger will actually log the process during normal application bootstrapping.
 
 ## [1.4.2] 2023-09-21
 ### No change
