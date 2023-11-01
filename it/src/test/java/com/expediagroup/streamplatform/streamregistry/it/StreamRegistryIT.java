@@ -15,6 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry.it;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.AfterClass;
@@ -25,7 +28,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -56,8 +58,8 @@ public class StreamRegistryIT {
   public static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.2.1"));
 
   @BeforeClass
-  public static void before() {
-    int port = SocketUtils.findAvailableTcpPort();
+  public static void before() throws IOException {
+    int port = (new ServerSocket(0)).getLocalPort();
 
     log.info("Starting to run embedded spring app in port {}", port);
 
