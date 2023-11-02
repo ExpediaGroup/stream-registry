@@ -71,11 +71,11 @@
 
     <jacoco.version>0.8.11</jacoco.version>
     <confluent.version>7.4.0</confluent.version>
-    <avro.version>1.11.2</avro.version>
+    <avro.version>1.11.3</avro.version>
     <apollo.version>2.5.14</apollo.version>
     <awaitility.version>3.1.6</awaitility.version>
     <bull.version>1.4.7.3</bull.version>
-    <guava.version>29.0-jre</guava.version>
+    <guava.version>32.0.0-jre</guava.version>
     <graphql-java.version>21.0</graphql-java.version>
     <kotlin.version>1.7.10</kotlin.version>
     <slf4j.version>1.7.26</slf4j.version>
