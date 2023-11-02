@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [unreleased]
 ### Fixed
 - KafkaEventReceiver progress logger will actually log the process during normal application bootstrapping.
+- `DefaultEntityViewUpdater` to handle receiving double delete events correctly. 
 
 ## [1.4.2] 2023-09-21
 ### No change
