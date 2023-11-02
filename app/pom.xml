@@ -14,7 +14,7 @@
     <docker.to.repo />
     <docker.from.repo />
     <docker.image.name>stream-registry</docker.image.name>
-    <docker.image.base>openjdk:11-slim</docker.image.base>
+    <docker.image.base>openjdk:17-slim</docker.image.base>
   </properties>
 
   <dependencies>
@@ -35,6 +35,10 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
     </dependency>
   </dependencies>
 
