@@ -180,6 +180,21 @@ public class AgentIT {
       assertThat(dummyAgent.events, hasItem(Pair.of(data.getEntity(), specificationDeletion(data.getKey()))));  // the agent would be expected to handle the deletion event.
     });
 
+    // this shouldn't happen very often, but sending the same delete event should result in the old deleted entity still being available.
+    sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
+    await.untilAsserted(() -> {
+      // entity no longer exists
+      assertThat(domainEvents(entityView), hasSize(0));
+      // entity is marked as deleted
+      assertThat(deletedDomainEvents(entityView), is(aMapWithSize(1)));
+      assertThat(deletedDomainEvents(entityView), hasEntry(data.getKey(), Optional.of(data.getEntity())));
+
+      // onEvent has been called for the deleted entity
+      assertThat(dummyAgent.events, hasSize(2));
+      assertThat(dummyAgent.events, hasItem(Pair.of(null, data.getSpecificationEvent())));
+      assertThat(dummyAgent.events, hasItem(Pair.of(data.getEntity(), specificationDeletion(data.getKey()))));  // the agent would be expected to handle the deletion event.
+    });
+
     // purge would be called by the agent after the delete has been handled
     entityView.purgeDeleted(data.getKey());
     // the delete is removed from everywhere
