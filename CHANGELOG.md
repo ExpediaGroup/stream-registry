@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - KafkaEventReceiver progress logger will actually log the process during normal application bootstrapping.
 - Fixing test dependencies to be able to run on modern Mac hardware, Java 17 and Docker Desktop versions
-### Updated
+### Updated [BREAKING CHANGES]
 - Updated to Spring 3.1.5
 - Updating Java build to 17
 - Updating to latest graphql libraries and removing deprecated fields from instrospection query

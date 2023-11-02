@@ -14,7 +14,7 @@
     <docker.to.repo />
     <docker.from.repo />
     <docker.image.name>stream-registry</docker.image.name>
-    <docker.image.base>openjdk:11-slim</docker.image.base>
+    <docker.image.base>openjdk:17-slim</docker.image.base>
   </properties>
 
   <dependencies>

@@ -65,13 +65,11 @@
   </modules>
 
   <properties>
-
-    <jacoco.version>0.8.5</jacoco.version>
-
+    <jdk.version>17</jdk.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <jdk.version>8</jdk.version>
 
+    <jacoco.version>0.8.11</jacoco.version>
     <confluent.version>7.4.0</confluent.version>
     <avro.version>1.11.2</avro.version>
     <apollo.version>2.5.14</apollo.version>
@@ -81,7 +79,7 @@
     <graphql-java.version>21.0</graphql-java.version>
     <kotlin.version>1.7.10</kotlin.version>
     <slf4j.version>1.7.26</slf4j.version>
-    <spring-boot.version>3.1.4</spring-boot.version>
+    <spring-boot.version>3.1.5</spring-boot.version>
     <testcontainers.version>1.18.3</testcontainers.version>
     <log4j.version>2.17.1</log4j.version>
     <github.docker-java.version>3.3.3</github.docker-java.version>
@@ -92,6 +90,8 @@
     <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
     <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+    <maven-plugin-plugin.version>3.10.1</maven-plugin-plugin.version>
+    <jib.maven.plugin.version>3.4.0</jib.maven.plugin.version>
     <jib.goal>dockerBuild</jib.goal>
   </properties>
 

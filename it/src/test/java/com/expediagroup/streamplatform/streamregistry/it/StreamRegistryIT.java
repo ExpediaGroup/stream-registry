@@ -29,9 +29,9 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.utility.DockerImageName;
 
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
+import com.expediagroup.streamplatform.streamregistry.TestUtils;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
 
 @RunWith(Suite.class)
@@ -55,7 +55,7 @@ public class StreamRegistryIT {
   private static ConfigurableApplicationContext context;
 
   @ClassRule
-  public static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.2.1"));
+  public static KafkaContainer kafka = new KafkaContainer(TestUtils.kafkaImageName);
 
   @BeforeClass
   public static void before() throws IOException {

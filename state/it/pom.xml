@@ -13,6 +13,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.expediagroup.streamplatform</groupId>
       <artifactId>stream-registry-state-core</artifactId>
       <version>${project.version}</version>

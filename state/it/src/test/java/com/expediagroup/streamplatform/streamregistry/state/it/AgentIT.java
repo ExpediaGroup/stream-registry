@@ -51,8 +51,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.utility.DockerImageName;
 
+import com.expediagroup.streamplatform.streamregistry.TestUtils;
 import com.expediagroup.streamplatform.streamregistry.state.AgentData;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
@@ -78,7 +78,7 @@ public class AgentIT {
     .pollDelay(1, SECONDS);
 
   @Rule
-  public KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.2.1"));
+  public KafkaContainer kafka = new KafkaContainer(TestUtils.kafkaImageName);
 
   private String topicName;
   private KafkaEventSender kafkaEventSender;

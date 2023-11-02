@@ -35,8 +35,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.utility.DockerImageName;
 
+import com.expediagroup.streamplatform.streamregistry.TestUtils;
 import com.expediagroup.streamplatform.streamregistry.state.DefaultEventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
@@ -53,7 +53,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusE
 
 public class StateIT {
   @Rule
-  public KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.2.1"));
+  public KafkaContainer kafka = new KafkaContainer(TestUtils.kafkaImageName);
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode();
