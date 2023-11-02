@@ -90,7 +90,7 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(SpecificationDeletionEvent<K, S> event) {
-    val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
+    val oldEntity = (Entity<K, S>) getPossiblyDeletedEntity(event.getKey());
     entities.put(event.getKey(), deleted(oldEntity));
     log.debug("Deleted entity for {}", event.getKey());
     return oldEntity;
@@ -106,6 +106,24 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
     entities.put(event.getKey(), existing(entity));
     log.debug("Deleted status {} for {}", event.getStatusName(), event.getKey());
     return oldEntity;
+  }
+
+  /**
+   * There is a chance the entity will have already been deleted.
+   */
+  private Entity<?, ?> getPossiblyDeletedEntity(Entity.Key<?> key) {
+    val stateValue = Optional.ofNullable(entities.get(key));
+    stateValue.ifPresent(it -> {
+        if (it.deleted) {
+          log.debug("Found deleted entity for key={}", key);
+        } else {
+          log.debug("Found entity for key={}", key);
+        }
+      }
+    );
+    return stateValue
+      .map(it -> it.entity)
+      .orElse(null);
   }
 
   private Entity<?, ?> getExistingEntity(Entity.Key<?> key) {
