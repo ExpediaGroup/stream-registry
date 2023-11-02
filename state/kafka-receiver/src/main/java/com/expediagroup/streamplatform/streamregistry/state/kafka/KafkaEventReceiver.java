@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2018-2023 Expedia, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,33 @@
  * limitations under the License.
  */
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
+
+import com.expediagroup.streamplatform.streamregistry.state.Configurator;
+import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
+import com.expediagroup.streamplatform.streamregistry.state.EventReceiverListener;
+import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
+import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
+import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
+import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
+import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
@@ -30,35 +57,6 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
-
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-
-import com.expediagroup.streamplatform.streamregistry.state.Configurator;
-import com.expediagroup.streamplatform.streamregistry.state.EventReceiver;
-import com.expediagroup.streamplatform.streamregistry.state.EventReceiverListener;
-import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
-import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
-import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
-import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
-
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
 public class KafkaEventReceiver implements EventReceiver {
@@ -70,27 +68,32 @@ public class KafkaEventReceiver implements EventReceiver {
   private static final int THREAD_POOL_SIZE = 2;
 
 
-  @NonNull private final Config config;
+  @NonNull
+  private final Config config;
   private final EventCorrelator correlator;
-  @NonNull private final AvroConverter converter;
-  @NonNull private final KafkaConsumer<AvroKey, AvroValue> consumer;
-  @NonNull private final ScheduledExecutorService executorService;
+  @NonNull
+  private final AvroConverter converter;
+  @NonNull
+  private final KafkaConsumer<AvroKey, AvroValue> consumer;
+  @NonNull
+  private final ScheduledExecutorService executorService;
 
   private volatile boolean shuttingDown = false;
   private final AtomicBoolean started = new AtomicBoolean(false);
 
   public KafkaEventReceiver(Config config, EventCorrelator correlator, Configurator<KafkaConsumer<AvroKey, AvroValue>> consumerConfigurator) {
     this(
-        config,
-        correlator,
-        new AvroConverter(),
-        getKafkaConsumer(config, consumerConfigurator),
-        newScheduledThreadPool(THREAD_POOL_SIZE)
+      config,
+      correlator,
+      new AvroConverter(),
+      getKafkaConsumer(config, consumerConfigurator),
+      newScheduledThreadPool(THREAD_POOL_SIZE)
     );
   }
 
   public KafkaEventReceiver(Config config, EventCorrelator correlator) {
-    this(config, correlator, kafkaConsumer -> {});
+    this(config, correlator, kafkaConsumer -> {
+    });
   }
 
   public KafkaEventReceiver(Config config) {
@@ -105,7 +108,7 @@ public class KafkaEventReceiver implements EventReceiver {
 
   @Override
   public void receive(EventReceiverListener listener) {
-    if(started.getAndSet(true)) {
+    if (started.getAndSet(true)) {
       throw new IllegalStateException("Only a single EventReceiverListener is supported");
     }
     executorService.execute(() -> {
@@ -121,7 +124,7 @@ public class KafkaEventReceiver implements EventReceiver {
   void consume(EventReceiverListener listener) {
     val currentOffset = new AtomicLong(0L);
     val progressLogger = executorService
-        .scheduleAtFixedRate(() -> log.info("Current offset {}", currentOffset.get()), 10, 10, SECONDS);
+      .scheduleAtFixedRate(() -> log.info("Current offset {}", currentOffset.get()), 10, 10, SECONDS);
 
     val topicPartition = new TopicPartition(config.getTopic(), 0);
     val topicPartitions = Collections.singletonList(topicPartition);
@@ -164,6 +167,7 @@ public class KafkaEventReceiver implements EventReceiver {
         }
       }
     }
+    consumer.close();
   }
 
   private void receiveCorrelationId(ConsumerRecord<?, ?> record) {
@@ -180,8 +184,7 @@ public class KafkaEventReceiver implements EventReceiver {
   @Override
   public void close() {
     shuttingDown = true;
-    executorService.shutdown();
-    consumer.close();
+    shutdownAndAwaitTermination(executorService);
   }
 
   static Map<String, Object> consumerConfig(Config config) {
@@ -211,5 +214,23 @@ public class KafkaEventReceiver implements EventReceiver {
     @NonNull String schemaRegistryUrl;
     @NonNull String groupId;
     Map<String, Object> properties;
+  }
+
+  /**
+   * This is a copy/paste of the JDK examples on how to effectively shutdown an ExecutorService.
+   */
+  private void shutdownAndAwaitTermination(ScheduledExecutorService pool) {
+    pool.shutdown();
+    try {
+      if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+        pool.shutdownNow();
+        if (!pool.awaitTermination(10, TimeUnit.SECONDS))
+          log.warn("Pool did not terminate");
+      }
+    } catch (InterruptedException ex) {
+      log.warn("Pool shutdown interrupted", ex);
+      pool.shutdownNow();
+      Thread.currentThread().interrupt();
+    }
   }
 }
