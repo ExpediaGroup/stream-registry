@@ -55,7 +55,7 @@ public class StreamRegistryIT {
   private static ConfigurableApplicationContext context;
 
   @ClassRule
-  public static KafkaContainer kafka = new KafkaContainer(TestUtils.kafkaImageName);
+  public static KafkaContainer kafka = new KafkaContainer(TestUtils.KAFKA_IMAGE_NAME);
 
   @BeforeClass
   public static void before() throws IOException {
