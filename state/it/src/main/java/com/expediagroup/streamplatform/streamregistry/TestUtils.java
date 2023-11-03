@@ -18,5 +18,5 @@ package com.expediagroup.streamplatform.streamregistry;
 import org.testcontainers.utility.DockerImageName;
 
 public class TestUtils {
-  public static DockerImageName kafkaImageName = DockerImageName.parse("confluentinc/cp-kafka:7.4.0");
+  public static final DockerImageName KAFKA_IMAGE_NAME = DockerImageName.parse("confluentinc/cp-kafka:7.4.0");
 }

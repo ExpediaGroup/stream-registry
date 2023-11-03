@@ -53,7 +53,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusE
 
 public class StateIT {
   @Rule
-  public KafkaContainer kafka = new KafkaContainer(TestUtils.kafkaImageName);
+  public KafkaContainer kafka = new KafkaContainer(TestUtils.KAFKA_IMAGE_NAME);
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final ObjectNode configuration = mapper.createObjectNode();

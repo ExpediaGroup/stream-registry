@@ -78,7 +78,7 @@ public class AgentIT {
     .pollDelay(1, SECONDS);
 
   @Rule
-  public KafkaContainer kafka = new KafkaContainer(TestUtils.kafkaImageName);
+  public KafkaContainer kafka = new KafkaContainer(TestUtils.KAFKA_IMAGE_NAME);
 
   private String topicName;
   private KafkaEventSender kafkaEventSender;
