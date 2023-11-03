@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package com.expediagroup.streamplatform.streamregistry;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.expediagroup.streamplatform.streamregistry.core.validators.key.ConsumerBindingKeyValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.key.ConsumerKeyValidator;
@@ -45,7 +45,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 
-@Configuration
+@AutoConfiguration
 public class StreamRegistryAutoConfiguration {
 
   @ConditionalOnMissingBean(value = ConsumerBinding.class, parameterizedContainer = KeyValidator.class)

@@ -5,11 +5,17 @@
   <parent>
     <groupId>com.expediagroup.streamplatform</groupId>
     <artifactId>stream-registry</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
+    <version>2.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>stream-registry-graphql-api</artifactId>
+
+  <properties>
+    <graphql-spring-boot.version>15.0.0</graphql-spring-boot.version>
+    <graphiql-spring-boot.version>11.1.0</graphiql-spring-boot.version>
+    <graphql-java-tools.version>13.1.0</graphql-java-tools.version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -35,17 +41,17 @@
     <dependency>
       <groupId>com.graphql-java-kickstart</groupId>
       <artifactId>graphql-java-tools</artifactId>
-      <version>6.0.2</version>
+      <version>${graphql-java-tools.version}</version>
     </dependency>
     <dependency>
       <groupId>com.graphql-java-kickstart</groupId>
       <artifactId>graphql-spring-boot-starter</artifactId>
-      <version>7.0.1</version>
+      <version>${graphql-spring-boot.version}</version>
     </dependency>
     <dependency>
       <groupId>com.graphql-java-kickstart</groupId>
       <artifactId>graphiql-spring-boot-starter</artifactId>
-      <version>7.0.1</version>
+      <version>${graphiql-spring-boot.version}</version>
     </dependency>
     <dependency>
       <groupId>com.hotels.beans</groupId>

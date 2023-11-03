@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.state;
+package com.expediagroup.streamplatform.streamregistry;
 
-import java.util.Map;
+import org.testcontainers.utility.DockerImageName;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-
-public class DefaultEntityViewUpdaterTest extends EntityViewUpdaterTest {
-  @Override
-  public EntityViewUpdater entityViewUpdater(Map<Entity.Key<?>, StateValue> entities) {
-    return new DefaultEntityViewUpdater(entities);
-  }
+public class TestUtils {
+  public static DockerImageName kafkaImageName = DockerImageName.parse("confluentinc/cp-kafka:7.4.0");
 }

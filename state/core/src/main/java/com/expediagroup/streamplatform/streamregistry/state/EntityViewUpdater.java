@@ -15,11 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import java.util.Optional;
+
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
-
-import java.util.Optional;
 
 interface EntityViewUpdater {
 
