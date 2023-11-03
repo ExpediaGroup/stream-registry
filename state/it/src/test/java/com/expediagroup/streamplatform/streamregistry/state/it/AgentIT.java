@@ -189,8 +189,8 @@ public class AgentIT {
       assertThat(deletedDomainEvents(entityView), is(aMapWithSize(1)));
       assertThat(deletedDomainEvents(entityView), hasEntry(data.getKey(), Optional.of(data.getEntity())));
 
-      // onEvent has been called for the deleted entity
-      assertThat(dummyAgent.events, hasSize(2));
+      // onEvent has been called for the deleted entity twice
+      assertThat(dummyAgent.events, hasSize(3));
       assertThat(dummyAgent.events, hasItem(Pair.of(null, data.getSpecificationEvent())));
       assertThat(dummyAgent.events, hasItem(Pair.of(data.getEntity(), specificationDeletion(data.getKey()))));  // the agent would be expected to handle the deletion event.
     });
