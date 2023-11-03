@@ -141,6 +141,25 @@ public abstract class EntityViewUpdaterTest {
   }
 
   @Test
+  public void doubleDeleteSpecificationEvent() {
+    val previousEntity = underTest.update(specificationEvent);
+
+    assertThat(previousEntity, is(nullValue()));
+    assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, existing(entity.withStatus(oldStatus))));
+
+    val deletedEntity = underTest.update(specificationDeletionEvent);
+    assertThat(deletedEntity, is(entity.withStatus(oldStatus)));
+    assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
+
+    val doubleDeletedEntity = underTest.update(specificationDeletionEvent);
+    assertThat(doubleDeletedEntity, is(entity.withStatus(oldStatus)));
+    assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
+  }
+
+  @Test
   public void deleteStatusEvent() {
     entities.put(key, existing(oldEntity));
 

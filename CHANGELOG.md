@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 ### Fixed
+- `DefaultEntityViewUpdater` to handle receiving double delete events correctly.
+
+## [2.0.0] 2023-11-02
+### Fixed
 - KafkaEventReceiver progress logger will actually log the process during normal application bootstrapping.
 - Fixing test dependencies to be able to run on modern Mac hardware, Java 17 and Docker Desktop versions
 ### Updated [BREAKING CHANGES]
