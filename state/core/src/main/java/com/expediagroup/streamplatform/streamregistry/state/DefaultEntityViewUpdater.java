@@ -15,6 +15,17 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.deleted;
+import static com.expediagroup.streamplatform.streamregistry.state.StateValue.existing;
+
+import java.util.Map;
+import java.util.Optional;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationDeletionEvent;
@@ -23,16 +34,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDe
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
-import java.util.Map;
-import java.util.Optional;
-
-import static com.expediagroup.streamplatform.streamregistry.state.StateValue.deleted;
-import static com.expediagroup.streamplatform.streamregistry.state.StateValue.existing;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -90,7 +91,7 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
   }
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> delete(SpecificationDeletionEvent<K, S> event) {
-    val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
+    val oldEntity = (Entity<K, S>) getEntity(event.getKey());
     entities.put(event.getKey(), deleted(oldEntity));
     log.debug("Deleted entity for {}", event.getKey());
     return oldEntity;
@@ -111,6 +112,24 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
   private Entity<?, ?> getExistingEntity(Entity.Key<?> key) {
     return Optional.ofNullable(entities.get(key))
       .filter(it -> !it.deleted)
+      .map(it -> it.entity)
+      .orElse(null);
+  }
+
+  /**
+   * There is a chance the entity will have already been deleted. Only use this method if you don't care.
+   */
+  private Entity<?, ?> getEntity(Entity.Key<?> key) {
+    val stateValue = Optional.ofNullable(entities.get(key));
+    stateValue.ifPresent(it -> {
+        if (it.deleted) {
+          log.debug("Found deleted entity for key={}", key);
+        } else {
+          log.debug("Found entity for key={}", key);
+        }
+      }
+    );
+    return stateValue
       .map(it -> it.entity)
       .orElse(null);
   }

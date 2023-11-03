@@ -15,40 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.it;
 
-import com.expediagroup.streamplatform.streamregistry.state.AgentData;
-import com.expediagroup.streamplatform.streamregistry.state.EntityView;
-import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
-import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
-import com.expediagroup.streamplatform.streamregistry.state.EventSender;
-import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
-import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
-import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.testcontainers.containers.KafkaContainer;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 import static com.expediagroup.streamplatform.streamregistry.state.AgentData.generateData;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.specificationDeletion;
 import static java.util.UUID.randomUUID;
@@ -63,6 +29,44 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.hamcrest.core.IsIterableContaining.hasItems;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.val;
+
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionFactory;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.testcontainers.containers.KafkaContainer;
+
+import com.expediagroup.streamplatform.streamregistry.TestUtils;
+import com.expediagroup.streamplatform.streamregistry.state.AgentData;
+import com.expediagroup.streamplatform.streamregistry.state.EntityView;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
+import com.expediagroup.streamplatform.streamregistry.state.EntityViews;
+import com.expediagroup.streamplatform.streamregistry.state.EventSender;
+import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver;
+import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventSender;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.Key;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+
 public class AgentIT {
 
   private final MeterRegistry meterRegistry = new SimpleMeterRegistry();
@@ -74,7 +78,7 @@ public class AgentIT {
     .pollDelay(1, SECONDS);
 
   @Rule
-  public KafkaContainer kafka = new KafkaContainer();
+  public KafkaContainer kafka = new KafkaContainer(TestUtils.KAFKA_IMAGE_NAME);
 
   private String topicName;
   private KafkaEventSender kafkaEventSender;
@@ -176,6 +180,21 @@ public class AgentIT {
 
       // onEvent has been called for the deleted entity
       assertThat(dummyAgent.events, hasSize(2));
+      assertThat(dummyAgent.events, hasItem(Pair.of(null, data.getSpecificationEvent())));
+      assertThat(dummyAgent.events, hasItem(Pair.of(data.getEntity(), specificationDeletion(data.getKey()))));  // the agent would be expected to handle the deletion event.
+    });
+
+    // this shouldn't happen very often, but sending the same delete event should result in the old deleted entity still being available.
+    sendSync(kafkaEventSender, specificationDeletion(data.getKey()));
+    await.untilAsserted(() -> {
+      // entity no longer exists
+      assertThat(domainEvents(entityView), hasSize(0));
+      // entity is marked as deleted
+      assertThat(deletedDomainEvents(entityView), is(aMapWithSize(1)));
+      assertThat(deletedDomainEvents(entityView), hasEntry(data.getKey(), Optional.of(data.getEntity())));
+
+      // onEvent has been called for the deleted entity twice
+      assertThat(dummyAgent.events, hasSize(3));
       assertThat(dummyAgent.events, hasItem(Pair.of(null, data.getSpecificationEvent())));
       assertThat(dummyAgent.events, hasItem(Pair.of(data.getEntity(), specificationDeletion(data.getKey()))));  // the agent would be expected to handle the deletion event.
     });

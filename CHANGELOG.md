@@ -6,8 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 ### Fixed
+- `DefaultEntityViewUpdater` to handle receiving double delete events correctly.
+
+## [2.0.0] 2023-11-02
+### Fixed
 - KafkaEventReceiver progress logger will actually log the process during normal application bootstrapping.
-- Deleting a `ProcessBinding` will no longer propagate deletion to `Consumer` and `Producer` entities.
+- Fixing test dependencies to be able to run on modern Mac hardware, Java 17 and Docker Desktop versions
+### Updated [BREAKING CHANGES]
+- Updated to Spring 3.1.5
+- Updating Java build to 17
+- Updating to latest graphql libraries and removing deprecated fields from instrospection query
 
 ## [1.4.2] 2023-09-21
 ### No change

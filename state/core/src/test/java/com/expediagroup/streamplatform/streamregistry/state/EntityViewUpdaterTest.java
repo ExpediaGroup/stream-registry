@@ -15,19 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state;
 
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
-import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
-import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
-import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
-import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
-import lombok.val;
-import org.junit.After;
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.entity;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.key;
 import static com.expediagroup.streamplatform.streamregistry.state.SampleEntities.specification;
@@ -44,6 +31,21 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
 import static org.junit.Assert.assertThat;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import lombok.val;
+
+import org.junit.After;
+import org.junit.Test;
+
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainKey;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 
 public abstract class EntityViewUpdaterTest {
 
@@ -134,6 +136,25 @@ public abstract class EntityViewUpdaterTest {
 
     val deletedEntity = underTest.update(specificationDeletionEvent);
     assertThat(deletedEntity, is(entity.withStatus(oldStatus)));
+    assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
+  }
+
+  @Test
+  public void doubleDeleteSpecificationEvent() {
+    val previousEntity = underTest.update(specificationEvent);
+
+    assertThat(previousEntity, is(nullValue()));
+    assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, existing(entity.withStatus(oldStatus))));
+
+    val deletedEntity = underTest.update(specificationDeletionEvent);
+    assertThat(deletedEntity, is(entity.withStatus(oldStatus)));
+    assertThat(entities, is(aMapWithSize(1)));
+    assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
+
+    val doubleDeletedEntity = underTest.update(specificationDeletionEvent);
+    assertThat(doubleDeletedEntity, is(entity.withStatus(oldStatus)));
     assertThat(entities, is(aMapWithSize(1)));
     assertThat(entities, hasEntry(key, deleted(entity.withStatus(oldStatus))));
   }

@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.expediagroup.streamplatform</groupId>
     <artifactId>stream-registry</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -74,7 +74,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>${maven-plugin-plugin.version}</version>
         <configuration>
           <mojoDependencies>
             <param>com.expediagroup.streamplatform:stream-registry-graphql-maven-plugin</param>
