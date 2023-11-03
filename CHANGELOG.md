@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [unreleased]
 ### Fixed
 - `DefaultEntityViewUpdater` to handle receiving double delete events correctly.
+- Deleting a `ProcessBinding` will no longer propagate deletion to `Consumer` and `Producer` entities.
 
 ## [2.0.0] 2023-11-02
 ### Fixed
