@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [2.0.2] 2023-11-06
 ### Fixed
 - `DefaultEntityViewUpdater` to handle receiving double delete events correctly.
 - Deleting a `ProcessBinding` will no longer propagate deletion to `Consumer` and `Producer` entities.
+
+## [2.0.1] 2023-11-03
+### Changed
+- Override nexus plugin to handle Java 17
 
 ## [2.0.0] 2023-11-02
 ### Fixed
