@@ -54,10 +54,6 @@
       <version>${graphiql-spring-boot.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.hotels.beans</groupId>
-      <artifactId>bean-utils-library</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
