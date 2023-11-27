@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Stated;
 public class StateHelper {
 
   public static void maintainState(Stated stated, Optional<? extends Stated> existing) {
-    if (existing.isPresent()) {
-      stated.setStatus(existing.get().getStatus());
-    }
+    existing.ifPresent(value -> stated.setStatus(value.getStatus()));
   }
 }
