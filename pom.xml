@@ -62,6 +62,7 @@
     <module>state/kafka-sender</module>
     <module>state/kafka-receiver</module>
     <module>it</module>
+    <module>bom</module>
   </modules>
 
   <properties>
