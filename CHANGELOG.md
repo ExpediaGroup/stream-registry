@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+### Added
+- stream-registry bom
+
 ## [2.0.2] 2023-11-06
 ### Fixed
 - `DefaultEntityViewUpdater` to handle receiving double delete events correctly.
