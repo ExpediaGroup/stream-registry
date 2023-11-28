@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - stream-registry bom
 
+## [2.1.2]
+### No change [DO NOT USE]
+
+## [2.1.1]
+### No change [DO NOT USE]
+
+## [2.1.0] 2023-11-27
+### Changed 
+- Removed the `cli` module. It is no longer recommended to directly interact with the underlying Kafka topic (and hasn't been since cascading deletes were introduced).
+
+### Updated
+- Updated spring-boot from 3.1.5 to 3.1.6
+- Updated snakeyaml from 1.3.3 to 2.0.0 (Spring supports both versions, newest schema registry client already uses 2.0.0)
+- Updated kotlin from 1.7.10 to 1.8.22
+- Updated schema-registry-client from 7.4.0 to 7.5.2
+- Updated commons-text from 1.9 to 1.10.0
+- Removed bean-utils-library, which didn't appear to be in use.
+
 ## [2.0.2] 2023-11-06
 ### Fixed
 - `DefaultEntityViewUpdater` to handle receiving double delete events correctly.
