@@ -17,3 +17,7 @@ ij_yaml_spaces_within_braces=true
 ij_yaml_spaces_within_brackets=true
 ij_yaml_sequence_on_new_line=false
 ij_yaml_block_mapping_on_new_line=false
+
+[*.xml]
+indent_size=2
+indent_style=space
