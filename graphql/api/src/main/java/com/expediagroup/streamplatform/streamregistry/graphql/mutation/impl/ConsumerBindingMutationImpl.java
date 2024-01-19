@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -34,6 +36,9 @@ import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
   private final ConsumerBindingService consumerBindingService;
   private final ConsumerBindingView consumerBindingView;
+
+  @Value("${entityView.exist.check.enabled:true}")
+  private boolean checkExistEnabled;
 
   @Override
   public ConsumerBinding insert(ConsumerBindingKeyInput key, SpecificationInput specification) {
@@ -57,7 +62,12 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public Boolean delete(ConsumerBindingKeyInput key) {
+    if(checkExistEnabled){
     consumerBindingView.get(key.asConsumerBindingKey()).ifPresent(consumerBindingService::delete);
+    }else {
+      ConsumerBinding consumerBinding = new ConsumerBinding(key.asConsumerBindingKey(), StateHelper.specification(), StateHelper.status());
+      consumerBindingService.delete(consumerBinding);
+    }
     return true;
   }
 

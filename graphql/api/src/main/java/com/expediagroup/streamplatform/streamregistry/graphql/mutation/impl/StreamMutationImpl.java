@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SchemaKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -35,6 +37,10 @@ import com.expediagroup.streamplatform.streamregistry.model.Stream;
 @Component
 @RequiredArgsConstructor
 public class StreamMutationImpl implements StreamMutation {
+
+  @Value("${entityView.exist.check.enabled:true}")
+  private boolean checkExistEnabled;
+
   private final StreamService streamService;
   private final StreamView streamView;
 
@@ -60,7 +66,12 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Boolean delete(StreamKeyInput key) {
-    streamView.get(key.asStreamKey()).ifPresent(streamService::delete);
+    if(checkExistEnabled){
+      streamView.get(key.asStreamKey()).ifPresent(streamService::delete);
+    }else{
+      Stream stream = new Stream(key.asStreamKey(), StateHelper.schemaKey(), StateHelper.specification(), StateHelper.status());
+      streamService.delete(stream);
+    }
     return true;
   }
 

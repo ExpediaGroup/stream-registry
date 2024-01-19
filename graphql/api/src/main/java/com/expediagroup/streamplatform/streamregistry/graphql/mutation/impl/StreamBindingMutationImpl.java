@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
@@ -32,6 +34,10 @@ import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 @Component
 @RequiredArgsConstructor
 public class StreamBindingMutationImpl implements StreamBindingMutation {
+
+  @Value("${entityView.exist.check.enabled:true}")
+  private boolean checkExistEnabled;
+
   private final StreamBindingService streamBindingService;
   private final StreamBindingView streamBindingView;
 
@@ -57,7 +63,12 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public Boolean delete(StreamBindingKeyInput key) {
-    streamBindingView.get(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
+    if(checkExistEnabled){
+      streamBindingView.get(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
+    }else{
+      StreamBinding streamBinding = new StreamBinding(key.asStreamBindingKey(), StateHelper.specification(), StateHelper.status());
+      streamBindingService.delete(streamBinding);
+    }
     return true;
   }
 

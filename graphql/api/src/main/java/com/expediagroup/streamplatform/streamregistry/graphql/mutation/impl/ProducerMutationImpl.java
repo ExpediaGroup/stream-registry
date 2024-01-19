@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
+import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.SpecificationInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
@@ -33,6 +35,10 @@ import com.expediagroup.streamplatform.streamregistry.model.Producer;
 @Component
 @RequiredArgsConstructor
 public class ProducerMutationImpl implements ProducerMutation {
+
+  @Value("${entityView.exist.check.enabled:true}")
+  private boolean checkExistEnabled;
+
   private final ProducerService producerService;
   private final ProducerView producerView;
 
@@ -58,7 +64,12 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Boolean delete(ProducerKeyInput key) {
-    producerView.get(key.asProducerKey()).ifPresent(producerService::delete);
+    if(checkExistEnabled){
+      producerView.get(key.asProducerKey()).ifPresent(producerService::delete);
+    }else{
+      Producer producer = new Producer(key.asProducerKey(), StateHelper.specification(), StateHelper.status());
+      producerService.delete(producer);
+    }
     return true;
   }
 
