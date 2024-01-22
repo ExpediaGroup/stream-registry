@@ -63,9 +63,9 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public Boolean delete(ProducerBindingKeyInput key) {
-    if(checkExistEnabled){
+    if (checkExistEnabled) {
       producerBindingView.get(key.asProducerBindingKey()).ifPresent(producerBindingService::delete);
-    }else{
+    } else {
       ProducerBinding producerBinding = new ProducerBinding(key.asProducerBindingKey(), StateHelper.specification(), StateHelper.status());
       producerBindingService.delete(producerBinding);
     }

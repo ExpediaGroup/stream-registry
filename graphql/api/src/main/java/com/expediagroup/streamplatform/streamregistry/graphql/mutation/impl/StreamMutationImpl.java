@@ -66,9 +66,9 @@ public class StreamMutationImpl implements StreamMutation {
 
   @Override
   public Boolean delete(StreamKeyInput key) {
-    if(checkExistEnabled){
+    if (checkExistEnabled) {
       streamView.get(key.asStreamKey()).ifPresent(streamService::delete);
-    }else{
+    } else {
       Stream stream = new Stream(key.asStreamKey(), StateHelper.schemaKey(), StateHelper.specification(), StateHelper.status());
       streamService.delete(stream);
     }
@@ -85,7 +85,7 @@ public class StreamMutationImpl implements StreamMutation {
     Stream stream = new Stream();
     stream.setKey(key.asStreamKey());
     stream.setSpecification(specification.asSpecification());
-    if(schema.isPresent()) {
+    if (schema.isPresent()) {
       stream.setSchemaKey(schema.get().asSchemaKey());
     }
     maintainState(stream, streamView.get(stream.getKey()));

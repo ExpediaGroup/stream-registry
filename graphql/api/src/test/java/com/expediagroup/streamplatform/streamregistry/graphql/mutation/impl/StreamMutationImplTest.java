@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -51,14 +52,25 @@ public class StreamMutationImplTest {
   }
 
   @Test
-  public void deleteWithCheckExistEnabled() {
+  public void deleteWithCheckExistEnabledWhenEntityExists() {
     ReflectionTestUtils.setField(streamMutation, "checkExistEnabled", true);
     StreamKeyInput key = getStreamInputKey();
     when(streamView.get(any())).thenReturn(Optional.of(getStream(key)));
     Boolean result = streamMutation.delete(key);
     verify(streamService, times(1)).delete(any());
     verify(streamView, times(1)).get(any());
-    assert (result);
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistEnabledWhenEntityDoesNotExist() {
+    ReflectionTestUtils.setField(streamMutation, "checkExistEnabled", true);
+    StreamKeyInput key = getStreamInputKey();
+    when(streamView.get(any())).thenReturn(Optional.empty());
+    Boolean result = streamMutation.delete(key);
+    verify(streamService, times(0)).delete(any());
+    verify(streamView, times(1)).get(any());
+    assertTrue(result);
   }
 
   @Test
@@ -68,7 +80,7 @@ public class StreamMutationImplTest {
     Boolean result = streamMutation.delete(key);
     verify(streamService, times(1)).delete(getStream(key));
     verify(streamView, times(0)).get(any());
-    assert (result);
+    assertTrue(result);
   }
 
   private StreamKeyInput getStreamInputKey() {

@@ -31,7 +31,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Statu
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.ProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
-
 @Component
 @RequiredArgsConstructor
 public class ProducerMutationImpl implements ProducerMutation {
@@ -64,9 +63,9 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Boolean delete(ProducerKeyInput key) {
-    if(checkExistEnabled){
+    if (checkExistEnabled) {
       producerView.get(key.asProducerKey()).ifPresent(producerService::delete);
-    }else{
+    } else {
       Producer producer = new Producer(key.asProducerKey(), StateHelper.specification(), StateHelper.status());
       producerService.delete(producer);
     }

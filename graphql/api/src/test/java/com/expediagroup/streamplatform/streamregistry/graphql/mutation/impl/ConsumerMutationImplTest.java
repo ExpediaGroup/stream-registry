@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -52,14 +53,25 @@ public class ConsumerMutationImplTest {
   }
 
   @Test
-  public void deleteWithCheckExistEnabled() {
+  public void deleteWithCheckExistEnabledWhenEntityExists() {
     ReflectionTestUtils.setField(consumerMutation, "checkExistEnabled", true);
     ConsumerKeyInput key = getConsumerInputKey();
     when(consumerView.get(any())).thenReturn(Optional.of(getConsumer(key)));
     Boolean result = consumerMutation.delete(key);
     verify(consumerService, times(1)).delete(any());
     verify(consumerView, times(1)).get(any());
-    assert (result);
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistEnabledWhenEntityDoesNotExist() {
+    ReflectionTestUtils.setField(consumerMutation, "checkExistEnabled", true);
+    ConsumerKeyInput key = getConsumerInputKey();
+    when(consumerView.get(any())).thenReturn(Optional.empty());
+    Boolean result = consumerMutation.delete(key);
+    verify(consumerService, times(0)).delete(any());
+    verify(consumerView, times(1)).get(any());
+    assertTrue(result);
   }
 
   @Test
@@ -69,7 +81,7 @@ public class ConsumerMutationImplTest {
     Boolean result = consumerMutation.delete(key);
     verify(consumerService, times(1)).delete(getConsumer(key));
     verify(consumerView, times(0)).get(any());
-    assert (result);
+    assertTrue(result);
   }
 
   private ConsumerKeyInput getConsumerInputKey() {

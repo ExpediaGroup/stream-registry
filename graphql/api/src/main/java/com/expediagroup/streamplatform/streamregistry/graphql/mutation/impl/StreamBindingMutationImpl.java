@@ -63,9 +63,9 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public Boolean delete(StreamBindingKeyInput key) {
-    if(checkExistEnabled){
+    if (checkExistEnabled) {
       streamBindingView.get(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
-    }else{
+    } else {
       StreamBinding streamBinding = new StreamBinding(key.asStreamBindingKey(), StateHelper.specification(), StateHelper.status());
       streamBindingService.delete(streamBinding);
     }

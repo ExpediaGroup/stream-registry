@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -52,14 +53,25 @@ public class ProducerMutationImplTest {
   }
 
   @Test
-  public void deleteWithCheckExistEnabled() {
+  public void deleteWithCheckExistEnabledWhenEntityExists() {
     ReflectionTestUtils.setField(producerMutation, "checkExistEnabled", true);
     ProducerKeyInput key = getProducerInputKey();
     when(producerView.get(any())).thenReturn(Optional.of(getProducer(key)));
     Boolean result = producerMutation.delete(key);
     verify(producerService, times(1)).delete(any());
     verify(producerView, times(1)).get(any());
-    assert (result);
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistEnabledWhenEntityDoesNotExist() {
+    ReflectionTestUtils.setField(producerMutation, "checkExistEnabled", true);
+    ProducerKeyInput key = getProducerInputKey();
+    when(producerView.get(any())).thenReturn(Optional.empty());
+    Boolean result = producerMutation.delete(key);
+    verify(producerService, times(0)).delete(any());
+    verify(producerView, times(1)).get(any());
+    assertTrue(result);
   }
 
   @Test
@@ -70,7 +82,7 @@ public class ProducerMutationImplTest {
     Boolean result = producerMutation.delete(key);
     verify(producerService, times(1)).delete(getProducer(key));
     verify(producerView, times(0)).get(any());
-    assert (result);
+    assertTrue(result);
   }
 
   private ProducerKeyInput getProducerInputKey() {

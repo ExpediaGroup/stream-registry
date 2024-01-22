@@ -34,6 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 @Component
 @RequiredArgsConstructor
 public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
+
   private final ConsumerBindingService consumerBindingService;
   private final ConsumerBindingView consumerBindingView;
 
@@ -62,9 +63,9 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
 
   @Override
   public Boolean delete(ConsumerBindingKeyInput key) {
-    if(checkExistEnabled){
-    consumerBindingView.get(key.asConsumerBindingKey()).ifPresent(consumerBindingService::delete);
-    }else {
+    if (checkExistEnabled) {
+      consumerBindingView.get(key.asConsumerBindingKey()).ifPresent(consumerBindingService::delete);
+    } else {
       ConsumerBinding consumerBinding = new ConsumerBinding(key.asConsumerBindingKey(), StateHelper.specification(), StateHelper.status());
       consumerBindingService.delete(consumerBinding);
     }

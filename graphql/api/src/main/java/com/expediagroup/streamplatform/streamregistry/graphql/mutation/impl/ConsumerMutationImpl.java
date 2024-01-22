@@ -34,6 +34,7 @@ import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 @Component
 @RequiredArgsConstructor
 public class ConsumerMutationImpl implements ConsumerMutation {
+
   private final ConsumerService consumerService;
   private final ConsumerView consumerView;
 
@@ -62,9 +63,9 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Boolean delete(ConsumerKeyInput key) {
-    if(checkExistEnabled) {
-    consumerView.get(key.asConsumerKey()).ifPresent(consumerService::delete);
-    }else {
+    if (checkExistEnabled) {
+      consumerView.get(key.asConsumerKey()).ifPresent(consumerService::delete);
+    } else {
       Consumer consumer = new Consumer(key.asConsumerKey(), StateHelper.specification(), StateHelper.status());
       consumerService.delete(consumer);
     }
