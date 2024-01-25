@@ -40,7 +40,7 @@ public class StateHelper {
     return SpecificationInput.builder()
       .description("description")
       .tags(Collections.emptyList())
-      .type("default")
+      .type("egsp.kafka")
       .configuration(mapper.createObjectNode())
       .security(Collections.emptyList())
       .build().asSpecification();
