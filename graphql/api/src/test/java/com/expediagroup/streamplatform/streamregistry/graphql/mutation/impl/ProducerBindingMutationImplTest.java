@@ -30,72 +30,84 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
-import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.services.ProducerBindingService;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerBindingKeyInput;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProducerBindingMutationImplTest {
 
   @Mock
-  private ConsumerBindingService consumerBindingService;
+  private ProducerBindingService producerBindingService;
 
   @Mock
-  private ConsumerBindingView consumerBindingView;
+  private ProducerBindingView producerBindingView;
 
-  private ConsumerBindingMutationImpl consumerBindingMutation;
+  private ProducerBindingMutationImpl producerBindingMutation;
 
   @Before
   public void before() throws Exception {
-    consumerBindingMutation = new ConsumerBindingMutationImpl(consumerBindingService, consumerBindingView);
+    producerBindingMutation = new ProducerBindingMutationImpl(producerBindingService, producerBindingView);
   }
 
   @Test
   public void deleteWithCheckExistEnabledWhenEntityExists() {
-    ReflectionTestUtils.setField(consumerBindingMutation, "checkExistEnabled", true);
-    ConsumerBindingKeyInput key = getConsumerBindingInputKey();
-    when(consumerBindingView.get(any())).thenReturn(Optional.of(getConsumer(key)));
-    Boolean result = consumerBindingMutation.delete(key);
-    verify(consumerBindingService, times(1)).delete(any());
-    verify(consumerBindingView, times(1)).get(any());
+    ReflectionTestUtils.setField(producerBindingMutation, "checkExistEnabled", true);
+    ProducerBindingKeyInput key = getproducerBindingInputKey();
+    when(producerBindingView.get(any())).thenReturn(Optional.of(getProducer(key)));
+    Boolean result = producerBindingMutation.delete(key);
+    verify(producerBindingView, times(1)).get(key.asProducerBindingKey());
+    verify(producerBindingService, times(1)).delete(any());
     assertTrue(result);
   }
 
   @Test
   public void deleteWithCheckExistEnabledWhenEntityDoesNotExist() {
-    ReflectionTestUtils.setField(consumerBindingMutation, "checkExistEnabled", true);
-    ConsumerBindingKeyInput key = getConsumerBindingInputKey();
-    when(consumerBindingView.get(any())).thenReturn(Optional.empty());
-    Boolean result = consumerBindingMutation.delete(key);
-    verify(consumerBindingService, times(0)).delete(any());
-    verify(consumerBindingView, times(1)).get(any());
+    ReflectionTestUtils.setField(producerBindingMutation, "checkExistEnabled", true);
+    ProducerBindingKeyInput key = getproducerBindingInputKey();
+    when(producerBindingView.get(any())).thenReturn(Optional.empty());
+    Boolean result = producerBindingMutation.delete(key);
+    verify(producerBindingView, times(1)).get(key.asProducerBindingKey());
+    verify(producerBindingService, times(0)).delete(any());
     assertTrue(result);
   }
 
   @Test
-  public void deleteWithCheckExistDisabled() {
-    ReflectionTestUtils.setField(consumerBindingMutation, "checkExistEnabled", false);
-    ConsumerBindingKeyInput key = getConsumerBindingInputKey();
-    Boolean result = consumerBindingMutation.delete(key);
-    verify(consumerBindingService, times(1)).delete(getConsumer(key));
-    verify(consumerBindingView, times(0)).get(any());
+  public void deleteWithCheckExistDisabledWhenEntityExists() {
+    ReflectionTestUtils.setField(producerBindingMutation, "checkExistEnabled", false);
+    ProducerBindingKeyInput key = getproducerBindingInputKey();
+    when(producerBindingView.get(any())).thenReturn(Optional.of(getProducer(key)));
+    Boolean result = producerBindingMutation.delete(key);
+    verify(producerBindingView, times(1)).get(key.asProducerBindingKey());
+    verify(producerBindingService, times(1)).delete(getProducer(key));
     assertTrue(result);
   }
 
-  private ConsumerBindingKeyInput getConsumerBindingInputKey() {
-    return ConsumerBindingKeyInput.builder()
+  @Test
+  public void deleteWithCheckExistDisabledWhenEntityDoesNotExist() {
+    ReflectionTestUtils.setField(producerBindingMutation, "checkExistEnabled", false);
+    ProducerBindingKeyInput key = getproducerBindingInputKey();
+    when(producerBindingView.get(any())).thenReturn(Optional.empty());
+    Boolean result = producerBindingMutation.delete(key);
+    verify(producerBindingView, times(1)).get(key.asProducerBindingKey());
+    verify(producerBindingService, times(1)).delete(getProducer(key));
+    assertTrue(result);
+  }
+
+  private ProducerBindingKeyInput getproducerBindingInputKey() {
+    return ProducerBindingKeyInput.builder()
       .streamDomain("domain")
       .streamName("stream")
       .streamVersion(1)
       .infrastructureZone("zone")
       .infrastructureName("infrastructure")
-      .consumerName("consumer")
+      .producerName("producer")
       .build();
   }
 
-  private ConsumerBinding getConsumer(ConsumerBindingKeyInput key) {
-    return new ConsumerBinding(key.asConsumerBindingKey(), StateHelper.specification(), StateHelper.status());
+  private ProducerBinding getProducer(ProducerBindingKeyInput key) {
+    return new ProducerBinding(key.asProducerBindingKey(), StateHelper.specification(), StateHelper.status());
   }
 }

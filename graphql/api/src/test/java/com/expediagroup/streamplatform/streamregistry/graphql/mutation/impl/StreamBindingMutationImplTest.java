@@ -58,8 +58,8 @@ public class StreamBindingMutationImplTest {
     StreamBindingKeyInput key = getStreamBindingInputKey();
     when(streamBindingView.get(any())).thenReturn(Optional.of(getStream(key)));
     Boolean result = streamBindingMutation.delete(key);
+    verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
     verify(streamBindingService, times(1)).delete(any());
-    verify(streamBindingView, times(1)).get(any());
     assertTrue(result);
   }
 
@@ -69,18 +69,30 @@ public class StreamBindingMutationImplTest {
     StreamBindingKeyInput key = getStreamBindingInputKey();
     when(streamBindingView.get(any())).thenReturn(Optional.empty());
     Boolean result = streamBindingMutation.delete(key);
+    verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
     verify(streamBindingService, times(0)).delete(any());
-    verify(streamBindingView, times(1)).get(any());
     assertTrue(result);
   }
 
   @Test
-  public void deleteWithCheckExistDisabled() {
+  public void deleteWithCheckExistDisabledWhenEntiyExists() {
     ReflectionTestUtils.setField(streamBindingMutation, "checkExistEnabled", false);
     StreamBindingKeyInput key = getStreamBindingInputKey();
+    when(streamBindingView.get(any())).thenReturn(Optional.of(getStream(key)));
     Boolean result = streamBindingMutation.delete(key);
-    verify(streamBindingService, times(1)).delete(getStream(key));
-    verify(streamBindingView, times(0)).get(any());
+    verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
+    verify(streamBindingService, times(1)).delete(any());
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistDisabledWhenEntiyDoesNotExist() {
+    ReflectionTestUtils.setField(streamBindingMutation, "checkExistEnabled", false);
+    StreamBindingKeyInput key = getStreamBindingInputKey();
+    when(streamBindingView.get(any())).thenReturn(Optional.empty());
+    Boolean result = streamBindingMutation.delete(key);
+    verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
+    verify(streamBindingService, times(1)).delete(any());
     assertTrue(result);
   }
 

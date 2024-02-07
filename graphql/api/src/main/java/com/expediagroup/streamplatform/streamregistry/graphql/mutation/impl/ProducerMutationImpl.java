@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -63,12 +65,12 @@ public class ProducerMutationImpl implements ProducerMutation {
 
   @Override
   public Boolean delete(ProducerKeyInput key) {
-    if (checkExistEnabled) {
-      producerView.get(key.asProducerKey()).ifPresent(producerService::delete);
-    } else {
-      Producer producer = new Producer(key.asProducerKey(), StateHelper.specification(), StateHelper.status());
-      producerService.delete(producer);
-    }
+    Optional<Producer> producer = producerView.get(key.asProducerKey());
+    producer.ifPresentOrElse(producerService::delete, () -> {
+      if (!checkExistEnabled) {
+        producerService.delete(new Producer(key.asProducerKey(), StateHelper.specification(), StateHelper.status()));
+      }
+    });
     return true;
   }
 
