@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -63,12 +65,12 @@ public class ConsumerMutationImpl implements ConsumerMutation {
 
   @Override
   public Boolean delete(ConsumerKeyInput key) {
-    if (checkExistEnabled) {
-      consumerView.get(key.asConsumerKey()).ifPresent(consumerService::delete);
-    } else {
-      Consumer consumer = new Consumer(key.asConsumerKey(), StateHelper.specification(), StateHelper.status());
-      consumerService.delete(consumer);
-    }
+    Optional<Consumer> consumer = consumerView.get(key.asConsumerKey());
+    consumer.ifPresentOrElse(consumerService::delete, () -> {
+      if (!checkExistEnabled) {
+        consumerService.delete(new Consumer(key.asConsumerKey(), StateHelper.specification(), StateHelper.status()));
+      }
+    });
     return true;
   }
 

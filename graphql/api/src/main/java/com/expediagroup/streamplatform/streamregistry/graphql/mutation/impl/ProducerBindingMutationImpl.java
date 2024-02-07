@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -63,12 +65,12 @@ public class ProducerBindingMutationImpl implements ProducerBindingMutation {
 
   @Override
   public Boolean delete(ProducerBindingKeyInput key) {
-    if (checkExistEnabled) {
-      producerBindingView.get(key.asProducerBindingKey()).ifPresent(producerBindingService::delete);
-    } else {
-      ProducerBinding producerBinding = new ProducerBinding(key.asProducerBindingKey(), StateHelper.specification(), StateHelper.status());
-      producerBindingService.delete(producerBinding);
-    }
+    Optional<ProducerBinding> producerBinding = producerBindingView.get(key.asProducerBindingKey());
+    producerBinding.ifPresentOrElse(producerBindingService::delete, () -> {
+      if (!checkExistEnabled) {
+        producerBindingService.delete(new ProducerBinding(key.asProducerBindingKey(), StateHelper.specification(), StateHelper.status()));
+      }
+    });
     return true;
   }
 

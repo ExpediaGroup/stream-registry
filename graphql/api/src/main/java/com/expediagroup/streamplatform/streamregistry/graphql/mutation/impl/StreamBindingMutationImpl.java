@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -63,12 +65,12 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
 
   @Override
   public Boolean delete(StreamBindingKeyInput key) {
-    if (checkExistEnabled) {
-      streamBindingView.get(key.asStreamBindingKey()).ifPresent(streamBindingService::delete);
-    } else {
-      StreamBinding streamBinding = new StreamBinding(key.asStreamBindingKey(), StateHelper.specification(), StateHelper.status());
-      streamBindingService.delete(streamBinding);
-    }
+    Optional<StreamBinding> streamBinding = streamBindingView.get(key.asStreamBindingKey());
+    streamBinding.ifPresentOrElse(streamBindingService::delete, () -> {
+      if (!checkExistEnabled) {
+        streamBindingService.delete(new StreamBinding(key.asStreamBindingKey(), StateHelper.specification(), StateHelper.status()));
+      }
+    });
     return true;
   }
 

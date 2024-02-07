@@ -58,8 +58,8 @@ public class ConsumerMutationImplTest {
     ConsumerKeyInput key = getConsumerInputKey();
     when(consumerView.get(any())).thenReturn(Optional.of(getConsumer(key)));
     Boolean result = consumerMutation.delete(key);
-    verify(consumerService, times(1)).delete(any());
-    verify(consumerView, times(1)).get(any());
+    verify(consumerView, times(1)).get(key.asConsumerKey());
+    verify(consumerService, times(1)).delete(getConsumer(key));
     assertTrue(result);
   }
 
@@ -69,18 +69,30 @@ public class ConsumerMutationImplTest {
     ConsumerKeyInput key = getConsumerInputKey();
     when(consumerView.get(any())).thenReturn(Optional.empty());
     Boolean result = consumerMutation.delete(key);
+    verify(consumerView, times(1)).get(key.asConsumerKey());
     verify(consumerService, times(0)).delete(any());
-    verify(consumerView, times(1)).get(any());
     assertTrue(result);
   }
 
   @Test
-  public void deleteWithCheckExistDisabled() {
+  public void deleteWithCheckExistDisabledWhenEntityExists() {
     ReflectionTestUtils.setField(consumerMutation, "checkExistEnabled", false);
     ConsumerKeyInput key = getConsumerInputKey();
+    when(consumerView.get(any())).thenReturn(Optional.of(getConsumer(key)));
     Boolean result = consumerMutation.delete(key);
+    verify(consumerView, times(1)).get(key.asConsumerKey());
     verify(consumerService, times(1)).delete(getConsumer(key));
-    verify(consumerView, times(0)).get(any());
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistDisabledWhenEntityDoesNotExist() {
+    ReflectionTestUtils.setField(consumerMutation, "checkExistEnabled", false);
+    ConsumerKeyInput key = getConsumerInputKey();
+    when(consumerView.get(any())).thenReturn(Optional.of(getConsumer(key)));
+    Boolean result = consumerMutation.delete(key);
+    verify(consumerView, times(1)).get(key.asConsumerKey());
+    verify(consumerService, times(1)).delete(getConsumer(key));
     assertTrue(result);
   }
 

@@ -58,8 +58,8 @@ public class ProducerMutationImplTest {
     ProducerKeyInput key = getProducerInputKey();
     when(producerView.get(any())).thenReturn(Optional.of(getProducer(key)));
     Boolean result = producerMutation.delete(key);
+    verify(producerView, times(1)).get(key.asProducerKey());
     verify(producerService, times(1)).delete(any());
-    verify(producerView, times(1)).get(any());
     assertTrue(result);
   }
 
@@ -69,19 +69,32 @@ public class ProducerMutationImplTest {
     ProducerKeyInput key = getProducerInputKey();
     when(producerView.get(any())).thenReturn(Optional.empty());
     Boolean result = producerMutation.delete(key);
+    verify(producerView, times(1)).get(key.asProducerKey());
     verify(producerService, times(0)).delete(any());
-    verify(producerView, times(1)).get(any());
     assertTrue(result);
   }
 
   @Test
-  public void deleteWithCheckExistDisabled() {
+  public void deleteWithCheckExistDisabledWhenEntityExists() {
     ProducerMutationImpl producerMutation = new ProducerMutationImpl(producerService, producerView);
     ReflectionTestUtils.setField(producerMutation, "checkExistEnabled", false);
     ProducerKeyInput key = getProducerInputKey();
+    when(producerView.get(any())).thenReturn(Optional.of(getProducer(key)));;
     Boolean result = producerMutation.delete(key);
+    verify(producerView, times(1)).get(key.asProducerKey());
+    verify(producerService, times(1)).delete(any());
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistDisabledWhenEntityDoesNotExist() {
+    ProducerMutationImpl producerMutation = new ProducerMutationImpl(producerService, producerView);
+    ReflectionTestUtils.setField(producerMutation, "checkExistEnabled", false);
+    ProducerKeyInput key = getProducerInputKey();
+    when(producerView.get(any())).thenReturn(Optional.of(getProducer(key)));;
+    Boolean result = producerMutation.delete(key);
+    verify(producerView, times(1)).get(key.asProducerKey());
     verify(producerService, times(1)).delete(getProducer(key));
-    verify(producerView, times(0)).get(any());
     assertTrue(result);
   }
 

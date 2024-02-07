@@ -56,10 +56,11 @@ public class ConsumerBindingMutationImplTest {
   public void deleteWithCheckExistEnabledWhenEntityExists() {
     ReflectionTestUtils.setField(consumerBindingMutation, "checkExistEnabled", true);
     ConsumerBindingKeyInput key = getConsumerBindingInputKey();
-    when(consumerBindingView.get(any())).thenReturn(Optional.of(getConsumer(key)));
+    Optional<ConsumerBinding> consumerBinding = Optional.of(getConsumer(key));
+    when(consumerBindingView.get(any())).thenReturn(consumerBinding);
     Boolean result = consumerBindingMutation.delete(key);
-    verify(consumerBindingService, times(1)).delete(any());
-    verify(consumerBindingView, times(1)).get(any());
+    verify(consumerBindingView, times(1)).get(key.asConsumerBindingKey());
+    verify(consumerBindingService, times(1)).delete(consumerBinding.get());
     assertTrue(result);
   }
 
@@ -67,20 +68,35 @@ public class ConsumerBindingMutationImplTest {
   public void deleteWithCheckExistEnabledWhenEntityDoesNotExist() {
     ReflectionTestUtils.setField(consumerBindingMutation, "checkExistEnabled", true);
     ConsumerBindingKeyInput key = getConsumerBindingInputKey();
+    Optional<ConsumerBinding> consumerBinding = Optional.of(getConsumer(key));
     when(consumerBindingView.get(any())).thenReturn(Optional.empty());
     Boolean result = consumerBindingMutation.delete(key);
+    verify(consumerBindingView, times(1)).get(key.asConsumerBindingKey());
     verify(consumerBindingService, times(0)).delete(any());
-    verify(consumerBindingView, times(1)).get(any());
     assertTrue(result);
   }
 
   @Test
-  public void deleteWithCheckExistDisabled() {
+  public void deleteWithCheckExistDisabledWhenEntityExists() {
     ReflectionTestUtils.setField(consumerBindingMutation, "checkExistEnabled", false);
     ConsumerBindingKeyInput key = getConsumerBindingInputKey();
+    Optional<ConsumerBinding> consumerBinding = Optional.of(getConsumer(key));
+    when(consumerBindingView.get(any())).thenReturn(consumerBinding);
     Boolean result = consumerBindingMutation.delete(key);
-    verify(consumerBindingService, times(1)).delete(getConsumer(key));
-    verify(consumerBindingView, times(0)).get(any());
+    verify(consumerBindingView, times(1)).get(key.asConsumerBindingKey());
+    verify(consumerBindingService, times(1)).delete(consumerBinding.get());
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistDisabledWhenEntityDoesNotExist() {
+    ReflectionTestUtils.setField(consumerBindingMutation, "checkExistEnabled", false);
+    ConsumerBindingKeyInput key = getConsumerBindingInputKey();
+    Optional<ConsumerBinding> consumerBinding = Optional.of(getConsumer(key));
+    when(consumerBindingView.get(any())).thenReturn(Optional.empty());
+    Boolean result = consumerBindingMutation.delete(key);
+    verify(consumerBindingView, times(1)).get(key.asConsumerBindingKey());
+    verify(consumerBindingService, times(1)).delete(any());
     assertTrue(result);
   }
 

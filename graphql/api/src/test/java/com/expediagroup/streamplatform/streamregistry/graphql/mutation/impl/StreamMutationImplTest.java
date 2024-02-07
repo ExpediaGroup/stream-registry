@@ -57,8 +57,8 @@ public class StreamMutationImplTest {
     StreamKeyInput key = getStreamInputKey();
     when(streamView.get(any())).thenReturn(Optional.of(getStream(key)));
     Boolean result = streamMutation.delete(key);
+    verify(streamView, times(1)).get(key.asStreamKey());
     verify(streamService, times(1)).delete(any());
-    verify(streamView, times(1)).get(any());
     assertTrue(result);
   }
 
@@ -68,18 +68,30 @@ public class StreamMutationImplTest {
     StreamKeyInput key = getStreamInputKey();
     when(streamView.get(any())).thenReturn(Optional.empty());
     Boolean result = streamMutation.delete(key);
+    verify(streamView, times(1)).get(key.asStreamKey());
     verify(streamService, times(0)).delete(any());
-    verify(streamView, times(1)).get(any());
     assertTrue(result);
   }
 
   @Test
-  public void deleteWithCheckExistDisabled() {
+  public void deleteWithCheckExistDisabledWhenEntityExists() {
     ReflectionTestUtils.setField(streamMutation, "checkExistEnabled", false);
     StreamKeyInput key = getStreamInputKey();
+    when(streamView.get(any())).thenReturn(Optional.of(getStream(key)));
     Boolean result = streamMutation.delete(key);
-    verify(streamService, times(1)).delete(getStream(key));
-    verify(streamView, times(0)).get(any());
+    verify(streamView, times(1)).get(key.asStreamKey());
+    verify(streamService, times(1)).delete(any());
+    assertTrue(result);
+  }
+
+  @Test
+  public void deleteWithCheckExistDisabledWhenEntityDoesNotExist() {
+    ReflectionTestUtils.setField(streamMutation, "checkExistEnabled", false);
+    StreamKeyInput key = getStreamInputKey();
+    when(streamView.get(any())).thenReturn(Optional.empty());
+    Boolean result = streamMutation.delete(key);
+    verify(streamView, times(1)).get(key.asStreamKey());
+    verify(streamService, times(1)).delete(any());
     assertTrue(result);
   }
 
