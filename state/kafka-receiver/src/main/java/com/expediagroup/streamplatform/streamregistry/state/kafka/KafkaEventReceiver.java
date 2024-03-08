@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
 import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
+import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.*;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
@@ -35,8 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.*;
 
 import lombok.Builder;
 import lombok.NonNull;
@@ -70,27 +70,33 @@ public class KafkaEventReceiver implements EventReceiver {
   private static final int THREAD_POOL_SIZE = 2;
 
 
-  @NonNull private final Config config;
+  @NonNull
+  private final Config config;
   private final EventCorrelator correlator;
-  @NonNull private final AvroConverter converter;
-  @NonNull private final KafkaConsumer<AvroKey, AvroValue> consumer;
-  @NonNull private final ScheduledExecutorService executorService;
+  @NonNull
+  private final AvroConverter converter;
+  @NonNull
+  private final KafkaConsumer<AvroKey, AvroValue> consumer;
+  @NonNull
+  private final ScheduledExecutorService executorService;
+  private final AtomicReference<State> state = new AtomicReference<>(CREATED);
 
   private volatile boolean shuttingDown = false;
   private final AtomicBoolean started = new AtomicBoolean(false);
 
   public KafkaEventReceiver(Config config, EventCorrelator correlator, Configurator<KafkaConsumer<AvroKey, AvroValue>> consumerConfigurator) {
     this(
-        config,
-        correlator,
-        new AvroConverter(),
-        getKafkaConsumer(config, consumerConfigurator),
-        newScheduledThreadPool(THREAD_POOL_SIZE)
+      config,
+      correlator,
+      new AvroConverter(),
+      getKafkaConsumer(config, consumerConfigurator),
+      newScheduledThreadPool(THREAD_POOL_SIZE)
     );
   }
 
   public KafkaEventReceiver(Config config, EventCorrelator correlator) {
-    this(config, correlator, kafkaConsumer -> {});
+    this(config, correlator, kafkaConsumer -> {
+    });
   }
 
   public KafkaEventReceiver(Config config) {
@@ -105,7 +111,7 @@ public class KafkaEventReceiver implements EventReceiver {
 
   @Override
   public void receive(EventReceiverListener listener) {
-    if(started.getAndSet(true)) {
+    if (state.getAndSet(RUNNING) != CREATED) {
       throw new IllegalStateException("Only a single EventReceiverListener is supported");
     }
     executorService.execute(() -> {
@@ -113,6 +119,7 @@ public class KafkaEventReceiver implements EventReceiver {
         consume(listener);
       } catch (Exception e) {
         log.error("Receiving failed", e);
+        state.set(ERROR);
         throw e;
       }
     });
@@ -121,7 +128,7 @@ public class KafkaEventReceiver implements EventReceiver {
   void consume(EventReceiverListener listener) {
     val currentOffset = new AtomicLong(0L);
     val progressLogger = executorService
-        .scheduleAtFixedRate(() -> log.info("Current offset {}", currentOffset.get()), 10, 10, SECONDS);
+      .scheduleAtFixedRate(() -> log.info("Current offset {}", currentOffset.get()), 10, 10, SECONDS);
 
     val topicPartition = new TopicPartition(config.getTopic(), 0);
     val topicPartitions = Collections.singletonList(topicPartition);
@@ -146,7 +153,7 @@ public class KafkaEventReceiver implements EventReceiver {
       loaded = true;
     }
 
-    while (!shuttingDown) {
+    while (state.get() == RUNNING) {
       for (ConsumerRecord<AvroKey, AvroValue> record : consumer.poll(Duration.ofMillis(100))) {
         val event = converter.toModel(record.key(), record.value());
         currentOffset.set(record.offset());
@@ -179,9 +186,14 @@ public class KafkaEventReceiver implements EventReceiver {
 
   @Override
   public void close() {
-    shuttingDown = true;
+    state.set(PENDING_SHUTDOWN);
     executorService.shutdown();
     consumer.close();
+    state.set(NOT_RUNNING);
+  }
+
+  public State getState() {
+    return state.get();
   }
 
   static Map<String, Object> consumerConfig(Config config) {
@@ -211,5 +223,13 @@ public class KafkaEventReceiver implements EventReceiver {
     @NonNull String schemaRegistryUrl;
     @NonNull String groupId;
     Map<String, Object> properties;
+  }
+
+  public enum State {
+    CREATED,
+    RUNNING,
+    ERROR,
+    PENDING_SHUTDOWN,
+    NOT_RUNNING
   }
 }
