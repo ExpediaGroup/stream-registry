@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.state.kafka;
 
 import static com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator.CORRELATION_ID;
+import static com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.State.*;
 import static com.expediagroup.streamplatform.streamregistry.state.model.event.Event.LOAD_COMPLETE;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;
@@ -29,19 +30,16 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.*;
 
 import lombok.val;
 
@@ -54,6 +52,8 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
+import org.awaitility.*;
+import org.awaitility.core.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,16 +73,26 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class KafkaEventReceiverTest {
-  @Mock private KafkaEventReceiver.Config config;
-  @Mock private EventCorrelator correlator;
-  @Mock private AvroConverter converter;
-  @Mock private KafkaConsumer<AvroKey, AvroValue> consumer;
-  @Mock private EventReceiverListener listener;
-  @Mock private PartitionInfo partitionInfo;
-  @Mock private ConsumerRecord<AvroKey, AvroValue> record;
-  @Mock private AvroKey avroKey;
-  @Mock private AvroValue avroValue;
-  @Mock private Event event;
+  @Mock
+  private KafkaEventReceiver.Config config;
+  @Mock
+  private EventCorrelator correlator;
+  @Mock
+  private AvroConverter converter;
+  @Mock
+  private KafkaConsumer<AvroKey, AvroValue> consumer;
+  @Mock
+  private EventReceiverListener listener;
+  @Mock
+  private PartitionInfo partitionInfo;
+  @Mock
+  private ConsumerRecord<AvroKey, AvroValue> record;
+  @Mock
+  private AvroKey avroKey;
+  @Mock
+  private AvroValue avroValue;
+  @Mock
+  private Event event;
 
   private final ScheduledExecutorService executorService = newScheduledThreadPool(2);
 
@@ -91,6 +101,7 @@ public class KafkaEventReceiverTest {
   private final String topic = "topic";
   private final TopicPartition topicPartition = new TopicPartition(topic, 0);
   private final List<TopicPartition> topicPartitions = Collections.singletonList(topicPartition);
+  private final ConditionFactory await = Awaitility.await().atMost(2, SECONDS);
 
   @Before
   public void before() {
@@ -109,14 +120,16 @@ public class KafkaEventReceiverTest {
     when(converter.toModel(avroKey, avroValue)).thenReturn(event);
     when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
     val latch = new CountDownLatch(1);
-    doAnswer((correlationId) ->{
+    doAnswer((correlationId) -> {
       latch.countDown();
       return null;
     }).when(correlator).received(anyString());
 
     underTest.receive(listener);
+    assertThat(underTest.getState(), is(RUNNING));
     latch.await(1, SECONDS);
     underTest.close();
+    assertThat(underTest.getState(), is(NOT_RUNNING));
 
     val inOrder = Mockito.inOrder(consumer, listener, correlator);
     inOrder.verify(consumer).assign(topicPartitions);
@@ -139,14 +152,16 @@ public class KafkaEventReceiverTest {
     when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
     doThrow(new RuntimeException("listener error")).when(listener).onEvent(event);
     val latch = new CountDownLatch(1);
-    doAnswer((correlationId) ->{
+    doAnswer((correlationId) -> {
       latch.countDown();
       return null;
     }).when(correlator).received(anyString());
 
     underTest.receive(listener);
     latch.await(1, SECONDS);
+    assertThat(underTest.getState(), is(RUNNING));
     underTest.close();
+    assertThat(underTest.getState(), is(NOT_RUNNING));
 
     val inOrder = Mockito.inOrder(consumer, listener, correlator);
     inOrder.verify(consumer).assign(topicPartitions);
@@ -154,6 +169,63 @@ public class KafkaEventReceiverTest {
     inOrder.verify(listener).onEvent(LOAD_COMPLETE);
     inOrder.verify(listener).onEvent(event);
     inOrder.verify(correlator).received("foo");
+  }
+
+  @Test
+  public void errorWhenMoreThanOnePartition() {
+    when(config.getTopic()).thenReturn(topic);
+    val multiplePartitions = new ArrayList<PartitionInfo>() {{
+      add(partitionInfo);
+      add(partitionInfo);
+    }};
+    when(consumer.partitionsFor(topic)).thenReturn(multiplePartitions);
+
+    underTest.receive(listener);
+    verify(consumer, timeout(100)).partitionsFor(topic);
+    await.untilAsserted(() -> assertThat(underTest.getState(), is(ERROR)));
+
+    underTest.close();
+    assertThat(underTest.getState(), is(NOT_RUNNING));
+  }
+
+  @Test
+  public void errorWhenRunningButUnableToPoll() throws Exception {
+    val polls = new AtomicInteger(0);
+    when(config.getTopic()).thenReturn(topic);
+    when(consumer.partitionsFor(topic)).thenReturn(Collections.singletonList(partitionInfo));
+    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.endOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.poll(Duration.ofMillis(100))).thenAnswer(invocation -> {
+      if (polls.getAndIncrement() < 10) {
+        return new ConsumerRecords<>(Collections.singletonMap(topicPartition, Collections.singletonList(record)));
+      } else {
+        throw new RuntimeException("Some Kafka poll error here");
+      }
+    });
+    when(record.key()).thenReturn(avroKey);
+    when(record.value()).thenReturn(avroValue);
+    when(converter.toModel(avroKey, avroValue)).thenReturn(event);
+    when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+    val latch = new CountDownLatch(1);
+    doAnswer((correlationId) -> {
+      assertThat(underTest.getState(), is(RUNNING));
+      latch.countDown();
+      return null;
+    }).when(correlator).received(anyString());
+
+    underTest.receive(listener);
+    latch.await(1, SECONDS);
+
+    val inOrder = Mockito.inOrder(consumer, listener, correlator);
+    inOrder.verify(consumer).assign(topicPartitions);
+    inOrder.verify(consumer).seekToBeginning(topicPartitions);
+    inOrder.verify(listener).onEvent(LOAD_COMPLETE);
+    inOrder.verify(listener).onEvent(event);
+
+    await.untilAsserted(() -> assertThat(underTest.getState(), is(ERROR)));
+    verify(consumer, times(11)).poll(any());
+    underTest.close();
+    assertThat(underTest.getState(), is(NOT_RUNNING));
   }
 
   @Test(expected = IllegalStateException.class)
@@ -167,7 +239,8 @@ public class KafkaEventReceiverTest {
   public void onlySupportsOneReceiver() {
     val doNothingListener = new EventReceiverListener() {
       @Override
-      public <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event) { }
+      public <K extends Entity.Key<S>, S extends Specification> void onEvent(Event<K, S> event) {
+      }
     };
     underTest.receive(doNothingListener);
     underTest.receive(doNothingListener);
