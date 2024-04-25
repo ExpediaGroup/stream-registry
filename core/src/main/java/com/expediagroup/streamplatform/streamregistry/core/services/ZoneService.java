@@ -124,7 +124,7 @@ public class ZoneService {
       .ifPresent(pb -> { throw new IllegalStateException("Zone is used in process binding: " + pb.getKey()); });
 
     processView
-      .findAll(p -> p.getZones().stream().map(ZoneKey::getName).toList().contains(zone.getKey().getName()))
+      .findAll(p -> p.getZones().stream().toList().contains(zone.getKey()))
       .findAny()
       .ifPresent(p -> { throw new IllegalStateException("Zone is used in process: " + p.getKey()); });
 
