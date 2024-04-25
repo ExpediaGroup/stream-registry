@@ -131,7 +131,7 @@ public class ZoneService {
     infrastructureView
       .findAll(infra -> infra.getKey().getZone().equals(zone.getKey().getName()))
       .findAny()
-      .ifPresent(infra -> { throw new IllegalStateException("Zone is used in infrastructure: " + infra.getKey().getName()); });
+      .ifPresent(infra -> { throw new IllegalStateException("Zone is used in infrastructure: " + infra.getKey()); });
 
     zoneRepository.delete(zone);
   }
