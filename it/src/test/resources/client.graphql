@@ -642,6 +642,14 @@ mutation UpdateInfrastructureStatus(
   }
 }
 
+mutation deleteInfrastructure(
+  $key: InfrastructureKeyInput!
+) {
+  infrastructure {
+    delete(key: $key)
+  }
+}
+
 query Infrastructure(
   $key: InfrastructureKeyInput!
 ) {
@@ -1263,6 +1271,14 @@ mutation UpdateZoneStatus(
       __typename
       ...ZonePart
     }
+  }
+}
+
+mutation deleteZone(
+  $key: ZoneKeyInput!
+) {
+  zone {
+    delete(key: $key)
   }
 }
 
