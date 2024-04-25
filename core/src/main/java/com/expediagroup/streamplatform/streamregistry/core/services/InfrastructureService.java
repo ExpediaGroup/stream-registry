@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,10 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
@@ -45,6 +48,9 @@ public class InfrastructureService {
   private final HandlerService handlerService;
   private final InfrastructureValidator infrastructureValidator;
   private final InfrastructureRepository infrastructureRepository;
+  private final StreamBindingView streamBindingView;
+  private final ConsumerBindingView consumerBindingView;
+  private final ProducerBindingView producerBindingView;
 
   @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
@@ -90,7 +96,22 @@ public class InfrastructureService {
 
   @PreAuthorize("hasPermission(#infrastructure, 'DELETE')")
   public void delete(Infrastructure infrastructure) {
-    throw new UnsupportedOperationException("Infrastructure deletion not currently supported.");
-  }
+    handlerService.handleDelete(infrastructure);
+    streamBindingView
+      .findAll(sb -> sb.getKey().getInfrastructureName().equals(infrastructure.getKey().getName()))
+      .findAny()
+      .ifPresent(sb -> { throw new IllegalStateException("Infrastructure is used in stream: " + sb.getKey().getStreamKey()); });
 
+    consumerBindingView
+      .findAll(cb -> cb.getKey().getInfrastructureName().equals(infrastructure.getKey().getName()))
+      .findAny()
+      .ifPresent(cb -> { throw new IllegalStateException("Infrastructure is used in consumer binding: " + cb.getKey()); });
+
+    producerBindingView
+      .findAll(pb -> pb.getKey().getInfrastructureName().equals(infrastructure.getKey().getName()))
+      .findAny()
+      .ifPresent(pb -> { throw new IllegalStateException("Infrastructure is used in producer binding: " + pb.getKey()); });
+
+    infrastructureRepository.delete(infrastructure);
+  }
 }
