@@ -15,28 +15,54 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
+import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.Process;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Specification;
+import com.expediagroup.streamplatform.streamregistry.model.Status;
+import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.Zone;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
-import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
-import com.expediagroup.streamplatform.streamregistry.core.views.*;
-import com.expediagroup.streamplatform.streamregistry.model.Specification;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
-import com.expediagroup.streamplatform.streamregistry.model.Zone;
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
-import com.expediagroup.streamplatform.streamregistry.repository.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ZoneServiceTest {
@@ -86,7 +112,7 @@ public class ZoneServiceTest {
     );
   }
 
-  @org.junit.Test
+  @Test
   public void create() {
     final Zone entity = mock(Zone.class);
     final ZoneKey key = mock(ZoneKey.class);
@@ -108,7 +134,7 @@ public class ZoneServiceTest {
     verify(zoneRepository).save(entity);
   }
 
-  @org.junit.Test
+  @Test
   public void update() {
     final Zone entity = mock(Zone.class);
     final ZoneKey key = mock(ZoneKey.class);
@@ -132,7 +158,7 @@ public class ZoneServiceTest {
     verify(zoneRepository).save(entity);
   }
 
-  @org.junit.Test
+  @Test
   public void updateStatus() {
     final Zone entity = mock(Zone.class);
     final Status status = mock(Status.class);
@@ -144,9 +170,156 @@ public class ZoneServiceTest {
     verify(zoneRepository).save(entity);
   }
 
-//  @Test(expected = UnsupportedOperationException.class)
-//  public void delete() {
-//    final Zone entity = mock(Zone.class);
-//    zoneService.delete(entity);
-//  }
+  @Test
+  public void deleteWithNoError() {
+    final Zone zone = mock(Zone.class);
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(processBindingRepository.findAll()).thenReturn(emptyList());
+    when(processRepository.findAll()).thenReturn(emptyList());
+    when(infrastructureRepository.findAll()).thenReturn(emptyList());
+    zoneService.delete(zone);
+    verify(zoneRepository).delete(zone);
+  }
+
+  @Test
+  public void throwExceptionWhenZoneIsUsedInStreamBinding() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+    final Zone zone = mock(Zone.class);
+
+    final StreamBindingKey streamBindingKey = new StreamBindingKey(
+      "domain",
+      "stream",
+      1,
+      "aws_us_east_1",
+      "infra"
+    );
+
+    final StreamBinding streamBinding = mock(StreamBinding.class);
+
+    when(streamBinding.getKey()).thenReturn(streamBindingKey);
+    when(zone.getKey()).thenReturn(zoneKey);
+    when(streamBindingRepository.findAll()).thenReturn(Collections.singletonList(streamBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals("Zone is used in stream: StreamKey(domain=domain, name=stream, version=1)", ex.getMessage());
+  }
+
+  @Test
+  public void throwExceptionWhenZoneIsUsedInConsumerBinding() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+    final Zone zone = mock(Zone.class);
+
+    final ConsumerBindingKey consumerBindingKey = new ConsumerBindingKey(
+      "domain",
+      "stream",
+      1,
+      "aws_us_east_1",
+      "infra",
+      "consumer"
+    );
+
+    final ConsumerBinding consumerBinding = mock(ConsumerBinding.class);
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBinding.getKey()).thenReturn(consumerBindingKey);
+    when(zone.getKey()).thenReturn(zoneKey);
+    when(consumerBindingRepository.findAll()).thenReturn(Collections.singletonList(consumerBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals("Zone is used in consumer binding: " + consumerBindingKey, ex.getMessage());
+  }
+
+  @Test
+  public void throwExceptionWhenZoneIsUsedInProducerBinding() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+    final Zone zone = mock(Zone.class);
+
+    final ProducerBindingKey producerBindingKey = new ProducerBindingKey(
+      "domain",
+      "stream",
+      1,
+      "aws_us_east_1",
+      "infra",
+      "producer"
+    );
+
+    final ProducerBinding producerBinding = mock(ProducerBinding.class);
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBinding.getKey()).thenReturn(producerBindingKey);
+    when(zone.getKey()).thenReturn(zoneKey);
+    when(producerBindingRepository.findAll()).thenReturn(Collections.singletonList(producerBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals("Zone is used in producer binding: " + producerBindingKey, ex.getMessage());
+  }
+
+  @Test
+  public void throwExceptionWhenZoneIsUsedInProcessBinding() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+    final Zone zone = mock(Zone.class);
+
+    final ProcessBindingKey processBindingKey = new ProcessBindingKey(
+      "domain",
+      "aws_us_east_1",
+      "process"
+    );
+
+    final ProcessBinding processBinding = mock(ProcessBinding.class);
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(processBinding.getKey()).thenReturn(processBindingKey);
+    when(zone.getKey()).thenReturn(zoneKey);
+    when(processBindingRepository.findAll()).thenReturn(Collections.singletonList(processBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals("Zone is used in process binding: " + processBindingKey, ex.getMessage());
+  }
+
+  @Test
+  public void throwExceptionWhenZoneIsUsedInProcess() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+    final Zone zone = mock(Zone.class);
+    final Process process = mock(Process.class);
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(processBindingRepository.findAll()).thenReturn(emptyList());
+    when(processRepository.findAll()).thenReturn(Collections.singletonList(process));
+    when(process.getZones()).thenReturn(Collections.singletonList(zoneKey));
+    when(zone.getKey()).thenReturn(zoneKey);
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals(
+      "Zone is used in process: " + process.getKey(),
+      ex.getMessage()
+    );
+  }
+
+  @Test
+  public void throwExceptionWhenZoneIsUsedInInfrastructure() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+
+    final Zone zone = mock(Zone.class);
+    final Infrastructure infrastructure = mock(Infrastructure.class);
+    final InfrastructureKey infrastructureKey = new InfrastructureKey("aws_us_east_1", "infrastructure");
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(processBindingRepository.findAll()).thenReturn(emptyList());
+    when(processRepository.findAll()).thenReturn(emptyList());
+    when(infrastructureRepository.findAll()).thenReturn(Collections.singletonList(infrastructure));
+    when(zone.getKey()).thenReturn(zoneKey);
+    when(infrastructure.getKey()).thenReturn(infrastructureKey);
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals("Zone is used in infrastructure: " + infrastructure.getKey(), ex.getMessage());
+  }
 }
