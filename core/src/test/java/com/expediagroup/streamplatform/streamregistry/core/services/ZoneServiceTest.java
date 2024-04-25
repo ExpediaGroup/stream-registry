@@ -25,6 +25,14 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Optional;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
@@ -56,13 +64,6 @@ import com.expediagroup.streamplatform.streamregistry.repository.ProcessReposito
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ZoneRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ZoneServiceTest {
