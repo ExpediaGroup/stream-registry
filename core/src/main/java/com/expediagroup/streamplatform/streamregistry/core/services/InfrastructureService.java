@@ -129,12 +129,12 @@ public class InfrastructureService {
   }
 
   private boolean isInfrastructureUsedInProcessBindingOutput(Infrastructure infrastructure, ProcessBinding processBinding) {
-    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureName()).toList()
-      .contains(infrastructure.getKey().getName());
+    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureName())
+      .anyMatch(infra -> infra.equals(infrastructure.getKey().getName()));
   }
 
   private boolean isInfrastructureUsedInProcessBindingInput(Infrastructure infrastructure, ProcessBinding processBinding) {
-    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureName()).toList()
-      .contains(infrastructure.getKey().getName());
+    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureName())
+      .anyMatch(infra -> infra.equals(infrastructure.getKey().getName()));
   }
 }

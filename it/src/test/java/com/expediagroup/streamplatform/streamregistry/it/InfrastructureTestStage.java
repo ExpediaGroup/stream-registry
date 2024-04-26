@@ -98,7 +98,6 @@ public class InfrastructureTestStage extends AbstractTestStage {
 
   @Override
   public void delete() {
-    //not implemented for infrastructure
     setFactorySuffix("delete");
 
     Object data = client.getOptionalData(factory.deleteInfrastructureMutationBuilder().build()).get();

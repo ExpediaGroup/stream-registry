@@ -126,12 +126,12 @@ public class StreamBindingService {
   }
 
   private boolean isStreamBindingUsedInProcessBindingOutput(StreamBinding streamBinding, ProcessBinding processBinding) {
-    return processBinding.getOutputs().stream().map(ProcessOutputStreamBinding::getStreamBindingKey).toList()
-      .contains(streamBinding.getKey());
+    return processBinding.getOutputs().stream().map(ProcessOutputStreamBinding::getStreamBindingKey)
+      .anyMatch(streamBindingKey -> streamBindingKey.equals(streamBinding.getKey()));
   }
 
   private boolean isStreamBindingUsedInProcessBindingInput(StreamBinding streamBinding, ProcessBinding processBinding) {
-    return processBinding.getInputs().stream().map(ProcessInputStreamBinding::getStreamBindingKey).toList()
-      .contains(streamBinding.getKey());
+    return processBinding.getInputs().stream().map(ProcessInputStreamBinding::getStreamBindingKey)
+      .anyMatch(streamBindingKey -> streamBindingKey.equals(streamBinding.getKey()));
   }
 }

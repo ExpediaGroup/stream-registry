@@ -125,7 +125,7 @@ public class ZoneService {
       .ifPresent(pb -> { throw new IllegalStateException("Zone is used in process binding: " + pb.getKey()); });
 
     processView
-      .findAll(p -> p.getZones().stream().toList().contains(zone.getKey()))
+      .findAll(p -> p.getZones().contains(zone.getKey()))
       .findAny()
       .ifPresent(p -> { throw new IllegalStateException("Zone is used in process: " + p.getKey()); });
 
@@ -144,12 +144,12 @@ public class ZoneService {
   }
 
   private boolean isZoneUsedInProcessBindingOutput(Zone zone, ProcessBinding processBinding) {
-    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureZone()).toList()
-      .contains(zone.getKey().getName());
+    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureZone())
+      .anyMatch(z -> z.equals(zone.getKey().getName()));
   }
 
   private boolean isZoneUsedInProcessBindingInput(Zone zone, ProcessBinding processBinding) {
-    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureZone()).toList()
-      .contains(zone.getKey().getName());
+    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureZone())
+      .anyMatch(z -> z.equals(zone.getKey().getName()));
   }
 }
