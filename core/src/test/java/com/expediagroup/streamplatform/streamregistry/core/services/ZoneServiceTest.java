@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -46,6 +48,8 @@ import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
 import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -185,7 +189,7 @@ public class ZoneServiceTest {
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInStreamBinding() {
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInStreamBinding() {
     final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
     final Zone zone = mock(Zone.class);
 
@@ -208,7 +212,7 @@ public class ZoneServiceTest {
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInConsumerBinding() {
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInConsumerBinding() {
     final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
     final Zone zone = mock(Zone.class);
 
@@ -233,7 +237,7 @@ public class ZoneServiceTest {
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInProducerBinding() {
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInProducerBinding() {
     final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
     final Zone zone = mock(Zone.class);
 
@@ -259,7 +263,7 @@ public class ZoneServiceTest {
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInProcessBinding() {
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInProcessBinding() {
     final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
     final Zone zone = mock(Zone.class);
 
@@ -283,7 +287,63 @@ public class ZoneServiceTest {
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInProcess() {
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInProcessBindingOutput() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+    final Zone zone = mock(Zone.class);
+    final ProcessBindingKey processBindingKey = new ProcessBindingKey(
+      "domain",
+      "aws_us_east_2",
+      "process"
+    );
+    final ProcessBinding processBinding = mock(ProcessBinding.class);
+
+    final ProcessOutputStreamBinding processOutputStreamBinding = new ProcessOutputStreamBinding(
+      new StreamBindingKey("domain", "stream", 1, "aws_us_east_1", "kafka-1c"),
+      new ObjectMapper().createObjectNode()
+    );
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(processBindingRepository.findAll()).thenReturn(Collections.singletonList(processBinding));
+    when(processBinding.getOutputs()).thenReturn(Collections.singletonList(processOutputStreamBinding));
+    when(processBinding.getKey()).thenReturn(processBindingKey);
+    when(zone.getKey()).thenReturn(zoneKey);
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals("Zone is used in process binding: " + processBinding.getKey(), ex.getMessage());
+  }
+
+  @Test
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInProcessBindingInput() {
+    final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
+    final Zone zone = mock(Zone.class);
+    final ProcessBindingKey processBindingKey = new ProcessBindingKey(
+      "domain",
+      "aws_us_east_2",
+      "process"
+    );
+    final ProcessBinding processBinding = mock(ProcessBinding.class);
+
+    final ProcessInputStreamBinding processInputStreamBinding = new ProcessInputStreamBinding(
+      new StreamBindingKey("domain", "stream", 1, "aws_us_east_1", "kafka-1c"),
+      new ObjectMapper().createObjectNode()
+    );
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(processBindingRepository.findAll()).thenReturn(Collections.singletonList(processBinding));
+    when(processBinding.getInputs()).thenReturn(Collections.singletonList(processInputStreamBinding));
+    when(processBinding.getKey()).thenReturn(processBindingKey);
+    when(zone.getKey()).thenReturn(zoneKey);
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
+    Assertions.assertEquals("Zone is used in process binding: " + processBinding.getKey(), ex.getMessage());
+  }
+
+  @Test
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInProcess() {
     final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
     final Zone zone = mock(Zone.class);
     final Process process = mock(Process.class);
@@ -297,14 +357,11 @@ public class ZoneServiceTest {
     when(zone.getKey()).thenReturn(zoneKey);
 
     IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> zoneService.delete(zone));
-    Assertions.assertEquals(
-      "Zone is used in process: " + process.getKey(),
-      ex.getMessage()
-    );
+    Assertions.assertEquals("Zone is used in process: " + process.getKey(), ex.getMessage());
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInInfrastructure() {
+  public void deletionShouldThrowExceptionWhenZoneIsUsedInInfrastructure() {
     final ZoneKey zoneKey = new ZoneKey("aws_us_east_1");
 
     final Zone zone = mock(Zone.class);

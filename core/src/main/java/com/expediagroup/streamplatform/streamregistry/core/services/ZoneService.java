@@ -39,6 +39,7 @@ import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
@@ -119,7 +120,7 @@ public class ZoneService {
       .ifPresent(pb -> { throw new IllegalStateException("Zone is used in producer binding: " + pb.getKey()); });
 
     processBindingView
-      .findAll(pb -> pb.getKey().getInfrastructureZone().equals(zone.getKey().getName()))
+      .findAll(pb -> isZoneUsedInProcessBinding(zone, pb))
       .findAny()
       .ifPresent(pb -> { throw new IllegalStateException("Zone is used in process binding: " + pb.getKey()); });
 
@@ -134,5 +135,21 @@ public class ZoneService {
       .ifPresent(infra -> { throw new IllegalStateException("Zone is used in infrastructure: " + infra.getKey()); });
 
     zoneRepository.delete(zone);
+  }
+
+  private boolean isZoneUsedInProcessBinding(Zone zone, ProcessBinding processBinding) {
+    return processBinding.getKey().getInfrastructureZone().equals(zone.getKey().getName()) ||
+      isZoneUsedInProcessBindingOutput(zone, processBinding) ||
+      isZoneUsedInProcessBindingInput(zone, processBinding);
+  }
+
+  private boolean isZoneUsedInProcessBindingOutput(Zone zone, ProcessBinding processBinding) {
+    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureZone()).toList()
+      .contains(zone.getKey().getName());
+  }
+
+  private boolean isZoneUsedInProcessBindingInput(Zone zone, ProcessBinding processBinding) {
+    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureZone()).toList()
+      .contains(zone.getKey().getName());
   }
 }

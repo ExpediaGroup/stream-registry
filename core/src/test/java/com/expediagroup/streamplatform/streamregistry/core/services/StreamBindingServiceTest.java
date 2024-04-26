@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,20 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -31,13 +36,18 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 
@@ -65,6 +75,9 @@ public class StreamBindingServiceTest {
   @Mock
   private ProducerBindingRepository producerBindingRepository;
 
+  @Mock
+  private ProcessBindingRepository processBindingRepository;
+
   private StreamBindingService streamBindingService;
 
   @Before
@@ -78,7 +91,8 @@ public class StreamBindingServiceTest {
       producerBindingService,
       new ConsumerBindingView(consumerBindingRepository),
       new ProducerBindingView(producerBindingRepository),
-      new StreamBindingView(streamBindingRepository)
+      new StreamBindingView(streamBindingRepository),
+      new ProcessBindingView(processBindingRepository)
     );
   }
 
@@ -143,9 +157,61 @@ public class StreamBindingServiceTest {
   }
 
   @Test
-  public void delete() {
+  public void deleteWithNoError() {
     final StreamBinding entity = mock(StreamBinding.class);
+    when(processBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
     streamBindingService.delete(entity);
     verify(streamBindingRepository).delete(entity);
+  }
+
+  @Test
+  public void deletionShouldThrowExceptionWhenStreamBindingIsUsedInProcessBindingOutput() {
+    final StreamBinding entity = mock(StreamBinding.class);
+    final StreamBindingKey streamBindingKey = new StreamBindingKey(
+      "domain",
+      "stream",
+      1,
+      "aws_us_east_1",
+      "kafka-1c"
+    );
+    final ProcessOutputStreamBinding processOutputStreamBinding = new ProcessOutputStreamBinding(
+      streamBindingKey,
+      new ObjectMapper().createObjectNode()
+    );
+    final ProcessBinding processBinding = mock(ProcessBinding.class);
+
+    when(processBinding.getOutputs()).thenReturn(Collections.singletonList(processOutputStreamBinding));
+    when(entity.getKey()).thenReturn(streamBindingKey);
+    when(processBindingRepository.findAll()).thenReturn(Collections.singletonList(processBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> streamBindingService.delete(entity));
+    Assertions.assertEquals("Stream binding is used in process binding: " + processBinding.getKey(), ex.getMessage());
+  }
+
+  @Test
+  public void deletionShouldThrowExceptionWhenStreamBindingIsUsedInProcessBindingInput() {
+    final StreamBinding entity = mock(StreamBinding.class);
+    final StreamBindingKey streamBindingKey = new StreamBindingKey(
+      "domain",
+      "stream",
+      1,
+      "aws_us_east_1",
+      "kafka-1c"
+    );
+    final ProcessInputStreamBinding processInputStreamBinding = new ProcessInputStreamBinding(
+      streamBindingKey,
+      new ObjectMapper().createObjectNode()
+    );
+    final ProcessBinding processBinding = mock(ProcessBinding.class);
+
+    when(processBinding.getOutputs()).thenReturn(emptyList());
+    when(processBinding.getInputs()).thenReturn(Collections.singletonList(processInputStreamBinding));
+    when(entity.getKey()).thenReturn(streamBindingKey);
+    when(processBindingRepository.findAll()).thenReturn(Collections.singletonList(processBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> streamBindingService.delete(entity));
+    Assertions.assertEquals("Stream binding is used in process binding: " + processBinding.getKey(), ex.getMessage());
   }
 }

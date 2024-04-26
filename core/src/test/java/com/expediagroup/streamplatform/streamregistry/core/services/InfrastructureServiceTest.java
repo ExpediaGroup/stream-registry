@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -37,10 +39,14 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.InfrastructureValidator;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.ProducerBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Specification;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
@@ -51,6 +57,7 @@ import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBinding
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ConsumerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
+import com.expediagroup.streamplatform.streamregistry.repository.ProcessBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.ProducerBindingRepository;
 import com.expediagroup.streamplatform.streamregistry.repository.StreamBindingRepository;
 
@@ -75,6 +82,9 @@ public class InfrastructureServiceTest {
   @Mock
   private ProducerBindingRepository producerBindingRepository;
 
+  @Mock
+  private ProcessBindingRepository processBindingRepository;
+
   private InfrastructureService infrastructureService;
 
   @Before
@@ -86,7 +96,8 @@ public class InfrastructureServiceTest {
       infrastructureRepository,
       new StreamBindingView(streamBindingRepository),
       new ConsumerBindingView(consumerBindingRepository),
-      new ProducerBindingView(producerBindingRepository)
+      new ProducerBindingView(producerBindingRepository),
+      new ProcessBindingView(processBindingRepository)
     );
   }
 
@@ -154,12 +165,13 @@ public class InfrastructureServiceTest {
     when(streamBindingRepository.findAll()).thenReturn(emptyList());
     when(consumerBindingRepository.findAll()).thenReturn(emptyList());
     when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(processBindingRepository.findAll()).thenReturn(emptyList());
     infrastructureService.delete(infrastructure);
     verify(infrastructureRepository).delete(infrastructure);
   }
 
   @Test
-  public void throwExceptionWhenInfrastructureIsUsedInStreamBinding() {
+  public void deletionShouldThrowExceptionWhenInfrastructureIsUsedInStreamBinding() {
     final InfrastructureKey infrastructureKey = new InfrastructureKey("aws_us_east_1", "kafka-1c");
     final Infrastructure infrastructure = mock(Infrastructure.class);
 
@@ -182,7 +194,7 @@ public class InfrastructureServiceTest {
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInConsumerBinding() {
+  public void deletionShouldThrowExceptionWhenInfrastructureIsUsedInConsumerBinding() {
     final InfrastructureKey infrastructureKey = new InfrastructureKey("aws_us_east_1", "kafka-1c");
     final Infrastructure infrastructure = mock(Infrastructure.class);
 
@@ -207,7 +219,7 @@ public class InfrastructureServiceTest {
   }
 
   @Test
-  public void throwExceptionWhenZoneIsUsedInProducerBinding() {
+  public void deletionShouldThrowExceptionWhenInfrastructureIsUsedInProducerBinding() {
     final InfrastructureKey infrastructureKey = new InfrastructureKey("aws_us_east_1", "kafka-1c");
     final Infrastructure infrastructure = mock(Infrastructure.class);
 
@@ -230,5 +242,51 @@ public class InfrastructureServiceTest {
 
     IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> infrastructureService.delete(infrastructure));
     Assertions.assertEquals("Infrastructure is used in producer binding: " + producerBindingKey, ex.getMessage());
+  }
+
+  @Test
+  public void deletionShouldThrowExceptionWhenInfrastructureIsUsedInProcessBindingOutput() {
+    final InfrastructureKey infrastructureKey = new InfrastructureKey("aws_us_east_1", "kafka-1c");
+    final Infrastructure infrastructure = mock(Infrastructure.class);
+
+    final ProcessOutputStreamBinding processOutputStreamBinding = new ProcessOutputStreamBinding(
+      new StreamBindingKey("domain", "stream", 1, "aws_us_east_1", "kafka-1c"),
+      new ObjectMapper().createObjectNode()
+    );
+
+    final ProcessBinding processBinding = mock(ProcessBinding.class);
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(infrastructure.getKey()).thenReturn(infrastructureKey);
+    when(processBinding.getOutputs()).thenReturn(Collections.singletonList(processOutputStreamBinding));
+    when(processBindingRepository.findAll()).thenReturn(Collections.singletonList(processBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> infrastructureService.delete(infrastructure));
+    Assertions.assertEquals("Infrastructure is used in process binding: " + processBinding.getKey(), ex.getMessage());
+  }
+
+  @Test
+  public void deletionShouldThrowExceptionWhenInfrastructureIsUsedInProcessBindingInput() {
+    final InfrastructureKey infrastructureKey = new InfrastructureKey("aws_us_east_1", "kafka-1c");
+    final Infrastructure infrastructure = mock(Infrastructure.class);
+
+    final ProcessInputStreamBinding processInputStreamBinding = new ProcessInputStreamBinding(
+      new StreamBindingKey("domain", "stream", 1, "aws_us_east_1", "kafka-1c"),
+      new ObjectMapper().createObjectNode()
+    );
+
+    final ProcessBinding processBinding = mock(ProcessBinding.class);
+
+    when(streamBindingRepository.findAll()).thenReturn(emptyList());
+    when(consumerBindingRepository.findAll()).thenReturn(emptyList());
+    when(producerBindingRepository.findAll()).thenReturn(emptyList());
+    when(infrastructure.getKey()).thenReturn(infrastructureKey);
+    when(processBinding.getInputs()).thenReturn(Collections.singletonList(processInputStreamBinding));
+    when(processBindingRepository.findAll()).thenReturn(Collections.singletonList(processBinding));
+
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> infrastructureService.delete(infrastructure));
+    Assertions.assertEquals("Infrastructure is used in process binding: " + processBinding.getKey(), ex.getMessage());
   }
 }

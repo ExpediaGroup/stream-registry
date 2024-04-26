@@ -34,9 +34,11 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.Infrastruc
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.InfrastructureKey;
 import com.expediagroup.streamplatform.streamregistry.repository.InfrastructureRepository;
@@ -51,6 +53,7 @@ public class InfrastructureService {
   private final StreamBindingView streamBindingView;
   private final ConsumerBindingView consumerBindingView;
   private final ProducerBindingView producerBindingView;
+  private final ProcessBindingView processBindingView;
 
   @PreAuthorize("hasPermission(#infrastructure, 'CREATE')")
   public Optional<Infrastructure> create(Infrastructure infrastructure) throws ValidationException {
@@ -112,6 +115,26 @@ public class InfrastructureService {
       .findAny()
       .ifPresent(pb -> { throw new IllegalStateException("Infrastructure is used in producer binding: " + pb.getKey()); });
 
+    processBindingView
+      .findAll(pb -> isInfrastructureUsedInProcessBinding(infrastructure, pb))
+      .findAny()
+      .ifPresent(pb -> { throw new IllegalStateException("Infrastructure is used in process binding: " + pb.getKey()); });
+
     infrastructureRepository.delete(infrastructure);
+  }
+
+  private boolean isInfrastructureUsedInProcessBinding(Infrastructure infrastructure, ProcessBinding processBinding) {
+    return isInfrastructureUsedInProcessBindingOutput(infrastructure, processBinding) ||
+      isInfrastructureUsedInProcessBindingInput(infrastructure, processBinding);
+  }
+
+  private boolean isInfrastructureUsedInProcessBindingOutput(Infrastructure infrastructure, ProcessBinding processBinding) {
+    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureName()).toList()
+      .contains(infrastructure.getKey().getName());
+  }
+
+  private boolean isInfrastructureUsedInProcessBindingInput(Infrastructure infrastructure, ProcessBinding processBinding) {
+    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureName()).toList()
+      .contains(infrastructure.getKey().getName());
   }
 }
