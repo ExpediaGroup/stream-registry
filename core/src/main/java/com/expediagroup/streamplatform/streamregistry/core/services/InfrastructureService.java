@@ -101,17 +101,17 @@ public class InfrastructureService {
   public void delete(Infrastructure infrastructure) {
     handlerService.handleDelete(infrastructure);
     streamBindingView
-      .findAll(sb -> sb.getKey().getInfrastructureName().equals(infrastructure.getKey().getName()))
+      .findAll(sb -> sb.getKey().getInfrastructureKey().equals(infrastructure.getKey()))
       .findAny()
       .ifPresent(sb -> { throw new IllegalStateException("Infrastructure is used in stream: " + sb.getKey().getStreamKey()); });
 
     consumerBindingView
-      .findAll(cb -> cb.getKey().getInfrastructureName().equals(infrastructure.getKey().getName()))
+      .findAll(cb -> cb.getKey().getStreamBindingKey().getInfrastructureKey().equals(infrastructure.getKey()))
       .findAny()
       .ifPresent(cb -> { throw new IllegalStateException("Infrastructure is used in consumer binding: " + cb.getKey()); });
 
     producerBindingView
-      .findAll(pb -> pb.getKey().getInfrastructureName().equals(infrastructure.getKey().getName()))
+      .findAll(pb -> pb.getKey().getStreamBindingKey().getInfrastructureKey().equals(infrastructure.getKey()))
       .findAny()
       .ifPresent(pb -> { throw new IllegalStateException("Infrastructure is used in producer binding: " + pb.getKey()); });
 
@@ -129,12 +129,12 @@ public class InfrastructureService {
   }
 
   private boolean isInfrastructureUsedInProcessBindingOutput(Infrastructure infrastructure, ProcessBinding processBinding) {
-    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureName())
-      .anyMatch(infra -> infra.equals(infrastructure.getKey().getName()));
+    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureKey())
+      .anyMatch(infra -> infra.equals(infrastructure.getKey()));
   }
 
   private boolean isInfrastructureUsedInProcessBindingInput(Infrastructure infrastructure, ProcessBinding processBinding) {
-    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureName())
-      .anyMatch(infra -> infra.equals(infrastructure.getKey().getName()));
+    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureKey())
+      .anyMatch(infra -> infra.equals(infrastructure.getKey()));
   }
 }

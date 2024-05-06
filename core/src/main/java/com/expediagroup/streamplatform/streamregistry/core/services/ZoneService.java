@@ -105,17 +105,17 @@ public class ZoneService {
   public void delete(Zone zone) {
     handlerService.handleDelete(zone);
     streamBindingView
-      .findAll(sb -> sb.getKey().getInfrastructureZone().equals(zone.getKey().getName()))
+      .findAll(sb -> sb.getKey().getInfrastructureKey().getZoneKey().equals(zone.getKey()))
       .findAny()
       .ifPresent(sb -> { throw new IllegalStateException("Zone is used in stream: " + sb.getKey().getStreamKey()); });
 
     consumerBindingView
-      .findAll(cb -> cb.getKey().getInfrastructureZone().equals(zone.getKey().getName()))
+      .findAll(cb -> cb.getKey().getConsumerKey().getZoneKey().equals(zone.getKey()))
       .findAny()
       .ifPresent(cb -> { throw new IllegalStateException("Zone is used in consumer binding: " + cb.getKey()); });
 
     producerBindingView
-      .findAll(pb -> pb.getKey().getInfrastructureZone().equals(zone.getKey().getName()))
+      .findAll(pb -> pb.getKey().getProducerKey().getZoneKey().equals(zone.getKey()))
       .findAny()
       .ifPresent(pb -> { throw new IllegalStateException("Zone is used in producer binding: " + pb.getKey()); });
 
@@ -130,7 +130,7 @@ public class ZoneService {
       .ifPresent(p -> { throw new IllegalStateException("Zone is used in process: " + p.getKey()); });
 
     infrastructureView
-      .findAll(infra -> infra.getKey().getZone().equals(zone.getKey().getName()))
+      .findAll(infra -> infra.getKey().getZoneKey().equals(zone.getKey()))
       .findAny()
       .ifPresent(infra -> { throw new IllegalStateException("Zone is used in infrastructure: " + infra.getKey()); });
 
@@ -138,18 +138,18 @@ public class ZoneService {
   }
 
   private boolean isZoneUsedInProcessBinding(Zone zone, ProcessBinding processBinding) {
-    return processBinding.getKey().getInfrastructureZone().equals(zone.getKey().getName()) ||
+    return processBinding.getKey().getZoneKey().equals(zone.getKey()) ||
       isZoneUsedInProcessBindingOutput(zone, processBinding) ||
       isZoneUsedInProcessBindingInput(zone, processBinding);
   }
 
   private boolean isZoneUsedInProcessBindingOutput(Zone zone, ProcessBinding processBinding) {
-    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureZone())
-      .anyMatch(z -> z.equals(zone.getKey().getName()));
+    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureKey().getZoneKey())
+      .anyMatch(z -> z.equals(zone.getKey()));
   }
 
   private boolean isZoneUsedInProcessBindingInput(Zone zone, ProcessBinding processBinding) {
-    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureZone())
-      .anyMatch(z -> z.equals(zone.getKey().getName()));
+    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureKey().getZoneKey())
+      .anyMatch(z -> z.equals(zone.getKey()));
   }
 }
