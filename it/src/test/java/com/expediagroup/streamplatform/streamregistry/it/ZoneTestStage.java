@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
+import com.expediagroup.streamplatform.streamregistry.graphql.client.test.DeleteZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.InsertZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.UpdateZoneStatusMutation;
@@ -79,7 +81,12 @@ public class ZoneTestStage extends AbstractTestStage {
 
   @Override
   public void delete() {
-    //not implemented for zone
+    setFactorySuffix("delete");
+
+    Object data = client.getOptionalData(factory.deleteZoneMutationBuilder().build()).get();
+    boolean result = ((DeleteZoneMutation.Data) data).getZone().isDelete();
+
+    assertTrue(result);
   }
 
   @Override

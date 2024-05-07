@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,12 @@ import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerServi
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamBindingValidator;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStreamBinding;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.keys.StreamBindingKey;
@@ -51,6 +55,7 @@ public class StreamBindingService {
   private final ConsumerBindingView consumerBindingView;
   private final ProducerBindingView producerBindingView;
   private final StreamBindingView streamBindingView;
+  private final ProcessBindingView processBindingView;
 
   @PreAuthorize("hasPermission(#streamBinding, 'CREATE')")
   public Optional<StreamBinding> create(StreamBinding streamBinding) throws ValidationException {
@@ -97,6 +102,11 @@ public class StreamBindingService {
   public void delete(StreamBinding streamBinding) {
     handlerService.handleDelete(streamBinding);
 
+    processBindingView
+      .findAll(pb -> isStreamBindingUsedInProcessBinding(streamBinding, pb))
+      .findAny()
+      .ifPresent(pb -> { throw new IllegalStateException("Stream binding is used in process binding: " + pb.getKey()); });
+
     // Remove producers AFTER consumers - a consumer is nothing without a producer
     consumerBindingView
       .findAll(b -> b.getKey().getStreamBindingKey().equals(streamBinding.getKey()))
@@ -110,4 +120,18 @@ public class StreamBindingService {
     streamBindingRepository.delete(streamBinding);
   }
 
+  private boolean isStreamBindingUsedInProcessBinding(StreamBinding streamBinding, ProcessBinding processBinding) {
+    return isStreamBindingUsedInProcessBindingOutput(streamBinding, processBinding) ||
+      isStreamBindingUsedInProcessBindingInput(streamBinding, processBinding);
+  }
+
+  private boolean isStreamBindingUsedInProcessBindingOutput(StreamBinding streamBinding, ProcessBinding processBinding) {
+    return processBinding.getOutputs().stream().map(ProcessOutputStreamBinding::getStreamBindingKey)
+      .anyMatch(streamBindingKey -> streamBindingKey.equals(streamBinding.getKey()));
+  }
+
+  private boolean isStreamBindingUsedInProcessBindingInput(StreamBinding streamBinding, ProcessBinding processBinding) {
+    return processBinding.getInputs().stream().map(ProcessInputStreamBinding::getStreamBindingKey)
+      .anyMatch(streamBindingKey -> streamBindingKey.equals(streamBinding.getKey()));
+  }
 }

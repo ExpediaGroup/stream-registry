@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,14 @@ import org.springframework.stereotype.Component;
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.validators.ZoneValidator;
+import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.InfrastructureView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
+import com.expediagroup.streamplatform.streamregistry.core.views.ProducerBindingView;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
+import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
@@ -45,6 +52,12 @@ public class ZoneService {
   private final ZoneValidator zoneValidator;
   private final ZoneRepository zoneRepository;
   private final ZoneView zoneView;
+  private final StreamBindingView streamBindingView;
+  private final ConsumerBindingView consumerBindingView;
+  private final ProducerBindingView producerBindingView;
+  private final ProcessBindingView processBindingView;
+  private final ProcessView processView;
+  private final InfrastructureView infrastructureView;
 
   @PreAuthorize("hasPermission(#zone, 'CREATE')")
   public Optional<Zone> create(Zone zone) throws ValidationException {
@@ -90,7 +103,53 @@ public class ZoneService {
 
   @PreAuthorize("hasPermission(#zone, 'DELETE')")
   public void delete(Zone zone) {
-    throw new UnsupportedOperationException("Zone deletion not currently supported.");
+    handlerService.handleDelete(zone);
+    streamBindingView
+      .findAll(sb -> sb.getKey().getInfrastructureKey().getZoneKey().equals(zone.getKey()))
+      .findAny()
+      .ifPresent(sb -> { throw new IllegalStateException("Zone is used in stream: " + sb.getKey().getStreamKey()); });
+
+    consumerBindingView
+      .findAll(cb -> cb.getKey().getConsumerKey().getZoneKey().equals(zone.getKey()))
+      .findAny()
+      .ifPresent(cb -> { throw new IllegalStateException("Zone is used in consumer binding: " + cb.getKey()); });
+
+    producerBindingView
+      .findAll(pb -> pb.getKey().getProducerKey().getZoneKey().equals(zone.getKey()))
+      .findAny()
+      .ifPresent(pb -> { throw new IllegalStateException("Zone is used in producer binding: " + pb.getKey()); });
+
+    processBindingView
+      .findAll(pb -> isZoneUsedInProcessBinding(zone, pb))
+      .findAny()
+      .ifPresent(pb -> { throw new IllegalStateException("Zone is used in process binding: " + pb.getKey()); });
+
+    processView
+      .findAll(p -> p.getZones().contains(zone.getKey()))
+      .findAny()
+      .ifPresent(p -> { throw new IllegalStateException("Zone is used in process: " + p.getKey()); });
+
+    infrastructureView
+      .findAll(infra -> infra.getKey().getZoneKey().equals(zone.getKey()))
+      .findAny()
+      .ifPresent(infra -> { throw new IllegalStateException("Zone is used in infrastructure: " + infra.getKey()); });
+
+    zoneRepository.delete(zone);
   }
 
+  private boolean isZoneUsedInProcessBinding(Zone zone, ProcessBinding processBinding) {
+    return processBinding.getKey().getZoneKey().equals(zone.getKey()) ||
+      isZoneUsedInProcessBindingOutput(zone, processBinding) ||
+      isZoneUsedInProcessBindingInput(zone, processBinding);
+  }
+
+  private boolean isZoneUsedInProcessBindingOutput(Zone zone, ProcessBinding processBinding) {
+    return processBinding.getOutputs().stream().map(o -> o.getStreamBindingKey().getInfrastructureKey().getZoneKey())
+      .anyMatch(z -> z.equals(zone.getKey()));
+  }
+
+  private boolean isZoneUsedInProcessBindingInput(Zone zone, ProcessBinding processBinding) {
+    return processBinding.getInputs().stream().map(i -> i.getStreamBindingKey().getInfrastructureKey().getZoneKey())
+      .anyMatch(z -> z.equals(zone.getKey()));
+  }
 }

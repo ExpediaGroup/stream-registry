@@ -58,7 +58,8 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
 
   @Override
   public Boolean delete(InfrastructureKeyInput key) {
-    throw new UnsupportedOperationException("Infrastructure deletion is not currently supported.");
+    infrastructureView.get(key.asInfrastructureKey()).ifPresent(infrastructureService::delete);
+    return true;
   }
 
   @Override

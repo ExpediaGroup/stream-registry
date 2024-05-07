@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,8 @@ public class ZoneMutationImpl implements ZoneMutation {
 
   @Override
   public Boolean delete(ZoneKeyInput key) {
-    throw new UnsupportedOperationException("Zone deletion is not currently supported.");
+    zoneView.get(key.asZoneKey()).ifPresent(zoneService::delete);
+    return true;
   }
 
   @Override
