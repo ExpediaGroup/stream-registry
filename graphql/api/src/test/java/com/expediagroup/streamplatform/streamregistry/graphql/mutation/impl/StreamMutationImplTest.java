@@ -15,11 +15,10 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
@@ -32,7 +31,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.graphql.InputHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 
@@ -93,6 +94,39 @@ public class StreamMutationImplTest {
     verify(streamView, times(1)).get(key.asStreamKey());
     verify(streamService, times(1)).delete(any());
     assertTrue(result);
+  }
+
+  @Test
+  public void updateStatusWithEntityStatusEnabled() {
+    ReflectionTestUtils.setField(streamMutation, "entityStatusEnabled", true);
+    StreamKeyInput key = getStreamInputKey();
+    Optional<Stream> stream = Optional.of(getStream(key));
+    StatusInput statusInput = InputHelper.statusInput();
+
+    when(streamView.get(any())).thenReturn(stream);
+    when(streamService.updateStatus(any(), any())).thenReturn(stream);
+
+    Stream result = streamMutation.updateStatus(key, statusInput);
+
+    verify(streamView, times(1)).get(key.asStreamKey());
+    verify(streamService, times(1)).updateStatus(stream.get(), statusInput.asStatus());
+    assertEquals(stream.get(), result);
+  }
+
+  @Test
+  public void updateStatusWithEntityStatusDisabled() {
+    ReflectionTestUtils.setField(streamMutation, "entityStatusEnabled", false);
+    StreamKeyInput key = getStreamInputKey();
+    Optional<Stream> stream = Optional.of(getStream(key));
+    StatusInput statusInput = InputHelper.statusInput();
+
+    when(streamView.get(any())).thenReturn(stream);
+
+    Stream result = streamMutation.updateStatus(key, statusInput);
+
+    verify(streamView, times(1)).get(key.asStreamKey());
+    verify(streamService, never()).updateStatus(stream.get(), statusInput.asStatus());
+    assertEquals(stream.get(), result);
   }
 
   private StreamKeyInput getStreamInputKey() {

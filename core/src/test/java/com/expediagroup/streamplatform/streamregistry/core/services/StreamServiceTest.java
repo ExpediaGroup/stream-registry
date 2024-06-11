@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -145,7 +146,7 @@ public class StreamServiceTest {
     doNothing().when(streamValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(streamRepository.save(entity)).thenReturn(entity);
+    when(streamRepository.saveSpecification(entity)).thenReturn(entity);
 
     streamService.create(entity);
 
@@ -153,7 +154,7 @@ public class StreamServiceTest {
     verify(streamRepository).findById(key);
     verify(streamValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(streamRepository).save(entity);
+    verify(streamRepository).saveSpecification(entity);
   }
 
   @Test
@@ -170,7 +171,7 @@ public class StreamServiceTest {
     doNothing().when(streamValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(streamRepository.save(entity)).thenReturn(entity);
+    when(streamRepository.saveSpecification(entity)).thenReturn(entity);
 
     streamService.update(entity);
 
@@ -178,7 +179,7 @@ public class StreamServiceTest {
     verify(streamRepository).findById(key);
     verify(streamValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(streamRepository).save(entity);
+    verify(streamRepository).saveSpecification(entity);
   }
 
   @Test
@@ -186,11 +187,11 @@ public class StreamServiceTest {
     final Status status = mock(Status.class);
     final Stream entity = mock(Stream.class);
 
-    when(streamRepository.save(entity)).thenReturn(entity);
+    when(streamRepository.saveStatus(entity)).thenReturn(entity);
 
     streamService.updateStatus(entity, status);
 
-    verify(streamRepository).save(entity);
+    verify(streamRepository).saveStatus(entity);
   }
 
   @Test
@@ -219,11 +220,11 @@ public class StreamServiceTest {
     when(producer.getKey()).thenReturn(producerKey);
 
     when(processRepository.findAll()).thenReturn(emptyList());
-    when(streamBindingRepository.findAll()).thenReturn(asList(binding));
-    when(producerRepository.findAll()).thenReturn(asList(producer));
-    when(consumerRepository.findAll()).thenReturn(asList(consumer));
+    when(streamBindingRepository.findAll()).thenReturn(List.of(binding));
+    when(producerRepository.findAll()).thenReturn(List.of(producer));
+    when(consumerRepository.findAll()).thenReturn(List.of(consumer));
     when(schemaRepository.findById(any())).thenReturn(Optional.of(schema));
-    when(streamRepository.findAll()).thenReturn(asList(entity));
+    when(streamRepository.findAll()).thenReturn(List.of(entity));
 
     streamService.delete(entity);
 
@@ -266,9 +267,9 @@ public class StreamServiceTest {
     when(producer.getKey()).thenReturn(producerKey);
 
     when(processRepository.findAll()).thenReturn(emptyList());
-    when(streamBindingRepository.findAll()).thenReturn(asList(binding));
-    when(producerRepository.findAll()).thenReturn(asList(producer));
-    when(consumerRepository.findAll()).thenReturn(asList(consumer));
+    when(streamBindingRepository.findAll()).thenReturn(List.of(binding));
+    when(producerRepository.findAll()).thenReturn(List.of(producer));
+    when(consumerRepository.findAll()).thenReturn(List.of(consumer));
     when(streamRepository.findAll()).thenReturn(asList(entity, otherStream));
 
     streamService.delete(entity);
@@ -347,7 +348,7 @@ public class StreamServiceTest {
     when(producerRepository.findAll()).thenReturn(asList(producer1, producer2));
     when(consumerRepository.findAll()).thenReturn(asList(consumer1, consumer2));
     when(schemaRepository.findById(any())).thenReturn(Optional.of(schema));
-    when(streamRepository.findAll()).thenReturn(asList(entity));
+    when(streamRepository.findAll()).thenReturn(List.of(entity));
 
     streamService.delete(entity);
 
@@ -371,20 +372,20 @@ public class StreamServiceTest {
     final StreamKey otherStreamKey = mock(StreamKey.class);
 
     final Process otherProcess = mock(Process.class);
-    when(otherProcess.getInputs()).thenReturn(asList(new ProcessInputStream(otherStreamKey, new ObjectMapper().createObjectNode())));
+    when(otherProcess.getInputs()).thenReturn(List.of(new ProcessInputStream(otherStreamKey, new ObjectMapper().createObjectNode())));
     when(otherProcess.getOutputs()).thenReturn(emptyList());
 
     final Process inputProcess = mock(Process.class);
-    when(inputProcess.getInputs()).thenReturn(asList(new ProcessInputStream(streamKey, new ObjectMapper().createObjectNode())));
+    when(inputProcess.getInputs()).thenReturn(List.of(new ProcessInputStream(streamKey, new ObjectMapper().createObjectNode())));
     when(inputProcess.getOutputs()).thenReturn(emptyList());
 
     final Process outputProcess = mock(Process.class);
     when(outputProcess.getInputs()).thenReturn(emptyList());
-    when(outputProcess.getOutputs()).thenReturn(asList(new ProcessOutputStream(streamKey, new ObjectMapper().createObjectNode())));
+    when(outputProcess.getOutputs()).thenReturn(List.of(new ProcessOutputStream(streamKey, new ObjectMapper().createObjectNode())));
 
     final Process inputOutputProcess = mock(Process.class);
-    when(inputOutputProcess.getInputs()).thenReturn(asList(new ProcessInputStream(streamKey, new ObjectMapper().createObjectNode())));
-    when(inputOutputProcess.getOutputs()).thenReturn(asList(new ProcessOutputStream(streamKey, new ObjectMapper().createObjectNode())));
+    when(inputOutputProcess.getInputs()).thenReturn(List.of(new ProcessInputStream(streamKey, new ObjectMapper().createObjectNode())));
+    when(inputOutputProcess.getOutputs()).thenReturn(List.of(new ProcessOutputStream(streamKey, new ObjectMapper().createObjectNode())));
 
     when(processRepository.findAll()).thenReturn(asList(otherProcess, inputProcess, outputProcess, inputOutputProcess));
     when(streamBindingRepository.findAll()).thenReturn(emptyList());
@@ -410,10 +411,10 @@ public class StreamServiceTest {
 
     final ProcessKey processKey = mock(ProcessKey.class);
     final Process process = mock(Process.class);
-    when(process.getInputs()).thenReturn(asList(new ProcessInputStream(otherStreamKey, new ObjectMapper().createObjectNode())));
-    when(process.getOutputs()).thenReturn(asList(new ProcessOutputStream(streamKey, new ObjectMapper().createObjectNode())));
+    when(process.getInputs()).thenReturn(List.of(new ProcessInputStream(otherStreamKey, new ObjectMapper().createObjectNode())));
+    when(process.getOutputs()).thenReturn(List.of(new ProcessOutputStream(streamKey, new ObjectMapper().createObjectNode())));
     when(process.getKey()).thenReturn(processKey);
-    when(processRepository.findAll()).thenReturn(asList(process));
+    when(processRepository.findAll()).thenReturn(List.of(process));
 
     streamService.delete(stream);
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -85,7 +86,7 @@ public class ConsumerServiceTest {
     doNothing().when(consumerValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(consumerRepository.save(entity)).thenReturn(entity);
+    when(consumerRepository.saveSpecification(entity)).thenReturn(entity);
 
     consumerService.create(entity);
 
@@ -93,7 +94,7 @@ public class ConsumerServiceTest {
     verify(consumerRepository).findById(key);
     verify(consumerValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(consumerRepository).save(entity);
+    verify(consumerRepository).saveSpecification(entity);
   }
 
   @Test
@@ -110,7 +111,7 @@ public class ConsumerServiceTest {
     doNothing().when(consumerValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(consumerRepository.save(entity)).thenReturn(entity);
+    when(consumerRepository.saveSpecification(entity)).thenReturn(entity);
 
     consumerService.update(entity);
 
@@ -118,7 +119,7 @@ public class ConsumerServiceTest {
     verify(consumerRepository).findById(key);
     verify(consumerValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(consumerRepository).save(entity);
+    verify(consumerRepository).saveSpecification(entity);
   }
 
   @Test
@@ -126,11 +127,11 @@ public class ConsumerServiceTest {
     final Status status = mock(Status.class);
     final Consumer entity = mock(Consumer.class);
 
-    when(consumerRepository.save(entity)).thenReturn(entity);
+    when(consumerRepository.saveStatus(entity)).thenReturn(entity);
 
     consumerService.updateStatus(entity, status);
 
-    verify(consumerRepository).save(entity);
+    verify(consumerRepository).saveStatus(entity);
   }
 
   @Test
@@ -144,7 +145,7 @@ public class ConsumerServiceTest {
     when(bindingKey.getConsumerKey()).thenReturn(key);
     when(binding.getKey()).thenReturn(bindingKey);
 
-    when(consumerBindingRepository.findAll()).thenReturn(asList(binding));
+    when(consumerBindingRepository.findAll()).thenReturn(List.of(binding));
 
     consumerService.delete(entity);
 

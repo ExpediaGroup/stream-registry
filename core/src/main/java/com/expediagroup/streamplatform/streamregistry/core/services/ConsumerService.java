@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,28 +56,32 @@ public class ConsumerService {
     }
     consumerValidator.validateForCreate(consumer);
     consumer.setSpecification(handlerService.handleInsert(consumer));
-    return save(consumer);
+    return saveSpecification(consumer);
   }
 
   @PreAuthorize("hasPermission(#consumer, 'UPDATE')")
   public Optional<Consumer> update(Consumer consumer) throws ValidationException {
     val existing = consumerView.get(consumer.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + consumer.getKey().getName() + " because it doesn't exist");
     }
     consumerValidator.validateForUpdate(consumer, existing.get());
     consumer.setSpecification(handlerService.handleUpdate(consumer, existing.get()));
-    return save(consumer);
+    return saveSpecification(consumer);
   }
 
   @PreAuthorize("hasPermission(#consumer, 'UPDATE_STATUS')")
   public Optional<Consumer> updateStatus(Consumer consumer, Status status) {
     consumer.setStatus(status);
-    return save(consumer);
+    return saveStatus(consumer);
   }
 
-  private Optional<Consumer> save(Consumer consumer) {
-    return Optional.ofNullable(consumerRepository.save(consumer));
+  private Optional<Consumer> saveSpecification(Consumer consumer) {
+    return Optional.ofNullable(consumerRepository.saveSpecification(consumer));
+  }
+
+  private Optional<Consumer> saveStatus(Consumer consumer) {
+    return Optional.ofNullable(consumerRepository.saveStatus(consumer));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,14 +111,14 @@ public class ProcessServiceTest {
     when(processRepository.findById(entity.getKey())).thenReturn(empty());
     doNothing().when(processValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
-    when(processRepository.save(entity)).thenReturn(entity);
+    when(processRepository.saveSpecification(entity)).thenReturn(entity);
 
     processService.create(entity);
 
     verify(processRepository).findById(entity.getKey());
     verify(processValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(processRepository).save(entity);
+    verify(processRepository).saveSpecification(entity);
   }
 
   @Test(expected = ValidationException.class)
@@ -153,7 +153,7 @@ public class ProcessServiceTest {
     when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
     doNothing().when(processValidator).validateForUpdate(newEntity, existing);
     when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
-    when(processRepository.save(newEntity)).thenReturn(newEntity);
+    when(processRepository.saveSpecification(newEntity)).thenReturn(newEntity);
 
     processService.update(newEntity);
 
@@ -162,7 +162,7 @@ public class ProcessServiceTest {
     verify(handlerService).handleUpdate(newEntity, existing);
     verify(consumerService, never()).canCreateConsumer(any(Consumer.class));
     verify(producerService, never()).canCreateProducer(any(Producer.class));
-    verify(processRepository).save(newEntity);
+    verify(processRepository).saveSpecification(newEntity);
   }
 
   @Test
@@ -179,7 +179,7 @@ public class ProcessServiceTest {
     when(processRepository.findById(existing.getKey())).thenReturn(Optional.of(existing));
     doNothing().when(processValidator).validateForUpdate(newEntity, existing);
     when(handlerService.handleUpdate(newEntity, existing)).thenReturn(specification);
-    when(processRepository.save(newEntity)).thenReturn(newEntity);
+    when(processRepository.saveSpecification(newEntity)).thenReturn(newEntity);
 
     processService.update(newEntity);
 
@@ -188,7 +188,7 @@ public class ProcessServiceTest {
     verify(handlerService).handleUpdate(newEntity, existing);
     verify(consumerService, times(1)).canCreateConsumer(any(Consumer.class));
     verify(producerService, times(1)).canCreateProducer(any(Producer.class));
-    verify(processRepository).save(newEntity);
+    verify(processRepository).saveSpecification(newEntity);
   }
 
   @Test(expected = ValidationException.class)
@@ -246,11 +246,11 @@ public class ProcessServiceTest {
     final Status status = mock(Status.class);
     final Process entity = mock(Process.class);
 
-    when(processRepository.save(entity)).thenReturn(entity);
+    when(processRepository.saveStatus(entity)).thenReturn(entity);
 
     processService.updateStatus(entity, status);
 
-    verify(processRepository).save(entity);
+    verify(processRepository).saveStatus(entity);
   }
 
   @Test

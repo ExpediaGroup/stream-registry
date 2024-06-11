@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,11 +42,21 @@ public final class EntityViews {
   }
 
   @NonNull
+  public static EntityView defaultEntityView(EventReceiver receiver, Boolean entityStatusEnabled) {
+    return new DefaultEntityView(receiver, entityStatusEnabled);
+  }
+
+  @NonNull
   public static EntityView meteredEntityView(EventReceiver receiver, MeterRegistry meterRegistry) {
+    return meteredEntityView(receiver, meterRegistry, true);
+  }
+
+  @NonNull
+  public static EntityView meteredEntityView(EventReceiver receiver, MeterRegistry meterRegistry, Boolean entityStatusEnabled) {
     Map<Entity.Key<?>, StateValue> entities = new ConcurrentHashMap<>();
     meterRegistry.gaugeMapSize("stream_registry_state.view.entities", Tags.empty(), entities);
 
-    DefaultEntityViewUpdater defaultEntityViewUpdater = new DefaultEntityViewUpdater(entities);
+    DefaultEntityViewUpdater defaultEntityViewUpdater = new DefaultEntityViewUpdater(entities, entityStatusEnabled);
     return new DefaultEntityView(receiver, entities, new MeteredEntityViewUpdater(defaultEntityViewUpdater, meterRegistry));
   }
 

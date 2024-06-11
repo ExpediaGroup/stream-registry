@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
@@ -35,6 +36,9 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
 
   private final InfrastructureService infrastructureService;
   private final InfrastructureView infrastructureView;
+
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
 
   @Override
   public Infrastructure insert(InfrastructureKeyInput key, SpecificationInput specification) {
@@ -65,7 +69,12 @@ public class InfrastructureMutationImpl implements InfrastructureMutation {
   @Override
   public Infrastructure updateStatus(InfrastructureKeyInput key, StatusInput status) {
     Infrastructure infrastructure = infrastructureView.get(key.asInfrastructureKey()).get();
-    return infrastructureService.updateStatus(infrastructure, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return infrastructureService.updateStatus(infrastructure, status.asStatus()).get();
+    } else {
+      return infrastructure;
+    }
   }
 
   private Infrastructure asInfrastructure(InfrastructureKeyInput key, SpecificationInput specification) {

@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.SchemaService;
@@ -35,6 +36,9 @@ public class SchemaMutationImpl implements SchemaMutation {
 
   private final SchemaService schemaService;
   private final SchemaView schemaView;
+
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
 
   @Override
   public Schema insert(SchemaKeyInput key, SpecificationInput specification) {
@@ -64,7 +68,12 @@ public class SchemaMutationImpl implements SchemaMutation {
   @Override
   public Schema updateStatus(SchemaKeyInput key, StatusInput status) {
     Schema schema = schemaView.get(key.asSchemaKey()).get();
-    return schemaService.updateStatus(schema, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return schemaService.updateStatus(schema, status.asStatus()).get();
+    } else {
+      return schema;
+    }
   }
 
   private Schema asSchema(SchemaKeyInput key, SpecificationInput specification) {

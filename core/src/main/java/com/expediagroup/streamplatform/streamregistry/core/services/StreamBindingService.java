@@ -64,28 +64,32 @@ public class StreamBindingService {
     }
     streamBindingValidator.validateForCreate(streamBinding);
     streamBinding.setSpecification(handlerService.handleInsert(streamBinding));
-    return save(streamBinding);
+    return saveSpecification(streamBinding);
   }
 
   @PreAuthorize("hasPermission(#streamBinding, 'UPDATE')")
   public Optional<StreamBinding> update(StreamBinding streamBinding) throws ValidationException {
     val existing = streamBindingView.get(streamBinding.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + streamBinding.getKey() + " because it doesn't exist");
     }
     streamBindingValidator.validateForUpdate(streamBinding, existing.get());
     streamBinding.setSpecification(handlerService.handleUpdate(streamBinding, existing.get()));
-    return save(streamBinding);
+    return saveSpecification(streamBinding);
   }
 
   @PreAuthorize("hasPermission(#streamBinding, 'UPDATE_STATUS')")
   public Optional<StreamBinding> updateStatus(StreamBinding streamBinding, Status status) {
     streamBinding.setStatus(status);
-    return save(streamBinding);
+    return saveStatus(streamBinding);
   }
 
-  private Optional<StreamBinding> save(StreamBinding streamBinding) {
-    return Optional.ofNullable(streamBindingRepository.save(streamBinding));
+  private Optional<StreamBinding> saveSpecification(StreamBinding streamBinding) {
+    return Optional.ofNullable(streamBindingRepository.saveSpecification(streamBinding));
+  }
+
+  private Optional<StreamBinding> saveStatus(StreamBinding streamBinding) {
+    return Optional.ofNullable(streamBindingRepository.saveStatus(streamBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

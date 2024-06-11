@@ -69,6 +69,8 @@ import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrel
 import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventReceiver.Config;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationEvent;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -92,7 +94,9 @@ public class KafkaEventReceiverTest {
   @Mock
   private AvroValue avroValue;
   @Mock
-  private Event event;
+  private SpecificationEvent event;
+  @Mock
+  private StatusEvent statusEvent;
 
   private final ScheduledExecutorService executorService = newScheduledThreadPool(2);
 
@@ -105,7 +109,7 @@ public class KafkaEventReceiverTest {
 
   @Before
   public void before() {
-    underTest = new KafkaEventReceiver(config, correlator, converter, consumer, executorService);
+    underTest = new KafkaEventReceiver(config, correlator, converter, consumer, executorService, true);
   }
 
   @Test
@@ -130,6 +134,72 @@ public class KafkaEventReceiverTest {
     latch.await(1, SECONDS);
     underTest.close();
     assertThat(underTest.getState(), is(NOT_RUNNING));
+
+    val inOrder = Mockito.inOrder(consumer, listener, correlator);
+    inOrder.verify(consumer).assign(topicPartitions);
+    inOrder.verify(consumer).seekToBeginning(topicPartitions);
+    inOrder.verify(listener).onEvent(LOAD_COMPLETE);
+    inOrder.verify(listener).onEvent(event);
+    inOrder.verify(correlator).received("foo");
+  }
+
+  @Test
+  public void receiverDoesNotCallOnEventForStatusEventWhenEventStatusDisabled() throws Exception {
+    val receiver = new KafkaEventReceiver(config, correlator, converter, consumer, executorService, false);
+
+    when(config.getTopic()).thenReturn(topic);
+    when(consumer.partitionsFor(topic)).thenReturn(Collections.singletonList(partitionInfo));
+    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.endOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.poll(Duration.ofMillis(100))).thenReturn(new ConsumerRecords<>(Collections.singletonMap(topicPartition, Collections.singletonList(record))));
+    when(record.key()).thenReturn(avroKey);
+    when(record.value()).thenReturn(avroValue);
+    when(converter.toModel(avroKey, avroValue)).thenReturn(statusEvent);
+    when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+    val latch = new CountDownLatch(1);
+    doAnswer((correlationId) -> {
+      latch.countDown();
+      return null;
+    }).when(correlator).received(anyString());
+
+    receiver.receive(listener);
+    assertThat(receiver.getState(), is(RUNNING));
+    latch.await(1, SECONDS);
+    receiver.close();
+    assertThat(receiver.getState(), is(NOT_RUNNING));
+
+    val inOrder = Mockito.inOrder(consumer, listener, correlator);
+    inOrder.verify(consumer).assign(topicPartitions);
+    inOrder.verify(consumer).seekToBeginning(topicPartitions);
+    inOrder.verify(listener).onEvent(LOAD_COMPLETE);
+    inOrder.verify(listener, never()).onEvent(statusEvent);
+    inOrder.verify(correlator).received("foo");
+  }
+
+  @Test
+  public void receiverCallsOnEventForSpecieficationEventWhenEventStatusDisabled() throws Exception {
+    val receiver = new KafkaEventReceiver(config, correlator, converter, consumer, executorService, false);
+
+    when(config.getTopic()).thenReturn(topic);
+    when(consumer.partitionsFor(topic)).thenReturn(Collections.singletonList(partitionInfo));
+    when(consumer.beginningOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.endOffsets(topicPartitions)).thenReturn(Collections.singletonMap(topicPartition, 0L));
+    when(consumer.poll(Duration.ofMillis(100))).thenReturn(new ConsumerRecords<>(Collections.singletonMap(topicPartition, Collections.singletonList(record))));
+    when(record.key()).thenReturn(avroKey);
+    when(record.value()).thenReturn(avroValue);
+    when(converter.toModel(avroKey, avroValue)).thenReturn(event);
+    when(record.headers()).thenReturn(new RecordHeaders(Collections.singletonList(new RecordHeader(CORRELATION_ID, "foo".getBytes(UTF_8)))));
+    val latch = new CountDownLatch(1);
+    doAnswer((correlationId) -> {
+      latch.countDown();
+      return null;
+    }).when(correlator).received(anyString());
+
+    receiver.receive(listener);
+    assertThat(receiver.getState(), is(RUNNING));
+    latch.await(1, SECONDS);
+    receiver.close();
+    assertThat(receiver.getState(), is(NOT_RUNNING));
 
     val inOrder = Mockito.inOrder(consumer, listener, correlator);
     inOrder.verify(consumer).assign(topicPartitions);

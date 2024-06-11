@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,28 +56,32 @@ public class ProducerService {
     }
     producerValidator.validateForCreate(producer);
     producer.setSpecification(handlerService.handleInsert(producer));
-    return save(producer);
+    return saveSpecification(producer);
   }
 
   @PreAuthorize("hasPermission(#producer, 'UPDATE')")
   public Optional<Producer> update(Producer producer) throws ValidationException {
     val existing = producerView.get(producer.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + producer.getKey().getName() + " because it doesn't exist");
     }
     producerValidator.validateForUpdate(producer, existing.get());
     producer.setSpecification(handlerService.handleUpdate(producer, existing.get()));
-    return save(producer);
+    return saveSpecification(producer);
   }
 
   @PreAuthorize("hasPermission(#producer, 'UPDATE_STATUS')")
   public Optional<Producer> updateStatus(Producer producer, Status status) {
     producer.setStatus(status);
-    return save(producer);
+    return saveStatus(producer);
   }
 
-  private Optional<Producer> save(Producer producer) {
-    return Optional.ofNullable(producerRepository.save(producer));
+  private Optional<Producer> saveSpecification(Producer producer) {
+    return Optional.ofNullable(producerRepository.saveSpecification(producer));
+  }
+
+  private Optional<Producer> saveStatus(Producer producer) {
+    return Optional.ofNullable(producerRepository.saveStatus(producer));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

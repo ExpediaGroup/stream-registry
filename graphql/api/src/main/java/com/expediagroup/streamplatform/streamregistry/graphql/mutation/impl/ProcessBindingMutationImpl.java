@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProcessBindingService;
@@ -35,6 +36,9 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 public class ProcessBindingMutationImpl implements ProcessBindingMutation {
   private final ProcessBindingService processBindingService;
   private final ProcessBindingView processBindingView;
+
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
 
   @Override
   public ProcessBinding insert(ProcessBindingKeyInput key, SpecificationInput specification,
@@ -68,7 +72,12 @@ public class ProcessBindingMutationImpl implements ProcessBindingMutation {
   @Override
   public ProcessBinding updateStatus(ProcessBindingKeyInput key, StatusInput status) {
     ProcessBinding processBinding = processBindingView.get(key.asProcessBindingKey()).get();
-    return processBindingService.updateStatus(processBinding, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return processBindingService.updateStatus(processBinding, status.asStatus()).get();
+    } else {
+      return processBinding;
+    }
   }
 
   private ProcessBinding asProcessBinding(ProcessBindingKeyInput key, SpecificationInput specification,

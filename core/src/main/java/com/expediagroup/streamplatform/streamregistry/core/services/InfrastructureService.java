@@ -62,28 +62,32 @@ public class InfrastructureService {
     }
     infrastructureValidator.validateForCreate(infrastructure);
     infrastructure.setSpecification(handlerService.handleInsert(infrastructure));
-    return save(infrastructure);
+    return saveSpecification(infrastructure);
   }
 
   @PreAuthorize("hasPermission(#infrastructure, 'UPDATE')")
   public Optional<Infrastructure> update(Infrastructure infrastructure) throws ValidationException {
     val existing = infrastructureView.get(infrastructure.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + infrastructure.getKey().getName() + " because it doesn't exist");
     }
     infrastructureValidator.validateForUpdate(infrastructure, existing.get());
     infrastructure.setSpecification(handlerService.handleUpdate(infrastructure, existing.get()));
-    return save(infrastructure);
+    return saveSpecification(infrastructure);
   }
 
   @PreAuthorize("hasPermission(#infrastructure, 'UPDATE_STATUS')")
   public Optional<Infrastructure> updateStatus(Infrastructure infrastructure, Status status) {
     infrastructure.setStatus(status);
-    return save(infrastructure);
+    return saveStatus(infrastructure);
   }
 
-  private Optional<Infrastructure> save(Infrastructure infrastructure) {
-    return Optional.ofNullable(infrastructureRepository.save(infrastructure));
+  private Optional<Infrastructure> saveSpecification(Infrastructure infrastructure) {
+    return Optional.ofNullable(infrastructureRepository.saveSpecification(infrastructure));
+  }
+
+  private Optional<Infrastructure> saveStatus(Infrastructure infrastructure) {
+    return Optional.ofNullable(infrastructureRepository.saveStatus(infrastructure));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

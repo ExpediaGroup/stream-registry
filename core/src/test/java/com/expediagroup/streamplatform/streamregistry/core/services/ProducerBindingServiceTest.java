@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class ProducerBindingServiceTest {
     doNothing().when(producerBindingValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(producerBindingRepository.save(entity)).thenReturn(entity);
+    when(producerBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     producerBindingService.create(entity);
 
@@ -81,7 +81,7 @@ public class ProducerBindingServiceTest {
     verify(producerBindingRepository).findById(key);
     verify(producerBindingValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(producerBindingRepository).save(entity);
+    verify(producerBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -98,7 +98,7 @@ public class ProducerBindingServiceTest {
     doNothing().when(producerBindingValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(producerBindingRepository.save(entity)).thenReturn(entity);
+    when(producerBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     producerBindingService.update(entity);
 
@@ -106,7 +106,7 @@ public class ProducerBindingServiceTest {
     verify(producerBindingRepository).findById(key);
     verify(producerBindingValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(producerBindingRepository).save(entity);
+    verify(producerBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -114,11 +114,11 @@ public class ProducerBindingServiceTest {
     final Status status = mock(Status.class);
     final ProducerBinding entity = mock(ProducerBinding.class);
 
-    when(producerBindingRepository.save(entity)).thenReturn(entity);
+    when(producerBindingRepository.saveStatus(entity)).thenReturn(entity);
 
     producerBindingService.updateStatus(entity, status);
 
-    verify(producerBindingRepository).save(entity);
+    verify(producerBindingRepository).saveStatus(entity);
   }
 
   @Test

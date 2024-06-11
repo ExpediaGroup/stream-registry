@@ -43,6 +43,9 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
   @Value("${entityView.exist.check.enabled:true}")
   private boolean checkExistEnabled;
 
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
+
   @Override
   public ConsumerBinding insert(ConsumerBindingKeyInput key, SpecificationInput specification) {
     return consumerBindingService.create(asConsumerBinding(key, specification)).get();
@@ -77,7 +80,12 @@ public class ConsumerBindingMutationImpl implements ConsumerBindingMutation {
   @Override
   public ConsumerBinding updateStatus(ConsumerBindingKeyInput key, StatusInput status) {
     ConsumerBinding consumerBinding = consumerBindingView.get(key.asConsumerBindingKey()).get();
-    return consumerBindingService.updateStatus(consumerBinding, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return consumerBindingService.updateStatus(consumerBinding, status.asStatus()).get();
+    } else {
+      return consumerBinding;
+    }
   }
 
   private ConsumerBinding asConsumerBinding(ConsumerBindingKeyInput key, SpecificationInput specification) {

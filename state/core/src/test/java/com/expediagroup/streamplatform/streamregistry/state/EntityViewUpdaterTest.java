@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,11 +49,11 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.Default
 
 public abstract class EntityViewUpdaterTest {
 
-  private final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
+  final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
 
   private final DefaultSpecification oldSpecification = specification.withDescription("old-description");
-  private final DefaultStatus oldStatus = new DefaultStatus();
-  private final Entity<DomainKey, DefaultSpecification> oldEntity = entity
+  final DefaultStatus oldStatus = new DefaultStatus();
+  final Entity<DomainKey, DefaultSpecification> oldEntity = entity
     .withSpecification(oldSpecification)
     .withStatus(oldStatus);
 

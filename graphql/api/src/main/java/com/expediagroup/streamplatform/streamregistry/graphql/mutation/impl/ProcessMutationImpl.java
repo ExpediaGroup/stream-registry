@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProcessService;
@@ -35,6 +36,9 @@ import com.expediagroup.streamplatform.streamregistry.model.Process;
 public class ProcessMutationImpl implements ProcessMutation {
   private final ProcessService processService;
   private final ProcessView processView;
+
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
 
   @Override
   public Process insert(ProcessKeyInput key, SpecificationInput specification,
@@ -68,7 +72,12 @@ public class ProcessMutationImpl implements ProcessMutation {
   @Override
   public Process updateStatus(ProcessKeyInput key, StatusInput status) {
     Process stream = processView.get(key.asProcessKey()).get();
-    return processService.updateStatus(stream, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return processService.updateStatus(stream, status.asStatus()).get();
+    } else {
+      return stream;
+    }
   }
 
   private Process asProcess(ProcessKeyInput key, SpecificationInput specification,

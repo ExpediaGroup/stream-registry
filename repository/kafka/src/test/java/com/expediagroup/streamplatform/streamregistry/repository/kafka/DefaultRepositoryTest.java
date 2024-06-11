@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,28 +63,6 @@ public class DefaultRepositoryTest {
   }
 
   @Test
-  public void saveExistingSpecificationAndStatus() {
-    Entity<Entity.DomainKey, DefaultSpecification> domain = SampleState.domain();
-    domain = domain.withSpecification(domain.getSpecification().withDescription("old description"));
-    domain = domain.withStatus(new DefaultStatus().with(new StatusEntry("agentStatus", mapper
-        .createObjectNode().put("foo", "bar"))));
-
-    when(view.get(SampleState.domainKey())).thenReturn(Optional.of(domain));
-
-    when(sender.send(any(SpecificationEvent.class))).thenReturn(completedFuture(null));
-    when(sender.send(any(StatusEvent.class))).thenReturn(completedFuture(null));
-
-    Domain result = underTest.save(SampleModel.domain());
-
-    assertThat(result, is(SampleModel.domain()));
-
-    Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
-
-    verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
-    verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
-  }
-
-  @Test
   public void saveExistingSpecificationOnly() {
     Entity<Entity.DomainKey, DefaultSpecification> domain = SampleState.domain();
     domain = domain.withSpecification(domain.getSpecification().withDescription("old description"));
@@ -93,7 +71,7 @@ public class DefaultRepositoryTest {
 
     when(sender.send(any(SpecificationEvent.class))).thenReturn(completedFuture(null));
 
-    Domain result = underTest.save(SampleModel.domain());
+    Domain result = underTest.saveSpecification(SampleModel.domain());
 
     assertThat(result, is(SampleModel.domain()));
 
@@ -113,7 +91,7 @@ public class DefaultRepositoryTest {
 
     when(sender.send(any(StatusEvent.class))).thenReturn(completedFuture(null));
 
-    Domain result = underTest.save(SampleModel.domain());
+    Domain result = underTest.saveStatus(SampleModel.domain());
 
     assertThat(result, is(SampleModel.domain()));
 
@@ -124,19 +102,34 @@ public class DefaultRepositoryTest {
   }
 
   @Test
-  public void saveNewSpecificationAndStatus() {
+  public void saveNewSpecification() {
     when(view.get(SampleState.domainKey())).thenReturn(Optional.empty());
 
     when(sender.send(any(SpecificationEvent.class))).thenReturn(completedFuture(null));
-    when(sender.send(any(StatusEvent.class))).thenReturn(completedFuture(null));
 
-    Domain result = underTest.save(SampleModel.domain());
+    Domain result = underTest.saveSpecification(SampleModel.domain());
 
     assertThat(result, is(SampleModel.domain()));
 
     Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
 
     verify(sender).send(Event.specification(expected.getKey(), expected.getSpecification()));
+    verify(sender, never()).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
+  }
+
+  @Test
+  public void saveNewEntityStatus() {
+    when(view.get(SampleState.domainKey())).thenReturn(Optional.empty());
+
+    when(sender.send(any(StatusEvent.class))).thenReturn(completedFuture(null));
+
+    Domain result = underTest.saveStatus(SampleModel.domain());
+
+    assertThat(result, is(SampleModel.domain()));
+
+    Entity<Entity.DomainKey, DefaultSpecification> expected = SampleState.domain();
+
+    verify(sender, never()).send(Event.specification(expected.getKey(), expected.getSpecification()));
     verify(sender).send(Event.status(expected.getKey(), new StatusEntry("agentStatus", mapper.createObjectNode())));
   }
 

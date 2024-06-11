@@ -19,6 +19,7 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
@@ -34,6 +35,9 @@ import com.expediagroup.streamplatform.streamregistry.model.Zone;
 public class ZoneMutationImpl implements ZoneMutation {
   private final ZoneService zoneService;
   private final ZoneView zoneView;
+
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
 
   @Override
   public Zone insert(ZoneKeyInput key, SpecificationInput specification) {
@@ -64,7 +68,12 @@ public class ZoneMutationImpl implements ZoneMutation {
   @Override
   public Zone updateStatus(ZoneKeyInput key, StatusInput status) {
     Zone zone = zoneView.get(key.asZoneKey()).get();
-    return zoneService.updateStatus(zone, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return zoneService.updateStatus(zone, status.asStatus()).get();
+    } else {
+      return zone;
+    }
   }
 
   private Zone asZone(ZoneKeyInput key, SpecificationInput specification) {

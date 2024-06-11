@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,18 @@ public class DefaultEntityView implements EntityView {
     this(receiver, entities, new DefaultEntityViewUpdater(entities));
   }
 
+  DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, StateValue> entities, Boolean entityStatusEnabled) {
+    this(receiver, entities, new DefaultEntityViewUpdater(entities, entityStatusEnabled));
+  }
+
+  public DefaultEntityView(EventReceiver receiver, Boolean entityStatusEnabled) {
+    this(receiver, new ConcurrentHashMap<>(), entityStatusEnabled);
+  }
+
   public DefaultEntityView(EventReceiver receiver) {
     this(receiver, new ConcurrentHashMap<>());
   }
+
 
   @Override
   public CompletableFuture<Void> load(@NonNull EntityViewListener listener) {

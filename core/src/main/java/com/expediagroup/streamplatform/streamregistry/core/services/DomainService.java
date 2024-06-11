@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,29 +68,34 @@ public class DomainService {
     }
     domainValidator.validateForCreate(domain);
     domain.setSpecification(handlerService.handleInsert(domain));
-    return save(domain);
+    return saveSpecification(domain);
   }
 
   @PreAuthorize("hasPermission(#domain, 'UPDATE')")
   public Optional<Domain> update(Domain domain) throws ValidationException {
     val existing = domainView.get(domain.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + domain.getKey().getName() + " because it doesn't exist");
     }
     domainValidator.validateForUpdate(domain, existing.get());
     domain.setSpecification(handlerService.handleUpdate(domain, existing.get()));
-    return save(domain);
+    return saveSpecification(domain);
   }
 
   @PreAuthorize("hasPermission(#domain, 'UPDATE_STATUS')")
   public Optional<Domain> updateStatus(Domain domain, Status status) {
     domain.setStatus(status);
-    return save(domain);
+    return saveStatus(domain);
   }
 
-  private Optional<Domain> save(Domain domain) {
-    return Optional.ofNullable(domainRepository.save(domain));
+  private Optional<Domain> saveSpecification(Domain domain) {
+    return Optional.ofNullable(domainRepository.saveSpecification(domain));
   }
+
+  private Optional<Domain> saveStatus(Domain domain) {
+    return Optional.ofNullable(domainRepository.saveStatus(domain));
+  }
+
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Domain> get(DomainKey key) {

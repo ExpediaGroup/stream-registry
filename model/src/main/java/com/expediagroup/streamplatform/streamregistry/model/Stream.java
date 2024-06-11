@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,4 +31,11 @@ public class Stream implements Entity<StreamKey> {
   private SchemaKey schemaKey;
   private Specification specification;
   private Status status;
+
+  public Stream(StreamKey key, Specification specification, SchemaKey schemaKey) {
+    this.key = key;
+    this.specification = specification;
+    this.schemaKey = schemaKey;
+    this.status = new Status();
+  }
 }

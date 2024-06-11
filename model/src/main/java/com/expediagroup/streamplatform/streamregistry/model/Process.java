@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,4 +34,19 @@ public class Process implements Entity<ProcessKey> {
   private List<ProcessInputStream> inputs;
   private List<ProcessOutputStream> outputs;
   private Status status;
+
+  public Process(
+    ProcessKey key,
+    Specification specification,
+    List<ZoneKey> zones,
+    List<ProcessInputStream> inputs,
+    List<ProcessOutputStream> outputs
+  ) {
+    this.key = key;
+    this.specification = specification;
+    this.zones = zones;
+    this.inputs = inputs;
+    this.outputs = outputs;
+    this.status = new Status();
+  }
 }

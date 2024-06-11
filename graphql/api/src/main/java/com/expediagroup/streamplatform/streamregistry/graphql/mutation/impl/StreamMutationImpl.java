@@ -41,6 +41,9 @@ public class StreamMutationImpl implements StreamMutation {
   @Value("${entityView.exist.check.enabled:true}")
   private boolean checkExistEnabled;
 
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
+
   private final StreamService streamService;
   private final StreamView streamView;
 
@@ -78,7 +81,12 @@ public class StreamMutationImpl implements StreamMutation {
   @Override
   public Stream updateStatus(StreamKeyInput key, StatusInput status) {
     Stream stream = streamView.get(key.asStreamKey()).get();
-    return streamService.updateStatus(stream, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return streamService.updateStatus(stream, status.asStatus()).get();
+    } else {
+      return stream;
+    }
   }
 
   private Stream asStream(StreamKeyInput key, SpecificationInput specification, Optional<SchemaKeyInput> schema) {

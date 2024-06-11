@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,30 +73,33 @@ public class StreamService {
     }
     streamValidator.validateForCreate(stream);
     stream.setSpecification(handlerService.handleInsert(stream));
-    return save(stream);
+    return saveSpecification(stream);
   }
 
   @PreAuthorize("hasPermission(#stream, 'UPDATE')")
   public Optional<Stream> update(Stream stream) throws ValidationException {
     val existing = streamView.get(stream.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
     stream.setSchemaKey(existing.get().getSchemaKey());
     streamValidator.validateForUpdate(stream, existing.get());
     stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
-    return save(stream);
+    return saveSpecification(stream);
   }
 
   @PreAuthorize("hasPermission(#stream, 'UPDATE_STATUS')")
   public Optional<Stream> updateStatus(Stream stream, Status status) {
     stream.setStatus(status);
-    return save(stream);
+    return saveStatus(stream);
   }
 
-  private Optional<Stream> save(Stream stream) {
-    stream = streamRepository.save(stream);
-    return Optional.ofNullable(stream);
+  private Optional<Stream> saveSpecification(Stream stream) {
+    return Optional.ofNullable(streamRepository.saveSpecification(stream));
+  }
+
+  private Optional<Stream> saveStatus(Stream stream) {
+    return Optional.ofNullable(streamRepository.saveStatus(stream));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

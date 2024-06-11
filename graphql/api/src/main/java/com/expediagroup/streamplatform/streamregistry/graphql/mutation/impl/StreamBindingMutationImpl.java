@@ -40,6 +40,9 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
   @Value("${entityView.exist.check.enabled:true}")
   private boolean checkExistEnabled;
 
+  @Value("${stream-registry.entity.status.enabled:true}")
+  private boolean entityStatusEnabled;
+
   private final StreamBindingService streamBindingService;
   private final StreamBindingView streamBindingView;
 
@@ -77,7 +80,12 @@ public class StreamBindingMutationImpl implements StreamBindingMutation {
   @Override
   public StreamBinding updateStatus(StreamBindingKeyInput key, StatusInput status) {
     StreamBinding streamBinding = streamBindingView.get(key.asStreamBindingKey()).get();
-    return streamBindingService.updateStatus(streamBinding, status.asStatus()).get();
+
+    if (entityStatusEnabled) {
+      return streamBindingService.updateStatus(streamBinding, status.asStatus()).get();
+    } else {
+      return streamBinding;
+    }
   }
 
   private StreamBinding asStreamBinding(StreamBindingKeyInput key, SpecificationInput specification) {

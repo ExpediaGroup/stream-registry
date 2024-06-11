@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.expediagroup.streamplatform.streamregistry.model;
+package com.expediagroup.streamplatform.streamregistry.graphql;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
+public class InputHelper {
+  private static final ObjectMapper mapper = new ObjectMapper();
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Zone implements Entity<ZoneKey> {
-  private ZoneKey key;
-  private Specification specification;
-  private Status status;
-
-  public Zone(ZoneKey key, Specification specification) {
-    this.key = key;
-    this.specification = specification;
-    this.status = new Status();
+  public static StatusInput statusInput() {
+    return StatusInput.builder().agentStatus(mapper.createObjectNode()).build();
   }
 }
