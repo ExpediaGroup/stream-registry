@@ -53,6 +53,7 @@ abstract class DefaultRepository<
    * {link {@link #saveStatus(com.expediagroup.streamplatform.streamregistry.model.Entity)}}
    * to save the entity specification or entity status independently.
    */
+  @Deprecated
   @Override
   public ME save(ME entity) {
     throw new UnsupportedOperationException();
