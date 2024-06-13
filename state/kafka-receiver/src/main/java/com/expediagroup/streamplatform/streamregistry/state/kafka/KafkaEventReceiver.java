@@ -38,12 +38,8 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.*;
 
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
@@ -58,6 +54,7 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroKey;
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 
 @Slf4j
@@ -80,48 +77,28 @@ public class KafkaEventReceiver implements EventReceiver {
   private final KafkaConsumer<AvroKey, AvroValue> consumer;
   @NonNull
   private final ScheduledExecutorService executorService;
-  @NonNull
-  private final Boolean entityStatusEnabled;
 
   private final AtomicReference<State> state = new AtomicReference<>(CREATED);
 
   private volatile boolean shuttingDown = false;
   private final AtomicBoolean started = new AtomicBoolean(false);
 
-  public KafkaEventReceiver(
-    Config config,
-    EventCorrelator correlator,
-    Configurator<KafkaConsumer<AvroKey, AvroValue>> consumerConfigurator,
-    Boolean entityStatusEnabled
-  ) {
+  public KafkaEventReceiver(Config config, EventCorrelator correlator, Configurator<KafkaConsumer<AvroKey, AvroValue>> consumerConfigurator) {
     this(
       config,
       correlator,
       new AvroConverter(),
       getKafkaConsumer(config, consumerConfigurator),
-      newScheduledThreadPool(THREAD_POOL_SIZE),
-      entityStatusEnabled
+      newScheduledThreadPool(THREAD_POOL_SIZE)
     );
   }
 
-  public KafkaEventReceiver(Config config, EventCorrelator correlator, Configurator<KafkaConsumer<AvroKey, AvroValue>> consumerConfigurator) {
-    this(config, correlator, consumerConfigurator, true);
-  }
-
   public KafkaEventReceiver(Config config, EventCorrelator correlator) {
-    this(config, correlator, true);
-  }
-
-  public KafkaEventReceiver(Config config, EventCorrelator correlator, Boolean entityStatusEnabled) {
-    this(config, correlator, kafkaConsumer -> {}, entityStatusEnabled);
+    this(config, correlator, kafkaConsumer -> {});
   }
 
   public KafkaEventReceiver(Config config) {
-    this(config, null, true);
-  }
-
-  public KafkaEventReceiver(Config config, Boolean entityStatusEnabled) {
-    this(config, null, entityStatusEnabled);
+    this(config, null);
   }
 
 
@@ -180,7 +157,7 @@ public class KafkaEventReceiver implements EventReceiver {
         val event = converter.toModel(record.key(), record.value());
         currentOffset.set(record.offset());
         try {
-          if (event instanceof StatusEvent && !entityStatusEnabled) {
+          if (!config.getEntityStatusEnabled() && (event instanceof StatusEvent || event instanceof StatusDeletionEvent)) {
             log.warn("Entity Status is disabled and will not trigger onEvent key={}", event.getKey());
           } else {
             listener.onEvent(event);
@@ -249,6 +226,7 @@ public class KafkaEventReceiver implements EventReceiver {
     @NonNull String schemaRegistryUrl;
     @NonNull String groupId;
     Map<String, Object> properties;
+    @Builder.Default Boolean entityStatusEnabled = true;
   }
 
   public enum State {

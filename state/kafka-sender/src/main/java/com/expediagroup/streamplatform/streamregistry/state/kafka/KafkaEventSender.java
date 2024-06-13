@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,8 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
+import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 
 @Slf4j
@@ -88,6 +90,11 @@ public class KafkaEventSender implements EventSender {
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> CompletableFuture<Void> send(@NonNull Event<K, S> event) {
+    if (!config.getEntityStatusEnabled() && (event instanceof StatusEvent<K, S> || event instanceof StatusDeletionEvent<K, S>)) {
+      log.warn("Entity Status is disabled and will not send event with key={}", event.getKey());
+      return CompletableFuture.completedFuture(null);
+    }
+
     val avroEvent = converter.toAvro(event);
     return send(avroEvent.getKey(), avroEvent.getValue());
   }
@@ -190,5 +197,6 @@ public class KafkaEventSender implements EventSender {
     @NonNull String topic;
     @NonNull String schemaRegistryUrl;
     Map<String, Object> properties;
+    @Builder.Default Boolean entityStatusEnabled = true;
   }
 }

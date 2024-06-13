@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CL
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +48,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.state.avro.AvroConverter;
@@ -64,6 +63,7 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainK
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
+import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KafkaEventSenderTest {
@@ -79,6 +79,8 @@ public class KafkaEventSenderTest {
   }};
   private final DefaultSpecification specification = new DefaultSpecification("description", Collections.emptyList(), "type", mapper.createObjectNode(), security, "function");
   private final Event<DomainKey, DefaultSpecification> event = Event.specification(key, specification);
+  private final Event<DomainKey, DefaultSpecification> deleteEvent = Event.specificationDeletion(key);
+  private final StatusEntry statusEntry = new StatusEntry("status", mapper.createObjectNode());
 
   @Mock private AvroEvent avroEvent;
   @Mock private AvroKey avroKey;
@@ -89,10 +91,82 @@ public class KafkaEventSenderTest {
 
   @Before
   public void before() {
+    Mockito.reset(producer, config);
     when(converter.toAvro(event)).thenReturn(avroEvent);
     when(avroEvent.getKey()).thenReturn(avroKey);
     when(avroEvent.getValue()).thenReturn(avroValue);
     when(config.getTopic()).thenReturn("topic");
+    when(config.getEntityStatusEnabled()).thenReturn(true);
+  }
+
+  @Test
+  public void entityStatusDisabledDoesNotSendStatus() {
+    when(config.getEntityStatusEnabled()).thenReturn(false);
+
+    val underTest = new KafkaEventSender(config, new NullCorrelationStrategy(), converter, producer);
+    val statusEvent = Event.status(key, statusEntry);
+    val result = underTest.send(statusEvent);
+
+    verify(producer, never()).send(any(), any());
+
+    assertTrue(result.isDone());
+  }
+
+  @Test
+  public void entityStatusDisabledDoesNotSendStatusDelete() {
+    when(config.getEntityStatusEnabled()).thenReturn(false);
+
+    val underTest = new KafkaEventSender(config, new NullCorrelationStrategy(), converter, producer);
+    val statusDeleteEvent = Event.statusDeletion(key, "delete");
+    val result = underTest.send(statusDeleteEvent);
+
+    verify(producer, never()).send(any(), any());
+
+    assertTrue(result.isDone());
+  }
+
+  @Test
+  public void entityStatusDisabledSendsEntitySpecification() {
+    val underTest = new KafkaEventSender(config, new NullCorrelationStrategy(), converter, producer);
+    val result = underTest.send(event);
+
+    verify(producer).send(recordCaptor.capture(), callbackCaptor.capture());
+
+    val record = recordCaptor.getValue();
+    assertThat(record.topic(), is("topic"));
+    assertThat(record.key(), is(avroKey));
+    assertThat(record.value(), is(avroValue));
+    assertThat(record.headers().toArray().length, is(0));
+
+    val callback = callbackCaptor.getValue();
+    assertThat(result.isDone(), is(false));
+    val recordMetadata = mock(RecordMetadata.class);
+    callback.onCompletion(recordMetadata, null);
+    assertThat(result.isDone(), is(true));
+  }
+
+  @Test
+  public void entityStatusDisabledSendsEntityDeletion() {
+    when(config.getEntityStatusEnabled()).thenReturn(false);
+    when(converter.toAvro(deleteEvent)).thenReturn(avroEvent);
+    when(avroEvent.getValue()).thenReturn(null);
+
+    val underTest = new KafkaEventSender(config, new NullCorrelationStrategy(), converter, producer);
+    val result = underTest.send(deleteEvent);
+
+    verify(producer).send(recordCaptor.capture(), callbackCaptor.capture());
+
+    val record = recordCaptor.getValue();
+    assertThat(record.topic(), is("topic"));
+    assertThat(record.key(), is(avroKey));
+    assertNull(record.value());
+    assertThat(record.headers().toArray().length, is(0));
+
+    val callback = callbackCaptor.getValue();
+    assertThat(result.isDone(), is(false));
+    val recordMetadata = mock(RecordMetadata.class);
+    callback.onCompletion(recordMetadata, null);
+    assertThat(result.isDone(), is(true));
   }
 
   @Test
@@ -201,7 +275,7 @@ public class KafkaEventSenderTest {
       put("ssl.truststore.password", "password");
       put("ssl.endpoint.identification.algorithm", "");
     }};
-    Config config = new Config("bootstrap", "topic", "schemaRegistry", properties);
+    Config config = new Config("bootstrap", "topic", "schemaRegistry", properties, true);
 
     Map<String, Object> expected = new HashMap<String, Object>() {{
       put(BOOTSTRAP_SERVERS_CONFIG, "bootstrap");
