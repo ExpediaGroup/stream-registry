@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] 2024-06-13
+### Added
+- Added convenience constructors to all Entity Models that do not require a `status` and populates with a default empty object.
+- Added property support for `repository.kafka.entity.status.enabled=<true|false>` on both KafkaEventReceiver and KafkaEventSender. Set to `true` by default. When set to `false`, `Status` and `StatusDeletion` events are ignored (not published/consumed from the repository topic).
+
+### [BREAKING CHANGE] 
+All Repositories and Services updated to use `saveSpecification` and `saveStatus` methods instead of a consolidated `save` method.
+
 ## [2.4.0] 2024-05-07
 ### Added
 - Support deletion of zone and infrastructure entities
