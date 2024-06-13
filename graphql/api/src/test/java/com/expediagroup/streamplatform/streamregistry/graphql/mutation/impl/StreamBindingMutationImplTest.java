@@ -15,10 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -31,9 +32,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamBindingView;
-import com.expediagroup.streamplatform.streamregistry.graphql.InputHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StreamBindingKeyInput;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 
@@ -57,7 +56,7 @@ public class StreamBindingMutationImplTest {
   public void deleteWithCheckExistEnabledWhenEntityExists() {
     ReflectionTestUtils.setField(streamBindingMutation, "checkExistEnabled", true);
     StreamBindingKeyInput key = getStreamBindingInputKey();
-    when(streamBindingView.get(any())).thenReturn(Optional.of(getStreamBinding(key)));
+    when(streamBindingView.get(any())).thenReturn(Optional.of(getStream(key)));
     Boolean result = streamBindingMutation.delete(key);
     verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
     verify(streamBindingService, times(1)).delete(any());
@@ -79,7 +78,7 @@ public class StreamBindingMutationImplTest {
   public void deleteWithCheckExistDisabledWhenEntiyExists() {
     ReflectionTestUtils.setField(streamBindingMutation, "checkExistEnabled", false);
     StreamBindingKeyInput key = getStreamBindingInputKey();
-    when(streamBindingView.get(any())).thenReturn(Optional.of(getStreamBinding(key)));
+    when(streamBindingView.get(any())).thenReturn(Optional.of(getStream(key)));
     Boolean result = streamBindingMutation.delete(key);
     verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
     verify(streamBindingService, times(1)).delete(any());
@@ -97,39 +96,6 @@ public class StreamBindingMutationImplTest {
     assertTrue(result);
   }
 
-  @Test
-  public void updateStatusWithEntityStatusEnabled() {
-    ReflectionTestUtils.setField(streamBindingMutation, "entityStatusEnabled", true);
-    StreamBindingKeyInput key = getStreamBindingInputKey();
-    Optional<StreamBinding> streamBinding = Optional.of(getStreamBinding(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(streamBindingView.get(any())).thenReturn(streamBinding);
-    when(streamBindingService.updateStatus(any(), any())).thenReturn(streamBinding);
-
-    StreamBinding result = streamBindingMutation.updateStatus(key, statusInput);
-
-    verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
-    verify(streamBindingService, times(1)).updateStatus(streamBinding.get(), statusInput.asStatus());
-    assertEquals(streamBinding.get(), result);
-  }
-
-  @Test
-  public void updateStatusWithEntityStatusDisabled() {
-    ReflectionTestUtils.setField(streamBindingMutation, "entityStatusEnabled", false);
-    StreamBindingKeyInput key = getStreamBindingInputKey();
-    Optional<StreamBinding> streamBinding = Optional.of(getStreamBinding(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(streamBindingView.get(any())).thenReturn(streamBinding);
-
-    StreamBinding result = streamBindingMutation.updateStatus(key, statusInput);
-
-    verify(streamBindingView, times(1)).get(key.asStreamBindingKey());
-    verify(streamBindingService, never()).updateStatus(streamBinding.get(), statusInput.asStatus());
-    assertEquals(streamBinding.get(), result);
-  }
-
   private StreamBindingKeyInput getStreamBindingInputKey() {
     return StreamBindingKeyInput.builder()
       .streamDomain("domain")
@@ -140,7 +106,7 @@ public class StreamBindingMutationImplTest {
       .build();
   }
 
-  private StreamBinding getStreamBinding(StreamBindingKeyInput key) {
+  private StreamBinding getStream(StreamBindingKeyInput key) {
     return new StreamBinding(key.asStreamBindingKey(), StateHelper.specification(), StateHelper.status());
   }
 }

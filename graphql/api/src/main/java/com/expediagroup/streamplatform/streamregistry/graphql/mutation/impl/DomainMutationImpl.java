@@ -19,7 +19,6 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.DomainService;
@@ -36,9 +35,6 @@ public class DomainMutationImpl implements DomainMutation {
 
   private final DomainService domainService;
   private final DomainView domainView;
-
-  @Value("${stream-registry.entity.status.enabled:true}")
-  private boolean entityStatusEnabled;
 
   @Override
   public Domain insert(DomainKeyInput key, SpecificationInput specification) {
@@ -69,12 +65,7 @@ public class DomainMutationImpl implements DomainMutation {
   @Override
   public Domain updateStatus(DomainKeyInput key, StatusInput status) {
     Domain domain = domainView.get(key.asDomainKey()).get();
-
-    if (entityStatusEnabled) {
-      return domainService.updateStatus(domain, status.asStatus()).get();
-    } else {
-      return domain;
-    }
+    return domainService.updateStatus(domain, status.asStatus()).get();
   }
 
   private Domain asDomain(DomainKeyInput key, SpecificationInput specification) {

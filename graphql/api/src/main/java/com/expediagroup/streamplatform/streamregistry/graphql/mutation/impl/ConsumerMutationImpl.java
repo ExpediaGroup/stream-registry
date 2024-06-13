@@ -43,9 +43,6 @@ public class ConsumerMutationImpl implements ConsumerMutation {
   @Value("${entityView.exist.check.enabled:true}")
   private boolean checkExistEnabled;
 
-  @Value("${stream-registry.entity.status.enabled:true}")
-  private boolean entityStatusEnabled;
-
   @Override
   public Consumer insert(ConsumerKeyInput key, SpecificationInput specification) {
     return consumerService.create(asConsumer(key, specification)).get();
@@ -80,12 +77,7 @@ public class ConsumerMutationImpl implements ConsumerMutation {
   @Override
   public Consumer updateStatus(ConsumerKeyInput key, StatusInput status) {
     Consumer consumer = consumerView.get(key.asConsumerKey()).get();
-
-    if (entityStatusEnabled) {
-      return consumerService.updateStatus(consumer, status.asStatus()).get();
-    } else {
-      return consumer;
-    }
+    return consumerService.updateStatus(consumer, status.asStatus()).get();
   }
 
   private Consumer asConsumer(ConsumerKeyInput key, SpecificationInput specification) {

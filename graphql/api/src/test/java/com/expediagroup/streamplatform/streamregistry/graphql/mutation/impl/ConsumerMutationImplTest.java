@@ -15,10 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -31,10 +32,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerService;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
-import com.expediagroup.streamplatform.streamregistry.graphql.InputHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Consumer;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -95,39 +94,6 @@ public class ConsumerMutationImplTest {
     verify(consumerView, times(1)).get(key.asConsumerKey());
     verify(consumerService, times(1)).delete(getConsumer(key));
     assertTrue(result);
-  }
-
-  @Test
-  public void updateStatusWithEntityStatusEnabled() {
-    ReflectionTestUtils.setField(consumerMutation, "entityStatusEnabled", true);
-    ConsumerKeyInput key = getConsumerInputKey();
-    Optional<Consumer> consumer = Optional.of(getConsumer(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(consumerView.get(any())).thenReturn(consumer);
-    when(consumerService.updateStatus(any(), any())).thenReturn(consumer);
-
-    Consumer result = consumerMutation.updateStatus(key, statusInput);
-
-    verify(consumerView, times(1)).get(key.asConsumerKey());
-    verify(consumerService, times(1)).updateStatus(consumer.get(), statusInput.asStatus());
-    assertEquals(consumer.get(), result);
-  }
-
-  @Test
-  public void updateStatusWithEntityStatusDisabled() {
-    ReflectionTestUtils.setField(consumerMutation, "entityStatusEnabled", false);
-    ConsumerKeyInput key = getConsumerInputKey();
-    Optional<Consumer> consumer = Optional.of(getConsumer(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(consumerView.get(any())).thenReturn(consumer);
-
-    Consumer result = consumerMutation.updateStatus(key, statusInput);
-
-    verify(consumerView, times(1)).get(key.asConsumerKey());
-    verify(consumerService, never()).updateStatus(consumer.get(), statusInput.asStatus());
-    assertEquals(consumer.get(), result);
   }
 
   private ConsumerKeyInput getConsumerInputKey() {

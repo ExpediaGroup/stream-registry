@@ -40,9 +40,6 @@ public class ProducerMutationImpl implements ProducerMutation {
   @Value("${entityView.exist.check.enabled:true}")
   private boolean checkExistEnabled;
 
-  @Value("${stream-registry.entity.status.enabled:true}")
-  private boolean entityStatusEnabled;
-
   private final ProducerService producerService;
   private final ProducerView producerView;
 
@@ -80,12 +77,7 @@ public class ProducerMutationImpl implements ProducerMutation {
   @Override
   public Producer updateStatus(ProducerKeyInput key, StatusInput status) {
     Producer producer = producerView.get(key.asProducerKey()).get();
-
-    if (entityStatusEnabled) {
-      return producerService.updateStatus(producer, status.asStatus()).get();
-    } else {
-      return producer;
-    }
+    return producerService.updateStatus(producer, status.asStatus()).get();
   }
 
   private Producer asProducer(ProducerKeyInput key, SpecificationInput specification) {

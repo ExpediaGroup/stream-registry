@@ -15,10 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -31,10 +32,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProducerService;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
-import com.expediagroup.streamplatform.streamregistry.graphql.InputHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ProducerKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -97,39 +96,6 @@ public class ProducerMutationImplTest {
     verify(producerView, times(1)).get(key.asProducerKey());
     verify(producerService, times(1)).delete(getProducer(key));
     assertTrue(result);
-  }
-
-  @Test
-  public void updateStatusWithEntityStatusEnabled() {
-    ReflectionTestUtils.setField(producerMutation, "entityStatusEnabled", true);
-    ProducerKeyInput key = getProducerInputKey();
-    Optional<Producer> producer = Optional.of(getProducer(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(producerView.get(any())).thenReturn(producer);
-    when(producerService.updateStatus(any(), any())).thenReturn(producer);
-
-    Producer result = producerMutation.updateStatus(key, statusInput);
-
-    verify(producerView, times(1)).get(key.asProducerKey());
-    verify(producerService, times(1)).updateStatus(producer.get(), statusInput.asStatus());
-    assertEquals(producer.get(), result);
-  }
-
-  @Test
-  public void updateStatusWithEntityStatusDisabled() {
-    ReflectionTestUtils.setField(producerMutation, "entityStatusEnabled", false);
-    ProducerKeyInput key = getProducerInputKey();
-    Optional<Producer> producer = Optional.of(getProducer(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(producerView.get(any())).thenReturn(producer);
-
-    Producer result = producerMutation.updateStatus(key, statusInput);
-
-    verify(producerView, times(1)).get(key.asProducerKey());
-    verify(producerService, never()).updateStatus(producer.get(), statusInput.asStatus());
-    assertEquals(producer.get(), result);
   }
 
   private ProducerKeyInput getProducerInputKey() {

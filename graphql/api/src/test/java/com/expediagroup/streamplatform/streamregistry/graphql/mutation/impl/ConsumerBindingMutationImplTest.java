@@ -15,10 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -31,10 +32,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ConsumerBindingService;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerBindingView;
-import com.expediagroup.streamplatform.streamregistry.graphql.InputHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.StateHelper;
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ConsumerBindingKeyInput;
-import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.model.ConsumerBinding;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -99,39 +98,6 @@ public class ConsumerBindingMutationImplTest {
     verify(consumerBindingView, times(1)).get(key.asConsumerBindingKey());
     verify(consumerBindingService, times(1)).delete(any());
     assertTrue(result);
-  }
-
-  @Test
-  public void updateStatusWithEntityStatusEnabled() {
-    ReflectionTestUtils.setField(consumerBindingMutation, "entityStatusEnabled", true);
-    ConsumerBindingKeyInput key = getConsumerBindingInputKey();
-    Optional<ConsumerBinding> consumerBinding = Optional.of(getConsumer(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(consumerBindingView.get(any())).thenReturn(consumerBinding);
-    when(consumerBindingService.updateStatus(any(), any())).thenReturn(consumerBinding);
-
-    ConsumerBinding result = consumerBindingMutation.updateStatus(key, statusInput);
-
-    verify(consumerBindingView, times(1)).get(key.asConsumerBindingKey());
-    verify(consumerBindingService, times(1)).updateStatus(consumerBinding.get(), statusInput.asStatus());
-    assertEquals(consumerBinding.get(), result);
-  }
-
-  @Test
-  public void updateStatusWithEntityStatusDisabled() {
-    ReflectionTestUtils.setField(consumerBindingMutation, "entityStatusEnabled", false);
-    ConsumerBindingKeyInput key = getConsumerBindingInputKey();
-    Optional<ConsumerBinding> consumerBinding = Optional.of(getConsumer(key));
-    StatusInput statusInput = InputHelper.statusInput();
-
-    when(consumerBindingView.get(any())).thenReturn(consumerBinding);
-
-    ConsumerBinding result = consumerBindingMutation.updateStatus(key, statusInput);
-
-    verify(consumerBindingView, times(1)).get(key.asConsumerBindingKey());
-    verify(consumerBindingService, never()).updateStatus(consumerBinding.get(), statusInput.asStatus());
-    assertEquals(consumerBinding.get(), result);
   }
 
   private ConsumerBindingKeyInput getConsumerBindingInputKey() {

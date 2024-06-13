@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ProcessBindingService;
@@ -36,9 +35,6 @@ import com.expediagroup.streamplatform.streamregistry.model.ProcessBinding;
 public class ProcessBindingMutationImpl implements ProcessBindingMutation {
   private final ProcessBindingService processBindingService;
   private final ProcessBindingView processBindingView;
-
-  @Value("${stream-registry.entity.status.enabled:true}")
-  private boolean entityStatusEnabled;
 
   @Override
   public ProcessBinding insert(ProcessBindingKeyInput key, SpecificationInput specification,
@@ -72,12 +68,7 @@ public class ProcessBindingMutationImpl implements ProcessBindingMutation {
   @Override
   public ProcessBinding updateStatus(ProcessBindingKeyInput key, StatusInput status) {
     ProcessBinding processBinding = processBindingView.get(key.asProcessBindingKey()).get();
-
-    if (entityStatusEnabled) {
-      return processBindingService.updateStatus(processBinding, status.asStatus()).get();
-    } else {
-      return processBinding;
-    }
+    return processBindingService.updateStatus(processBinding, status.asStatus()).get();
   }
 
   private ProcessBinding asProcessBinding(ProcessBindingKeyInput key, SpecificationInput specification,
