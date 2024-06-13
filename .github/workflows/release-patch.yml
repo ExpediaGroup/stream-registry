@@ -8,18 +8,18 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           # We need a personal access token to be able to push to a protected branch
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
       - name: Setup JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           java-package: jdk
-          distribution: adopt
+          distribution: 'temurin'
           architecture: x64
           # this also creates settings.xml with the following server
           server-id: sonatype-nexus-staging # Value of the distributionManagement/repository/id field of the pom.xml
