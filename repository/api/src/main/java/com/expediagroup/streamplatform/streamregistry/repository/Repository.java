@@ -20,12 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Repository<T, ID> {
-  /**
-   * @deprecated Use {link {@link #saveSpecification(Object)}} or {link {@link #saveStatus(Object)}}
-   * to save the entity specification or entity status independently.
-   */
-  T save(T entity);
-
   T saveSpecification(T entity);
 
   T saveStatus(T entity);

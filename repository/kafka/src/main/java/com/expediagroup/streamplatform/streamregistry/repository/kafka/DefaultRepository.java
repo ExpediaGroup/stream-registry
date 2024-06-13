@@ -48,17 +48,6 @@ abstract class DefaultRepository<
   private final Converter<ME, MK, SK, SS> converter;
   private final Class<SK> stateKeyClass;
 
-  /**
-   * @deprecated Use {link {@link #saveSpecification(com.expediagroup.streamplatform.streamregistry.model.Entity)}} or
-   * {link {@link #saveStatus(com.expediagroup.streamplatform.streamregistry.model.Entity)}}
-   * to save the entity specification or entity status independently.
-   */
-  @Deprecated
-  @Override
-  public ME save(ME entity) {
-    throw new UnsupportedOperationException();
-  }
-
   @Override
   public ME saveSpecification(ME entity) {
     Optional<ME> existing = findById(entity.getKey());
