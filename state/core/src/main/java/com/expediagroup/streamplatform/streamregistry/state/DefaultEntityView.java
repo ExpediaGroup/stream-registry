@@ -47,18 +47,9 @@ public class DefaultEntityView implements EntityView {
     this(receiver, entities, new DefaultEntityViewUpdater(entities));
   }
 
-  DefaultEntityView(EventReceiver receiver, Map<Entity.Key<?>, StateValue> entities, Boolean entityStatusEnabled) {
-    this(receiver, entities, new DefaultEntityViewUpdater(entities, entityStatusEnabled));
-  }
-
-  public DefaultEntityView(EventReceiver receiver, Boolean entityStatusEnabled) {
-    this(receiver, new ConcurrentHashMap<>(), entityStatusEnabled);
-  }
-
   public DefaultEntityView(EventReceiver receiver) {
     this(receiver, new ConcurrentHashMap<>());
   }
-
 
   @Override
   public CompletableFuture<Void> load(@NonNull EntityViewListener listener) {

@@ -21,7 +21,6 @@ import static com.expediagroup.streamplatform.streamregistry.state.StateValue.ex
 import java.util.Map;
 import java.util.Optional;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +37,9 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.Default
 
 @Slf4j
 @RequiredArgsConstructor
-@AllArgsConstructor
 class DefaultEntityViewUpdater implements EntityViewUpdater {
   @NonNull
   private final Map<Entity.Key<?>, StateValue> entities;
-  private Boolean entityStatusEnabled = true;
 
   @Override
   public <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(Event<K, S> event) {
@@ -83,12 +80,6 @@ class DefaultEntityViewUpdater implements EntityViewUpdater {
 
   private <K extends Entity.Key<S>, S extends Specification> Entity<K, S> update(StatusEvent<K, S> event) {
     val oldEntity = (Entity<K, S>) getExistingEntity(event.getKey());
-
-    if (!entityStatusEnabled) {
-      log.warn("Entity Status is disabled and is not persisted for key={}", event.getKey());
-      return oldEntity;
-    }
-
     if (oldEntity == null) {
       log.info("Received status {} non existent entity {}", event.getStatusEntry().getName(), event.getKey());
       return null;

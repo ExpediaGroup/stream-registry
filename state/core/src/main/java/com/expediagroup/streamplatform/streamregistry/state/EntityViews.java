@@ -42,21 +42,11 @@ public final class EntityViews {
   }
 
   @NonNull
-  public static EntityView defaultEntityView(EventReceiver receiver, Boolean entityStatusEnabled) {
-    return new DefaultEntityView(receiver, entityStatusEnabled);
-  }
-
-  @NonNull
   public static EntityView meteredEntityView(EventReceiver receiver, MeterRegistry meterRegistry) {
-    return meteredEntityView(receiver, meterRegistry, true);
-  }
-
-  @NonNull
-  public static EntityView meteredEntityView(EventReceiver receiver, MeterRegistry meterRegistry, Boolean entityStatusEnabled) {
     Map<Entity.Key<?>, StateValue> entities = new ConcurrentHashMap<>();
     meterRegistry.gaugeMapSize("stream_registry_state.view.entities", Tags.empty(), entities);
 
-    DefaultEntityViewUpdater defaultEntityViewUpdater = new DefaultEntityViewUpdater(entities, entityStatusEnabled);
+    DefaultEntityViewUpdater defaultEntityViewUpdater = new DefaultEntityViewUpdater(entities);
     return new DefaultEntityView(receiver, entities, new MeteredEntityViewUpdater(defaultEntityViewUpdater, meterRegistry));
   }
 

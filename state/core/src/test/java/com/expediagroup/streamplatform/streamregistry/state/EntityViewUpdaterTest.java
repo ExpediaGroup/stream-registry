@@ -49,11 +49,11 @@ import com.expediagroup.streamplatform.streamregistry.state.model.status.Default
 
 public abstract class EntityViewUpdaterTest {
 
-  final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
+  private final Map<Entity.Key<?>, StateValue> entities = new HashMap<>();
 
   private final DefaultSpecification oldSpecification = specification.withDescription("old-description");
-  final DefaultStatus oldStatus = new DefaultStatus();
-  final Entity<DomainKey, DefaultSpecification> oldEntity = entity
+  private final DefaultStatus oldStatus = new DefaultStatus();
+  private final Entity<DomainKey, DefaultSpecification> oldEntity = entity
     .withSpecification(oldSpecification)
     .withStatus(oldStatus);
 
