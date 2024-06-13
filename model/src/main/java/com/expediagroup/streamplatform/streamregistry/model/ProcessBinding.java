@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,4 +34,19 @@ public class ProcessBinding implements Entity<ProcessBindingKey> {
   private List<ProcessInputStreamBinding> inputs;
   private List<ProcessOutputStreamBinding> outputs;
   private Status status;
+
+  public ProcessBinding(
+    ProcessBindingKey key,
+    Specification specification,
+    ZoneKey zone,
+    List<ProcessInputStreamBinding> inputs,
+    List<ProcessOutputStreamBinding> outputs
+  ) {
+    this.key = key;
+    this.specification = specification;
+    this.zone = zone;
+    this.inputs = inputs;
+    this.outputs = outputs;
+    this.status = new Status();
+  }
 }

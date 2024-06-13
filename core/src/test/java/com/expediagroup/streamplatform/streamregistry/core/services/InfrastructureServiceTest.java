@@ -111,7 +111,7 @@ public class InfrastructureServiceTest {
     Mockito.doNothing().when(infrastructureValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    Mockito.when(infrastructureRepository.save(any())).thenReturn(entity);
+    Mockito.when(infrastructureRepository.saveSpecification(any())).thenReturn(entity);
     when(entity.getKey()).thenReturn(key);
 
     infrastructureService.create(entity);
@@ -120,7 +120,7 @@ public class InfrastructureServiceTest {
     verify(infrastructureRepository).findById(key);
     verify(infrastructureValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(infrastructureRepository).save(entity);
+    verify(infrastructureRepository).saveSpecification(entity);
   }
 
   @Test
@@ -136,7 +136,7 @@ public class InfrastructureServiceTest {
     doNothing().when(infrastructureValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(infrastructureRepository.save(entity)).thenReturn(entity);
+    when(infrastructureRepository.saveSpecification(entity)).thenReturn(entity);
 
     infrastructureService.update(entity);
 
@@ -144,7 +144,7 @@ public class InfrastructureServiceTest {
     verify(infrastructureRepository).findById(key);
     verify(infrastructureValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(infrastructureRepository).save(entity);
+    verify(infrastructureRepository).saveSpecification(entity);
   }
 
   @Test
@@ -152,11 +152,11 @@ public class InfrastructureServiceTest {
     final Infrastructure entity = mock(Infrastructure.class);
     final Status status = mock(Status.class);
 
-    when(infrastructureRepository.save(entity)).thenReturn(entity);
+    when(infrastructureRepository.saveStatus(entity)).thenReturn(entity);
 
     infrastructureService.updateStatus(entity, status);
 
-    verify(infrastructureRepository).save(entity);
+    verify(infrastructureRepository).saveStatus(entity);
   }
 
   @Test

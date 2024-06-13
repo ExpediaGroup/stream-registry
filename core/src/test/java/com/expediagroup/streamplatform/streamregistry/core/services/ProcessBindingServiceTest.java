@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,8 +54,6 @@ public class ProcessBindingServiceTest {
 
   private ProcessBindingService processBindingService;
 
-  private ObjectMapper objectMapper = new ObjectMapper();
-
   @Before
   public void before() {
     processBindingService = new ProcessBindingService(
@@ -80,7 +76,7 @@ public class ProcessBindingServiceTest {
     doNothing().when(processBindingValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(processBindingRepository.save(entity)).thenReturn(entity);
+    when(processBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     processBindingService.create(entity);
 
@@ -88,7 +84,7 @@ public class ProcessBindingServiceTest {
     verify(processBindingRepository).findById(key);
     verify(processBindingValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(processBindingRepository).save(entity);
+    verify(processBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -105,7 +101,7 @@ public class ProcessBindingServiceTest {
     doNothing().when(processBindingValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(processBindingRepository.save(entity)).thenReturn(entity);
+    when(processBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     processBindingService.update(entity);
 
@@ -113,7 +109,7 @@ public class ProcessBindingServiceTest {
     verify(processBindingRepository).findById(key);
     verify(processBindingValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(processBindingRepository).save(entity);
+    verify(processBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -121,11 +117,11 @@ public class ProcessBindingServiceTest {
     final Status status = mock(Status.class);
     final ProcessBinding entity = mock(ProcessBinding.class);
 
-    when(processBindingRepository.save(entity)).thenReturn(entity);
+    when(processBindingRepository.saveStatus(entity)).thenReturn(entity);
 
     processBindingService.updateStatus(entity, status);
 
-    verify(processBindingRepository).save(entity);
+    verify(processBindingRepository).saveStatus(entity);
   }
 
   @Test

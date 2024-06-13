@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,28 +54,32 @@ public class ProducerBindingService {
     }
     producerBindingValidator.validateForCreate(producerBinding);
     producerBinding.setSpecification(handlerService.handleInsert(producerBinding));
-    return save(producerBinding);
+    return saveSpecification(producerBinding);
   }
 
   @PreAuthorize("hasPermission(#producerBinding, 'UPDATE')")
   public Optional<ProducerBinding> update(ProducerBinding producerBinding) throws ValidationException {
     val existing = producerBindingView.get(producerBinding.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + producerBinding.getKey() + " because it doesn't exist");
     }
     producerBindingValidator.validateForUpdate(producerBinding, existing.get());
     producerBinding.setSpecification(handlerService.handleUpdate(producerBinding, existing.get()));
-    return save(producerBinding);
+    return saveSpecification(producerBinding);
   }
 
   @PreAuthorize("hasPermission(#producerBinding, 'UPDATE_STATUS')")
   public Optional<ProducerBinding> updateStatus(ProducerBinding producerBinding, Status status) {
     producerBinding.setStatus(status);
-    return save(producerBinding);
+    return saveStatus(producerBinding);
   }
 
-  private Optional<ProducerBinding> save(ProducerBinding producerBinding) {
-    return Optional.ofNullable(producerBindingRepository.save(producerBinding));
+  private Optional<ProducerBinding> saveSpecification(ProducerBinding producerBinding) {
+    return Optional.ofNullable(producerBindingRepository.saveSpecification(producerBinding));
+  }
+
+  private Optional<ProducerBinding> saveStatus(ProducerBinding producerBinding) {
+    return Optional.ofNullable(producerBindingRepository.saveStatus(producerBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class ProcessService {
       process.getOutputs().forEach(output -> producerService.canCreateProducer(
         buildProducer(process, zoneKey, output)
       )));
-    return save(process);
+    return saveSpecification(process);
   }
 
   private Producer buildProducer(Process process, ZoneKey zoneKey, ProcessOutputStream output) {
@@ -94,7 +94,7 @@ public class ProcessService {
   @PreAuthorize("hasPermission(#process, 'UPDATE')")
   public Optional<Process> update(Process process) throws ValidationException {
     val existing = processView.get(process.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + process.getKey().getName() + " because it doesn't exist");
     }
     processValidator.validateForUpdate(process, existing.get());
@@ -119,7 +119,7 @@ public class ProcessService {
       });
     });
 
-    return save(process);
+    return saveSpecification(process);
   }
 
   private Consumer buildConsumer(Process process, ZoneKey zoneKey, ProcessInputStream input) {
@@ -139,12 +139,17 @@ public class ProcessService {
   @PreAuthorize("hasPermission(#process, 'UPDATE_STATUS')")
   public Optional<Process> updateStatus(Process process, Status status) {
     process.setStatus(status);
-    return save(process);
+    return saveStatus(process);
   }
 
-  private Optional<Process> save(Process process) {
-    return Optional.ofNullable(processRepository.save(process));
+  private Optional<Process> saveSpecification(Process process) {
+    return Optional.ofNullable(processRepository.saveSpecification(process));
   }
+
+  private Optional<Process> saveStatus(Process process) {
+    return Optional.ofNullable(processRepository.saveStatus(process));
+  }
+
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")
   public Optional<Process> get(ProcessKey key) {

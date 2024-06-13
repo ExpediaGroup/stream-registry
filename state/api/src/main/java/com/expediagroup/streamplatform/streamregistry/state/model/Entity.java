@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.model;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.With;
@@ -24,15 +25,23 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
+import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.Status;
 
 @Value
+@AllArgsConstructor
 public class Entity<K extends Entity.Key<S>, S extends Specification> {
   @NonNull K key;
   @With
   @NonNull S specification;
   @With
   @NonNull Status status;
+
+  public Entity(K key, S specification) {
+    this.key = key;
+    this.specification = specification;
+    this.status = new DefaultStatus();
+  }
 
   public interface Key<S extends Specification> {}
 

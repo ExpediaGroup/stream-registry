@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class SchemaService {
     }
     schemaValidator.validateForCreate(schema);
     schema.setSpecification(handlerService.handleInsert(schema));
-    return save(schema);
+    return saveSpecification(schema);
   }
 
   @PreAuthorize("hasPermission(#schema, 'UPDATE')")
@@ -64,17 +64,21 @@ public class SchemaService {
     }
     schemaValidator.validateForUpdate(schema, existing.get());
     schema.setSpecification(handlerService.handleUpdate(schema, existing.get()));
-    return save(schema);
+    return saveSpecification(schema);
   }
 
   @PreAuthorize("hasPermission(#schema, 'UPDATE_STATUS')")
   public Optional<Schema> updateStatus(Schema schema, Status status) {
     schema.setStatus(status);
-    return save(schema);
+    return saveStatus(schema);
   }
 
-  private Optional<Schema> save(Schema schema) {
-    return Optional.ofNullable(schemaRepository.save(schema));
+  private Optional<Schema> saveSpecification(Schema schema) {
+    return Optional.ofNullable(schemaRepository.saveSpecification(schema));
+  }
+
+  private Optional<Schema> saveStatus(Schema schema) {
+    return Optional.ofNullable(schemaRepository.saveStatus(schema));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

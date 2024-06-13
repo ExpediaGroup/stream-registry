@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,28 +54,32 @@ public class ConsumerBindingService {
     }
     consumerBindingValidator.validateForCreate(consumerBinding);
     consumerBinding.setSpecification(handlerService.handleInsert(consumerBinding));
-    return save(consumerBinding);
+    return saveSpecification(consumerBinding);
   }
 
   @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE')")
   public Optional<ConsumerBinding> update(ConsumerBinding consumerBinding) throws ValidationException {
     val existing = consumerBindingView.get(consumerBinding.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + consumerBinding.getKey() + " because it doesn't exist");
     }
     consumerBindingValidator.validateForUpdate(consumerBinding, existing.get());
     consumerBinding.setSpecification(handlerService.handleUpdate(consumerBinding, existing.get()));
-    return save(consumerBinding);
+    return saveSpecification(consumerBinding);
   }
 
   @PreAuthorize("hasPermission(#consumerBinding, 'UPDATE_STATUS')")
   public Optional<ConsumerBinding> updateStatus(ConsumerBinding consumerBinding, Status status) {
     consumerBinding.setStatus(status);
-    return save(consumerBinding);
+    return saveStatus(consumerBinding);
   }
 
-  private Optional<ConsumerBinding> save(ConsumerBinding consumerBinding) {
-    return Optional.ofNullable(consumerBindingRepository.save(consumerBinding));
+  private Optional<ConsumerBinding> saveSpecification(ConsumerBinding consumerBinding) {
+    return Optional.ofNullable(consumerBindingRepository.saveSpecification(consumerBinding));
+  }
+
+  private Optional<ConsumerBinding> saveStatus(ConsumerBinding consumerBinding) {
+    return Optional.ofNullable(consumerBindingRepository.saveStatus(consumerBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

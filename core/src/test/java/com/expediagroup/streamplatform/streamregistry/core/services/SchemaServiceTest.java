@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,14 +72,14 @@ public class SchemaServiceTest {
     doNothing().when(schemaValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(schemaRepository.save(entity)).thenReturn(entity);
+    when(schemaRepository.saveSpecification(entity)).thenReturn(entity);
 
     schemaService.create(entity);
 
     verify(entity).getKey();
     verify(schemaValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(schemaRepository).save(entity);
+    verify(schemaRepository).saveSpecification(entity);
   }
 
   @Test
@@ -95,7 +95,7 @@ public class SchemaServiceTest {
     doNothing().when(schemaValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(schemaRepository.save(entity)).thenReturn(entity);
+    when(schemaRepository.saveSpecification(entity)).thenReturn(entity);
 
     schemaService.update(entity);
 
@@ -103,7 +103,7 @@ public class SchemaServiceTest {
     verify(schemaRepository).findById(key);
     verify(schemaValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(schemaRepository).save(entity);
+    verify(schemaRepository).saveSpecification(entity);
   }
 
   @Test
@@ -111,11 +111,11 @@ public class SchemaServiceTest {
     final Schema entity = mock(Schema.class);
     final Status status = mock(Status.class);
 
-    when(schemaRepository.save(entity)).thenReturn(entity);
+    when(schemaRepository.saveStatus(entity)).thenReturn(entity);
 
     schemaService.updateStatus(entity, status);
 
-    verify(schemaRepository).save(entity);
+    verify(schemaRepository).saveStatus(entity);
   }
 
   @Test

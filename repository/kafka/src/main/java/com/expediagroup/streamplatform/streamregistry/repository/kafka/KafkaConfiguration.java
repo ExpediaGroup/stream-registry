@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ public class KafkaConfiguration {
     @Value("${repository.kafka.topic:_streamregistry}") String topic,
     @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
     @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
+    @Value("${repository.kafka.entity.status.enabled:true}") Boolean entityStatusEnabled,
     EventCorrelator eventCorrelator
   ) {
     KafkaEventSender.Config config = KafkaEventSender.Config.builder()
@@ -56,6 +57,7 @@ public class KafkaConfiguration {
       .topic(topic)
       .schemaRegistryUrl(schemaRegistryUrl)
       .properties(readPropertiesFile(propertiesPath))
+      .entityStatusEnabled(entityStatusEnabled)
       .build();
     return new KafkaEventSender(config, eventCorrelator);
   }
@@ -67,6 +69,7 @@ public class KafkaConfiguration {
     @Value("${repository.kafka.groupId:stream-registry}") String groupId,
     @Value("${repository.kafka.schemaRegistryUrl}") String schemaRegistryUrl,
     @Value("${repository.kafka.propertiesPath:}") String propertiesPath,
+    @Value("${repository.kafka.entity.status.enabled:true}") Boolean entityStatusEnabled,
     EventCorrelator eventCorrelator
   ) {
     KafkaEventReceiver.Config receiverConfig = KafkaEventReceiver.Config.builder()
@@ -75,6 +78,7 @@ public class KafkaConfiguration {
       .groupId(groupId)
       .schemaRegistryUrl(schemaRegistryUrl)
       .properties(readPropertiesFile(propertiesPath))
+      .entityStatusEnabled(entityStatusEnabled)
       .build();
     return new KafkaEventReceiver(receiverConfig, eventCorrelator);
   }

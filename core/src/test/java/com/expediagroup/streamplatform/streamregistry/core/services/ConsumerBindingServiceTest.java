@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class ConsumerBindingServiceTest {
     doNothing().when(consumerBindingValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(consumerBindingRepository.save(entity)).thenReturn(entity);
+    when(consumerBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     consumerBindingService.create(entity);
 
@@ -81,7 +81,7 @@ public class ConsumerBindingServiceTest {
     verify(consumerBindingRepository).findById(key);
     verify(consumerBindingValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(consumerBindingRepository).save(entity);
+    verify(consumerBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -98,7 +98,7 @@ public class ConsumerBindingServiceTest {
     doNothing().when(consumerBindingValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(consumerBindingRepository.save(entity)).thenReturn(entity);
+    when(consumerBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     consumerBindingService.update(entity);
 
@@ -106,7 +106,7 @@ public class ConsumerBindingServiceTest {
     verify(consumerBindingRepository).findById(key);
     verify(consumerBindingValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(consumerBindingRepository).save(entity);
+    verify(consumerBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -114,11 +114,11 @@ public class ConsumerBindingServiceTest {
     final Status status = mock(Status.class);
     final ConsumerBinding entity = mock(ConsumerBinding.class);
 
-    when(consumerBindingRepository.save(entity)).thenReturn(entity);
+    when(consumerBindingRepository.saveStatus(entity)).thenReturn(entity);
 
     consumerBindingService.updateStatus(entity, status);
 
-    verify(consumerBindingRepository).save(entity);
+    verify(consumerBindingRepository).saveStatus(entity);
   }
 
   @Test

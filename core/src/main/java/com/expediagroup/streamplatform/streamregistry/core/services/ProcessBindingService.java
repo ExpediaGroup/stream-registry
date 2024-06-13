@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,28 +53,32 @@ public class ProcessBindingService {
     }
     processBindingValidator.validateForCreate(processBinding);
     processBinding.setSpecification(handlerService.handleInsert(processBinding));
-    return save(processBinding);
+    return saveSpecification(processBinding);
   }
 
   @PreAuthorize("hasPermission(#processBinding, 'UPDATE')")
   public Optional<ProcessBinding> update(ProcessBinding processBinding) throws ValidationException {
     val existing = processBindingView.get(processBinding.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + processBinding.getKey() + " because it doesn't exist");
     }
     processBindingValidator.validateForUpdate(processBinding, existing.get());
     processBinding.setSpecification(handlerService.handleUpdate(processBinding, existing.get()));
-    return save(processBinding);
+    return saveSpecification(processBinding);
   }
 
   @PreAuthorize("hasPermission(#processBinding, 'UPDATE_STATUS')")
   public Optional<ProcessBinding> updateStatus(ProcessBinding processBinding, Status status) {
     processBinding.setStatus(status);
-    return save(processBinding);
+    return saveStatus(processBinding);
   }
 
-  private Optional<ProcessBinding> save(ProcessBinding processBinding) {
-    return Optional.ofNullable(processBindingRepository.save(processBinding));
+  private Optional<ProcessBinding> saveSpecification(ProcessBinding processBinding) {
+    return Optional.ofNullable(processBindingRepository.saveSpecification(processBinding));
+  }
+
+  private Optional<ProcessBinding> saveStatus(ProcessBinding processBinding) {
+    return Optional.ofNullable(processBindingRepository.saveStatus(processBinding));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

@@ -108,7 +108,7 @@ public class StreamBindingServiceTest {
     doNothing().when(streamBindingValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(streamBindingRepository.save(entity)).thenReturn(entity);
+    when(streamBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     streamBindingService.create(entity);
 
@@ -116,7 +116,7 @@ public class StreamBindingServiceTest {
     verify(streamBindingRepository).findById(key);
     verify(streamBindingValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(streamBindingRepository).save(entity);
+    verify(streamBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -133,7 +133,7 @@ public class StreamBindingServiceTest {
     doNothing().when(streamBindingValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(streamBindingRepository.save(entity)).thenReturn(entity);
+    when(streamBindingRepository.saveSpecification(entity)).thenReturn(entity);
 
     streamBindingService.update(entity);
 
@@ -141,7 +141,7 @@ public class StreamBindingServiceTest {
     verify(streamBindingRepository).findById(key);
     verify(streamBindingValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(streamBindingRepository).save(entity);
+    verify(streamBindingRepository).saveSpecification(entity);
   }
 
   @Test
@@ -149,11 +149,11 @@ public class StreamBindingServiceTest {
     final Status status = mock(Status.class);
     final StreamBinding entity = mock(StreamBinding.class);
 
-    when(streamBindingRepository.save(entity)).thenReturn(entity);
+    when(streamBindingRepository.saveStatus(entity)).thenReturn(entity);
 
     streamBindingService.updateStatus(entity, status);
 
-    verify(streamBindingRepository).save(entity);
+    verify(streamBindingRepository).saveStatus(entity);
   }
 
   @Test

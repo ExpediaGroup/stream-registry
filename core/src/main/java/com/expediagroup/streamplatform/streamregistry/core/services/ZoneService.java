@@ -66,29 +66,32 @@ public class ZoneService {
     }
     zoneValidator.validateForCreate(zone);
     zone.setSpecification(handlerService.handleInsert(zone));
-    return save(zone);
+    return saveSpecification(zone);
   }
 
   @PreAuthorize("hasPermission(#zone, 'UPDATE')")
   public Optional<Zone> update(Zone zone) throws ValidationException {
     val existing = zoneView.get(zone.getKey());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + zone.getKey().getName() + " because it doesn't exist");
     }
     zoneValidator.validateForUpdate(zone, existing.get());
     zone.setSpecification(handlerService.handleUpdate(zone, existing.get()));
-    return save(zone);
+    return saveSpecification(zone);
   }
 
   @PreAuthorize("hasPermission(#zone, 'UPDATE_STATUS')")
   public Optional<Zone> updateStatus(Zone zone, Status status) {
     zone.setStatus(status);
-    return save(zone);
+    return saveStatus(zone);
   }
 
-  private Optional<Zone> save(Zone zone) {
-    zone = zoneRepository.save(zone);
-    return Optional.ofNullable(zone);
+  private Optional<Zone> saveSpecification(Zone zone) {
+    return Optional.ofNullable(zoneRepository.saveSpecification(zone));
+  }
+
+  private Optional<Zone> saveStatus(Zone zone) {
+    return Optional.ofNullable(zoneRepository.saveStatus(zone));
   }
 
   @PostAuthorize("returnObject.isPresent() ? hasPermission(returnObject, 'READ') : true")

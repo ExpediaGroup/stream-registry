@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2020 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,4 +28,10 @@ public class Schema implements Entity<SchemaKey> {
   private SchemaKey key;
   private Specification specification;
   private Status status;
+
+  public Schema(SchemaKey key, Specification specification) {
+    this.key = key;
+    this.specification = specification;
+    this.status = new Status();
+  }
 }

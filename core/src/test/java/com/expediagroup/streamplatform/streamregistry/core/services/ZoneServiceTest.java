@@ -127,7 +127,7 @@ public class ZoneServiceTest {
     Mockito.doNothing().when(zoneValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    Mockito.when(zoneRepository.save(any())).thenReturn(entity);
+    Mockito.when(zoneRepository.saveSpecification(any())).thenReturn(entity);
     when(entity.getKey()).thenReturn(key);
 
     zoneService.create(entity);
@@ -136,7 +136,7 @@ public class ZoneServiceTest {
     verify(zoneRepository).findById(key);
     verify(zoneValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(zoneRepository).save(entity);
+    verify(zoneRepository).saveSpecification(entity);
   }
 
   @Test
@@ -152,7 +152,7 @@ public class ZoneServiceTest {
     doNothing().when(zoneValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(zoneRepository.save(entity)).thenReturn(entity);
+    when(zoneRepository.saveSpecification(entity)).thenReturn(entity);
 
     zoneService.update(entity);
 
@@ -160,7 +160,7 @@ public class ZoneServiceTest {
     verify(zoneRepository).findById(key);
     verify(zoneValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(zoneRepository).save(entity);
+    verify(zoneRepository).saveSpecification(entity);
   }
 
   @Test
@@ -168,11 +168,11 @@ public class ZoneServiceTest {
     final Zone entity = mock(Zone.class);
     final Status status = mock(Status.class);
 
-    when(zoneRepository.save(entity)).thenReturn(entity);
+    when(zoneRepository.saveStatus(entity)).thenReturn(entity);
 
     zoneService.updateStatus(entity, status);
 
-    verify(zoneRepository).save(entity);
+    verify(zoneRepository).saveStatus(entity);
   }
 
   @Test

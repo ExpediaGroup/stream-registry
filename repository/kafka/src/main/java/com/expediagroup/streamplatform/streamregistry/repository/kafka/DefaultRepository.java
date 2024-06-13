@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,25 +48,35 @@ abstract class DefaultRepository<
   private final Converter<ME, MK, SK, SS> converter;
   private final Class<SK> stateKeyClass;
 
-  //TODO deprecate - split specification from status so they are saveable separately.
   @Override
-  public ME save(ME entity) {
+  public ME saveSpecification(ME entity) {
+    Optional<ME> existing = findById(entity.getKey());
+    Entity<SK, SS> stateEntity = converter.convertEntity(entity);
+    if (existing.isPresent()) {
+      Entity<SK, SS> existingStateEntity = converter.convertEntity(existing.get());
+      if (!existingStateEntity.getSpecification().equals(stateEntity.getSpecification())) {
+        sender.send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification())).join();
+      }
+    } else {
+      sender.send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification())).join();
+    }
+    return entity;
+  }
+
+  @Override
+  public ME saveStatus(ME entity) {
     Optional<ME> existing = findById(entity.getKey());
     Entity<SK, SS> stateEntity = converter.convertEntity(entity);
     List<CompletableFuture<Void>> futures = new ArrayList<>();
     if (existing.isPresent()) {
       Entity<SK, SS> existingStateEntity = converter.convertEntity(existing.get());
-      if (!existingStateEntity.getSpecification().equals(stateEntity.getSpecification())) {
-        send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification()), futures);
-      }
       for (StatusEntry entry : stateEntity.getStatus().getEntries()) {
         if (existingStateEntity.getStatus().getNames().contains(entry.getName())
-            && !entry.getValue().equals(existingStateEntity.getStatus().getValue(entry.getName()))) {
+          && !entry.getValue().equals(existingStateEntity.getStatus().getValue(entry.getName()))) {
           send(Event.status(stateEntity.getKey(), entry), futures);
         }
       }
     } else {
-      send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification()), futures);
       for (StatusEntry entry : stateEntity.getStatus().getEntries()) {
         send(Event.status(stateEntity.getKey(), entry), futures);
       }
@@ -95,7 +105,7 @@ abstract class DefaultRepository<
 
   @Override
   public List<ME> findAll(ME example) {
-    //This is only used by ProducerBinding and ConsumerBinding
+    // This is only used by ProducerBinding and ConsumerBinding
     throw new UnsupportedOperationException();
   }
 
@@ -103,9 +113,7 @@ abstract class DefaultRepository<
   public void delete(ME entity) {
     List<CompletableFuture<Void>> futures = new ArrayList<>();
     Entity<SK, SS> stateEntity = converter.convertEntity(entity);
-    stateEntity.getStatus().getEntries().stream().forEach( e -> {
-      send(Event.statusDeletion(stateEntity.getKey(), e.getName()), futures);
-    });
+    stateEntity.getStatus().getEntries().forEach(e -> send(Event.statusDeletion(stateEntity.getKey(), e.getName()), futures));
     send(Event.specificationDeletion(stateEntity.getKey()), futures);
     futures.forEach(CompletableFuture::join);
   }

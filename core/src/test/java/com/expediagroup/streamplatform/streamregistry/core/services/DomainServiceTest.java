@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.core.services;
 
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -117,7 +117,7 @@ public class DomainServiceTest {
     Mockito.doNothing().when(domainValidator).validateForCreate(entity);
     Mockito.when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    Mockito.when(domainRepository.save(any())).thenReturn(entity);
+    Mockito.when(domainRepository.saveSpecification(any())).thenReturn(entity);
     when(entity.getKey()).thenReturn(key);
 
     domainService.create(entity);
@@ -126,7 +126,7 @@ public class DomainServiceTest {
     verify(domainRepository).findById(key);
     verify(domainValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(domainRepository).save(entity);
+    verify(domainRepository).saveSpecification(entity);
   }
 
   @Test
@@ -142,7 +142,7 @@ public class DomainServiceTest {
     doNothing().when(domainValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(domainRepository.save(entity)).thenReturn(entity);
+    when(domainRepository.saveSpecification(entity)).thenReturn(entity);
 
     domainService.update(entity);
 
@@ -150,7 +150,7 @@ public class DomainServiceTest {
     verify(domainRepository).findById(key);
     verify(domainValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(domainRepository).save(entity);
+    verify(domainRepository).saveSpecification(entity);
   }
 
   @Test
@@ -158,11 +158,11 @@ public class DomainServiceTest {
     final Domain entity = mock(Domain.class);
     final Status status = mock(Status.class);
 
-    when(domainRepository.save(entity)).thenReturn(entity);
+    when(domainRepository.saveStatus(entity)).thenReturn(entity);
 
     domainService.updateStatus(entity, status);
 
-    verify(domainRepository).save(entity);
+    verify(domainRepository).saveStatus(entity);
   }
 
   @Test
@@ -190,7 +190,7 @@ public class DomainServiceTest {
     final Process process = mock(Process.class);
     when(processKey.getDomainKey()).thenReturn(key);
     when(process.getKey()).thenReturn(processKey);
-    when(processRepository.findAll()).thenReturn(asList(process));
+    when(processRepository.findAll()).thenReturn(List.of(process));
     IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
       domainService.delete(entity);
     });
@@ -209,7 +209,7 @@ public class DomainServiceTest {
     when(stream.getKey()).thenReturn(streamkey);
 
     when(processRepository.findAll()).thenReturn(emptyList());
-    when(streamRepository.findAll()).thenReturn(asList(stream));
+    when(streamRepository.findAll()).thenReturn(List.of(stream));
     IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
       domainService.delete(entity);
     });
@@ -229,7 +229,7 @@ public class DomainServiceTest {
 
     when(processRepository.findAll()).thenReturn(emptyList());
     when(streamRepository.findAll()).thenReturn(emptyList());
-    when(schemaRepository.findAll()).thenReturn(asList(schema));
+    when(schemaRepository.findAll()).thenReturn(List.of(schema));
     IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
       domainService.delete(entity);
     });
@@ -252,7 +252,7 @@ public class DomainServiceTest {
     when(processRepository.findAll()).thenReturn(emptyList());
     when(streamRepository.findAll()).thenReturn(emptyList());
     when(producerRepository.findAll()).thenReturn(emptyList());
-    when(consumerRepository.findAll()).thenReturn(asList(consumer));
+    when(consumerRepository.findAll()).thenReturn(List.of(consumer));
     IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
       domainService.delete(entity);
     });
@@ -274,7 +274,7 @@ public class DomainServiceTest {
 
     when(processRepository.findAll()).thenReturn(emptyList());
     when(streamRepository.findAll()).thenReturn(emptyList());
-    when(producerRepository.findAll()).thenReturn(asList(producer));
+    when(producerRepository.findAll()).thenReturn(List.of(producer));
     IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class, () -> {
       domainService.delete(entity);
     });

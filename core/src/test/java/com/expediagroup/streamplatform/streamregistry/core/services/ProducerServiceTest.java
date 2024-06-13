@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -85,7 +86,7 @@ public class ProducerServiceTest {
     doNothing().when(producerValidator).validateForCreate(entity);
     when(handlerService.handleInsert(entity)).thenReturn(specification);
 
-    when(producerRepository.save(entity)).thenReturn(entity);
+    when(producerRepository.saveSpecification(entity)).thenReturn(entity);
 
     producerService.create(entity);
 
@@ -93,7 +94,7 @@ public class ProducerServiceTest {
     verify(producerRepository).findById(key);
     verify(producerValidator).validateForCreate(entity);
     verify(handlerService).handleInsert(entity);
-    verify(producerRepository).save(entity);
+    verify(producerRepository).saveSpecification(entity);
   }
 
   @Test
@@ -110,7 +111,7 @@ public class ProducerServiceTest {
     doNothing().when(producerValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
 
-    when(producerRepository.save(entity)).thenReturn(entity);
+    when(producerRepository.saveSpecification(entity)).thenReturn(entity);
 
     producerService.update(entity);
 
@@ -118,7 +119,7 @@ public class ProducerServiceTest {
     verify(producerRepository).findById(key);
     verify(producerValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
-    verify(producerRepository).save(entity);
+    verify(producerRepository).saveSpecification(entity);
   }
 
   @Test
@@ -126,11 +127,11 @@ public class ProducerServiceTest {
     final Status status = mock(Status.class);
     final Producer entity = mock(Producer.class);
 
-    when(producerRepository.save(entity)).thenReturn(entity);
+    when(producerRepository.saveStatus(entity)).thenReturn(entity);
 
     producerService.updateStatus(entity, status);
 
-    verify(producerRepository).save(entity);
+    verify(producerRepository).saveStatus(entity);
   }
 
   @Test
@@ -144,7 +145,7 @@ public class ProducerServiceTest {
     when(bindingKey.getProducerKey()).thenReturn(key);
     when(binding.getKey()).thenReturn(bindingKey);
 
-    when(producerBindingRepository.findAll()).thenReturn(asList(binding));
+    when(producerBindingRepository.findAll()).thenReturn(List.of(binding));
 
     producerService.delete(entity);
 
@@ -154,7 +155,6 @@ public class ProducerServiceTest {
 
   @Test
   public void delete_noChildren() {
-    final ProducerKey key = mock(ProducerKey.class);
     final Producer entity = mock(Producer.class);
 
     when(producerBindingRepository.findAll()).thenReturn(emptyList());
