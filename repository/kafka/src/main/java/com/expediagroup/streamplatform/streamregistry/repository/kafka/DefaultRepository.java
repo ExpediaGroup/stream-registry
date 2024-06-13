@@ -52,16 +52,14 @@ abstract class DefaultRepository<
   public ME saveSpecification(ME entity) {
     Optional<ME> existing = findById(entity.getKey());
     Entity<SK, SS> stateEntity = converter.convertEntity(entity);
-    List<CompletableFuture<Void>> futures = new ArrayList<>();
     if (existing.isPresent()) {
       Entity<SK, SS> existingStateEntity = converter.convertEntity(existing.get());
       if (!existingStateEntity.getSpecification().equals(stateEntity.getSpecification())) {
-        send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification()), futures);
+        sender.send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification())).join();
       }
     } else {
-      send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification()), futures);
+      sender.send(Event.specification(stateEntity.getKey(), stateEntity.getSpecification())).join();
     }
-    futures.forEach(CompletableFuture::join);
     return entity;
   }
 
