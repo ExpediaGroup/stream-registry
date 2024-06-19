@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
@@ -417,5 +418,10 @@ public class StreamServiceTest {
     when(processRepository.findAll()).thenReturn(List.of(process));
 
     streamService.delete(stream);
+  }
+
+  @Test(expected = ValidationException.class)
+  public void updateFailWhenSchemaKeyChanged() {
+
   }
 }
