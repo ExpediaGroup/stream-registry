@@ -421,7 +421,16 @@ public class StreamServiceTest {
   }
 
   @Test(expected = ValidationException.class)
-  public void updateFailWhenSchemaKeyChanged() {
-
+  public void updateShouldFailWhenSchemaKeyChanged() {
+    StreamKey key = new StreamKey();
+    key.setDomain("domain");
+    key.setName("stream");
+    key.setVersion(1);
+    Stream existingEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v1"));
+    Stream updatedEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v2"));
+    when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    streamService.update(updatedEntity);
+    verify(updatedEntity).getKey();
+    verify(streamRepository).findById(key);
   }
 }
