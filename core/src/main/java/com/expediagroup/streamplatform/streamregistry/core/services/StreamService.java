@@ -85,7 +85,7 @@ public class StreamService {
 
     if (stream.getSchemaKey() != null && !existing.get().getSchemaKey().equals(stream.getSchemaKey())) {
       throw new ValidationException("can't update " + stream.getKey() + "because existing schema key = " +
-        existing.get().getKey() + " is not matching with given schema = " + stream.getKey());
+        existing.get().getKey() + " is not matching with given schema key = " + stream.getKey());
     }
     stream.setSchemaKey(existing.get().getSchemaKey());
     streamValidator.validateForUpdate(stream, existing.get());
