@@ -82,8 +82,6 @@ public class StreamService {
     if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
-    System.out.println(existing.get().getSchemaKey());
-    System.out.println(stream.getSchemaKey());
     if (stream.getSchemaKey() == null) {
       stream.setSchemaKey(existing.get().getSchemaKey());
     }
