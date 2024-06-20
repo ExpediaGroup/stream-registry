@@ -168,15 +168,34 @@ public class StreamServiceTest {
     when(entity.getKey()).thenReturn(key);
 
     when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    doNothing().when(streamValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
+
     when(streamRepository.saveSpecification(entity)).thenReturn(entity);
 
     streamService.update(entity);
 
     verify(entity).getKey();
     verify(streamRepository).findById(key);
+    verify(streamValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
     verify(streamRepository).saveSpecification(entity);
+  }
+
+  @Test
+  public void updateWithChangedSchemaKey() {
+    StreamKey key = new StreamKey();
+    key.setDomain("domain");
+    key.setName("stream");
+    key.setVersion(1);
+    Stream existingEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v1"));
+    Stream updatedEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v2"));
+    when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    streamService.update(updatedEntity);
+    verify(streamRepository).findById(key);
+    verify(streamValidator).validateForUpdate(updatedEntity, existingEntity);
+    verify(handlerService).handleUpdate(updatedEntity, existingEntity);
+    verify(streamRepository).saveSpecification(updatedEntity);
   }
 
   @Test
