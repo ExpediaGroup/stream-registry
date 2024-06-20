@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2022 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@ public class StreamValidator implements Validator<Stream> {
   @Override
   public void validateForCreate(Stream stream) throws ValidationException {
     streamKeyValidator.validateKey(stream);
-    validateForCreateAndUpdate(stream);
+    requireExistingDomain(stream);
+    requireExistingSchema(stream);
     specificationValidator.validateForCreate(stream.getSpecification());
   }
 
@@ -44,11 +45,6 @@ public class StreamValidator implements Validator<Stream> {
     requireExistingDomain(stream);
     requireSchemaSpecified(stream);
     specificationValidator.validateForUpdate(stream.getSpecification(), existing.getSpecification());
-  }
-
-  public void validateForCreateAndUpdate(Stream stream) throws ValidationException {
-    requireExistingDomain(stream);
-    requireExistingSchema(stream);
   }
 
   private void requireExistingDomain(Stream stream) {
