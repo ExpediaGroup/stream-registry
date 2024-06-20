@@ -40,6 +40,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
@@ -182,7 +183,7 @@ public class StreamServiceTest {
     verify(streamRepository).saveSpecification(entity);
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void updateWithChangedSchemaKey() {
     StreamKey key = new StreamKey();
     key.setDomain("domain");
@@ -190,6 +191,19 @@ public class StreamServiceTest {
     key.setVersion(1);
     Stream existingEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v1"));
     Stream updatedEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v2"));
+    when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    streamService.update(updatedEntity);
+    verify(streamRepository).findById(key);
+  }
+
+  @Test
+  public void updateWithSchemaKeyNull() {
+    StreamKey key = new StreamKey();
+    key.setDomain("domain");
+    key.setName("stream");
+    key.setVersion(1);
+    Stream existingEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v1"));
+    Stream updatedEntity = new Stream(key, new Specification(), null);
     when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
     streamService.update(updatedEntity);
     verify(streamRepository).findById(key);

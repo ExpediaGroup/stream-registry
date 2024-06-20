@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.S
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
+import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
+import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 public class StreamTestStage extends AbstractTestStage {
 
@@ -77,6 +79,22 @@ public class StreamTestStage extends AbstractTestStage {
           .build()).get();
     } catch (RuntimeException ex) {
       assertEquals("Schema does not exist", ex.getMessage());
+    }
+
+    try {
+      SchemaKeyInput nonExisting = SchemaKeyInput.builder()
+          .domain(factory.domainName)
+          .name("nonExisting")
+          .build();
+      client.getOptionalData(factory.upsertStreamMutationBuilder()
+          .schema(nonExisting)
+          .build()).get();
+    } catch (RuntimeException ex) {
+      String message = ex.getMessage().replace("com.expediagroup.streamplatform.streamregistry.state.graphql.ApolloResponseException: Unexpected response: ", "");
+      StreamKey streamKey = new StreamKey(factory.domainName, factory.streamName, 1);
+      SchemaKey existingSchemaKey = new SchemaKey(factory.domainName, factory.schemaName);
+      SchemaKey nonExisting = new SchemaKey(factory.domainName, "nonExisting");
+      assertEquals("Stream = " + streamKey + " update failed, because existing schemaKey = " + existingSchemaKey + " is not matching with given schemaKey = " + nonExisting, message);
     }
 
     Object data = client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
