@@ -79,18 +79,6 @@ public class StreamTestStage extends AbstractTestStage {
       assertEquals("Schema does not exist", ex.getMessage());
     }
 
-    try {
-      SchemaKeyInput nonExisting = SchemaKeyInput.builder()
-          .domain(factory.domainName)
-          .name("nonExisting")
-          .build();
-      client.getOptionalData(factory.upsertStreamMutationBuilder()
-          .schema(nonExisting)
-          .build()).get();
-    } catch (RuntimeException ex) {
-      assertEquals("Schema does not exist", ex.getMessage());
-    }
-
     Object data = client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
 
     UpsertStreamMutation.Upsert upsert = ((UpsertStreamMutation.Data) data).getStream().getUpsert();

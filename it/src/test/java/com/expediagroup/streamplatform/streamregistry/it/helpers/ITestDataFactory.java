@@ -132,7 +132,6 @@ public class ITestDataFactory {
     key = "key_" + suffix;
     value = "value_" + suffix;
     description = "description_" + suffix;
-    System.out.println(schemaName);
   }
 
   public final DomainKeyInput.Builder domainKeyInputBuilder() {

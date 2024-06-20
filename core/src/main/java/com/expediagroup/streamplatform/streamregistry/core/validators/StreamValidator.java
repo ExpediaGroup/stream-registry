@@ -42,6 +42,7 @@ public class StreamValidator implements Validator<Stream> {
   @Override
   public void validateForUpdate(Stream stream, Stream existing) throws ValidationException {
     requireExistingDomain(stream);
+    requireNewSchema(stream);
     specificationValidator.validateForUpdate(stream.getSpecification(), existing.getSpecification());
   }
 
@@ -62,6 +63,12 @@ public class StreamValidator implements Validator<Stream> {
     }
     if (!schemaView.exists(stream.getSchemaKey())) {
       throw new ValidationException("Schema does not exist");
+    }
+  }
+
+  private void requireNewSchema(Stream stream) {
+    if (stream.getSchemaKey() == null) {
+      throw new ValidationException("Schema must be specified");
     }
   }
 }
