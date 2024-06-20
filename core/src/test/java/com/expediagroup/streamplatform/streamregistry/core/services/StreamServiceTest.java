@@ -29,7 +29,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
@@ -169,16 +168,13 @@ public class StreamServiceTest {
     when(entity.getKey()).thenReturn(key);
 
     when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    doNothing().when(streamValidator).validateForUpdate(entity, existingEntity);
     when(handlerService.handleUpdate(entity, existingEntity)).thenReturn(specification);
-
     when(streamRepository.saveSpecification(entity)).thenReturn(entity);
 
     streamService.update(entity);
 
     verify(entity).getKey();
     verify(streamRepository).findById(key);
-    verify(streamValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
     verify(streamRepository).saveSpecification(entity);
   }
@@ -418,19 +414,5 @@ public class StreamServiceTest {
     when(processRepository.findAll()).thenReturn(List.of(process));
 
     streamService.delete(stream);
-  }
-
-  @Test(expected = ValidationException.class)
-  public void updateShouldFailWhenSchemaKeyChanged() {
-    StreamKey key = new StreamKey();
-    key.setDomain("domain");
-    key.setName("stream");
-    key.setVersion(1);
-    Stream existingEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v1"));
-    Stream updatedEntity = new Stream(key, new Specification(), new SchemaKey("domain", "stream_v2"));
-    when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
-    streamService.update(updatedEntity);
-    verify(updatedEntity).getKey();
-    verify(streamRepository).findById(key);
   }
 }

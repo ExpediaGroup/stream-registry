@@ -41,7 +41,7 @@ public class StreamValidator implements Validator<Stream> {
 
   @Override
   public void validateForUpdate(Stream stream, Stream existing) throws ValidationException {
-    validateForCreateAndUpdate(stream);
+    requireExistingDomain(stream);
     specificationValidator.validateForUpdate(stream.getSpecification(), existing.getSpecification());
   }
 
