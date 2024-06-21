@@ -35,15 +35,19 @@ public class StreamValidator implements Validator<Stream> {
   @Override
   public void validateForCreate(Stream stream) throws ValidationException {
     streamKeyValidator.validateKey(stream);
-    requireExistingDomain(stream);
-    requireExistingSchema(stream);
+    validateForCreateAndUpdate(stream);
     specificationValidator.validateForCreate(stream.getSpecification());
   }
 
   @Override
   public void validateForUpdate(Stream stream, Stream existing) throws ValidationException {
-    requireExistingDomain(stream);
+    validateForCreateAndUpdate(stream);
     specificationValidator.validateForUpdate(stream.getSpecification(), existing.getSpecification());
+  }
+
+  public void validateForCreateAndUpdate(Stream stream) throws ValidationException {
+    requireExistingDomain(stream);
+    requireExistingSchema(stream);
   }
 
   private void requireExistingDomain(Stream stream) {
@@ -56,7 +60,6 @@ public class StreamValidator implements Validator<Stream> {
     if (stream.getSchemaKey() == null) {
       throw new ValidationException("Schema must be specified");
     }
-
     if (!schemaView.exists(stream.getSchemaKey())) {
       throw new ValidationException("Schema does not exist");
     }
