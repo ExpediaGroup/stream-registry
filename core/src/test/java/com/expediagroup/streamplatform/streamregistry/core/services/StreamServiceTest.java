@@ -18,6 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.core.services;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
@@ -40,6 +43,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.core.handlers.HandlerService;
 import com.expediagroup.streamplatform.streamregistry.core.validators.StreamValidator;
+import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.views.ConsumerView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProducerView;
@@ -180,6 +184,44 @@ public class StreamServiceTest {
     verify(streamValidator).validateForUpdate(entity, existingEntity);
     verify(handlerService).handleUpdate(entity, existingEntity);
     verify(streamRepository).saveSpecification(entity);
+  }
+
+  @Test
+  public void updateWithChangedSchemaKey() {
+    StreamKey key = new StreamKey();
+    key.setDomain("domain");
+    key.setName("stream");
+    key.setVersion(1);
+    SchemaKey existingSchema = new SchemaKey("domain", "existing");
+    SchemaKey updatedSchema = new SchemaKey("domain", "updated");
+    Stream existingEntity = new Stream(key, new Specification(), existingSchema);
+    Stream updatedEntity = new Stream(key, new Specification(), updatedSchema);
+    when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    ValidationException ex = assertThrows(ValidationException.class, () -> streamService.update(updatedEntity));
+    assertEquals("Stream = " + key + " update failed, because existing schemaKey = " + existingSchema +
+      " is not matching with given schemaKey = " + updatedSchema, ex.getMessage());
+    verify(streamRepository).findById(key);
+  }
+
+  @Test
+  public void updateWithSchemaKeyNull() {
+    StreamKey key = new StreamKey();
+    key.setDomain("domain");
+    key.setName("stream");
+    key.setVersion(1);
+    SchemaKey schemaKey = new SchemaKey("domain", "stream_v1");
+    Stream existingEntity = new Stream(key, new Specification(), schemaKey);
+    Stream updatedEntity = new Stream(key, new Specification(), null);
+    when(streamRepository.findById(key)).thenReturn(Optional.of(existingEntity));
+    streamService.update(updatedEntity);
+    // should update the schemaKey if null in update
+    assertNotNull(updatedEntity.getSchemaKey());
+    assertEquals(updatedEntity.getSchemaKey(), schemaKey);
+
+    verify(streamRepository).findById(key);
+    verify(streamValidator).validateForUpdate(updatedEntity, existingEntity);
+    verify(handlerService).handleUpdate(updatedEntity, existingEntity);
+    verify(streamRepository).saveSpecification(updatedEntity);
   }
 
   @Test
