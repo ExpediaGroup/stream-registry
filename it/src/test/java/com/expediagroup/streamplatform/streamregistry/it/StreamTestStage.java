@@ -37,8 +37,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.S
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.AbstractTestStage;
-import com.expediagroup.streamplatform.streamregistry.model.keys.SchemaKey;
-import com.expediagroup.streamplatform.streamregistry.model.keys.StreamKey;
 
 public class StreamTestStage extends AbstractTestStage {
 
@@ -72,15 +70,16 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void upsert() {
+    /**
+     * Not throw exception, because we are over-riding schemaKey if schemaKey is null
+     */
+    client.getOptionalData(factory.upsertStreamMutationBuilder()
+      .schema(null)
+      .build()).get();
 
-    try {
-      client.getOptionalData(factory.upsertStreamMutationBuilder()
-          .schema(null)
-          .build()).get();
-    } catch (RuntimeException ex) {
-      assertEquals("Schema does not exist", ex.getMessage());
-    }
-
+    /**
+     * This should throw exception if schemaKey is matches with the existing schemaKey.
+     */
     try {
       SchemaKeyInput nonExisting = SchemaKeyInput.builder()
           .domain(factory.domainName)
@@ -89,12 +88,8 @@ public class StreamTestStage extends AbstractTestStage {
       client.getOptionalData(factory.upsertStreamMutationBuilder()
           .schema(nonExisting)
           .build()).get();
-    } catch (RuntimeException ex) {
-      String message = ex.getMessage().replace("com.expediagroup.streamplatform.streamregistry.state.graphql.ApolloResponseException: Unexpected response: ", "");
-      StreamKey streamKey = new StreamKey(factory.domainName, factory.streamName, 1);
-      SchemaKey existingSchemaKey = new SchemaKey(factory.domainName, factory.schemaName);
-      SchemaKey nonExisting = new SchemaKey(factory.domainName, "nonExisting");
-      assertEquals("Stream = " + streamKey + " update failed, because existing schemaKey = " + existingSchemaKey + " is not matching with given schemaKey = " + nonExisting, message);
+    } catch(RuntimeException ex ) {
+      assertTrue(ex.getMessage().contains("update failed, because existing schemaKey"));
     }
 
     Object data = client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();

@@ -82,14 +82,7 @@ public class StreamService {
     if (existing.isEmpty()) {
       throw new ValidationException("Can't update " + stream.getKey() + " because it doesn't exist");
     }
-
-    if (stream.getSchemaKey() == null) {
-      stream.setSchemaKey(existing.get().getSchemaKey());
-    } else if (!existing.get().getSchemaKey().equals(stream.getSchemaKey())) {
-      throw new ValidationException("Stream = " + stream.getKey() + " update failed, because existing schemaKey = " +
-        existing.get().getSchemaKey() + " is not matching with given schemaKey = " + stream.getSchemaKey());
-    }
-
+    validateSchemaKey(stream, existing.get());
     streamValidator.validateForUpdate(stream, existing.get());
     stream.setSpecification(handlerService.handleUpdate(stream, existing.get()));
     return saveSpecification(stream);
@@ -182,5 +175,14 @@ public class StreamService {
       process.getInputs().stream().anyMatch(input -> input.getStream().equals(stream.getKey())) ||
         process.getOutputs().stream().anyMatch(output -> output.getStream().equals(stream.getKey()))
     );
+  }
+
+  private void validateSchemaKey(Stream stream, Stream existing) {
+    if (stream.getSchemaKey() == null) {
+      stream.setSchemaKey(existing.getSchemaKey());
+    } else if (!existing.getSchemaKey().equals(stream.getSchemaKey())) {
+      throw new ValidationException("Stream = " + stream.getKey() + " update failed, because existing schemaKey = " +
+        existing.getSchemaKey() + " is not matching with given schemaKey = " + stream.getSchemaKey());
+    }
   }
 }
