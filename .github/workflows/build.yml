@@ -15,6 +15,9 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
+          java-package: jdk
+          distribution: adopt
+          architecture: x64
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
