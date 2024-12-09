@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
     name: Build the project
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu
     steps:
       - name: Checkout
         uses: actions/checkout@v2
