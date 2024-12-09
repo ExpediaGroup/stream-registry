@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import lombok.val;
-import okhttp3.OkHttpClient;
-
 import com.apollographql.apollo.ApolloClient;
 
 import org.junit.Test;
@@ -35,6 +32,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import lombok.val;
+import okhttp3.OkHttpClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultApolloClientFactoryTest {

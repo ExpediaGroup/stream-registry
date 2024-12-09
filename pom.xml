@@ -43,11 +43,13 @@
 
   <modules>
     <module>app</module>
+    <module>bom</module>
     <module>core</module>
     <module>graphql/api</module>
     <module>graphql/maven-plugin</module>
     <module>graphql/scalars</module>
     <module>handler-spi</module>
+    <module>it</module>
     <module>model</module>
     <module>repository/api</module>
     <module>repository/kafka</module>
@@ -60,8 +62,6 @@
     <module>state/it</module>
     <module>state/kafka-sender</module>
     <module>state/kafka-receiver</module>
-    <module>it</module>
-    <module>bom</module>
   </modules>
 
   <properties>
@@ -70,30 +70,34 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <jacoco.version>0.8.11</jacoco.version>
-    <commons-text.version>1.10.0</commons-text.version>
-    <confluent.version>7.5.2</confluent.version>
+    <commons-text.version>1.12.0</commons-text.version>
+    <confluent.version>7.7.2</confluent.version>
     <avro.version>1.11.3</avro.version>
     <apollo.version>2.5.14</apollo.version>
-    <awaitility.version>3.1.6</awaitility.version>
-    <guava.version>32.1.3-jre</guava.version>
+    <awaitility.version>4.2.2</awaitility.version>
+    <guava.version>33.3.1-jre</guava.version>
     <graphql-java.version>21.0</graphql-java.version>
-    <kotlin.version>1.8.22</kotlin.version>
-    <jetbrains.annotations.version>24.0.1</jetbrains.annotations.version>
+    <kotlin.version>2.1.0</kotlin.version>
+    <jetbrains.annotations.version>26.0.1</jetbrains.annotations.version>
     <slf4j.version>1.7.26</slf4j.version>
-    <snakeyaml.version>2.0</snakeyaml.version>
-    <spring-boot.version>3.1.6</spring-boot.version>
-    <testcontainers.version>1.18.3</testcontainers.version>
-    <log4j.version>2.17.1</log4j.version>
-    <github.docker-java.version>3.3.3</github.docker-java.version>
+    <snakeyaml.version>2.3</snakeyaml.version>
+    <spring-boot.version>3.3.6</spring-boot.version>
+    <testcontainers.version>1.20.4</testcontainers.version>
+    <log4j.version>2.24.2</log4j.version>
+    <github.docker-java.version>3.4.0</github.docker-java.version>
+    <maven-plugin-api.version>3.9.9</maven-plugin-api.version>
+    <maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 
     <!-- Plugins -->
-    <spotless-maven-plugin.version>1.24.0</spotless-maven-plugin.version>
-    <maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
-    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
-    <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
-    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-    <maven-plugin-plugin.version>3.10.1</maven-plugin-plugin.version>
-    <jib.maven.plugin.version>3.4.0</jib.maven.plugin.version>
+    <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
+    <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
+    <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+    <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-plugin-plugin.version>3.15.1</maven-plugin-plugin.version>
+    <apollo-client-maven-plugin.version>3.3.1</apollo-client-maven-plugin.version>
+    <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
+    <jib.maven.plugin.version>3.4.4</jib.maven.plugin.version>
     <jib.goal>dockerBuild</jib.goal>
   </properties>
 
@@ -119,7 +123,6 @@
           </exclusion>
         </exclusions>
       </dependency>
-
       <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro</artifactId>
@@ -184,6 +187,17 @@
         <artifactId>kotlin-reflect</artifactId>
         <version>${kotlin.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${maven-plugin-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>${maven-plugin-annotations.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>

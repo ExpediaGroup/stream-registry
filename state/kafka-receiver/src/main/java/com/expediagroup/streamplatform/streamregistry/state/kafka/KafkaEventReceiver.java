@@ -42,13 +42,6 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.*;
 
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -64,6 +57,13 @@ import com.expediagroup.streamplatform.streamregistry.state.avro.AvroValue;
 import com.expediagroup.streamplatform.streamregistry.state.internal.EventCorrelator;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
+
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)

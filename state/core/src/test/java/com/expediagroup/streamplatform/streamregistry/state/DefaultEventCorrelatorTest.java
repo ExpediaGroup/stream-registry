@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.val;
-
 import org.junit.Test;
+
+import lombok.val;
 
 public class DefaultEventCorrelatorTest {
   private final Map<String, CompletableFuture<Void>> futures = new ConcurrentHashMap<>();

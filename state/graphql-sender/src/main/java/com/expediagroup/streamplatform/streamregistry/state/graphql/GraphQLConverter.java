@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import static java.util.stream.Collectors.toList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import lombok.val;
 
 import com.apollographql.apollo.api.InputType;
 import com.apollographql.apollo.api.Mutation;
@@ -71,6 +69,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
+
+import lombok.val;
 
 class GraphQLConverter {
 

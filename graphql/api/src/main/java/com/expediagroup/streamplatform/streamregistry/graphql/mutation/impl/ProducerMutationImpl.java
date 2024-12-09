@@ -19,8 +19,6 @@ import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper
 
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +30,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Speci
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.ProducerMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

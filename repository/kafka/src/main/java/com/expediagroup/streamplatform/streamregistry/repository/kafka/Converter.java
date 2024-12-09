@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -67,6 +65,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
+
+import lombok.RequiredArgsConstructor;
 
 interface Converter<ME extends com.expediagroup.streamplatform.streamregistry.model.Entity<MK>, MK, SK extends Entity.Key<SS>, SS extends com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification> {
   MK convertKey(SK key);

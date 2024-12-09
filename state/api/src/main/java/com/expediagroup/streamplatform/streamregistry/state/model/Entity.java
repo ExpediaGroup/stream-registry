@@ -15,11 +15,6 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.model;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.Value;
-import lombok.With;
-
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessBindingSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.ProcessSpecification;
@@ -27,6 +22,11 @@ import com.expediagroup.streamplatform.streamregistry.state.model.specification.
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.StreamSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.Status;
+
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Value;
+import lombok.With;
 
 @Value
 @AllArgsConstructor

@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
@@ -64,6 +62,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Principal;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
+
+import lombok.val;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KafkaEventSenderTest {

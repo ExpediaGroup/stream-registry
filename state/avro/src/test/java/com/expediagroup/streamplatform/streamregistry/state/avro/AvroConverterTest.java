@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Test;
@@ -43,6 +41,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.ZoneKey
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.*;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.StatusEntry;
+
+import lombok.val;
 
 public class AvroConverterTest {
   private final ObjectMapper mapper = new ObjectMapper();

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package com.expediagroup.streamplatform.streamregistry.state.model.specification
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import lombok.NonNull;
 import lombok.Value;
 import lombok.With;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Value
 public class DefaultSpecification implements Specification {

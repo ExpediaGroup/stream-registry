@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2024 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
@@ -46,6 +43,9 @@ import com.expediagroup.streamplatform.streamregistry.model.Specified;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
 import com.expediagroup.streamplatform.streamregistry.model.StreamBinding;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
+
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

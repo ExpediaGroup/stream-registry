@@ -30,13 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 
 import org.apache.kafka.clients.producer.Callback;
@@ -56,6 +49,13 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 @Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
