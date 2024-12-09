@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2022 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package com.expediagroup.streamplatform.streamregistry.core.validators;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.validators.key.KeyValidator;
@@ -22,8 +24,6 @@ import com.expediagroup.streamplatform.streamregistry.core.views.DomainView;
 import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ZoneView;
 import com.expediagroup.streamplatform.streamregistry.model.Producer;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

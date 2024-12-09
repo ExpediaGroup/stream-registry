@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
  */
 package com.expediagroup.streamplatform.streamregistry.repository.kafka;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+
 import com.expediagroup.streamplatform.streamregistry.state.EntityView;
 import com.expediagroup.streamplatform.streamregistry.state.EntityViewListener;
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationDeletionEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
-
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
 
 @AllArgsConstructor
 class PurgingEntityViewListener implements EntityViewListener {

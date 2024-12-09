@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.ZoneService;
@@ -26,8 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Statu
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.ZoneKeyInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.ZoneMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Zone;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

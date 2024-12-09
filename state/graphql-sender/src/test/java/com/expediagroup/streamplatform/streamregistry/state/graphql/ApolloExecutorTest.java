@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.concurrent.CompletableFuture;
 
+import lombok.val;
+
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.ApolloMutationCall;
 import com.apollographql.apollo.api.Mutation;
@@ -38,8 +40,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.expediagroup.streamplatform.streamregistry.state.graphql.ApolloExecutor.Callback;
-
-import lombok.val;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApolloExecutorTest {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import static okhttp3.Credentials.basic;
 
 import java.util.function.Consumer;
 
-import com.apollographql.apollo.ApolloClient;
-
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
+
+import com.apollographql.apollo.ApolloClient;
 
 @AllArgsConstructor
 public class DefaultApolloClientFactory implements ApolloClientFactory {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.query.impl;
 
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.StreamService;
@@ -27,8 +29,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.Spec
 import com.expediagroup.streamplatform.streamregistry.graphql.model.queries.StreamKeyQuery;
 import com.expediagroup.streamplatform.streamregistry.graphql.query.StreamQuery;
 import com.expediagroup.streamplatform.streamregistry.model.Stream;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

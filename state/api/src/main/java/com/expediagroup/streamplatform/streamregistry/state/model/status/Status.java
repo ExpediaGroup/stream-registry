@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package com.expediagroup.streamplatform.streamregistry.state.model.status;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.NonNull;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public interface Status {
   Set<String> getNames();

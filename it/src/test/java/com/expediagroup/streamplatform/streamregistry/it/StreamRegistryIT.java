@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.expediagroup.streamplatform.streamregistry.it;
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -31,8 +33,6 @@ import org.testcontainers.containers.KafkaContainer;
 import com.expediagroup.streamplatform.streamregistry.StreamRegistryApp;
 import com.expediagroup.streamplatform.streamregistry.TestUtils;
 import com.expediagroup.streamplatform.streamregistry.it.helpers.ITestClient;
-
-import lombok.extern.slf4j.Slf4j;
 
 @RunWith(Suite.class)
 @SuiteClasses({

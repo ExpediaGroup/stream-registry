@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2020 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import graphql.language.ArrayValue;
 import graphql.language.BooleanValue;
 import graphql.language.EnumValue;
@@ -31,7 +32,6 @@ import graphql.language.StringValue;
 import graphql.language.Value;
 import graphql.language.VariableReference;
 import graphql.schema.CoercingParseLiteralException;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class JsonCoercingUtil {

@@ -17,6 +17,8 @@ package com.expediagroup.streamplatform.streamregistry.graphql.mutation.impl;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.StateHelper.maintainState;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import com.expediagroup.streamplatform.streamregistry.core.services.InfrastructureService;
@@ -26,8 +28,6 @@ import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.Speci
 import com.expediagroup.streamplatform.streamregistry.graphql.model.inputs.StatusInput;
 import com.expediagroup.streamplatform.streamregistry.graphql.mutation.InfrastructureMutation;
 import com.expediagroup.streamplatform.streamregistry.model.Infrastructure;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

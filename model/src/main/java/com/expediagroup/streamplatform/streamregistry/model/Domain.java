@@ -15,11 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
-import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 
 @Data
 @AllArgsConstructor

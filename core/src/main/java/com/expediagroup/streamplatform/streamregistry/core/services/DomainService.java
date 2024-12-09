@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,9 +42,6 @@ import com.expediagroup.streamplatform.streamregistry.model.Domain;
 import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.DomainKey;
 import com.expediagroup.streamplatform.streamregistry.repository.DomainRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.val;
 
 @Component
 @RequiredArgsConstructor

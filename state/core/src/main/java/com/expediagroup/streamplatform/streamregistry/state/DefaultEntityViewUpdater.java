@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2023 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,11 @@ import static com.expediagroup.streamplatform.streamregistry.state.StateValue.ex
 import java.util.Map;
 import java.util.Optional;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.SpecificationDeletionEvent;
@@ -29,11 +34,6 @@ import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusDe
 import com.expediagroup.streamplatform.streamregistry.state.model.event.StatusEvent;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
-
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 @Slf4j
 @RequiredArgsConstructor
