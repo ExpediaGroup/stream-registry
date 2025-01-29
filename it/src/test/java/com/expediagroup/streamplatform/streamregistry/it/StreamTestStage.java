@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2021 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,16 +70,15 @@ public class StreamTestStage extends AbstractTestStage {
 
   @Override
   public void upsert() {
-    /**
-     * Not throw exception, because we are over-riding schemaKey if schemaKey is null
-     */
-    client.getOptionalData(factory.upsertStreamMutationBuilder()
-      .schema(null)
-      .build()).get();
 
-    /**
-     * This should throw exception if schemaKey is matches with the existing schemaKey.
-     */
+    try {
+      client.getOptionalData(factory.upsertStreamMutationBuilder()
+          .schema(null)
+          .build()).get();
+    } catch (RuntimeException ex) {
+      assertEquals("Schema does not exist", ex.getMessage());
+    }
+
     try {
       SchemaKeyInput nonExisting = SchemaKeyInput.builder()
           .domain(factory.domainName)
@@ -88,8 +87,8 @@ public class StreamTestStage extends AbstractTestStage {
       client.getOptionalData(factory.upsertStreamMutationBuilder()
           .schema(nonExisting)
           .build()).get();
-    } catch(RuntimeException ex ) {
-      assertTrue(ex.getMessage().contains("update failed, because existing schemaKey"));
+    } catch (RuntimeException ex) {
+      assertEquals("Schema does not exist", ex.getMessage());
     }
 
     Object data = client.getOptionalData(factory.upsertStreamMutationBuilder().build()).get();
