@@ -8,19 +8,14 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Setup JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: 17
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          distribution: 'temurin'
+          cache: 'maven'
       - name: mvn build
-        run: ./mvnw clean install -Djib.skip -B
+        run: ./mvnw clean install -Djib.skip -B -ntp
