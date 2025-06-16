@@ -140,9 +140,21 @@ public class KafkaEventReceiver implements EventReceiver {
     val topicPartition = new TopicPartition(config.getTopic(), 0);
     val topicPartitions = Collections.singletonList(topicPartition);
 
-    int partitions = consumer.partitionsFor(topicPartition.topic()).size();
-    if (partitions != 1) {
-      throw new IllegalStateException("Unsupported partition count. Require 1, got " + partitions);
+    int partitions = 0;
+    int count = 0;
+    while (partitions != 1) {
+      if (count > 3) {
+        throw new IllegalStateException("Unsupported partition count. Require 1, got " + partitions);
+      }
+      try {
+        Thread.sleep(5000 * count);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+      count++;
+
+      partitions = consumer.partitionsFor(topicPartition.topic()).size();
+      log.info("Partition count is {} for topic {}", partitions, topicPartition.topic());
     }
 
     long beginningOffset = consumer.beginningOffsets(topicPartitions).get(topicPartition);
