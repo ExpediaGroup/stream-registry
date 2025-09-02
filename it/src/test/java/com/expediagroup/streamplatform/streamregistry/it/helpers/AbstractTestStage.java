@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@ package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
-
 import com.apollographql.apollo.api.Mutation;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.expediagroup.streamplatform.streamregistry.it.StreamRegistryIT;
+
+import junit.framework.TestCase;
 
 public abstract class AbstractTestStage {
   protected ITestDataFactory factory = new ITestDataFactory(getClass().getSimpleName().toLowerCase());

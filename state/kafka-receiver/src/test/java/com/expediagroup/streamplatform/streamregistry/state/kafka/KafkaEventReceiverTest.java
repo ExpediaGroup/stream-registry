@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.*;
 
-import lombok.val;
-
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -70,6 +68,8 @@ import com.expediagroup.streamplatform.streamregistry.state.kafka.KafkaEventRece
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
 import com.expediagroup.streamplatform.streamregistry.state.model.event.*;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.Specification;
+
+import lombok.val;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class KafkaEventReceiverTest {

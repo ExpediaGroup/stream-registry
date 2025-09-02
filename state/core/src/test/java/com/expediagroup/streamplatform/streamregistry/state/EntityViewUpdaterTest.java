@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2023 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import lombok.val;
-
 import org.junit.After;
 import org.junit.Test;
 
@@ -46,6 +44,8 @@ import com.expediagroup.streamplatform.streamregistry.state.model.Entity.DomainK
 import com.expediagroup.streamplatform.streamregistry.state.model.event.Event;
 import com.expediagroup.streamplatform.streamregistry.state.model.specification.DefaultSpecification;
 import com.expediagroup.streamplatform.streamregistry.state.model.status.DefaultStatus;
+
+import lombok.val;
 
 public abstract class EntityViewUpdaterTest {
 
