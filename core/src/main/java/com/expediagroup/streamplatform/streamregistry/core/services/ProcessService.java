@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,17 +31,17 @@ import com.expediagroup.streamplatform.streamregistry.core.validators.ProcessVal
 import com.expediagroup.streamplatform.streamregistry.core.validators.ValidationException;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessBindingView;
 import com.expediagroup.streamplatform.streamregistry.core.views.ProcessView;
-import com.expediagroup.streamplatform.streamregistry.model.Consumer;
+import com.expediagroup.streamplatform.streamregistry.core.views.StreamView;
+import com.expediagroup.streamplatform.streamregistry.model.*;
 import com.expediagroup.streamplatform.streamregistry.model.Process;
-import com.expediagroup.streamplatform.streamregistry.model.ProcessInputStream;
-import com.expediagroup.streamplatform.streamregistry.model.ProcessOutputStream;
-import com.expediagroup.streamplatform.streamregistry.model.Producer;
-import com.expediagroup.streamplatform.streamregistry.model.Status;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ConsumerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProcessKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerKey;
 import com.expediagroup.streamplatform.streamregistry.model.keys.ZoneKey;
 import com.expediagroup.streamplatform.streamregistry.repository.ProcessRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 @Component
 @RequiredArgsConstructor
@@ -57,6 +54,7 @@ public class ProcessService {
   private final ProcessView processView;
   private final ConsumerService consumerService;
   private final ProducerService producerService;
+  private final StreamView streamView;
 
   @PreAuthorize("hasPermission(#process, 'CREATE')")
   public Optional<Process> create(Process process) throws ValidationException {
@@ -78,6 +76,11 @@ public class ProcessService {
   }
 
   private Producer buildProducer(Process process, ZoneKey zoneKey, ProcessOutputStream output) {
+    val stream = streamView.get(output.getStream());
+    if (stream.isEmpty()) {
+      throw new ValidationException("Can't authorize output for " + output.getStream() + " because the stream doesn't exist.");
+    }
+
     return new Producer(
       new ProducerKey(
         output.getStream().getDomainKey().getName(),
@@ -86,7 +89,7 @@ public class ProcessService {
         zoneKey.getName(),
         process.getKey().getName()
       ),
-      process.getSpecification(),
+      secureSpecification(process.getSpecification(), stream.get()),
       process.getStatus()
     );
   }
@@ -123,6 +126,11 @@ public class ProcessService {
   }
 
   private Consumer buildConsumer(Process process, ZoneKey zoneKey, ProcessInputStream input) {
+    val stream = streamView.get(input.getStream());
+    if (stream.isEmpty()) {
+      throw new ValidationException("Can't authorize input for " + input.getStream() + " because the stream doesn't exist.");
+    }
+
     return new Consumer(
       new ConsumerKey(
         input.getStream().getDomainKey().getName(),
@@ -131,8 +139,19 @@ public class ProcessService {
         zoneKey.getName(),
         process.getKey().getName()
       ),
-      process.getSpecification(),
+      secureSpecification(process.getSpecification(), stream.get()),
       process.getStatus()
+    );
+  }
+
+  private Specification secureSpecification(Specification specification, Stream stream) {
+    return new Specification(
+      specification.getDescription(),
+      specification.getTags(),
+      specification.getType(),
+      specification.getConfiguration(),
+      stream.getSpecification().getSecurity(),
+      specification.getFunction()
     );
   }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2024 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.model;
 
+import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import com.expediagroup.streamplatform.streamregistry.model.keys.ProducerBindingKey;
 
 @Data
 @AllArgsConstructor

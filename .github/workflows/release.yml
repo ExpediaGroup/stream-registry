@@ -15,17 +15,17 @@ on:
 jobs:
   build:
     name: Release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           # We need a personal access token to be able to push to a protected branch
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
       - name: Setup JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v5
         with:
           java-version: 17
           java-package: jdk

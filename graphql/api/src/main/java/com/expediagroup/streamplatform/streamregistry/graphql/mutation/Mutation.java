@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
  */
 package com.expediagroup.streamplatform.streamregistry.graphql.mutation;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
 import graphql.kickstart.tools.GraphQLMutationResolver;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package com.expediagroup.streamplatform.streamregistry.it.helpers;
 
 import java.util.Optional;
-
-import lombok.RequiredArgsConstructor;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Mutation;
@@ -41,6 +39,8 @@ import com.expediagroup.streamplatform.streamregistry.graphql.client.test.type.Z
 import com.expediagroup.streamplatform.streamregistry.state.graphql.ApolloExecutor;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.Credentials;
 import com.expediagroup.streamplatform.streamregistry.state.graphql.DefaultApolloClientFactory;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class StreamRegistryClient {

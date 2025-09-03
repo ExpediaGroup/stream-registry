@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package com.expediagroup.streamplatform.streamregistry.state.model.specification;
 
-import lombok.NonNull;
-import lombok.Value;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.expediagroup.streamplatform.streamregistry.state.model.Entity;
+
+import lombok.NonNull;
+import lombok.Value;
 
 @Value
 public class ProcessOutputStream {
