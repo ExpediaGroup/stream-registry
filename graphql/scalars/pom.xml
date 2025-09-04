@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>stream-registry-graphql-scalars</artifactId>
+  <name>${project.groupId}:${project.artifactId}</name>
 
   <dependencies>
     <dependency>

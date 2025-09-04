@@ -14,6 +14,7 @@
   <version>3.0.5-SNAPSHOT</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
+  <name>stream-registry</name>
 
   <scm>
     <!--suppress UnresolvedMavenProperty -->
