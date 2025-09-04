@@ -330,44 +330,6 @@
           <showWarnings>true</showWarnings>
         </configuration>
       </plugin>
-      <!--
-        Override parent nexus plugin to add dependencies that will work with Java 17.
-        https://issues.sonatype.org/browse/OSSRH-66257
-        https://stackoverflow.com/questions/70153962/nexus-staging-maven-plugin-maven-deploy-failed-an-api-incompatibility-was-enco
-      -->
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>${nexus.staging.maven.plugin.version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <serverId>sonatype-nexus-staging</serverId>
-          <nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.15</version> <!-- apparently this needs to be exactly this version -->
-          </dependency>
-        </dependencies>
-      </plugin>
-      <!--
-        Override parent publishing plugin so that we can specify the correct serverId.
-        https://github.com/ExpediaGroup/eg-oss-parent/blob/main/pom.xml#L457-L467
-      -->
-      <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-        <version>0.8.0</version>
-        <extensions>true</extensions>
-        <configuration>
-          <publishingServerId>sonatype-nexus-staging</publishingServerId>
-          <autoPublish>true</autoPublish>
-          <waitUntil>published</waitUntil>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
