@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>3.0.4-SNAPSHOT</version>
+  <version>3.0.3-SNAPSHOT</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
 
@@ -352,6 +352,21 @@
             <version>1.4.15</version> <!-- apparently this needs to be exactly this version -->
           </dependency>
         </dependencies>
+      </plugin>
+      <!--
+        Override parent publishing plugin so that we can specify the correct serverId.
+        https://github.com/ExpediaGroup/eg-oss-parent/blob/main/pom.xml#L457-L467
+      -->
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.8.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>sonatype-nexus-staging</publishingServerId>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
+        </configuration>
       </plugin>
     </plugins>
   </build>
