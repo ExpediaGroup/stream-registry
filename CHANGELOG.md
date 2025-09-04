@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [3.0.5] 2025-08-04
+### Updated
+- Updated the secondary authorization check during Process insert/upsert.
+  - `buildConsumer` and `buildProducer` in [ProcessService.java](core/src/main/java/com/expediagroup/streamplatform/streamregistry/core/services/ProcessService.java) retrieve the relevant Stream and use the Streams `security` configuration instead of from the Process.
+  - This does not change any functionality, that security block is not currently used in any way.
+  - This allows downstream authorization services access to the Stream security block, which holds `consumers` and `producers` lists.
+
+## ~~[3.0.4] 2025-09-04~~
+### Failure to release
+- Release changes required after release pipeline deprecation
+- 
+## ~~[3.0.3] 2025-09-04~~
+### Failure to release
+- Release changes required after release pipeline deprecation
+
 ## [3.0.2] 2025-01-29
 ### Reverted
 - Reverted the change in 3.0.1, this change would have adverse effects on too many existing schemas.
