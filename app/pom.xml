@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>stream-registry-app</artifactId>
+  <name>${project.groupId}:${project.artifactId}</name>
 
   <properties>
     <docker.to.repo />

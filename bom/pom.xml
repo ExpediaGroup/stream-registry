@@ -8,6 +8,7 @@
   </parent>
 
   <artifactId>stream-registry-bom</artifactId>
+  <name>${project.groupId}:${project.artifactId}</name>
   <packaging>pom</packaging>
 
   <dependencyManagement>

@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>stream-registry-state-avro</artifactId>
+  <name>${project.groupId}:${project.artifactId}</name>
 
   <dependencies>
     <dependency>
