@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018-2021 Expedia, Inc.
+ * Copyright (C) 2018-2025 Expedia, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.expediagroup.streamplatform.streamregistry.graphql.filters;
 
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matches;
+import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesInt;
 import static com.expediagroup.streamplatform.streamregistry.graphql.filters.FilterUtility.matchesSpecification;
 
 import java.util.function.Predicate;
@@ -55,7 +56,7 @@ public class ProducerBindingFilter implements Predicate<ProducerBinding> {
       if (!matches(key.getStreamName(), keyQuery.getStreamNameRegex())) {
         return false;
       }
-      if (keyQuery.getStreamVersion() != null && key.getStreamVersion() != keyQuery.getStreamVersion()) {
+      if (keyQuery.getStreamVersion() != null && !matchesInt(key.getStreamVersion(),keyQuery.getStreamVersion())) {
         return false;
       }
       if (!matches(key.getProducerName(), keyQuery.getProducerNameRegex())) {
