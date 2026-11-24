@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [3.2.0] 2026-11-24
 ### Updated
 - Bumped `com.graphql-java:graphql-java` from 21.0 to 21.5, which adds limits on introspection queries (default introspection sanity check and optional maximum result nodes). Supersedes Dependabot PR #365.
+- Bumped Testcontainers from 1.20.4 to 1.21.4 (test only). The `testcontainers` core artifact is now managed explicitly, because an imported BOM had pinned it to 1.19.8, whose Docker API version (1.32) newer Docker engines reject. That broke the integration tests on CI runners.
 - Version moved from the 3.0.x line to 3.2.0. It includes all changes released in 3.0.2 to 3.0.6, which came after 3.1.0.
 
 ## [3.0.5] 2025-08-04

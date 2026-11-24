@@ -83,7 +83,7 @@
     <slf4j.version>1.7.26</slf4j.version>
     <snakeyaml.version>2.3</snakeyaml.version>
     <spring-boot.version>3.3.6</spring-boot.version>
-    <testcontainers.version>1.20.4</testcontainers.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
     <log4j.version>2.24.2</log4j.version>
     <github.docker-java.version>3.4.0</github.docker-java.version>
     <maven-plugin-api.version>3.9.9</maven-plugin-api.version>
@@ -204,6 +204,11 @@
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>${testcontainers.version}</version>
       </dependency>
       <dependency>
         <groupId>org.testcontainers</groupId>
