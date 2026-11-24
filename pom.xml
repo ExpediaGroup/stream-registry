@@ -11,7 +11,7 @@
   <groupId>com.expediagroup.streamplatform</groupId>
   <artifactId>stream-registry</artifactId>
   <packaging>pom</packaging>
-  <version>3.0.7-SNAPSHOT</version>
+  <version>3.2.0-SNAPSHOT</version>
   <url>https://expediagroup.github.io/stream-registry/</url>
   <inceptionYear>2018</inceptionYear>
   <name>stream-registry</name>
@@ -77,13 +77,13 @@
     <apollo.version>2.5.14</apollo.version>
     <awaitility.version>4.2.2</awaitility.version>
     <guava.version>33.3.1-jre</guava.version>
-    <graphql-java.version>21.0</graphql-java.version>
+    <graphql-java.version>21.5</graphql-java.version>
     <kotlin.version>2.1.0</kotlin.version>
     <jetbrains.annotations.version>26.0.1</jetbrains.annotations.version>
     <slf4j.version>1.7.26</slf4j.version>
     <snakeyaml.version>2.3</snakeyaml.version>
     <spring-boot.version>3.3.6</spring-boot.version>
-    <testcontainers.version>1.20.4</testcontainers.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
     <log4j.version>2.24.2</log4j.version>
     <github.docker-java.version>3.4.0</github.docker-java.version>
     <maven-plugin-api.version>3.9.9</maven-plugin-api.version>
@@ -204,6 +204,11 @@
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>${testcontainers.version}</version>
       </dependency>
       <dependency>
         <groupId>org.testcontainers</groupId>
