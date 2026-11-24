@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] 2026-11-24
+### Updated
+- Bumped `com.graphql-java:graphql-java` from 21.0 to 21.5, which adds limits on introspection queries (default introspection sanity check and optional maximum result nodes). Supersedes Dependabot PR #365.
+- Version moved from the 3.0.x line to 3.2.0. It includes all changes released in 3.0.2 to 3.0.6, which came after 3.1.0.
+
 ## [3.0.5] 2025-08-04
 ### Updated
 - Updated the secondary authorization check during Process insert/upsert.
